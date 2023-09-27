@@ -64,7 +64,6 @@ analyzer = AnalyzerEngine(
 
 analyzer.analyze(text="My name is David", language="en")
 ```
-Link to LANGUAGES_CONFIG_FILE=[languages-config.yml](https://github.com/microsoft/presidio/blob/main/docs/analyzer/languages-config.yml)
 
 ### Automatically install NLP models into the Docker container
 
@@ -74,4 +73,4 @@ update the [conf/default.yaml](https://github.com/microsoft/presidio/blob/main/p
 the `docker build` phase and the models defined in it are installed automatically.
 
 For `transformers` based models, the configuration [can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/transformers.yaml). 
-A docker file supporting transformers models [can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/Dockerfile.transformers).
+In addition, make sure the Docker file contains the relevant packages for `transformers`, which are not loaded automatically with Presidio.

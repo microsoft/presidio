@@ -13,5 +13,5 @@ In a similar way to example 3, we can write logic to call external services for 
 
 ## Calling a model in a different framework
 
-- [This example](https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py) shows a Presidio wrapper for a Flair model.
+- [This example](../samples/python/flair_recognizer.py) shows a Presidio wrapper for a Flair model.
 - Using a similar approach, we could create wrappers for HuggingFace models, Conditional Random Fields or any other framework.
