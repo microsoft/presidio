@@ -1,6 +1,6 @@
 import numpy as np
 import PIL
-from PIL import Image, PngImagePlugin
+from PIL import Image
 import cv2
 
 from typing import Union, Tuple, Optional
@@ -19,9 +19,7 @@ class ImagePreprocessor:
         """
         self.use_greyscale = use_greyscale
 
-    def preprocess_image(
-        self, image: PngImagePlugin.PngImageFile
-    ) -> Tuple[Image.Image, dict]:
+    def preprocess_image(self, image: Image.Image) -> Tuple[Image.Image, dict]:
         """Preprocess the image to be analyzed.
 
         :param image: Loaded PIL image.
@@ -31,7 +29,7 @@ class ImagePreprocessor:
         """
         return image, {}
 
-    def convert_image_to_array(self, image: PngImagePlugin.PngImageFile) -> np.ndarray:
+    def convert_image_to_array(self, image: Image.Image) -> np.ndarray:
         """Convert PIL image to numpy array.
 
         :param image: Loaded PNG image.
@@ -51,7 +49,7 @@ class ImagePreprocessor:
 
     @staticmethod
     def _get_bg_color(
-        image: PngImagePlugin.PngImageFile, is_greyscale: bool, invert: bool = False
+        image: Image.Image, is_greyscale: bool, invert: bool = False
     ) -> Union[int, Tuple[int, int, int]]:
         """Select most common color as background color.
 
@@ -122,9 +120,7 @@ class BilateralFilter(ImagePreprocessor):
         self.sigma_color = sigma_color
         self.sigma_space = sigma_space
 
-    def preprocess_image(
-        self, image: PngImagePlugin.PngImageFile
-    ) -> Tuple[Image.Image, dict]:
+    def preprocess_image(self, image: Image.Image) -> Tuple[Image.Image, dict]:
         """Preprocess the image to be analyzed.
 
         :param image: Loaded PIL image.
@@ -184,7 +180,7 @@ class SegmentedAdaptiveThreshold(ImagePreprocessor):
         self.contrast_threshold = contrast_threshold
 
     def preprocess_image(
-        self, image: Union[PngImagePlugin.PngImageFile, np.ndarray]
+        self, image: Union[Image.Image, np.ndarray]
     ) -> Tuple[Image.Image, dict]:
         """Preprocess the image.
 
@@ -252,9 +248,7 @@ class ImageRescaling(ImagePreprocessor):
         self.factor = factor
         self.interpolation = interpolation
 
-    def preprocess_image(
-        self, image: PngImagePlugin.PngImageFile
-    ) -> Tuple[Image.Image, dict]:
+    def preprocess_image(self, image: Image.Image) -> Tuple[Image.Image, dict]:
         """Preprocess the image to be analyzed.
 
         :param image: Loaded PIL image.
@@ -320,9 +314,7 @@ class ContrastSegmentedImageEnhancer(ImagePreprocessor):
 
         self.low_contrast_threshold = low_contrast_threshold
 
-    def preprocess_image(
-        self, image: PngImagePlugin.PngImageFile
-    ) -> Tuple[Image.Image, dict]:
+    def preprocess_image(self, image: Image.Image) -> Tuple[Image.Image, dict]:
         """Preprocess the image to be analyzed.
 
         :param image: Loaded PIL image.

@@ -7,7 +7,6 @@ from pathlib import Path
 from PIL import Image, ImageOps
 import pydicom
 from pydicom.pixel_data_handlers.util import apply_voi_lut
-import PIL
 import png
 import json
 import numpy as np
@@ -85,17 +84,19 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # Detect PII
         analyzer_results = self._get_analyzer_results(
-            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
-            **text_analyzer_kwargs
+            image,
+            instance,
+            use_metadata,
+            ocr_kwargs,
+            ad_hoc_recognizers,
+            **text_analyzer_kwargs,
         )
 
         # Redact all bounding boxes from DICOM file
         analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
             analyzer_results
         )
-        bboxes = self.bbox_processor.remove_bbox_padding(
-            analyzer_bboxes, padding_width
-        )
+        bboxes = self.bbox_processor.remove_bbox_padding(analyzer_bboxes, padding_width)
         redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
         return redacted_image, bboxes
@@ -135,7 +136,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             crop_ratio=crop_ratio,
             ocr_kwargs=ocr_kwargs,
             ad_hoc_recognizers=ad_hoc_recognizers,
-            **text_analyzer_kwargs
+            **text_analyzer_kwargs,
         )
 
         return redacted_image
@@ -306,7 +307,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             color_scale = instance.PhotometricInterpretation
         except AttributeError:
             color_scale = None
-        is_greyscale = (color_scale in ["MONOCHROME1", "MONOCHROME2"])
+        is_greyscale = color_scale in ["MONOCHROME1", "MONOCHROME2"]
 
         return is_greyscale
 
@@ -402,7 +403,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @staticmethod
     def _get_bg_color(
-        image: PIL.PngImagePlugin.PngImageFile, is_greyscale: bool, invert: bool = False
+        image: Image.Image, is_greyscale: bool, invert: bool = False
     ) -> Union[int, Tuple[int, int, int]]:
         """Select most common color as background color.
 
@@ -521,10 +522,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     @classmethod
     def _add_padding(
         cls,
-        image: PIL.PngImagePlugin.PngImageFile,
+        image: Image.Image,
         is_greyscale: bool,
         padding_width: int,
-    ) -> PIL.PngImagePlugin.PngImageFile:
+    ) -> Image.Image:
         """Add border to image using most common color.
 
         :param image: Loaded PNG image.
@@ -667,12 +668,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
                 # Append iterations
                 word_list.extend(
-                    [
-                        text_no_separator,
-                        text_upper,
-                        text_lower,
-                        text_title
-                    ]
+                    [text_no_separator, text_upper, text_lower, text_title]
                 )
 
                 # Adding each term as a separate item in the list
@@ -681,7 +677,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                         text_no_separator.split(" "),
                         text_upper.split(" "),
                         text_lower.split(" "),
-                        text_title.split(" ")
+                        text_title.split(" "),
                     ]
                 )
 
@@ -819,8 +815,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             number_of_frames = instance[0x0028, 0x0008].value
         except KeyError:
             number_of_frames = 1
-        expected_num_bytes = (rows * columns * number_of_frames
-                              * samples_per_pixel * (bits_allocated/8))
+        expected_num_bytes = (
+            rows * columns * number_of_frames * samples_per_pixel * (bits_allocated / 8)
+        )
 
         # Compare expected vs actual
         is_compressed = (int(expected_num_bytes)) > len(instance.PixelData)
@@ -829,7 +826,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @staticmethod
     def _compress_pixel_data(
-        instance: pydicom.dataset.FileDataset
+        instance: pydicom.dataset.FileDataset,
     ) -> pydicom.dataset.FileDataset:
         """Recompress pixel data that was decompressed during redaction.
 
@@ -840,17 +837,17 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         compression_method = pydicom.uid.RLELossless
 
         # Temporarily change syntax to an "uncompressed" method
-        instance.file_meta.TransferSyntaxUID = pydicom.uid.UID('1.2.840.10008.1.2')
+        instance.file_meta.TransferSyntaxUID = pydicom.uid.UID("1.2.840.10008.1.2")
 
         # Compress and update syntax
-        instance.compress(compression_method, encoding_plugin='gdcm')
+        instance.compress(compression_method, encoding_plugin="gdcm")
         instance.file_meta.TransferSyntaxUID = compression_method
 
         return instance
 
     @staticmethod
     def _check_if_has_image_icon_sequence(
-        instance: pydicom.dataset.FileDataset
+        instance: pydicom.dataset.FileDataset,
     ) -> bool:
         """Check if there is an image icon sequence tag in the metadata.
 
@@ -927,12 +924,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     def _get_analyzer_results(
         self,
-        image: PIL.PngImagePlugin.PngImageFile,
+        image: Image.Image,
         instance: pydicom.dataset.FileDataset,
         use_metadata: bool,
         ocr_kwargs: Optional[dict],
         ad_hoc_recognizers: Optional[List[PatternRecognizer]],
-        **text_analyzer_kwargs
+        **text_analyzer_kwargs,
     ) -> List[ImageRecognizerResult]:
         """Analyze image with selected redaction approach.
 
@@ -953,12 +950,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # Create custom recognizer using DICOM metadata
         if use_metadata:
-            original_metadata, is_name, is_patient = self._get_text_metadata(
-                instance
-            )
-            phi_list = self._make_phi_list(
-                original_metadata, is_name, is_patient
-            )
+            original_metadata, is_name, is_patient = self._get_text_metadata(instance)
+            phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
             deny_list_recognizer = PatternRecognizer(
                 supported_entity="PERSON", deny_list=phi_list
             )
@@ -1064,17 +1057,19 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # Detect PII
         analyzer_results = self._get_analyzer_results(
-            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
-            **text_analyzer_kwargs
+            image,
+            instance,
+            use_metadata,
+            ocr_kwargs,
+            ad_hoc_recognizers,
+            **text_analyzer_kwargs,
         )
 
         # Redact all bounding boxes from DICOM file
         analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
             analyzer_results
         )
-        bboxes = self.bbox_processor.remove_bbox_padding(
-            analyzer_bboxes, padding_width
-        )
+        bboxes = self.bbox_processor.remove_bbox_padding(analyzer_bboxes, padding_width)
         redacted_dicom_instance = self._add_redact_box(
             instance, bboxes, crop_ratio, fill
         )
