@@ -407,7 +407,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> Union[int, Tuple[int, int, int]]:
         """Select most common color as background color.
 
-        :param image: Loaded PNG image.
+        :param image: Loaded PIL image.
         :param colorscale: Colorscale of image (e.g., 'grayscale', 'RGB')
         :param invert: TRUE if you want to get the inverse of the bg color.
 
@@ -528,11 +528,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> Image.Image:
         """Add border to image using most common color.
 
-        :param image: Loaded PNG image.
+        :param image: Loaded PIL image.
         :param is_greyscale: Whether image is in grayscale or not.
         :param padding_width: Pixel width of padding (uniform).
 
-        :return: PNG image with padding.
+        :return: PIL image with padding.
         """
         # Check padding width value
         if padding_width <= 0:

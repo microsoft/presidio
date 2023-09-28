@@ -32,7 +32,7 @@ class ImagePreprocessor:
     def convert_image_to_array(self, image: Image.Image) -> np.ndarray:
         """Convert PIL image to numpy array.
 
-        :param image: Loaded PNG image.
+        :param image: Loaded PIL image.
         :param convert_to_greyscale: Whether to convert the image to greyscale.
 
         :return: image pixels as a numpy array.
@@ -53,7 +53,7 @@ class ImagePreprocessor:
     ) -> Union[int, Tuple[int, int, int]]:
         """Select most common color as background color.
 
-        :param image: Loaded PNG image.
+        :param image: Loaded PIL image.
         :param is_greyscale: Whether the image is greyscale.
         :param invert: TRUE if you want to get the inverse of the bg color.
 
