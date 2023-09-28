@@ -49,6 +49,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         instance: pydicom.dataset.FileDataset,
         padding_width: int = 25,
         display_image: bool = True,
+        show_text_annotation: bool = True,
         use_metadata: bool = True,
         ocr_kwargs: Optional[dict] = None,
         ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
@@ -59,6 +60,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param padding_width: Padding width to use when running OCR.
         :param display_image: If the verificationimage is displayed and returned.
+        :param show_text_annotation: True to display entity type when displaying
+        image with bounding boxes.
         :param use_metadata: Whether to redact text in the image that
         are present in the metadata.
         :param ocr_kwargs: Additional params for OCR methods.
@@ -88,23 +91,47 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
+        # Get OCR results
+        perform_ocr_kwargs, ocr_threshold = self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)  # noqa: E501
+        ocr_results = self.ocr_engine.perform_ocr(image, **perform_ocr_kwargs)
+        if ocr_threshold:
+            ocr_results = self.image_analyzer_engine.threshold_ocr_result(
+                ocr_results,
+                ocr_threshold
+            )
+        ocr_bboxes = self.bbox_processor.get_bboxes_from_ocr_results(
+            ocr_results
+        )
+
         # Get analyzer results
-        ocr_results = self.ocr_engine.perform_ocr(image)
         analyzer_results = self._get_analyzer_results(
             image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
             **text_analyzer_kwargs
         )
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
+
+        # Prepare for plotting
+        pii_bboxes = self.image_analyzer_engine.get_pii_bboxes(
+            ocr_bboxes,
+            analyzer_bboxes
+        )
+        if is_greyscale:
+            use_greyscale_cmap = True
+        else:
+            use_greyscale_cmap = False
 
         # Get image with verification boxes
         verify_image = (
-            self.verify(
-                image, ad_hoc_recognizers=ad_hoc_recognizers, **text_analyzer_kwargs
+            self.image_analyzer_engine.add_custom_bboxes(
+                image, pii_bboxes, show_text_annotation, use_greyscale_cmap
             )
             if display_image
             else None
         )
 
-        return verify_image, ocr_results, analyzer_results
+        return verify_image, ocr_bboxes, analyzer_bboxes
 
     def eval_dicom_instance(
         self,

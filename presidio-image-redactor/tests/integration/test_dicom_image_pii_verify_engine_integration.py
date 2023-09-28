@@ -27,14 +27,11 @@ def test_verify_correctly(
         expected_ocr_results_labels.append(item["label"])
 
     # Act
-    test_image_verify, test_ocr_results, _ = DicomImagePiiVerifyEngine().verify_dicom_instance(
+    test_image_verify, test_ocr_results_formatted, _ = DicomImagePiiVerifyEngine().verify_dicom_instance(
         instance=get_mock_dicom_instance,
         padding_width=PADDING_WIDTH,
         display_image=True,
         ocr_kwargs=None
-    )
-    test_ocr_results_formatted = BboxProcessor().get_bboxes_from_ocr_results(
-        ocr_results=test_ocr_results
     )
 
     # Check most OCR results (labels) are the same
