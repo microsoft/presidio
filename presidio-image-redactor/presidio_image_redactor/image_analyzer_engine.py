@@ -1,8 +1,9 @@
-from typing import List, Tuple, Optional
-
+from typing import List, Tuple, Optional, Dict, Union
+from copy import deepcopy
+import numpy as np
 from presidio_analyzer import AnalyzerEngine, RecognizerResult
 
-from presidio_image_redactor import OCR, TesseractOCR
+from presidio_image_redactor import OCR, TesseractOCR, ImagePreprocessor
 from presidio_image_redactor.entities import ImageRecognizerResult
 
 from PIL import Image, ImageChops
@@ -17,12 +18,15 @@ class ImageAnalyzerEngine:
     :param analyzer_engine: The Presidio AnalyzerEngine instance
         to be used to detect PII in text
     :param ocr: the OCR object to be used to detect text in images.
+    :param image_preprocessor: The ImagePreprocessor object to be
+        used to preprocess the image
     """
 
     def __init__(
         self,
         analyzer_engine: Optional[AnalyzerEngine] = None,
         ocr: Optional[OCR] = None,
+        image_preprocessor: Optional[ImagePreprocessor] = None,
     ):
         if not analyzer_engine:
             analyzer_engine = AnalyzerEngine()
@@ -31,6 +35,10 @@ class ImageAnalyzerEngine:
         if not ocr:
             ocr = TesseractOCR()
         self.ocr = ocr
+
+        if not image_preprocessor:
+            image_preprocessor = ImagePreprocessor()
+        self.image_preprocessor = image_preprocessor
 
     def analyze(
         self, image: object, ocr_kwargs: Optional[dict] = None, **text_analyzer_kwargs
@@ -46,8 +54,14 @@ class ImageAnalyzerEngine:
         """
         # Perform OCR
         perform_ocr_kwargs, ocr_threshold = self._parse_ocr_kwargs(ocr_kwargs)
+        image, preprocessing_metadata = self.image_preprocessor.preprocess_image(image)
         ocr_result = self.ocr.perform_ocr(image, **perform_ocr_kwargs)
         ocr_result = self.remove_space_boxes(ocr_result)
+
+        if preprocessing_metadata and ("scale_factor" in preprocessing_metadata):
+            ocr_result = self._scale_bbox_results(
+                ocr_result, preprocessing_metadata["scale_factor"]
+            )
 
         # Apply OCR confidence threshold if it is passed in
         if ocr_threshold:
@@ -63,6 +77,7 @@ class ImageAnalyzerEngine:
         bboxes = self.map_analyzer_results_to_bounding_boxes(
             analyzer_result, ocr_result, text, allow_list
         )
+
         return bboxes
 
     @staticmethod
@@ -203,6 +218,58 @@ class ImageAnalyzerEngine:
                 pos += len(word) + 1
 
         return bboxes
+
+    @staticmethod
+    def _scale_bbox_results(
+        ocr_result: Dict[str, List[Union[int, str]]], scale_factor: float
+    ) -> Dict[str, float]:
+        """Scale down the bounding box results based on a scale percentage.
+
+        :param ocr_result: OCR results (raw).
+        :param scale_percent: Scale percentage for resizing the bounding box.
+
+        :return: OCR results (scaled).
+        """
+        scaled_results = deepcopy(ocr_result)
+        coordinate_keys = ["left", "top"]
+        dimension_keys = ["width", "height"]
+
+        for coord_key in coordinate_keys:
+            scaled_results[coord_key] = [
+                int(np.ceil((x) / (scale_factor))) for x in scaled_results[coord_key]
+            ]
+
+        for dim_key in dimension_keys:
+            scaled_results[dim_key] = [
+                max(1, int(np.ceil(x / (scale_factor))))
+                for x in scaled_results[dim_key]
+            ]
+        return scaled_results
+
+    @staticmethod
+    def _remove_bbox_padding(
+        analyzer_bboxes: List[Dict[str, Union[str, float, int]]],
+        padding_width: int,
+    ) -> List[Dict[str, int]]:
+        """Remove added padding in bounding box coordinates.
+
+        :param analyzer_bboxes: The bounding boxes from analyzer results.
+        :param padding_width: Pixel width used for padding (0 if no padding).
+
+        :return: Bounding box information per word.
+        """
+
+        unpadded_results = deepcopy(analyzer_bboxes)
+        if padding_width < 0:
+            raise ValueError("Padding width must be a non-negative integer.")
+
+        coordinate_keys = ["left", "top"]
+        for coord_key in coordinate_keys:
+            unpadded_results[coord_key] = [
+                max(0, x - padding_width) for x in unpadded_results[coord_key]
+            ]
+
+        return unpadded_results
 
     @staticmethod
     def _parse_ocr_kwargs(ocr_kwargs: dict) -> Tuple[dict, float]:

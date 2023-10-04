@@ -10,6 +10,10 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && tesseract -v
 
+RUN apt-get update \ 
+  && apt-get install ffmpeg libsm6 libxext6  -y
+
+
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv \
   && pipenv install --deploy \
