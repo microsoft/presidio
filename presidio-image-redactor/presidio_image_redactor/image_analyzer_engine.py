@@ -6,6 +6,11 @@ from presidio_analyzer import AnalyzerEngine, RecognizerResult
 from presidio_image_redactor import OCR, TesseractOCR, ImagePreprocessor
 from presidio_image_redactor.entities import ImageRecognizerResult
 
+from PIL import Image, ImageChops
+import matplotlib.pyplot as plt
+import matplotlib
+import io
+
 
 class ImageAnalyzerEngine:
     """ImageAnalyzerEngine class.
@@ -301,3 +306,125 @@ class ImageAnalyzerEngine:
                 allow_list = text_analyzer_kwargs["allow_list"]
 
         return allow_list
+
+    @staticmethod
+    def fig2img(fig: matplotlib.figure.Figure) -> Image:
+        """Convert a Matplotlib figure to a PIL Image and return it.
+
+        :param fig: Matplotlib figure.
+
+        :return: Image of figure.
+        """
+        buf = io.BytesIO()
+        fig.savefig(buf)
+        buf.seek(0)
+        img = Image.open(buf)
+
+        return img
+
+    @staticmethod
+    def get_pii_bboxes(
+        ocr_bboxes: List[dict],
+        analyzer_bboxes: List[dict]
+    ) -> List[dict]:
+        """Get a list of bboxes with is_PII property.
+
+        :param ocr_bboxes: Bboxes from OCR results.
+        :param analyzer_bboxes: Bboxes from analyzer results.
+
+        :return: All bboxes with appropriate label for whether it is PHI or not.
+        """
+        bboxes = []
+        for ocr_bbox in ocr_bboxes:
+            has_match = False
+
+            # Check if we have the same bbox in analyzer results
+            for analyzer_bbox in analyzer_bboxes:
+                has_same_position = (ocr_bbox["left"] == analyzer_bbox["left"] and ocr_bbox["top"] == analyzer_bbox["top"])  # noqa: E501
+                has_same_dimension = (ocr_bbox["width"] == analyzer_bbox["width"] and ocr_bbox["height"] == analyzer_bbox["height"])  # noqa: E501
+                is_same = (has_same_position is True and has_same_dimension is True)
+
+                if is_same is True:
+                    current_bbox = analyzer_bbox
+                    current_bbox["is_PII"] = True
+                    has_match = True
+                    break
+
+            if has_match is False:
+                current_bbox = ocr_bbox
+                current_bbox["is_PII"] = False
+
+            bboxes.append(current_bbox)
+
+        return bboxes
+
+    @classmethod
+    def add_custom_bboxes(
+        cls,
+        image: Image,
+        bboxes: List[dict],
+        show_text_annotation: bool = True,
+        use_greyscale_cmap: bool = False
+    ) -> Image:
+        """Add custom bounding boxes to image.
+
+        :param image: Standard image of DICOM pixels.
+        :param bboxes: List of bounding boxes to display (with is_PII field).
+        :param gt_bboxes: Ground truth bboxes (list of dictionaries).
+        :param show_text_annotation: True if you want text annotation for
+        PHI status to display.
+        :param use_greyscale_cmap: Use greyscale color map.
+        :return: Image with bounding boxes drawn on.
+        """
+        image_custom = ImageChops.duplicate(image)
+        image_x, image_y = image_custom.size
+
+        fig, ax = plt.subplots()
+        image_r = 70
+        fig.set_size_inches(image_x / image_r, image_y / image_r)
+
+        if len(bboxes) == 0:
+            ax.imshow(image_custom)
+            return image_custom
+        else:
+            for box in bboxes:
+                try:
+                    entity_type = box["entity_type"]
+                except KeyError:
+                    entity_type = "UNKNOWN"
+
+                try:
+                    if box["is_PII"]:
+                        bbox_color = "r"
+                    else:
+                        bbox_color = "b"
+                except KeyError:
+                    bbox_color = "b"
+
+                # Get coordinates and dimensions
+                x0 = box["left"]
+                y0 = box["top"]
+                x1 = x0 + box["width"]
+                y1 = y0 + box["height"]
+                rect = matplotlib.patches.Rectangle(
+                    (x0, y0),
+                    x1 - x0, y1 - y0,
+                    edgecolor=bbox_color,
+                    facecolor="none"
+                )
+                ax.add_patch(rect)
+                if show_text_annotation:
+                    ax.annotate(
+                        entity_type,
+                        xy=(x0 - 3, y0 - 3),
+                        xycoords="data",
+                        bbox=dict(boxstyle="round4,pad=.5", fc="0.9"),
+                    )
+            if use_greyscale_cmap:
+                ax.imshow(image_custom, cmap="gray")
+            else:
+                ax.imshow(image_custom)
+            im_from_fig = cls.fig2img(fig)
+            im_resized = im_from_fig.resize((image_x, image_y))
+
+        return im_resized
