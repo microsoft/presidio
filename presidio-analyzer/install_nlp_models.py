@@ -4,7 +4,6 @@ import argparse
 import logging
 from typing import Union, Dict
 
-import spacy
 from spacy.cli import download as spacy_download
 import yaml
 
