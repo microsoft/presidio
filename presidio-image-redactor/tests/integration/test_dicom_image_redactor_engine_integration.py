@@ -9,6 +9,8 @@ from pathlib import Path
 import os
 import numpy as np
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
+from presidio_image_redactor.document_intelligence_ocr import DocumentIntelligenceOCR
+from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
 import pytest
 
 SCRIPT_DIR = os.path.dirname(__file__)
@@ -17,13 +19,26 @@ RESOURCES_DIR1 = f"{SCRIPT_DIR}/resources/dir1"
 RESOURCES_DIR2 = f"{SCRIPT_DIR}/resources/dir1/dir2"
 
 
-@pytest.fixture(scope="module")
+#These are not fixtures, because depending on the setup, some of the object 
+#instantiations may fail
+@pytest.fixture
 def mock_engine():
     """Instance of the DicomImageRedactorEngine"""
     dicom_image_redactor_engine = DicomImageRedactorEngine()
-
     return dicom_image_redactor_engine
 
+def mock_tesseract_engine():
+    return DicomImageRedactorEngine()
+
+def mock_di_engine():
+    di_ocr = DocumentIntelligenceOCR()
+    ia_engine = ImageAnalyzerEngine(ocr=di_ocr)
+    return DicomImageRedactorEngine(image_analyzer_engine=ia_engine)
+
+def all_engines_required():
+    """Returns engine, must_pass flag for tests using these engines"""
+    return [(mock_tesseract_engine), 
+            pytest.param(mock_di_engine, marks=pytest.mark.xfail(reason="This engine may fail if environment variables are not set"))]
 
 @pytest.mark.parametrize(
     "dcm_filepath",
@@ -33,33 +48,34 @@ def mock_engine():
         (Path(RESOURCES_DIR2, "2_ORIGINAL.dcm")),
     ],
 )
-def test_redact_image_correctly(
-    mock_engine: DicomImageRedactorEngine, dcm_filepath: Path
-):
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_image_correctly(engine_builder, dcm_filepath: Path):
     """Test the redact function
 
     Args:
-        mock_engine (DicomImageRedactorEngine): Mock instance.
+        engine (DicomImageRedactorEngine): Mock instance.
         dcm_filepath (Path): Path to DICOM file to load.
     """
     test_image = pydicom.dcmread(dcm_filepath)
-    test_redacted_image = mock_engine.redact(test_image, use_metadata=True)
+    test_redacted_image = engine_builder().redact(test_image, use_metadata=True)
 
     assert (
         np.array_equal(test_image.pixel_array, test_redacted_image.pixel_array) is False
     )
 
 
-def test_redact_from_single_file_correctly(mock_engine: DicomImageRedactorEngine):
+
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_from_single_file_correctly(engine_builder):
     """Test the redact_from_file function with single file case
 
     Args:
-        mock_engine (DicomImageRedactorEngine): Mock instance.
+        engine (DicomImageRedactorEngine): Mock instance.
     """
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Set file paths and redact PII
         input_path = Path(RESOURCES_PARENT_DIR, "0_ORIGINAL.dcm")
-        mock_engine.redact_from_file(
+        engine_builder().redact_from_file(
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
             fill="contrast",
