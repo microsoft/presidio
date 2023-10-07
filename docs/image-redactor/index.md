@@ -145,6 +145,39 @@ Python script example can be found under:
     ocr_kwargs = {"ocr_threshold": 50}
     engine.redact_from_directory("path/to/your/dicom", output_dir, fill="background", save_bboxes=True, ocr_kwargs=ocr_kwargs)
     ```
+## Getting started using the document intelligence OCR engine
+
+You will need to register with Azure get an API key and endpoint.  Perform the steps in the "Prerequisites" section of [this page](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/quickstarts/get-started-sdks-rest-api).  Once your resource deploys, copy your endpoint and key values and save them for the next step.
+
+The most basic usage of the engine can be setup like the following in python
+```
+    diOCR = DocumentIntelligenceOCR(endpoint="<your_endpoint>", key="<your_key>")
+```
+
+The DocumentIntelligenceOCR can also attempt to pull your endpoint and key values from environment variables.  
+``` 
+$ export DOCUMENT_INTELLIGENCE_ENDPOINT=<your_endpoint>
+$ export DOCUMENT_INTELLIGENCE_KEY=<your_key>
+```
+
+##### Creating an image redactor engine in Python:
+```
+diOCR = DocumentIntelligenceOCR()
+ia_engine = ImageAnalyzerEngine(ocr=di_ocr)
+my_engine = DicomImageRedactorEngine(image_analyzer_engine=ia_engine)
+```
+
+#### Testing Document Inteligence
+
+Follow the steps of [running the tests](../development.md#running-tests)
+
+The test suite has a series of tests which are only exercised when the appropriate environment variables are populated.  To run the test suite, to test the DocumentIntelligenceOCR engine, call the tests like this:
+
+``` 
+$ export DOCUMENT_INTELLIGENCE_ENDPOINT=<your_endpoint>
+$ export DOCUMENT_INTELLIGENCE_KEY=<your_key>
+$ pytest
+```
 
 ### Evaluating de-identification performance
 
