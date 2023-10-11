@@ -151,7 +151,7 @@ You will need to register with Azure get an API key and endpoint.  Perform the s
 
 The most basic usage of the engine can be setup like the following in python
 ```
-    diOCR = DocumentIntelligenceOCR(endpoint="<your_endpoint>", key="<your_key>")
+diOCR = DocumentIntelligenceOCR(endpoint="<your_endpoint>", key="<your_key>")
 ```
 
 The DocumentIntelligenceOCR can also attempt to pull your endpoint and key values from environment variables.  
