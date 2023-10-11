@@ -147,6 +147,8 @@ Python script example can be found under:
     ```
 ## Getting started using the document intelligence OCR engine
 
+Presidio offers two engines for OCR based PHI removal. The first is the default engine which uses Tesseract OCR. The second is the Document Intelligence OCR engine which uses Azure's Document Intelligence service, which requires an Azure subscription. The following sections describe how to setup and use the Document Intelligence OCR engine.
+
 You will need to register with Azure get an API key and endpoint.  Perform the steps in the "Prerequisites" section of [this page](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/quickstarts/get-started-sdks-rest-api).  Once your resource deploys, copy your endpoint and key values and save them for the next step.
 
 The most basic usage of the engine can be setup like the following in python
@@ -164,7 +166,7 @@ $ export DOCUMENT_INTELLIGENCE_KEY=<your_key>
 ```
 diOCR = DocumentIntelligenceOCR()
 ia_engine = ImageAnalyzerEngine(ocr=di_ocr)
-my_engine = DicomImageRedactorEngine(image_analyzer_engine=ia_engine)
+my_engine = ImageRedactorEngine(image_analyzer_engine=ia_engine)
 ```
 
 #### Testing Document Inteligence
