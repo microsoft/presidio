@@ -1,13 +1,16 @@
-"""Integration test for the DicomImageRedactorEngine class
+"""Integration test for the DicomImageRedactorEngine class.
 
-Note that we are not asserting every pixel is equal when comparing original to redacted images
-to account for differences in performance with different versions of Tesseract OCR.
+Note that we are not asserting every pixel is equal when comparing original to redacted
+images to account for differences in performance with different versions of
+OCR.
 """
 import tempfile
 import pydicom
 from pathlib import Path
 import os
 import numpy as np
+
+from tests.engine_test_utils import must_succeed, allow_failure
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
 from presidio_image_redactor.document_intelligence_ocr import DocumentIntelligenceOCR
 from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
@@ -19,26 +22,32 @@ RESOURCES_DIR1 = f"{SCRIPT_DIR}/resources/dir1"
 RESOURCES_DIR2 = f"{SCRIPT_DIR}/resources/dir1/dir2"
 
 
-#These are not fixtures, because depending on the setup, some of the object 
-#instantiations may fail
 @pytest.fixture
 def mock_engine():
-    """Instance of the DicomImageRedactorEngine"""
+    """Instance of the DicomImageRedactorEngine."""
     dicom_image_redactor_engine = DicomImageRedactorEngine()
     return dicom_image_redactor_engine
 
+
+# These are not fixtures, because depending on the setup, some of the object
+# instantiations may fail
 def mock_tesseract_engine():
+    """Get the Dicom Redactor Engine."""
     return DicomImageRedactorEngine()
 
+
 def mock_di_engine():
+    """Build the Dicom Redactor Engine with Document Intelligence OCR."""
     di_ocr = DocumentIntelligenceOCR()
     ia_engine = ImageAnalyzerEngine(ocr=di_ocr)
     return DicomImageRedactorEngine(image_analyzer_engine=ia_engine)
 
+
 def all_engines_required():
-    """Returns engine, must_pass flag for tests using these engines"""
-    return [(mock_tesseract_engine), 
-            pytest.param(mock_di_engine, marks=pytest.mark.xfail(reason="This engine may fail if environment variables are not set"))]
+    """Return all required engines and their must_pass flag for tests."""
+    return [(must_succeed(mock_tesseract_engine)),
+            (allow_failure(mock_di_engine))]
+
 
 @pytest.mark.parametrize(
     "dcm_filepath",
@@ -50,7 +59,7 @@ def all_engines_required():
 )
 @pytest.mark.parametrize("engine_builder", all_engines_required())
 def test_redact_image_correctly(engine_builder, dcm_filepath: Path):
-    """Test the redact function
+    """Test the redact function.
 
     Args:
         engine (DicomImageRedactorEngine): Mock instance.
@@ -64,10 +73,9 @@ def test_redact_image_correctly(engine_builder, dcm_filepath: Path):
     )
 
 
-
 @pytest.mark.parametrize("engine_builder", all_engines_required())
 def test_redact_from_single_file_correctly(engine_builder):
-    """Test the redact_from_file function with single file case
+    """Test the redact_from_file function with single file case.
 
     Args:
         engine (DicomImageRedactorEngine): Mock instance.
@@ -110,7 +118,7 @@ def test_redact_from_single_file_correctly(engine_builder):
 
 
 def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
-    """Test the redact_from_file function with multiple files case
+    """Test the redact_from_file function with multiple files case.
 
     Args:
         mock_engine (DicomImageRedactorEngine): Mock instance.
