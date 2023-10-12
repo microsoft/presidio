@@ -114,15 +114,21 @@ class DocumentIntelligenceOCR(OCR):
             raise ValueError("Unsupported image type: %s" % type(image))
         return imgbytes
 
-    def analyze_document(self, imgbytes : bytes) -> AnalyzedDocument:
+    def analyze_document(self, imgbytes : bytes, **kwargs) -> AnalyzedDocument:
         """Analyze the document and return the result."""
-        poller = self.client.begin_analyze_document(self.model_id, imgbytes)
+        poller = self.client.begin_analyze_document(self.model_id, imgbytes, **kwargs)
         return poller.result()
 
     def perform_ocr(self, image: object, **kwargs) -> dict:
-        """Perform OCR on the image."""
+        """Perform OCR on the image.
+
+        :param image: PIL Image/numpy array or file path(str) to be processed
+        :param kwargs: Additional values for begin_analyze_document
+
+        :return: results dictionary containing bboxes and text for each detected word
+        """
         imgbytes = self.get_imgbytes(image)
-        result = self.analyze_document(imgbytes)
+        result = self.analyze_document(imgbytes, **kwargs)
 
         # Currently cannot handle more than one page.
         if not (len(result.pages) == 1):

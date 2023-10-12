@@ -74,7 +74,7 @@ def test_ocr_endpoint_via_environment_vars_then_valid_response(get_mock_png):
     try:
         di_ocr = DocumentIntelligenceOCR()
     except Exception:
-
+        pytest.skip("Environment variables not set")
     result = di_ocr.perform_ocr(get_mock_png)
     assert isinstance(result, dict)
     assert "text" in result
