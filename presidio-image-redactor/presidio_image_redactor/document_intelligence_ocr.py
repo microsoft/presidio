@@ -8,7 +8,7 @@ from PIL import Image
 
 from presidio_image_redactor import OCR
 
-from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzedDocument
+from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzedDocument, DocumentPage
 from azure.core.credentials import AzureKeyCredential
 
 
@@ -69,7 +69,7 @@ class DocumentIntelligenceOCR(OCR):
         return (left, top, width, height)
 
     @staticmethod
-    def _page_to_bboxes(page) -> dict:
+    def _page_to_bboxes(page: DocumentPage) -> dict:
         """Convert bounding boxes to uniform format."""
         # Presidio supports tesseract format of output only, so we format in the same
         # way.
