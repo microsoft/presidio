@@ -1,14 +1,17 @@
 import os
 from io import BytesIO
 
-from typing import Optional
+from typing import Optional, Sequence
 
 import numpy as np
 from PIL import Image
 
 from presidio_image_redactor import OCR
 
-from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzedDocument, DocumentPage
+from azure.ai.formrecognizer import DocumentAnalysisClient, \
+                                    AnalyzedDocument, \
+                                    DocumentPage, \
+                                    Point
 from azure.core.credentials import AzureKeyCredential
 
 
@@ -52,7 +55,7 @@ class DocumentIntelligenceOCR(OCR):
         self.model_id = model_id
 
     @staticmethod
-    def _polygon_to_bbox(polygon):
+    def _polygon_to_bbox(polygon : Sequence[Point]) -> tuple:
         # Returns a tuple of left/top/width/height according to expected which covers
         # the passed polygon.
 
