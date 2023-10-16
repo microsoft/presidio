@@ -161,6 +161,11 @@ The DocumentIntelligenceOCR can also attempt to pull your endpoint and key value
 $ export DOCUMENT_INTELLIGENCE_ENDPOINT=<your_endpoint>
 $ export DOCUMENT_INTELLIGENCE_KEY=<your_key>
 ```
+### Document Intelligence Model Support
+
+There are numerous document processing models available, and currently we only support the most basic usage of the model.  For an overview of the functionalities offered by Document Intelligence, see [this page](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept-model-overview). Presidio offers only word-level processing on the result for PHI redaction purposes, as all prebuilt document models support this interface. Different models support additional structured support for tables, paragraphs, key-value pairs, fields and other types of metadata in the response. 
+
+Additional metadata can be sent to the Document Intelligence API call, such as pages, locale, and features, which are documented [here](https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.documentanalysisclient?view=azure-python#azure-ai-formrecognizer-documentanalysisclient-begin-analyze-document). You are encouraged to test each model to see which fits best to your use case.
 
 ##### Creating an image redactor engine in Python:
 ```
