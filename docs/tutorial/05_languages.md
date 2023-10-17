@@ -13,7 +13,7 @@ In this example we will configure Presidio to use spaCy as its underlying NLP fr
 
 <!--pytest-codeblocks:cont-->
 ```python
-from presidio import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 
 # import spacy
