@@ -1,7 +1,7 @@
 import os
 from io import BytesIO
 
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Union
 
 import numpy as np
 from PIL import Image
@@ -16,7 +16,15 @@ from azure.core.credentials import AzureKeyCredential
 
 
 class DocumentIntelligenceOCR(OCR):
-    """OCR class that uses Microsoft's Document Intelligence OCR engine."""
+    """OCR class that uses Azure AI Document Intelligence OCR engine.
+
+    :param key: The API key
+    :param endpoint: The API endpoint
+    :param model_id: Which model to use
+
+    For details, see
+    https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/
+    """
 
     SUPPORTED_MODELS = [
         "prebuilt-document",
@@ -56,9 +64,15 @@ class DocumentIntelligenceOCR(OCR):
 
     @staticmethod
     def _polygon_to_bbox(polygon : Sequence[Point]) -> tuple:
-        # Returns a tuple of left/top/width/height according to expected which covers
-        # the passed polygon.
+        """Convert polygon to a tuple of left/top/width/height.
 
+        The returned bounding box should entirely cover the passed polygon.
+
+        :param polygon: A sequence of points
+
+        :return a tuple of left/top/width/height in pixel dimensions
+
+        """
         # We need at least two points for a valid bounding box.
         if len(polygon) < 2:
             return (0, 0, 0, 0)
@@ -73,19 +87,24 @@ class DocumentIntelligenceOCR(OCR):
 
     @staticmethod
     def _page_to_bboxes(page: DocumentPage) -> dict:
-        """Convert bounding boxes to uniform format."""
-        # Presidio supports tesseract format of output only, so we format in the same
-        # way.
-        #
-        # Expected format looks like:
-        # {
-        #     "left": [123, 345],
-        #     "top": [0, 15],
-        #     "width": [100, 75],
-        #     "height": [25, 30],
-        #     "conf": ["1", "0.87"],
-        #     "text": ["JOHN", "DOE"],
-        # }
+        """Convert bounding boxes to uniform format.
+
+        Presidio supports tesseract format of output only, so we format in the same
+        way.
+        Expected format looks like:
+        {
+            "left": [123, 345],
+            "top": [0, 15],
+            "width": [100, 75],
+            "height": [25, 30],
+            "conf": ["1", "0.87"],
+            "text": ["JOHN", "DOE"],
+        }
+
+        :param page: The documentpage object from the DI client library
+
+        :return dictionary in the expected format for presidio
+        """
         bounds = [DocumentIntelligenceOCR._polygon_to_bbox(word.polygon)
                   for word in page.words]
 
@@ -98,8 +117,13 @@ class DocumentIntelligenceOCR(OCR):
             "text": [w.content for w in page.words]
         }
 
-    def get_imgbytes(self, image: object, **kwargs) -> bytes:
-        """Get the image bytes from the image object."""
+    def get_imgbytes(self, image: Union[bytes, np.ndarray, Image.Image]) -> bytes:
+        """Retrieve the image bytes from the image object.
+
+        :param image:  Any of bytes/numpy array /PIL image object
+
+        :return raw image bytes
+        """
         if isinstance(image, bytes):
             return image
         if isinstance(image, np.ndarray):
@@ -118,7 +142,13 @@ class DocumentIntelligenceOCR(OCR):
         return imgbytes
 
     def analyze_document(self, imgbytes : bytes, **kwargs) -> AnalyzedDocument:
-        """Analyze the document and return the result."""
+        """Analyze the document and return the result.
+
+        :param imgbytes: The bytes to send to the API endpoint
+        :param kwargs: additional arguments for begin_analyze_document
+
+        :return the result of the poller, an AnalyzedDocument object.
+        """
         poller = self.client.begin_analyze_document(self.model_id, imgbytes, **kwargs)
         return poller.result()
 

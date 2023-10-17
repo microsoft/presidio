@@ -10,6 +10,8 @@ from pathlib import Path
 import os
 import numpy as np
 
+from typing import Callable
+
 from tests.engine_test_utils import must_succeed, allow_failure
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
 from presidio_image_redactor.document_intelligence_ocr import DocumentIntelligenceOCR
@@ -58,11 +60,11 @@ def all_engines_required():
     ],
 )
 @pytest.mark.parametrize("engine_builder", all_engines_required())
-def test_redact_image_correctly(engine_builder, dcm_filepath: Path):
+def test_redact_image_correctly(engine_builder: Callable, dcm_filepath: Path):
     """Test the redact function.
 
     Args:
-        engine (DicomImageRedactorEngine): Mock instance.
+        engine_builder: function returning a DicomImageRedactorEngine
         dcm_filepath (Path): Path to DICOM file to load.
     """
     test_image = pydicom.dcmread(dcm_filepath)
@@ -74,11 +76,11 @@ def test_redact_image_correctly(engine_builder, dcm_filepath: Path):
 
 
 @pytest.mark.parametrize("engine_builder", all_engines_required())
-def test_redact_from_single_file_correctly(engine_builder):
+def test_redact_from_single_file_correctly(engine_builder: Callable):
     """Test the redact_from_file function with single file case.
 
     Args:
-        engine (DicomImageRedactorEngine): Mock instance.
+        engine_builder: function returning a DicomImageRedactorEngine
     """
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Set file paths and redact PII
