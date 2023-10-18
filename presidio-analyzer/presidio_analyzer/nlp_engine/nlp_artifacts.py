@@ -26,7 +26,7 @@ class NlpArtifacts:
         tokens: Doc,
         tokens_indices: List[int],
         lemmas: List[str],
-        nlp_engine: NlpEngine,  # noqa F821
+        nlp_engine: "NlpEngine",  # noqa F821
         language: str,
         scores: Optional[List[float]] = None,
     ):
