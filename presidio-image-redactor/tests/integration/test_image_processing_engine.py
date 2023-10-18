@@ -101,6 +101,6 @@ def test_contrast_segmented_image_enhancer__improve_contrast():
     result = preprocessor._improve_contrast(image)
     assert len(result) == 3
     assert isinstance(result[0], PIL.Image.Image)
-    assert type(result[1]) == np.float64
-    assert type(result[2]) == np.float64
+    assert isinstance(result[1], np.float64)
+    assert isinstance(result[2], np.float64)
     assert result[1] <= result[2]
