@@ -1,7 +1,8 @@
 import copy
 import logging
-from pathlib import Path
 from typing import Optional, List, Iterable, Union, Type, Dict
+
+from pathlib import Path
 from presidio_analyzer.nlp_engine.transformers_nlp_engine import (
     TransformersNlpEngine,
 )
@@ -55,7 +56,6 @@ class RecognizerRegistry:
     """
 
     def __init__(self, recognizers: Optional[Iterable[EntityRecognizer]] = None):
-
         if recognizers:
             self.recognizers = recognizers
         else:
@@ -75,6 +75,7 @@ class RecognizerRegistry:
             languages = ["en"]
 
         nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
+
         recognizers_map = {
             "en": [
                 UsBankRecognizer,
@@ -106,7 +107,6 @@ class RecognizerRegistry:
                 IbanRecognizer,
                 IpRecognizer,
                 MedicalLicenseRecognizer,
-                nlp_recognizer,
                 PhoneRecognizer,
                 UrlRecognizer,
             ],
@@ -118,11 +118,19 @@ class RecognizerRegistry:
                 rc(supported_language=lang) for rc in recognizers_map.get("ALL", [])
             ]
             self.recognizers.extend(all_recognizers)
+            if nlp_engine:
+                nlp_recognizer_inst = nlp_recognizer(
+                    supported_language=lang,
+                    supported_entities=nlp_engine.get_supported_entities(),
+                )
+            else:
+                nlp_recognizer_inst = nlp_recognizer(supported_language=lang)
+            self.recognizers.append(nlp_recognizer_inst)
 
     @staticmethod
     def _get_nlp_recognizer(
         nlp_engine: NlpEngine,
-    ) -> Union[Type[SpacyRecognizer], Type[StanzaRecognizer]]:
+    ) -> Type[SpacyRecognizer]:
         """Return the recognizer leveraging the selected NLP Engine."""
 
         if isinstance(nlp_engine, StanzaNlpEngine):
@@ -231,7 +239,7 @@ class RecognizerRegistry:
         )
         self.recognizers = new_recognizers
 
-    def add_pattern_recognizer_from_dict(self, recognizer_dict: Dict):
+    def add_pattern_recognizer_from_dict(self, recognizer_dict: Dict) -> None:
         """
         Load a pattern recognizer from a Dict into the recognizer registry.
 
@@ -246,7 +254,7 @@ class RecognizerRegistry:
         recognizer = PatternRecognizer.from_dict(recognizer_dict)
         self.add_recognizer(recognizer)
 
-    def add_recognizers_from_yaml(self, yml_path: Union[str, Path]):
+    def add_recognizers_from_yaml(self, yml_path: Union[str, Path]) -> None:
         r"""
         Read YAML file and load recognizers into the recognizer registry.
 

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable, Iterator, Tuple
+from typing import Iterable, Iterator, Tuple, List
 
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
@@ -13,12 +13,20 @@ class NlpEngine(ABC):
     """
 
     @abstractmethod
+    def load(self) -> None:
+        """Load the NLP model."""
+
+    @abstractmethod
+    def is_loaded(self) -> bool:
+        """Return True if the model is already loaded."""
+
+    @abstractmethod
     def process_text(self, text: str, language: str) -> NlpArtifacts:
         """Execute the NLP pipeline on the given text and language."""
 
     @abstractmethod
     def process_batch(
-        self, texts: Iterable[str], language: str, **kwargs
+        self, texts: Iterable[str], language: str, **kwargs  # noqa ANN003
     ) -> Iterator[Tuple[str, NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts.
 
@@ -40,3 +48,8 @@ class NlpEngine(ABC):
 
         (within the given language)
         """
+
+    @abstractmethod
+    def get_supported_entities(self) -> List[str]:
+        """Return the supported entities for this NLP engine."""
+        pass

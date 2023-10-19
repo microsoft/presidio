@@ -1,6 +1,5 @@
 import pytest
 
-from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from tests import assert_result_within_score_range
 
 
@@ -9,17 +8,29 @@ def entities():
     return ["PERSON", "DATE_TIME"]
 
 
+@pytest.mark.skip_engine("transformers_en")
 @pytest.fixture(scope="module")
 def nlp_recognizer(nlp_recognizers):
-    return nlp_recognizers["spacy"]
+    return nlp_recognizers.get("transformers", None)
 
 
-def prepare_and_analyze(nlp, recognizer, text, ents):
+@pytest.mark.skip_engine("transformers_en")
+@pytest.fixture(scope="module")
+def nlp_engine(nlp_engines):
+    nlp_engine = nlp_engines.get("transformers_en", None)
+    if nlp_engine:
+        nlp_engine.load()
+    return nlp_engine
+
+
+def prepare_and_analyze(nlp, recognizer, text, entities):
+    nlp.load()
     nlp_artifacts = nlp.process_text(text, "en")
-    results = recognizer.analyze(text, ents, nlp_artifacts)
+    results = recognizer.analyze(text, entities, nlp_artifacts)
     return results
 
 
+@pytest.mark.skip_engine("transformers_en")
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",
     [
@@ -30,44 +41,51 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("John Oliver is a comedian.", 1, ((0, 11),), 0),
         ("Richard Milhous Nixon", 1, ((0, 21),), 0),
         ("Richard M. Nixon", 1, ((0, 16),), 0),
-        ("Dan Bar has a bank account.", 1, ((0, 7),), 0),
-        ("Mr. Mayers", 1, ((4, 10),), 0),
-        ("They call me Mr. Mayers", 1, ((17, 23),), 0),
+        ("Dan May has a bank account.", 1, ((0, 7),), 0),
+        ("his name is Mr. May", 1, ((12, 19),), 0),
+        ("They call me Mr. May", 1, ((13, 20),), 0),
         # Test DATE_TIME Entity
-        ("1972", 1, ((0, 4),), 1),
-        ("I bought my car in 1972", 1, ((19, 23),), 1),
-        ("I bought my car in May", 1, ((19, 22),), 1),
+        ("year 1972", 1, ((0, 9),), 1),
+        ("I bought my car in 1972.", 1, ((19, 23),), 1),
+        ("I bought my car in May.", 1, ((19, 22),), 1),
         ("May 1st", 1, ((0, 7),), 1),
         ("May 1st, 1977", 1, ((0, 13),), 1),
         ("I bought my car on May 1st, 1977", 1, ((19, 32),), 1),
         # fmt: on
     ],
 )
-def test_when_using_spacy_then_all_spacy_result_found(
+def test_when_using_transformers_then_all_transformers_result_correct(
     text,
     expected_len,
     expected_positions,
     entity_num,
-    spacy_nlp_engine,
+    nlp_engine,
     nlp_recognizer,
     entities,
-    ner_strength,
+    min_score,
     max_score,
 ):
-    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
     assert len(results) == expected_len
     entity_to_check = entities[entity_num]
     for res, (st_pos, fn_pos) in zip(results, expected_positions):
         assert_result_within_score_range(
-            res, entity_to_check, st_pos, fn_pos, ner_strength, max_score
+            result=res,
+            expected_entity_type=entity_to_check,
+            expected_start=st_pos,
+            expected_end=fn_pos,
+            expected_score_min=min_score,
+            expected_score_max=max_score,
         )
 
 
+
+@pytest.mark.skip_engine("transformers_en")
 def test_when_person_in_text_then_person_full_name_complex_found(
-    spacy_nlp_engine, nlp_recognizer, entities
+    nlp_engine, nlp_recognizer, entities
 ):
-    text = "William Bill Alexander"
-    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
+    text = "Richard (Rick) C. Henderson"
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
 
     assert len(results) > 0
 
@@ -78,9 +96,3 @@ def test_when_person_in_text_then_person_full_name_complex_found(
         covered_text += text[sl]
 
     assert len(text) - len(covered_text) < 5
-
-
-def test_analyze_no_nlp_artifacts():
-    spacy_recognizer = SpacyRecognizer()
-    res = spacy_recognizer.analyze(text="text", nlp_artifacts=None, entities=["PERSON"])
-    assert len(res) == 0

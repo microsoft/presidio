@@ -18,6 +18,7 @@ steps:
         set -eux  # fail on error
         pipenv install --deploy --dev
         pipenv run python -m spacy download en_core_web_lg
+        pipenv run python -m spacy download en_core_web_sm
 
   - template: ./build-python.yml
     parameters:
