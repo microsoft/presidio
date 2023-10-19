@@ -10,7 +10,7 @@ def entities():
 
 @pytest.mark.skip_engine("stanza_en")
 @pytest.fixture(scope="module")
-def spacy_nlp_engine(nlp_engines):
+def stanza_nlp_engine(nlp_engines):
     nlp_engine = nlp_engines.get("stanza_en", None)
     if nlp_engine:
         nlp_engine.load()
@@ -59,13 +59,13 @@ def test_when_using_stanza_then_all_stanza_result_correct(
     expected_len,
     expected_positions,
     entity_num,
-    spacy_nlp_engine,
+    stanza_nlp_engine,
     nlp_recognizer,
     entities,
     ner_strength,
     max_score,
 ):
-    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
+    results = prepare_and_analyze(stanza_nlp_engine, nlp_recognizer, text, entities)
     assert len(results) == expected_len
     entity_to_check = entities[entity_num]
     for res, (st_pos, fn_pos) in zip(results, expected_positions):
