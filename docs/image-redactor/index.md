@@ -12,8 +12,8 @@ This module may also be used on medical DICOM images. The `DicomImageRedactorEng
 ![img.png](../assets/dicom-image-redactor-design.png)
 
 !!! note "Note"
-     This class only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata.
-     We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PHI.*
+     This class only redacts pixel data and does not scrub text PII which may exist in the DICOM metadata.
+     We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PII.*
 
 ## Installation
 
@@ -145,6 +145,46 @@ Python script example can be found under:
     ocr_kwargs = {"ocr_threshold": 50}
     engine.redact_from_directory("path/to/your/dicom", output_dir, fill="background", save_bboxes=True, ocr_kwargs=ocr_kwargs)
     ```
+## Getting started using the document intelligence OCR engine
+
+Presidio offers two engines for OCR based PII removal. The first is the default engine which uses Tesseract OCR. The second is the Document Intelligence OCR engine which uses Azure's Document Intelligence service, which requires an Azure subscription. The following sections describe how to setup and use the Document Intelligence OCR engine.
+
+You will need to register with Azure to get an API key and endpoint.  Perform the steps in the "Prerequisites" section of [this page](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/quickstarts/get-started-sdks-rest-api).  Once your resource deploys, copy your endpoint and key values and save them for the next step.
+
+The most basic usage of the engine can be setup like the following in python
+```
+diOCR = DocumentIntelligenceOCR(endpoint="<your_endpoint>", key="<your_key>")
+```
+
+The DocumentIntelligenceOCR can also attempt to pull your endpoint and key values from environment variables.  
+``` 
+$ export DOCUMENT_INTELLIGENCE_ENDPOINT=<your_endpoint>
+$ export DOCUMENT_INTELLIGENCE_KEY=<your_key>
+```
+### Document Intelligence Model Support
+
+There are numerous document processing models available, and currently we only support the most basic usage of the model.  For an overview of the functionalities offered by Document Intelligence, see [this page](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept-model-overview). Presidio offers only word-level processing on the result for PII redaction purposes, as all prebuilt document models support this interface. Different models support additional structured support for tables, paragraphs, key-value pairs, fields and other types of metadata in the response. 
+
+Additional metadata can be sent to the Document Intelligence API call, such as pages, locale, and features, which are documented [here](https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.documentanalysisclient?view=azure-python#azure-ai-formrecognizer-documentanalysisclient-begin-analyze-document). You are encouraged to test each model to see which fits best to your use case.
+
+##### Creating an image redactor engine in Python:
+```
+diOCR = DocumentIntelligenceOCR()
+ia_engine = ImageAnalyzerEngine(ocr=di_ocr)
+my_engine = ImageRedactorEngine(image_analyzer_engine=ia_engine)
+```
+
+#### Testing Document Inteligence
+
+Follow the steps of [running the tests](../development.md#running-tests)
+
+The test suite has a series of tests which are only exercised when the appropriate environment variables are populated.  To run the test suite, to test the DocumentIntelligenceOCR engine, call the tests like this:
+
+``` 
+$ export DOCUMENT_INTELLIGENCE_ENDPOINT=<your_endpoint>
+$ export DOCUMENT_INTELLIGENCE_KEY=<your_key>
+$ pytest
+```
 
 ### Evaluating de-identification performance
 

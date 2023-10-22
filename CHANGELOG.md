@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
+#### Image redactor
+* Added support for Microsoft's document intelligence OCR
 
 ## [2.2.33] - June 1st 2023
 ### Added
