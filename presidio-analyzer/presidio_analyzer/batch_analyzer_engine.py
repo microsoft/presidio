@@ -8,17 +8,18 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 class BatchAnalyzerEngine:
-    """
-    Batch analysis of documents (tables, lists, dicts).
 
-    Wrapper class to run Presidio Analyzer Engine on multiple values,
-    either lists/iterators of strings, or dictionaries.
-
-    :param: analyzer_engine: AnalyzerEngine instance to use
-    for handling the values in those collections.
-    """
 
     def __init__(self, analyzer_engine: Optional[AnalyzerEngine] = None):
+        """
+        Batch analysis of documents (tables, lists, dicts).
+
+        Wrapper class to run Presidio Analyzer Engine on multiple values,
+        either lists/iterators of strings, or dictionaries.
+
+        :param: analyzer_engine: AnalyzerEngine instance to use
+        for handling the values in those collections.
+        """
 
         self.analyzer_engine = analyzer_engine
         if not analyzer_engine:
