@@ -26,7 +26,6 @@ nav:
     - Custom anonymization: tutorial/11_custom_anonymization.md
     - Encryption/Decryption: tutorial/12_encryption.md
     - Allow-lists: tutorial/13_allow_list.md
-
   - Handling text: 
     - Home: text_anonymization.md
     - Presidio Analyzer:
@@ -46,22 +45,24 @@ nav:
   - Handling images: 
     - Home: image-redactor/index.md
     - Evaluating DICOM redaction: image-redactor/evaluating_dicom_redaction.md
-  - Supported entities: supported_entities.md
-  - Development and design:
-    - Design: design.md
-    - Setting up a development environment: development.md
-    - Build and release process: build_release.md
-    - Changes from V1 to V2: presidio_V2.md
-    - Python API reference:
-      - Home: api.md
-      - Presidio Analyzer Python API: api/analyzer_python.md
-      - Presidio Anonymizer Python API: api/anonymizer_python.md
-      - Presidio Image Redactor Python API: api/image_redactor_python.md
-    - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
-  - Samples: samples/index.md
-  - Community: community.md
-  - FAQ: faq.md
-  - Demo: https://huggingface.co/spaces/presidio/presidio_demo" target="_blank
+  - Samples: samples/index.md  
+  - General:
+    - Supported entities: supported_entities.md
+    - Development and design:
+      - Design: design.md
+      - Setting up a development environment: development.md
+      - Build and release process: build_release.md
+      - Changes from V1 to V2: presidio_V2.md
+      - Python API reference:
+        - Home: api.md
+        - Presidio Analyzer Python API: api/analyzer_python.md
+        - Presidio Anonymizer Python API: api/anonymizer_python.md
+        - Presidio Image Redactor Python API: api/image_redactor_python.md
+      - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
+
+    - Community: community.md
+    - FAQ: faq.md
+    - Demo: https://huggingface.co/spaces/presidio/presidio_demo" target="_blank
 theme:
   name: material
   custom_dir: overrides
@@ -79,6 +80,7 @@ theme:
   features:
     - navigation.instant
     - content.tabs.link
+    # - navigation.sections
     # - navigation.tabs
     # - navigation.tabs.sticky
 plugins:
@@ -111,3 +113,8 @@ markdown_extensions:
   - pymdownx.pathconverter
   - pymdownx.tabbed:
       alternate_style: true 
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
