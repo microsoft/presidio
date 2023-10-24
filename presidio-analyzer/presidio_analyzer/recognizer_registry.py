@@ -316,4 +316,3 @@ class RecognizerRegistry:
         if isinstance(inst, PatternRecognizer):
             inst.global_regex_flags = self.global_regex_flags
         return inst
-
