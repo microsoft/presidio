@@ -96,32 +96,3 @@ class DateRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
-
-    def analyze(
-        self,
-        text: str,
-        entities: List[str],
-        nlp_artifacts: NlpArtifacts = None,
-        regex_flags: int = None,
-    ) -> List[RecognizerResult]:
-        """
-        Analyzes text to detect PII using regular expressions or deny-lists.
-
-        :param text: Text to be analyzed
-        :param entities: Entities this recognizer can detect
-        :param nlp_artifacts: Output values from the NLP engine
-        :param regex_flags:
-        :return:
-        """
-        regex_flags = (
-            regex_flags | re.IGNORECASE
-            if regex_flags
-            else re.DOTALL | re.MULTILINE | re.IGNORECASE
-        )  # noqa: E501
-
-        return super().analyze(
-            text=text,
-            entities=entities,
-            nlp_artifacts=nlp_artifacts,
-            regex_flags=regex_flags,
-        )
