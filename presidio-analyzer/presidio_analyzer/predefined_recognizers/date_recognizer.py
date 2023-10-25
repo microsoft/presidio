@@ -1,9 +1,6 @@
 from typing import Optional, List
 
-from presidio_analyzer import Pattern, PatternRecognizer, RecognizerResult
-from presidio_analyzer.nlp_engine import NlpArtifacts
-
-import regex as re
+from presidio_analyzer import Pattern, PatternRecognizer
 
 
 class DateRecognizer(PatternRecognizer):
