@@ -142,6 +142,23 @@ class AnonymizerEngine(EngineBase):
                 self.logger.debug(
                     f"removing element {result} from results list due to conflict"
                 )
+        
+        # This further improves the quality of handling the conflict between the 
+        # various results overlapping. This will not drop the results insted 
+        # it adjust the start and end positions of overlapping results. 
+        unique_text_metadata_elements.sort(key=lambda x: x.start)
+
+        for i in range(len(unique_text_metadata_elements)):
+            result = unique_text_metadata_elements[i]
+            j = 0
+            while j < i:
+                existing_result = unique_text_metadata_elements[j]
+                if result.end <= existing_result.start or result.start >= existing_result.end:
+                    j += 1
+                else:
+                    result.start = existing_result.end
+                    result.end = result.start + (result.end - result.start)
+                    break
         return unique_text_metadata_elements
 
     def _merge_entities_with_whitespace_between(
