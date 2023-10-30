@@ -81,6 +81,24 @@ results = analyzer.analyze(text=text,language="en")
 print(results)
 ```
 
+For pattern based recognizers, it is possible to change the regex flags, either for
+one recognizer or for all.
+For one recognizer, use the `global_regex_flags` parameter 
+in the `PatternRecognizer` constructor.
+For all recognizers, use the `global_regex_flags` parameter in the `RecognizerRegistry` constructor:
+
+<!--pytest-codeblocks:cont-->
+```python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+
+import regex as re
+
+registry = RecognizerRegistry(global_regex_flags=re.DOTALL | re.MULTILINE | re.IGNORECASE)
+engine = AnalyzerEngine(registry=registry)
+engine.analyze(...)
+```
+
+
 ### Creating a new `EntityRecognizer` in code
 
 To create a new recognizer via code:
