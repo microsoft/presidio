@@ -2,10 +2,55 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
-### Changed
+## [2.2.34] - Oct. 30th 2024
+
+### Added
+#### Analyzer
+* New Predefined Recognizer: IN_PAN (#1100)
+  
+#### Anonymizer
+* Anonymizer - Pass bytes key to Encrypt / Decrypt (#1147)
+  
 #### Image redactor
+* DICOM redactor improvement: Enabling more photometric interpretations (#1103)
+* DICOM redactor improvement: Adding exceptions for when DICOM file does not have pixel data (#1104)
+* Small reordering of kwargs as prereq for allow list functionality (#1110)
+* DICOM redactor improvement: Preventing distortion when multiple sets of pixels are in one instance (#1109)
+* DICOM redactor improvement: Enabling compatibility with compressed images (#1105)
+* DICOM redactor improvement: Enable return of redacted bboxes (#1111)
+* DICOM redactor improvement: Enable selection of redact approach (#1113)
+* Enable toggle of printing output location after redacting from file (#1144)
+* Changing test exception type check (#1148)
+* Enabling allow list approach with all image redaction (#1145)
+* Improve process names method in DICOM image redactor (#1150)
+* Adding examples of toggling metadata usage and saving bboxes (#1158)
+* Updating verification engines to include latest updates to redactor engines (#1162)
+* Improved bbox processor (#1163)
+* Updating verification engines and enable plotting of custom bboxes (#1164)
+* Added image processing class to preprocess the image before running OCR (#1166)
 * Added support for Microsoft's document intelligence OCR
+  
+### Changed
+#### Analyzer
+* Refactord the `NlpEngine` and Ner recognizers (`SpacyRecognizer`, `TransformersRecognizer`, `StanzaRecognizer`) to allow simpler integration of huggingface and transformers models (#1159). This includes:
+    - Changes in how NER results flow through Presidio (see docs)
+    - NER/model definition is now defined using a conf file or a `NerModelConfiguration` object.
+    - Integrated `spacy-huggingface-pipelines` for a more robust integration of huggingface models.        
+* As a result, `SpacyRecognizer` logic has changed, please see #1159. Some fields within the class are now deprecated.
+* Updated type checks (#1175)
+* Enabled regex flags manipulation (#1193)
+  
+#### Anonymizer
+* Initial logic check for merging 2 entities (#1092)
+* Fix Sphinx warning in OperatorConfig (#1143)
+* Fix type mismatch in check_label_groups parameter in spacy_recognizer (#1130)
+* anonymize_list return type hint fix (#1178)
+* 
+#### General
+* We no longer use Pipenv.lock. Locking happens as part of the CI. (#1152)
+* Changed the ACR instance (#1089)
+* Updated to Cred Scan V3 (#1154) 
+
 
 ## [2.2.33] - June 1st 2023
 ### Added
@@ -242,6 +287,7 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
 [unreleased]: https://github.com/microsoft/presidio/compare/2.2.33...HEAD
+[2.2.34]: https://github.com/microsoft/presidio/compare/2.2.34...2.2.33
 [2.2.33]: https://github.com/microsoft/presidio/compare/2.2.32...2.2.33
 [2.2.32]: https://github.com/microsoft/presidio/compare/2.2.31...2.2.32
 [2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
