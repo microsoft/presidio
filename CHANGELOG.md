@@ -32,7 +32,7 @@ All notable changes to this project will be documented in this file.
   
 ### Changed
 #### Analyzer
-* Refactord the `NlpEngine` and Ner recognizers (`SpacyRecognizer`, `TransformersRecognizer`, `StanzaRecognizer`) to allow simpler integration of huggingface and transformers models (#1159). This includes:
+* Refactored the `NlpEngine` and Ner recognizers (`SpacyRecognizer`, `TransformersRecognizer`, `StanzaRecognizer`) to allow simpler integration of huggingface and transformers models (#1159). This includes:
     - Changes in how NER results flow through Presidio (see docs)
     - NER/model definition is now defined using a conf file or a `NerModelConfiguration` object.
     - Integrated `spacy-huggingface-pipelines` for a more robust integration of huggingface models.        
