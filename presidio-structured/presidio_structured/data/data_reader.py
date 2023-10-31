@@ -1,3 +1,5 @@
+""" Helper data classes, mostly simple wrappers  to ensure consistent user interface. """
+
 import json
 from abc import ABC, abstractmethod
 from typing import Any, Dict

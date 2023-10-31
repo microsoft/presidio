@@ -5,6 +5,8 @@ from pandas import DataFrame
 from presidio_anonymizer.entities import OperatorConfig
 from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 
+from presidio_structured.config import StructuredAnalysis
+
 
 class DataTransformerBase(ABC):
     """
@@ -18,7 +20,7 @@ class DataTransformerBase(ABC):
     def operate(
         self,
         data: Any,
-        structured_analysis: "StructuredAnalysis",
+        structured_analysis: StructuredAnalysis,
         operators: Dict[str, OperatorConfig],
     ) -> Any:
         """
@@ -184,6 +186,10 @@ class JsonDataTransformer(DataTransformerBase):
         :param config: Configuration object containing operator information.
         :return: JSON-like data after the operation.
         """
+
+        if not isinstance(data, (dict, list)):
+            raise ValueError("Data must be a JSON-like object")
+
         for key, operator_callable in key_to_operator_mapping.items():
             keys = key.split(".")
             if isinstance(data, list):
