@@ -86,14 +86,26 @@ def test_verify_dicom_instance_happy_path(
     mock_add_padding = mocker.patch.object(
         DicomImagePiiVerifyEngine, "_add_padding", return_value=None
     )
+    mock_parse_ocr_kwargs = mocker.patch.object(
+        ImageAnalyzerEngine, "_parse_ocr_kwargs", return_value=[{}, None]
+    )
     mock_perform_ocr = mocker.patch.object(
         TesseractOCR, "perform_ocr", return_value=None
+    )
+    mock_format_ocr_results = mocker.patch.object(
+        BboxProcessor, "get_bboxes_from_ocr_results", return_value=None
     )
     mock_analyze = mocker.patch.object(
         DicomImagePiiVerifyEngine, "_get_analyzer_results", return_value=None
     )
-    mock_verify = mocker.patch.object(
-        DicomImagePiiVerifyEngine, "verify", return_value=None
+    mock_format_analyzer_results = mocker.patch.object(
+        BboxProcessor, "get_bboxes_from_analyzer_results", return_value=None
+    )
+    mock_get_pii = mocker.patch.object(
+        ImageAnalyzerEngine, "get_pii_bboxes", return_value=None
+    )
+    mock_add_bboxes = mocker.patch.object(
+        ImageAnalyzerEngine, "add_custom_bboxes", return_value=None
     )
 
     # Act
@@ -105,9 +117,13 @@ def test_verify_dicom_instance_happy_path(
     assert mock_save_pixel_array.call_count == 1
     assert mock_image_open.call_count == 1
     assert mock_add_padding.call_count == 1
+    assert mock_parse_ocr_kwargs.call_count == 1
     assert mock_perform_ocr.call_count == 1
+    assert mock_format_ocr_results.call_count == 1
     assert mock_analyze.call_count == 1
-    assert mock_verify.call_count == 1
+    assert mock_format_analyzer_results.call_count == 1
+    assert mock_get_pii.call_count == 1
+    assert mock_add_bboxes.call_count == 1
 
 def test_verify_dicom_instance_exception(
     mock_engine: DicomImagePiiVerifyEngine,

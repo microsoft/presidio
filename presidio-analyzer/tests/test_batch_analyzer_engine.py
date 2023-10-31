@@ -158,7 +158,7 @@ def test_analyze_dict_on_nested_dict(batch_analyzer_engine_simple):
                     key="key_a1",
                     value=nested_dict["key_a"]["key_a1"],
                     recognizer_results=[
-                        RecognizerResult("PHONE_NUMBER", start=19, end=31, score=0.75)
+                        RecognizerResult("PHONE_NUMBER", start=19, end=31, score=0.4)
                     ],
                 )
             ],

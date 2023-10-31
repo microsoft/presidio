@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Optional
 
 from spacy.tokens import Doc, Span
 
@@ -10,6 +10,14 @@ class NlpArtifacts:
 
     processing over a given text, it holds attributes such as entities,
     tokens and lemmas which can be used by any recognizer
+
+    :param entities: Identified entities
+    :param tokens: Tokenized text
+    :param tokens_indices: Indices of tokens
+    :param lemmas: List of lemmas in text
+    :param nlp_engine: NlpEngine object
+    :param language: Text language
+    :param scores: Entity confidence scores
     """
 
     def __init__(
@@ -18,8 +26,9 @@ class NlpArtifacts:
         tokens: Doc,
         tokens_indices: List[int],
         lemmas: List[str],
-        nlp_engine,  # noqa ANN001
+        nlp_engine: "NlpEngine",  # noqa F821
         language: str,
+        scores: Optional[List[float]] = None,
     ):
         self.entities = entities
         self.tokens = tokens
@@ -27,6 +36,7 @@ class NlpArtifacts:
         self.tokens_indices = tokens_indices
         self.keywords = self.set_keywords(nlp_engine, lemmas, language)
         self.nlp_engine = nlp_engine
+        self.scores = scores if scores else [0.85] * len(entities)
 
     @staticmethod
     def set_keywords(
@@ -70,5 +80,7 @@ class NlpArtifacts:
             return_dict["tokens"] = [token.text for token in self.tokens]
         if "entities" in return_dict:
             return_dict["entities"] = [entity.text for entity in self.entities]
+        if "scores" in return_dict:
+            return_dict["scores"] = [float(score) for score in self.scores]
 
         return json.dumps(return_dict)

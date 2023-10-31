@@ -1,4 +1,4 @@
-from typing import Iterable, Iterator, Tuple
+from typing import Iterable, Iterator, Tuple, Dict, List
 
 from presidio_analyzer.nlp_engine import NlpEngine, NlpArtifacts
 
@@ -8,9 +8,15 @@ class NlpEngineMock(NlpEngine):
         self.stopwords = stopwords if stopwords else []
         self.punct_words = punct_words if punct_words else []
         if nlp_artifacts is None:
-            self.nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
+            self.nlp_artifacts = NlpArtifacts([], [], [], [], None, "en", [])
         else:
             self.nlp_artifacts = nlp_artifacts
+
+    def load(self):
+        pass
+
+    def is_loaded(self) -> bool:
+        return True
 
     def is_stopword(self, word, language):
         return word in self.stopwords
@@ -27,3 +33,9 @@ class NlpEngineMock(NlpEngine):
         texts = list(texts)
         for i in range(len(texts)):
             yield texts[i], self.nlp_artifacts
+
+    def get_nlp_engine_configuration_as_dict(self) -> Dict:
+        return {}
+
+    def get_supported_entities(self) -> List[str]:
+        pass

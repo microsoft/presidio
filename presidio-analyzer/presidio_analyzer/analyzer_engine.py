@@ -67,6 +67,9 @@ class AnalyzerEngine:
         self.supported_languages = supported_languages
 
         self.nlp_engine = nlp_engine
+        if not self.nlp_engine.is_loaded():
+            self.nlp_engine.load()
+
         self.registry = registry
 
         # load all recognizers
@@ -333,7 +336,7 @@ class AnalyzerEngine:
     @staticmethod
     def __add_recognizer_id_if_not_exists(
         results: List[RecognizerResult], recognizer: EntityRecognizer
-    ):
+    ) -> None:
         """Ensure recognition metadata with recognizer id existence.
 
         Ensure recognizer result list contains recognizer id inside recognition

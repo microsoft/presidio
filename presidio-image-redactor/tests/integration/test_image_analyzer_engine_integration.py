@@ -5,7 +5,7 @@ from tests.integration.methods import get_resource_image
 def test_given_image_then_text_entities_are_recognized_correctly(image_analyzer_engine):
     # Image with PII entities
     image = get_resource_image("ocr_test.png")
-    analyzer_results = image_analyzer_engine.analyze(image)
+    analyzer_results = image_analyzer_engine.analyze(image, score_threshold=0.4)
     assert len(analyzer_results) == 7
     results = __get_expected_ocr_test_image_analysis_results()
     for i in range(7):

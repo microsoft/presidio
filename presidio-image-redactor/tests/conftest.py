@@ -1,6 +1,8 @@
 import pydicom
 import json
 import os
+
+from PIL import Image
 from presidio_analyzer.recognizer_result import RecognizerResult
 
 from presidio_image_redactor import ImageAnalyzerEngine
@@ -73,3 +75,9 @@ def get_mock_dicom_verify_results():
         results_json = json.load(json_file)
 
     return results_json
+
+
+@pytest.fixture(scope="module")
+def get_mock_png():
+    filepath = f"{SCRIPT_DIR}/test_data/png_images/0_ORIGINAL.png"
+    return Image.open(filepath)

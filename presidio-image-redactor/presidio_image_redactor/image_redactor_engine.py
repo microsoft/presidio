@@ -13,7 +13,10 @@ class ImageRedactorEngine:
     :param image_analyzer_engine: Engine which performs OCR + PII detection.
     """
 
-    def __init__(self, image_analyzer_engine: ImageAnalyzerEngine = None):
+    def __init__(
+        self,
+        image_analyzer_engine: ImageAnalyzerEngine = None,
+    ):
         if not image_analyzer_engine:
             self.image_analyzer_engine = ImageAnalyzerEngine()
         else:
@@ -78,7 +81,7 @@ class ImageRedactorEngine:
 
     @staticmethod
     def _check_ad_hoc_recognizer_list(
-        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
     ):
         """Check if the provided ad-hoc recognizer list is valid.
 
@@ -88,10 +91,22 @@ class ImageRedactorEngine:
         if isinstance(ad_hoc_recognizers, (list, type(None))):
             if isinstance(ad_hoc_recognizers, list):
                 if len(ad_hoc_recognizers) >= 1:
-                    are_recognizers = all(isinstance(x, presidio_analyzer.pattern_recognizer.PatternRecognizer) for x in ad_hoc_recognizers)  # noqa: E501
+                    are_recognizers = all(
+                        isinstance(
+                            x, presidio_analyzer.pattern_recognizer.PatternRecognizer
+                        )
+                        for x in ad_hoc_recognizers
+                    )
                     if are_recognizers is False:
-                        raise TypeError("All items in ad_hoc_recognizers list must be PatternRecognizer objects")  # noqa: E501
+                        raise TypeError(
+                            """All items in ad_hoc_recognizers list must be
+                            PatternRecognizer objects"""
+                        )
                 else:
-                    raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
+                    raise TypeError(
+                        "ad_hoc_recognizers must be None or list of PatternRecognizer"
+                    )
         else:
-            raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
+            raise TypeError(
+                "ad_hoc_recognizers must be None or list of PatternRecognizer"
+            )
