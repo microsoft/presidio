@@ -28,6 +28,9 @@ setuptools.setup(
         "presidio_analyzer.nlp_engine",
         "presidio_analyzer.context_aware_enhancers",
     ],
+    package_data={
+        "presidio_analyzer": ["py.typed"],
+    },
     trusted_host=["pypi.org"],
     tests_require=["pytest", "flake8>=3.7.9"],
     install_requires=[
