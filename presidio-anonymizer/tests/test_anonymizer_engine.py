@@ -255,3 +255,19 @@ def _operate(
     return EngineResult(
         "Number: I am your new text!", [OperatorResult(0, 35, "type", "text", "hash")]
     )
+
+
+def test_when_pii_unmasked_then_original_text_restored():
+    engine = AnonymizerEngine()
+    text = (
+        "Fake card number 4151 3217 6243 3448.com that "
+        "overlaps with nonexisting URL."
+    )
+    analyzer_result = RecognizerResult("CREDIT_CARD", 17, 36, 0.8)
+    analyzer_result2 = RecognizerResult("URL", 32, 40, 0.8)
+    anonymizer_config = OperatorConfig("keep")
+    result = engine.anonymize(
+        text, [analyzer_result, analyzer_result2], {"DEFAULT": anonymizer_config}
+    ).text
+
+    assert result == text
