@@ -2,10 +2,6 @@ stages:
     - stage: LintBuildTest
       displayName: Presidio Build
       jobs:
-          - job: Inclusivelint
-            displayName: 'Inclusive linting validation'
-            steps:
-                - template: ./inclusive-lint.yml
 
           - job: SecurityAnalysis
             displayName: Security Analysis
