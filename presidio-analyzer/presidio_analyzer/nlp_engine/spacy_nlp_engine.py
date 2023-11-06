@@ -41,7 +41,7 @@ class SpacyNlpEngine(NlpEngine):
         self.models = models
 
         if not ner_model_configuration:
-            ner_model_configuration = NerModelConfiguration(self.engine_name)
+            ner_model_configuration = NerModelConfiguration()
         self.ner_model_configuration = ner_model_configuration
 
         self.nlp = None
