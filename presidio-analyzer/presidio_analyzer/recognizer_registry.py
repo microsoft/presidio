@@ -102,7 +102,6 @@ class RecognizerRegistry:
                 AuMedicareRecognizer,
                 InPanRecognizer,
             ],
-            "pl": [PlPeselRecognizer],
             "es": [EsNifRecognizer],
             "it": [
                 ItDriverLicenseRecognizer,
@@ -111,6 +110,7 @@ class RecognizerRegistry:
                 ItIdentityCardRecognizer,
                 ItPassportRecognizer,
             ],
+            "pl": [PlPeselRecognizer],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,
