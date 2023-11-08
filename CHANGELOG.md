@@ -2,10 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.2.4] - Nov. 2nd 2024
+## [2.2.351] - Nov. 6th 2024
 ### Changed
 #### Analyzer
-* Hotfix for the default.yaml file which is not parsed correctly (#1202)
+* Hotfix for NerModelConfiguration not created correctly (#1208)
+
+## [2.2.350] - Nov. 2nd 2024
+### Changed
+#### Analyzer
+* Hotfix: default.yaml is not parsed correctly (#1202)
+
+## [2.2.35] - Nov. 2nd 2024
+### Changed
+#### Analyzer
+* Put org in ignore as it has many FPs (#1200)
 
 ## [2.2.34] - Oct. 30th 2024
 
@@ -291,8 +301,10 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.4...HEAD
-[2.2.4]: https://github.com/microsoft/presidio/compare/2.2.34...2.2.4
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.351...HEAD
+[2.2.351]: https://github.com/microsoft/presidio/compare/2.2.350...2.2.351
+[2.2.350]: https://github.com/microsoft/presidio/compare/2.2.35...2.2.350
+[2.2.35]: https://github.com/microsoft/presidio/compare/2.2.34...2.2.35
 [2.2.34]: https://github.com/microsoft/presidio/compare/2.2.33...2.2.34
 [2.2.33]: https://github.com/microsoft/presidio/compare/2.2.32...2.2.33
 [2.2.32]: https://github.com/microsoft/presidio/compare/2.2.31...2.2.32
