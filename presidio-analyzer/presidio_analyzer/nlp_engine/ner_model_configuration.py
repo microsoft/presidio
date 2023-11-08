@@ -26,8 +26,22 @@ MODEL_TO_PRESIDIO_ENTITY_MAPPING = dict(
     HOSPITAL="ORGANIZATION",
 )
 
-LOW_SCORE_ENTITY_NAMES = {"ORG", "ORGANIZATION"}
-LABELS_TO_IGNORE = {"O"}
+LOW_SCORE_ENTITY_NAMES = {}
+LABELS_TO_IGNORE = {
+    "O",
+    "ORG",
+    "ORGANIZATION",
+    "CARDINAL",
+    "EVENT",
+    "LANGUAGE",
+    "LAW",
+    "MONEY",
+    "ORDINAL",
+    "PERCENT",
+    "PRODUCT",
+    "QUANTITY",
+    "WORK_OF_ART",
+}
 
 
 @dataclass

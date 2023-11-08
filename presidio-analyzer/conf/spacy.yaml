@@ -20,9 +20,10 @@ ner_model_configuration:
 
   low_confidence_score_multiplier: 0.4
   low_score_entity_names:
-  - ORG
-  - ORGANIZATION
+  -
   labels_to_ignore:
+  - ORG
+  - ORGANIZATION # has many false positives
   - CARDINAL
   - EVENT
   - LANGUAGE
