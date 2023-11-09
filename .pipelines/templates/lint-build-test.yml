@@ -35,8 +35,6 @@ stages:
 
           - job: TestAnonymizer
             displayName: Test Anonymizer
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
@@ -59,8 +57,6 @@ stages:
 
           - job: TestImageRedactor
             displayName: Test Image Redactor
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
@@ -82,8 +78,6 @@ stages:
                 - template: ./build-image-redactor.yml
           - job: TestCli
             displayName: Test Cli
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
