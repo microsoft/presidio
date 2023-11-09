@@ -9,7 +9,7 @@ from presidio_structured.data.data_transformers import DataTransformerBase
 DEFAULT = "replace"
 
 
-class TabularEngine:
+class StructuredEngine:
     """
     Class to implement methods for anonymizing tabular data.
     """
