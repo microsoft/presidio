@@ -13,8 +13,6 @@ stages:
 
           - job: TestAnalyzer
             displayName: Test Analyzer
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
