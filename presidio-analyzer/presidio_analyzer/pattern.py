@@ -12,7 +12,8 @@ class Pattern:
     :param case_sensitive: whether to use regex with case sensitivity or not
     """
 
-    def __init__(self, name: str, regex: str, score: float, case_sensitive: bool = False):
+    def __init__(self, name: str, regex: str, score: float,
+                 case_sensitive: bool = False):
 
         self.name = name
         self.regex = regex

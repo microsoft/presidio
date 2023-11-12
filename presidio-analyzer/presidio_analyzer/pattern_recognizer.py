@@ -183,7 +183,7 @@ class PatternRecognizer(LocalRecognizer):
         for pattern in self.patterns:
             match_start_time = datetime.datetime.now()
             matches = re.finditer(pattern.regex, text,
-                                  flags=flags ^ re.I if pattern.case_sensitive else flags)
+                flags=flags ^ re.I if pattern.case_sensitive else flags)
             match_time = datetime.datetime.now() - match_start_time
             logger.debug(
                 "--- match_time[%s]: %s.%s seconds",
