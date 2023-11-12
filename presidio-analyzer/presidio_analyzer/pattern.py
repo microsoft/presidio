@@ -9,13 +9,15 @@ class Pattern:
     :param name: the name of the pattern
     :param regex: the regex pattern to detect
     :param score: the pattern's strength (values varies 0-1)
+    :param case_sensitive: whether to use regex with case sensitivity or not
     """
 
-    def __init__(self, name: str, regex: str, score: float):
+    def __init__(self, name: str, regex: str, score: float, case_sensitive: bool = False):
 
         self.name = name
         self.regex = regex
         self.score = score
+        self.case_sensitive = case_sensitive
 
     def to_dict(self) -> Dict:
         """

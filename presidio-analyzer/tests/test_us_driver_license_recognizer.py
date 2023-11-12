@@ -40,6 +40,8 @@ def entities():
         ),
         ("ABCDEFG ABCDEFGH ABCDEFGHI", 0, (), (),),
         ("ABCD ABCDEFGHIJ", 0, (), (),),
+        ("contribution", 0, (), (),),
+        ("CONTRIBUTION", 1, ((0, 9),), ((0.3, 0.4),),),
         # The following fails due to keyphrases not yet supported
         # ("my driver license: ABCDEFG", 1, ((19, 25),), ((0.5, 0.91),),),
         # fmt: on
