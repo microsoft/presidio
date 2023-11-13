@@ -185,7 +185,9 @@ class PatternRecognizer(LocalRecognizer):
             matches = re.finditer(
                 pattern.regex,
                 text,
-                flags=flags ^ re.I if pattern.case_sensitive else flags,
+                flags=flags ^ re.I
+                if re.I in flags and pattern.case_sensitive
+                else flags,
             )
             match_time = datetime.datetime.now() - match_start_time
             logger.debug(
