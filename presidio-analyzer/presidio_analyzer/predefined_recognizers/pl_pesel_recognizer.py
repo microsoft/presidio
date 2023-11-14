@@ -19,7 +19,7 @@ class PlPeselRecognizer(PatternRecognizer):
         Pattern(
             "PESEL",
             r"[0-9]{2}([02468][1-9]|[13579][012])(0[1-9]|1[0-9]|2[0-9]|3[01])[0-9]{5}",
-            0.5,
+            0.4,
         ),
     ]
 
