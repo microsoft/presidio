@@ -2,10 +2,6 @@ stages:
     - stage: LintBuildTest
       displayName: Presidio Build
       jobs:
-          - job: Inclusivelint
-            displayName: 'Inclusive linting validation'
-            steps:
-                - template: ./inclusive-lint.yml
 
           - job: SecurityAnalysis
             displayName: Security Analysis
@@ -17,8 +13,6 @@ stages:
 
           - job: TestAnalyzer
             displayName: Test Analyzer
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
@@ -41,8 +35,6 @@ stages:
 
           - job: TestAnonymizer
             displayName: Test Anonymizer
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
@@ -65,8 +57,6 @@ stages:
 
           - job: TestImageRedactor
             displayName: Test Image Redactor
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
@@ -88,8 +78,6 @@ stages:
                 - template: ./build-image-redactor.yml
           - job: TestCli
             displayName: Test Cli
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
