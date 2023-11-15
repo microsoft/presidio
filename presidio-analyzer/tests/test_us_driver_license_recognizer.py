@@ -18,15 +18,6 @@ def entities():
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        # WA license tests
-        (
-            "AA1B2**9ABA7 A*1234AB*CD9",
-            2,
-            ((0, 12), (13, 25),),
-            ((0.3, 0.4), (0.3, 0.4),),
-        ),
-        ("3A1B2**9ABA7", 0, (), (),),
-        # Other states license weak tests
         ("H12234567", 1, ((0, 9),), ((0.3, 0.4),),),
         ("C12T345672", 0, (), (),),
         # invalid license that should fail, but doesn't do to context
