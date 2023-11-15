@@ -12,7 +12,7 @@ ner_model_configuration:
     PER: PERSON
     PERSON: PERSON
     NORP: NRP
-    FAC: FACILITY
+    FAC: LOCATION
     LOC: LOCATION
     LOCATION: LOCATION
     GPE: LOCATION

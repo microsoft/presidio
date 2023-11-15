@@ -67,7 +67,6 @@ class IbanRecognizer(PatternRecognizer):
         self.replacement_pairs = replacement_pairs or [("-", ""), (" ", "")]
         self.exact_match = exact_match
         self.BOSEOS = bos_eos if exact_match else ()
-        self.flags = regex_flags
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
         super().__init__(
@@ -75,6 +74,7 @@ class IbanRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            global_regex_flags=regex_flags
         )
 
     def validate_result(self, pattern_text: str):  # noqa D102
@@ -126,9 +126,10 @@ class IbanRecognizer(PatternRecognizer):
         :param flags: regex flags
         :return: A list of RecognizerResult
         """
+        flags = flags if flags else self.global_regex_flags
         results = []
         for pattern in self.patterns:
-            matches = re.finditer(pattern.regex, text, flags=self.flags)
+            matches = re.finditer(pattern.regex, text, flags=flags)
 
             for match in matches:
                 for grp_num in reversed(range(1, len(match.groups()) + 1)):
@@ -148,7 +149,12 @@ class IbanRecognizer(PatternRecognizer):
 
                     validation_result = self.validate_result(current_match)
                     description = PatternRecognizer.build_regex_explanation(
-                        self.name, pattern.name, pattern.regex, score, validation_result
+                        self.name,
+                        pattern.name,
+                        pattern.regex,
+                        score,
+                        validation_result,
+                        flags,
                     )
                     pattern_result = RecognizerResult(
                         entity_type=self.supported_entities[0],

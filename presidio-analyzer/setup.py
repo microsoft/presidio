@@ -26,17 +26,19 @@ setuptools.setup(
         "presidio_analyzer",
         "presidio_analyzer.predefined_recognizers",
         "presidio_analyzer.nlp_engine",
-        "presidio_analyzer.recognizer_registry",
         "presidio_analyzer.context_aware_enhancers",
     ],
+    package_data={
+        "presidio_analyzer": ["py.typed"],
+    },
     trusted_host=["pypi.org"],
     tests_require=["pytest", "flake8>=3.7.9"],
     install_requires=[
-        "spacy>=3.4.4",
+        "spacy>=3.4.4, <4.0.0",
         "regex",
         "tldextract",
         "pyyaml",
-        "phonenumbers>=8.12",
+        "phonenumbers>=8.12,<9.0.0",
     ],
     extras_require={
         "transformers": ["spacy_huggingface_pipelines"],

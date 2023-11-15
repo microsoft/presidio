@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+import regex as re
 
 from presidio_analyzer import (
     RecognizerRegistry,
@@ -204,3 +205,11 @@ def test_recognizer_registry_exception_erroneous_yaml():
     with pytest.raises(TypeError):
         registry = RecognizerRegistry()
         registry.add_recognizers_from_yaml(test_yaml)
+
+
+def test_predefined_pattern_recognizers_have_the_right_regex_flags():
+    registry = RecognizerRegistry(global_regex_flags=re.DOTALL)
+    registry.load_predefined_recognizers()
+    for rec in registry.recognizers:
+        if isinstance(rec, PatternRecognizer):
+            assert rec.global_regex_flags == re.DOTALL

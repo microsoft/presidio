@@ -178,7 +178,7 @@ def test_deny_list_score_change():
 
 @pytest.mark.parametrize(
     "text,flag,expected_len",
-    [("mrs. Kennedy", re.IGNORECASE, 1), ("mrs. Kennedy", None, 0)],
+    [("mrs. Kennedy", re.IGNORECASE, 1), ("mrs. Kennedy", re.DOTALL, 0)],
 )
 def test_deny_list_regex_flags(text, flag, expected_len):
     deny_list = ["Mr.", "Mrs."]
@@ -201,3 +201,21 @@ def test_empty_deny_list_raises_value_error():
             supported_language="en",
             deny_list=[],
         )
+
+
+@pytest.mark.parametrize(
+    "global_flag,expected_len",
+    [(re.IGNORECASE | re.MULTILINE, 2), (re.MULTILINE, 0)],
+)
+def test_global_regex_flag_deny_list_returns_right_result(global_flag, expected_len):
+    deny_list = ["MrS", "mR"]
+    text = "Mrs. smith \n\n" \
+           "and Mr. Jones were sitting in the room."
+
+    recognizer_ignore_case = PatternRecognizer(supported_entity="TITLE",
+                                               name="TitlesRecognizer",
+                                               deny_list=deny_list,
+                                               global_regex_flags=global_flag)
+
+    results = recognizer_ignore_case.analyze(text=text, entities=["TITLE"])
+    assert len(results) == expected_len
