@@ -1,0 +1,21 @@
+FROM python:3.9-windowsservercore
+
+ARG NLP_CONF_FILE=conf/default.yaml
+ENV PIPENV_VENV_IN_PROJECT=1
+ENV PIP_NO_CACHE_DIR=1
+WORKDIR /app
+
+ADD https://aka.ms/vs/16/release/vc_redist.x64.exe .
+RUN ./vc_redist.x64.exe /quiet /install
+
+COPY ./Pipfile* .
+RUN pip install pipenv; pipenv install --deploy
+
+# install nlp models specified in conf/default.yaml
+COPY ./install_nlp_models.py .
+COPY ${NLP_CONF_FILE} ${NLP_CONF_FILE}
+RUN pipenv run python install_nlp_models.py --conf_file $Env:NLP_CONF_FILE
+
+COPY . .
+EXPOSE ${PORT}
+CMD pipenv run python app.py --host 0.0.0.0
