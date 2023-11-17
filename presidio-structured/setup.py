@@ -3,7 +3,7 @@
 import os.path
 from os import path
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 test_requirements = ["pytest>=3", "flake8==3.7.9"]
 
@@ -21,7 +21,7 @@ except Exception:
     __version__ = os.environ.get("PRESIDIO_VERSION", "0.0.1-alpha")
 
 setup(
-    name="presidio_anonymizer",
+    name="presidio_structured",
     python_requires=">=3.5",
     version=__version__,
     classifiers=[
