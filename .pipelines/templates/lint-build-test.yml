@@ -76,6 +76,7 @@ stages:
                       versionSpec: '$(python.version)'
                   displayName: 'Use Python $(python.version)'
                 - template: ./build-image-redactor.yml
+
           - job: TestCli
             displayName: Test Cli
             pool:
@@ -97,10 +98,9 @@ stages:
                       versionSpec: '$(python.version)'
                   displayName: 'Use Python $(python.version)'
                 - template: ./build-cli.yml
-        - job: TestStructured
+
+          - job: TestStructured
             displayName: Test Presidio Structured
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
