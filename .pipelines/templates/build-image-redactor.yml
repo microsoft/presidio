@@ -27,7 +27,7 @@ steps:
               set -eux  # fail on error
               pipenv install --deploy --dev
               pipenv run python -m spacy download en_core_web_lg
-              pipenv run pip install -e ../presidio-analyzer/. # Use the existing analyzer and not the one in PyPI
+              pipenv run pip install -e ../presidio-analyzer/.
     - template: ./build-python.yml
       parameters:
           SERVICE: 'Image-Redactor'

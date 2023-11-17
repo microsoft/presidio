@@ -44,6 +44,7 @@ from presidio_analyzer.predefined_recognizers import (
     ItPassportRecognizer,
     ItIdentityCardRecognizer,
     InPanRecognizer,
+    PlPeselRecognizer,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -109,6 +110,7 @@ class RecognizerRegistry:
                 ItIdentityCardRecognizer,
                 ItPassportRecognizer,
             ],
+            "pl": [PlPeselRecognizer],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,

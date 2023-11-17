@@ -1,8 +1,16 @@
+import json
 from typing import Iterator
 
 import pytest
 
-from presidio_analyzer.nlp_engine import SpacyNlpEngine
+from presidio_analyzer.nlp_engine import SpacyNlpEngine, NerModelConfiguration
+
+
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, set):
+            return list(obj)
+        return json.JSONEncoder.default(self, obj)
 
 
 def test_simple_process_text(spacy_nlp_engine):
@@ -42,3 +50,20 @@ def test_validate_model_params_missing_fields():
 
         with pytest.raises(ValueError):
             SpacyNlpEngine._validate_model_params(new_model)
+
+
+def test_default_configuration_correct():
+    spacy_nlp_engine = SpacyNlpEngine()
+    expected_ner_config = NerModelConfiguration()
+
+    actual_config_json = json.dumps(
+        spacy_nlp_engine.ner_model_configuration.to_dict(),
+        sort_keys=True,
+        cls=SetEncoder,
+    )
+
+    expected_config_json = json.dumps(
+        expected_ner_config.to_dict(), sort_keys=True, cls=SetEncoder
+    )
+
+    assert actual_config_json == expected_config_json
