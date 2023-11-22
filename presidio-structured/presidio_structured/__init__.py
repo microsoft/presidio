@@ -1,6 +1,6 @@
 from .analysis_builder import JsonAnalysisBuilder, TabularAnalysisBuilder
 from .config import StructuredAnalysis
-from .data import CsvReader, JsonDataTransformer, JsonReader, PandasDataTransformer
+from .data import CsvReader, JsonDataProcessor, JsonReader, PandasDataProcessor
 from .structured_engine import StructuredEngine
 
 __all__ = [
@@ -10,6 +10,6 @@ __all__ = [
     "StructuredAnalysis",
     "CsvReader",
     "JsonReader",
-    "PandasDataTransformer",
-    "JsonDataTransformer",
+    "PandasDataProcessor",
+    "JsonDataProcessor",
 ]
