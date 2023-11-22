@@ -2,7 +2,8 @@
 
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from pathlib import Path
+from typing import Any, Dict, Union
 
 import pandas as pd
 
@@ -15,7 +16,7 @@ class ReaderBase(ABC):
     """
 
     @abstractmethod
-    def read(self, path: str) -> Any:
+    def read(self, path: Union[str, Path]) -> Any:
         """
         Extract data from file located at path.
 
@@ -36,7 +37,7 @@ class CsvReader(ReaderBase):
 
     """
 
-    def read(self, path: str) -> pd.DataFrame:
+    def read(self, path: Union[str, Path]) -> pd.DataFrame:
         """
         Read csv file to pandas dataframe.
 
@@ -57,7 +58,7 @@ class JsonReader(ReaderBase):
 
     """
 
-    def read(self, path: str) -> Dict[str, Any]:
+    def read(self, path: Union[str, Path]) -> Dict[str, Any]:
         """
         Read json file to dict.
 
