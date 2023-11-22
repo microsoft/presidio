@@ -19,9 +19,9 @@ class AnalysisBuilder(ABC):
     Abstract base class for a configuration generator.
     """
 
-    def __init__(self):
+    def __init__(self, analyzer: AnalyzerEngine = None) -> None:
         """Initialize the configuration generator."""
-        self.analyzer = AnalyzerEngine()
+        self.analyzer = AnalyzerEngine() if analyzer is None else analyzer
 
     @abstractmethod
     def generate_analysis(self, data: Union[Dict, DataFrame]) -> StructuredAnalysis:
