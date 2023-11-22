@@ -118,8 +118,9 @@ class TabularAnalysisBuilder(AnalysisBuilder):
         """
         key_recognizer_result_map = {}
 
+        batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
+
         for column in df.columns:
-            batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
             analyzer_results = batch_analyzer.analyze_iterator(
                 [val for val in df[column]], language=language
             )
