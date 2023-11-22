@@ -8,13 +8,13 @@ from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 from presidio_structured.config import StructuredAnalysis
 
 
-class DataTransformerBase(ABC):
+class DataProcessorBase(ABC):
     """
     Abstract base class to handle logic of operations over the text using the operators.
     """
 
     def __init__(self) -> None:
-        """Initializes DataTransformerBase object."""
+        """Initializes DataProcessorBase object."""
         pass
 
     def operate(
@@ -99,7 +99,7 @@ class DataTransformerBase(ABC):
         return operator_callable(text_to_operate_on)
 
 
-class PandasDataTransformer(DataTransformerBase):
+class PandasDataProcessor(DataProcessorBase):
     def _process(
         self, data: DataFrame, key_to_operator_mapping: Dict[str, Callable]
     ) -> DataFrame:
@@ -124,8 +124,8 @@ class PandasDataTransformer(DataTransformerBase):
         return data
 
 
-class JsonDataTransformer(DataTransformerBase):
-    """JSON Data Transformer, Supports arbitrary nesting of dictionaries and lists."""
+class JsonDataProcessor(DataProcessorBase):
+    """JSON Data Processor, Supports arbitrary nesting of dictionaries and lists."""
 
     @staticmethod
     def _get_nested_value(data: Union[Dict, List], path: List[str]) -> Any:
@@ -142,7 +142,7 @@ class JsonDataTransformer(DataTransformerBase):
                     data = data[int(key)]
                 else:
                     return [
-                        JsonDataTransformer._get_nested_value(item, path[i:])
+                        JsonDataProcessor._get_nested_value(item, path[i:])
                         for item in data
                     ]
             elif isinstance(data, dict):
@@ -169,7 +169,7 @@ class JsonDataTransformer(DataTransformerBase):
                     continue
                 else:
                     for item in data:
-                        JsonDataTransformer._set_nested_value(item, path[i:], value)
+                        JsonDataProcessor._set_nested_value(item, path[i:], value)
                     return
             elif isinstance(data, dict):
                 if i == len(path) - 1:
