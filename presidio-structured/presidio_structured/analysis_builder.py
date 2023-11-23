@@ -71,9 +71,9 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                     result.recognizer_results, prefix=current_key + "."
                 )
                 mappings.update(nested_mappings.entity_mapping)
-
-            if result.recognizer_results > 0:
-                mappings[current_key] = result.recognizer_results[0].entity_type
+            first_recognizer_result = next(iter(result.recognizer_results), None)
+            if first_recognizer_result is not None:
+                mappings[current_key] = first_recognizer_result.entity_type
         return StructuredAnalysis(entity_mapping=mappings)
 
 
