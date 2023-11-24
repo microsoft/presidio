@@ -52,7 +52,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         self, analyzer_results: Iterator[DictAnalyzerResult], prefix: str = ""
     ) -> StructuredAnalysis:
         """
-        Generate a configuration from the given analyzer results.
+        Generate a configuration from the given analyzer results. Always uses the first recognizer result if there are more than one.
 
         :param analyzer_results: The analyzer results.
         :param prefix: The prefix for the configuration keys.

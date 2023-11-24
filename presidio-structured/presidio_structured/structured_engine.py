@@ -17,14 +17,12 @@ class StructuredEngine:
     Class to implement methods for anonymizing tabular data.
     """
 
-    def __init__(self, data_processor: DataProcessorBase = None) -> None:
+    def __init__(self, data_processor: DataProcessorBase = PandasDataProcessor()) -> None:
         """
         Initialize the class with a data processor.
 
         :param data_processor: Instance of DataProcessorBase.
         """
-        if data_processor is None:
-            data_processor = PandasDataProcessor()
         self.data_processor = data_processor
 
     def anonymize(
