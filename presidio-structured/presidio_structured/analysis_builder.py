@@ -19,9 +19,9 @@ class AnalysisBuilder(ABC):
     Abstract base class for a configuration generator.
     """
 
-    def __init__(self):
+    def __init__(self, analyzer: AnalyzerEngine = None) -> None:
         """Initialize the configuration generator."""
-        self.analyzer = AnalyzerEngine()
+        self.analyzer = AnalyzerEngine() if analyzer is None else analyzer
 
     @abstractmethod
     def generate_analysis(self, data: Union[Dict, DataFrame]) -> StructuredAnalysis:
@@ -29,9 +29,7 @@ class AnalysisBuilder(ABC):
         Abstract method to generate a configuration from the given data.
 
         :param data: The input data. Can be a dictionary or DataFrame instance.
-        :type data: Union[Dict, DataFrame]
         :return: The generated configuration.
-        :rtype StructuredAnalysis:
         """
         pass
 
@@ -44,9 +42,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         Generate a configuration from the given JSON data.
 
         :param data: The input JSON data.
-        :type data: Dict
         :return: The generated configuration.
-        :rtype StructuredAnalysis:
         """
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
         analyzer_results = batch_analyzer.analyze_dict(input_dict=data, language="en")
@@ -59,11 +55,8 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         Generate a configuration from the given analyzer results.
 
         :param analyzer_results: The analyzer results.
-        :type analyzer_results: Iterator[DictAnalyzerResult]
         :param prefix: The prefix for the configuration keys.
-        :type prefix: str
         :return: The generated configuration.
-        :rtype StructuredAnalysis:
         """
         mappings = {}
 
@@ -78,10 +71,9 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                     result.recognizer_results, prefix=current_key + "."
                 )
                 mappings.update(nested_mappings.entity_mapping)
-
-            if sum(1 for _ in result.recognizer_results) > 0:
-                for recognizer_result in result.recognizer_results:
-                    mappings[current_key] = recognizer_result.entity_type
+            first_recognizer_result = next(iter(result.recognizer_results), None)
+            if first_recognizer_result is not None:
+                mappings[current_key] = first_recognizer_result.entity_type
         return StructuredAnalysis(entity_mapping=mappings)
 
 
@@ -95,13 +87,9 @@ class TabularAnalysisBuilder(AnalysisBuilder):
         Generate a configuration from the given tabular data.
 
         :param df: The input tabular data (dataframe).
-        :type df: DataFrame
         :param n: The number of samples to be taken from the dataframe.
-        :type n: int
         :param language: The language to be used for analysis.
-        :type language: str
         :return: The generated configuration.
-        :rtype StructuredAnalysis:
         """
         if n > len(df):
             n = len(df)
@@ -125,16 +113,14 @@ class TabularAnalysisBuilder(AnalysisBuilder):
         Find the most common entity in a dataframe column.
 
         :param df: The dataframe where entities will be searched.
-        :type df: DataFrame
         :param language: Language to be used in the analysis engine.
-        :type language: str
         :return: A dictionary mapping column names to the most common RecognizerResult.
-        :rtype: Dict[str, RecognizerResult]
         """
         key_recognizer_result_map = {}
 
+        batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
+
         for column in df.columns:
-            batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
             analyzer_results = batch_analyzer.analyze_iterator(
                 [val for val in df[column]], language=language
             )

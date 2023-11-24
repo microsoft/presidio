@@ -4,7 +4,10 @@ from pandas import DataFrame
 from presidio_anonymizer.entities import OperatorConfig
 
 from presidio_structured.config import StructuredAnalysis
-from presidio_structured.data.data_transformers import DataTransformerBase
+from presidio_structured.data.data_processors import (
+    DataProcessorBase,
+    PandasDataProcessor,
+)
 
 DEFAULT = "replace"
 
@@ -14,13 +17,15 @@ class StructuredEngine:
     Class to implement methods for anonymizing tabular data.
     """
 
-    def __init__(self, data_transformer: DataTransformerBase):
+    def __init__(self, data_processor: DataProcessorBase = None) -> None:
         """
-        Initialize the class with a data transformer.
+        Initialize the class with a data processor.
 
-        :param data_transformer: Instance of DataTransformerBase.
+        :param data_processor: Instance of DataProcessorBase.
         """
-        self.data_transformer = data_transformer
+        if data_processor is None:
+            data_processor = PandasDataProcessor()
+        self.data_processor = data_processor
 
     def anonymize(
         self,
@@ -38,7 +43,7 @@ class StructuredEngine:
         """
         operators = self.__check_or_add_default_operator(operators)
 
-        return self.data_transformer.operate(data, structured_analysis, operators)
+        return self.data_processor.operate(data, structured_analysis, operators)
 
     @staticmethod
     def __check_or_add_default_operator(

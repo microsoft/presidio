@@ -2,7 +2,8 @@
 
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from pathlib import Path
+from typing import Any, Dict, Union
 
 import pandas as pd
 
@@ -15,7 +16,7 @@ class ReaderBase(ABC):
     """
 
     @abstractmethod
-    def read(self, path: str) -> Any:
+    def read(self, path: Union[str, Path], **kwargs) -> Any:
         """
         Extract data from file located at path.
 
@@ -36,14 +37,14 @@ class CsvReader(ReaderBase):
 
     """
 
-    def read(self, path: str) -> pd.DataFrame:
+    def read(self, path: Union[str, Path], **kwargs) -> pd.DataFrame:
         """
         Read csv file to pandas dataframe.
 
         :param path: String defining the location of the csv file to read.
         :return: Pandas DataFrame with the data read from the csv file.
         """
-        return pd.read_csv(path)
+        return pd.read_csv(path, **kwargs)
 
 
 class JsonReader(ReaderBase):
@@ -57,7 +58,7 @@ class JsonReader(ReaderBase):
 
     """
 
-    def read(self, path: str) -> Dict[str, Any]:
+    def read(self, path: Union[str, Path], **kwargs) -> Dict[str, Any]:
         """
         Read json file to dict.
 
@@ -65,5 +66,5 @@ class JsonReader(ReaderBase):
         :return: dictionary with the data read from the json file.
         """
         with open(path) as f:
-            data = json.load(f)
+            data = json.load(f, **kwargs)
         return data

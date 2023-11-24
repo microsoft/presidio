@@ -3,7 +3,7 @@
 import os.path
 from os import path
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 test_requirements = ["pytest>=3", "flake8==3.7.9"]
 
@@ -24,6 +24,7 @@ setup(
     name="presidio_structured",
     python_requires=">=3.5",
     version=__version__,
+    packages=find_packages(include=["presidio_structured", "presidio_structured.*"]),
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",

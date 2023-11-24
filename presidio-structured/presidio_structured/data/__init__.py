@@ -1,9 +1,9 @@
 from .data_reader import CsvReader, JsonReader
-from .data_transformers import JsonDataTransformer, PandasDataTransformer
+from .data_processors import JsonDataProcessor, PandasDataProcessor
 
 __all__ = [
     "CsvReader",
     "JsonReader",
-    "PandasDataTransformer",
-    "JsonDataTransformer",
+    "PandasDataProcessor",
+    "JsonDataProcessor",
 ]
