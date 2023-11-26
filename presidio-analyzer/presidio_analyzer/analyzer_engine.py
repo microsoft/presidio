@@ -118,12 +118,13 @@ class AnalyzerEngine:
         :param language: Return only entities supported in a specific language.
         :return: List of entity names
         """
-        recognizers = self.get_recognizers(language=language)
-        supported_entities = []
-        for recognizer in recognizers:
-            supported_entities.extend(recognizer.get_supported_entities())
 
-        return list(set(supported_entities))
+        if not language:
+            languages = self.supported_languages
+        else:
+            languages = [language]
+
+        return self.registry.get_supported_entities(languages=languages)
 
     def analyze(
         self,

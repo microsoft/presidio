@@ -842,3 +842,4 @@ def test_when_multiple_nameless_recognizers_context_is_correct(spacy_nlp_engine)
 
     for recognizer_result in recognizer_results:
         assert recognizer_result.score > 0.3
+
