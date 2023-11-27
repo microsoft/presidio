@@ -1,6 +1,10 @@
 import pandas as pd
 import pytest
 
+from presidio_analyzer import AnalyzerEngine
+
+from presidio_structured import PandasAnalysisBuilder
+
 # NOTE: we won't go into depth unit-testing all analyzers, as that is covered in the presidio-analyzer tests
 
 
@@ -46,6 +50,42 @@ def test_find_most_common_entity_with_empty_df(tabular_analysis_builder):
     )
 
     assert len(key_recognizer_result_map) == 0
+
+
+def test_when_threshold_is_zero_then_all_results_pass(
+    tabular_analysis_builder, sample_df
+):
+    structured_analysis = tabular_analysis_builder.generate_analysis(
+        sample_df, score_threshold=0
+    )
+
+    assert len(structured_analysis.entity_mapping) == 3
+
+
+def test_when_threshold_is_half_then_phone_does_not_pass(
+    tabular_analysis_builder, sample_df
+):
+    structured_analysis = tabular_analysis_builder.generate_analysis(
+        sample_df, score_threshold=0.5
+    )
+
+    assert len(structured_analysis.entity_mapping) == 2
+
+
+def test_when_default_threshold_is_half_then_phone_does_not_pass(sample_df):
+    analyzer_engine = AnalyzerEngine(default_score_threshold=0.5)
+    tabular_analysis_builder = PandasAnalysisBuilder(analyzer_engine)
+    structured_analysis = tabular_analysis_builder.generate_analysis(sample_df)
+
+    assert len(structured_analysis.entity_mapping) == 2
+
+
+def test_when_default_threshold_is_zero_then_all_results_pass(
+    tabular_analysis_builder, sample_df
+):
+    structured_analysis = tabular_analysis_builder.generate_analysis(sample_df)
+
+    assert len(structured_analysis.entity_mapping) == 3
 
 
 def test_generate_analysis_json(json_analysis_builder, sample_json):

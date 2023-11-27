@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from collections import Counter
 from collections.abc import Iterable
-from typing import Dict, Iterator, Union
+from typing import Dict, Iterator, List, Optional, Union
 
 from pandas import DataFrame
 from presidio_analyzer import (
@@ -96,7 +96,11 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
     """Concrete configuration generator for tabular data."""
 
     def generate_analysis(
-        self, df: DataFrame, n: int = 100, language: str = "en"
+        self,
+        df: DataFrame,
+        n: int = 100,
+        language: str = "en",
+        score_threshold: Optional[float] = None,
     ) -> StructuredAnalysis:
         """
         Generate a configuration from the given tabular data.
@@ -115,6 +119,11 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
         df = df.sample(n)
 
         key_recognizer_result_map = self._find_most_common_entity(df, language)
+
+        # Remove low score results
+        key_recognizer_result_map = self.__remove_low_scores(
+            key_recognizer_result_map, score_threshold
+        )
 
         key_entity_map = {
             key: result.entity_type
@@ -166,3 +175,25 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
                 most_common_type, 0, 1, average_score
             )
         return key_recognizer_result_map
+
+    def __remove_low_scores(
+        self,
+        key_recognizer_result_map: Dict[str, RecognizerResult],
+        score_threshold: float = None,
+    ) -> List[RecognizerResult]:
+        """
+        Remove results for which the confidence is lower than the threshold.
+
+        :param results: Dict of column names to RecognizerResult
+        :param score_threshold: float value for minimum possible confidence
+        :return: List[RecognizerResult]
+        """
+        if score_threshold is None:
+            score_threshold = self.analyzer.default_score_threshold
+
+        new_key_recognizer_result_map = {}
+        for column, result in key_recognizer_result_map.items():
+            if result.score >= score_threshold:
+                new_key_recognizer_result_map[column] = result
+
+        return new_key_recognizer_result_map
