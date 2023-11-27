@@ -28,6 +28,7 @@ class AnalysisBuilder(ABC):
         self,
         data: Union[Dict, DataFrame],
         language: str = "en",
+        score_threshold: Optional[float] = None,
     ) -> StructuredAnalysis:
         """
         Abstract method to generate a configuration from the given data.
@@ -37,6 +38,27 @@ class AnalysisBuilder(ABC):
         """
         pass
 
+    def _remove_low_scores(
+        self,
+        key_recognizer_result_map: Dict[str, RecognizerResult],
+        score_threshold: float = None,
+    ) -> List[RecognizerResult]:
+        """
+        Remove results for which the confidence is lower than the threshold.
+
+        :param results: Dict of column names to RecognizerResult
+        :param score_threshold: float value for minimum possible confidence
+        :return: List[RecognizerResult]
+        """
+        if score_threshold is None:
+            score_threshold = self.analyzer.default_score_threshold
+
+        new_key_recognizer_result_map = {}
+        for column, result in key_recognizer_result_map.items():
+            if result.score >= score_threshold:
+                new_key_recognizer_result_map[column] = result
+
+        return new_key_recognizer_result_map
 
 class JsonAnalysisBuilder(AnalysisBuilder):
     """Concrete configuration generator for JSON data."""
@@ -45,6 +67,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         self,
         data: Dict,
         language: str = "en",
+        score_threshold: Optional[float] = None,
     ) -> StructuredAnalysis:
         """
         Generate a configuration from the given JSON data.
@@ -131,7 +154,7 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         key_recognizer_result_map = self._find_most_common_entity(df, language)
 
         # Remove low score results
-        key_recognizer_result_map = self.__remove_low_scores(
+        key_recognizer_result_map = self._remove_low_scores(
             key_recognizer_result_map, score_threshold
         )
 
@@ -185,25 +208,3 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
                 most_common_type, 0, 1, average_score
             )
         return key_recognizer_result_map
-
-    def __remove_low_scores(
-        self,
-        key_recognizer_result_map: Dict[str, RecognizerResult],
-        score_threshold: float = None,
-    ) -> List[RecognizerResult]:
-        """
-        Remove results for which the confidence is lower than the threshold.
-
-        :param results: Dict of column names to RecognizerResult
-        :param score_threshold: float value for minimum possible confidence
-        :return: List[RecognizerResult]
-        """
-        if score_threshold is None:
-            score_threshold = self.analyzer.default_score_threshold
-
-        new_key_recognizer_result_map = {}
-        for column, result in key_recognizer_result_map.items():
-            if result.score >= score_threshold:
-                new_key_recognizer_result_map[column] = result
-
-        return new_key_recognizer_result_map
