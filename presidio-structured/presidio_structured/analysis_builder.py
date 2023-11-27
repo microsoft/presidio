@@ -119,7 +119,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                 nested_mappings = self._generate_analysis_from_results_json(
                     result.recognizer_results, prefix=current_key + "."
                 )
-                key_recognizer_result_map.update(nested_mappings.entity_mapping)
+                key_recognizer_result_map.update(nested_mappings)
             first_recognizer_result = next(iter(result.recognizer_results), None)
             if first_recognizer_result is not None:
                 self.logger.debug(
