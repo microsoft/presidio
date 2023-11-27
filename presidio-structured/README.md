@@ -24,7 +24,7 @@ Example 1: Anonymizing DataFrames
 
 ```python
 import pandas as pd
-from presidio_structured import StructuredEngine, TabularAnalysisBuilder
+from presidio_structured import StructuredEngine, PandasAnalysisBuilder
 from presidio_anonymizer.entities import OperatorConfig
 from faker import Faker # optionally using faker as an example
 
@@ -35,7 +35,7 @@ pandas_engine = StructuredEngine()
 sample_df = pd.DataFrame({'name': ['John Doe', 'Jane Smith'], 'email': ['john.doe@example.com', 'jane.smith@example.com']})
 
 # Generate a tabular analysis which describes PII entities in the DataFrame.
-tabular_analysis = TabularAnalysisBuilder().generate_analysis(sample_df)
+tabular_analysis = PandasAnalysisBuilder().generate_analysis(sample_df)
 
 # Define anonymization operators
 fake = Faker()

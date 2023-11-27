@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from presidio_structured import TabularAnalysisBuilder, JsonAnalysisBuilder
+from presidio_structured import PandasAnalysisBuilder, JsonAnalysisBuilder
 
 # NOTE: we won't go into depth unit-testing all analyzers, as that is covered in the presidio-analyzer tests
 

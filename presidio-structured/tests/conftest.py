@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 from presidio_anonymizer.entities import OperatorConfig
-from presidio_structured import TabularAnalysisBuilder, JsonAnalysisBuilder
+from presidio_structured import PandasAnalysisBuilder, JsonAnalysisBuilder
 from presidio_structured.config import StructuredAnalysis
 
 
@@ -48,7 +48,7 @@ def json_analysis_builder():
 
 @pytest.fixture
 def tabular_analysis_builder():
-    return TabularAnalysisBuilder()
+    return PandasAnalysisBuilder()
 
 
 @pytest.fixture
