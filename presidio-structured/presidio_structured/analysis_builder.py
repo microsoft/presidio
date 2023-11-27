@@ -25,7 +25,9 @@ class AnalysisBuilder(ABC):
 
     @abstractmethod
     def generate_analysis(
-        self, data: Union[Dict, DataFrame]
+        self,
+        data: Union[Dict, DataFrame],
+        language: str = "en",
     ) -> StructuredAnalysis:
         """
         Abstract method to generate a configuration from the given data.
@@ -39,7 +41,11 @@ class AnalysisBuilder(ABC):
 class JsonAnalysisBuilder(AnalysisBuilder):
     """Concrete configuration generator for JSON data."""
 
-    def generate_analysis(self, data: Dict) -> StructuredAnalysis:
+    def generate_analysis(
+        self,
+        data: Dict,
+        language: str = "en",
+    ) -> StructuredAnalysis:
         """
         Generate a configuration from the given JSON data.
 
@@ -48,9 +54,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         """
         self.logger.debug("Starting JSON BatchAnalyzer analysis")
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
-        analyzer_results = batch_analyzer.analyze_dict(
-            input_dict=data, language="en"
-        )
+        analyzer_results = batch_analyzer.analyze_dict(input_dict=data, language=language)
         return self._generate_analysis_from_results_json(analyzer_results)
 
     def _generate_analysis_from_results_json(
@@ -80,9 +84,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                     result.recognizer_results, prefix=current_key + "."
                 )
                 mappings.update(nested_mappings.entity_mapping)
-            first_recognizer_result = next(
-                iter(result.recognizer_results), None
-            )
+            first_recognizer_result = next(iter(result.recognizer_results), None)
             if first_recognizer_result is not None:
                 self.logger.debug(
                     f"Found entity {first_recognizer_result.entity_type} \
@@ -126,9 +128,7 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
 
         df = df.sample(n)
 
-        key_recognizer_result_map = self._find_most_common_entity(
-            df, language
-        )
+        key_recognizer_result_map = self._find_most_common_entity(df, language)
 
         # Remove low score results
         key_recognizer_result_map = self.__remove_low_scores(
@@ -158,9 +158,7 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
 
         for column in df.columns:
-            self.logger.debug(
-                f"Finding most common PII entity for column {column}"
-            )
+            self.logger.debug(f"Finding most common PII entity for column {column}")
             analyzer_results = batch_analyzer.analyze_iterator(
                 [val for val in df[column]], language=language
             )
