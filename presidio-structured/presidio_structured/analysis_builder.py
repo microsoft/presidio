@@ -86,6 +86,11 @@ class JsonAnalysisBuilder(AnalysisBuilder):
             analyzer_results
         )
 
+        # Remove low score results
+        key_recognizer_result_map = self._remove_low_scores(
+            key_recognizer_result_map, score_threshold
+        )
+
         return StructuredAnalysis(entity_mapping=key_recognizer_result_map)
 
     def _generate_analysis_from_results_json(
