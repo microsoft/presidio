@@ -94,14 +94,14 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         return StructuredAnalysis(entity_mapping=mappings)
 
 
-class TabularAnalysisbuilder(AnalysisBuilder):
+class TabularAnalysisBuilder(AnalysisBuilder):
     """Placeholder class for generalizing tabular data analysis builders \
           (e.g. PySpark). Only implemented as PandasAnalysisBuilder for now."""
 
     pass
 
 
-class PandasAnalysisBuilder(TabularAnalysisbuilder):
+class PandasAnalysisBuilder(TabularAnalysisBuilder):
     """Concrete configuration generator for tabular data."""
 
     def generate_analysis(
