@@ -10,12 +10,10 @@ from presidio_structured.config import StructuredAnalysis
 
 
 class DataProcessorBase(ABC):
-    """
-    Abstract base class to handle logic of operations over the text using the operators.
-    """
+    """Abstract class to handle logic of operations over text using the operators."""
 
     def __init__(self) -> None:
-        """Initializes DataProcessorBase object."""
+        """Initialize DataProcessorBase object."""
         self.logger = logging.getLogger("presidio-structured")
 
     def operate(
@@ -25,7 +23,8 @@ class DataProcessorBase(ABC):
         operators: Dict[str, OperatorConfig],
     ) -> Any:
         """
-        Performs operations over the text using the operators, as per the structured analysis.
+        Perform operations over the text using the operators, \
+            as per the structured analysis.
 
         :param data: Data to be operated on.
         :param structured_analysis: Analysis schema as per the structured data.
@@ -39,7 +38,9 @@ class DataProcessorBase(ABC):
 
     @abstractmethod
     def _process(
-        self, data: Dict | DataFrame, key_to_operator_mapping: Dict[str, Callable]
+        self,
+        data: Dict | DataFrame,
+        key_to_operator_mapping: Dict[str, Callable],
     ) -> Dict | DataFrame:
         """
         Abstract method for subclasses to provide operation implementation.
@@ -71,11 +72,15 @@ class DataProcessorBase(ABC):
 
         operators_factory = OperatorsFactory()
         for key, entity in config.entity_mapping.items():
-            self.logger.debug(f"Creating operator for key {key} and entity {entity}")
-            operator_config = operators.get(entity, operators.get("DEFAULT", None))
+            self.logger.debug(
+                f"Creating operator for key {key} and entity {entity}"
+            )
+            operator_config = operators.get(
+                entity, operators.get("DEFAULT", None)
+            )
             if operator_config is None:
                 raise ValueError(f"Operator for entity {entity} not found")
-            # NOTE: hardcoded OperatorType.Anonymize, as this is the only one supported for now.
+            # NOTE: hardcoded OperatorType.Anonymize, as this is the only one supported.
             operator = operators_factory.create_operator_class(
                 operator_config.operator_name, OperatorType.Anonymize
             )
@@ -102,6 +107,8 @@ class DataProcessorBase(ABC):
 
 
 class PandasDataProcessor(DataProcessorBase):
+    """Pandas Data Processor."""
+
     def _process(
         self, data: DataFrame, key_to_operator_mapping: Dict[str, Callable]
     ) -> DataFrame:
@@ -155,9 +162,12 @@ class JsonDataProcessor(DataProcessorBase):
         return data
 
     @staticmethod
-    def _set_nested_value(data: Union[Dict, List], path: List[str], value: Any) -> None:
+    def _set_nested_value(
+        data: Union[Dict, List], path: List[str], value: Any
+    ) -> None:
         """
         Recursively sets a value in nested data using a given path.
+
         :param data: Nested data (JSON-like).
         :param path: List of keys/indexes representing the path.
         :param value: Value to be set.
@@ -172,7 +182,9 @@ class JsonDataProcessor(DataProcessorBase):
                     continue
                 else:
                     for item in data:
-                        JsonDataProcessor._set_nested_value(item, path[i:], value)
+                        JsonDataProcessor._set_nested_value(
+                            item, path[i:], value
+                        )
                     return
             elif isinstance(data, dict):
                 if i == len(path) - 1:
@@ -181,10 +193,13 @@ class JsonDataProcessor(DataProcessorBase):
                     data = data.setdefault(key, {})
 
     def _process(
-        self, data: Union[Dict, List], key_to_operator_mapping: Dict[str, Callable]
+        self,
+        data: Union[Dict, List],
+        key_to_operator_mapping: Dict[str, Callable],
     ) -> Union[Dict, List]:
         """
-        Operates on the given JSON-like data (nested dictionary/list) based on the provided configuration.
+        Operates on the given JSON-like data based on the provided configuration.
+
         :param data: JSON-like data to be operated on.
         :param config: Configuration object containing operator information.
         :return: JSON-like data after the operation.

@@ -16,9 +16,7 @@ from presidio_structured.config import StructuredAnalysis
 
 
 class AnalysisBuilder(ABC):
-    """
-    Abstract base class for a configuration generator.
-    """
+    """Abstract base class for a configuration generator."""
 
     def __init__(self, analyzer: AnalyzerEngine = None) -> None:
         """Initialize the configuration generator."""
@@ -26,7 +24,9 @@ class AnalysisBuilder(ABC):
         self.logger = logging.getLogger("presidio-structured")
 
     @abstractmethod
-    def generate_analysis(self, data: Union[Dict, DataFrame]) -> StructuredAnalysis:
+    def generate_analysis(
+        self, data: Union[Dict, DataFrame]
+    ) -> StructuredAnalysis:
         """
         Abstract method to generate a configuration from the given data.
 
@@ -48,14 +48,17 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         """
         self.logger.debug("Starting JSON BatchAnalyzer analysis")
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
-        analyzer_results = batch_analyzer.analyze_dict(input_dict=data, language="en")
+        analyzer_results = batch_analyzer.analyze_dict(
+            input_dict=data, language="en"
+        )
         return self._generate_analysis_from_results_json(analyzer_results)
 
     def _generate_analysis_from_results_json(
         self, analyzer_results: Iterator[DictAnalyzerResult], prefix: str = ""
     ) -> StructuredAnalysis:
         """
-        Generate a configuration from the given analyzer results. Always uses the first recognizer result if there are more than one.
+        Generate a configuration from the given analyzer results. \
+             Always uses the first recognizer result if there are more than one.
 
         :param analyzer_results: The analyzer results.
         :param prefix: The prefix for the configuration keys.
@@ -77,17 +80,21 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                     result.recognizer_results, prefix=current_key + "."
                 )
                 mappings.update(nested_mappings.entity_mapping)
-            first_recognizer_result = next(iter(result.recognizer_results), None)
+            first_recognizer_result = next(
+                iter(result.recognizer_results), None
+            )
             if first_recognizer_result is not None:
                 self.logger.debug(
-                    f"Found entity {first_recognizer_result.entity_type} in {current_key}"
+                    f"Found entity {first_recognizer_result.entity_type} \
+                        in {current_key}"
                 )
                 mappings[current_key] = first_recognizer_result.entity_type
         return StructuredAnalysis(entity_mapping=mappings)
 
 
 class TabularAnalysisbuilder(AnalysisBuilder):
-    """Placeholder class for generalizing tabular data analysis builders (e.g. PySpark). Only implemented as PandasAnalysisBuilder for now."""
+    """Placeholder class for generalizing tabular data analysis builders \
+          (e.g. PySpark). Only implemented as PandasAnalysisBuilder for now."""
 
     pass
 
@@ -112,13 +119,16 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
         """
         if n > len(df):
             self.logger.debug(
-                f"Number of samples ({n}) is larger than the number of rows ({len(df)}), using all rows"
+                f"Number of samples ({n}) is larger than the number of rows \
+                    ({len(df)}), using all rows"
             )
             n = len(df)
 
         df = df.sample(n)
 
-        key_recognizer_result_map = self._find_most_common_entity(df, language)
+        key_recognizer_result_map = self._find_most_common_entity(
+            df, language
+        )
 
         # Remove low score results
         key_recognizer_result_map = self.__remove_low_scores(
@@ -148,7 +158,9 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
 
         for column in df.columns:
-            self.logger.debug(f"Finding most common PII entity for column {column}")
+            self.logger.debug(
+                f"Finding most common PII entity for column {column}"
+            )
             analyzer_results = batch_analyzer.analyze_iterator(
                 [val for val in df[column]], language=language
             )
