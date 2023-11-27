@@ -100,6 +100,7 @@ class DataProcessorBase(ABC):
         """
         return operator_callable(text_to_operate_on)
 
+
 class PandasDataProcessor(DataProcessorBase):
     def _process(
         self, data: DataFrame, key_to_operator_mapping: Dict[str, Callable]

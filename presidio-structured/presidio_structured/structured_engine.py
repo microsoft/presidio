@@ -18,7 +18,9 @@ class StructuredEngine:
     Class to implement methods for anonymizing tabular data.
     """
 
-    def __init__(self, data_processor: DataProcessorBase = PandasDataProcessor()) -> None:
+    def __init__(
+        self, data_processor: DataProcessorBase = PandasDataProcessor()
+    ) -> None:
         """
         Initialize the class with a data processor.
 
@@ -46,8 +48,8 @@ class StructuredEngine:
 
         return self.data_processor.operate(data, structured_analysis, operators)
 
-    def __check_or_add_default_operator(self,
-        operators: Dict[str, OperatorConfig]
+    def __check_or_add_default_operator(
+        self, operators: Dict[str, OperatorConfig]
     ) -> Dict[str, OperatorConfig]:
         """
         Check if the provided operators dictionary has a default operator.

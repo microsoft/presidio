@@ -21,9 +21,7 @@ def test_structured_engine_anonymize_calls_data_processor_operate():
     structured_engine.anonymize(data, structured_analysis, operators)
 
     # Assert
-    data_processor.operate.assert_called_once_with(
-        data, structured_analysis, operators
-    )
+    data_processor.operate.assert_called_once_with(data, structured_analysis, operators)
 
 
 def test_structured_engine_anonymize_adds_default_operator_if_none_provided():
@@ -54,9 +52,8 @@ def test_structured_engine_anonymize_does_not_override_existing_default_operator
     structured_engine.anonymize(data, structured_analysis, operators)
 
     # Assert
-    data_processor.operate.assert_called_once_with(
-        data, structured_analysis, operators
-    )
+    data_processor.operate.assert_called_once_with(data, structured_analysis, operators)
+
 
 def test_json_processor_with_pandas_dataframe_will_raise(tabular_analysis):
     data_processor = JsonDataProcessor()
@@ -65,8 +62,9 @@ def test_json_processor_with_pandas_dataframe_will_raise(tabular_analysis):
     with pytest.raises(ValueError):
         structured_engine.anonymize(data, tabular_analysis)
 
+
 def test_pandas_processor_with_json_will_raise(json_analysis):
-    structured_engine = StructuredEngine() # default PandasDataProcessor
+    structured_engine = StructuredEngine()  # default PandasDataProcessor
     data = {"name": ["John", "Jane"]}
     with pytest.raises(ValueError):
         structured_engine.anonymize(data, json_analysis)

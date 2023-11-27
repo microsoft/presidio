@@ -25,19 +25,15 @@ def sample_json():
             "street": "123 Main St",
             "city": "Anytown",
             "state": "CA",
-            "postal_code": "12345"
-        }
+            "postal_code": "12345",
+        },
     }
     return data
 
 
 @pytest.fixture
 def sample_json_with_array():
-    data = {'users':
-            [
-                {'id': 1, 'name': 'John Doe'},
-                {'id': 2, 'name': 'Jane Doe'}
-            ]}
+    data = {"users": [{"id": 1, "name": "John Doe"}, {"id": 2, "name": "Jane Doe"}]}
     return data
 
 
@@ -55,8 +51,9 @@ def tabular_analysis_builder():
 def operators():
     return {
         "PERSON": OperatorConfig("replace", {"new_value": "PERSON_REPLACEMENT"}),
-        "DEFAULT": OperatorConfig("replace", {"new_value": "DEFAULT_REPLACEMENT"})
+        "DEFAULT": OperatorConfig("replace", {"new_value": "DEFAULT_REPLACEMENT"}),
     }
+
 
 @pytest.fixture
 def operators_no_default():
@@ -64,19 +61,23 @@ def operators_no_default():
         "PERSON": OperatorConfig("replace", {"new_value": "PERSON_REPLACEMENT"}),
     }
 
+
 @pytest.fixture
 def tabular_analysis():
-    return StructuredAnalysis(entity_mapping={
+    return StructuredAnalysis(
+        entity_mapping={
             "name": "PERSON",
             "email": "EMAIL_ADDRESS",
             "phone": "PHONE_NUMBER",
-        })
+        }
+    )
 
 
 @pytest.fixture
 def json_analysis():
-    return StructuredAnalysis(entity_mapping={
-        "name": "PERSON",
-        "address.city": "LOCATION",
-    }
+    return StructuredAnalysis(
+        entity_mapping={
+            "name": "PERSON",
+            "address.city": "LOCATION",
+        }
     )

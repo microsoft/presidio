@@ -64,7 +64,9 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         mappings = {}
 
         if not isinstance(analyzer_results, Iterable):
-            self.logger.debug("No analyzer results found, returning empty StructuredAnalysis")
+            self.logger.debug(
+                "No analyzer results found, returning empty StructuredAnalysis"
+            )
             return StructuredAnalysis(entity_mapping=mappings)
 
         for result in analyzer_results:
@@ -83,9 +85,12 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                 mappings[current_key] = first_recognizer_result.entity_type
         return StructuredAnalysis(entity_mapping=mappings)
 
+
 class TabularAnalysisbuilder(AnalysisBuilder):
-    """ Placeholder class for generalizing tabular data analysis builders (e.g. PySpark). Only implemented as PandasAnalysisBuilder for now."""
+    """Placeholder class for generalizing tabular data analysis builders (e.g. PySpark). Only implemented as PandasAnalysisBuilder for now."""
+
     pass
+
 
 class PandasAnalysisBuilder(TabularAnalysisbuilder):
     """Concrete configuration generator for tabular data."""
