@@ -1,4 +1,5 @@
-from typing import Any, Dict, Union
+import logging
+from typing import Dict, Union
 
 from pandas import DataFrame
 from presidio_anonymizer.entities import OperatorConfig
@@ -24,6 +25,7 @@ class StructuredEngine:
         :param data_processor: Instance of DataProcessorBase.
         """
         self.data_processor = data_processor
+        self.logger = logging.getLogger("presidio-structured")
 
     def anonymize(
         self,
@@ -39,12 +41,12 @@ class StructuredEngine:
         :param operators: a dictionary of operator configurations, optional.
         :return: Anonymized dictionary or DataFrame.
         """
+        self.loggger.debug("Starting anonymization")
         operators = self.__check_or_add_default_operator(operators)
 
         return self.data_processor.operate(data, structured_analysis, operators)
 
-    @staticmethod
-    def __check_or_add_default_operator(
+    def __check_or_add_default_operator(self,
         operators: Dict[str, OperatorConfig]
     ) -> Dict[str, OperatorConfig]:
         """
@@ -56,7 +58,9 @@ class StructuredEngine:
         """
         default_operator = OperatorConfig(DEFAULT)
         if not operators:
+            self.logger.debug("No operators provided, using default operator")
             return {"DEFAULT": default_operator}
         if not operators.get("DEFAULT"):
+            self.logger.debug("No default operator provided, using default operator")
             operators["DEFAULT"] = default_operator
         return operators

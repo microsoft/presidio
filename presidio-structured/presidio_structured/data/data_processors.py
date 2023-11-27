@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Union
 
@@ -15,7 +16,7 @@ class DataProcessorBase(ABC):
 
     def __init__(self) -> None:
         """Initializes DataProcessorBase object."""
-        pass
+        self.logger = logging.getLogger("presidio-structured")
 
     def operate(
         self,
@@ -70,6 +71,7 @@ class DataProcessorBase(ABC):
 
         operators_factory = OperatorsFactory()
         for key, entity in config.entity_mapping.items():
+            self.logger.debug(f"Creating operator for key {key} and entity {entity}")
             operator_config = operators.get(entity, operators.get("DEFAULT", None))
             if operator_config is None:
                 raise ValueError(f"Operator for entity {entity} not found")
@@ -114,6 +116,7 @@ class PandasDataProcessor(DataProcessorBase):
             raise ValueError("Data must be a pandas DataFrame")
 
         for key, operator_callable in key_to_operator_mapping.items():
+            self.logger.debug(f"Operating on column {key}")
             for idx, row in data.iterrows():
                 text_to_operate_on = row[key]
                 operated_text = self._operate_on_text(
@@ -190,6 +193,7 @@ class JsonDataProcessor(DataProcessorBase):
             raise ValueError("Data must be a JSON-like object")
 
         for key, operator_callable in key_to_operator_mapping.items():
+            self.logger.debug(f"Operating on key {key}")
             keys = key.split(".")
             if isinstance(data, list):
                 for idx, item in enumerate(data):

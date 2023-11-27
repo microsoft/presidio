@@ -1,7 +1,8 @@
+import logging
 from abc import ABC, abstractmethod
 from collections import Counter
 from collections.abc import Iterable
-from typing import Any, Dict, Iterator, Union
+from typing import Dict, Iterator, Union
 
 from pandas import DataFrame
 from presidio_analyzer import (
@@ -22,6 +23,7 @@ class AnalysisBuilder(ABC):
     def __init__(self, analyzer: AnalyzerEngine = None) -> None:
         """Initialize the configuration generator."""
         self.analyzer = AnalyzerEngine() if analyzer is None else analyzer
+        self.logger = logging.getLogger("presidio-structured")
 
     @abstractmethod
     def generate_analysis(self, data: Union[Dict, DataFrame]) -> StructuredAnalysis:
@@ -44,6 +46,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         :param data: The input JSON data.
         :return: The generated configuration.
         """
+        self.logger.debug("Starting JSON BatchAnalyzer analysis")
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
         analyzer_results = batch_analyzer.analyze_dict(input_dict=data, language="en")
         return self._generate_analysis_from_results_json(analyzer_results)
@@ -61,7 +64,8 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         mappings = {}
 
         if not isinstance(analyzer_results, Iterable):
-            return mappings
+            self.logger.debug("No analyzer results found, returning empty StructuredAnalysis")
+            return StructuredAnalysis(entity_mapping=mappings)
 
         for result in analyzer_results:
             current_key = prefix + result.key
@@ -73,6 +77,9 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                 mappings.update(nested_mappings.entity_mapping)
             first_recognizer_result = next(iter(result.recognizer_results), None)
             if first_recognizer_result is not None:
+                self.logger.debug(
+                    f"Found entity {first_recognizer_result.entity_type} in {current_key}"
+                )
                 mappings[current_key] = first_recognizer_result.entity_type
         return StructuredAnalysis(entity_mapping=mappings)
 
@@ -95,6 +102,9 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
         :return: The generated configuration.
         """
         if n > len(df):
+            self.logger.debug(
+                f"Number of samples ({n}) is larger than the number of rows ({len(df)}), using all rows"
+            )
             n = len(df)
 
         df = df.sample(n)
@@ -124,6 +134,7 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
 
         for column in df.columns:
+            self.logger.debug(f"Finding most common PII entity for column {column}")
             analyzer_results = batch_analyzer.analyze_iterator(
                 [val for val in df[column]], language=language
             )
