@@ -91,7 +91,11 @@ class JsonAnalysisBuilder(AnalysisBuilder):
             key_recognizer_result_map, score_threshold
         )
 
-        return StructuredAnalysis(entity_mapping=key_recognizer_result_map)
+        key_entity_map = {
+            key: result.entity_type for key, result in key_recognizer_result_map.items()
+        }
+
+        return StructuredAnalysis(entity_mapping=key_entity_map)
 
     def _generate_analysis_from_results_json(
         self, analyzer_results: Iterator[DictAnalyzerResult], prefix: str = ""
