@@ -1,4 +1,4 @@
-""" Helper data classes, mostly simple wrappers  to ensure consistent user interface. """
+"""Helper data classes, mostly simple wrappers  to ensure consistent user interface."""
 
 import json
 from abc import ABC, abstractmethod
@@ -12,7 +12,7 @@ class ReaderBase(ABC):
     """
     Base class for data readers.
 
-    This class should not be instantiated directly. Instead use or define a reader subclass.
+    This class should not be instantiated directly, instead init a subclass.
     """
 
     @abstractmethod

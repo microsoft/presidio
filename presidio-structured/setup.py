@@ -24,7 +24,9 @@ setup(
     name="presidio_structured",
     python_requires=">=3.5",
     version=__version__,
-    packages=find_packages(include=["presidio_structured", "presidio_structured.*"]),
+    packages=find_packages(
+        include=["presidio_structured", "presidio_structured.*"]
+    ),
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
@@ -36,7 +38,8 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
     ],
-    description="Presidio structured package - analyses and anonymizes structured and semistructured data.",
+    description="Presidio structured package - analyses and anonymizes \
+          structured and semistructured data.",
     license="MIT license",
     include_package_data=True,
     keywords="presidio_structured",

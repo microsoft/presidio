@@ -8,7 +8,9 @@ from presidio_structured.data.data_processors import (
 
 
 class TestDataProcessorBase:
-    def test_abstract_init_raises(self, sample_df, tabular_analysis_builder, operators):
+    def test_abstract_init_raises(
+        self, sample_df, tabular_analysis_builder, operators
+    ):
         with pytest.raises(TypeError):
             DataProcessorBase()
 
@@ -29,9 +31,13 @@ class TestPandasDataProcessor:
     ):
         processor = PandasDataProcessor()
         with pytest.raises(ValueError):
-            processor.operate(sample_df, tabular_analysis, operators_no_default)
+            processor.operate(
+                sample_df, tabular_analysis, operators_no_default
+            )
 
-    def test_process_invalid_data(self, sample_json, tabular_analysis, operators):
+    def test_process_invalid_data(
+        self, sample_json, tabular_analysis, operators
+    ):
         processor = PandasDataProcessor()
         with pytest.raises(ValueError):
             processor.operate(sample_json, tabular_analysis, operators)
@@ -57,7 +63,9 @@ class TestJsonDataProcessor:
     ):
         processor = JsonDataProcessor()
         with pytest.raises(ValueError):
-            processor.operate(sample_json, json_analysis, operators_no_default)
+            processor.operate(
+                sample_json, json_analysis, operators_no_default
+            )
 
     def test_process_invalid_data(self, sample_df, json_analysis, operators):
         processor = JsonDataProcessor()
