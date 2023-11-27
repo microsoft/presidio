@@ -128,25 +128,25 @@ def test_analysis_json_when_threshold_is_zero_then_all_results_pass(
     assert len(structured_analysis.entity_mapping) == 4
 
 
-def test_analysis_tabular_when_threshold_is_half_then_phone_does_not_pass(
+def test_analysis_json_when_threshold_is_high_then_only_email_passes(
     json_analysis_builder, sample_json
 ):
     structured_analysis = json_analysis_builder.generate_analysis(
         sample_json, score_threshold=0.9
     )
 
-    assert len(structured_analysis.entity_mapping) == 2
+    assert len(structured_analysis.entity_mapping) == 1
 
 
-def test_analysis_tabular_when_default_threshold_is_half_then_phone_does_not_pass(sample_json):
+def test_analysis_json_when_default_threshold_is_high_then_only_email_passes(sample_json):
     analyzer_engine = AnalyzerEngine(default_score_threshold=0.9)
     json_analysis_builder = JsonAnalysisBuilder(analyzer_engine)
     structured_analysis = json_analysis_builder.generate_analysis(sample_json)
 
-    assert len(structured_analysis.entity_mapping) == 2
+    assert len(structured_analysis.entity_mapping) == 1
 
 
-def test_analysis_tabular_when_default_threshold_is_zero_then_all_results_pass(
+def test_analysis_json_when_default_threshold_is_zero_then_all_results_pass(
     json_analysis_builder, sample_json
 ):
     structured_analysis = json_analysis_builder.generate_analysis(sample_json)
