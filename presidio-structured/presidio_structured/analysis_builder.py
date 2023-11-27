@@ -60,6 +60,7 @@ class AnalysisBuilder(ABC):
 
         return new_key_recognizer_result_map
 
+
 class JsonAnalysisBuilder(AnalysisBuilder):
     """Concrete configuration generator for JSON data."""
 
@@ -77,12 +78,19 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         """
         self.logger.debug("Starting JSON BatchAnalyzer analysis")
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
-        analyzer_results = batch_analyzer.analyze_dict(input_dict=data, language=language)
-        return self._generate_analysis_from_results_json(analyzer_results)
+        analyzer_results = batch_analyzer.analyze_dict(
+            input_dict=data, language=language
+        )
+
+        key_recognizer_result_map = self._generate_analysis_from_results_json(
+            analyzer_results
+        )
+
+        return StructuredAnalysis(entity_mapping=key_recognizer_result_map)
 
     def _generate_analysis_from_results_json(
         self, analyzer_results: Iterator[DictAnalyzerResult], prefix: str = ""
-    ) -> StructuredAnalysis:
+    ) -> Dict[str, RecognizerResult]:
         """
         Generate a configuration from the given analyzer results. \
              Always uses the first recognizer result if there are more than one.
@@ -91,13 +99,13 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         :param prefix: The prefix for the configuration keys.
         :return: The generated configuration.
         """
-        mappings = {}
+        key_recognizer_result_map = {}
 
         if not isinstance(analyzer_results, Iterable):
             self.logger.debug(
                 "No analyzer results found, returning empty StructuredAnalysis"
             )
-            return StructuredAnalysis(entity_mapping=mappings)
+            return key_recognizer_result_map
 
         for result in analyzer_results:
             current_key = prefix + result.key
@@ -106,15 +114,15 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                 nested_mappings = self._generate_analysis_from_results_json(
                     result.recognizer_results, prefix=current_key + "."
                 )
-                mappings.update(nested_mappings.entity_mapping)
+                key_recognizer_result_map.update(nested_mappings.entity_mapping)
             first_recognizer_result = next(iter(result.recognizer_results), None)
             if first_recognizer_result is not None:
                 self.logger.debug(
-                    f"Found entity {first_recognizer_result.entity_type} \
+                    f"Found result with entity {first_recognizer_result.entity_type} \
                         in {current_key}"
                 )
-                mappings[current_key] = first_recognizer_result.entity_type
-        return StructuredAnalysis(entity_mapping=mappings)
+                key_recognizer_result_map[current_key] = first_recognizer_result
+        return key_recognizer_result_map
 
 
 class TabularAnalysisBuilder(AnalysisBuilder):
