@@ -43,7 +43,7 @@ class StructuredEngine:
         :param operators: a dictionary of operator configurations, optional.
         :return: Anonymized dictionary or DataFrame.
         """
-        self.loggger.debug("Starting anonymization")
+        self.logger.debug("Starting anonymization")
         operators = self.__check_or_add_default_operator(operators)
 
         return self.data_processor.operate(data, structured_analysis, operators)
