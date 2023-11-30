@@ -39,9 +39,9 @@ class DataProcessorBase(ABC):
     @abstractmethod
     def _process(
         self,
-        data: Dict | DataFrame,
+        data: Union[Dict,  DataFrame],
         key_to_operator_mapping: Dict[str, Callable],
-    ) -> Dict | DataFrame:
+    ) -> Union[Dict, DataFrame]:
         """
         Abstract method for subclasses to provide operation implementation.
 
