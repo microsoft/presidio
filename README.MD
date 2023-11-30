@@ -51,6 +51,12 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
+
+## Are you using Presidio? We'd love to know how
+
+Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u)
+
+
 ## Installing Presidio
 
 1. [Using pip](https://microsoft.github.io/presidio/installation/#using-pip)
