@@ -30,9 +30,9 @@ bitcoin wallets, US phone numbers, financial data and more.
 
 ## [Demo](https://aka.ms/presidio-demo) | [Frequently Asked Questions](faq.md)
 
-## Are you using Presidio? We'd love to know how
+## :mailbox_with_mail: Are you using Presidio? We'd love to know how :mailbox_with_mail:
 
-Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u)
+Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u).
 
 
 ## Presidio's modules
