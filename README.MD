@@ -35,6 +35,12 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ---
 
+## :mailbox_with_mail: Are you using Presidio? We'd love to know how :mailbox_with_mail:
+
+Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u).
+
+---
+
 ### Goals
 
 - Allow organizations to preserve privacy in a simpler way by democratizing de-identification technologies and introducing transparency in decisions.
@@ -50,6 +56,8 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 5. Module for **redacting PII text in images** (standard image types and DICOM medical images).
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
+
+
 
 ## Installing Presidio
 
