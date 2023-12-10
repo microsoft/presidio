@@ -10,32 +10,32 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Quickstart: getting_started.md
-  - Step by step tutorial:
-    - Home: tutorial/index.md
-    - Getting started: tutorial/00_getting_started.md
-    - Deny-list recognizers: tutorial/01_deny_list.md
-    - Regex recognizers: tutorial/02_regex.md
-    - Rule-based recognizers: tutorial/03_rule_based.md
-    - Additional models/languages: tutorial/05_languages.md
-    - External services: tutorial/04_external_services.md
-    - Context enhancement: tutorial/06_context.md
-    - Decision process: tutorial/07_decision_process.md
-    - No-code recognizers: tutorial/08_no_code.md
-    - Ad-hoc recognizers: tutorial/09_ad_hoc.md
-    - Simple anonymization: tutorial/10_simple_anonymization.md
-    - Custom anonymization: tutorial/11_custom_anonymization.md
-    - Encryption/Decryption: tutorial/12_encryption.md
-    - Allow-lists: tutorial/13_allow_list.md
-
-  - Handling text:
+  - Handling text: 
     - Home: text_anonymization.md
+    - Step by step tutorial: 
+      - Home: tutorial/index.md
+      - Getting started: tutorial/00_getting_started.md
+      - Deny-list recognizers: tutorial/01_deny_list.md
+      - Regex recognizers: tutorial/02_regex.md
+      - Rule-based recognizers: tutorial/03_rule_based.md
+      - Additional models/languages: tutorial/05_languages.md
+      - External services: tutorial/04_external_services.md
+      - Context enhancement: tutorial/06_context.md
+      - Decision process: tutorial/07_decision_process.md
+      - No-code recognizers: tutorial/08_no_code.md
+      - Ad-hoc recognizers: tutorial/09_ad_hoc.md
+      - Simple anonymization: tutorial/10_simple_anonymization.md
+      - Custom anonymization: tutorial/11_custom_anonymization.md
+      - Encryption/Decryption: tutorial/12_encryption.md
+      - Allow-lists: tutorial/13_allow_list.md
+
     - Presidio Analyzer:
       - Home: analyzer/index.md
       - Developing PII recognizers:
         - Tutorial : analyzer/adding_recognizers.md
         - Best practices in developing recognizers : analyzer/developing_recognizers.md
       - Multi-language support: analyzer/languages.md
-      - Customizing the NLP model:
+      - Customizing the NLP model: 
         - Home: analyzer/customizing_nlp_models.md
         - Spacy/Stanza: analyzer/nlp_engines/spacy_stanza.md
         - Transformers: analyzer/nlp_engines/transformers.md
@@ -43,25 +43,27 @@ nav:
     - Presidio Anonymizer:
       - Home: anonymizer/index.md
       - Developing PII operators: anonymizer/adding_operators.md
-  - Handling images:
+  - Handling images: 
     - Home: image-redactor/index.md
     - Evaluating DICOM redaction: image-redactor/evaluating_dicom_redaction.md
-  - Supported entities: supported_entities.md
-  - Development and design:
-    - Design: design.md
-    - Setting up a development environment: development.md
-    - Build and release process: build_release.md
-    - Changes from V1 to V2: presidio_V2.md
-    - Python API reference:
-      - Home: api.md
-      - Presidio Analyzer Python API: api/analyzer_python.md
-      - Presidio Anonymizer Python API: api/anonymizer_python.md
-      - Presidio Image Redactor Python API: api/image_redactor_python.md
-    - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
-  - Samples: samples/index.md
-  - Community: community.md
-  - FAQ: faq.md
-  - Demo: https://huggingface.co/spaces/presidio/presidio_demo" target="_blank
+  - Samples: samples/index.md  
+  - General:
+    - Supported entities: supported_entities.md
+    - Development and design:
+      - Design: design.md
+      - Setting up a development environment: development.md
+      - Build and release process: build_release.md
+      - Changes from V1 to V2: presidio_V2.md
+      - Python API reference:
+        - Home: api.md
+        - Presidio Analyzer Python API: api/analyzer_python.md
+        - Presidio Anonymizer Python API: api/anonymizer_python.md
+        - Presidio Image Redactor Python API: api/image_redactor_python.md
+      - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
+
+    - Community: community.md
+    - FAQ: faq.md
+    - Demo: https://huggingface.co/spaces/presidio/presidio_demo" target="_blank
 theme:
   name: material
   custom_dir: overrides
@@ -79,6 +81,7 @@ theme:
   features:
     - navigation.instant
     - content.tabs.link
+    # - navigation.sections
     # - navigation.tabs
     # - navigation.tabs.sticky
 plugins:
@@ -110,4 +113,9 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.pathconverter
   - pymdownx.tabbed:
-      alternate_style: true
+      alternate_style: true 
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
