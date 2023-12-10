@@ -33,6 +33,7 @@ from .au_acn_recognizer import AuAcnRecognizer
 from .au_tfn_recognizer import AuTfnRecognizer
 from .au_medicare_recognizer import AuMedicareRecognizer
 from .in_pan_recognizer import InPanRecognizer
+from .pl_pesel_recognizer import PlPeselRecognizer
 
 
 NLP_RECOGNIZERS = {
@@ -74,4 +75,5 @@ __all__ = [
     "ItIdentityCardRecognizer",
     "ItPassportRecognizer",
     "InPanRecognizer",
+    "PlPeselRecognizer",
 ]
