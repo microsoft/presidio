@@ -43,6 +43,7 @@ setuptools.setup(
     extras_require={
         "transformers": ["spacy_huggingface_pipelines"],
         "stanza": ["stanza", "spacy_stanza"],
+        "azure-ai-language": ["azure-ai-textanalytics", "azure-core"],
     },
     include_package_data=True,
     license="MIT",
