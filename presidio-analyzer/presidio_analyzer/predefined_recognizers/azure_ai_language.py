@@ -62,13 +62,13 @@ class AzureAILanguageRecognizer(EntityRecognizer):
         if azure_ai_key is None:
             raise ValueError(
                 "Azure AI Language key is required. "
-                "Please provide a key or set the TA_KEY environment variable."
+                "Please provide a key or set the AZURE_AI_KEY environment variable."
             )
         if azure_ai_endpoint is None:
             raise ValueError(
                 "Azure AI Language endpoint is required. "
                 "Please provide an endpoint "
-                "or set the TA_ENDPOINT environment variable."
+                "or set the AZURE_AI_ENDPOINT environment variable."
             )
 
         if not ta_client:
