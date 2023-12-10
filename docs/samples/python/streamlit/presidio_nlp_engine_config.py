@@ -199,7 +199,9 @@ def create_nlp_engine_with_azure_ai_language(ta_key: str, ta_endpoint: str):
     registry = RecognizerRegistry()
     registry.load_predefined_recognizers()
 
-    azure_ai_language_recognizer = AzureAIServiceWrapper(ta_endpoint=ta_endpoint, ta_key=ta_key)
+    azure_ai_language_recognizer = AzureAIServiceWrapper(
+        ta_endpoint=ta_endpoint, ta_key=ta_key
+    )
     nlp_configuration = {
         "nlp_engine_name": "spacy",
         "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],

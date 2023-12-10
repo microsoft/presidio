@@ -3,7 +3,6 @@ from transformers import AutoModel, AutoTokenizer
 
 
 if __name__ == "__main__":
-
     from flair.data import Sentence
     from flair.models import SequenceTagger
 
@@ -20,8 +19,7 @@ if __name__ == "__main__":
     print(sentence)
 
     # print predicted NER spans
-    print('The following NER tags are found:')
+    print("The following NER tags are found:")
     # iterate over entities and print
-    for entity in sentence.get_spans('ner'):
+    for entity in sentence.get_spans("ner"):
         print(entity)
-

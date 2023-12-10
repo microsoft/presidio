@@ -2,8 +2,8 @@ from presidio_helpers import analyzer_engine, analyze, anonymize
 
 
 def test_streamlit_logic():
-    st_model ="en" #st_model = "StanfordAIMI/stanford-deidentifier-base"
-    st_model_package = "stanza" ##st_model_package = "HuggingFace"
+    st_model = "en"  # st_model = "StanfordAIMI/stanford-deidentifier-base"
+    st_model_package = "stanza"  ##st_model_package = "HuggingFace"
     st_ta_key = None
     st_ta_endpoint = None
 

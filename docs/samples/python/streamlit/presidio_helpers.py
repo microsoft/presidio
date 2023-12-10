@@ -16,10 +16,9 @@ from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 
 from openai_fake_data_generator import (
-    set_openai_params,
     call_completion_model,
-    create_prompt,
     OpenAIParams,
+    create_prompt,
 )
 from presidio_nlp_engine_config import (
     create_nlp_engine_with_spacy,
@@ -50,15 +49,15 @@ def nlp_engine_and_registry(
     """
 
     # Set up NLP Engine according to the model of choice
-    if "spaCy" in model_family:
+    if "spacy" in model_family.lower():
         return create_nlp_engine_with_spacy(model_path)
-    if "stanza" in model_family:
+    if "stanza" in model_family.lower():
         return create_nlp_engine_with_stanza(model_path)
-    elif "flair" in model_family:
+    elif "flair" in model_family.lower():
         return create_nlp_engine_with_flair(model_path)
-    elif "HuggingFace" in model_family:
+    elif "huggingface" in model_family.lower():
         return create_nlp_engine_with_transformers(model_path)
-    elif "Azure Text Analytics" in model_family:
+    elif "azure ai language" in model_family.lower():
         return create_nlp_engine_with_azure_ai_language(ta_key, ta_endpoint)
     else:
         raise ValueError(f"Model family {model_family} not supported")
@@ -218,14 +217,9 @@ def create_fake_data(
     if not openai_params.openai_key:
         return "Please provide your OpenAI key"
     results = anonymize(text=text, operator="replace", analyze_results=analyze_results)
-    set_openai_params(openai_params)
     prompt = create_prompt(results.text)
     print(f"Prompt: {prompt}")
-    fake = call_openai_api(
-        prompt=prompt,
-        openai_model_name=openai_params.model,
-        openai_deployment_name=openai_params.deployment_name,
-    )
+    fake = call_completion_model(prompt=prompt, openai_params=openai_params)
     return fake
 
 
