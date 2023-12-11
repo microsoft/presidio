@@ -16,6 +16,8 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 class AzureAILanguageRecognizer(EntityRecognizer):
+    """Wrapper for PII detection using Azure AI Language."""
+
     def __init__(
         self,
         supported_entities: Optional[List[str]] = None,
@@ -26,7 +28,11 @@ class AzureAILanguageRecognizer(EntityRecognizer):
     ):
         """
         Wrapper for the PII detection in Azure AI Language
-        :param ta_client: object of type TextAnalyticsClient
+        :param supported_entities: List of supported entities for this recognizer.
+        If None, all supported entities will be used.
+        :param supported_language: Language code to use for the recognizer.
+        :param ta_client: object of type TextAnalyticsClient. If missing,
+        the client will be created using the key and endpoint.
         :param azure_ai_key: Azure AI  for language key
         :param azure_ai_endpoint: Azure AI for language endpoint
 
@@ -77,12 +83,13 @@ class AzureAILanguageRecognizer(EntityRecognizer):
 
     @staticmethod
     def get_azure_ai_supported_entities() -> List[str]:
+        """Return the list of all supported entities for Azure AI Language."""
         from azure.ai.textanalytics._models import PiiEntityCategory
 
         return [r.value.upper() for r in PiiEntityCategory]
 
     @staticmethod
-    def __authenticate_client(key: str, endpoint: str):
+    def __authenticate_client(key: str, endpoint: str) -> TextAnalyticsClient:
         """Authenticate the client using the key and endpoint."""
 
         ta_credential = AzureKeyCredential(key)
@@ -94,6 +101,14 @@ class AzureAILanguageRecognizer(EntityRecognizer):
     def analyze(
         self, text: str, entities: List[str] = None, nlp_artifacts: NlpArtifacts = None
     ) -> List[RecognizerResult]:
+        """
+        Analyze text using Azure AI Language.
+
+        :param text: Text to analyze
+        :param entities: List of entities to return
+        :param nlp_artifacts: Object of type NlpArtifacts, not used in this recognizer.
+        :return: A list of RecognizerResult, one per each entity found in the text.
+        """
         if not entities:
             entities = self.supported_entities
         response = self.ta_client.recognize_pii_entities(
@@ -136,4 +151,5 @@ class AzureAILanguageRecognizer(EntityRecognizer):
         return explanation
 
     def load(self) -> None:
+        """Load the recognizer."""
         pass
