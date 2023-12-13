@@ -59,9 +59,7 @@ class FlairRecognizer(EntityRecognizer):
         # ({"MISCELLANEOUS"}, {"MISC"}), # Probably not PII
     ]
 
-    MODEL_LANGUAGES = {
-        "en": "flair/ner-english-large"
-    }
+    MODEL_LANGUAGES = {"en": "flair/ner-english-large"}
 
     PRESIDIO_EQUIVALENCES = {
         "PER": "PERSON",
@@ -76,7 +74,7 @@ class FlairRecognizer(EntityRecognizer):
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
         model: SequenceTagger = None,
-        model_path: Optional[str] = None
+        model_path: Optional[str] = None,
     ):
         self.check_label_groups = (
             check_label_groups if check_label_groups else self.CHECK_LABEL_GROUPS
@@ -93,7 +91,9 @@ class FlairRecognizer(EntityRecognizer):
             self.model = SequenceTagger.load(model_path)
         else:
             print(f"Loading model for language {supported_language}")
-            self.model = SequenceTagger.load(self.MODEL_LANGUAGES.get(supported_language))
+            self.model = SequenceTagger.load(
+                self.MODEL_LANGUAGES.get(supported_language)
+            )
 
         super().__init__(
             supported_entities=supported_entities,
