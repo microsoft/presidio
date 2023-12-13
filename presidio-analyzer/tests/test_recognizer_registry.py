@@ -8,7 +8,9 @@ from presidio_analyzer import (
     PatternRecognizer,
     EntityRecognizer,
     Pattern,
+    AnalyzerEngine
 )
+from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 
 
 @pytest.fixture(scope="module")
@@ -213,3 +215,23 @@ def test_predefined_pattern_recognizers_have_the_right_regex_flags():
     for rec in registry.recognizers:
         if isinstance(rec, PatternRecognizer):
             assert rec.global_regex_flags == re.DOTALL
+
+
+def test_recognizer_removed_and_returned_entities_are_correct():
+    registry = RecognizerRegistry()
+    registry.load_predefined_recognizers()
+    registry.remove_recognizer("SpacyRecognizer")
+    sr = SpacyRecognizer(supported_entities=["DATE_TIME", "NRP"])
+    registry.add_recognizer(sr)
+
+    supported_entities = registry.get_supported_entities(languages=["en"])
+
+    assert "DATE_TIME" in supported_entities
+    assert "PERSON" not in supported_entities
+
+    analyzer = AnalyzerEngine(
+        registry=registry,
+        supported_languages='en'
+    )
+
+    analyzer.analyze("My name is David", language="en")
