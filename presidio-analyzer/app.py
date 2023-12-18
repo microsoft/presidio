@@ -5,6 +5,9 @@ import os
 from logging.config import fileConfig
 from pathlib import Path
 from typing import Tuple
+from functools import wraps
+from flask import request, jsonify
+import requests
 
 from flask import Flask, request, jsonify, Response
 from werkzeug.exceptions import HTTPException
@@ -40,12 +43,51 @@ class Server:
         self.engine = AnalyzerEngine()
         self.logger.info(WELCOME_MESSAGE)
 
+        def verify_token(token):
+           
+            payload = {'id': 'pvi_3rz3vx5xfnwkuek7vtvy4pgovyyqev6b'}
+            headers = {
+                'Authorization': f'Bearer pts_qhiskoancgv6t5huj5rrfzjzcckyw27c'
+            }
+
+            response = requests.post('https://vault.aws.us.pangea.cloud/v1/get', json=payload, headers=headers)
+            
+            if response.status_code == 200:
+                try:
+                    json_data = response.json()
+                    secret = json_data['result']['current_version']['secret']
+                    token = token.strip().split()[1]
+
+                    return secret == token
+                except KeyError:
+                    return False
+                except Exception as e:
+                    print(f"Exception occurred: {e}")
+                    return False
+            else:
+                print(f"Request failed with status code: {response.status_code}")
+                return False
+        
+        def token_required(func):
+            @wraps(func)
+            def decorated_function(*args, **kwargs):
+                token = request.headers.get('Authorization')
+
+                if not token or not verify_token(token):
+                    return jsonify({"error": "Unauthorized"}), 401
+
+                return func(*args, **kwargs)
+
+            return decorated_function
+
         @self.app.route("/health")
+        @token_required
         def health() -> str:
             """Return basic health probe result."""
             return "Presidio Analyzer service is up"
 
         @self.app.route("/analyze", methods=["POST"])
+        @token_required
         def analyze() -> Tuple[str, int]:
             """Execute the analyzer function."""
             # Parse the request params
@@ -92,6 +134,7 @@ class Server:
                 return jsonify(error=e.args[0]), 500
 
         @self.app.route("/recognizers", methods=["GET"])
+        @token_required
         def recognizers() -> Tuple[str, int]:
             """Return a list of supported recognizers."""
             language = request.args.get("language")
@@ -107,6 +150,7 @@ class Server:
                 return jsonify(error=e.args[0]), 500
 
         @self.app.route("/supportedentities", methods=["GET"])
+        @token_required
         def supported_entities() -> Tuple[str, int]:
             """Return a list of supported entities."""
             language = request.args.get("language")
