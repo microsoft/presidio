@@ -56,7 +56,8 @@ model_list = [
     "flair/ner-english-large",
     "HuggingFace/obi/deid_roberta_i2b2",
     "HuggingFace/StanfordAIMI/stanford-deidentifier-base",
-    "Azure Text Analytics PII",
+    "stanza/en",
+    "Azure AI Language",
     "Other",
 ]
 if not allow_other_models:
@@ -75,22 +76,22 @@ st_model_package = st_model.split("/")[0]
 # Remove package prefix (if needed)
 st_model = (
     st_model
-    if st_model_package not in ("spaCy", "HuggingFace")
+    if st_model_package.lower() not in ("spacy", "stanza", "huggingface")
     else "/".join(st_model.split("/")[1:])
 )
 
 if st_model == "Other":
     st_model_package = st.sidebar.selectbox(
-        "NER model OSS package", options=["spaCy", "Flair", "HuggingFace"]
+        "NER model OSS package", options=["spaCy", "stanza", "Flair", "HuggingFace"]
     )
     st_model = st.sidebar.text_input(f"NER model name", value="")
 
-if st_model == "Azure Text Analytics PII":
+if st_model == "Azure AI Language":
     st_ta_key = st.sidebar.text_input(
-        f"Text Analytics key", value=os.getenv("TA_KEY", ""), type="password"
+        f"Azure AI Language key", value=os.getenv("TA_KEY", ""), type="password"
     )
     st_ta_endpoint = st.sidebar.text_input(
-        f"Text Analytics endpoint",
+        f"Azure AI Language endpoint",
         value=os.getenv("TA_ENDPOINT", default=""),
         help="For more info: https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/personally-identifiable-information/overview",  # noqa: E501
     )
@@ -124,6 +125,50 @@ open_ai_params = None
 
 logger.debug(f"st_operator: {st_operator}")
 
+
+def set_up_openai_synthesis():
+    """Set up the OpenAI API key and model for text synthesis."""
+
+    if os.getenv("OPENAI_TYPE", default="openai") == "Azure":
+        openai_api_type = "azure"
+        st_openai_api_base = st.sidebar.text_input(
+            "Azure OpenAI base URL",
+            value=os.getenv("AZURE_OPENAI_ENDPOINT", default=""),
+        )
+        openai_key = os.getenv("AZURE_OPENAI_KEY", default="")
+        st_deployment_id = st.sidebar.text_input(
+            "Deployment name", value=os.getenv("AZURE_OPENAI_DEPLOYMENT", default="")
+        )
+        st_openai_version = st.sidebar.text_input(
+            "OpenAI version",
+            value=os.getenv("OPENAI_API_VERSION", default="2023-05-15"),
+        )
+    else:
+        openai_api_type = "openai"
+        st_openai_version = st_openai_api_base = None
+        st_deployment_id = ""
+        openai_key = os.getenv("OPENAI_KEY", default="")
+    st_openai_key = st.sidebar.text_input(
+        "OPENAI_KEY",
+        value=openai_key,
+        help="See https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key for more info.",
+        type="password",
+    )
+    st_openai_model = st.sidebar.text_input(
+        "OpenAI model for text synthesis",
+        value=os.getenv("OPENAI_MODEL", default="text-davinci-003"),
+        help="See more here: https://platform.openai.com/docs/models/",
+    )
+    return (
+        openai_api_type,
+        st_openai_api_base,
+        st_deployment_id,
+        st_openai_version,
+        st_openai_key,
+        st_openai_model,
+    )
+
+
 if st_operator == "mask":
     st_number_of_chars = st.sidebar.number_input(
         "number of chars", value=st_number_of_chars, min_value=0, max_value=100
@@ -134,39 +179,20 @@ if st_operator == "mask":
 elif st_operator == "encrypt":
     st_encrypt_key = st.sidebar.text_input("AES key", value=st_encrypt_key)
 elif st_operator == "synthesize":
-    if os.getenv("OPENAI_TYPE", default="openai") == "Azure":
-        openai_api_type = "azure"
-        st_openai_api_base = st.sidebar.text_input(
-            "Azure OpenAI base URL",
-            value=os.getenv("AZURE_OPENAI_ENDPOINT", default=""),
-        )
-        st_deployment_name = st.sidebar.text_input(
-            "Deployment name", value=os.getenv("AZURE_OPENAI_DEPLOYMENT", default="")
-        )
-        st_openai_version = st.sidebar.text_input(
-            "OpenAI version",
-            value=os.getenv("OPENAI_API_VERSION", default="2023-05-15"),
-        )
-    else:
-        st_openai_version = openai_api_type = st_openai_api_base = None
-        st_deployment_name = ""
-    st_openai_key = st.sidebar.text_input(
-        "OPENAI_KEY",
-        value=os.getenv("OPENAI_KEY", default=""),
-        help="See https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key for more info.",
-        type="password",
-    )
-    st_openai_model = st.sidebar.text_input(
-        "OpenAI model for text synthesis",
-        value=os.getenv("OPENAI_MODEL", default="text-davinci-003"),
-        help="See more here: https://platform.openai.com/docs/models/",
-    )
+    (
+        openai_api_type,
+        st_openai_api_base,
+        st_deployment_id,
+        st_openai_version,
+        st_openai_key,
+        st_openai_model,
+    ) = set_up_openai_synthesis()
 
     open_ai_params = OpenAIParams(
         openai_key=st_openai_key,
         model=st_openai_model,
         api_base=st_openai_api_base,
-        deployment_name=st_deployment_name,
+        deployment_id=st_deployment_id,
         api_version=st_openai_version,
         api_type=openai_api_type,
     )
@@ -214,7 +240,8 @@ with st.expander("About this demo", expanded=False):
         \n\n[Code](https://aka.ms/presidio) | 
         [Tutorial](https://microsoft.github.io/presidio/tutorial/) | 
         [Installation](https://microsoft.github.io/presidio/installation/) | 
-        [FAQ](https://microsoft.github.io/presidio/faq/) |"""
+        [FAQ](https://microsoft.github.io/presidio/faq/) |
+        [Feedback](https://forms.office.com/r/9ufyYjfDaY) |"""
     )
 
     st.info(

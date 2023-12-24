@@ -103,7 +103,8 @@ class SpacyRecognizer(LocalRecognizer):
         ner_scores = nlp_artifacts.scores
 
         for ner_entity, ner_score in zip(ner_entities, ner_scores):
-            if ner_entity.label_ not in entities:
+            if (ner_entity.label_ not in entities
+                    or ner_entity.label_ not in self.supported_entities):
                 logger.debug(
                     f"Skipping entity {ner_entity.label_} "
                     f"as it is not in the supported entities list"

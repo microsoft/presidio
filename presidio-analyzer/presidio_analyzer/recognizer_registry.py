@@ -323,3 +323,31 @@ class RecognizerRegistry:
         if isinstance(inst, PatternRecognizer):
             inst.global_regex_flags = self.global_regex_flags
         return inst
+
+    def _get_supported_languages(self) -> List[str]:
+        languages = []
+        for rec in self.recognizers:
+            languages.append(rec.supported_language)
+
+        return list(set(languages))
+
+    def get_supported_entities(
+        self, languages: Optional[List[str]] = None
+    ) -> List[str]:
+        """
+        Return the supported entities by the set of recognizers loaded.
+
+        :param languages: The languages to get the supported entities for.
+        If languages=None, returns all entities for all languages.
+        """
+        if not languages:
+            languages = self._get_supported_languages()
+
+        supported_entities = []
+        for language in languages:
+            recognizers = self.get_recognizers(language=language, all_fields=True)
+
+            for recognizer in recognizers:
+                supported_entities.extend(recognizer.get_supported_entities())
+
+        return list(set(supported_entities))
