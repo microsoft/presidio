@@ -24,7 +24,7 @@ will be used when integrating with Text Analytics, using a Presidio Text Analyti
 ## Azure AI Language Recognizer
 [The implementation of a `AzureAILanguage` recognizer can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/azure_ai_language.py).
 
-## How to integrate Azure AI Language into Presaidio
+## How to integrate Azure AI Language into Presidio
 
 1. Install the package with the azure-ai-language extra:
   ```sh
