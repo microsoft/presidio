@@ -77,7 +77,7 @@ analyzer = AnalyzerEngine()
 
 analyzer.registry.add_recognizer(titles_recognizer)
 
-results = analyzer.analyze(text=text,language="en")
+results = analyzer.analyze(text=text, language="en")
 print(results)
 ```
 
