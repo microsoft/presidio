@@ -338,9 +338,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             image_2d_scaled = image_2d_float
         else:
             # Rescaling grey scale between 0-255
-            image_2d_scaled = (
-                np.maximum(image_2d_float, 0) / image_2d_float.max()
-            ) * 255.0
+            image_2d_scaled = ((image_2d_float.max() - image_2d_float) / (
+                    image_2d_float.max() - image_2d_float.min())) * 255.0
 
         # Convert to uint
         image_2d_scaled = np.uint8(image_2d_scaled)
