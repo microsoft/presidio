@@ -10,6 +10,7 @@ from presidio_anonymizer.entities import (
     PIIEntity,
     OperatorResult,
     EngineResult,
+    ConflictResolutionStrategy,
 )
 from presidio_anonymizer.operators import OperatorType
 
@@ -257,7 +258,7 @@ def _operate(
     )
 
 
-def test_when_pii_unmasked_then_original_text_restored():
+def test_when_text_entities_conflict_selected_then_all_conflicts_handled():
     engine = AnonymizerEngine()
     text = (
         "Fake card number 4151 3217 6243 3448.com that "
@@ -266,8 +267,35 @@ def test_when_pii_unmasked_then_original_text_restored():
     analyzer_result = RecognizerResult("CREDIT_CARD", 17, 36, 0.8)
     analyzer_result2 = RecognizerResult("URL", 32, 40, 0.8)
     anonymizer_config = OperatorConfig("keep")
+    conflict_strategy = ConflictResolutionStrategy.TEXT_AND_ENTITIES
     result = engine.anonymize(
-        text, [analyzer_result, analyzer_result2], {"DEFAULT": anonymizer_config}
+        text,
+        [analyzer_result, analyzer_result2],
+        {"DEFAULT": anonymizer_config},
+        conflict_resolution=conflict_strategy
     ).text
 
     assert result == text
+
+
+def test_when_none_conflict_selected_then_no_conflict_handled():
+    engine = AnonymizerEngine()
+    text = (
+        "Fake card number 4151 3217 6243 3448.com that "
+        "overlaps with nonexisting URL."
+    )
+    analyzer_result = RecognizerResult("CREDIT_CARD", 17, 36, 0.8)
+    analyzer_result2 = RecognizerResult("URL", 32, 40, 0.8)
+    anonymizer_config = OperatorConfig("keep")
+    conflict_strategy = ConflictResolutionStrategy.NONE
+    result = engine.anonymize(
+        text,
+        [analyzer_result, analyzer_result2],
+        {"DEFAULT": anonymizer_config},
+        conflict_resolution=conflict_strategy
+    ).text
+    resp = (
+        "Fake card number 4151 3217 6243 34483448.com that "
+        "overlaps with nonexisting URL."
+    )
+    assert result == resp
