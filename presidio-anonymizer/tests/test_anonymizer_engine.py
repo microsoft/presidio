@@ -50,7 +50,7 @@ def test_given_custom_anonymizer_then_we_manage_to_anonymize_successfully():
     ).text
     resp = (
         "Fake card number <ENTITY: 4151 3217 6243 3448>"
-        "<ENTITY: .com> that overlaps with nonexisting URL."
+        "<ENTITY: 3448.com> that overlaps with nonexisting URL."
     )
     assert result == resp
 
