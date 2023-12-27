@@ -4,7 +4,12 @@ import re
 from typing import List, Dict, Optional
 
 from presidio_anonymizer.core import EngineBase
-from presidio_anonymizer.entities import OperatorConfig, RecognizerResult, EngineResult
+from presidio_anonymizer.entities import (
+    OperatorConfig,
+    RecognizerResult,
+    EngineResult,
+    ConflictResolutionStrategy
+)
 from presidio_anonymizer.operators import OperatorType
 
 DEFAULT = "replace"
@@ -28,6 +33,7 @@ class AnonymizerEngine(EngineBase):
             text: str,
             analyzer_results: List[RecognizerResult],
             operators: Optional[Dict[str, OperatorConfig]] = None,
+            conflict_resolution: Optional[ConflictResolutionStrategy] = None
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -37,6 +43,8 @@ class AnonymizerEngine(EngineBase):
         :param operators: The configuration of the anonymizers we would like
         to use for each entity e.g.: {"PHONE_NUMBER":OperatorConfig("redact", {})}
         received from the analyzer
+        :param conflict_resolution: The configuration designed to handle conflicts
+        among entities
         :return: the anonymized text and a list of information about the
         anonymized entities.
 
@@ -76,7 +84,7 @@ class AnonymizerEngine(EngineBase):
 
         """
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
-            analyzer_results
+            analyzer_results, conflict_resolution
         )
 
         merged_results = self._merge_entities_with_whitespace_between(
@@ -88,7 +96,9 @@ class AnonymizerEngine(EngineBase):
         return self._operate(text, merged_results, operators, OperatorType.Anonymize)
 
     def _remove_conflicts_and_get_text_manipulation_data(
-            self, analyzer_results: List[RecognizerResult]
+            self,
+            analyzer_results: List[RecognizerResult],
+            conflict_resolution: ConflictResolutionStrategy
     ) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
@@ -144,22 +154,24 @@ class AnonymizerEngine(EngineBase):
                 )
 
         # This further improves the quality of handling the conflict between the
-        # various results overlapping. This will not drop the results insted
-        # it adjust the start and end positions of overlapping results.
-        unique_text_metadata_elements.sort(key=lambda x: x.start)
+        # various entities overlapping. This will not drop the results insted
+        # it adjust the start and end positions of overlapping results and removes
+        # All types of conflicts among entities as well as text.
+        if conflict_resolution == ConflictResolutionStrategy.TEXT_AND_ENTITIES:
+            unique_text_metadata_elements.sort(key=lambda x: x.start)
 
-        for i in range(len(unique_text_metadata_elements)):
-            result = unique_text_metadata_elements[i]
-            j = 0
-            while j < i:
-                existing_result = unique_text_metadata_elements[j]
-                if (result.end <= existing_result.start or
-                        result.start >= existing_result.end):
-                    j += 1
-                else:
-                    result.start = existing_result.end
-                    result.end = result.start + (result.end - result.start)
-                    break
+            for i in range(len(unique_text_metadata_elements)):
+                result = unique_text_metadata_elements[i]
+                j = 0
+                while j < i:
+                    existing_result = unique_text_metadata_elements[j]
+                    if (result.end <= existing_result.start or
+                            result.start >= existing_result.end):
+                        j += 1
+                    else:
+                        result.start = existing_result.end
+                        result.end = result.start + (result.end - result.start)
+                        break
         return unique_text_metadata_elements
 
     def _merge_entities_with_whitespace_between(
