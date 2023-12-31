@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.352]
+### Added
+#### Analyzer
+* Add PL PESEL recognizer (#1209)
+
+#### General
+* Add Dockerfile for Windows containers (#1194)
+
+### Changed
+#### Analyzer
+* Drop WA driver license number (#1214)
+* Change ner_model_configuration from list to map (#1222)
+* Bugfix in SpacyRecognizer (#1221)
+* Bugfix in NerModelConfiguration (#1230)
+
+#### Image Redactor
+* Change default score threshold in image redactor (#1210)
+* fixes bug #1227 (#1231)
+* 
+
+#### General
+* Remove inclusive-lint step (#1207)
+* Updates to demo website with new NLP Engine (#1181)
+* 
+
 ## [2.2.351] - Nov. 6th 2024
 ### Changed
 #### Analyzer
@@ -301,7 +326,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.351...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.352...HEAD
+[2.2.352]: https://github.com/microsoft/presidio/compare/2.2.351...2.2.352
 [2.2.351]: https://github.com/microsoft/presidio/compare/2.2.350...2.2.351
 [2.2.350]: https://github.com/microsoft/presidio/compare/2.2.35...2.2.350
 [2.2.35]: https://github.com/microsoft/presidio/compare/2.2.34...2.2.35
