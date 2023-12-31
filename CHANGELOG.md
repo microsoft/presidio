@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 * Change ner_model_configuration from list to map (#1222)
 * Bugfix in SpacyRecognizer (#1221)
 * Bugfix in NerModelConfiguration (#1230)
+* Add_conf_to_package_data (#1243)
 
 #### Image Redactor
 * Change default score threshold in image redactor (#1210)
