@@ -9,7 +9,7 @@
 
 When initializing the `TransformersRecognizer`, choose from the following options:
 
-1. A string referencing an uploaded model to HuggingFace. See the different available options for models [here](https://huggingface.co/models?pipeline_tag=token-classification&sort=downloads>).
+1. A string referencing an uploaded model to HuggingFace. See the different available options for models [here](https://huggingface.co/models?pipeline_tag=token-classification&sort=downloads).
 
 2. Initialize your own `TokenClassificationPipeline` instance using your custom transformers model and use it for inference.
 
