@@ -158,20 +158,26 @@ class AnonymizerEngine(EngineBase):
         # it adjust the start and end positions of overlapping results and removes
         # All types of conflicts among entities as well as text.
         if conflict_resolution == ConflictResolutionStrategy.TEXT_AND_ENTITIES:
-            unique_text_metadata_elements.sort(key=lambda x: x.start)
-
-            for i in range(len(unique_text_metadata_elements)):
-                result = unique_text_metadata_elements[i]
-                j = 0
-                while j < i:
-                    existing_result = unique_text_metadata_elements[j]
-                    if (result.end <= existing_result.start or
-                            result.start >= existing_result.end):
-                        j += 1
+            unique_text_metadata_elements.sort(key=lambda element: element.start)
+            elements_length = len(unique_text_metadata_elements)
+            index = 0
+            while index < elements_length - 1:
+                current_entity = unique_text_metadata_elements[index]
+                next_entity = unique_text_metadata_elements[index + 1]
+                if current_entity.end <= next_entity.start:
+                    index += 1
+                else:
+                    if current_entity.score >= next_entity.score:
+                        next_entity.start = current_entity.end
                     else:
-                        result.start = existing_result.end
-                        result.end = result.start + (result.end - result.start)
-                        break
+                        current_entity.end = next_entity.start
+                    unique_text_metadata_elements.sort(
+                        key=lambda element: element.start
+                    )
+            unique_text_metadata_elements = [
+                element for element in unique_text_metadata_elements
+                if element.start <= element.end
+                ]
         return unique_text_metadata_elements
 
     def _merge_entities_with_whitespace_between(
