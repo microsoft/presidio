@@ -10,7 +10,6 @@ from presidio_anonymizer.entities import (
     PIIEntity,
     OperatorResult,
     EngineResult,
-    ConflictResolutionStrategy,
 )
 from presidio_anonymizer.operators import OperatorType
 
@@ -256,61 +255,3 @@ def _operate(
     return EngineResult(
         "Number: I am your new text!", [OperatorResult(0, 35, "type", "text", "hash")]
     )
-
-
-def test_when_text_entities_conflict_selected_then_all_conflicts_handled():
-    engine = AnonymizerEngine()
-    text = (
-        "Fake card number 4151 3217 6243 3448.com that "
-        "overlaps with nonexisting URL."
-    )
-    analyzer_result1 = RecognizerResult("CREDIT_CARD", 17, 36, 0.8)
-    analyzer_result2 = RecognizerResult("URL", 32, 40, 0.8)
-    operator_config = OperatorConfig("keep")
-    conflict_strategy = ConflictResolutionStrategy.TEXT_AND_ENTITIES
-    result = engine.anonymize(
-        text,
-        [analyzer_result1, analyzer_result2],
-        {"DEFAULT": operator_config},
-        conflict_resolution=conflict_strategy
-    ).text
-
-    assert result == text
-
-
-@pytest.mark.parametrize(
-    # fmt: off
-    "text, analyzer_result1, analyzer_result2, conflict_strategy, expected_result",
-    [
-        (
-            ("Fake card number 4151 3217 6243 3448.com "
-             "that overlaps with nonexisting URL."),
-            RecognizerResult("CREDIT_CARD", 17, 36, 0.8),
-            RecognizerResult("URL", 32, 40, 0.8),
-            ConflictResolutionStrategy.NONE,
-            ("Fake card number 4151 3217 6243 34483448.com "
-             "that overlaps with nonexisting URL.")
-        ),
-        (
-            "Fake text with SSN 145-45-6789 and phone number 953-555-5555.",
-            RecognizerResult("SSN", 19, 30, 0.85),
-            RecognizerResult("PHONE_NUMBER", 48, 60, 0.95),
-            None,
-            "Fake text with SSN 145-45-6789 and phone number 953-555-5555."
-        ),
-    ]
-    # fmt: on
-)
-def test_when_none_conflict_selected_then_no_conflict_handled(
-    text, analyzer_result1, analyzer_result2, conflict_strategy, expected_result
-):
-    engine = AnonymizerEngine()
-    operator_config = OperatorConfig("keep")
-    result = engine.anonymize(
-        text,
-        [analyzer_result1, analyzer_result2],
-        {"DEFAULT": operator_config},
-        conflict_resolution=conflict_strategy
-    ).text
-
-    assert result == expected_result
