@@ -10,33 +10,6 @@ from presidio_anonymizer.entities import (
 )
 
 
-def test_when_none_conflict_selected_then_no_conflict_handled():
-    engine = AnonymizerEngine()
-    text = ("Fake card number 4151 3217 6243 3448.com "
-            "that overlaps with nonexisting URL.")
-    analyzer_result1 = RecognizerResult("CREDIT_CARD", 17, 36, 1)
-    analyzer_result2 = RecognizerResult("URL", 32, 40, 0.5)
-    conflict_strategy = ConflictResolutionStrategy.NONE
-    operator_config = OperatorConfig("keep")
-
-    result = engine.anonymize(
-        text,
-        [analyzer_result1, analyzer_result2],
-        {"DEFAULT": operator_config},
-        conflict_resolution=conflict_strategy
-    )
-
-    expected_result = EngineResult(
-        text=("Fake card number 4151 3217 6243 34483448.com "
-              "that overlaps with nonexisting URL."),
-        items=[OperatorResult(17, 36, 'CREDIT_CARD', '4151 3217 6243 3448', 'keep'),
-               OperatorResult(36, 44, 'URL', '3448.com', 'keep')]
-    )
-
-    assert result.text == expected_result.text
-    assert sorted(result.items) == sorted(result.items)
-
-
 @pytest.mark.parametrize(
     # fmt: off
     "text, analyzer_result1, analyzer_result2, conflict_strategy, expected_result",

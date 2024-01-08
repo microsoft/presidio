@@ -83,9 +83,6 @@ class AnonymizerEngine(EngineBase):
 
 
         """
-        if not conflict_resolution:
-            conflict_resolution = ConflictResolutionStrategy.MERGE_SIMILAR_OR_CONTAINED
-
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results, conflict_resolution
         )
@@ -111,10 +108,6 @@ class AnonymizerEngine(EngineBase):
         2. Have the same indices as other results but with larger score.
         :return: List
         """
-        # Return without modifying analyzer_results.
-        if conflict_resolution == conflict_resolution.NONE:
-            return analyzer_results
-
         tmp_analyzer_results = []
         # This list contains all elements which we need to check a single result
         # against. If a result is dropped, it can also be dropped from this list

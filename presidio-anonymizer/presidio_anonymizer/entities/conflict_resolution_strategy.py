@@ -16,4 +16,3 @@ class ConflictResolutionStrategy(Enum):
 
     MERGE_SIMILAR_OR_CONTAINED = "merge_similar_or_contained"
     REMOVE_INTERSECTIONS = "remove_intersections"
-    NONE = "none"
