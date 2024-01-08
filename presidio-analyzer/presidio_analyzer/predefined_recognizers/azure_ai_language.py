@@ -9,20 +9,20 @@ try:
 except ImportError:
     TextAnalyticsClient = None
     AzureKeyCredential = None
-from presidio_analyzer import EntityRecognizer, RecognizerResult, AnalysisExplanation
+from presidio_analyzer import RemoteRecognizer, RecognizerResult, AnalysisExplanation
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
 
-class AzureAILanguageRecognizer(EntityRecognizer):
+class AzureAILanguageRecognizer(RemoteRecognizer):
     """Wrapper for PII detection using Azure AI Language."""
 
     def __init__(
         self,
         supported_entities: Optional[List[str]] = None,
         supported_language: str = "en",
-        ta_client: Optional[TextAnalyticsClient] = None,
+        ta_client: Optional["TextAnalyticsClient"] = None,
         azure_ai_key: Optional[str] = None,
         azure_ai_endpoint: Optional[str] = None,
     ):
@@ -43,10 +43,11 @@ class AzureAILanguageRecognizer(EntityRecognizer):
             supported_entities=supported_entities,
             supported_language=supported_language,
             name="Azure AI Language PII",
+            version="5.2.0",
         )
 
         is_available = bool(TextAnalyticsClient)
-        if not is_available:
+        if not ta_client and not is_available:
             raise ValueError(
                 "Azure AI Language is not available. "
                 "Please install the required dependencies:"
@@ -55,11 +56,9 @@ class AzureAILanguageRecognizer(EntityRecognizer):
             )
 
         if not supported_entities:
-            self.supported_entities = self.get_azure_ai_supported_entities()
+            self.supported_entities = self.__get_azure_ai_supported_entities()
 
-        azure_ai_key = (
-            azure_ai_key if azure_ai_key else os.getenv("AZURE_AI_KEY", None)
-        )
+        azure_ai_key = azure_ai_key if azure_ai_key else os.getenv("AZURE_AI_KEY", None)
         azure_ai_endpoint = (
             azure_ai_endpoint
             if azure_ai_endpoint
@@ -81,8 +80,16 @@ class AzureAILanguageRecognizer(EntityRecognizer):
             ta_client = self.__authenticate_client(azure_ai_key, azure_ai_endpoint)
         self.ta_client = ta_client
 
+    def get_supported_entities(self) -> List[str]:
+        """
+        Return the list of entities this recognizer can identify.
+
+        :return: A list of the supported entities by this recognizer
+        """
+        return self.supported_entities
+
     @staticmethod
-    def get_azure_ai_supported_entities() -> List[str]:
+    def __get_azure_ai_supported_entities() -> List[str]:
         """Return the list of all supported entities for Azure AI Language."""
         from azure.ai.textanalytics._models import PiiEntityCategory
 
@@ -119,9 +126,11 @@ class AzureAILanguageRecognizer(EntityRecognizer):
         for res in results:
             for entity in res.entities:
                 entity.category = entity.category.upper()
-                if entity.category not in self.supported_entities:
+                if entity.category.lower() not in [
+                    ent.lower() for ent in self.supported_entities
+                ]:
                     continue
-                if entity.category not in entities:
+                if entity.category.lower() not in [ent.lower() for ent in entities]:
                     continue
                 analysis_explanation = AzureAILanguageRecognizer._build_explanation(
                     original_score=entity.confidence_score,
@@ -131,7 +140,7 @@ class AzureAILanguageRecognizer(EntityRecognizer):
                     RecognizerResult(
                         entity_type=entity.category,
                         start=entity.offset,
-                        end=entity.offset + len(entity.text),
+                        end=entity.offset + entity.length,
                         score=entity.confidence_score,
                         analysis_explanation=analysis_explanation,
                     )
@@ -149,7 +158,3 @@ class AzureAILanguageRecognizer(EntityRecognizer):
             textual_explanation=f"Identified as {entity_type} by Azure AI Language",
         )
         return explanation
-
-    def load(self) -> None:
-        """Load the recognizer."""
-        pass
