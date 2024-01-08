@@ -89,33 +89,7 @@ See [this documentation](analyzer/adding_recognizers.md) for instructions on how
 
 A list of supported entities by Azure AI Language PII [can be found here](https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/concepts/entity-categories).
 
-To add Azure AI language into Presidio:
-
-### Installation
-
-```sh
-pip install presidio-analyzer[azure-ai-language]
-```
-
-### Usage (as an additional recognizer)
-
-```python
-from presidio_analyzer import AnalyzerEngine
-from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer
-
-
-AZURE_AI_KEY = "<MY AZURE AI KEY>"
-AZURE_AI_ENDPOINT = "<MY AZURE AI ENDPOINT>"
-
-# These params could also be stored as environment variables
-
-azure_ai_language = AzureAILanguageRecognizer(azure_ai_key=AZURE_AI_KEY, azure_ai_endpoint=AZURE_AI_ENDPOINT)
-
-analyzer = AnalyzerEngine()
-analyzer.registry.add_recognizer(azure_ai_language)
-
-analyzer.analyze(text="My email is email@email.com", language="en")
-```
+To add Azure AI language into Presidio, [see this sample](samples/python/text_analytics/index.md#how-to-integrate-azure-ai-language-into-presidio).
 
 ### Connecting to 3rd party PII detectors
 
