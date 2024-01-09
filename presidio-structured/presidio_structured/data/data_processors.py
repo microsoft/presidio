@@ -201,7 +201,7 @@ class JsonDataProcessor(DataProcessorBase):
         Operates on the given JSON-like data based on the provided configuration.
 
         :param data: JSON-like data to be operated on.
-        :param config: Configuration object containing operator information.
+        :param key_to_operator_mapping: maps keys to Callable operators.
         :return: JSON-like data after the operation.
         """
 
@@ -212,11 +212,11 @@ class JsonDataProcessor(DataProcessorBase):
             self.logger.debug(f"Operating on key {key}")
             keys = key.split(".")
             if isinstance(data, list):
-                for idx, item in enumerate(data):
+                for item in data:
                     self._process(item, key_to_operator_mapping)
             else:
                 text_to_operate_on = self._get_nested_value(data, keys)
-                if text_to_operate_on is not None:
+                if text_to_operate_on:
                     if isinstance(text_to_operate_on, list):
                         for text in text_to_operate_on:
                             operated_text = self._operate_on_text(

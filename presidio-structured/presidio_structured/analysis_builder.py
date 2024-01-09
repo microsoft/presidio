@@ -14,14 +14,16 @@ from presidio_analyzer import (
 
 from presidio_structured.config import StructuredAnalysis
 
+NON_PII_ENTITY_TYPE = "NON_PII"
+
+logger = logging.getLogger("presidio-structured")
 
 class AnalysisBuilder(ABC):
     """Abstract base class for a configuration generator."""
 
-    def __init__(self, analyzer: AnalyzerEngine = None) -> None:
+    def __init__(self, analyzer: Optional[AnalyzerEngine] = None) -> None:
         """Initialize the configuration generator."""
         self.analyzer = AnalyzerEngine() if analyzer is None else analyzer
-        self.logger = logging.getLogger("presidio-structured")
 
     @abstractmethod
     def generate_analysis(
@@ -76,7 +78,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         :param data: The input JSON data.
         :return: The generated configuration.
         """
-        self.logger.debug("Starting JSON BatchAnalyzer analysis")
+        logger.debug("Starting JSON BatchAnalyzer analysis")
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
         analyzer_results = batch_analyzer.analyze_dict(
             input_dict=data, language=language
@@ -111,7 +113,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         key_recognizer_result_map = {}
 
         if not isinstance(analyzer_results, Iterable):
-            self.logger.debug(
+            logger.debug(
                 "No analyzer results found, returning empty StructuredAnalysis"
             )
             return key_recognizer_result_map
@@ -126,7 +128,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                 key_recognizer_result_map.update(nested_mappings)
             first_recognizer_result = next(iter(result.recognizer_results), None)
             if first_recognizer_result is not None:
-                self.logger.debug(
+                logger.debug(
                     f"Found result with entity {first_recognizer_result.entity_type} \
                         in {current_key}"
                 )
@@ -160,7 +162,7 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         :return: The generated configuration.
         """
         if n > len(df):
-            self.logger.debug(
+            logger.debug(
                 f"Number of samples ({n}) is larger than the number of rows \
                     ({len(df)}), using all rows"
             )
@@ -178,7 +180,7 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         key_entity_map = {
             key: result.entity_type
             for key, result in key_recognizer_result_map.items()
-            if result.entity_type != "NON_PII"
+            if result.entity_type != NON_PII_ENTITY_TYPE
         }
 
         return StructuredAnalysis(entity_mapping=key_entity_map)
@@ -198,14 +200,14 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
 
         for column in df.columns:
-            self.logger.debug(f"Finding most common PII entity for column {column}")
+            logger.debug(f"Finding most common PII entity for column {column}")
             analyzer_results = batch_analyzer.analyze_iterator(
                 [val for val in df[column]], language=language
             )
 
             if all(len(res) == 0 for res in analyzer_results):
                 key_recognizer_result_map[column] = RecognizerResult(
-                    entity_type="NON_PII", start=0, end=1, score=1.0
+                    entity_type=NON_PII_ENTITY_TYPE, start=0, end=1, score=1.0
                 )
                 continue
             # Grabbing most common type
