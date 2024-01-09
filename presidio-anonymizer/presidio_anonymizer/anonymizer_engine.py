@@ -33,7 +33,7 @@ class AnonymizerEngine(EngineBase):
             text: str,
             analyzer_results: List[RecognizerResult],
             operators: Optional[Dict[str, OperatorConfig]] = None,
-            conflict_resolution: Optional[ConflictResolutionStrategy] = None
+            conflict_resolution: ConflictResolutionStrategy = ConflictResolutionStrategy. MERGE_SIMILAR_OR_CONTAINED
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
