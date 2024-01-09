@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from collections import Counter
 from collections.abc import Iterable
-from typing import Dict, Iterator, Union
+from typing import Dict, Iterator, List, Optional, Union
 
 from pandas import DataFrame
 from presidio_analyzer import (
@@ -25,7 +25,10 @@ class AnalysisBuilder(ABC):
 
     @abstractmethod
     def generate_analysis(
-        self, data: Union[Dict, DataFrame]
+        self,
+        data: Union[Dict, DataFrame],
+        language: str = "en",
+        score_threshold: Optional[float] = None,
     ) -> StructuredAnalysis:
         """
         Abstract method to generate a configuration from the given data.
@@ -35,11 +38,38 @@ class AnalysisBuilder(ABC):
         """
         pass
 
+    def _remove_low_scores(
+        self,
+        key_recognizer_result_map: Dict[str, RecognizerResult],
+        score_threshold: float = None,
+    ) -> List[RecognizerResult]:
+        """
+        Remove results for which the confidence is lower than the threshold.
+
+        :param results: Dict of column names to RecognizerResult
+        :param score_threshold: float value for minimum possible confidence
+        :return: List[RecognizerResult]
+        """
+        if score_threshold is None:
+            score_threshold = self.analyzer.default_score_threshold
+
+        new_key_recognizer_result_map = {}
+        for column, result in key_recognizer_result_map.items():
+            if result.score >= score_threshold:
+                new_key_recognizer_result_map[column] = result
+
+        return new_key_recognizer_result_map
+
 
 class JsonAnalysisBuilder(AnalysisBuilder):
     """Concrete configuration generator for JSON data."""
 
-    def generate_analysis(self, data: Dict) -> StructuredAnalysis:
+    def generate_analysis(
+        self,
+        data: Dict,
+        language: str = "en",
+        score_threshold: Optional[float] = None,
+    ) -> StructuredAnalysis:
         """
         Generate a configuration from the given JSON data.
 
@@ -49,13 +79,27 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         self.logger.debug("Starting JSON BatchAnalyzer analysis")
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
         analyzer_results = batch_analyzer.analyze_dict(
-            input_dict=data, language="en"
+            input_dict=data, language=language
         )
-        return self._generate_analysis_from_results_json(analyzer_results)
+
+        key_recognizer_result_map = self._generate_analysis_from_results_json(
+            analyzer_results
+        )
+
+        # Remove low score results
+        key_recognizer_result_map = self._remove_low_scores(
+            key_recognizer_result_map, score_threshold
+        )
+
+        key_entity_map = {
+            key: result.entity_type for key, result in key_recognizer_result_map.items()
+        }
+
+        return StructuredAnalysis(entity_mapping=key_entity_map)
 
     def _generate_analysis_from_results_json(
         self, analyzer_results: Iterator[DictAnalyzerResult], prefix: str = ""
-    ) -> StructuredAnalysis:
+    ) -> Dict[str, RecognizerResult]:
         """
         Generate a configuration from the given analyzer results. \
              Always uses the first recognizer result if there are more than one.
@@ -64,13 +108,13 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         :param prefix: The prefix for the configuration keys.
         :return: The generated configuration.
         """
-        mappings = {}
+        key_recognizer_result_map = {}
 
         if not isinstance(analyzer_results, Iterable):
             self.logger.debug(
                 "No analyzer results found, returning empty StructuredAnalysis"
             )
-            return StructuredAnalysis(entity_mapping=mappings)
+            return key_recognizer_result_map
 
         for result in analyzer_results:
             current_key = prefix + result.key
@@ -79,31 +123,33 @@ class JsonAnalysisBuilder(AnalysisBuilder):
                 nested_mappings = self._generate_analysis_from_results_json(
                     result.recognizer_results, prefix=current_key + "."
                 )
-                mappings.update(nested_mappings.entity_mapping)
-            first_recognizer_result = next(
-                iter(result.recognizer_results), None
-            )
+                key_recognizer_result_map.update(nested_mappings)
+            first_recognizer_result = next(iter(result.recognizer_results), None)
             if first_recognizer_result is not None:
                 self.logger.debug(
-                    f"Found entity {first_recognizer_result.entity_type} \
+                    f"Found result with entity {first_recognizer_result.entity_type} \
                         in {current_key}"
                 )
-                mappings[current_key] = first_recognizer_result.entity_type
-        return StructuredAnalysis(entity_mapping=mappings)
+                key_recognizer_result_map[current_key] = first_recognizer_result
+        return key_recognizer_result_map
 
 
-class TabularAnalysisbuilder(AnalysisBuilder):
+class TabularAnalysisBuilder(AnalysisBuilder):
     """Placeholder class for generalizing tabular data analysis builders \
           (e.g. PySpark). Only implemented as PandasAnalysisBuilder for now."""
 
     pass
 
 
-class PandasAnalysisBuilder(TabularAnalysisbuilder):
+class PandasAnalysisBuilder(TabularAnalysisBuilder):
     """Concrete configuration generator for tabular data."""
 
     def generate_analysis(
-        self, df: DataFrame, n: int = 100, language: str = "en"
+        self,
+        df: DataFrame,
+        n: int = 100,
+        language: str = "en",
+        score_threshold: Optional[float] = None,
     ) -> StructuredAnalysis:
         """
         Generate a configuration from the given tabular data.
@@ -122,8 +168,11 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
 
         df = df.sample(n)
 
-        key_recognizer_result_map = self._find_most_common_entity(
-            df, language
+        key_recognizer_result_map = self._find_most_common_entity(df, language)
+
+        # Remove low score results
+        key_recognizer_result_map = self._remove_low_scores(
+            key_recognizer_result_map, score_threshold
         )
 
         key_entity_map = {
@@ -149,9 +198,7 @@ class PandasAnalysisBuilder(TabularAnalysisbuilder):
         batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
 
         for column in df.columns:
-            self.logger.debug(
-                f"Finding most common PII entity for column {column}"
-            )
+            self.logger.debug(f"Finding most common PII entity for column {column}")
             analyzer_results = batch_analyzer.analyze_iterator(
                 [val for val in df[column]], language=language
             )
