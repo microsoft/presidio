@@ -18,6 +18,7 @@ NON_PII_ENTITY_TYPE = "NON_PII"
 
 logger = logging.getLogger("presidio-structured")
 
+
 class AnalysisBuilder(ABC):
     """Abstract base class for a configuration generator."""
 
@@ -66,6 +67,11 @@ class AnalysisBuilder(ABC):
 class JsonAnalysisBuilder(AnalysisBuilder):
     """Concrete configuration generator for JSON data."""
 
+    def __init__(self, analyzer: Optional[AnalyzerEngine] = None) -> None:
+        """Initialize the JSON analysis builder."""
+        super().__init__(analyzer)
+        self.batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
+
     def generate_analysis(
         self,
         data: Dict,
@@ -79,8 +85,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         :return: The generated configuration.
         """
         logger.debug("Starting JSON BatchAnalyzer analysis")
-        batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
-        analyzer_results = batch_analyzer.analyze_dict(
+        analyzer_results = self.batch_analyzer.analyze_dict(
             input_dict=data, language=language
         )
 
@@ -149,7 +154,7 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
     def generate_analysis(
         self,
         df: DataFrame,
-        n: int = 100,
+        n: Optional[int] = None,
         language: str = "en",
         score_threshold: Optional[float] = None,
     ) -> StructuredAnalysis:
@@ -161,7 +166,9 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         :param language: The language to be used for analysis.
         :return: The generated configuration.
         """
-        if n > len(df):
+        if not n:
+            n = len(df)
+        elif n > len(df):
             logger.debug(
                 f"Number of samples ({n}) is larger than the number of rows \
                     ({len(df)}), using all rows"
