@@ -22,9 +22,15 @@ logger = logging.getLogger("presidio-structured")
 class AnalysisBuilder(ABC):
     """Abstract base class for a configuration generator."""
 
-    def __init__(self, analyzer: Optional[AnalyzerEngine] = None) -> None:
+    def __init__(self, analyzer: Optional[AnalyzerEngine] = None, \
+                  analyzer_score_threshold: Optional[float] = None) -> None:
         """Initialize the configuration generator."""
-        self.analyzer = AnalyzerEngine() if analyzer is None else analyzer
+        default_score_threshold = analyzer_score_threshold if \
+              analyzer_score_threshold is not None else 0
+        self.analyzer = \
+            AnalyzerEngine(default_score_threshold = default_score_threshold) \
+                if analyzer is None else analyzer
+        self.batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
 
     @abstractmethod
     def generate_analysis(
@@ -46,6 +52,8 @@ class AnalysisBuilder(ABC):
         key_recognizer_result_map: Dict[str, RecognizerResult],
         score_threshold: float = None,
     ) -> List[RecognizerResult]:
+        #FIXME: score threshold between anaylzer engine (Top level) and analysis builder (lower level) are different in the way they work.
+        # it should never be used in here, but always in analyzer engine....
         """
         Remove results for which the confidence is lower than the threshold.
 
@@ -67,16 +75,10 @@ class AnalysisBuilder(ABC):
 class JsonAnalysisBuilder(AnalysisBuilder):
     """Concrete configuration generator for JSON data."""
 
-    def __init__(self, analyzer: Optional[AnalyzerEngine] = None) -> None:
-        """Initialize the JSON analysis builder."""
-        super().__init__(analyzer)
-        self.batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
-
     def generate_analysis(
         self,
         data: Dict,
         language: str = "en",
-        score_threshold: Optional[float] = None,
     ) -> StructuredAnalysis:
         """
         Generate a configuration from the given JSON data.
@@ -93,10 +95,6 @@ class JsonAnalysisBuilder(AnalysisBuilder):
             analyzer_results
         )
 
-        # Remove low score results
-        key_recognizer_result_map = self._remove_low_scores(
-            key_recognizer_result_map, score_threshold
-        )
 
         key_entity_map = {
             key: result.entity_type for key, result in key_recognizer_result_map.items()
@@ -156,7 +154,6 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         df: DataFrame,
         n: Optional[int] = None,
         language: str = "en",
-        score_threshold: Optional[float] = None,
     ) -> StructuredAnalysis:
         """
         Generate a configuration from the given tabular data.
@@ -164,7 +161,7 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         :param df: The input tabular data (dataframe).
         :param n: The number of samples to be taken from the dataframe.
         :param language: The language to be used for analysis.
-        :return: The generated configuration.
+        :return: A StructuredAnalysis object containing the analysis results.
         """
         if not n:
             n = len(df)
@@ -175,14 +172,9 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
             )
             n = len(df)
 
-        df = df.sample(n)
+        df = df.sample(n, random_state=123)
 
-        key_recognizer_result_map = self._find_most_common_entity(df, language)
-
-        # Remove low score results
-        key_recognizer_result_map = self._remove_low_scores(
-            key_recognizer_result_map, score_threshold
-        )
+        key_recognizer_result_map = self._generate_key_rec_results_map(df, language)
 
         key_entity_map = {
             key: result.entity_type
@@ -192,45 +184,86 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
 
         return StructuredAnalysis(entity_mapping=key_entity_map)
 
-    def _find_most_common_entity(
+    def _generate_key_rec_results_map(
         self, df: DataFrame, language: str
     ) -> Dict[str, RecognizerResult]:
         """
         Find the most common entity in a dataframe column.
 
+        If more than one entity is found in a cell, the first one is used.
+
         :param df: The dataframe where entities will be searched.
         :param language: Language to be used in the analysis engine.
         :return: A dictionary mapping column names to the most common RecognizerResult.
         """
+        column_analyzer_results_map = self._batch_analyze_df(df, language)
         key_recognizer_result_map = {}
-
-        batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
-
-        for column in df.columns:
-            logger.debug(f"Finding most common PII entity for column {column}")
-            analyzer_results = batch_analyzer.analyze_iterator(
-                [val for val in df[column]], language=language
-            )
-
-            if all(len(res) == 0 for res in analyzer_results):
-                key_recognizer_result_map[column] = RecognizerResult(
-                    entity_type=NON_PII_ENTITY_TYPE, start=0, end=1, score=1.0
-                )
-                continue
-            # Grabbing most common type
-            types_list = [
-                res[0].entity_type for res in analyzer_results if len(res) > 0
-            ]
-            type_counter = Counter(types_list)
-            most_common_type = type_counter.most_common(1)[0][0]
-            # Grabbing the average confidence score for the most common type.
-            scores = [
-                res[0].score
-                for res in analyzer_results
-                if len(res) > 0 and res[0].entity_type == most_common_type
-            ]
-            average_score = sum(scores) / len(scores) if scores else 0.0
-            key_recognizer_result_map[column] = RecognizerResult(
-                most_common_type, 0, 1, average_score
+        for column, analyzer_result in column_analyzer_results_map.items():
+            key_recognizer_result_map[column] = self._find_most_common_entity(
+                analyzer_result
             )
         return key_recognizer_result_map
+
+    def _batch_analyze_df(self, df: DataFrame, language: str) \
+          -> Dict[str, List[List[RecognizerResult]]]:
+        """
+        Analyze each column in the dataframe for entities using the batch analyzer.
+
+        :param df: The dataframe to be analyzed.
+        :param language: The language configuration for the analyzer.
+        :return: A dictionary mapping each column name to a \
+            list of lists of RecognizerResults.
+        """
+        column_analyzer_results_map = {}
+        for column in df.columns:
+            logger.debug(f"Finding most common PII entity for column {column}")
+            analyzer_results = self.batch_analyzer.analyze_iterator(
+                [val for val in df[column]], language=language
+            )
+            column_analyzer_results_map[column] = analyzer_results
+
+        return column_analyzer_results_map
+
+    def _find_most_common_entity(
+        self, analyzer_results: List[List[RecognizerResult]]
+    ) -> RecognizerResult:
+        """
+        Find the most common entity in a list of analyzer results for \
+            a dataframe column.
+
+        It takes the most common entity type and calculates the confidence score based
+        on the number of cells it appears in.
+
+        :param analyzer_results: List of lists of RecognizerResults for each \
+            cell in the column.
+        :return: A RecognizerResult with the most common entity type and the \
+            calculated confidence score.
+        """
+
+        if not any(analyzer_results):
+            return RecognizerResult(
+                entity_type=NON_PII_ENTITY_TYPE, start=0, end=1, score=1.0
+            )
+
+        # Flatten the list of lists while keeping track of the cell index
+        flat_results = [
+            (cell_idx, res)
+            for cell_idx, cell_results in enumerate(analyzer_results)
+            for res in cell_results
+        ]
+
+        # Count the occurrences of each entity type in different cells
+        type_counter = Counter(
+            res.entity_type for cell_idx, res in flat_results
+        )
+
+        # Find the most common entity type based on the number of cells it appears in
+        most_common_type, _ = type_counter.most_common(1)[0]
+
+        # The score is the ratio of the most common entity type's count to the total
+        most_common_count = type_counter[most_common_type]
+        score = most_common_count / len(analyzer_results)
+
+        return RecognizerResult(
+            entity_type=most_common_type, start=0, end=1, score=score
+        )

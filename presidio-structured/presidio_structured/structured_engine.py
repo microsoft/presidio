@@ -25,7 +25,10 @@ class StructuredEngine:
         :param data_processor: Instance of DataProcessorBase.
         """
         if data_processor is None:
-            data_processor = PandasDataProcessor()
+            self.data_processor = PandasDataProcessor()
+        else:
+            self.data_processor = data_processor
+
         self.logger = logging.getLogger("presidio-structured")
 
     def anonymize(
