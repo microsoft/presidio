@@ -33,7 +33,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         :param supported_language: Language code to use for the recognizer.
         :param ta_client: object of type TextAnalyticsClient. If missing,
         the client will be created using the key and endpoint.
-        :param azure_ai_key: Azure AI  for language key
+        :param azure_ai_key: Azure AI for language key
         :param azure_ai_endpoint: Azure AI for language endpoint
 
         For more info, see https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/overview # noqa
@@ -58,24 +58,6 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         if not supported_entities:
             self.supported_entities = self.__get_azure_ai_supported_entities()
 
-        azure_ai_key = azure_ai_key if azure_ai_key else os.getenv("AZURE_AI_KEY", None)
-        azure_ai_endpoint = (
-            azure_ai_endpoint
-            if azure_ai_endpoint
-            else os.getenv("AZURE_AI_ENDPOINT", None)
-        )
-        if azure_ai_key is None:
-            raise ValueError(
-                "Azure AI Language key is required. "
-                "Please provide a key or set the AZURE_AI_KEY environment variable."
-            )
-        if azure_ai_endpoint is None:
-            raise ValueError(
-                "Azure AI Language endpoint is required. "
-                "Please provide an endpoint "
-                "or set the AZURE_AI_ENDPOINT environment variable."
-            )
-
         if not ta_client:
             ta_client = self.__authenticate_client(azure_ai_key, azure_ai_endpoint)
         self.ta_client = ta_client
@@ -91,13 +73,30 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
     @staticmethod
     def __get_azure_ai_supported_entities() -> List[str]:
         """Return the list of all supported entities for Azure AI Language."""
-        from azure.ai.textanalytics._models import PiiEntityCategory
+        from azure.ai.textanalytics._models import PiiEntityCategory # noqa
 
         return [r.value.upper() for r in PiiEntityCategory]
 
     @staticmethod
     def __authenticate_client(key: str, endpoint: str) -> TextAnalyticsClient:
-        """Authenticate the client using the key and endpoint."""
+        """Authenticate the client using the key and endpoint.
+
+        :param key: Azure AI Language key
+        :param endpoint: Azure AI Language endpoint
+        """
+        key = key if key else os.getenv("AZURE_AI_KEY", None)
+        endpoint = endpoint if endpoint else os.getenv("AZURE_AI_ENDPOINT", None)
+        if key is None:
+            raise ValueError(
+                "Azure AI Language key is required. "
+                "Please provide a key or set the AZURE_AI_KEY environment variable."
+            )
+        if endpoint is None:
+            raise ValueError(
+                "Azure AI Language endpoint is required. "
+                "Please provide an endpoint "
+                "or set the AZURE_AI_ENDPOINT environment variable."
+            )
 
         ta_credential = AzureKeyCredential(key)
         text_analytics_client = TextAnalyticsClient(
