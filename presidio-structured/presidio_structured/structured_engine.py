@@ -16,9 +16,7 @@ DEFAULT = "replace"
 class StructuredEngine:
     """Class to implement methods for anonymizing tabular data."""
 
-    def __init__(
-        self, data_processor: Optional[DataProcessorBase] = None
-    ) -> None:
+    def __init__(self, data_processor: Optional[DataProcessorBase] = None) -> None:
         """
         Initialize the class with a data processor.
 
@@ -48,9 +46,7 @@ class StructuredEngine:
         self.logger.debug("Starting anonymization")
         operators = self.__check_or_add_default_operator(operators)
 
-        return self.data_processor.operate(
-            data, structured_analysis, operators
-        )
+        return self.data_processor.operate(data, structured_analysis, operators)
 
     def __check_or_add_default_operator(
         self, operators: Dict[str, OperatorConfig]
@@ -68,8 +64,6 @@ class StructuredEngine:
             self.logger.debug("No operators provided, using default operator")
             return {"DEFAULT": default_operator}
         if not operators.get("DEFAULT"):
-            self.logger.debug(
-                "No default operator provided, using default operator"
-            )
+            self.logger.debug("No default operator provided, using default operator")
             operators["DEFAULT"] = default_operator
         return operators

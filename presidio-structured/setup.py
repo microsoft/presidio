@@ -24,9 +24,7 @@ setup(
     name="presidio_structured",
     python_requires=">=3.5",
     version=__version__,
-    packages=find_packages(
-        include=["presidio_structured", "presidio_structured.*"]
-    ),
+    packages=find_packages(include=["presidio_structured", "presidio_structured.*"]),
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",

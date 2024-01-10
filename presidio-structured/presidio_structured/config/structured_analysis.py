@@ -17,6 +17,4 @@ class StructuredAnalysis:
         }
     """
 
-    entity_mapping: Dict[
-        str, str
-    ]
+    entity_mapping: Dict[str, str]

@@ -61,21 +61,15 @@ def tabular_analysis_builder():
 @pytest.fixture
 def operators():
     return {
-        "PERSON": OperatorConfig(
-            "replace", {"new_value": "PERSON_REPLACEMENT"}
-        ),
-        "DEFAULT": OperatorConfig(
-            "replace", {"new_value": "DEFAULT_REPLACEMENT"}
-        ),
+        "PERSON": OperatorConfig("replace", {"new_value": "PERSON_REPLACEMENT"}),
+        "DEFAULT": OperatorConfig("replace", {"new_value": "DEFAULT_REPLACEMENT"}),
     }
 
 
 @pytest.fixture
 def operators_no_default():
     return {
-        "PERSON": OperatorConfig(
-            "replace", {"new_value": "PERSON_REPLACEMENT"}
-        ),
+        "PERSON": OperatorConfig("replace", {"new_value": "PERSON_REPLACEMENT"}),
     }
 
 

@@ -22,14 +22,20 @@ logger = logging.getLogger("presidio-structured")
 class AnalysisBuilder(ABC):
     """Abstract base class for a configuration generator."""
 
-    def __init__(self, analyzer: Optional[AnalyzerEngine] = None, \
-                  analyzer_score_threshold: Optional[float] = None) -> None:
+    def __init__(
+        self,
+        analyzer: Optional[AnalyzerEngine] = None,
+        analyzer_score_threshold: Optional[float] = None,
+    ) -> None:
         """Initialize the configuration generator."""
-        default_score_threshold = analyzer_score_threshold if \
-              analyzer_score_threshold is not None else 0
-        self.analyzer = \
-            AnalyzerEngine(default_score_threshold = default_score_threshold) \
-                if analyzer is None else analyzer
+        default_score_threshold = (
+            analyzer_score_threshold if analyzer_score_threshold is not None else 0
+        )
+        self.analyzer = (
+            AnalyzerEngine(default_score_threshold=default_score_threshold)
+            if analyzer is None
+            else analyzer
+        )
         self.batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
 
     @abstractmethod
@@ -52,8 +58,6 @@ class AnalysisBuilder(ABC):
         key_recognizer_result_map: Dict[str, RecognizerResult],
         score_threshold: float = None,
     ) -> List[RecognizerResult]:
-        #FIXME: score threshold between anaylzer engine (Top level) and analysis builder (lower level) are different in the way they work.
-        # it should never be used in here, but always in analyzer engine....
         """
         Remove results for which the confidence is lower than the threshold.
 
@@ -94,7 +98,6 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         key_recognizer_result_map = self._generate_analysis_from_results_json(
             analyzer_results
         )
-
 
         key_entity_map = {
             key: result.entity_type for key, result in key_recognizer_result_map.items()
@@ -204,8 +207,9 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
             )
         return key_recognizer_result_map
 
-    def _batch_analyze_df(self, df: DataFrame, language: str) \
-          -> Dict[str, List[List[RecognizerResult]]]:
+    def _batch_analyze_df(
+        self, df: DataFrame, language: str
+    ) -> Dict[str, List[List[RecognizerResult]]]:
         """
         Analyze each column in the dataframe for entities using the batch analyzer.
 
@@ -253,9 +257,7 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         ]
 
         # Count the occurrences of each entity type in different cells
-        type_counter = Counter(
-            res.entity_type for cell_idx, res in flat_results
-        )
+        type_counter = Counter(res.entity_type for cell_idx, res in flat_results)
 
         # Find the most common entity type based on the number of cells it appears in
         most_common_type, _ = type_counter.most_common(1)[0]

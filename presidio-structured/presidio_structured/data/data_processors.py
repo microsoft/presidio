@@ -39,7 +39,7 @@ class DataProcessorBase(ABC):
     @abstractmethod
     def _process(
         self,
-        data: Union[Dict,  DataFrame],
+        data: Union[Dict, DataFrame],
         key_to_operator_mapping: Dict[str, Callable],
     ) -> Union[Dict, DataFrame]:
         """
@@ -72,12 +72,8 @@ class DataProcessorBase(ABC):
 
         operators_factory = OperatorsFactory()
         for key, entity in config.entity_mapping.items():
-            self.logger.debug(
-                f"Creating operator for key {key} and entity {entity}"
-            )
-            operator_config = operators.get(
-                entity, operators.get("DEFAULT", None)
-            )
+            self.logger.debug(f"Creating operator for key {key} and entity {entity}")
+            operator_config = operators.get(entity, operators.get("DEFAULT", None))
             if operator_config is None:
                 raise ValueError(f"Operator for entity {entity} not found")
             # NOTE: hardcoded OperatorType.Anonymize, as this is the only one supported.
@@ -162,9 +158,7 @@ class JsonDataProcessor(DataProcessorBase):
         return data
 
     @staticmethod
-    def _set_nested_value(
-        data: Union[Dict, List], path: List[str], value: Any
-    ) -> None:
+    def _set_nested_value(data: Union[Dict, List], path: List[str], value: Any) -> None:
         """
         Recursively sets a value in nested data using a given path.
 
@@ -182,9 +176,7 @@ class JsonDataProcessor(DataProcessorBase):
                     continue
                 else:
                     for item in data:
-                        JsonDataProcessor._set_nested_value(
-                            item, path[i:], value
-                        )
+                        JsonDataProcessor._set_nested_value(item, path[i:], value)
                     return
             elif isinstance(data, dict):
                 if i == len(path) - 1:
