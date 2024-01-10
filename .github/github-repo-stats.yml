@@ -12,6 +12,7 @@ jobs:
   j1:
     name: github-repo-stats
     runs-on: ubuntu-latest
+    permissions: read-all
     steps:
       - name: run-ghrs
         # Use latest release.
