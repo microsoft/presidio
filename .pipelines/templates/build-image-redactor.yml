@@ -25,8 +25,9 @@ steps:
           workingDirectory: 'presidio-image-redactor'
           script: |
               set -eux  # fail on error
-              pipenv sync --dev
+              pipenv install --deploy --dev
               pipenv run python -m spacy download en_core_web_lg
+              pipenv run pip install -e ../presidio-analyzer/.
     - template: ./build-python.yml
       parameters:
           SERVICE: 'Image-Redactor'

@@ -1,14 +1,21 @@
-"""Integration test for the DicomImageRedactorEngine class
+"""Integration test for the DicomImageRedactorEngine class.
 
-Note that we are not asserting every pixel is equal when comparing original to redacted images
-to account for differences in performance with different versions of Tesseract OCR.
+Note that we are not asserting every pixel is equal when comparing original to redacted
+images to account for differences in performance with different versions of
+OCR.
 """
 import tempfile
 import pydicom
 from pathlib import Path
 import os
 import numpy as np
+
+from typing import Callable
+
+from tests.engine_test_utils import must_succeed, allow_failure
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
+from presidio_image_redactor.document_intelligence_ocr import DocumentIntelligenceOCR
+from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
 import pytest
 
 SCRIPT_DIR = os.path.dirname(__file__)
@@ -17,12 +24,31 @@ RESOURCES_DIR1 = f"{SCRIPT_DIR}/resources/dir1"
 RESOURCES_DIR2 = f"{SCRIPT_DIR}/resources/dir1/dir2"
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def mock_engine():
-    """Instance of the DicomImageRedactorEngine"""
+    """Instance of the DicomImageRedactorEngine."""
     dicom_image_redactor_engine = DicomImageRedactorEngine()
-
     return dicom_image_redactor_engine
+
+
+# These are not fixtures, because depending on the setup, some of the object
+# instantiations may fail
+def mock_tesseract_engine():
+    """Get the Dicom Redactor Engine."""
+    return DicomImageRedactorEngine()
+
+
+def mock_di_engine():
+    """Build the Dicom Redactor Engine with Document Intelligence OCR."""
+    di_ocr = DocumentIntelligenceOCR()
+    ia_engine = ImageAnalyzerEngine(ocr=di_ocr)
+    return DicomImageRedactorEngine(image_analyzer_engine=ia_engine)
+
+
+def all_engines_required():
+    """Return all required engines and their must_pass flag for tests."""
+    return [(must_succeed(mock_tesseract_engine)),
+            (allow_failure(mock_di_engine))]
 
 
 @pytest.mark.parametrize(
@@ -33,36 +59,37 @@ def mock_engine():
         (Path(RESOURCES_DIR2, "2_ORIGINAL.dcm")),
     ],
 )
-def test_redact_image_correctly(
-    mock_engine: DicomImageRedactorEngine, dcm_filepath: Path
-):
-    """Test the redact function
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_image_correctly(engine_builder: Callable, dcm_filepath: Path):
+    """Test the redact function.
 
     Args:
-        mock_engine (DicomImageRedactorEngine): Mock instance.
+        engine_builder: function returning a DicomImageRedactorEngine
         dcm_filepath (Path): Path to DICOM file to load.
     """
     test_image = pydicom.dcmread(dcm_filepath)
-    test_redacted_image = mock_engine.redact(test_image)
+    test_redacted_image = engine_builder().redact(test_image, use_metadata=True)
 
     assert (
         np.array_equal(test_image.pixel_array, test_redacted_image.pixel_array) is False
     )
 
 
-def test_redact_from_single_file_correctly(mock_engine: DicomImageRedactorEngine):
-    """Test the redact_from_file function with single file case
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_from_single_file_correctly(engine_builder: Callable):
+    """Test the redact_from_file function with single file case.
 
     Args:
-        mock_engine (DicomImageRedactorEngine): Mock instance.
+        engine_builder: function returning a DicomImageRedactorEngine
     """
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Set file paths and redact PII
         input_path = Path(RESOURCES_PARENT_DIR, "0_ORIGINAL.dcm")
-        mock_engine.redact_from_file(
+        engine_builder().redact_from_file(
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
             fill="contrast",
+            use_metadata=True
         )
         output_path = Path(tmpdirname, f"{input_path.stem}.dcm")
 
@@ -93,7 +120,7 @@ def test_redact_from_single_file_correctly(mock_engine: DicomImageRedactorEngine
 
 
 def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
-    """Test the redact_from_file function with multiple files case
+    """Test the redact_from_file function with multiple files case.
 
     Args:
         mock_engine (DicomImageRedactorEngine): Mock instance.
@@ -105,6 +132,7 @@ def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
             fill="contrast",
+            use_metadata=True
         )
 
         # Get list of all DICOM files

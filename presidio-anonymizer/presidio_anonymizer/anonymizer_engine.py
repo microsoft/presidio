@@ -4,7 +4,12 @@ import re
 from typing import List, Dict, Optional
 
 from presidio_anonymizer.core import EngineBase
-from presidio_anonymizer.entities import OperatorConfig, RecognizerResult, EngineResult
+from presidio_anonymizer.entities import (
+    OperatorConfig,
+    RecognizerResult,
+    EngineResult,
+    ConflictResolutionStrategy,
+)
 from presidio_anonymizer.operators import OperatorType
 
 DEFAULT = "replace"
@@ -28,6 +33,9 @@ class AnonymizerEngine(EngineBase):
             text: str,
             analyzer_results: List[RecognizerResult],
             operators: Optional[Dict[str, OperatorConfig]] = None,
+            conflict_resolution: ConflictResolutionStrategy = (
+                ConflictResolutionStrategy.MERGE_SIMILAR_OR_CONTAINED
+            )
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -37,6 +45,8 @@ class AnonymizerEngine(EngineBase):
         :param operators: The configuration of the anonymizers we would like
         to use for each entity e.g.: {"PHONE_NUMBER":OperatorConfig("redact", {})}
         received from the analyzer
+        :param conflict_resolution: The configuration designed to handle conflicts
+        among entities
         :return: the anonymized text and a list of information about the
         anonymized entities.
 
@@ -76,7 +86,7 @@ class AnonymizerEngine(EngineBase):
 
         """
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
-            analyzer_results
+            analyzer_results, conflict_resolution
         )
 
         merged_results = self._merge_entities_with_whitespace_between(
@@ -88,7 +98,9 @@ class AnonymizerEngine(EngineBase):
         return self._operate(text, merged_results, operators, OperatorType.Anonymize)
 
     def _remove_conflicts_and_get_text_manipulation_data(
-            self, analyzer_results: List[RecognizerResult]
+            self,
+            analyzer_results: List[RecognizerResult],
+            conflict_resolution: ConflictResolutionStrategy
     ) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
@@ -142,6 +154,32 @@ class AnonymizerEngine(EngineBase):
                 self.logger.debug(
                     f"removing element {result} from results list due to conflict"
                 )
+
+        # This further improves the quality of handling the conflict between the
+        # various entities overlapping. This will not drop the results insted
+        # it adjust the start and end positions of overlapping results and removes
+        # All types of conflicts among entities as well as text.
+        if conflict_resolution == ConflictResolutionStrategy.REMOVE_INTERSECTIONS:
+            unique_text_metadata_elements.sort(key=lambda element: element.start)
+            elements_length = len(unique_text_metadata_elements)
+            index = 0
+            while index < elements_length - 1:
+                current_entity = unique_text_metadata_elements[index]
+                next_entity = unique_text_metadata_elements[index + 1]
+                if current_entity.end <= next_entity.start:
+                    index += 1
+                else:
+                    if current_entity.score >= next_entity.score:
+                        next_entity.start = current_entity.end
+                    else:
+                        current_entity.end = next_entity.start
+                    unique_text_metadata_elements.sort(
+                        key=lambda element: element.start
+                    )
+            unique_text_metadata_elements = [
+                element for element in unique_text_metadata_elements
+                if element.start <= element.end
+                ]
         return unique_text_metadata_elements
 
     def _merge_entities_with_whitespace_between(

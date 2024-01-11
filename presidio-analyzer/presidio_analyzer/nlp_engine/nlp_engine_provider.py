@@ -9,6 +9,7 @@ from presidio_analyzer.nlp_engine import (
     SpacyNlpEngine,
     NlpEngine,
     TransformersNlpEngine,
+    NerModelConfiguration,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -37,7 +38,6 @@ class NlpEngineProvider:
         conf_file: Optional[Union[Path, str]] = None,
         nlp_configuration: Optional[Dict] = None,
     ):
-
         if not nlp_engines:
             nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
 
@@ -59,7 +59,7 @@ class NlpEngineProvider:
         if conf_file:
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
-        if not conf_file and not nlp_configuration:
+        if conf_file is None and nlp_configuration is None:
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
             self.nlp_configuration = self._read_nlp_conf(conf_file)
@@ -84,11 +84,20 @@ class NlpEngineProvider:
             )
         try:
             nlp_engine_class = self.nlp_engines[nlp_engine_name]
-            nlp_engine_opts = {
-                m["lang_code"]: m["model_name"]
-                for m in self.nlp_configuration["models"]
-            }
-            engine = nlp_engine_class(nlp_engine_opts)
+            nlp_models = self.nlp_configuration["models"]
+
+            ner_model_configuration = self.nlp_configuration.get(
+                "ner_model_configuration"
+            )
+            if ner_model_configuration:
+                ner_model_configuration = NerModelConfiguration.from_dict(
+                    ner_model_configuration
+                )
+
+            engine = nlp_engine_class(
+                models=nlp_models, ner_model_configuration=ner_model_configuration
+            )
+            engine.load()
             logger.info(
                 f"Created NLP engine: {engine.engine_name}. "
                 f"Loaded models: {list(engine.nlp.keys())}"
@@ -113,6 +122,11 @@ class NlpEngineProvider:
 
         else:
             nlp_configuration = yaml.safe_load(open(conf_file))
+
+        if "ner_model_configuration" not in nlp_configuration:
+            logger.warning(
+                "configuration file is missing 'ner_model_configuration'. Using default"
+            )
 
         return nlp_configuration
 

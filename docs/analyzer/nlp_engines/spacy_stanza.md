@@ -30,10 +30,25 @@ For the available models, follow these links: [spaCy](https://spacy.io/usage/mod
 !!! tip "Tip"
     For Person, Location and Organization detection, it could be useful to try out the transformers based models (e.g. `en_core_web_trf`) which uses a more modern deep-learning architecture, but is generally slower than the default `en_core_web_lg` model.
 
-
 ### Configure Presidio to use the pre-trained model
 
 Once created, see [the NLP configuration documentation](../customizing_nlp_models.md#Configure-Presidio-to-use-the-new-model) for more information.
+
+## How NER results flow within Presidio
+This diagram describes the flow of NER results within Presidio, and the relationship between the `SpacyNlpEngine` component and the `SpacyRecognizer` component:
+```mermaid
+sequenceDiagram
+    AnalyzerEngine->>SpacyNlpEngine: Call engine.process_text(text) <br>to get model results
+    SpacyNlpEngine->>spaCy: Call spaCy pipeline
+    spaCy->>SpacyNlpEngine: return entities and other attributes
+    Note over SpacyNlpEngine: Map entity names to Presidio's, <BR>update scores, <BR>remove unwanted entities <BR> based on NerModelConfiguration
+    SpacyNlpEngine->>AnalyzerEngine: Pass NlpArtifacts<BR>(Entities, lemmas, tokens, scores etc.)
+    Note over AnalyzerEngine: Call all recognizers
+    AnalyzerEngine->>SpacyRecognizer: Pass NlpArtifacts
+    Note over SpacyRecognizer: Extract PII entities out of NlpArtifacts
+    SpacyRecognizer->>AnalyzerEngine: Return List[RecognizerResult]
+
+```
 
 ## Training your own model
 
@@ -61,6 +76,7 @@ import spacy
 # Create a class inheriting from SpacyNlpEngine
 class LoadedSpacyNlpEngine(SpacyNlpEngine):
     def __init__(self, loaded_spacy_model):
+        super.__init__()
         self.nlp = {"en": loaded_spacy_model}
 
 # Load a model a-priori

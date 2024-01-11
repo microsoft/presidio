@@ -77,9 +77,27 @@ analyzer = AnalyzerEngine()
 
 analyzer.registry.add_recognizer(titles_recognizer)
 
-results = analyzer.analyze(text=text,language="en")
+results = analyzer.analyze(text=text, language="en")
 print(results)
 ```
+
+For pattern based recognizers, it is possible to change the regex flags, either for
+one recognizer or for all.
+For one recognizer, use the `global_regex_flags` parameter 
+in the `PatternRecognizer` constructor.
+For all recognizers, use the `global_regex_flags` parameter in the `RecognizerRegistry` constructor:
+
+<!--pytest-codeblocks:cont-->
+```python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+
+import regex as re
+
+registry = RecognizerRegistry(global_regex_flags=re.DOTALL | re.MULTILINE | re.IGNORECASE)
+engine = AnalyzerEngine(registry=registry)
+engine.analyze(...)
+```
+
 
 ### Creating a new `EntityRecognizer` in code
 
@@ -136,9 +154,9 @@ To add a recognizer to the list of pre-defined recognizers:
 3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
-### Azure Text Analytics recognizer
+### Azure AI Language recognizer
 
-On how to integrate Presidio with Azure Text Analytics,
+On how to integrate Presidio with Azure AI Language PII detection service,
 and a sample for a Text Analytics Remote Recognizer, refer to the
 [Azure Text Analytics Integration document](../samples/python/text_analytics/index.md).
 

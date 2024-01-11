@@ -10,9 +10,13 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && tesseract -v
 
+RUN apt-get update \ 
+  && apt-get install ffmpeg libsm6 libxext6  -y
+
+
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv \
-  && pipenv sync \
+  && pipenv install --deploy \
   && pipenv run python -m spacy download en_core_web_lg
 
 COPY . /usr/bin/${NAME}/

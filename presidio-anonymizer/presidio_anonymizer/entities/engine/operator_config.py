@@ -35,7 +35,7 @@ class OperatorConfig:
             "masking_char": "*",
             "chars_to_mask": 4,
             "from_end": true
-        }
+            }
         :return: OperatorConfig
         """
         operator_name = params.get("type")

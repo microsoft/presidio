@@ -1,9 +1,9 @@
 import collections
-from typing import List, Dict, Union, Iterable, Optional
+from typing import Any, List, Dict, Union, Iterable, Optional
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import DictRecognizerResult
-from presidio_anonymizer.entities import EngineResult, RecognizerResult
+from presidio_anonymizer.entities import RecognizerResult
 
 
 class BatchAnonymizerEngine:
@@ -19,14 +19,15 @@ class BatchAnonymizerEngine:
 
     def anonymize_list(
         self,
-        texts: List[Union[str, bool, int, float]],
+        texts: List[Optional[Union[str, bool, int, float]]],
         recognizer_results_list: List[List[RecognizerResult]],
         **kwargs
-    ) -> List[EngineResult]:
+    ) -> List[Union[str, Any]]:
         """
         Anonymize a list of strings.
 
-        :param texts: List containing the texts to be anonymized (original texts)
+        :param texts: List containing the texts to be anonymized (original texts).
+            Items with a `type` not in `(str, bool, int, float)` will not be anonymized.
         :param recognizer_results_list: A list of lists of RecognizerResult,
         the output of the AnalyzerEngine on each text in the list.
         :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method
