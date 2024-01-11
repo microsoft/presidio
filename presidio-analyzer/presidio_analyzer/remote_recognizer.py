@@ -31,7 +31,6 @@ class RemoteRecognizer(ABC, EntityRecognizer):
             context=context,
         )
 
-    @abstractmethod
     def load(self):  # noqa D102
         pass
 
