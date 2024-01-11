@@ -54,7 +54,7 @@ class TransformersNlpEngine(SpacyNlpEngine):
 
     def __init__(
         self,
-        models: Optional[Dict] = None,
+        models: Optional[List[Dict]] = None,
         ner_model_configuration: Optional[NerModelConfiguration] = None,
     ):
         if not models:

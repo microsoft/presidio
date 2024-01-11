@@ -12,6 +12,8 @@ pyyaml = "*"
 phonenumbers = ">=8.12,<9.0.0"
 typing-extensions = "*"
 spacy-huggingface-pipelines = "*"
+azure-ai-textanalytics = "*"
+azure-core = "*"
 # stanza = "*"
 # spacy-stanza = "*"
 
@@ -22,3 +24,4 @@ flake8= {version = ">=3.7.9"}
 pep8-naming = "*"
 flake8-docstrings = "*"
 pre_commit = "*"
+python-dotenv = "*"
