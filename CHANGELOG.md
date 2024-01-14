@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [Unreleased]
+### Added
+#### Structured
+* Added alpha of presidio-structured, a library (presidio-structured) which re-uses existing logic from existing presidio components to allow anonymization of (semi-)structured data.
+
 ## [2.2.351] - Nov. 6th 2024
 ### Changed
 #### Analyzer
@@ -16,6 +22,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 #### Analyzer
 * Put org in ignore as it has many FPs (#1200)
+
 
 ## [2.2.34] - Oct. 30th 2024
 
@@ -65,7 +72,6 @@ All notable changes to this project will be documented in this file.
 * We no longer use Pipenv.lock. Locking happens as part of the CI. (#1152)
 * Changed the ACR instance (#1089)
 * Updated to Cred Scan V3 (#1154) 
-
 
 ## [2.2.33] - June 1st 2023
 ### Added
