@@ -78,6 +78,12 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |AU_TFN| The tax file number (TFN) is a unique identifier issued by the Australian Taxation Office to each taxpaying entity | Pattern match, context, and checksum |
 |AU_MEDICARE| Medicare number is a unique identifier issued by Australian Government that enables the cardholder to receive a rebates of medical expenses under Australia's Medicare system| Pattern match, context, and checksum |
 
+### India
+| FieldType  | Description                                                                                                                                                         |Detection Method|
+|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|--- |
+| IN_PAN     | The Indian Permanent Account Number (PAN) is a unique 12 character alphanumeric identifier issued to all business and individual entities registered as Tax Payers. | Pattern match, context |
+| IN_AADHAAR | Indian government issued unique 12 digit individual identity number                                                                                                 | Pattern match, context, and checksum |
+
 ## Adding a custom PII entity
 
 See [this documentation](analyzer/adding_recognizers.md) for instructions on how to add a new Recognizer for a new type of PII entity.

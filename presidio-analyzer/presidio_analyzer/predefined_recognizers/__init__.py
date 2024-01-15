@@ -35,6 +35,7 @@ from .au_medicare_recognizer import AuMedicareRecognizer
 from .in_pan_recognizer import InPanRecognizer
 from .pl_pesel_recognizer import PlPeselRecognizer
 from .azure_ai_language import AzureAILanguageRecognizer
+from .in_aadhaar_recognizer import InAadhaarRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -76,5 +77,6 @@ __all__ = [
     "ItPassportRecognizer",
     "InPanRecognizer",
     "PlPeselRecognizer",
-    "AzureAILanguageRecognizer"
+    "AzureAILanguageRecognizer",
+    "InAadhaarRecognizer"
 ]
