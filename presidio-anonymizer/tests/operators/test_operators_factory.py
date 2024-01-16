@@ -21,7 +21,7 @@ def test_given_anonymizers_list_then_all_classes_are_there():
 
 def test_given_decryptors_list_then_all_classes_are_there():
     decryptors = OperatorsFactory.get_deanonymizers()
-    assert len(decryptors) == 1
+    assert len(decryptors) == 2
     for class_name in ["decrypt"]:
         assert decryptors.get(class_name)
 
