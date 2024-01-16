@@ -32,15 +32,16 @@ class InAadhaarRecognizer(PatternRecognizer):
     ]
 
     def __init__(
-            self,
-            patterns: Optional[List[Pattern]] = None,
-            context: Optional[List[str]] = None,
-            supported_language: str = "en",
-            supported_entity: str = "IN_AADHAAR",
-            replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        self,
+        patterns: Optional[List[Pattern]] = None,
+        context: Optional[List[str]] = None,
+        supported_language: str = "en",
+        supported_entity: str = "IN_AADHAAR",
+        replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
         self.replacement_pairs = (
-            replacement_pairs if replacement_pairs
+            replacement_pairs
+            if replacement_pairs
             else [("-", ""), (" ", ""), (":", "")]
         )
         patterns = patterns if patterns else self.PATTERNS
@@ -60,10 +61,12 @@ class InAadhaarRecognizer(PatternRecognizer):
     @staticmethod
     def __check_aadhaar(sanitized_value: str) -> bool:
         is_valid_aadhaar: bool = False
-        if len(sanitized_value) == 12 and \
-                sanitized_value.isnumeric() is True and \
-                int(sanitized_value[0]) >= 2 and \
-                verhoeff.is_valid(number=int(sanitized_value)) is True:
+        if (
+            len(sanitized_value) == 12
+            and sanitized_value.isnumeric() is True
+            and int(sanitized_value[0]) >= 2
+            and verhoeff.is_valid(number=int(sanitized_value)) is True
+        ):
             is_valid_aadhaar = True
         return is_valid_aadhaar
 
