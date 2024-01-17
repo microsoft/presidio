@@ -20,9 +20,9 @@ class InAadhaarRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "AADHAAR (Low)",
+            "AADHAAR (Very Weak)",
             r"\b[0-9]{12}\b",
-            0.05,
+            0.01,
         ),
     ]
 
