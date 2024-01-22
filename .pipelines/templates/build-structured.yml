@@ -1,0 +1,27 @@
+steps:
+  - task: Bash@3
+    displayName: 'Setup pipenv'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+        python -m pip install --upgrade pip
+        python -m pip install pipenv
+        pipenv --python 3
+
+  - task: Bash@3
+    displayName: 'Install deps'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: 'presidio-structured'
+      script: |
+        set -eux  # fail on error
+        pipenv install --deploy --dev
+        pipenv run pip install -e ../presidio-analyzer/. # Use the existing analyzer and not the one in PyPI
+        pipenv run pip install -e ../presidio-anonymizer/. # Use the existing analyzer and not the one in PyPI
+
+  - template: ./build-python.yml
+    parameters:
+      SERVICE: 'Structured'
+      WORKING_FOLDER: 'presidio-structured'
+

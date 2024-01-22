@@ -29,7 +29,7 @@ setuptools.setup(
         "presidio_analyzer.context_aware_enhancers",
     ],
     package_data={
-        "presidio_analyzer": ["py.typed"],
+        "presidio_analyzer": ["py.typed", "conf/*"],
     },
     trusted_host=["pypi.org"],
     tests_require=["pytest", "flake8>=3.7.9"],
@@ -43,6 +43,7 @@ setuptools.setup(
     extras_require={
         "transformers": ["spacy_huggingface_pipelines"],
         "stanza": ["stanza", "spacy_stanza"],
+        "azure-ai-language": ["azure-ai-textanalytics", "azure-core"],
     },
     include_package_data=True,
     license="MIT",
