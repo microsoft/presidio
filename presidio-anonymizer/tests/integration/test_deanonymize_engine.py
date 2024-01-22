@@ -20,7 +20,7 @@ def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully
     decryption = engine.deanonymize(
         text,
         encryption_results,
-        {"DEFAULT": OperatorConfig(Decrypt.NAME, {"key": b'WmZq4t7w!z%C&F)J'})},
+        {"DEFAULT": OperatorConfig(Decrypt.NAME, {"key": b"WmZq4t7w!z%C&F)J"})},
     )
     assert decryption.text == "My name is Chloë"
     assert len(decryption.items) == 1
@@ -91,7 +91,7 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
 
 def test_given_request_deanonymizers_return_list():
     engine = DeanonymizeEngine()
-    expected_list = ["decrypt"]
+    expected_list = ["deanonymize_keep", "decrypt"]
     anon_list = engine.get_deanonymizers()
 
     assert anon_list == expected_list

@@ -76,6 +76,7 @@ stages:
                       versionSpec: '$(python.version)'
                   displayName: 'Use Python $(python.version)'
                 - template: ./build-image-redactor.yml
+
           - job: TestCli
             displayName: Test Cli
             pool:
@@ -97,3 +98,25 @@ stages:
                       versionSpec: '$(python.version)'
                   displayName: 'Use Python $(python.version)'
                 - template: ./build-cli.yml
+
+          - job: TestStructured
+            displayName: Test Presidio Structured
+            pool:
+                vmImage: 'ubuntu-latest'
+            strategy:
+                matrix:
+                    Python38:
+                        python.version: '3.8'
+                    Python39:
+                        python.version: '3.9'
+                    Python310:
+                        python.version: '3.10'
+                    Python311:
+                        python.version: '3.11'
+
+            steps:
+                - task: UsePythonVersion@0
+                  inputs:
+                      versionSpec: '$(python.version)'
+                  displayName: 'Use Python $(python.version)'
+                - template: ./build-structured.yml

@@ -1,0 +1,37 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "address": {
+                "street": "123 Main St",
+                "city": "Anytown",
+                "state": "CA",
+                "postal_code": "12345"
+            }
+        },
+        {
+            "id": 2,
+            "name": "Jane Smith",
+            "email": "jane.smith@example.com",
+            "address": {
+                "street": "456 Elm St",
+                "city": "Somewhere",
+                "state": "TX",
+                "postal_code": "67890"
+            }
+        },
+        {
+            "id": 3,
+            "name": "Alice Johnson",
+            "email": "alice.johnson@example.com",
+            "address": {
+                "street": "789 Pine St",
+                "city": "Elsewhere",
+                "state": "NY",
+                "postal_code": "11223"
+            }
+        }
+    ]
+}

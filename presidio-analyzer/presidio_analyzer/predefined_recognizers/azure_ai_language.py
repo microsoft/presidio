@@ -52,7 +52,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
                 "Azure AI Language is not available. "
                 "Please install the required dependencies:"
                 "1. azure-ai-textanalytics"
-                "3. azure-core"
+                "2. azure-core"
             )
 
         if not supported_entities:

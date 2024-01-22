@@ -28,7 +28,11 @@ will be used when integrating with Text Analytics, using a Presidio Text Analyti
 
 1. Install the package with the azure-ai-language extra:
   ```sh
+<<<<<<< HEAD
   pip install presidio-analyzer[azure-ai-language]
+=======
+  pip install "presidio-analyzer[azure-ai-language]"
+>>>>>>> main
   ```
 
 2. Define environment varibles `AZURE_AI_KEY` and `AZURE_AI_ENDPOINT`

@@ -3,7 +3,7 @@ parameters:
 steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.8'
+      versionSpec: '3.10'
   - task: Bash@3
     displayName: 'Package Wheel'
     inputs:
@@ -12,6 +12,16 @@ steps:
         set -eux  # fail on error
         pip install wheel
         python setup.py bdist_wheel
+      workingDirectory: ${{ parameters.WORKING_FOLDER }}
+  - task: Bash@3
+    displayName: 'Install locally and test package'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+        python setup.py install
+        pip install pytest
+        pytest
       workingDirectory: ${{ parameters.WORKING_FOLDER }}
   - task: Bash@3
     displayName: 'Install twine'
