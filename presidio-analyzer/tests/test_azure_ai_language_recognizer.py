@@ -58,7 +58,6 @@ def test_analyze_subset_of_entities_on_init():
 
 
 def test_mocked_entities_match_recognizer_results():
-<<<<<<< HEAD
     try:
         importlib.import_module("azure.ai.textanalytics")
     except ImportError:
