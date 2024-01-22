@@ -14,6 +14,16 @@ steps:
         python setup.py bdist_wheel
       workingDirectory: ${{ parameters.WORKING_FOLDER }}
   - task: Bash@3
+    displayName: 'Install locally and test package''
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+        python setup.py install
+        pip install pytest
+        pytest
+      workingDirectory: ${{ parameters.WORKING_FOLDER }}
+  - task: Bash@3
     displayName: 'Install twine'
     inputs:
       targetType: 'inline'

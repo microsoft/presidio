@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 
 
 ## [Unreleased]
+
+## [2.2.352]
 ### Added
 #### Structured
-* Added alpha of presidio-structured, a library (presidio-structured) which re-uses existing logic from existing presidio components to allow anonymization of (semi-)structured data.
+* Added alpha of presidio-structured, a library (presidio-structured) which re-uses existing logic from existing presidio components to allow anonymization of (semi-)structured data. (#1192)
+
+#### Image redactor
+* Added missing dependencies for opencv-python and azure forms recognizer (#1257)
 
 ## [2.2.351] - Nov. 6th 2024
 ### Changed
@@ -307,7 +312,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.351...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.352...HEAD
+[2.2.352]: https://github.com/microsoft/presidio/compare/2.2.351...2.2.352
 [2.2.351]: https://github.com/microsoft/presidio/compare/2.2.350...2.2.351
 [2.2.350]: https://github.com/microsoft/presidio/compare/2.2.35...2.2.350
 [2.2.35]: https://github.com/microsoft/presidio/compare/2.2.34...2.2.35
