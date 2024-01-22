@@ -1,23 +1,11 @@
 import os
-<<<<<<< HEAD
+import importlib
 from unittest.mock import MagicMock
 
 import pytest
-
-import importlib
-
-=======
-from unittest.mock import patch, MagicMock
-
-import pytest
-from azure.ai.textanalytics import PiiEntity, TextAnalyticsClient, \
-    RecognizePiiEntitiesResult
->>>>>>> main
-from azure.core.credentials import AzureKeyCredential
-
-from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer
 import dotenv
 
+from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer
 
 dotenv.load_dotenv()
 
@@ -78,8 +66,7 @@ def test_mocked_entities_match_recognizer_results():
 
     from azure.ai.textanalytics import PiiEntity, TextAnalyticsClient, \
         RecognizePiiEntitiesResult
-=======
->>>>>>> main
+    from azure.core.credentials import AzureKeyCredential
 
     ent1 = PiiEntity(text="Raj", category="Person",
                      length=3, offset=0, confidence_score=0.8)
