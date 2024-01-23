@@ -1,6 +1,6 @@
-from stdnum import verhoeff
 from presidio_analyzer import Pattern, PatternRecognizer
 from typing import Optional, List, Tuple
+from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
 
 
 class InAadhaarRecognizer(PatternRecognizer):
@@ -31,6 +31,8 @@ class InAadhaarRecognizer(PatternRecognizer):
         "uidai",
     ]
 
+    utils = None
+
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
@@ -55,23 +57,17 @@ class InAadhaarRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> bool:
         """Determine absolute value based on calculation."""
-        sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
+        sanitized_value = Utils.sanitize_value(pattern_text, self.replacement_pairs)
         return self.__check_aadhaar(sanitized_value)
 
-    @staticmethod
-    def __check_aadhaar(sanitized_value: str) -> bool:
+    def __check_aadhaar(self, sanitized_value: str) -> bool:
         is_valid_aadhaar: bool = False
         if (
             len(sanitized_value) == 12
             and sanitized_value.isnumeric() is True
             and int(sanitized_value[0]) >= 2
-            and verhoeff.is_valid(number=int(sanitized_value)) is True
+            and Utils.is_verhoeff_number(int(sanitized_value)) is True
+            and Utils.is_palindrome(sanitized_value) is False
         ):
             is_valid_aadhaar = True
         return is_valid_aadhaar
-
-    @staticmethod
-    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
-        for search_string, replacement_string in replacement_pairs:
-            text = text.replace(search_string, replacement_string)
-        return text
