@@ -56,8 +56,8 @@ class AnalysisBuilder(ABC):
     def _remove_low_scores(
         self,
         key_recognizer_result_map: Dict[str, RecognizerResult],
-        score_threshold: float = None,
-    ) -> List[RecognizerResult]:
+        score_threshold: Optional[float] = None,
+    ) -> Dict[str, RecognizerResult]:
         """
         Remove results for which the confidence is lower than the threshold.
 
@@ -127,13 +127,13 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         for result in analyzer_results:
             current_key = prefix + result.key
 
-            if isinstance(result.value, dict):
+            if isinstance(result.value, dict) and isinstance(result.recognizer_results, Iterator):
                 nested_mappings = self._generate_analysis_from_results_json(
                     result.recognizer_results, prefix=current_key + "."
                 )
                 key_recognizer_result_map.update(nested_mappings)
             first_recognizer_result = next(iter(result.recognizer_results), None)
-            if first_recognizer_result is not None:
+            if isinstance(first_recognizer_result, RecognizerResult):
                 logger.debug(
                     f"Found result with entity {first_recognizer_result.entity_type} \
                         in {current_key}"
