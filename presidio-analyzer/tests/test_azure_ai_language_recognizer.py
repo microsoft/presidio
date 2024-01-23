@@ -1,14 +1,11 @@
 import os
-from unittest.mock import patch, MagicMock
+import importlib
+from unittest.mock import MagicMock
 
 import pytest
-from azure.ai.textanalytics import PiiEntity, TextAnalyticsClient, \
-    RecognizePiiEntitiesResult
-from azure.core.credentials import AzureKeyCredential
-
-from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer
 import dotenv
 
+from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer
 
 dotenv.load_dotenv()
 
@@ -61,6 +58,14 @@ def test_analyze_subset_of_entities_on_init():
 
 
 def test_mocked_entities_match_recognizer_results():
+    try:
+        importlib.import_module("azure.ai.textanalytics")
+    except ImportError:
+        pytest.skip("Skipping test because 'azure.ai.textanalytics' is not installed")
+
+    from azure.ai.textanalytics import PiiEntity, TextAnalyticsClient, \
+        RecognizePiiEntitiesResult
+    from azure.core.credentials import AzureKeyCredential
 
     ent1 = PiiEntity(text="Raj", category="Person",
                      length=3, offset=0, confidence_score=0.8)
