@@ -83,7 +83,7 @@ context_aware_enhancer = LemmaContextAwareEnhancer(
 )
 
 registry = RecognizerRegistry()
-registry.add_recognizer(zipcode_recognizer)
+registry.add_recognizer(zipcode_recognizer_w_context)
 analyzer = AnalyzerEngine(
     registry=registry, context_aware_enhancer=context_aware_enhancer
 )
