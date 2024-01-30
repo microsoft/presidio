@@ -1,9 +1,41 @@
 from typing import Optional, List
+from presidio_analyzer import (
+    AnalysisExplanation,
+    ImprovablePatternRecognizer,
+    ImprovablePattern,
+)
 
-from presidio_analyzer import Pattern, PatternRecognizer
+from regex import Match
 
 
-class UsItinRecognizer(PatternRecognizer):
+def improve_itin_pattern(
+    pattern: ImprovablePattern, matched_text: str, match: Match, analysis_explanation: AnalysisExplanation
+):
+    """
+    Change the score of the itin by checking if contains '-' or ' ' characters as separators.
+    """
+    first_separator = match.group(1)
+    second_separator = match.group(2)
+
+    if first_separator and second_separator:
+        return
+
+    if not first_separator and not second_separator:
+        analysis_explanation.pattern_name = "Itin (weak)"
+        analysis_explanation.set_improved_score(0.3)
+        analysis_explanation.append_textual_explanation_line(
+            "Weak pattern. No separators"
+        )
+        return
+
+    analysis_explanation.pattern_name = "Itin (very weak)"
+    analysis_explanation.set_improved_score(0.05)
+    analysis_explanation.append_textual_explanation_line(
+        "Very Weak pattern. Only one separator"
+    )
+
+
+class UsItinRecognizer(ImprovablePatternRecognizer):
     """
     Recognizes US ITIN (Individual Taxpayer Identification Number) using regex.
 
@@ -14,20 +46,11 @@ class UsItinRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        Pattern(
-            "Itin (very weak)",
-            r"\b9\d{2}[- ](5\d|6[0-5]|7\d|8[0-8]|9([0-2]|[4-9]))\d{4}\b|\b9\d{2}(5\d|6[0-5]|7\d|8[0-8]|9([0-2]|[4-9]))[- ]\d{4}\b",  # noqa: E501
-            0.05,
-        ),
-        Pattern(
-            "Itin (weak)",
-            r"\b9\d{2}(5\d|6[0-5]|7\d|8[0-8]|9([0-2]|[4-9]))\d{4}\b",  # noqa: E501
-            0.3,
-        ),
-        Pattern(
+        ImprovablePattern(
             "Itin (medium)",
-            r"\b9\d{2}[- ](5\d|6[0-5]|7\d|8[0-8]|9([0-2]|[4-9]))[- ]\d{4}\b",  # noqa: E501
+            r"\b9\d{2}([- ]?)(?:5\d|6[0-5]|7\d|8[0-8]|9(?:[0-2]|[4-9]))([- ]?)\d{4}\b",
             0.5,
+            improve_itin_pattern,
         ),
     ]
 
@@ -35,7 +58,7 @@ class UsItinRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns: Optional[List[Pattern]] = None,
+        patterns: Optional[List[ImprovablePattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "US_ITIN",

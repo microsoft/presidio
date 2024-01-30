@@ -1,10 +1,44 @@
-from collections import defaultdict
 from typing import List, Optional
+from presidio_analyzer import (
+    AnalysisExplanation,
+    EntityRecognizer,
+    ImprovablePatternRecognizer,
+    ImprovablePattern,
+)
+from presidio_analyzer.string_sanitizers import StringSanitizer, TranslateSanitizer
+from regex import Match
 
-from presidio_analyzer import Pattern, PatternRecognizer
+
+def improve_ssn_pattern(
+    pattern: ImprovablePattern, matched_text: str, match: Match, analysis_explanation: AnalysisExplanation
+):
+    """
+    Change the score of the ssn by checking if contains separator characters.
+    """
+    first_separator = match.group(1)
+    second_separator = match.group(2)
+    analysis_explanation.set_improved_score(0.05)
+
+    if first_separator and second_separator:
+        if first_separator != second_separator:
+            analysis_explanation.set_improved_score(EntityRecognizer.MIN_SCORE)
+        else:
+            analysis_explanation.set_improved_score(pattern.score)
+    elif not first_separator and not second_separator:
+        analysis_explanation.pattern_name = "SSN4 (very weak)"
+    elif first_separator:
+        if first_separator == "-":
+            analysis_explanation.pattern_name = "SSN2 (very weak)"
+        else:
+            analysis_explanation.set_improved_score(EntityRecognizer.MIN_SCORE)
+    else:
+        if second_separator == "-":
+            analysis_explanation.pattern_name = "SSN1 (very weak)"
+        else:
+            analysis_explanation.set_improved_score(EntityRecognizer.MIN_SCORE)
 
 
-class UsSsnRecognizer(PatternRecognizer):
+class UsSsnRecognizer(ImprovablePatternRecognizer):
     """Recognize US Social Security Number (SSN) using regex.
 
     :param patterns: List of patterns to be used by this recognizer
@@ -14,13 +48,12 @@ class UsSsnRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        Pattern("SSN1 (very weak)", r"\b([0-9]{5})-([0-9]{4})\b", 0.05),  # noqa E501
-        Pattern("SSN2 (very weak)", r"\b([0-9]{3})-([0-9]{6})\b", 0.05),  # noqa E501
-        Pattern(
-            "SSN3 (very weak)", r"\b(([0-9]{3})-([0-9]{2})-([0-9]{4}))\b", 0.05
-        ),  # noqa E501
-        Pattern("SSN4 (very weak)", r"\b[0-9]{9}\b", 0.05),
-        Pattern("SSN5 (medium)", r"\b([0-9]{3})[- .]([0-9]{2})[- .]([0-9]{4})\b", 0.5),
+        ImprovablePattern(
+            "SSN5 (medium)",
+            r"\b[0-9]{3}([\.\- ])?[0-9]{2}([\.\- ])?[0-9]{4}\b",
+            0.5,
+            improve_ssn_pattern,
+        )
     ]
 
     CONTEXT = [
@@ -36,10 +69,11 @@ class UsSsnRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns: Optional[List[Pattern]] = None,
+        patterns: Optional[List[ImprovablePatternRecognizer]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "US_SSN",
+        sanitizer: Optional[StringSanitizer] = None,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -49,24 +83,20 @@ class UsSsnRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+        self.sanitizer = sanitizer or TranslateSanitizer({".": "", "-": "", " ": ""})
 
-    def invalidate_result(self, pattern_text: str) -> bool:
-        """
-        Check if the pattern text cannot be validated as a US_SSN entity.
+    def improve_score(
+        self,
+        pattern: ImprovablePattern,
+        matched_text: str,
+        match: Match,
+        analysis_explanation: AnalysisExplanation,
+    ):
+        sanitized_value = self.sanitizer.sanitize(matched_text)
+        if self.is_invalid_ssn(sanitized_value):
+            analysis_explanation.set_improved_score(EntityRecognizer.MIN_SCORE)
 
-        :param pattern_text: Text detected as pattern by regex
-        :return: True if invalidated
-        """
-        # if there are delimiters, make sure both delimiters are the same
-        delimiter_counts = defaultdict(int)
-        for c in pattern_text:
-            if c in (".", "-", " "):
-                delimiter_counts[c] += 1
-        if len(delimiter_counts.keys()) > 1:
-            # mismatched delimiters
-            return True
-
-        only_digits = "".join(c for c in pattern_text if c.isdigit())
+    def is_invalid_ssn(self, only_digits: str) -> bool:
         if all(only_digits[0] == c for c in only_digits):
             # cannot be all same digit
             return True
