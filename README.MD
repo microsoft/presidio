@@ -9,14 +9,14 @@
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6076/badge)](https://bestpractices.coreinfrastructure.org/projects/6076)
 
-Analyzer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
-[![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
+- Presidio Analyzer [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
+ [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
 
-Anonymizer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-anonymizer.svg)](https://pypi.python.org/pypi/presidio-anonymizer/)
-[![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)
+- Presidio Anonymizer [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)
+ [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-anonymizer.svg)](https://pypi.python.org/pypi/presidio-anonymizer/)
 
-Image-Redactor [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-image-redactor.svg)](https://pypi.python.org/pypi/presidio-image-redactor/)
-[![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-image-redactor.svg)](https://img.shields.io/pypi/dm/presidio-iamge-redactor.svg)
+- Presidio Image-Redactor [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-image-redactor.svg)](https://img.shields.io/pypi/dm/presidio-iamge-redactor.svg)
+ [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-image-redactor.svg)](https://pypi.python.org/pypi/presidio-image-redactor/)
 
 ## What is Presidio
 
