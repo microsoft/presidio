@@ -385,4 +385,14 @@ def test_add_custom_bboxes_happy_path(
     else:
         assert blue_pixels > 0
 
+def test_check_analyze_supports_language_param(get_mock_png):
+    """Test that the method analyze from class ImageAnalyzerEngine
+    supports the language parameter. 
+    Before there where a bug: 
+        "TypeError: presidio_analyzer.analyzer_engine.AnalyzerEngine.analyze() got multiple values for keyword argument 'language'"
+        
+    :param get_mock_png: The mock PNG image
+    """
+    redacted = ImageAnalyzerEngine().analyze(get_mock_png, language='en')
+    assert len(redacted) > 0
     
