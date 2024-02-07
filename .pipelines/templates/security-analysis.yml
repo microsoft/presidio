@@ -3,7 +3,6 @@ steps:
     inputs:
       languages: "python"
   - task: AdvancedSecurity-Dependency-Scanning@1 
-  - task: AdvancedSecurity-Codeql-Analyze@1 
   - task: ComponentGovernanceComponentDetection@0
     inputs:
         scanType: 'Register'
