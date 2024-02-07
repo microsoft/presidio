@@ -1,5 +1,4 @@
 steps:
-  - task: AdvancedSecurity-Dependency-Scanning@1 
   - task: ComponentGovernanceComponentDetection@0
     inputs:
         scanType: 'Register'
