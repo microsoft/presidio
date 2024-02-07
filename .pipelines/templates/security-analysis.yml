@@ -1,7 +1,4 @@
 steps:
-  - task: AdvancedSecurity-Codeql-Init@1
-    inputs:
-      languages: "python"
   - task: AdvancedSecurity-Dependency-Scanning@1 
   - task: ComponentGovernanceComponentDetection@0
     inputs:
