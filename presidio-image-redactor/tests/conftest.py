@@ -9,6 +9,12 @@ from presidio_image_redactor import ImageAnalyzerEngine
 from presidio_image_redactor.entities import ImageRecognizerResult
 import pytest
 
+from presidio_analyzer.nlp_engine import NlpEngine
+from presidio_analyzer.nlp_engine import NlpArtifacts
+
+from typing import Iterable, Iterator, Tuple, List
+
+
 SCRIPT_DIR = os.path.dirname(__file__)
 
 
@@ -81,3 +87,25 @@ def get_mock_dicom_verify_results():
 def get_mock_png():
     filepath = f"{SCRIPT_DIR}/test_data/png_images/0_ORIGINAL.png"
     return Image.open(filepath)
+
+@pytest.fixture(scope="module")
+def get_dummy_nlp_engine():
+    """Dummy NLP engine to use in testing"""
+    class DummyNlpEngine(NlpEngine):
+        def load(self) -> None:
+            return None
+        def is_loaded(self) -> bool:
+            return True
+        def process_text(self, text: str, language: str) -> NlpArtifacts:
+            return None
+        def process_batch(
+            self, texts: Iterable[str], language: str, **kwargs  # noqa ANN003
+        ) -> Iterator[Tuple[str, NlpArtifacts]]:
+            return None
+        def is_stopword(self, word: str, language: str) -> bool:
+            return False
+        def is_punct(self, word: str, language: str) -> bool:
+            return False
+        def get_supported_entities(self) -> List[str]:
+            return []
+    return DummyNlpEngine()
