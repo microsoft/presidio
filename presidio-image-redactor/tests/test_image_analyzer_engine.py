@@ -1,5 +1,6 @@
 import pytest
-from presidio_analyzer import RecognizerResult
+from presidio_analyzer import RecognizerResult, AnalyzerEngine, PatternRecognizer, Pattern
+from presidio_analyzer.recognizer_registry import RecognizerRegistry
 
 from presidio_image_redactor import ImageAnalyzerEngine
 from presidio_image_redactor.entities import ImageRecognizerResult
@@ -396,3 +397,21 @@ def test_check_analyze_supports_language_param(get_mock_png):
     redacted = ImageAnalyzerEngine().analyze(get_mock_png, language='en')
     assert len(redacted) > 0
     
+def test_use_other_language_in_analyze(get_dummy_nlp_engine, get_mock_png):
+    """Verify if the method analyze from class ImageAnalyzerEngine
+    supports a language parameter other tham en. 
+        
+    :get_dummy_nlp_engine: The mock of a NLP engine
+    :param get_mock_png: The mock PNG image
+    """
+    # Create a dummy recognizer. It's necessary at least one recognizer to use the AnalyzerEngine
+    pattern = Pattern(name="character_a_pattern", regex=r"####-DUMMY-####", score=1.0)
+    dummy_recognizer = PatternRecognizer("DUMMY", patterns=[pattern], supported_language="pt")
+    registry = RecognizerRegistry(recognizers=[dummy_recognizer])
+   
+    # Create an AnalyzerEngine to suport another language 
+    analyzer_engine = AnalyzerEngine(nlp_engine=get_dummy_nlp_engine, registry=registry, supported_languages=["pt"])
+    # Analyze the image using other language 
+    redacted = ImageAnalyzerEngine(analyzer_engine=analyzer_engine).analyze(get_mock_png, language='pt', entities=['DUMMY'])
+    # There aren't the dummy pattern in the image, so the redacted should be empty
+    assert len(redacted) == 0
