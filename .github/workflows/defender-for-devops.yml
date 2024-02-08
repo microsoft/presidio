@@ -26,10 +26,16 @@ on:
   schedule:
     - cron: '30 2 * * 4'
 
+permissions: read-all
+
 jobs:
   MSDO:
     # currently only windows latest is supported
     runs-on: windows-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
     steps:
     - uses: actions/checkout@v3
