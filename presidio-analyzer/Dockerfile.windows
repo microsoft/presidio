@@ -9,6 +9,7 @@ ADD https://aka.ms/vs/16/release/vc_redist.x64.exe .
 RUN ./vc_redist.x64.exe /quiet /install
 
 COPY ./Pipfile* .
+RUN pip install --upgrade pip
 RUN pip install pipenv; pipenv install --deploy
 
 # install nlp models specified in conf/default.yaml

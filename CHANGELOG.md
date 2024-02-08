@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Changed
+#### Image Redactor
+* Bugfix in ImageAnalyzerEngine  #1274
+
 ## [2.2.352] - Jan 22nd 2024
 ### Added
 #### Structured
