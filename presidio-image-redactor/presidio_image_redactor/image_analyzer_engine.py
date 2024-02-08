@@ -70,8 +70,11 @@ class ImageAnalyzerEngine:
         # Analyze text
         text = self.ocr.get_text_from_ocr_dict(ocr_result)
 
+        # Difines English as default language, if not specified
+        if "language" not in text_analyzer_kwargs:
+            text_analyzer_kwargs["language"] = "en"
         analyzer_result = self.analyzer_engine.analyze(
-            text=text, language="en", **text_analyzer_kwargs
+            text=text, **text_analyzer_kwargs
         )
         allow_list = self._check_for_allow_list(text_analyzer_kwargs)
         bboxes = self.map_analyzer_results_to_bounding_boxes(
