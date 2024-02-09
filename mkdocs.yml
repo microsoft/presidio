@@ -46,6 +46,8 @@ nav:
   - Handling images: 
     - Home: image-redactor/index.md
     - Evaluating DICOM redaction: image-redactor/evaluating_dicom_redaction.md
+  - Handling structured data:
+    - Home: structured/index.md
   - Samples: samples/index.md  
   - General:
     - Supported entities: supported_entities.md
