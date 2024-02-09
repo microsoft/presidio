@@ -1,67 +1,7 @@
 steps:
-    - task: CredScan@3
-      displayName: 'Find credentials in source code'
-    - task: SdtReport@1
-      displayName: 'Security analysis report'
-      inputs:
-          AllTools: false
-          APIScan: false
-          BinSkim: false
-          CodesignValidation: false
-          CredScan: true
-          FortifySCA: false
-          FxCop: false
-          ModernCop: false
-          MSRD: false
-          PoliCheck: false
-          RoslynAnalyzers: false
-          SDLNativeRules: false
-          Semmle: false
-          TSLint: false
-          ToolLogsNotFoundAction: 'Standard'
-    - task: PublishSecurityAnalysisLogs@2
-      displayName: 'Publish security analysis logs'
-      inputs:
-          ArtifactName: 'CodeAnalysisLogs'
-          ArtifactType: 'Container'
-          AllTools: false
-          AntiMalware: false
-          APIScan: false
-          BinSkim: false
-          CodesignValidation: false
-          CredScan: true
-          FortifySCA: false
-          FxCop: false
-          ModernCop: false
-          MSRD: false
-          PoliCheck: false
-          RoslynAnalyzers: false
-          SDLNativeRules: false
-          Semmle: false
-          TSLint: false
-          WebScout: false
-          ToolLogsNotFoundAction: 'Standard'
-    - task: PostAnalysis@1
-      displayName: 'Post security analysis'
-      inputs:
-          AllTools: false
-          APIScan: false
-          BinSkim: false
-          CodesignValidation: false
-          CredScan: true
-          FortifySCA: false
-          FxCop: false
-          ModernCop: false
-          PoliCheck: false
-          RoslynAnalyzers: false
-          SDLNativeRules: false
-          Semmle: false
-          TSLint: false
-          VstsConsole: false
-          ToolLogsNotFoundAction: 'Standard'
-    - task: ComponentGovernanceComponentDetection@0
-      inputs:
-          scanType: 'Register'
-          verbosity: 'Verbose'
-          alertWarningLevel: 'Medium'
-          failOnAlert: true
+  - task: ComponentGovernanceComponentDetection@0
+    inputs:
+        scanType: 'Register'
+        verbosity: 'Verbose'
+        alertWarningLevel: 'Medium'
+        failOnAlert: true

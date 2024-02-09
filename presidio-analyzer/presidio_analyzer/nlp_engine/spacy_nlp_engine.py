@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Optional, Dict, Iterator, Tuple, Union, List
 
 import spacy
@@ -59,7 +60,7 @@ class SpacyNlpEngine(NlpEngine):
 
     @staticmethod
     def _download_spacy_model_if_needed(model_name: str) -> None:
-        if not spacy.util.is_package(model_name):
+        if not (spacy.util.is_package(model_name) or Path(model_name).exists()):
             logger.warning(f"Model {model_name} is not installed. Downloading...")
             spacy.cli.download(model_name)
             logger.info(f"Finished downloading model {model_name}")

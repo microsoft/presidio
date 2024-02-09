@@ -5,6 +5,7 @@ ENV PIP_NO_CACHE_DIR=1
 WORKDIR /app
 
 COPY ./Pipfile* .
+RUN pip install --upgrade pip
 RUN pip install pipenv; pipenv install --deploy
 
 COPY . .
