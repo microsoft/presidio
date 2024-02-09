@@ -1,18 +1,13 @@
 """Deanonymize anonymized text by using deanonymize operators."""
-import logging
-from typing import List, Dict
+from typing import List, Dict, Type
 
 from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities import OperatorConfig, OperatorResult, EngineResult
-from presidio_anonymizer.operators import OperatorType
+from presidio_anonymizer.operators import OperatorType, Operator
 
 
 class DeanonymizeEngine(EngineBase):
     """Deanonymize text that was previously anonymized."""
-
-    def __init__(self):
-        self.logger = logging.getLogger("presidio-anonymizer")
-        EngineBase.__init__(self)
 
     def deanonymize(
         self,
@@ -34,3 +29,19 @@ class DeanonymizeEngine(EngineBase):
         """Return a list of supported deanonymizers."""
         names = [p for p in self.operators_factory.get_deanonymizers().keys()]
         return names
+
+    def add_deanonymizer(self, deanonymizer_cls: Type[Operator]) -> None:
+        """
+        Add a new deanonymizer to the engine.
+
+        anonymizer_cls: The deanonymizer class to add to the engine.
+        """
+        self.operators_factory.add_deanonymize_operator(deanonymizer_cls)
+
+    def remove_deanonymizer(self, deanonymizer_cls: Type[Operator]) -> None:
+        """
+        Remove a deanonymizer from the engine.
+
+        deanonymizer_cls: The deanonymizer class to remove from the engine.
+        """
+        self.operators_factory.remove_deanonymize_operator(deanonymizer_cls)

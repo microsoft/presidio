@@ -40,20 +40,20 @@ class EngineBase(ABC):
         text_replace_builder = TextReplaceBuilder(original_text=text)
         engine_result = EngineResult()
         sorted_pii_entities = sorted(pii_entities, reverse=True)
-        for operator in sorted_pii_entities:
+        for entity in sorted_pii_entities:
             text_to_operate_on = text_replace_builder.get_text_in_position(
-                operator.start, operator.end
+                entity.start, entity.end
             )
 
-            self.logger.debug(f"performing operation {operator}")
+            self.logger.debug(f"performing operation {entity}")
             operator_metadata = self.__get_entity_operator_metadata(
-                operator.entity_type, operators_metadata
+                entity.entity_type, operators_metadata
             )
             changed_text = self.__operate_on_text(
-                operator, text_to_operate_on, operator_metadata, operator_type
+                entity, text_to_operate_on, operator_metadata, operator_type
             )
             index_from_end = text_replace_builder.replace_text_get_insertion_index(
-                changed_text, operator.start, operator.end
+                changed_text, entity.start, entity.end
             )
 
             # The following creates an intermediate list of result entities,
@@ -62,7 +62,7 @@ class EngineBase(ABC):
             result_item = OperatorResult(
                 0,
                 index_from_end,
-                operator.entity_type,
+                entity.entity_type,
                 changed_text,
                 operator_metadata.operator_name,
             )

@@ -238,20 +238,20 @@ def test_given_sorted_analyzer_results_merge_entities_separated_by_white_space(
 
 def _operate(
     text: str,
-    text_metadata: List[PIIEntity],
-    operators: Dict[str, OperatorConfig],
-    operator: OperatorType,
+    pii_entities: List[PIIEntity],
+    operators_metadata: Dict[str, OperatorConfig],
+    operator_type: OperatorType,
 ) -> EngineResult:
     assert text == "hello world, my name is Jane Doe. My number is: 034453334"
-    assert len(text_metadata) == 2
+    assert len(pii_entities) == 2
     expected = [
         RecognizerResult(start=48, end=57, entity_type="PHONE_NUMBER", score=0.95),
         RecognizerResult(start=18, end=36, entity_type="BLA", score=0.8),
     ]
-    assert all(elem in text_metadata for elem in expected)
-    assert len(operators) == 1
-    assert operators["DEFAULT"]
-    assert operator == OperatorType.Anonymize
+    assert all(elem in pii_entities for elem in expected)
+    assert len(operators_metadata) == 1
+    assert operators_metadata["DEFAULT"]
+    assert operator_type == OperatorType.Anonymize
     return EngineResult(
         "Number: I am your new text!", [OperatorResult(0, 35, "type", "text", "hash")]
     )

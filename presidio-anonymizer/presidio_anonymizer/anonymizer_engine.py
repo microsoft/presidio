@@ -1,7 +1,7 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 import logging
 import re
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Type
 
 from presidio_anonymizer.core import EngineBase
 from presidio_anonymizer.entities import (
@@ -10,7 +10,7 @@ from presidio_anonymizer.entities import (
     EngineResult,
     ConflictResolutionStrategy,
 )
-from presidio_anonymizer.operators import OperatorType
+from presidio_anonymizer.operators import OperatorType, Operator
 
 DEFAULT = "replace"
 
@@ -24,9 +24,6 @@ class AnonymizerEngine(EngineBase):
     """
 
     logger = logging.getLogger("presidio-anonymizer")
-
-    def __init__(self):
-        EngineBase.__init__(self)
 
     def anonymize(
             self,
@@ -95,7 +92,26 @@ class AnonymizerEngine(EngineBase):
 
         operators = self.__check_or_add_default_operator(operators)
 
-        return self._operate(text, merged_results, operators, OperatorType.Anonymize)
+        return self._operate(text=text,
+                             pii_entities=merged_results,
+                             operators_metadata=operators,
+                             operator_type=OperatorType.Anonymize)
+
+    def add_anonymizer(self, anonymizer_cls: Type[Operator]) -> None:
+        """
+        Add a new anonymizer to the engine.
+
+        anonymizer_cls: The anonymizer class to add to the engine.
+        """
+        self.operators_factory.add_anonymize_operator(anonymizer_cls)
+
+    def remove_anonymizer(self, anonyizer_cls: Type[Operator]) -> None:
+        """
+        Remove an anonymizer from the engine.
+
+        anonymizer_cls: The anonymizer class to remove from the engine.
+        """
+        self.operators_factory.remove_anonymize_operator(anonyizer_cls)
 
     def _remove_conflicts_and_get_text_manipulation_data(
             self,
