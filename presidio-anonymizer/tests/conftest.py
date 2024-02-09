@@ -22,6 +22,7 @@ def mock_anonymizer_cls() -> Type[Operator]:
 
     return MyAnonymizer
 
+
 @pytest.fixture(scope="session")
 def mock_deanonymizer_cls() -> Type[Operator]:
     class MyDeanonymizer(Operator):
