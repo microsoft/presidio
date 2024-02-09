@@ -83,6 +83,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|--- |
 | IN_PAN     | The Indian Permanent Account Number (PAN) is a unique 12 character alphanumeric identifier issued to all business and individual entities registered as Tax Payers. | Pattern match, context |
 | IN_AADHAAR | Indian government issued unique 12 digit individual identity number                                                                                                 | Pattern match, context, and checksum |
+| IN_VEHICLE_REGISTRATION | Indian government issued transport (govt, personal, diplomatic, defence)  vehicle registration number                                                               | Pattern match, context, and checksum |
 
 ## Adding a custom PII entity
 
