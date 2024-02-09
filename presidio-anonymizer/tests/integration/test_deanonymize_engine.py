@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pytest
 
 from presidio_anonymizer import AnonymizerEngine
@@ -10,8 +8,7 @@ from presidio_anonymizer.entities import (
     OperatorResult,
     OperatorConfig,
 )
-from presidio_anonymizer.operators import Decrypt, Operator, OperatorType, \
-    DeanonymizeKeep
+from presidio_anonymizer.operators import Decrypt, OperatorType, DeanonymizeKeep
 from tests.mock_operators import create_reverser_operator
 
 
@@ -101,6 +98,7 @@ def test_given_request_deanonymizers_return_list():
     assert len(anon_list) == len(expected_list)
     assert set(anon_list) == set(expected_list)
 
+
 def test_add_deanonymizer_returns_updated_list(mock_deanonymizer_cls):
     engine = DeanonymizeEngine()
     deanon_list_len = len(engine.get_deanonymizers())
@@ -111,7 +109,6 @@ def test_add_deanonymizer_returns_updated_list(mock_deanonymizer_cls):
 
 
 def test_e2e_custom_operator_returns_original():
-
     text = "hello"
     recognizer_results = [RecognizerResult("WORD", 0, 5, 0.8)]
     anonymizer_engine = AnonymizerEngine()
@@ -123,12 +120,15 @@ def test_e2e_custom_operator_returns_original():
     assert anonymized.text == text[::-1]
 
     deanonymizer_engine = DeanonymizeEngine()
-    deanonymizer_engine.add_deanonymizer(create_reverser_operator(OperatorType.Deanonymize))
+    deanonymizer_engine.add_deanonymizer(
+        create_reverser_operator(OperatorType.Deanonymize)
+    )
     deanonymized = deanonymizer_engine.deanonymize(
         anonymized.text, anonymized.items, {"WORD": OperatorConfig("Reverser")}
     )
 
     assert deanonymized.text == text
+
 
 def test_remove_deanonymizer_removes_anonymizer():
     engine = DeanonymizeEngine()

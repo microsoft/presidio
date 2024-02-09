@@ -1,9 +1,7 @@
-from unittest.mock import MagicMock, patch
-
 import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.operators import OperatorsFactory, OperatorType, Operator
+from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 
 
 def test_given_anonymizers_list_then_all_classes_are_there():
@@ -22,7 +20,6 @@ def test_given_anonymizers_list_then_all_classes_are_there():
 
 
 def test_given_decryptors_list_then_all_classes_are_there():
-
     decryptors = OperatorsFactory().get_deanonymizers()
     assert len(decryptors) == 2
     for class_name in ["decrypt"]:
@@ -80,6 +77,7 @@ def test_given_custom_anonymizer_list_gets_updated(mock_anonymizer_cls):
     assert anonymizers.get("MockAnonymizer")
     assert anonymizers.get("MockAnonymizer")().operator_name() == "MockAnonymizer"
 
+
 def test_given_custom_deanonymizer_list_gets_updated(mock_deanonymizer_cls):
     factory = OperatorsFactory()
     num_of_deanonymizers = len(factory.get_deanonymizers())
@@ -88,7 +86,6 @@ def test_given_custom_deanonymizer_list_gets_updated(mock_deanonymizer_cls):
     assert len(deanonymizers) == num_of_deanonymizers + 1
     assert deanonymizers.get("MockDeanonymizer")
     assert deanonymizers.get("MockDeanonymizer")().operator_name() == "MockDeanonymizer"
-
 
 
 def test_remove_anonymizer_removes_operator(mock_anonymizer_cls):
@@ -104,7 +101,8 @@ def test_remove_anonymizer_removes_operator(mock_anonymizer_cls):
 def test_remove_missing_anonymizer_raises_exception(mock_anonymizer_cls):
     factory = OperatorsFactory()
     with pytest.raises(
-        InvalidParamException, match="Operator MockAnonymizer not found in anonymizers list"
+        InvalidParamException,
+        match="Operator MockAnonymizer not found in anonymizers list",
     ):
         factory.remove_anonymize_operator(mock_anonymizer_cls)
 
@@ -121,6 +119,7 @@ def test_remove_deanonymizer_removes_operator(mock_deanonymizer_cls):
 def test_remove_missing_deanonymizer_raises_exception(mock_deanonymizer_cls):
     factory = OperatorsFactory()
     with pytest.raises(
-        InvalidParamException, match="Operator MockDeanonymizer not found in deanonymizers list"
+        InvalidParamException,
+        match="Operator MockDeanonymizer not found in deanonymizers list",
     ):
         factory.remove_deanonymize_operator(mock_deanonymizer_cls)

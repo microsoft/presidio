@@ -3,7 +3,7 @@ from typing import Type, Dict
 from presidio_anonymizer.operators import OperatorType, Operator
 
 
-def create_reverser_operator(operator_type:OperatorType) -> Type[Operator]:
+def create_reverser_operator(operator_type: OperatorType) -> Type[Operator]:
     class ReverserOperator(Operator):
         def operate(self, text: str, params: Dict = None) -> str:
             return text[::-1]
