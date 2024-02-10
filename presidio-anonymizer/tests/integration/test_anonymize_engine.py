@@ -305,25 +305,21 @@ def test_remove_anonymizer_removes_anonymizer():
     assert len(anonymizers) == num_of_anonymizers - 1
 
 
-def test_operator_metadata_returns_updated_results():
-    reverser = create_instance_counter_anonymizer()
+def test_operator_metadata_returns_updated_results(three_person_analyzer_results):
+    counter_anonymizer = create_instance_counter_anonymizer()
     engine = AnonymizerEngine()
-    engine.add_anonymizer(reverser)
-    text = "Peter gave Julie a book about Heidi."
-    analyzer_results = [
-        RecognizerResult("PERSON", 0, 5, 1.0),
-        RecognizerResult("PERSON", 11, 16, 1.0),
-        RecognizerResult("PERSON", 30, 35, 1.0),
-    ]
+    engine.add_anonymizer(counter_anonymizer)
+    text, analyzer_results = three_person_analyzer_results
 
-    entity_counters = dict()
+    entity_mapping = dict()
 
     actual_anonymize_result = engine.anonymize(
         text,
         analyzer_results,
         {
-            "PERSON": OperatorConfig(
-                "entity_counter", {"entity_counters": entity_counters}
+            "DEFAULT": OperatorConfig(
+                "entity_counter", {"entity_mapping": entity_mapping}
+
             )
         },
     )

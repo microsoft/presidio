@@ -2,7 +2,19 @@ from typing import Dict, Type
 
 import pytest
 
+from presidio_anonymizer.entities import RecognizerResult
 from presidio_anonymizer.operators import Operator, OperatorType
+
+
+@pytest.fixture(scope="session")
+def three_person_analyzer_results():
+    text = "Peter gave Julie a book about Heidi."
+    analyzer_results = [
+        RecognizerResult("PERSON", 0, 5, 1.0),
+        RecognizerResult("PERSON", 11, 16, 1.0),
+        RecognizerResult("PERSON", 30, 35, 1.0),
+    ]
+    return text, analyzer_results
 
 
 @pytest.fixture(scope="session")
