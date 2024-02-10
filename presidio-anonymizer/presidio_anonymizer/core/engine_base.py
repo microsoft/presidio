@@ -26,6 +26,7 @@ class EngineBase(ABC):
         pii_entities: List[PIIEntity],
         operators_metadata: Dict[str, OperatorConfig],
         operator_type: OperatorType,
+        **operator_kwargs: Dict
     ) -> EngineResult:
         """
         Operate will do the operations required by the user over the text.
@@ -85,11 +86,14 @@ class EngineBase(ABC):
             operator_metadata.operator_name, operator_type
         )
         self.logger.debug(f"validating operator {operator} for {entity_type}")
-        operator.validate(params=operator_metadata.params)
         params = operator_metadata.params
         params["entity_type"] = entity_type
+
+        operator.validate(params=params)
+
         self.logger.debug(f"operating on {entity_type} with {operator}")
         operated_on_text = operator.operate(params=params, text=text_to_operate_on)
+
         return operated_on_text
 
     @staticmethod

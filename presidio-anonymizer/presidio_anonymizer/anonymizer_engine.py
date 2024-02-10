@@ -32,7 +32,7 @@ class AnonymizerEngine(EngineBase):
             operators: Optional[Dict[str, OperatorConfig]] = None,
             conflict_resolution: ConflictResolutionStrategy = (
                 ConflictResolutionStrategy.MERGE_SIMILAR_OR_CONTAINED
-            )
+            ),
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 

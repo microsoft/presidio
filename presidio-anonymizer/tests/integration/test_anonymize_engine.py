@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from presidio_anonymizer import AnonymizerEngine
@@ -7,7 +9,10 @@ from presidio_anonymizer.entities import (
     OperatorConfig,
 )
 from presidio_anonymizer.operators import AESCipher, OperatorType, Redact
-from tests.mock_operators import create_reverser_operator
+from tests.mock_operators import (
+    create_reverser_operator,
+    create_instance_counter_anonymizer,
+)
 
 
 def test_given_url_at_the_end_then_we_redact_is_successfully():
@@ -35,8 +40,8 @@ def test_given_operator_decrypt_then_we_fail():
     ]
     engine = AnonymizerEngine()
     with pytest.raises(
-            InvalidParamException,
-            match="Invalid operator class 'decrypt'.",
+        InvalidParamException,
+        match="Invalid operator class 'decrypt'.",
     ):
         engine.anonymize(text, analyzer_results, anonymizers_config)
 
@@ -281,7 +286,6 @@ def test_add_anonymizer_returns_updated_list(mock_anonymizer_cls):
 
 
 def test_anonymizer_engine_uses_custom_operator():
-
     engine = AnonymizerEngine()
     engine.add_anonymizer(create_reverser_operator(OperatorType.Anonymize))
     text = "hello"
@@ -299,3 +303,34 @@ def test_remove_anonymizer_removes_anonymizer():
     engine.remove_anonymizer(Redact)
     anonymizers = engine.get_anonymizers()
     assert len(anonymizers) == num_of_anonymizers - 1
+
+
+def test_operator_metadata_returns_updated_results():
+    reverser = create_instance_counter_anonymizer()
+    engine = AnonymizerEngine()
+    engine.add_anonymizer(reverser)
+    text = "Peter gave Julie a book about Heidi."
+    analyzer_results = [
+        RecognizerResult("PERSON", 0, 5, 1.0),
+        RecognizerResult("PERSON", 11, 16, 1.0),
+        RecognizerResult("PERSON", 30, 35, 1.0),
+    ]
+
+    entity_counters = dict()
+
+    actual_anonymize_result = engine.anonymize(
+        text,
+        analyzer_results,
+        {
+            "PERSON": OperatorConfig(
+                "entity_counter", {"entity_counters": entity_counters}
+            )
+        },
+    )
+
+    pattern = r'<PERSON_\d+>'
+    assert len(re.findall(pattern, actual_anonymize_result.text)) == 3
+    for results in actual_anonymize_result.items:
+        assert results.operator == "entity_counter"
+        assert results.entity_type == "PERSON"
+        assert re.findall(pattern, results.text)

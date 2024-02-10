@@ -7,7 +7,7 @@ from presidio_anonymizer.operators import Operator, OperatorType
 
 @pytest.fixture(scope="session")
 def mock_anonymizer_cls() -> Type[Operator]:
-    class MyAnonymizer(Operator):
+    class MockAnonymizer(Operator):
         def operate(self, text: str, params: Dict = None) -> str:
             return text
 
@@ -15,17 +15,17 @@ def mock_anonymizer_cls() -> Type[Operator]:
             pass
 
         def operator_name(self) -> str:
-            return "MockAnonymizer"
+            return self.__class__.__name__
 
         def operator_type(self) -> OperatorType:
             return OperatorType.Anonymize
 
-    return MyAnonymizer
+    return MockAnonymizer
 
 
 @pytest.fixture(scope="session")
 def mock_deanonymizer_cls() -> Type[Operator]:
-    class MyDeanonymizer(Operator):
+    class MockDeanonymizer(Operator):
         def operate(self, text: str, params: Dict = None) -> str:
             return text
 
@@ -33,9 +33,9 @@ def mock_deanonymizer_cls() -> Type[Operator]:
             pass
 
         def operator_name(self) -> str:
-            return "MockDeanonymizer"
+            return self.__class__.__name__
 
         def operator_type(self) -> OperatorType:
             return OperatorType.Deanonymize
 
-    return MyDeanonymizer
+    return MockDeanonymizer
