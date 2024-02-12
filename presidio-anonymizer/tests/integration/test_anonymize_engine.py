@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from presidio_anonymizer import AnonymizerEngine
@@ -6,7 +8,11 @@ from presidio_anonymizer.entities import (
     RecognizerResult,
     OperatorConfig,
 )
-from presidio_anonymizer.operators import AESCipher
+from presidio_anonymizer.operators import AESCipher, OperatorType, Redact
+from tests.mock_operators import (
+    create_reverser_operator,
+    create_instance_counter_anonymizer,
+)
 
 
 def test_given_url_at_the_end_then_we_redact_is_successfully():
@@ -34,8 +40,8 @@ def test_given_operator_decrypt_then_we_fail():
     ]
     engine = AnonymizerEngine()
     with pytest.raises(
-            InvalidParamException,
-            match="Invalid operator class 'decrypt'.",
+        InvalidParamException,
+        match="Invalid operator class 'decrypt'.",
     ):
         engine.anonymize(text, analyzer_results, anonymizers_config)
 
@@ -268,3 +274,59 @@ def test_empty_text_returns_correct_results():
     actual_anonymize_result = AnonymizerEngine().anonymize(text, analyzer_results)
 
     assert actual_anonymize_result.text == text
+
+
+def test_add_anonymizer_returns_updated_list(mock_anonymizer_cls):
+    engine = AnonymizerEngine()
+    anon_list_len = len(engine.get_anonymizers())
+    engine.add_anonymizer(mock_anonymizer_cls)
+    anon_list = engine.get_anonymizers()
+    assert len(anon_list) == anon_list_len + 1
+    assert mock_anonymizer_cls().operator_name() in anon_list
+
+
+def test_anonymizer_engine_uses_custom_operator():
+    engine = AnonymizerEngine()
+    engine.add_anonymizer(create_reverser_operator(OperatorType.Anonymize))
+    text = "hello"
+    analyzer_results = [RecognizerResult("WORD", 0, 5, 1.0)]
+
+    actual_anonymize_result = engine.anonymize(
+        text, analyzer_results, {"WORD": OperatorConfig("Reverser")}
+    )
+    assert actual_anonymize_result.text == "hello"[::-1]
+
+
+def test_remove_anonymizer_removes_anonymizer():
+    engine = AnonymizerEngine()
+    num_of_anonymizers = len(engine.get_anonymizers())
+    engine.remove_anonymizer(Redact)
+    anonymizers = engine.get_anonymizers()
+    assert len(anonymizers) == num_of_anonymizers - 1
+
+
+def test_operator_metadata_returns_updated_results(three_person_analyzer_results):
+    counter_anonymizer = create_instance_counter_anonymizer()
+    engine = AnonymizerEngine()
+    engine.add_anonymizer(counter_anonymizer)
+    text, analyzer_results = three_person_analyzer_results
+
+    entity_mapping = dict()
+
+    actual_anonymize_result = engine.anonymize(
+        text,
+        analyzer_results,
+        {
+            "DEFAULT": OperatorConfig(
+                "entity_counter", {"entity_mapping": entity_mapping}
+
+            )
+        },
+    )
+
+    pattern = r'<PERSON_\d+>'
+    assert len(re.findall(pattern, actual_anonymize_result.text)) == 3
+    for results in actual_anonymize_result.items:
+        assert results.operator == "entity_counter"
+        assert results.entity_type == "PERSON"
+        assert re.findall(pattern, results.text)
