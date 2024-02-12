@@ -111,7 +111,7 @@ class AnonymizerEngine(EngineBase):
 
         anonymizer_cls: The anonymizer class to remove from the engine.
         """
-        self.operators_factory.remove_anonymize_operator(anonyizer_cls)
+        self.operators_factory.remove_anonymize_operator(anonymizer_cls)
 
     def _remove_conflicts_and_get_text_manipulation_data(
             self,
