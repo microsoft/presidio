@@ -14,6 +14,8 @@ from presidio_anonymizer.operators import OperatorType, Operator
 
 DEFAULT = "replace"
 
+logger = logging.getLogger("presidio-anonymizer")
+
 
 class AnonymizerEngine(EngineBase):
     """
@@ -22,8 +24,6 @@ class AnonymizerEngine(EngineBase):
     Handles the entire logic of the Presidio-anonymizer. Gets the original text
     and replaces the PII entities with the desired anonymizers.
     """
-
-    logger = logging.getLogger("presidio-anonymizer")
 
     def anonymize(
             self,
@@ -103,6 +103,7 @@ class AnonymizerEngine(EngineBase):
 
         anonymizer_cls: The anonymizer class to add to the engine.
         """
+        logger.info(f"Added anonymizer {anonymizer_cls.__name__}")
         self.operators_factory.add_anonymize_operator(anonymizer_cls)
 
     def remove_anonymizer(self, anonymizer_cls: Type[Operator]) -> None:
@@ -111,6 +112,7 @@ class AnonymizerEngine(EngineBase):
 
         anonymizer_cls: The anonymizer class to remove from the engine.
         """
+        logger.info(f"Removed anonymizer {anonymizer_cls.__name__}")
         self.operators_factory.remove_anonymize_operator(anonymizer_cls)
 
     def _remove_conflicts_and_get_text_manipulation_data(
