@@ -105,7 +105,7 @@ class AnonymizerEngine(EngineBase):
         """
         self.operators_factory.add_anonymize_operator(anonymizer_cls)
 
-    def remove_anonymizer(self, anonyizer_cls: Type[Operator]) -> None:
+    def remove_anonymizer(self, anonymizer_cls: Type[Operator]) -> None:
         """
         Remove an anonymizer from the engine.
 
