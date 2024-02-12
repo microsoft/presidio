@@ -15,10 +15,12 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 try:
-    with open(os.path.join(parent_directory, "VERSION")) as version_file:
+    with open(
+        os.path.join(parent_directory, "PRESIDIO-STRUCTURED-VERSION")
+    ) as version_file:
         __version__ = version_file.read().strip()
 except Exception:
-    __version__ = os.environ.get("PRESIDIO_VERSION", "0.0.1-alpha")
+    __version__ = os.environ.get("PRESIDIO_STRUCTURED_VERSION", "0.0.1-alpha")
 
 setup(
     name="presidio_structured",
@@ -36,8 +38,8 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
     ],
-    description="Presidio structured package - analyses and anonymizes \
-          structured and semistructured data.",
+    description="Presidio structured package - analyzes and anonymizes \
+          structured and semi-structured data.",
     license="MIT license",
     include_package_data=True,
     keywords="presidio_structured",
