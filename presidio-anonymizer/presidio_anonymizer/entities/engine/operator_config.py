@@ -3,6 +3,8 @@ from typing import Dict
 
 from presidio_anonymizer.services.validators import validate_parameter_not_empty
 
+logger = logging.getLogger("presidio-anonymizer")
+
 
 class OperatorConfig:
     """Hold the data of the required operator."""
@@ -14,7 +16,6 @@ class OperatorConfig:
         :param operator_name: the name of the operator we want to work with
         :param params: the parameters the operator needs in order to work
         """
-        self.logger = logging.getLogger("presidio-anonymizer")
         self.operator_name = operator_name
         if not params:
             params = {}

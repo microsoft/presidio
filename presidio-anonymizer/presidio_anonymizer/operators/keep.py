@@ -21,7 +21,7 @@ class BaseKeep(Operator, ABC):
         pass
 
 
-class Keep(BaseKeep, Operator):
+class Keep(BaseKeep):
     """No-op anonymizer that keeps the PII text unmodified.
 
     This is useful when you don't want to anonymize some types of PII,
@@ -35,19 +35,3 @@ class Keep(BaseKeep, Operator):
     def operator_type(self) -> OperatorType:
         """Return operator type."""
         return OperatorType.Anonymize
-
-
-class DeanonymizeKeep(BaseKeep, Operator):
-    """No-op deanonymizer that keeps the PII text unmodified.
-
-    This is useful when you don't want to anonymize some types of PII,
-    but wants to keep track of it with the other PIIs.
-    """
-
-    def operator_name(self) -> str:
-        """Return operator name."""
-        return "deanonymize_keep"
-
-    def operator_type(self) -> OperatorType:
-        """Return operator type."""
-        return OperatorType.Deanonymize

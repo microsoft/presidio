@@ -16,7 +16,7 @@ from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
-
+from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils
 
 # Define default loggers behavior
 
@@ -49,4 +49,5 @@ __all__ = [
     "ContextAwareEnhancer",
     "LemmaContextAwareEnhancer",
     "BatchAnalyzerEngine",
+    "PresidioAnalyzerUtils",
 ]

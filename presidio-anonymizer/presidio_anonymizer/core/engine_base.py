@@ -26,6 +26,7 @@ class EngineBase(ABC):
         pii_entities: List[PIIEntity],
         operators_metadata: Dict[str, OperatorConfig],
         operator_type: OperatorType,
+        **operator_kwargs: Dict
     ) -> EngineResult:
         """
         Operate will do the operations required by the user over the text.
@@ -40,20 +41,20 @@ class EngineBase(ABC):
         text_replace_builder = TextReplaceBuilder(original_text=text)
         engine_result = EngineResult()
         sorted_pii_entities = sorted(pii_entities, reverse=True)
-        for operator in sorted_pii_entities:
+        for entity in sorted_pii_entities:
             text_to_operate_on = text_replace_builder.get_text_in_position(
-                operator.start, operator.end
+                entity.start, entity.end
             )
 
-            self.logger.debug(f"performing operation {operator}")
+            self.logger.debug(f"performing operation {entity}")
             operator_metadata = self.__get_entity_operator_metadata(
-                operator.entity_type, operators_metadata
+                entity.entity_type, operators_metadata
             )
             changed_text = self.__operate_on_text(
-                operator, text_to_operate_on, operator_metadata, operator_type
+                entity, text_to_operate_on, operator_metadata, operator_type
             )
             index_from_end = text_replace_builder.replace_text_get_insertion_index(
-                changed_text, operator.start, operator.end
+                changed_text, entity.start, entity.end
             )
 
             # The following creates an intermediate list of result entities,
@@ -62,7 +63,7 @@ class EngineBase(ABC):
             result_item = OperatorResult(
                 0,
                 index_from_end,
-                operator.entity_type,
+                entity.entity_type,
                 changed_text,
                 operator_metadata.operator_name,
             )
@@ -85,11 +86,14 @@ class EngineBase(ABC):
             operator_metadata.operator_name, operator_type
         )
         self.logger.debug(f"validating operator {operator} for {entity_type}")
-        operator.validate(params=operator_metadata.params)
         params = operator_metadata.params
         params["entity_type"] = entity_type
+
+        operator.validate(params=params)
+
         self.logger.debug(f"operating on {entity_type} with {operator}")
         operated_on_text = operator.operate(params=params, text=text_to_operate_on)
+
         return operated_on_text
 
     @staticmethod

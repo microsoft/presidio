@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+#### Analyzer
+#### Anonymizer
+#### Image redactor
+#### Structured
+
+
+### Changed
+
+### Removed
+
+
+## [2.2.353] - Feb 12th 2024
+
+### Added
+#### Analyzer
+* Add predefined_recognizer: IN_AADHAAR (#1256)
+
+#### Anonymizer
+* Added the option to add custom operators + pseudonymization sample (#1284)
+
+### Changed
+
+#### Analyzer
+* Fix failing test due to optional package (#1258)
+* Update publish-to-pypi.yml (#1259)
+* Allow local Spacy Models to be loaded in NLP Engine (#1269)
+* Upgrade pip in windows containers (#1272)
+
+#### Image Redactor
+* Bugfix in ImageAnalyzerEngine  #1274
+
+
 ## [2.2.352] - Jan 22nd 2024
 ### Added
 #### Structured
@@ -340,7 +375,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.352...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.353...HEAD
+[2.2.353]: https://github.com/microsoft/presidio/compare/2.2.352...2.2.353
 [2.2.352]: https://github.com/microsoft/presidio/compare/2.2.351...2.2.352
 [2.2.351]: https://github.com/microsoft/presidio/compare/2.2.350...2.2.351
 [2.2.350]: https://github.com/microsoft/presidio/compare/2.2.35...2.2.350
