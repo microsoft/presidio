@@ -127,7 +127,9 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         for result in analyzer_results:
             current_key = prefix + result.key
 
-            if isinstance(result.value, dict) and isinstance(result.recognizer_results, Iterator):
+            if isinstance(result.value, dict) and isinstance(
+                result.recognizer_results, Iterator
+            ):
                 nested_mappings = self._generate_analysis_from_results_json(
                     result.recognizer_results, prefix=current_key + "."
                 )
