@@ -33,7 +33,7 @@ class StructuredEngine:
         self,
         data: Union[Dict, DataFrame],
         structured_analysis: StructuredAnalysis,
-        operators: Dict[str, OperatorConfig] = None,
+        operators: Union[Dict[str, OperatorConfig], None] = None,
     ) -> Union[Dict, DataFrame]:
         """
         Anonymize the given data using the given configuration.
@@ -49,7 +49,7 @@ class StructuredEngine:
         return self.data_processor.operate(data, structured_analysis, operators)
 
     def __check_or_add_default_operator(
-        self, operators: Dict[str, OperatorConfig]
+        self, operators: Union[Dict[str, OperatorConfig], None]
     ) -> Dict[str, OperatorConfig]:
         """
         Check if the provided operators dictionary has a default operator. \
