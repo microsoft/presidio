@@ -134,7 +134,7 @@ class JsonDataProcessor(DataProcessorBase):
     """JSON Data Processor, Supports arbitrary nesting of dictionaries and lists."""
 
     @staticmethod
-    def _get_nested_value(data: Union[Dict, List], path: List[str]) -> Any:
+    def _get_nested_value(data: Union[Dict, List, None], path: List[str]) -> Any:
         """
         Recursively retrieves the value from nested data using a given path.
 
