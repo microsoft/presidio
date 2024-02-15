@@ -19,6 +19,7 @@
 | Usage | CSV       | Python file                               | [Analyze and Anonymize CSV file](https://github.com/microsoft/presidio/blob/main/docs/samples/python/process_csv_file.py) |
 | Usage | Text      | Python                                | [Using Flair as an external PII model](https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py)|
 | Usage | Text      | Python file                               | [Using Transformers as an external PII model](python/transformers_recognizer/index.md)|
+| Usage | Text      | Python file                               | [Pseudonomization (replace PII values using mappings)](https://github.com/microsoft/presidio/blob/main/docs/samples/python/pseudonomyzation.ipynb)|
 | Usage | Text      | Python file                               | [Passing a lambda as a Presidio anonymizer using Faker](https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_custom_lambda_anonymizer.py)|
 | Usage      | | REST API (postman)                    | [Presidio as a REST endpoint](docker/index.md)|
 | Deployment | | App Service                           | [Presidio with App Service](deployments/app-service/index.md)|
