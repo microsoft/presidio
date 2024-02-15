@@ -71,6 +71,210 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
 
     CONTEXT = ["RTO", "vehicle", "plate", "registration"]
 
+    # fmt: off
+    in_vehicle_foreign_mission_codes = [
+        84, 85, 89, 93, 94, 95, 97, 98, 99, 102, 104, 105, 106, 109, 111, 112,
+        113, 117, 119, 120, 121, 122, 123, 125, 126, 128, 133, 134, 135, 137,
+        141, 145, 147, 149, 152, 153, 155, 156, 157, 159, 160
+    ]
+
+    in_vehicle_armed_forces_codes = [
+        'A', 'B', 'C', 'D', 'E', 'F', 'H', 'K', 'P', 'R', 'X'
+    ]
+
+    in_vehicle_diplomatic_codes = ["CC", "CD", "UN"]
+    in_vehicle_dist_an = ["01"]
+    in_vehicle_dist_ap = ["39", "40"]
+    in_vehicle_dist_ar = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "19", "20", "22"
+    ]
+    in_vehicle_dist_as = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34"
+    ]
+    in_vehicle_dist_br = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "19",
+        "21", "22", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33",
+        "34", "37", "38", "39", "43", "44", "45", "46", "50", "51", "52", "53",
+        "55", "56"
+    ]
+    in_vehicle_dist_cg = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24",
+        "25", "26", "27", "28", "29", "30"
+    ]
+    in_vehicle_dist_ch = ["01", "02", "03", "04"]
+    in_vehicle_dist_dd = ["01", "02", "03"]
+    in_vehicle_dist_dn = ["09"]  # old list
+    in_vehicle_dist_dl = [
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"]
+    in_vehicle_dist_ga = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    in_vehicle_dist_gj = [
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
+        "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39"
+    ]
+    in_vehicle_dist_hp = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
+        "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73",
+        "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85",
+        "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97",
+        "98", "99"
+    ]
+    in_vehicle_dist_hr = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
+        "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73",
+        "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85",
+        "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97",
+        "98", "99"
+    ]
+    in_vehicle_dist_jh = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24"
+    ]
+    in_vehicle_dist_jk = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22"
+    ]
+    in_vehicle_dist_ka = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
+        "62", "63", "64", "65", "66", "67", "68", "69", "70", "71"
+    ]
+    in_vehicle_dist_kl = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
+        "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73",
+        "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85",
+        "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97",
+        "98", "99"
+    ]
+    in_vehicle_dist_la = ["01", "02"]
+    in_vehicle_dist_ld = ["01", "02", "03", "04", "05", "06", "07", "08", "09"]
+    in_vehicle_dist_mh = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51"
+    ]
+    in_vehicle_dist_ml = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"]
+    in_vehicle_dist_mn = ["01", "02", "03", "04", "05", "06", "07"]
+    in_vehicle_dist_mp = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
+        "62", "63", "64", "65", "66", "67", "68", "69", "70", "71"
+    ]
+    in_vehicle_dist_mz = ["01", "02", "03", "04", "05", "06", "07", "08"]
+    in_vehicle_dist_nl = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"]
+    in_vehicle_dist_od = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35"
+    ]
+    in_vehicle_dist_or = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31"
+    ]  # old list
+    in_vehicle_dist_pb = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
+        "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73",
+        "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85",
+        "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97",
+        "98", "99"
+    ]
+    in_vehicle_dist_py = ["01", "02", "03", "04", "05"]
+    in_vehicle_dist_rj = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58"
+    ]
+    in_vehicle_dist_sk = ["01", "02", "03", "04", "05", "06", "07", "08"]
+    in_vehicle_dist_tn = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
+        "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73",
+        "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85",
+        "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97",
+        "98", "99"
+    ]
+    in_vehicle_dist_tr = ["01", "02", "03", "04", "05", "06", "07", "08"]
+    in_vehicle_dist_ts = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38"
+    ]
+    in_vehicle_dist_uk = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20"
+    ]
+    in_vehicle_dist_up = [
+        "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "22", "23",
+        "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35",
+        "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47",
+        "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+        "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71",
+        "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83",
+        "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95",
+        "96"
+    ]
+    in_vehicle_dist_wb = [
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+        "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25",
+        "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37",
+        "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
+        "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73",
+        "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85",
+        "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97",
+        "98"
+    ]
+
+    in_union_territories = ["AN", "CH", "DH", "DL", "JK", "LA", "LD", "PY"]
+    in_old_union_territories = ["CT", "DN"]
+    in_states = [
+        "AP", "AR", "AS", "BR", "CG", "GA", "GJ", "HR", "HP", "JH", "KA", "KL",
+        "MP", "MH", "MN", "ML", "MZ", "NL", "OD", "PB", "RJ", "SK", "TN", "TS",
+        "TR", "UP", "UK", "WB", "UT"
+    ]
+    in_old_states = ["UL", "OR", "UA"]
+    in_non_standard_state_or_ut = ["DD"]
+
+    # fmt: on
+
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
@@ -104,51 +308,51 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
         is_valid_registration = None
         # logic here
         state_rto_districtcode_map = {
-            "AN": Utils.in_vehicle_dist_an,
-            "AP": Utils.in_vehicle_dist_ap,
-            "AR": Utils.in_vehicle_dist_ar,
-            "AS": Utils.in_vehicle_dist_as,
-            "BR": Utils.in_vehicle_dist_br,
-            "CG": Utils.in_vehicle_dist_cg,
-            "CH": Utils.in_vehicle_dist_ch,
-            "DD": Utils.in_vehicle_dist_dd,
-            "DN": Utils.in_vehicle_dist_dn,
-            "DL": Utils.in_vehicle_dist_dl,
-            "GA": Utils.in_vehicle_dist_ga,
-            "GJ": Utils.in_vehicle_dist_gj,
-            "HP": Utils.in_vehicle_dist_hp,
-            "HR": Utils.in_vehicle_dist_hr,
-            "JH": Utils.in_vehicle_dist_jh,
-            "JK": Utils.in_vehicle_dist_jk,
-            "KA": Utils.in_vehicle_dist_ka,
-            "KL": Utils.in_vehicle_dist_kl,
-            "LA": Utils.in_vehicle_dist_la,
-            "LD": Utils.in_vehicle_dist_ld,
-            "MH": Utils.in_vehicle_dist_mh,
-            "ML": Utils.in_vehicle_dist_ml,
-            "MN": Utils.in_vehicle_dist_mn,
-            "MP": Utils.in_vehicle_dist_mp,
-            "MZ": Utils.in_vehicle_dist_mz,
-            "NL": Utils.in_vehicle_dist_nl,
-            "OD": Utils.in_vehicle_dist_od,
-            "OR": Utils.in_vehicle_dist_or,
-            "PB": Utils.in_vehicle_dist_pb,
-            "PY": Utils.in_vehicle_dist_py,
-            "RJ": Utils.in_vehicle_dist_rj,
-            "SK": Utils.in_vehicle_dist_sk,
-            "TN": Utils.in_vehicle_dist_tn,
-            "TR": Utils.in_vehicle_dist_tr,
-            "TS": Utils.in_vehicle_dist_ts,
-            "UK": Utils.in_vehicle_dist_uk,
-            "UP": Utils.in_vehicle_dist_up,
-            "WB": Utils.in_vehicle_dist_wb,
+            "AN": self.in_vehicle_dist_an,
+            "AP": self.in_vehicle_dist_ap,
+            "AR": self.in_vehicle_dist_ar,
+            "AS": self.in_vehicle_dist_as,
+            "BR": self.in_vehicle_dist_br,
+            "CG": self.in_vehicle_dist_cg,
+            "CH": self.in_vehicle_dist_ch,
+            "DD": self.in_vehicle_dist_dd,
+            "DN": self.in_vehicle_dist_dn,
+            "DL": self.in_vehicle_dist_dl,
+            "GA": self.in_vehicle_dist_ga,
+            "GJ": self.in_vehicle_dist_gj,
+            "HP": self.in_vehicle_dist_hp,
+            "HR": self.in_vehicle_dist_hr,
+            "JH": self.in_vehicle_dist_jh,
+            "JK": self.in_vehicle_dist_jk,
+            "KA": self.in_vehicle_dist_ka,
+            "KL": self.in_vehicle_dist_kl,
+            "LA": self.in_vehicle_dist_la,
+            "LD": self.in_vehicle_dist_ld,
+            "MH": self.in_vehicle_dist_mh,
+            "ML": self.in_vehicle_dist_ml,
+            "MN": self.in_vehicle_dist_mn,
+            "MP": self.in_vehicle_dist_mp,
+            "MZ": self.in_vehicle_dist_mz,
+            "NL": self.in_vehicle_dist_nl,
+            "OD": self.in_vehicle_dist_od,
+            "OR": self.in_vehicle_dist_or,
+            "PB": self.in_vehicle_dist_pb,
+            "PY": self.in_vehicle_dist_py,
+            "RJ": self.in_vehicle_dist_rj,
+            "SK": self.in_vehicle_dist_sk,
+            "TN": self.in_vehicle_dist_tn,
+            "TR": self.in_vehicle_dist_tr,
+            "TS": self.in_vehicle_dist_ts,
+            "UK": self.in_vehicle_dist_uk,
+            "UP": self.in_vehicle_dist_up,
+            "WB": self.in_vehicle_dist_wb,
         }
         two_factor_registration_prefix = []
-        two_factor_registration_prefix.extend(Utils.in_union_territories)
-        two_factor_registration_prefix.extend(Utils.in_states)
-        two_factor_registration_prefix.extend(Utils.in_old_states)
-        two_factor_registration_prefix.extend(Utils.in_old_union_territories)
-        two_factor_registration_prefix.extend(Utils.in_non_standard_state_or_ut)
+        two_factor_registration_prefix.extend(self.in_union_territories)
+        two_factor_registration_prefix.extend(self.in_states)
+        two_factor_registration_prefix.extend(self.in_old_states)
+        two_factor_registration_prefix.extend(self.in_old_union_territories)
+        two_factor_registration_prefix.extend(self.in_non_standard_state_or_ut)
         first_two_char = sanitized_value[:2].upper()
         dist_code: str = ""
 
@@ -167,15 +371,23 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
                         ):
                             is_valid_registration = True
 
-            for diplomatic_vehicle_code in Utils.in_vehicle_diplomatic_codes:
+            for diplomatic_vehicle_code in self.in_vehicle_diplomatic_codes:
                 if diplomatic_vehicle_code in sanitized_value:
                     vehicle_prefix = sanitized_value.partition(diplomatic_vehicle_code)[
                         0
                     ]
                     if vehicle_prefix.isnumeric() and (
                         1 <= int(vehicle_prefix) <= 80
-                        or int(vehicle_prefix) in Utils.in_vehicle_foreign_mission_codes
+                        or int(vehicle_prefix) in self.in_vehicle_foreign_mission_codes
                     ):
                         is_valid_registration = True
 
         return is_valid_registration
+
+    def list_length(self):
+        """
+        Unimplemented functon with primary job of running content length test case.
+
+        :return: None
+        """
+        pass
