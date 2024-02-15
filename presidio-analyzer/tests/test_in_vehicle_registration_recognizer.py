@@ -38,8 +38,6 @@ def test_when_regn_in_text_then_all_regns_found(
     entities,
 ):
     results = recognizer.analyze(text, entities)
-    print("Results")
-    print(results)
 
     assert len(results) == expected_len
     if results:

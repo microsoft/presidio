@@ -305,82 +305,84 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
 
     def __check_vehicle_registration(self, sanitized_value: str) -> bool:
         # print('check function called')
-        is_valid_registration = None
+        is_valid_registration = None  # deliberately not typecasted or set to bool False
         # logic here
-        state_rto_districtcode_map = {
-            "AN": self.in_vehicle_dist_an,
-            "AP": self.in_vehicle_dist_ap,
-            "AR": self.in_vehicle_dist_ar,
-            "AS": self.in_vehicle_dist_as,
-            "BR": self.in_vehicle_dist_br,
-            "CG": self.in_vehicle_dist_cg,
-            "CH": self.in_vehicle_dist_ch,
-            "DD": self.in_vehicle_dist_dd,
-            "DN": self.in_vehicle_dist_dn,
-            "DL": self.in_vehicle_dist_dl,
-            "GA": self.in_vehicle_dist_ga,
-            "GJ": self.in_vehicle_dist_gj,
-            "HP": self.in_vehicle_dist_hp,
-            "HR": self.in_vehicle_dist_hr,
-            "JH": self.in_vehicle_dist_jh,
-            "JK": self.in_vehicle_dist_jk,
-            "KA": self.in_vehicle_dist_ka,
-            "KL": self.in_vehicle_dist_kl,
-            "LA": self.in_vehicle_dist_la,
-            "LD": self.in_vehicle_dist_ld,
-            "MH": self.in_vehicle_dist_mh,
-            "ML": self.in_vehicle_dist_ml,
-            "MN": self.in_vehicle_dist_mn,
-            "MP": self.in_vehicle_dist_mp,
-            "MZ": self.in_vehicle_dist_mz,
-            "NL": self.in_vehicle_dist_nl,
-            "OD": self.in_vehicle_dist_od,
-            "OR": self.in_vehicle_dist_or,
-            "PB": self.in_vehicle_dist_pb,
-            "PY": self.in_vehicle_dist_py,
-            "RJ": self.in_vehicle_dist_rj,
-            "SK": self.in_vehicle_dist_sk,
-            "TN": self.in_vehicle_dist_tn,
-            "TR": self.in_vehicle_dist_tr,
-            "TS": self.in_vehicle_dist_ts,
-            "UK": self.in_vehicle_dist_uk,
-            "UP": self.in_vehicle_dist_up,
-            "WB": self.in_vehicle_dist_wb,
-        }
-        two_factor_registration_prefix = []
-        two_factor_registration_prefix.extend(self.in_union_territories)
-        two_factor_registration_prefix.extend(self.in_states)
-        two_factor_registration_prefix.extend(self.in_old_states)
-        two_factor_registration_prefix.extend(self.in_old_union_territories)
-        two_factor_registration_prefix.extend(self.in_non_standard_state_or_ut)
-        first_two_char = sanitized_value[:2].upper()
-        dist_code: str = ""
+        if len(sanitized_value) >= 8:
+            state_rto_district_map = {
+                "AN": self.in_vehicle_dist_an,
+                "AP": self.in_vehicle_dist_ap,
+                "AR": self.in_vehicle_dist_ar,
+                "AS": self.in_vehicle_dist_as,
+                "BR": self.in_vehicle_dist_br,
+                "CG": self.in_vehicle_dist_cg,
+                "CH": self.in_vehicle_dist_ch,
+                "DD": self.in_vehicle_dist_dd,
+                "DN": self.in_vehicle_dist_dn,
+                "DL": self.in_vehicle_dist_dl,
+                "GA": self.in_vehicle_dist_ga,
+                "GJ": self.in_vehicle_dist_gj,
+                "HP": self.in_vehicle_dist_hp,
+                "HR": self.in_vehicle_dist_hr,
+                "JH": self.in_vehicle_dist_jh,
+                "JK": self.in_vehicle_dist_jk,
+                "KA": self.in_vehicle_dist_ka,
+                "KL": self.in_vehicle_dist_kl,
+                "LA": self.in_vehicle_dist_la,
+                "LD": self.in_vehicle_dist_ld,
+                "MH": self.in_vehicle_dist_mh,
+                "ML": self.in_vehicle_dist_ml,
+                "MN": self.in_vehicle_dist_mn,
+                "MP": self.in_vehicle_dist_mp,
+                "MZ": self.in_vehicle_dist_mz,
+                "NL": self.in_vehicle_dist_nl,
+                "OD": self.in_vehicle_dist_od,
+                "OR": self.in_vehicle_dist_or,
+                "PB": self.in_vehicle_dist_pb,
+                "PY": self.in_vehicle_dist_py,
+                "RJ": self.in_vehicle_dist_rj,
+                "SK": self.in_vehicle_dist_sk,
+                "TN": self.in_vehicle_dist_tn,
+                "TR": self.in_vehicle_dist_tr,
+                "TS": self.in_vehicle_dist_ts,
+                "UK": self.in_vehicle_dist_uk,
+                "UP": self.in_vehicle_dist_up,
+                "WB": self.in_vehicle_dist_wb,
+            }
+            two_factor_registration_prefix = []
+            two_factor_registration_prefix.extend(self.in_union_territories)
+            two_factor_registration_prefix.extend(self.in_states)
+            two_factor_registration_prefix.extend(self.in_old_states)
+            two_factor_registration_prefix.extend(self.in_old_union_territories)
+            two_factor_registration_prefix.extend(self.in_non_standard_state_or_ut)
+            first_two_char = sanitized_value[:2].upper()
+            dist_code: str = ""
 
-        if first_two_char in two_factor_registration_prefix:
-            if sanitized_value[2].isdigit():
-                if sanitized_value[3].isdigit():
-                    dist_code = sanitized_value[2:4]
-                else:
-                    dist_code = sanitized_value[2:3]
+            if first_two_char in two_factor_registration_prefix:
+                if sanitized_value[2].isdigit():
+                    if sanitized_value[3].isdigit():
+                        dist_code = sanitized_value[2:4]
+                    else:
+                        dist_code = sanitized_value[2:3]
 
-                registration_digits = sanitized_value[-4:]
-                if registration_digits.isnumeric():
-                    if 0 < int(registration_digits) <= 9999:
-                        if dist_code and dist_code in state_rto_districtcode_map.get(
-                            first_two_char, ""
+                    registration_digits = sanitized_value[-4:]
+                    if registration_digits.isnumeric():
+                        if 0 < int(registration_digits) <= 9999:
+                            if dist_code and dist_code in state_rto_district_map.get(
+                                first_two_char, ""
+                            ):
+                                is_valid_registration = True
+
+                for diplomatic_vehicle_code in self.in_vehicle_diplomatic_codes:
+                    if diplomatic_vehicle_code in sanitized_value:
+                        vehicle_prefix = sanitized_value.partition(
+                            diplomatic_vehicle_code
+                        )[0]
+                        if vehicle_prefix.isnumeric() and (
+                            1 <= int(vehicle_prefix) <= 80
+                            or int(vehicle_prefix)
+                            in self.in_vehicle_foreign_mission_codes
                         ):
                             is_valid_registration = True
-
-            for diplomatic_vehicle_code in self.in_vehicle_diplomatic_codes:
-                if diplomatic_vehicle_code in sanitized_value:
-                    vehicle_prefix = sanitized_value.partition(diplomatic_vehicle_code)[
-                        0
-                    ]
-                    if vehicle_prefix.isnumeric() and (
-                        1 <= int(vehicle_prefix) <= 80
-                        or int(vehicle_prefix) in self.in_vehicle_foreign_mission_codes
-                    ):
-                        is_valid_registration = True
 
         return is_valid_registration
 
