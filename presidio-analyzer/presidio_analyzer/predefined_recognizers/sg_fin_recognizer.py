@@ -2,8 +2,8 @@ from typing import Optional, List
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
-# Weak pattern: all FIN number start with "S", "T", "F" or "G"
-# and ends with a character, e.g., G3311100L
+# Weak pattern: all FIN number start with "S", "T", "F", "G" or "M"
+# and ends with a character, e.g., S2740116C
 # Ref: https://en.wikipedia.org/wiki/National_Registration_Identity_Card
 
 
