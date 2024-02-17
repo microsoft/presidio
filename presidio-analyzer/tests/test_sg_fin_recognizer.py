@@ -31,6 +31,8 @@ def entities():
         ("M4332674T", 1, [(0, 9)], [(0.5, 0.8)]),
         # Test with multiple valid NRIC/FINs
         ("S9108268C T7572225C", 2, [(0, 9), (10, 19)], [(0.5, 0.8)] * 2),
+        # Test with valid NRIC/FIN in a sentence
+        ("NRIC S2740116C was processed", 1, [(5, 14)], [(0.5, 0.8)]),
 
         # ## Weak match
         # Test with invalid NRIC/FIN starting with A
@@ -61,6 +63,8 @@ def test_when_sgfins_in_text_then_all_sg_fins_found(
     for result, (start_pos, end_pos), (start_score, end_score) in zip(
         results, expected_positions, expected_score_ranges
     ):
+        import logging
+        logging.info(f"result: {result}")
         # Adjust end_score if it's marked with a placeholder value that indicates it should be considered as max_score
         if end_score == "max":
             end_score = max_score
