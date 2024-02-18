@@ -9,15 +9,6 @@ palindrome_test_set = [
     ["NotAPalindrome", True, False],
 ]
 
-in_vehicle_metadata_test_set = [
-    ["in_non_standard_state_or_ut", 1],
-    ["in_old_states", 3],
-    ["in_states", 29],
-    ["in_union_territories", 8],
-    ["in_old_union_territories", 2],
-    ["in_vehicle_dist_wb", 70],
-]
-
 sanitizer_test_set = [
     ["  a|b:c       ::-", [("-", ""), (" ", ""), (":", ""), ("|", "")], "abc"],
     ["def", "", "def"],

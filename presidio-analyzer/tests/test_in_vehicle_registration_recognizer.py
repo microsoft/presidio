@@ -23,6 +23,7 @@ def entities():
         ("MN2412", 1, (0, 6), 0.01),
         ("MCX1243", 1, (0, 7), 0.2),
         ("I15432", 1, (0, 6), 0.01),
+        ("DL3CJI0001", 1, (0, 10), 1),
         ("ABNE123456", 0, (), (),),
         ("My Bike's registration number is OD02BA2341 with a lot of text beyond",
          1, (33, 43), 1),
