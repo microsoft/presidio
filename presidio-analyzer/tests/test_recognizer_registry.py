@@ -8,7 +8,7 @@ from presidio_analyzer import (
     PatternRecognizer,
     EntityRecognizer,
     Pattern,
-    AnalyzerEngine
+    AnalyzerEngine,
 )
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 
@@ -57,8 +57,8 @@ def test_when_get_recognizers_then_all_recognizers_returned(mock_recognizer_regi
     registry = mock_recognizer_registry
     registry.load_predefined_recognizers()
     recognizers = registry.get_recognizers(language="en", all_fields=True)
-    # 1 custom recognizer in english + 23 predefined
-    assert len(recognizers) == 1 + 23
+    # 1 custom recognizer in english + 24 predefined
+    assert len(recognizers) == 1 + 24
 
 
 def test_when_get_recognizers_then_return_all_fields(mock_recognizer_registry):
@@ -229,9 +229,6 @@ def test_recognizer_removed_and_returned_entities_are_correct():
     assert "DATE_TIME" in supported_entities
     assert "PERSON" not in supported_entities
 
-    analyzer = AnalyzerEngine(
-        registry=registry,
-        supported_languages='en'
-    )
+    analyzer = AnalyzerEngine(registry=registry, supported_languages="en")
 
     analyzer.analyze("My name is David", language="en")
