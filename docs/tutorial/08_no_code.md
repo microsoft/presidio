@@ -39,6 +39,6 @@ registry.load_predefined_recognizers()  # Loads all the predefined recognizers (
 
 registry.add_recognizers_from_yaml(yaml_file)
 
-analyzer = AnalyzerEngine()
+analyzer = AnalyzerEngine(registry=registry)
 analyzer.analyze(text="Mr. Plum wrote a book", language="en")
 ```
