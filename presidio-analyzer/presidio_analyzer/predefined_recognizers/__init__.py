@@ -37,6 +37,8 @@ from .pl_pesel_recognizer import PlPeselRecognizer
 from .azure_ai_language import AzureAILanguageRecognizer
 from .in_aadhaar_recognizer import InAadhaarRecognizer
 from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
+from .isin_recognizer import IsinRecognizer
+from .cfi_recognizer import CfiRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -81,4 +83,6 @@ __all__ = [
     "AzureAILanguageRecognizer",
     "InAadhaarRecognizer",
     "InVehicleRegistrationRecognizer",
+    "IsinRecognizer",
+    "CfiRecognizer",
 ]
