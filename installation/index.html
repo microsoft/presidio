@@ -22,7 +22,7 @@
       
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -30,7 +30,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.f2e4d321.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e359304.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -1989,20 +1989,29 @@ pip install presidio_anonymizer
 </div>
 </div>
 <h3 id="pii-redaction-in-images">PII redaction in images</h3>
-<p>For PII redaction in images, install the <code>presidio-image-redactor</code> package:</p>
+<p>For PII redaction in images</p>
+<ol>
+<li>
+<p>Install the <code>presidio-image-redactor</code> package:</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>presidio_image_redactor
 
 <span class="c1"># Presidio image redactor uses the presidio-analyzer</span>
 <span class="c1"># which requires a spaCy language model:</span>
 python<span class="w"> </span>-m<span class="w"> </span>spacy<span class="w"> </span>download<span class="w"> </span>en_core_web_lg
 </code></pre></div>
+</li>
+<li>
+<p>Install an OCR engine. The default version uses the <a href="https://github.com/tesseract-ocr/tesseract">Tesseract OCR Engine</a>. 
+More information on installation can be found <a href="../image-redactor/#installation">here</a>.</p>
+</li>
+</ol>
 <h2 id="using-docker">Using Docker</h2>
 <p>Presidio can expose REST endpoints for each service using Flask and Docker.
 To download the Presidio Docker containers, run the following command:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-</div>
 <p>This requires Docker to be installed. <a href="https://docs.docker.com/get-docker/">Download Docker</a>.</p>
+</div>
 <h3 id="for-pii-anonymization-in-text">For PII anonymization in text</h3>
 <p>For PII detection and anonymization in text, the <code>presidio-analyzer</code>
 and <code>presidio-anonymizer</code> modules are required.</p>

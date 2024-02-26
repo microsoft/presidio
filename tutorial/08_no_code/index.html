@@ -22,7 +22,7 @@
       
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -30,7 +30,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.f2e4d321.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e359304.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -1745,7 +1745,7 @@
 
 <span class="n">registry</span><span class="o">.</span><span class="n">add_recognizers_from_yaml</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
 
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
 <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mr. Plum wrote a book&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
 </code></pre></div>
 
