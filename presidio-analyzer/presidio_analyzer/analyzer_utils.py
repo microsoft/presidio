@@ -5,8 +5,8 @@ class PresidioAnalyzerUtils:
     """
     Utility functions for Presidio Analyzer.
 
-    The class provides a bundle of utility functions that help centralizing the logic
-    for reusability and maintainability
+    The class provides a bundle of utility functions that help centralizing the
+    logic for re-usability and maintainability
     """
 
     @staticmethod

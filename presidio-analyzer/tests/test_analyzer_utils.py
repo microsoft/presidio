@@ -6,8 +6,8 @@ palindrome_test_set = [
     ["abCba", False, True],
     ["ABBA", False, True],
     ["aBba", True, True],
+    ["NotAPalindrome", True, False],
 ]
-
 
 sanitizer_test_set = [
     ["  a|b:c       ::-", [("-", ""), (" ", ""), (":", ""), ("|", "")], "abc"],
