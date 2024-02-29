@@ -34,16 +34,38 @@ def test_generate_analysis_tabular_with_invalid_sampling(
         tabular_analysis_builder.generate_analysis(sample_df, n=-1)
 
 
-def test_find_most_common_entity(tabular_analysis_builder, sample_df):
+def test_find_most_common_entity(tabular_analysis_builder, sample_df_strategy):
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
-        sample_df, "en"
+        sample_df_strategy, "en", selection_strategy = "most_common"
     )
+    assert len(key_recognizer_result_map) == 6
+    assert key_recognizer_result_map["name"].entity_type == "PERSON"
+    assert key_recognizer_result_map["email"].entity_type == "URL"
+    assert key_recognizer_result_map["street"].entity_type == "NON_PII"
+    assert key_recognizer_result_map["city"].entity_type == "LOCATION"
+    assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
-    assert len(key_recognizer_result_map) == 3
+def test_find_highest_confidence_entity(tabular_analysis_builder, sample_df_strategy):
+    key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
+        sample_df_strategy, "en", selection_strategy = "highest_confidence"
+    )
+    assert len(key_recognizer_result_map) == 6
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
-    assert key_recognizer_result_map["phone"].entity_type == "PHONE_NUMBER"
+    assert key_recognizer_result_map["street"].entity_type == "NON_PII"
+    assert key_recognizer_result_map["city"].entity_type == "LOCATION"
+    assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
+def test_find_mixed_strategy_entity(tabular_analysis_builder, sample_df_strategy):
+    key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
+        sample_df_strategy, "en", selection_strategy = "mixed"
+    )
+    assert len(key_recognizer_result_map) == 6
+    assert key_recognizer_result_map["name"].entity_type == "PERSON"
+    assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
+    assert key_recognizer_result_map["street"].entity_type == "NON_PII"
+    assert key_recognizer_result_map["city"].entity_type == "LOCATION"
+    assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
 def test_find_most_common_entity_with_empty_df(tabular_analysis_builder):
     df = pd.DataFrame()

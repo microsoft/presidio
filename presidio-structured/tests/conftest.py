@@ -20,6 +20,18 @@ def sample_df():
     }
     return pd.DataFrame(data)
 
+@pytest.fixture
+def sample_df_strategy():
+    data = {
+        'name': ['John Doe', 'Jane Smith', 'Alice Johnson'],
+        'email': ['john.doe@example.com', 'jane.smith@example.com', 'alice.johnson@example.com'],
+        'street': ['123 Main St', '456 Elm St', '789 Pine St'],
+        'city': ['Anytown', 'Somewhere', 'Elsewhere'],
+        'state': ['CA', 'TX', 'NY'],
+        'postal_code': [12345, 67890, 11223]
+    }
+
+    return pd.DataFrame(data)
 
 @pytest.fixture
 def sample_json():

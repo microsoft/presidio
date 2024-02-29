@@ -159,6 +159,7 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         df: DataFrame,
         n: Optional[int] = None,
         language: str = "en",
+        selection_strategy: str = "most_common"
     ) -> StructuredAnalysis:
         """
         Generate a configuration from the given tabular data.
@@ -179,7 +180,11 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
 
         df = df.sample(n, random_state=123)
 
-        key_recognizer_result_map = self._generate_key_rec_results_map(df, language)
+        key_recognizer_result_map = self._generate_key_rec_results_map(
+            df,
+            language,
+            selection_strategy
+        )
 
         key_entity_map = {
             key: result.entity_type
@@ -190,7 +195,7 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         return StructuredAnalysis(entity_mapping=key_entity_map)
 
     def _generate_key_rec_results_map(
-        self, df: DataFrame, language: str
+        self, df: DataFrame, language: str, selection_strategy: str = "most_common"
     ) -> Dict[str, RecognizerResult]:
         """
         Find the most common entity in a dataframe column.
@@ -204,8 +209,9 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         column_analyzer_results_map = self._batch_analyze_df(df, language)
         key_recognizer_result_map = {}
         for column, analyzer_result in column_analyzer_results_map.items():
-            key_recognizer_result_map[column] = self._find_most_common_entity(
-                analyzer_result
+            key_recognizer_result_map[column] = self._find_entity_based_on_strategy(
+                analyzer_result,
+                selection_strategy
             )
         return key_recognizer_result_map
 
@@ -230,44 +236,133 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
 
         return column_analyzer_results_map
 
-    def _find_most_common_entity(
-        self, analyzer_results: List[List[RecognizerResult]]
+    def _find_entity_based_on_strategy(
+            self,
+            analyzer_results: List[List[RecognizerResult]],
+            selection_strategy: str
     ) -> RecognizerResult:
         """
-        Find the most common entity in a list of analyzer results for \
-            a dataframe column.
+        Determine the most suitable entity based on the specified selection strategy.
 
-        It takes the most common entity type and calculates the confidence score based
-        on the number of cells it appears in.
-
-        :param analyzer_results: List of lists of RecognizerResults for each \
-            cell in the column.
-        :return: A RecognizerResult with the most common entity type and the \
-            calculated confidence score.
+        :param analyzer_results: A nested list of RecognizerResult objects from the
+        analysis results.
+        :param selection_strategy: A string that specifies the entity selection strategy
+        ('highest_confidence', 'mixed', or default to most common).
+        :return: A RecognizerResult object representing the selected entity based on the
+        given strategy.
         """
-
         if not any(analyzer_results):
-            return RecognizerResult(
-                entity_type=NON_PII_ENTITY_TYPE, start=0, end=1, score=1.0
-            )
+            return RecognizerResult(entity_type=NON_PII_ENTITY_TYPE, start=0, end=1,
+                                    score=1.0)
 
-        # Flatten the list of lists while keeping track of the cell index
-        flat_results = [
-            (cell_idx, res)
-            for cell_idx, cell_results in enumerate(analyzer_results)
-            for res in cell_results
-        ]
+        flat_results = self._flatten_results(analyzer_results)
 
-        # Count the occurrences of each entity type in different cells
-        type_counter = Counter(res.entity_type for cell_idx, res in flat_results)
+        # Select the entity based on the desired strategy
+        if selection_strategy == "highest_confidence":
+            return self._select_highest_confidence_entity(flat_results)
+        elif selection_strategy == "mixed":
+            return self._select_mixed_strategy_entity(flat_results)
 
-        # Find the most common entity type based on the number of cells it appears in
-        most_common_type, _ = type_counter.most_common(1)[0]
+        return self._select_most_common_entity(flat_results)
 
-        # The score is the ratio of the most common entity type's count to the total
-        most_common_count = type_counter[most_common_type]
-        score = most_common_count / len(analyzer_results)
+    def _select_most_common_entity(self, flat_results):
+        """
+        Select the most common entity from the flattened analysis results.
+
+        :param flat_results: A list of tuples containing index and RecognizerResult
+        objects from the flattened analysis results.
+        :return: A RecognizerResult object for the most commonly found entity type.
+        """
+        # Count occurrences of each entity type
+        type_counter = Counter(res.entity_type for _, res in flat_results)
+        most_common_type, most_common_count = type_counter.most_common(1)[0]
+
+        # Calculate the score as the proportion of occurrences
+        score = most_common_count / len(flat_results)
 
         return RecognizerResult(
             entity_type=most_common_type, start=0, end=1, score=score
         )
+
+    def _select_highest_confidence_entity(self, flat_results):
+        """
+        Select the entity with the highest confidence score.
+
+        :param flat_results: A list of tuples containing index and RecognizerResult
+        objects from the flattened analysis results.
+        :return: A RecognizerResult object for the entity with the highest confidence
+        score.
+        """
+        score_aggregator = self._aggregate_scores(flat_results)
+
+        # Find the highest score across all entities
+        highest_score = max(max(scores) for scores in score_aggregator.values()
+                            if scores)
+
+        # Find the entities with the highest score and count their occurrences
+        entities_highest_score = {
+            entity: scores.count(highest_score)
+            for entity, scores in score_aggregator.items() if highest_score in scores
+        }
+
+        # Find the entity(ies) with the most number of high scores
+        max_occurrences = max(entities_highest_score.values())
+        highest_confidence_entities = [
+            entity for entity, count in entities_highest_score.items()
+            if count == max_occurrences
+        ]
+
+        return RecognizerResult(
+            entity_type=highest_confidence_entities[0], start=0, end=1,
+            score=highest_score
+            )
+
+    def _select_mixed_strategy_entity(self, flat_results):
+        """
+        Select an entity using a mixed strategy.
+
+        Chooses an entity based on the highest confidence score if it is above 0.5;
+        otherwise, it defaults to the most common entity.
+
+        :param flat_results: A list of tuples containing index and RecognizerResult
+        objects from the flattened analysis results.
+        :return: A RecognizerResult object selected based on the mixed strategy.
+        """
+        score_aggregator = self._aggregate_scores(flat_results)
+
+        # Check if the highest score is greater than 0.5 and select accordingly
+        highest_score = max(max(scores) for scores in score_aggregator.values()
+                            if scores)
+        if highest_score > 0.5:
+            return self._select_highest_confidence_entity(flat_results)
+        else:
+            return self._select_most_common_entity(flat_results)
+
+    @staticmethod
+    def _aggregate_scores(flat_results):
+        """
+        Aggregate the scores for each entity type from the flattened analysis results.
+
+        :param flat_results: A list of tuples containing index and RecognizerResult
+        objects from the flattened analysis results.
+        :return: A dictionary with entity types as keys and lists of scores as values.
+        """
+        score_aggregator = {}
+        for _, res in flat_results:
+            if res.entity_type not in score_aggregator:
+                score_aggregator[res.entity_type] = []
+            score_aggregator[res.entity_type].append(res.score)
+        return score_aggregator
+
+    @staticmethod
+    def _flatten_results(analyzer_results):
+        """
+        Flattens a nested lists of RecognizerResult objects into a list of tuples.
+
+        :param analyzer_results: A nested list of RecognizerResult objects from
+        the analysis results.
+        :return: A flattened list of tuples containing index and RecognizerResult
+        objects.
+        """
+        return [(cell_idx, res) for cell_idx, cell_results in
+                enumerate(analyzer_results) for res in cell_results]
