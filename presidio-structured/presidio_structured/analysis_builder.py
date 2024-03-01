@@ -161,7 +161,8 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         df: DataFrame,
         n: Optional[int] = None,
         language: str = "en",
-        selection_strategy: str = "most_common"
+        selection_strategy: str = "most_common",
+        mixed_strategy_threshold: float = 0.5,
     ) -> StructuredAnalysis:
         """
         Generate a configuration from the given tabular data.
@@ -169,6 +170,10 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         :param df: The input tabular data (dataframe).
         :param n: The number of samples to be taken from the dataframe.
         :param language: The language to be used for analysis.
+        :param selection_strategy: A string that specifies the entity selection strategy
+        ('highest_confidence', 'mixed', or default to most common).
+        :param mixed_strategy_threshold: A float value for the threshold to be used in
+        the entity selection mixed strategy.
         :return: A StructuredAnalysis object containing the analysis results.
         """
         if not n:
@@ -185,7 +190,8 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         key_recognizer_result_map = self._generate_key_rec_results_map(
             df,
             language,
-            selection_strategy
+            selection_strategy,
+            mixed_strategy_threshold
         )
 
         key_entity_map = {
@@ -197,7 +203,11 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         return StructuredAnalysis(entity_mapping=key_entity_map)
 
     def _generate_key_rec_results_map(
-        self, df: DataFrame, language: str, selection_strategy: str = "most_common"
+        self,
+        df: DataFrame,
+        language: str,
+        selection_strategy: str = "most_common",
+        mixed_strategy_threshold: float = 0.5,
     ) -> Dict[str, RecognizerResult]:
         """
         Find the most common entity in a dataframe column.
@@ -206,6 +216,10 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
 
         :param df: The dataframe where entities will be searched.
         :param language: Language to be used in the analysis engine.
+        :param selection_strategy: A string that specifies the entity selection strategy
+        ('highest_confidence', 'mixed', or default to most common).
+        :param mixed_strategy_threshold: A float value for the threshold to be used in
+        the entity selection mixed strategy.
         :return: A dictionary mapping column names to the most common RecognizerResult.
         """
         column_analyzer_results_map = self._batch_analyze_df(df, language)
@@ -213,7 +227,8 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         for column, analyzer_result in column_analyzer_results_map.items():
             key_recognizer_result_map[column] = self._find_entity_based_on_strategy(
                 analyzer_result,
-                selection_strategy
+                selection_strategy,
+                mixed_strategy_threshold
             )
         return key_recognizer_result_map
 
@@ -241,7 +256,8 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
     def _find_entity_based_on_strategy(
             self,
             analyzer_results: List[List[RecognizerResult]],
-            selection_strategy: str
+            selection_strategy: str,
+            mixed_strategy_threshold: float
     ) -> RecognizerResult:
         """
         Determine the most suitable entity based on the specified selection strategy.
@@ -268,7 +284,8 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         if selection_strategy == "highest_confidence":
             return self._select_highest_confidence_entity(flat_results)
         elif selection_strategy == "mixed":
-            return self._select_mixed_strategy_entity(flat_results)
+            return self._select_mixed_strategy_entity(flat_results,
+                                                      mixed_strategy_threshold)
 
         return self._select_most_common_entity(flat_results)
 
@@ -324,23 +341,29 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
             score=highest_score
             )
 
-    def _select_mixed_strategy_entity(self, flat_results):
+    def _select_mixed_strategy_entity(self, flat_results, mixed_strategy_threshold):
         """
         Select an entity using a mixed strategy.
 
-        Chooses an entity based on the highest confidence score if it is above 0.5;
-        otherwise, it defaults to the most common entity.
+        Chooses an entity based on the highest confidence score if it is above the
+        threshold. Otherwise, it defaults to the most common entity.
 
         :param flat_results: A list of tuples containing index and RecognizerResult
         objects from the flattened analysis results.
         :return: A RecognizerResult object selected based on the mixed strategy.
         """
+        # Check if mixed strategy threshold is within the valid range
+        if not 0 <= mixed_strategy_threshold <= 1:
+            raise ValueError(
+                f"Invalid mixed strategy threshold: {mixed_strategy_threshold}."
+                )
+
         score_aggregator = self._aggregate_scores(flat_results)
 
-        # Check if the highest score is greater than 0.5 and select accordingly
+        # Check if the highest score is greater than threshold and select accordingly
         highest_score = max(max(scores) for scores in score_aggregator.values()
                             if scores)
-        if highest_score > 0.5:
+        if highest_score > mixed_strategy_threshold:
             return self._select_highest_confidence_entity(flat_results)
         else:
             return self._select_most_common_entity(flat_results)

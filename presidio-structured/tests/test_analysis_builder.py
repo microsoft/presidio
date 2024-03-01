@@ -67,6 +67,15 @@ def test_find_mixed_strategy_entity(tabular_analysis_builder, sample_df_strategy
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
     assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
+def test_find_mixed_strategy_entity_with_custom_mixed_strategy_threshold(tabular_analysis_builder, sample_df):
+    key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
+        sample_df, "en", selection_strategy = "mixed", mixed_strategy_threshold = 0.4
+    )
+    assert len(key_recognizer_result_map) == 3
+    assert key_recognizer_result_map["name"].entity_type == "PERSON"
+    assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
+    assert key_recognizer_result_map["phone"].entity_type == "PHONE_NUMBER"
+
 def test_find_entity_with_invalid_strategy_raises_exception(tabular_analysis_builder, sample_df_strategy):
     selection_strategy = "invalid"
     with pytest.raises(ValueError) as excinfo:
