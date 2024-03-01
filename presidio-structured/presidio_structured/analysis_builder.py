@@ -154,6 +154,8 @@ class TabularAnalysisBuilder(AnalysisBuilder):
 class PandasAnalysisBuilder(TabularAnalysisBuilder):
     """Concrete configuration generator for tabular data."""
 
+    entity_selection_strategies = {"highest_confidence", "mixed", "most_common"}
+
     def generate_analysis(
         self,
         df: DataFrame,
@@ -251,6 +253,11 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         :return: A RecognizerResult object representing the selected entity based on the
         given strategy.
         """
+        if selection_strategy not in self.entity_selection_strategies:
+            raise ValueError(
+                f"Unsupported entity selection strategy: {selection_strategy}."
+                )
+
         if not any(analyzer_results):
             return RecognizerResult(entity_type=NON_PII_ENTITY_TYPE, start=0, end=1,
                                     score=1.0)

@@ -67,6 +67,15 @@ def test_find_mixed_strategy_entity(tabular_analysis_builder, sample_df_strategy
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
     assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
+def test_find_entity_with_invalid_strategy_raises_exception(tabular_analysis_builder, sample_df_strategy):
+    selection_strategy = "invalid"
+    with pytest.raises(ValueError) as excinfo:
+        key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
+            sample_df_strategy, "en", selection_strategy = selection_strategy
+        )
+
+    assert f"Unsupported entity selection strategy: {selection_strategy}." in str(excinfo.value)
+
 def test_find_most_common_entity_with_empty_df(tabular_analysis_builder):
     df = pd.DataFrame()
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
