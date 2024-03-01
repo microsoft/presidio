@@ -115,6 +115,27 @@ A more detailed sample can be found here:
 
 - <https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_structured.ipynb>
 
+#### Selection Strategy for Entity Detection in Tabular Data
+
+- **Most Common (default):**  Identifies the most frequently occurring PII entity in a data column or field.
+- **Highest Confidence:**  Selects PII entities based on the highest confidence scores, irrespective of their occurrence frequency.
+- **Mixed:**  Combines the strengths of both the above strategies. It selects the entity with the highest confidence score if that score exceeds a specified threshold (controlled by `mixed_strategy_threshold`); otherwise, it defaults to the most common entity.
+
+##### Usage
+
+Specify the `selection_strategy` and optionally the `mixed_strategy_threshold` in the `generate_analysis()` method:
+
+```python
+# Generate a tabular analysis using the most common strategy
+tabular_analysis = PandasAnalysisBuilder().generate_analysis(sample_df)
+
+# Generate a tabular analysis using the highest confidence strategy
+tabular_analysis = PandasAnalysisBuilder().generate_analysis(sample_df, selection_strategy="highest_confidence")
+
+# Generate a tabular analysis using the mixed strategy
+tabular_analysis = PandasAnalysisBuilder().generate_analysis(sample_df, selection_strategy="mixed", mixed_strategy_threshold=0.75)
+```
+
 #### Future work
 
 - Improve support for datasets with mixed free-text and structure data (e.g. some columns contain free text)
