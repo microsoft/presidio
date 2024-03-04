@@ -26,12 +26,12 @@ class InPanRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "PAN (High)",
-            r"\b([A-Z]{3}[ABCFGHJLPT]{1}[A-Za-z]{1}(?!0000)\d{4}[A-Z]{1})\b",
+            r"\b([A-Z]{3}[ABCFGHJLPT]{1}[A-Z]{1}(?!0000)[0-9]{4}[A-Z]{1})\b",
             0.85,
         ),
         Pattern(
             "PAN (Medium)",
-            r"\b([A-Z]{5}(?!0000)\d{4}[A-Z]{1})\b",
+            r"\b([A-Z]{5}(?!0000)[0-9]{4}[A-Z]{1})\b",
             0.6,
         ),
         Pattern(

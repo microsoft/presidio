@@ -9,6 +9,12 @@ palindrome_test_set = [
     ["NotAPalindrome", True, False],
 ]
 
+luhn_mod_n_test_set = [
+    ["27AAACM6094R1ZP", True],
+    ["36AAICA3369H1ZJ", True],
+    ["36AAHAA2262Q1ZF", True],
+]
+
 sanitizer_test_set = [
     ["  a|b:c       ::-", [("-", ""), (" ", ""), (":", ""), ("|", "")], "abc"],
     ["def", "", "def"],
@@ -19,6 +25,16 @@ verhoeff_test_set = [
     [400123456787, True],
     [123456789012, False],
 ]
+
+
+@pytest.mark.parametrize("input_string , expected_output", luhn_mod_n_test_set)
+def test_get_luhn_mod_n(input_string, expected_output):
+    """
+    Test if the checksum is matching for a module-36 LUHN input
+    :param input_string: string value
+    :return: match if calculated checksum is same as input
+    """
+    assert PresidioAnalyzerUtils.get_luhn_mod_n(input_string) == expected_output
 
 
 @pytest.mark.parametrize(

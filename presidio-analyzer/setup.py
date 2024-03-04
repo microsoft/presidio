@@ -39,6 +39,7 @@ setuptools.setup(
         "tldextract",
         "pyyaml",
         "phonenumbers>=8.12,<9.0.0",
+        "pycountry>=23.12.11",
     ],
     extras_require={
         "transformers": ["spacy_huggingface_pipelines"],

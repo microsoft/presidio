@@ -37,12 +37,32 @@ class PresidioAnalyzerUtils:
         return text
 
     @staticmethod
+    def get_luhn_mod_n(input_str: str, alphabet="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
+        """
+        Check if the given input number has a valid last checksum as per LUHN algorithm.
+
+        https://en.wikipedia.org/wiki/Luhn_mod_N_algorithm
+        :param alphabet: input alpha-numeric list of characters to determine mod 'N'
+        :param input_str: the alpha numeric string to be checked for LUHN algorithm
+        :return: True/False
+        """
+        if len(alphabet) == 0:
+            return False
+
+        charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        n = len(charset)
+        luhn_input = tuple(alphabet.index(i) for i in reversed(str(input_str)))
+        return (
+            sum(luhn_input[::2]) + sum(sum(divmod(i * 2, n)) for i in luhn_input[1::2])
+        ) % n == 0
+
+    @staticmethod
     def is_verhoeff_number(input_number: int):
         """
         Check if the input number is a true verhoeff number.
 
         :param input_number:
-        :return:
+        :return: Bool
         """
         __d__ = [
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
