@@ -70,6 +70,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |FieldType|Description|Detection Method|
 |--- |--- |--- |
 |SG_NRIC_FIN| A National Registration Identification Card | Pattern match and context |
+|SG_UEN| A Unique Entity Number (UEN) is a standard identification number for entities registered in Singapore. | Pattern match, context, and checksum |
 
 ### Australia
 

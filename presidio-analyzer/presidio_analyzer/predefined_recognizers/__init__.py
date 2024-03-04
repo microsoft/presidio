@@ -40,6 +40,7 @@ from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
 from .isin_recognizer import IsinRecognizer
 from .cfi_recognizer import CfiRecognizer
 from .in_gstin_recognizer import InGstinRecognizer
+from .sg_uen_recognizer import SgUenRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -87,4 +88,5 @@ __all__ = [
     "IsinRecognizer",
     "CfiRecognizer",
     "InGstinRecognizer",
+    "SgUenRecognizer",
 ]
