@@ -58,7 +58,6 @@ class SpanMarkerRecognizer(EntityRecognizer):
         "person-other": "PERSON",
         "location-GPE": "LOCATION",
         "organization-company": "ORGANIZATION",
-        "O": "OTHER",  # Outside of a named entity
         # 'MISC': 'MISCELLANEOUS'   # - Probably not PII
     }
 
