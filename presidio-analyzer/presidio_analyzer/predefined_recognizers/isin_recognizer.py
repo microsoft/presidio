@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple
 from presidio_analyzer import Pattern, PatternRecognizer
-import pycountry
+from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
 
 
 class IsinRecognizer(PatternRecognizer):
@@ -16,9 +16,10 @@ class IsinRecognizer(PatternRecognizer):
     """
 
     iso2a_countryname = ""
-    countries = pycountry.countries
+    utils = Utils()
+    countries = utils.get_country_codes(iso_code="ISO3166-1-Alpha-2")
     for country in countries:
-        iso2a_countryname += country.alpha_2 + "|"
+        iso2a_countryname += country + "|"
     pattern = "^" + "(" + iso2a_countryname.rstrip("|") + ")" + "[A-Z0-9]{9}[0-9]{1}$"
 
     PATTERNS = [

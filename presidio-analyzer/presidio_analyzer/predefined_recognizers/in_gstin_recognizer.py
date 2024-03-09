@@ -1,7 +1,6 @@
 from typing import Optional, List, Tuple
 from presidio_analyzer import Pattern, PatternRecognizer
 from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
-import pycountry
 
 
 class InGstinRecognizer(PatternRecognizer):
@@ -25,9 +24,10 @@ class InGstinRecognizer(PatternRecognizer):
     """
 
     gstin_country_codes_iso3a = ""
-    countries = pycountry.countries
+    utils = Utils()
+    countries = utils.get_country_codes(iso_code="ISO3166-1-Alpha-3")
     for country in countries:
-        gstin_country_codes_iso3a += country.alpha_3 + "|"
+        gstin_country_codes_iso3a += country + "|"
     pattern1 = (
         "[0-9]{4}"
         + "("
@@ -52,7 +52,11 @@ class InGstinRecognizer(PatternRecognizer):
             r"\b([0-9]{2}[A-Z]{5}(?!0000)[0-9]{4}[A-Z]{1}[0-9A-Z]{2})\b",
             0.2,
         ),
-        Pattern("GSTIN (Medium)", pattern1, 0.6),  # NRTP pattern
+        Pattern(
+            "GSTIN (Medium)",
+            pattern1,
+            0.6,  # NRTP pattern
+        ),
         Pattern(
             "GSTIN (Very Low)",
             r"\b((?=.*?[A-Z])(?=.*?[0-9]{4})[\w@#$%^?~-]{10})\b",
