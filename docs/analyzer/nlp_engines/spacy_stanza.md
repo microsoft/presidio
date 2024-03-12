@@ -76,7 +76,7 @@ import spacy
 # Create a class inheriting from SpacyNlpEngine
 class LoadedSpacyNlpEngine(SpacyNlpEngine):
     def __init__(self, loaded_spacy_model):
-        super.__init__()
+        super().__init__()
         self.nlp = {"en": loaded_spacy_model}
 
 # Load a model a-priori
