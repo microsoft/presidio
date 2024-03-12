@@ -20,6 +20,14 @@ logger = logging.getLogger("presidio-analyzer")
 class SpanMarkerRecognizer(EntityRecognizer):
     """
     Wrapper for a span marker models, if needed to be used within Presidio Analyzer.
+    :param supported_language: The language supported by the model,
+    default is set to English (en).
+    :param model: A string referencing a Span Marker model name or path.
+    :param supported_entities: A list of entities supported by Presidio.
+    :param presidio_equivalences: Mapping of model-defined entities with
+    Presidio-supported entities.
+    :param ignore_labels: A list of entities specified by the model that
+    should not be extracted.
 
     :example:
     >from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
