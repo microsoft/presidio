@@ -11,10 +11,18 @@ class PresidioAnalyzerUtils:
     logic for re-usability and maintainability
     """
 
-    __country_master_file_path__ = "presidio_analyzer/country_master.csv"
+    __country_master_file_path__ = "presidio_analyzer/data/country_master.csv"
     __country_master__ = []
 
     def __init__(self):
+        #  provision to override the default path for future need
+        __country_master_file_path__ = "presidio_analyzer/data/country_master.csv"
+        __country_master_file_path__ = (
+            __country_master_file_path__
+            if __country_master_file_path__
+            else self.__country_master_file_path__
+        )
+
         self.__load_country_master__()
 
     @staticmethod
@@ -178,7 +186,7 @@ class PresidioAnalyzerUtils:
 
     def get_currency_codes(self, iso_code: str = ""):
         """
-        Retrieve all defined currency codes across countries.
+        ...x .c ,xcRetrieve all defined currency codes across countries.
 
          :param iso_code: currently supporting : ISO4217-Alpha-3, ISO4217-Numeric
          :return: List of currency codes in provided ISO format.

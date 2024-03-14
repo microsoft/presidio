@@ -26,7 +26,7 @@ class IsinRecognizer(PatternRecognizer):
         Pattern(
             "ISIN (Medium)",
             r"\b[A-Z]{2}[A-Z0-9]{9}\d{1}\b",
-            0.5,
+            0.01,
         ),
         Pattern(
             "ISIN (Strong)",

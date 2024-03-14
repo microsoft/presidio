@@ -19,7 +19,7 @@ def entities():
     [
         # fmt: off
         ("IL0011762056", 1, (0, 12), 0.85),
-        ("ZZ12345ABCD1", 1, (0, 12), 0.50),
+        ("ZZ12345ABCD1", 1, (0, 12), 0.01),
         ("US0378331005", 1, (0, 12), 0.85),
         ("KR7000830000", 1, (0, 12), 0.85),
         ("IL0006290147", 1, (0, 12), 0.85),
@@ -30,13 +30,13 @@ def entities():
         ("SG1T75931496", 1, (0, 12), 0.85),
         ("GB00B16PRC61", 1, (0, 12), 0.85),
         ("DE0007236101", 1, (0, 12), 0.85),
-        ("XS1636274265", 1, (0, 12), 0.50),  # exception to XS as a country code
+        ("XS1636274265", 1, (0, 12), 0.01),  # exception to XS as a country code
         ("INF740KA1BM0", 1, (0, 12), 0.85),
         ("INE732I01013", 1, (0, 12), 0.85),
         ("ABNE123456", 0, (), (),),
         ("My Listed Company's stock trades with ISIN number SA14TG012N13 with a lot of "
          "text beyond the actual value",
-         1, (50, 62), 0.50),
+         1, (50, 62), 0.01),
         # fmt: on
     ],
 )
