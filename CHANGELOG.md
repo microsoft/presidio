@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 
 
 ### Changed
+#### Analyzer
+Fix for incorrectly referenced recognizer in analysis_explaination using PhoneRecognizer (#1330)
 
 ### Removed
 
