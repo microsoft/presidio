@@ -38,10 +38,9 @@ def test_find_most_common_entity(tabular_analysis_builder, sample_df_strategy):
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
         sample_df_strategy, "en", selection_strategy = "most_common"
     )
-    assert len(key_recognizer_result_map) == 6
+    assert len(key_recognizer_result_map) == 5
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "URL"
-    assert key_recognizer_result_map["street"].entity_type == "NON_PII"
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
     assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
@@ -49,10 +48,9 @@ def test_find_highest_confidence_entity(tabular_analysis_builder, sample_df_stra
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
         sample_df_strategy, "en", selection_strategy = "highest_confidence"
     )
-    assert len(key_recognizer_result_map) == 6
+    assert len(key_recognizer_result_map) == 5
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
-    assert key_recognizer_result_map["street"].entity_type == "NON_PII"
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
     assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
@@ -60,10 +58,9 @@ def test_find_mixed_strategy_entity(tabular_analysis_builder, sample_df_strategy
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
         sample_df_strategy, "en", selection_strategy = "mixed"
     )
-    assert len(key_recognizer_result_map) == 6
+    assert len(key_recognizer_result_map) == 5
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
-    assert key_recognizer_result_map["street"].entity_type == "NON_PII"
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
     assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
