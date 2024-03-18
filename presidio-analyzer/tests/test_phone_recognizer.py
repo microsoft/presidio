@@ -82,3 +82,10 @@ def test_when_phone_with_leniency_then_succeed(
     assert len(results) == expected_len
     for i, (res, (st_pos, fn_pos)) in enumerate(zip(results, expected_positions)):
         assert_result(res, entities[i], st_pos, fn_pos, score)
+
+
+def test_get_analysis_explanation():
+    phone_recognizer = PhoneRecognizer()
+    test_region = "US"
+    explanation = phone_recognizer._get_analysis_explanation(test_region)
+    assert explanation.recognizer == "PhoneRecognizer"
