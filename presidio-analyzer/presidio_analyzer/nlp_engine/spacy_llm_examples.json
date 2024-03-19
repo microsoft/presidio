@@ -1,0 +1,36 @@
+[
+    {
+      "text": "They stole my credit card. Its number is 15505-212441-24",
+      "spans": [
+        {
+          "text": "15505-212441-24",
+          "is_entity": true,
+          "label": "CREDIT_CARD",
+          "reason": "A credit card number is mentioned"
+        },
+        {
+          "text": "stole",
+          "is_entity": false,
+          "label": "==NONE==",
+          "reason": "stole is a non-sensitive word, not PII"
+        }
+      ]
+    },
+    {
+      "text": "My name is Risheek and I live in Grandumbrella",
+      "spans": [
+        {
+          "text": "Risheek",
+          "is_entity": true,
+          "label": "PERSON",
+          "reason": "a name is mentioned"
+        },
+        {
+          "text": "Grandumbrella",
+          "is_entity": true,
+          "label": "LOCATION",
+          "reason": "Although unknown, it is mentioned that Risheek lives there."
+        }
+      ]
+    }
+]

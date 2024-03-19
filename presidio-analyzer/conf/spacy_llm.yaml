@@ -1,0 +1,37 @@
+nlp_engine_name: spacy-llm
+models:
+  -
+    lang_code: en
+    model_name: spacy.GPT-4.v2
+
+ner_model_configuration:
+  labels_to_ignore:
+  - O
+  model_to_presidio_entity_mapping:
+    PER: PERSON
+    PERSON: PERSON
+    LOC: LOCATION
+    LOCATION: LOCATION
+    GPE: LOCATION
+    ORG: ORGANIZATION
+    ORGANIZATION: ORGANIZATION
+    NORP: NRP
+    AGE: AGE
+    ID: ID
+    EMAIL: EMAIL
+    PATIENT: PERSON
+    STAFF: PERSON
+    HOSP: ORGANIZATION
+    PATORG: ORGANIZATION
+    DATE: DATE_TIME
+    TIME: DATE_TIME
+    PHONE: PHONE_NUMBER
+    HCW: PERSON
+    HOSPITAL: ORGANIZATION
+    FACILITY: LOCATION
+    IP_ADDRESS: IP_ADDRESS
+    PHONE_NUMBER: PHONE_NUMBER
+    CREDIT_CARD: CREDIT_CARD
+    URL: URL
+    CRYPTO: CRYPTO
+    PII: GENERIC_PII
