@@ -1,6 +1,6 @@
 from typing import List, Optional
-
 from presidio_analyzer import Pattern, PatternRecognizer
+import unittest
 
 class APIKeyRecognizer(PatternRecognizer):
     """
@@ -38,3 +38,45 @@ class APIKeyRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+    def analyze(self, text: str) -> List:
+        """
+        Analyze function for API key recognition.
+
+        :param text: Text to analyze
+        :return: List of recognition results
+        """
+        return super().analyze(text)
+
+
+class TestAPIKeyRecognizer(unittest.TestCase):
+
+    def setUp(self):
+        self.recognizer = APIKeyRecognizer()
+
+    def test_recognizer_exists(self):
+        self.assertIsNotNone(self.recognizer)
+
+    def test_pattern_exists(self):
+        self.assertTrue(len(self.recognizer.PATTERNS) > 0)
+
+    def test_pattern_attributes(self):
+        for pattern in self.recognizer.PATTERNS:
+            self.assertIsInstance(pattern, Pattern)
+            self.assertIsNotNone(pattern.name)
+            self.assertIsNotNone(pattern.regex)
+            self.assertIsNotNone(pattern.score)
+
+    def test_context(self):
+        self.assertTrue(len(self.recognizer.CONTEXT) > 0)
+
+    def test_recognize_api_key(self):
+        text_with_api_key = "Here is my API key: w9aKPvHhu1zeD4Tb65G2rQfXNlYU0WJc" # Fake Token
+        results = self.recognizer.analyze(text_with_api_key)
+        self.assertTrue(len(results) > 0)
+        for result in results:
+            self.assertEqual(result.entity_type, "API_KEY")
+
+
+if __name__ == '__main__':
+    unittest.main()
