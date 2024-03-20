@@ -2,10 +2,10 @@ import yaml
 import os
 import logging
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
-from presidio_analyzer.nlp_engine import NlpEngineProvider
+from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
 import presidio_analyzer.recognizer_registry
 
 logger = logging.getLogger("presidio-analyzer")
@@ -61,7 +61,7 @@ class AnalyzerEngineProvider:
             return "en"
         return recognizer["supported_language"]
     
-    def _load_recognizer_registry(self):
+    def _load_recognizer_registry(self) -> RecognizerRegistry:
         if "recognizer_registry" not in self.configuration:
             logger.warning(
                 "configuration file is missing 'recognizer_registry'. Using default configuration for recognizer registry"
@@ -82,7 +82,7 @@ class AnalyzerEngineProvider:
 
         return RecognizerRegistry(recognizers=recognizer_instances)
     
-    def _load_nlp_engine(self):
+    def _load_nlp_engine(self) -> NlpEngine:
         if "nlp_configuration" not in self.configuration:
             logger.warning(
                 "configuration file is missing 'nlp_configuration'. Using default configuration for nlp engine"
