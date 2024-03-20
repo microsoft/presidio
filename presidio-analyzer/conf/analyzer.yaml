@@ -2,9 +2,11 @@ recognizer_registry:
   recognizers: 
     - 
       name: CreditCardRecognizer
-      supported_language: 
-      - en
-      - es
+      supported_language: en
+
+    - 
+      name: CreditCardRecognizer
+      supported_language: es
 
     - ItFiscalCodeRecognizer
 
@@ -12,38 +14,39 @@ supported_languages:
   - en
   - es
 
-nlp_engine_provider:
-  nlp_configuration:
-    nlp_engine_name: transformers
-    models:
-      -
-        lang_code: en
-        model_name:
-          spacy: en_core_web_sm
-          transformers: StanfordAIMI/stanford-deidentifier-base
+default_score_threshold: 0.7
 
-    ner_model_configuration:
-      labels_to_ignore:
-      - O
-      aggregation_strategy: simple # "simple", "first", "average", "max"
-      stride: 16
-      alignment_mode: strict # "strict", "contract", "expand"
-      model_to_presidio_entity_mapping:
-        PER: PERSON
-        LOC: LOCATION
-        ORG: ORGANIZATION
-        AGE: AGE
-        ID: ID
-        EMAIL: EMAIL
-        PATIENT: PERSON
-        STAFF: PERSON
-        HOSP: ORGANIZATION
-        PATORG: ORGANIZATION
-        DATE: DATE_TIME
-        PHONE: PHONE_NUMBER
-        HCW: PERSON
-        HOSPITAL: ORGANIZATION
+nlp_configuration:
+  nlp_engine_name: transformers
+  models:
+    -
+      lang_code: en
+      model_name:
+        spacy: en_core_web_sm
+        transformers: StanfordAIMI/stanford-deidentifier-base
 
-      low_confidence_score_multiplier: 0.4
-      low_score_entity_names:
-      - ID
+  ner_model_configuration:
+    labels_to_ignore:
+    - O
+    aggregation_strategy: simple # "simple", "first", "average", "max"
+    stride: 16
+    alignment_mode: strict # "strict", "contract", "expand"
+    model_to_presidio_entity_mapping:
+      PER: PERSON
+      LOC: LOCATION
+      ORG: ORGANIZATION
+      AGE: AGE
+      ID: ID
+      EMAIL: EMAIL
+      PATIENT: PERSON
+      STAFF: PERSON
+      HOSP: ORGANIZATION
+      PATORG: ORGANIZATION
+      DATE: DATE_TIME
+      PHONE: PHONE_NUMBER
+      HCW: PERSON
+      HOSPITAL: ORGANIZATION
+
+    low_confidence_score_multiplier: 0.4
+    low_score_entity_names:
+    - ID
