@@ -88,7 +88,7 @@ class PhoneRecognizer(LocalRecognizer):
 
     def _get_analysis_explanation(self, region):
         return AnalysisExplanation(
-            recognizer=PhoneRecognizer.__class__.__name__,
+            recognizer=PhoneRecognizer.__name__,
             original_score=self.SCORE,
             textual_explanation=f"Recognized as {region} region phone number, "
             f"using PhoneRecognizer",
