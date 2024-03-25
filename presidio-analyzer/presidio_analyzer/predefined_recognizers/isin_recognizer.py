@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple
 from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
+
+# from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
 
 
 class IsinRecognizer(PatternRecognizer):
@@ -16,24 +17,8 @@ class IsinRecognizer(PatternRecognizer):
     """
 
     iso2a_countryname = ""
-    utils = Utils()
-    countries = utils.get_country_codes(iso_code="ISO3166-1-Alpha-2")
-    for country in countries:
-        iso2a_countryname += country + "|"
-    pattern = "^" + "(" + iso2a_countryname.rstrip("|") + ")" + "[A-Z0-9]{9}[0-9]{1}$"
-
-    PATTERNS = [
-        Pattern(
-            "ISIN (Medium)",
-            r"\b[A-Z]{2}[A-Z0-9]{9}\d{1}\b",
-            0.01,
-        ),
-        Pattern(
-            "ISIN (Strong)",
-            pattern,
-            0.85,
-        ),
-    ]
+    # utils = Utils()
+    pattern: str = ""
 
     CONTEXT = ["ISIN", "ISIN_CODE"]
 
@@ -50,6 +35,32 @@ class IsinRecognizer(PatternRecognizer):
             if replacement_pairs
             else [("-", ""), (" ", ""), (":", "")]
         )
+
+        self.countries = self.analyzer_utils.get_country_codes(
+            iso_code="ISO3166-1-Alpha-2"
+        )
+        for country in self.countries:
+            self.iso2a_countryname += country + "|"
+        self.pattern = (
+            "^"
+            + "("
+            + self.iso2a_countryname.rstrip("|")
+            + ")"
+            + "[A-Z0-9]{9}[0-9]{1}$"
+        )
+
+        self.PATTERNS = [
+            Pattern(
+                "ISIN (Medium)",
+                r"\b[A-Z]{2}[A-Z0-9]{9}\d{1}\b",
+                0.01,
+            ),
+            Pattern(
+                "ISIN (Strong)",
+                self.pattern,
+                0.85,
+            ),
+        ]
 
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
