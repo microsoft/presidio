@@ -10,7 +10,7 @@ class InPassportRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "PASSPORT",
-            r"[A-Z][1-9][0-]{2}[0-9]{3}[1-9]",
+            r"[A-Z][1-9][0-9]{2}[0-9]{4}[1-9]",
             0.5,
         ),
     ]
