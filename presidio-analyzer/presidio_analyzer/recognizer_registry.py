@@ -47,6 +47,8 @@ from presidio_analyzer.predefined_recognizers import (
     PlPeselRecognizer,
     InAadhaarRecognizer,
     InVehicleRegistrationRecognizer,
+    IsinRecognizer,
+    CfiRecognizer,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -105,6 +107,8 @@ class RecognizerRegistry:
                 InPanRecognizer,
                 InAadhaarRecognizer,
                 InVehicleRegistrationRecognizer,
+                IsinRecognizer,
+                CfiRecognizer,
             ],
             "es": [EsNifRecognizer],
             "it": [
