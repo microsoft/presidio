@@ -9,12 +9,12 @@ models:
 ner_model_configuration:
   labels_to_ignore:
   - O
-  aggregation_strategy: simple # "simple", "first", "average", "max"
-  stride: 16                   # If stride >= 0, process long texts in
-                               # overlapping windows of the model max
-                               # length. The value is the length of the
-                               # window overlap in transformer tokenizer
-                               # tokens, NOT the length of the stride.
+  aggregation_strategy: max # "simple", "first", "average", "max"
+  stride: 16                # If stride >= 0, process long texts in
+                            # overlapping windows of the model max
+                            # length. The value is the length of the
+                            # window overlap in transformer tokenizer
+                            # tokens, NOT the length of the stride.
   alignment_mode: expand # "strict", "contract", "expand"
   model_to_presidio_entity_mapping:
     PER: PERSON

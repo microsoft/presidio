@@ -16,6 +16,8 @@ class Pattern:
         self.name = name
         self.regex = regex
         self.score = score
+        self.compiled_regex = None
+        self.compiled_with_flags = None
 
     def to_dict(self) -> Dict:
         """
