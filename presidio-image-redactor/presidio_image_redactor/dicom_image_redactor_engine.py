@@ -955,7 +955,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 supported_entity="PERSON", deny_list=phi_list
             )
 
-            if type(ad_hoc_recognizers) is None:
+            if ad_hoc_recognizers is None:
                 ad_hoc_recognizers = [deny_list_recognizer]
             elif type(ad_hoc_recognizers) is list:
                 ad_hoc_recognizers.append(deny_list_recognizer)
