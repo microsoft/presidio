@@ -1,14 +1,55 @@
 recognizer_registry:
   recognizers: 
-    - 
-      name: CreditCardRecognizer
-      supported_language: en
-
-    - 
-      name: CreditCardRecognizer
-      supported_language: es
+    - name: CreditCardRecognizer
+      supported_languages: 
+      - en
+      - es
+      type: predefined
 
     - ItFiscalCodeRecognizer
+
+    - name: ExampleCustomRecognizer
+      patterns:
+        - name: "zip code (weak)"
+          regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+          score: 0.01
+        - name: "zip code (weak)"
+          regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+          score: 0.01
+      supported_languages:
+        - language: es
+          context: [tarjeta,credito]
+        - language: en
+          context: [credit]
+      supported_entity: "ZIP"
+      deny_list: [Mr., Mrs., Ms., Miss, Dr., Prof.]
+      deny_list_score: 1
+      type: custom
+      enabled: true
+
+    - name: "ZipCodeRecognizer"
+      supported_language: "de"
+      patterns:
+        -
+          name: "zip code (weak)"
+          regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+          score: 0.01
+      context:
+      - zip
+      - code
+      supported_entity: "ZIP"
+
+    - name: "TitlesRecognizer"
+      supported_language: "en"
+      supported_entity: "TITLE"
+      deny_list:
+        - Mr.
+        - Mrs.
+        - Ms.
+        - Miss
+        - Dr.
+        - Prof.
+      enabled: false
 
 supported_languages: 
   - en

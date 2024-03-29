@@ -2,9 +2,9 @@ import yaml
 import os
 import logging
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, List, Tuple, Dict
 
-from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry, EntityRecognizer, PatternRecognizer
 from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
 import presidio_analyzer.recognizer_registry
 
@@ -50,17 +50,49 @@ class AnalyzerEngineProvider:
         )
 
         return analyzer
+    
+    def _is_enabled(self, recognizer: Dict) -> bool:
+        return not "enabled" in recognizer or recognizer["enabled"]
 
-    def _get_name(self, recognizer) ->str :
+    def _get_name(self, recognizer) -> str:
         if isinstance(recognizer, str):
             return recognizer
         return recognizer["name"]
 
-    def _get_language(self, recognizer) -> str:
+    def _get_languages(self, recognizer) -> List[str]:
         if isinstance(recognizer, str):
-            return "en"
-        return recognizer["supported_language"]
-    
+            return ["en"]
+        return recognizer["supported_languages"]
+
+    def _split_recognizers(self, recognizers) -> Tuple[List[str],List[str]]:
+        """
+        splits the recognizer list to predefined and custom
+        """
+        predefined =[]
+        custom =[]
+
+        predefined = [recognizer for recognizer in recognizers if isinstance(recognizer, str) or ("type" in recognizer and recognizer["type"] == "predefined")]
+        # all recognizers are custom by default, type: custom can be mentioned as well
+        custom = [recognizer for recognizer in recognizers if not isinstance(recognizer, str) and ("type" not in recognizer or recognizer["type"] == "custom")]
+        return predefined, custom
+
+    def _create_recognizers(self, recognizer: Dict) -> List[EntityRecognizer]:
+        # in case supported_languages is not present, use the previous interface for custom recognizers
+        if not "supported_languages" in recognizer:
+            return [PatternRecognizer.from_dict(recognizer)]
+
+        recognizers = []
+
+        for supported_language in recognizer["supported_languages"]:
+            copied_recognizer = {k: v for k, v in recognizer.items() if k not in ["enabled", "type", "supported_languages"]}
+            copied_recognizer["supported_language"] = recognizer["supported_languages"]
+            if not isinstance(copied_recognizer["supported_language"], str):
+                copied_recognizer["supported_language"] = supported_language["language"]
+                copied_recognizer["context"] = supported_language["context"]
+            recognizers.append(PatternRecognizer.from_dict(copied_recognizer))
+
+        return recognizers
+
     def _load_recognizer_registry(self) -> RecognizerRegistry:
         if "recognizer_registry" not in self.configuration:
             logger.warning(
@@ -77,8 +109,15 @@ class AnalyzerEngineProvider:
 
         recognizers=recognizer_registry["recognizers"]
         recognizer_instances = []
-        for recognizer in recognizers:
-            recognizer_instances.append(getattr(presidio_analyzer.predefined_recognizers, self._get_name(recognizer), None)(supported_language=self._get_language(recognizer)))
+        predefined, custom = self._split_recognizers(recognizers)
+        for recognizer in predefined:
+            for language in self._get_languages(recognizer):
+                if self._is_enabled(recognizer):
+                    recognizer_instances.append(getattr(presidio_analyzer.predefined_recognizers, self._get_name(recognizer), None)(supported_language=language))
+
+        for recognizer in custom:
+            if self._is_enabled(recognizer):
+                recognizer_instances.append(self._create_recognizers(recognizer))
 
         return RecognizerRegistry(recognizers=recognizer_instances)
     
