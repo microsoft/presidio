@@ -23,13 +23,18 @@ class InVoterRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "VOTER",
-            r"(?i)\b([A-Z]){3}([0-9]){7}\b",  # case insensitive
-            0.7,
+            r"\b([A-Za-z]{1}[ABCDGHJKMNPRSYabcdghjkmnprsy]{1}[A-Za-z]{1}([0-9]){7})\b",
+            0.6,
+        ),
+        Pattern(
+            "VOTER",
+            r"\b([A-Za-z]){3}([0-9]){7}\b",
+            0.3,
         ),
     ]
 
     CONTEXT = [
-        "voter id",
+        "voter",
         "epic",
         "elector photo identity card",
     ]
