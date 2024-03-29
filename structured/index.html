@@ -22,7 +22,7 @@
       
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.15">
     
     
       
@@ -1341,6 +1341,30 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#selection-strategy-for-entity-detection-in-tabular-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selection Strategy for Entity Detection in Tabular Data
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Selection Strategy for Entity Detection in Tabular Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#future-work" class="md-nav__link">
     <span class="md-ellipsis">
       Future work
@@ -1903,6 +1927,30 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#selection-strategy-for-entity-detection-in-tabular-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selection Strategy for Entity Detection in Tabular Data
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Selection Strategy for Entity Detection in Tabular Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#future-work" class="md-nav__link">
     <span class="md-ellipsis">
       Future work
@@ -2047,6 +2095,23 @@ to each value in columns identified as containing PII, ensuring the sensitive da
 <ul>
 <li><a href="https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_structured.ipynb">https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_structured.ipynb</a></li>
 </ul>
+<h4 id="selection-strategy-for-entity-detection-in-tabular-data">Selection Strategy for Entity Detection in Tabular Data</h4>
+<ul>
+<li><strong>Most Common (default):</strong>  Identifies the most frequently occurring PII entity in a data column or field.</li>
+<li><strong>Highest Confidence:</strong>  Selects PII entities based on the highest confidence scores, irrespective of their occurrence frequency.</li>
+<li><strong>Mixed:</strong>  Combines the strengths of both the above strategies. It selects the entity with the highest confidence score if that score exceeds a specified threshold (controlled by <code>mixed_strategy_threshold</code>); otherwise, it defaults to the most common entity.</li>
+</ul>
+<h5 id="usage">Usage</h5>
+<p>Specify the <code>selection_strategy</code> and optionally the <code>mixed_strategy_threshold</code> in the <code>generate_analysis()</code> method:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate a tabular analysis using the most common strategy</span>
+<span class="n">tabular_analysis</span> <span class="o">=</span> <span class="n">PandasAnalysisBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">generate_analysis</span><span class="p">(</span><span class="n">sample_df</span><span class="p">)</span>
+
+<span class="c1"># Generate a tabular analysis using the highest confidence strategy</span>
+<span class="n">tabular_analysis</span> <span class="o">=</span> <span class="n">PandasAnalysisBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">generate_analysis</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">selection_strategy</span><span class="o">=</span><span class="s2">&quot;highest_confidence&quot;</span><span class="p">)</span>
+
+<span class="c1"># Generate a tabular analysis using the mixed strategy</span>
+<span class="n">tabular_analysis</span> <span class="o">=</span> <span class="n">PandasAnalysisBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">generate_analysis</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">selection_strategy</span><span class="o">=</span><span class="s2">&quot;mixed&quot;</span><span class="p">,</span> <span class="n">mixed_strategy_threshold</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+</code></pre></div>
 <h4 id="future-work">Future work</h4>
 <ul>
 <li>Improve support for datasets with mixed free-text and structure data (e.g. some columns contain free text)</li>
@@ -2146,7 +2211,7 @@ to each value in columns identified as containing PII, ensuring the sensitive da
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "content.tabs.link"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../assets/javascripts/bundle.bd41221c.min.js"></script>
       
     
   </body>
