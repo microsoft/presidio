@@ -4,19 +4,40 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+
+## [2.2.353] - March 31st 2024
+
 ### Added
 #### Analyzer
-#### Anonymizer
-#### Image redactor
-#### Structured
+* Support 'M' prefix in SG_NRIC_FIN Recognizer and expand tests (#1304) (Thanks @miltonsim)
+* Add Bech32 and Bech32m Bitcoin Address Validation in Crypto Recognizer and expand tests (#1307) (Thanks @miltonsim)
+* Predefined pattern recognizer : IN_VEHICLE_REGISTRATION (#1288) (Thanks @devopam)
+* Addition of leniency parameter in predefined PhoneRecognizer (#1311) (Thanks @VMD7)
+* Add Singapore UEN Recognizer (#1315) (Thanks @miltonsim)
+* Update spacy_stanza.md (#1325) (Thanks @AndreasThinks)
+* Adding Span Marker Recognizer Sample (#1321) (Thanks @VMD7)
+* Cache compiled regexes in analyzer (#1335) (Thanks @Edward-Upton)
 
+#### Anonymizer
+* Added pseudonimyzation sample (#1296)
+
+
+#### Image redactor
+* Added tesseract to installation (#1312)
+  
+#### Structured
+* Analysis builder improvements (#1295) (Thanks @ebotiab)
+* Implement user-defined entity selection strategies in Presidio Structured (#1319) (Thanks @miltonsim)
 
 ### Changed
 #### Analyzer
-Fix for incorrectly referenced recognizer in analysis_explaination using PhoneRecognizer (#1330)
+* Fix for incorrectly referenced recognizer in analysis_explaination using PhoneRecognizer (#1330) *Thanks @egillv021)
+* Fix bug where "bank" and "check" wouldn't work (#1333) (Thanks @usr-ein and @Samuel Prevost)
+* Bugfix in tutorial (#1310)
+* Changed default aggregation_strategy to max (#1342)
 
-### Removed
-
+#### Image Redactor
+* Fixed wrong condition for dicom metadata (#1347)
 
 ## [2.2.353] - Feb 12th 2024
 
@@ -377,7 +398,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.353...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.354...HEAD
+[2.2.354]: https://github.com/microsoft/presidio/compare/2.2.353...2.2.354
 [2.2.353]: https://github.com/microsoft/presidio/compare/2.2.352...2.2.353
 [2.2.352]: https://github.com/microsoft/presidio/compare/2.2.351...2.2.352
 [2.2.351]: https://github.com/microsoft/presidio/compare/2.2.350...2.2.351

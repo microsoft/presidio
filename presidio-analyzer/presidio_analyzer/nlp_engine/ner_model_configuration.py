@@ -64,7 +64,7 @@ class NerModelConfiguration:
     """  # noqa E501
 
     labels_to_ignore: Optional[Collection[str]] = None
-    aggregation_strategy: Optional[str] = "simple"
+    aggregation_strategy: Optional[str] = "max"
     stride: Optional[int] = 14
     alignment_mode: Optional[str] = "expand"
     default_score: Optional[float] = 0.85
