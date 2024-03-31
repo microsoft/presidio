@@ -38,6 +38,7 @@ from .azure_ai_language import AzureAILanguageRecognizer
 from .in_aadhaar_recognizer import InAadhaarRecognizer
 from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
 from .sg_uen_recognizer import SgUenRecognizer
+from .fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -83,4 +84,5 @@ __all__ = [
     "InAadhaarRecognizer",
     "InVehicleRegistrationRecognizer",
     "SgUenRecognizer",
+    "FiPersonalIdentityCodeRecognizer",
 ]
