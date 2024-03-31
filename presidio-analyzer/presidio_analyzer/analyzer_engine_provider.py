@@ -2,7 +2,7 @@ import yaml
 import os
 import logging
 from pathlib import Path
-from typing import Optional, Union, List, Tuple, Dict
+from typing import Optional, Union, List, Tuple, Dict, Any
 
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry, EntityRecognizer, PatternRecognizer
 from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
@@ -20,7 +20,7 @@ class AnalyzerEngineProvider:
 
     def __init__(self, conf_file: Optional[Union[Path, str]] = None):
         self.configuration = {}
-        if not os.path.exists(conf_file):
+        if not conf_file or not os.path.exists(conf_file):
             logger.warning(
                 "configuration file is missing. Using default configuration for analyzer engine"
             )
@@ -39,8 +39,15 @@ class AnalyzerEngineProvider:
 
         nlp_engine = self._load_nlp_engine()
         registry = self._load_recognizer_registry()
-        supported_languages = self.configuration.get("supported_languages", None)
-        default_score_threshold = self.configuration.get("default_score_threshold", 0)
+        supported_languages = "en"
+        default_score_threshold = 0
+        if "analyzer_engine" not in self.configuration:
+            logger.warning(
+                "configuration file is missing 'analyzer_engine'. Using default configuration for analyzer engine"
+                )
+        else:
+            supported_languages = self.configuration.get("supported_languages", "en")
+            default_score_threshold = self.configuration.get("default_score_threshold", 0)
 
         analyzer = AnalyzerEngine(
             nlp_engine=nlp_engine, 
@@ -51,20 +58,28 @@ class AnalyzerEngineProvider:
 
         return analyzer
     
-    def _is_enabled(self, recognizer: Dict) -> bool:
+    def _is_enabled(self, recognizer: Union[Dict[str, Any], str]) -> bool:
         return not "enabled" in recognizer or recognizer["enabled"]
 
-    def _get_name(self, recognizer) -> str:
+    def _get_name(self, recognizer: Union[Dict[str, Any], str]) -> str:
         if isinstance(recognizer, str):
             return recognizer
         return recognizer["name"]
 
-    def _get_languages(self, recognizer) -> List[str]:
+    def _get_items(self, recognizer: Union[Dict[str, Any], str]) -> Dict[str, Any]:
         if isinstance(recognizer, str):
-            return ["en"]
-        return recognizer["supported_languages"]
+            return {}
+        return recognizer.items()
 
-    def _split_recognizers(self, recognizers) -> Tuple[List[str],List[str]]:
+    def _get_languages(self, recognizer: Union[Dict[str, Any], str]) -> List[Dict[str, Any]]:
+        if isinstance(recognizer, str) or "supported_languages" not in recognizer:
+            logger.warning("language was not specified, defaulting to English")
+            return [{"supported_language": "en", "context": None}]
+        if isinstance(recognizer["supported_languages"][0], str):
+            return [{"supported_language": language, "context": None} for language in recognizer["supported_languages"]]
+        return [{"supported_language": language["language"], "context": language["context"]} for language in recognizer["supported_languages"]]
+
+    def _split_recognizers(self, recognizers: Union[Dict[str, Any], str]) -> Tuple[List[Dict[str, Any]],List[Dict[str, Any]]]:
         """
         splits the recognizer list to predefined and custom
         """
@@ -83,13 +98,9 @@ class AnalyzerEngineProvider:
 
         recognizers = []
 
-        for supported_language in recognizer["supported_languages"]:
+        for supported_language in self._get_languages(recognizer):
             copied_recognizer = {k: v for k, v in recognizer.items() if k not in ["enabled", "type", "supported_languages"]}
-            copied_recognizer["supported_language"] = recognizer["supported_languages"]
-            if not isinstance(copied_recognizer["supported_language"], str):
-                copied_recognizer["supported_language"] = supported_language["language"]
-                copied_recognizer["context"] = supported_language["context"]
-            recognizers.append(PatternRecognizer.from_dict(copied_recognizer))
+            recognizers.append(PatternRecognizer.from_dict({**copied_recognizer, **supported_language}))
 
         return recognizers
 
@@ -113,13 +124,16 @@ class AnalyzerEngineProvider:
         for recognizer in predefined:
             for language in self._get_languages(recognizer):
                 if self._is_enabled(recognizer):
-                    recognizer_instances.append(getattr(presidio_analyzer.predefined_recognizers, self._get_name(recognizer), None)(supported_language=language))
+                    copied_recognizer = {k: v for k, v in self._get_items(recognizer) if k not in ["enabled", "type", "supported_languages", "name"]}
+                    recognizer_instances.append(getattr(presidio_analyzer.predefined_recognizers, self._get_name(recognizer), None)(**{**copied_recognizer, **language}))
 
         for recognizer in custom:
             if self._is_enabled(recognizer):
                 recognizer_instances.append(self._create_recognizers(recognizer))
 
-        return RecognizerRegistry(recognizers=recognizer_instances)
+        global_regex_flags = recognizer_registry.get("global_regex_flags", None)
+
+        return RecognizerRegistry(recognizers=recognizer_instances, global_regex_flags=global_regex_flags)
     
     def _load_nlp_engine(self) -> NlpEngine:
         if "nlp_configuration" not in self.configuration:
