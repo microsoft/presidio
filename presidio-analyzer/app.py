@@ -9,9 +9,7 @@ from typing import Tuple
 from flask import Flask, request, jsonify, Response
 from werkzeug.exceptions import HTTPException
 
-from presidio_analyzer.analyzer_engine import AnalyzerEngine
-from presidio_analyzer.analyzer_request import AnalyzerRequest
-from presidio_analyzer.analyzer_engine_provider import AnalyzerEngineProvider
+from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider, AnalyzerRequest
 
 DEFAULT_PORT = "3000"
 
