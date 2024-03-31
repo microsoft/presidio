@@ -39,20 +39,20 @@ class RecognizerRegistryProvider:
         self.configuration = yaml.safe_load(open(conf_file))
         return
 
-    def _is_enabled(self, recognizer: Union[Dict[str, Any], str]) -> bool:
+    def _is_recognizer_enabled(self, recognizer: Union[Dict[str, Any], str]) -> bool:
         return not "enabled" in recognizer or recognizer["enabled"]
 
-    def _get_name(self, recognizer: Union[Dict[str, Any], str]) -> str:
+    def _get_recognizer_name(self, recognizer: Union[Dict[str, Any], str]) -> str:
         if isinstance(recognizer, str):
             return recognizer
         return recognizer["name"]
 
-    def _get_items(self, recognizer: Union[Dict[str, Any], str]) -> Dict[str, Any]:
+    def _get_recognizer_items(self, recognizer: Union[Dict[str, Any], str]) -> Dict[str, Any]:
         if isinstance(recognizer, str):
             return {}
         return recognizer.items()
 
-    def _get_languages(self, recognizer: Union[Dict[str, Any], str]) -> List[Dict[str, Any]]:
+    def _get_recognizer_languages(self, recognizer: Union[Dict[str, Any], str]) -> List[Dict[str, Any]]:
         if isinstance(recognizer, str) or "supported_languages" not in recognizer:
             logger.warning("language was not specified, defaulting to English")
             return [{"supported_language": "en", "context": None}]
@@ -72,33 +72,35 @@ class RecognizerRegistryProvider:
         custom = [recognizer for recognizer in recognizers if not isinstance(recognizer, str) and ("type" not in recognizer or recognizer["type"] == "custom")]
         return predefined, custom
 
-    def _create_recognizers(self, recognizer: Dict) -> List[EntityRecognizer]:
+    def _create_custom_recognizers(self, recognizer: Dict) -> List[EntityRecognizer]:
         # in case supported_languages is not present, use the previous interface for custom recognizers
         if not "supported_languages" in recognizer:
             return [PatternRecognizer.from_dict(recognizer)]
 
         recognizers = []
 
-        for supported_language in self._get_languages(recognizer):
+        for supported_language in self._get_recognizer_languages(recognizer):
             copied_recognizer = {k: v for k, v in recognizer.items() if k not in ["enabled", "type", "supported_languages"]}
             recognizers.append(PatternRecognizer.from_dict({**copied_recognizer, **supported_language}))
 
         return recognizers
 
     def create_engine_recognizer_registry(self) -> RecognizerRegistry:
-        recognizers=self.configuration["recognizers"]
+        recognizers=self.configuration.get("recognizers", [])
         recognizer_instances = []
         predefined, custom = self._split_recognizers(recognizers)
         for recognizer in predefined:
-            for language in self._get_languages(recognizer):
-                if self._is_enabled(recognizer):
-                    copied_recognizer = {k: v for k, v in self._get_items(recognizer) if k not in ["enabled", "type", "supported_languages", "name"]}
-                    recognizer_instances.append(getattr(presidio_analyzer.predefined_recognizers, self._get_name(recognizer), None)(**{**copied_recognizer, **language}))
+            for language in self._get_recognizer_languages(recognizer):
+                if self._is_recognizer_enabled(recognizer):
+                    copied_recognizer = {k: v for k, v in self._get_recognizer_items(recognizer) if k not in ["enabled", "type", "supported_languages", "name"]}
+                    recognizer_instances.append(getattr(presidio_analyzer.predefined_recognizers, self._get_recognizer_name(recognizer), None)(**{**copied_recognizer, **language}))
 
         for recognizer in custom:
-            if self._is_enabled(recognizer):
-                recognizer_instances.append(self._create_recognizers(recognizer))
+            if self._is_recognizer_enabled(recognizer):
+                recognizer_instances.append(self._create_custom_recognizers(recognizer))
 
         global_regex_flags = self.configuration.get("global_regex_flags", None)
+        for recognizer in recognizer_instances:
+            recognizer.global_regex_flags = global_regex_flags
 
         return RecognizerRegistry(recognizers=recognizer_instances, global_regex_flags=global_regex_flags)
