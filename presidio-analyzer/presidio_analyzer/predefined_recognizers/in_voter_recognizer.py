@@ -24,7 +24,7 @@ class InVoterRecognizer(PatternRecognizer):
         Pattern(
             "VOTER",
             r"\b([A-Za-z]{1}[ABCDGHJKMNPRSYabcdghjkmnprsy]{1}[A-Za-z]{1}([0-9]){7})\b",
-            0.6,
+            0.4,
         ),
         Pattern(
             "VOTER",
