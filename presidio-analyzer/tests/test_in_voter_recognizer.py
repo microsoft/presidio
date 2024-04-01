@@ -19,11 +19,11 @@ def entities():
     [
         # fmt: off
         # valid
-        ("KSD1287349", 1, (0, 10), 0.6),
-        ("my voter: DBJ2289013", 1, (10, 20), (0.6)),
+        ("KSD1287349", 1, (0, 10), 0.4),
+        ("my voter: DBJ2289013", 1, (10, 20), (0.4)),
         ("uzb2345117", 1, (0, 10), 0.3),
         ("this MUP5632811", 1, (5, 15), 0.3),
-        ("You can vote with your CPJ4467918 number", 1, (23, 33), 0.6),
+        ("You can vote with your CPJ4467918 number", 1, (23, 33), 0.4),
         # invalid
         ("zxdf8923q1", 0, (), (),),
         ("A8923571WZ", 0, (), (),),
