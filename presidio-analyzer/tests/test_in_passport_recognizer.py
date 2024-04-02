@@ -17,10 +17,10 @@ def entities():
         # fmt: off
         #Valid Passport Numbers
         ("A3456781", 1, (0,8), 0.7),
-        # ("B3097651", 1, (0,8), 0.7),
-        # ("C3590543", 1, (0,8), 0.7),
-        # ("my passport number is T3569075", 1, (22,30), 0.7),
-        # ("passport number: J6932157", 1, (17,25), 0.7),
+        ("B3097651", 1, (0,8), 0.7),
+        ("C3590543", 1, (0,8), 0.7),
+        ("my passport number is T3569075", 1, (22,30), 0.7),
+        ("passport number: J6932157", 1, (17,25), 0.7),
 
         #Invalid Passport Numbers
         ("A3456781", 0, (0,8), 0),
@@ -38,7 +38,6 @@ def test_when_all_passport_numers_then_succeed(
         entities,
 ):
     results = recognizer.analyze(text, entities)
-    print(len(results) == expected_len)
     if results:
         assert_result(
             results[0],
