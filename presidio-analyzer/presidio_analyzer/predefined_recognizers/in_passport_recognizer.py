@@ -4,7 +4,15 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 class InPassportRecognizer(PatternRecognizer):
     """
-    Indian Passport Recognizer
+    Recognizes Indian Passport Number.
+
+    Indian Passport Number is a eight digit alphanumeric number.
+
+    :param patterns: List of patterns to be used by this recognizer
+    :param context: List of context words to increase confidence in detection
+    :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
+    
     """
 
     PATTERNS = [
