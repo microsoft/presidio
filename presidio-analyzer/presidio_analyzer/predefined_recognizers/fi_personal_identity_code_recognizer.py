@@ -22,7 +22,7 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
             0.5,
         ),
     ]
-    CONTEXT = ["hetu", "henkilötunnus", "Personbeteckningen", "personal identity code"]
+    CONTEXT = ["hetu", "henkilötunnus", "personbeteckningen", "personal identity code"]
 
     def __init__(
         self,
