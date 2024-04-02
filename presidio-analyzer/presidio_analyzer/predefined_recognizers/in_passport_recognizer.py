@@ -10,8 +10,8 @@ class InPassportRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "PASSPORT",
-            r"[A-Z][1-9][0-9]{2}[0-9]{4}[1-9]",
-            0.5,
+            r"\b[A-Z][1-9][0-9]{2}[0-9]{4}[1-9]\b",
+            0.7,
         ),
     ]
 
@@ -23,7 +23,7 @@ class InPassportRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns: Optional[List[Pattern]] = (None),
+        patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "IN_PASSPORT",
