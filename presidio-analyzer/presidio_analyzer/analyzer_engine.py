@@ -5,7 +5,7 @@ from typing import List, Optional
 from presidio_analyzer import (
     RecognizerRegistry,
     RecognizerResult,
-    EntityRecognizer,
+    EntityRecognizer
 )
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.context_aware_enhancers import (
@@ -13,6 +13,7 @@ from presidio_analyzer.context_aware_enhancers import (
     LemmaContextAwareEnhancer,
 )
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
+from presidio_analyzer.recognizer_registry_provider import RecognizerRegistryProvider
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -57,9 +58,6 @@ class AnalyzerEngine:
             provider = NlpEngineProvider()
             nlp_engine = provider.create_engine()
 
-        if not registry:
-            logger.info("registry not provided, creating default.")
-            registry = RecognizerRegistry()
         if not app_tracer:
             app_tracer = AppTracer()
         self.app_tracer = app_tracer
@@ -70,13 +68,13 @@ class AnalyzerEngine:
         if not self.nlp_engine.is_loaded():
             self.nlp_engine.load()
 
-        self.registry = registry
+        if not registry:
+            logger.info("registry not provided, creating default.")
+            provider = RecognizerRegistryProvider()
+            registry = provider.create_recognizer_registry()
+            registry.add_nlp_recognizer(nlp_engine=self.nlp_engine, supported_languages=self.supported_languages)
 
-        # load all recognizers
-        if not registry.recognizers:
-            registry.load_predefined_recognizers(
-                nlp_engine=self.nlp_engine, languages=self.supported_languages
-            )
+        self.registry = registry
 
         self.log_decision_process = log_decision_process
         self.default_score_threshold = default_score_threshold

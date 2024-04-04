@@ -39,7 +39,6 @@ class AnalyzerEngineProvider:
         """
 
         nlp_engine = self._load_nlp_engine()
-        registry = self._load_recognizer_registry()
         supported_languages = "en"
         default_score_threshold = 0
         if "analyzer_engine" not in self.configuration:
@@ -50,6 +49,8 @@ class AnalyzerEngineProvider:
             supported_languages = self.configuration.get("supported_languages", "en")
             default_score_threshold = self.configuration.get("default_score_threshold", 0)
 
+        registry = self._load_recognizer_registry(supported_languages)
+
         analyzer = AnalyzerEngine(
             nlp_engine=nlp_engine, 
             registry=registry,
@@ -59,15 +60,15 @@ class AnalyzerEngineProvider:
 
         return analyzer
 
-    def _load_recognizer_registry(self) -> RecognizerRegistry:
+    def _load_recognizer_registry(self, supported_languages: Optional[List[str]] = None) -> RecognizerRegistry:
         if "recognizer_registry" not in self.configuration:
             logger.warning(
                 "configuration file is missing 'recognizer_registry'. Using default configuration for recognizer registry"
             )
             return None
         registry_configuration = self.configuration["recognizer_registry"]
-        provider = RecognizerRegistryProvider(registry_configuration=registry_configuration)
-        return provider.create_engine_recognizer_registry()
+        provider = RecognizerRegistryProvider(registry_configuration=registry_configuration, supported_languages=supported_languages)
+        return provider.create_recognizer_registry()
     
     def _load_nlp_engine(self) -> NlpEngine:
         if "nlp_configuration" not in self.configuration:

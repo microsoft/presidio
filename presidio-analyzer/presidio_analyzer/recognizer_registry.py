@@ -74,6 +74,25 @@ class RecognizerRegistry:
             self.recognizers = []
         self.global_regex_flags = global_regex_flags
 
+    def _create_nlp_recognizer(self, nlp_engine: NlpEngine = None, supported_language: str = None) -> SpacyRecognizer:
+        nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
+
+        if nlp_engine:
+                return nlp_recognizer(
+                    supported_language=supported_language,
+                    supported_entities=nlp_engine.get_supported_entities(),
+                )
+
+        return nlp_recognizer(supported_language=supported_language)
+
+    def add_nlp_recognizer(self, supported_languages: Optional[List[str]] = None, nlp_engine: NlpEngine = None) -> None:
+        if not supported_languages:
+            supported_languages = ["en"]
+
+        self.recognizers.extend(
+            [self._create_nlp_recognizer(nlp_engine=nlp_engine, supported_language=supported_language) for supported_language in supported_languages]
+            )
+
     def load_predefined_recognizers(
         self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = None
     ) -> None:
@@ -86,8 +105,6 @@ class RecognizerRegistry:
         """
         if not languages:
             languages = ["en"]
-
-        nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
 
         recognizers_map = {
             "en": [
@@ -142,14 +159,7 @@ class RecognizerRegistry:
                 for rc in recognizers_map.get("ALL", [])
             ]
             self.recognizers.extend(all_recognizers)
-            if nlp_engine:
-                nlp_recognizer_inst = nlp_recognizer(
-                    supported_language=lang,
-                    supported_entities=nlp_engine.get_supported_entities(),
-                )
-            else:
-                nlp_recognizer_inst = nlp_recognizer(supported_language=lang)
-            self.recognizers.append(nlp_recognizer_inst)
+        self.add_nlp_recognizer(nlp_engine=nlp_engine, languages=languages)
 
     @staticmethod
     def _get_nlp_recognizer(
@@ -307,21 +317,6 @@ class RecognizerRegistry:
         except TypeError as yaml_error:
             print(f"Failed to parse file {yml_path}")
             raise yaml_error
-
-    def __instantiate_recognizer(
-        self, recognizer_class: Type[EntityRecognizer], supported_language: str
-    ):
-        """
-        Instantiate a recognizer class given type and input.
-
-        :param recognizer_class: Class object of the recognizer
-        :param supported_language: Language this recognizer should support
-        """
-
-        inst = recognizer_class(supported_language=supported_language)
-        if isinstance(inst, PatternRecognizer):
-            inst.global_regex_flags = self.global_regex_flags
-        return inst
 
     def _get_supported_languages(self) -> List[str]:
         languages = []
