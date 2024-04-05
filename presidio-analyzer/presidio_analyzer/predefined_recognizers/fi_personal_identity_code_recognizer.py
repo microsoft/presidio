@@ -17,9 +17,13 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "Finnish Personal Identity Code (Medium)",
-            r"\b(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(\d{2})([+-ABCDEFYXWVU])(\d{3})"
-            r"([0123456789ABCDEFHJKLMNPRSTUVWXY])\b",
+            r"\b(\d{6})([+-ABCDEFYXWVU])(\d{3})([0123456789ABCDEFHJKLMNPRSTUVWXY])\b",
             0.5,
+        ),
+        Pattern(
+            "Finnish Personal Identity Code (Very Weak)",
+            r"(\d{6})([+-ABCDEFYXWVU])(\d{3})([0123456789ABCDEFHJKLMNPRSTUVWXY])",
+            0.1,
         ),
     ]
     CONTEXT = ["hetu", "henkilötunnus", "personbeteckningen", "personal identity code"]
