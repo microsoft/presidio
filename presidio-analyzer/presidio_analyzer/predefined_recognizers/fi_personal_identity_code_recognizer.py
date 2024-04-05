@@ -46,9 +46,13 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """Validate the pattern by using the control character."""
+
+        # More information on the validation logic from:
+        # https://dvv.fi/en/personal-identity-code
+        # Under "How is the control character for a personal identity code calculated?".
         date_part = pattern_text[0:6]
         try:
-            # Checking if we do not have e.g. dates like 310211.
+            # Checking if we do not have invalid dates e.g. 310211.
             datetime.strptime(date_part, "%d%m%y")
         except ValueError:
             return False
