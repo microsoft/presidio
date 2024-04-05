@@ -67,12 +67,14 @@ class RecognizerRegistry:
         self,
         recognizers: Optional[Iterable[EntityRecognizer]] = None,
         global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
+        supported_languages: Optional[List[str]] = None
     ):
         if recognizers:
             self.recognizers = recognizers
         else:
             self.recognizers = []
         self.global_regex_flags = global_regex_flags
+        self.supported_languages = supported_languages
 
     def _create_nlp_recognizer(self, nlp_engine: NlpEngine = None, supported_language: str = None) -> SpacyRecognizer:
         nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
@@ -85,7 +87,7 @@ class RecognizerRegistry:
 
         return nlp_recognizer(supported_language=supported_language)
 
-    def add_nlp_recognizer(self, supported_languages: Optional[List[str]] = None, nlp_engine: NlpEngine = None) -> None:
+    def add_nlp_recognizer(self, nlp_engine: NlpEngine = None, supported_languages: Optional[List[str]] = None) -> None:
         if not supported_languages:
             supported_languages = ["en"]
 
@@ -159,7 +161,7 @@ class RecognizerRegistry:
                 for rc in recognizers_map.get("ALL", [])
             ]
             self.recognizers.extend(all_recognizers)
-        self.add_nlp_recognizer(nlp_engine=nlp_engine, languages=languages)
+        self.add_nlp_recognizer(nlp_engine=nlp_engine, supported_languages=languages)
 
     @staticmethod
     def _get_nlp_recognizer(
@@ -317,6 +319,21 @@ class RecognizerRegistry:
         except TypeError as yaml_error:
             print(f"Failed to parse file {yml_path}")
             raise yaml_error
+
+    def __instantiate_recognizer(
+        self, recognizer_class: Type[EntityRecognizer], supported_language: str
+    ):
+        """
+        Instantiate a recognizer class given type and input.
+
+        :param recognizer_class: Class object of the recognizer
+        :param supported_language: Language this recognizer should support
+        """
+
+        inst = recognizer_class(supported_language=supported_language)
+        if isinstance(inst, PatternRecognizer):
+            inst.global_regex_flags = self.global_regex_flags
+        return inst
 
     def _get_supported_languages(self) -> List[str]:
         languages = []

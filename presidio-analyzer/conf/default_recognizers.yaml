@@ -1,6 +1,5 @@
 supported_languages: 
   - en
-  - es
 
 recognizers:
   - name: UsBankRecognizer
@@ -108,11 +107,11 @@ recognizers:
     - pl
     type: predefined
 
-  - name: CreditCardRecognizer
-  - name: CryptoRecognizer
-  - name: DateRecognizer
-  - name: EmailRecognizer
-  - name: IbanRecognizer
-  - name: IpRecognizer
-  - name: MedicalLicenseRecognizer
-  - name: PhoneRecognizer
+  - CreditCardRecognizer
+  - CryptoRecognizer
+  - DateRecognizer
+  - EmailRecognizer
+  - IbanRecognizer
+  - IpRecognizer
+  - MedicalLicenseRecognizer
+  - PhoneRecognizer
