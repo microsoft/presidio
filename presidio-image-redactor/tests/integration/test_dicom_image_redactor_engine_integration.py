@@ -75,6 +75,20 @@ def test_redact_image_correctly(engine_builder: Callable, dcm_filepath: Path):
     )
 
 
+def test_compare_original_to_redacted():
+    """Test the redact_and_return_bbox function."""
+    input_path = Path(RESOURCES_PARENT_DIR, "0_ORIGINAL.dcm")
+    input_image = pydicom.dcmread(input_path)
+    redacted_path = Path(RESOURCES_PARENT_DIR, "0_ORIGINAL_redacted.dcm")
+    expected_redacted = pydicom.dcmread(redacted_path)
+    engine = DicomImageRedactorEngine()
+    actual_redacted, bboxes = engine.redact_and_return_bbox(
+        image=input_image,
+        use_metadata=True
+    )
+    assert np.array_equal(expected_redacted.pixel_array, actual_redacted.pixel_array)
+
+
 @pytest.mark.parametrize("engine_builder", all_engines_required())
 def test_redact_from_single_file_correctly(engine_builder: Callable):
     """Test the redact_from_file function with single file case.
