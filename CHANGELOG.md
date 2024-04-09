@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+#### Analyzer
+Recognizer for Finnish Personal Identity Codes (Henkilötunnus).
+
 
 ## [2.2.353] - March 31st 2024
 
