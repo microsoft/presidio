@@ -50,6 +50,9 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
         # More information on the validation logic from:
         # https://dvv.fi/en/personal-identity-code
         # Under "How is the control character for a personal identity code calculated?".
+        if len(pattern_text) != 11:
+            return False
+
         date_part = pattern_text[0:6]
         try:
             # Checking if we do not have invalid dates e.g. 310211.
