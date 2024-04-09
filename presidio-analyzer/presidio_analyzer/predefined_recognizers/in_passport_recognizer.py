@@ -19,7 +19,7 @@ class InPassportRecognizer(PatternRecognizer):
         Pattern(
             "PASSPORT",
             r"\b[A-Z][1-9][0-9]{2}[0-9]{4}[1-9]\b",
-            0.7,
+            0.1,
         ),
     ]
 
