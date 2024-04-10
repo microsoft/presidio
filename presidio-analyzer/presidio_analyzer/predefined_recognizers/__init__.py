@@ -9,6 +9,7 @@ from .crypto_recognizer import CryptoRecognizer
 from .date_recognizer import DateRecognizer
 from .email_recognizer import EmailRecognizer
 from .es_nif_recognizer import EsNifRecognizer
+from .es_nie_recognizer import EsNieRecognizer
 from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
 from .it_driver_license_recognizer import ItDriverLicenseRecognizer
@@ -39,6 +40,7 @@ from .in_aadhaar_recognizer import InAadhaarRecognizer
 from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
 from .sg_uen_recognizer import SgUenRecognizer
 from .fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecognizer
+from .es_nie_recognizer import EsNieRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -85,4 +87,5 @@ __all__ = [
     "InVehicleRegistrationRecognizer",
     "SgUenRecognizer",
     "FiPersonalIdentityCodeRecognizer",
+    "EsNieRecognizer",
 ]
