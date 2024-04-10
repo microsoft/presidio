@@ -8,6 +8,8 @@ class InPassportRecognizer(PatternRecognizer):
 
     Indian Passport Number is a eight digit alphanumeric number.
 
+    Reference: https://www.bajajallianz.com/blog/travel-insurance-articles/where-is-passport-number-in-indian-passport.html#:~:text=What%20is%20the%20Passport%20Number%3F
+
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
     :param supported_language: Language this recognizer supports
