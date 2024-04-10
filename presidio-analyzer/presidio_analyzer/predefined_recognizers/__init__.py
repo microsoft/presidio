@@ -39,6 +39,7 @@ from .in_aadhaar_recognizer import InAadhaarRecognizer
 from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
 from .sg_uen_recognizer import SgUenRecognizer
 from .fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecognizer
+from .es_nie_recognizer import EsNieRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -85,4 +86,5 @@ __all__ = [
     "InVehicleRegistrationRecognizer",
     "SgUenRecognizer",
     "FiPersonalIdentityCodeRecognizer",
+    "EsNieRecognizer",
 ]
