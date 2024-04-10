@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 import pytest
 
@@ -12,7 +12,7 @@ from presidio_analyzer import (
 )
 from presidio_analyzer import RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
-from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
+from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS, PREDEFINED_RECOGNIZERS
 from tests.mocks import RecognizerRegistryMock, NlpEngineMock
 
 
@@ -80,6 +80,11 @@ def spacy_nlp_engine(nlp_engines):
 @pytest.fixture(scope="session")
 def nlp_recognizers() -> Dict[str, EntityRecognizer]:
     return {name: rec_cls() for name, rec_cls in NLP_RECOGNIZERS.items()}
+
+
+@pytest.fixture(scope="session")
+def mandatory_recognizers() -> List[str]:
+    return list(PREDEFINED_RECOGNIZERS)
 
 
 @pytest.fixture(scope="session")

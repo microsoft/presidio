@@ -52,11 +52,10 @@ recognizer_registry:
         - Prof.
       enabled: false
 
-analyzer_engine:
-  supported_languages: 
-    - en
-    - es
-  default_score_threshold: 0.7
+supported_languages: 
+  - en
+  - es
+default_score_threshold: 0.7
 
 nlp_configuration:
   nlp_engine_name: transformers

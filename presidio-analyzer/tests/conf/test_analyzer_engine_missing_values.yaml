@@ -1,6 +1,5 @@
 recognizer_registry:
   global_regex_flags: 26
 
-analyzer_engine:
-  supported_languages: 
-    - de
+supported_languages: 
+  - de

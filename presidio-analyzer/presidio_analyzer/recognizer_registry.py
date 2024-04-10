@@ -87,9 +87,8 @@ class RecognizerRegistry:
 
         return nlp_recognizer(supported_language=supported_language)
 
-    def add_nlp_recognizer(self, nlp_engine: NlpEngine = None, supported_languages: Optional[List[str]] = None) -> None:
-        if not supported_languages:
-            supported_languages = ["en"]
+    def add_nlp_recognizer(self, nlp_engine: NlpEngine = None) -> None:
+        supported_languages = set([recognizer.supported_language for recognizer in self.recognizers])
 
         self.recognizers.extend(
             [self._create_nlp_recognizer(nlp_engine=nlp_engine, supported_language=supported_language) for supported_language in supported_languages]
@@ -161,7 +160,7 @@ class RecognizerRegistry:
                 for rc in recognizers_map.get("ALL", [])
             ]
             self.recognizers.extend(all_recognizers)
-        self.add_nlp_recognizer(nlp_engine=nlp_engine, supported_languages=languages)
+        self.add_nlp_recognizer(nlp_engine=nlp_engine)
 
     @staticmethod
     def _get_nlp_recognizer(

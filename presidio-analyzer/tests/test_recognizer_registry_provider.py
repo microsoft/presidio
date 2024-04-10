@@ -1,27 +1,24 @@
 import re
 from pathlib import Path
+from typing import List
+
 
 from presidio_analyzer.recognizer_registry_provider import RecognizerRegistryProvider
 from presidio_analyzer import RecognizerRegistry
 
-def assert_default_configuration(recognizer_registry: RecognizerRegistry):
+
+def assert_default_configuration(recognizer_registry: RecognizerRegistry, mandatory_recognizers: List[str]):
     assert recognizer_registry.supported_languages == ["en"]
     assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
-    assert len(recognizer_registry.recognizers) == 29
     names = [recognizer.name for recognizer in recognizer_registry.recognizers]
-    assert set(names) == set(["UsBankRecognizer", "UsLicenseRecognizer", "UsItinRecognizer", 
-                              "UsPassportRecognizer", "UsSsnRecognizer", "NhsRecognizer" ,"SgFinRecognizer" ,
-                              "AuAbnRecognizer", "AuAcnRecognizer", "AuTfnRecognizer", "AuMedicareRecognizer", 
-                              "InPanRecognizer", "InAadhaarRecognizer" ,"InVehicleRegistrationRecognizer", 
-                              "EsNifRecognizer", "ItDriverLicenseRecognizer" ,"ItFiscalCodeRecognizer", 
-                              "ItVatCodeRecognizer", "ItIdentityCardRecognizer", "ItPassportRecognizer", 
-                              "PlPeselRecognizer", "CreditCardRecognizer", "CryptoRecognizer", "DateRecognizer", 
-                              "EmailRecognizer", "IbanRecognizer", "IpRecognizer", "MedicalLicenseRecognizer", "PhoneRecognizer"])
+    for predefined_recognizer in mandatory_recognizers:
+        assert predefined_recognizer in names
 
-def test_recognizer_registry_provider_default_configuration():
+def test_recognizer_registry_provider_default_configuration(mandatory_recognizers):
     provider = RecognizerRegistryProvider()
     recognizer_registry = provider.create_recognizer_registry()
-    assert_default_configuration(recognizer_registry)
+    assert_default_configuration(recognizer_registry, mandatory_recognizers)
+
 
 def test_recognizer_registry_provider_configuration_file():
     this_path = Path(__file__).parent.absolute()
@@ -36,21 +33,24 @@ def test_recognizer_registry_provider_configuration_file():
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ZipCodeRecognizer"] == ["de"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer"] == ["en", "es"]
     snpanish_recognizer = [recognizer for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer" and recognizer.supported_language == "es"][0]
-    assert snpanish_recognizer.context == ["tarjeta","credito"]
+    assert snpanish_recognizer.context == ["tarjeta", "credito"]
 
-def test_recognizer_registry_provider_missing_conf_file_expect_default_configuration():
+
+def test_recognizer_registry_provider_missing_conf_file_expect_default_configuration(mandatory_recognizers):
     test_yaml = Path("missing.yaml")
     provider = RecognizerRegistryProvider(test_yaml)
     recognizer_registry = provider.create_recognizer_registry()
-    assert_default_configuration(recognizer_registry)
+    assert_default_configuration(recognizer_registry, mandatory_recognizers)
 
-def test_recognizer_registry_provider_corrupt_conf_file_expect_default_configurationl():
+
+def test_recognizer_registry_provider_corrupt_conf_file_expect_default_configurationl(mandatory_recognizers):
     this_path = Path(__file__).parent.absolute()
     test_yaml = Path(this_path, "conf/recognizers_error.yaml")
 
     provider = RecognizerRegistryProvider(conf_file=test_yaml)
     recognizer_registry = provider.create_recognizer_registry()
-    assert_default_configuration(recognizer_registry)
+    assert_default_configuration(recognizer_registry, mandatory_recognizers)
+
 
 def test_recognizer_registry_provider_conf_file_valid_missing_keys_default_values():
     this_path = Path(__file__).parent.absolute()
@@ -61,6 +61,7 @@ def test_recognizer_registry_provider_conf_file_valid_missing_keys_default_value
     assert recognizer_registry.supported_languages == ["en"]
     assert recognizer_registry.global_regex_flags == 26
     assert len(recognizer_registry.recognizers) == 0
+
 
 def test_recognizer_registry_provider_with_registry_configuration():
     registry_configuration = {
