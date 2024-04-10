@@ -9,7 +9,6 @@ from .crypto_recognizer import CryptoRecognizer
 from .date_recognizer import DateRecognizer
 from .email_recognizer import EmailRecognizer
 from .es_nif_recognizer import EsNifRecognizer
-from .es_nie_recognizer import EsNieRecognizer
 from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
 from .it_driver_license_recognizer import ItDriverLicenseRecognizer
