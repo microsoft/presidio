@@ -86,6 +86,11 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | IN_AADHAAR | Indian government issued unique 12 digit individual identity number                                                                                                 | Pattern match, context, and checksum |
 | IN_VEHICLE_REGISTRATION | Indian government issued transport (govt, personal, diplomatic, defence)  vehicle registration number                                                               | Pattern match, context, and checksum |
 
+### Finland
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| FI_PERSONAL_IDENTITY_CODE     | The Finnish Personal Identity Code (Henkilötunnus) is a unique 11 character individual identity number. | Pattern match, context and custom logic. |
+
 ## Adding a custom PII entity
 
 See [this documentation](analyzer/adding_recognizers.md) for instructions on how to add a new Recognizer for a new type of PII entity.
