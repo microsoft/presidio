@@ -32,7 +32,7 @@ class AnalyzerEngineProvider:
 
     def create_engine(self) -> AnalyzerEngine:
         """
-        loads Presidio Analyzer from yaml configuration file.
+        Load Presidio Analyzer from yaml configuration file.
 
         :return: analyzer engine initialized with yaml configuration
         """

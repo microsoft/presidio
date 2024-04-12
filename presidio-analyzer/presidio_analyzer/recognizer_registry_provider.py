@@ -11,7 +11,7 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 class RecognizerRegistryProvider:
-    """
+    r"""
     Utility class for loading Recognizer Registry.
 
     Use this class to load recognizer registry from a yaml file
@@ -124,7 +124,8 @@ class RecognizerRegistryProvider:
                                   recognizer: Union[Dict[str, Any], str]
                                   ) -> List[Dict[str, Any]]:
         """
-        Gets the different language properties for each recognizer.
+        Get the different language properties for each recognizer.
+
         Creating a new recognizer for each supported language.
         If language wasn't specified, create a recognizer for each supported language.
 
@@ -153,7 +154,8 @@ class RecognizerRegistryProvider:
                            recognizers: Union[Dict[str, Any], str]
                            ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         """
-        splits the recognizer list to predefined and custom.
+        Split the recognizer list to predefined and custom.
+
         All recognizers are custom by default though
         type: 'custom' can be mentioned as well.
         This function supports the previous format as well.
@@ -194,6 +196,7 @@ class RecognizerRegistryProvider:
     }
 
     def create_recognizer_registry(self) -> RecognizerRegistry:
+        """Create a recognizer registry according to configuration loaded previously."""
         fields = {
             "supported_languages": None,
             "recognizers": None,
@@ -242,4 +245,4 @@ class RecognizerRegistryProvider:
         default_conf_file: Union[Path, str] = "default_recognizers.yaml"
     ) -> Path:
         """Return a Path to the default conf file."""
-        return Path(Path(__file__).parent.parent, "conf", default_conf_file)
+        return Path(Path(__file__).parent, "conf", default_conf_file)

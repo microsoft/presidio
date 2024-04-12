@@ -70,7 +70,10 @@ class AnalyzerEngine:
 
         if not registry:
             logger.info("registry not provided, creating default.")
-            provider = RecognizerRegistryProvider(registry_configuration={"supported_languages":self.supported_languages})
+            provider = RecognizerRegistryProvider(
+                registry_configuration={
+                    "supported_languages": self.supported_languages
+                    })
             registry = provider.create_recognizer_registry()
             registry.add_nlp_recognizer(nlp_engine=self.nlp_engine)
 

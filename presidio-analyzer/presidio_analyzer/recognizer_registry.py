@@ -76,22 +76,36 @@ class RecognizerRegistry:
         self.global_regex_flags = global_regex_flags
         self.supported_languages = supported_languages
 
-    def _create_nlp_recognizer(self, nlp_engine: NlpEngine = None, supported_language: str = None) -> SpacyRecognizer:
+    def _create_nlp_recognizer(self,
+                               nlp_engine: NlpEngine = None,
+                               supported_language: str = None) -> SpacyRecognizer:
         nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
 
         if nlp_engine:
-                return nlp_recognizer(
-                    supported_language=supported_language,
-                    supported_entities=nlp_engine.get_supported_entities(),
+            return nlp_recognizer(
+                supported_language=supported_language,
+                supported_entities=nlp_engine.get_supported_entities(),
                 )
 
         return nlp_recognizer(supported_language=supported_language)
 
     def add_nlp_recognizer(self, nlp_engine: NlpEngine = None) -> None:
-        supported_languages = set([recognizer.supported_language for recognizer in self.recognizers])
+        """
+        Adding NLP recognizer in accordance with the nlp engine.
+
+        :param nlp_engine: The NLP engine.
+        :return: None
+        """
+        supported_languages = set([recognizer.supported_language
+                                   for recognizer
+                                   in self.recognizers])
 
         self.recognizers.extend(
-            [self._create_nlp_recognizer(nlp_engine=nlp_engine, supported_language=supported_language) for supported_language in supported_languages]
+            [self._create_nlp_recognizer(
+                nlp_engine=nlp_engine,
+                supported_language=supported_language)
+                for supported_language
+                in supported_languages]
             )
 
     def load_predefined_recognizers(

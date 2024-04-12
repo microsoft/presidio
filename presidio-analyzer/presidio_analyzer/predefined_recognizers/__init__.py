@@ -39,7 +39,17 @@ from .in_aadhaar_recognizer import InAadhaarRecognizer
 from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
 from .sg_uen_recognizer import SgUenRecognizer
 
-PREDEFINED_RECOGNIZERS = ["PhoneRecognizer", "CreditCardRecognizer", "CryptoRecognizer", "DateRecognizer", "EmailRecognizer", "IpRecognizer", "IbanRecognizer", "MedicalLicenseRecognizer", "UrlRecognizer"]
+PREDEFINED_RECOGNIZERS = [
+    "PhoneRecognizer",
+    "CreditCardRecognizer",
+    "CryptoRecognizer",
+    "DateRecognizer",
+    "EmailRecognizer",
+    "IpRecognizer",
+    "IbanRecognizer",
+    "MedicalLicenseRecognizer",
+    "UrlRecognizer"
+]
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
