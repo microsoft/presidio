@@ -7,6 +7,10 @@ class EsNieRecognizer(PatternRecognizer):
     """
     Recognize NIE number using regex and checksum.
 
+    Reference(s):
+    https://es.wikipedia.org/wiki/N%C3%BAmero_de_identidad_de_extranjero
+    https://www.interior.gob.es/opencms/ca/servicios-al-ciudadano/tramites-y-gestiones/dni/calculo-del-digito-de-control-del-nif-nie/
+
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
     :param supported_language: Language this recognizer supports
