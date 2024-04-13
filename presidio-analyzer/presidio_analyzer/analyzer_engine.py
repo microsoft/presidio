@@ -161,6 +161,7 @@ class AnalyzerEngine:
         in the text
         :param regex_allow_list: List of regex words that the user defines as being allowed to keep
         in the text
+        :param global_regex_flags: global regex flags to be used for regex allow list
         :param nlp_artifacts: precomputed NlpArtifacts
         :return: an array of the found entities in the text
 
