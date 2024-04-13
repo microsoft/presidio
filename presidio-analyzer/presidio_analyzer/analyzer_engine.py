@@ -1,6 +1,7 @@
 import json
 import logging
 from typing import List, Optional
+import re
 
 from presidio_analyzer import (
     RecognizerRegistry,
@@ -136,6 +137,8 @@ class AnalyzerEngine:
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
         context: Optional[List[str]] = None,
         allow_list: Optional[List[str]] = None,
+        regex_allow_list: Optional[List[str]] = None,
+        global_regex_flags: Optional[int] = 0,
         nlp_artifacts: Optional[NlpArtifacts] = None,
     ) -> List[RecognizerResult]:
         """
@@ -156,6 +159,8 @@ class AnalyzerEngine:
         with the recognized entity's recognizer context
         :param allow_list: List of words that the user defines as being allowed to keep
         in the text
+        :param regex_allow_list: List of regex words that the user defines as being allowed to keep
+        in the text
         :param nlp_artifacts: precomputed NlpArtifacts
         :return: an array of the found entities in the text
 
@@ -172,6 +177,9 @@ class AnalyzerEngine:
         >>> print(results)
         [type: PHONE_NUMBER, start: 19, end: 31, score: 0.85]
         """
+
+        self.global_regex_flags = global_regex_flags
+            
         all_fields = not entities
 
         recognizers = self.registry.get_recognizers(
@@ -229,6 +237,9 @@ class AnalyzerEngine:
 
         if allow_list:
             results = self._remove_allow_list(results, allow_list, text)
+
+        if regex_allow_list:
+            results = self._remove_regex_allow_list(results, regex_allow_list, text, self.global_regex_flags)
 
         if not return_decision_process:
             results = self.__remove_decision_process(results)
@@ -329,6 +340,31 @@ class AnalyzerEngine:
             word = text[result.start : result.end]
             # if the word is not specified to be allowed, keep in the PII entities
             if word not in allow_list:
+                new_results.append(result)
+
+        return new_results
+
+    @staticmethod
+    def _remove_regex_allow_list(
+        results: List[RecognizerResult], regex_allow_list: List[str], text: str, flags: int
+    ) -> List[RecognizerResult]:
+        """
+        Remove results which are part of the regex allow list.
+
+        :param results: List of RecognizerResult
+        :param regex_allow_list: list of allowed terms in regex
+        :param text: the text to analyze
+        :param flags: regex flags
+        :return: List[RecognizerResult]
+        """
+        new_results = []
+        pattern = "|".join(regex_allow_list)
+        re_compiled = re.compile(pattern, flags=flags)
+        for result in results:
+            word = text[result.start : result.end]
+            # if the word is not specified to be allowed, keep in the PII entities
+
+            if not re_compiled.match(word):
                 new_results.append(result)
 
         return new_results
