@@ -31,7 +31,6 @@ setuptools.setup(
     package_data={
         "presidio_analyzer": ["py.typed", "conf/*", "../conf/*"],
     },
-    data_files=[('conf', ['conf/default.yaml'])],
     trusted_host=["pypi.org"],
     tests_require=["pytest", "flake8>=3.7.9"],
     install_requires=[
