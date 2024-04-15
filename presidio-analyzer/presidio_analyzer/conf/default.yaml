@@ -33,4 +33,3 @@ ner_model_configuration:
   - PRODUCT
   - QUANTITY
   - WORK_OF_ART
-  - SOME_LABEL
