@@ -39,6 +39,7 @@ from .in_aadhaar_recognizer import InAadhaarRecognizer
 from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
 from .sg_uen_recognizer import SgUenRecognizer
 from .in_voter_recognizer import InVoterRecognizer
+from .in_passport_recognizer import InPassportRecognizer
 from .fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecognizer
 
 NLP_RECOGNIZERS = {
@@ -86,5 +87,6 @@ __all__ = [
     "InVehicleRegistrationRecognizer",
     "SgUenRecognizer",
     "InVoterRecognizer",
+    "InPassportRecognizer",
     "FiPersonalIdentityCodeRecognizer",
 ]
