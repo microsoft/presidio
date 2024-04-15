@@ -1,7 +1,7 @@
 FROM python:3.9-slim
 
 ARG NAME
-ARG NLP_CONF_FILE=conf/default.yaml
+ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /usr/bin/${NAME}
