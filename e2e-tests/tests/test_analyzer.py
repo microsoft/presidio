@@ -1,4 +1,5 @@
 import pytest
+from presidio_analyzer.nlp_engine import NlpEngineProvider
 
 from common.assertions import equal_json_strings
 from common.methods import analyze, analyzer_supported_entities
@@ -481,3 +482,8 @@ def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
     assert equal_json_strings(
         expected_response, response_content, ignore_keys=["recognition_metadata"]
     )
+
+
+def test_that_conf_files_are_read_from_package():
+    nlp_engine_provider = NlpEngineProvider()
+    assert "SOME_LABEL" in nlp_engine_provider.nlp_configuration["labels_to_ignore"]
