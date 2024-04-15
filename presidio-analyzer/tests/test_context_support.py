@@ -16,6 +16,8 @@ from presidio_analyzer.predefined_recognizers import (
     UsSsnRecognizer,
     SgFinRecognizer,
     InPanRecognizer,
+    InPassportRecognizer,
+
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
@@ -34,6 +36,7 @@ def recognizers_map():
         "US_PASSPORT": UsPassportRecognizer(),
         "FIN": SgFinRecognizer(),
         "IN_PAN": InPanRecognizer(),
+        "IN_PASSPORT": InPassportRecognizer(),
     }
     return rec_map
 
@@ -68,7 +71,7 @@ def dataset(recognizers_map):
 
         test_items.append((item, recognizer, [entity_type]))
     # Currently we have 31 sentences, this is a sanity check
-    if not len(test_items) == 31:
+    if not len(test_items) == 32:
         raise ValueError(f"expected 31 context sentences but found {len(test_items)}")
 
     yield test_items
