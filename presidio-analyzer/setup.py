@@ -1,6 +1,7 @@
 """Setup.py for Presidio Analyzer."""
 import os.path
 from os import path
+import shutil
 
 import setuptools
 
@@ -16,6 +17,16 @@ try:
         __version__ = version_file.read().strip()
 except Exception:
     __version__ = os.environ.get("PRESIDIO_VERSION", "0.0.1-alpha")
+
+def setup_package_data():
+    src_dir = 'conf'
+    dest_dir = os.path.dirname(__file__) + '/presidio_analyzer/conf'
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+    for filename in os.listdir(src_dir):
+        shutil.copy(os.path.join(src_dir, filename), dest_dir)
+
+setup_package_data()
 
 setuptools.setup(
     name="presidio_analyzer",
