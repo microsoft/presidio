@@ -486,4 +486,4 @@ def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
 
 def test_that_conf_files_are_read_from_package():
     nlp_engine_provider = NlpEngineProvider()
-    assert "SOME_LABEL" in nlp_engine_provider.nlp_configuration["labels_to_ignore"]
+    assert "SOME_LABEL" in nlp_engine_provider.nlp_configuration["ner_model_configuration"]["labels_to_ignore"]
