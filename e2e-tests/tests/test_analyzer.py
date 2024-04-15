@@ -1,6 +1,4 @@
 import pytest
-from presidio_analyzer.nlp_engine import NlpEngineProvider
-
 from common.assertions import equal_json_strings
 from common.methods import analyze, analyzer_supported_entities
 
