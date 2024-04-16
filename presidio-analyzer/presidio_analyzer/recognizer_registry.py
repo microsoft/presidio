@@ -47,6 +47,7 @@ from presidio_analyzer.predefined_recognizers import (
     PlPeselRecognizer,
     InAadhaarRecognizer,
     InVehicleRegistrationRecognizer,
+    InVoterRecognizer,
     InPassportRecognizer,
 )
 
@@ -106,6 +107,7 @@ class RecognizerRegistry:
                 InPanRecognizer,
                 InAadhaarRecognizer,
                 InVehicleRegistrationRecognizer,
+                InVoterRecognizer,
                 InPassportRecognizer,
             ],
             "es": [EsNifRecognizer],
