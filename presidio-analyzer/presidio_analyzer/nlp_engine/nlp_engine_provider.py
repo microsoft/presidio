@@ -39,7 +39,7 @@ class NlpEngineProvider:
         nlp_configuration: Optional[Dict] = None,
     ):
         if not nlp_engines:
-            nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
+            nlp_engines = NlpEngineProvider.get_all_nlp_engines()
 
         self.nlp_engines = {
             engine.engine_name: engine for engine in nlp_engines if engine.is_available
@@ -136,3 +136,14 @@ class NlpEngineProvider:
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent.parent.parent, "conf", default_conf_file)
+
+    @staticmethod
+    def get_all_nlp_engines(cls=None):
+        """Return all subclasses of NlpEngine."""
+
+        if not cls:
+            cls = NlpEngine
+
+        return set(cls.__subclasses__()).union(
+            [s for c in cls.__subclasses__() for s
+             in NlpEngineProvider.get_all_nlp_engines(c)])
