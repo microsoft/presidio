@@ -251,7 +251,7 @@ def test_when_regex_allow_list_specified(loaded_analyzer_engine):
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", regex_allow_list=["bing"]
+        text=text, language="en", allow_list=["bing"], allow_list_match = "regex"
     )
     assert len(results) == 2
     assert text[results[0].start : results[0].end] == "microsoft.com"
@@ -269,15 +269,13 @@ def test_when_regex_allow_list_specified_but_none_in_file(loaded_analyzer_engine
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        text=text,
-        language="en",
-        regex_allow_list=["microsoft"],
+        text=text, language="en", allow_list=["microsoft"], allow_list_match = "regex"
     )
     assert len(results) == 1
     assert_result(results[0], "URL", 0, 8, 0.5)
 
 
-def test_when_allow_list_specified_multiple_items(loaded_analyzer_engine):
+def test_when_regex_allow_list_specified_multiple_items_with_missing_flags(loaded_analyzer_engine):
     text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
     results = loaded_analyzer_engine.analyze(
         text=text,
@@ -287,13 +285,13 @@ def test_when_allow_list_specified_multiple_items(loaded_analyzer_engine):
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", regex_allow_list=["bing", "microsoft"]
+        text=text, language="en", allow_list=["bing", "microsoft"], allow_list_match = "regex", 
     )
     assert len(results) == 1
     assert text[results[0].start : results[0].end] == "azure.com"
 
 
-def test_when_regex_allow_list_and_allow_list_specified(loaded_analyzer_engine):
+def test_when_regex_allow_list_specified_with_regex_flags(loaded_analyzer_engine):
     text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
     results = loaded_analyzer_engine.analyze(
         text=text,
@@ -303,28 +301,15 @@ def test_when_regex_allow_list_and_allow_list_specified(loaded_analyzer_engine):
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", allow_list=["azure.com"], regex_allow_list=["bing", "microsoft"], 
-    )
-    assert len(results) == 0
-
-def test_when_regex_allow_list_specified_with_global_regex_flags(loaded_analyzer_engine):
-    text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
-    results = loaded_analyzer_engine.analyze(
-        text=text,
-        language="en",
-    )
-    assert len(results) == 3
-    assert_result(results[0], "URL", 0, 8, 0.5)
-
-    results = loaded_analyzer_engine.analyze(
-        text=text, language="en", regex_allow_list=["BING", "MICROSOFT", "AZURE"], flags=0
+        text=text, language="en", allow_list=["BING", "MICROSOFT", "AZURE"], allow_list_match = "regex", regex_flags=0
     )
     assert len(results) == 3
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", regex_allow_list=["BING", "MICROSOFT", "AZURE"], flags=re.IGNORECASE
+        text=text, language="en", allow_list=["BING", "MICROSOFT", "AZURE"], allow_list_match = "regex", regex_flags=re.IGNORECASE
     )
     assert len(results) == 0
+
 
 def test_when_removed_pattern_recognizer_then_doesnt_work(unit_test_guid):
     pattern = Pattern("spaceship pattern", r"\W*(spaceship)\W*", 0.8)

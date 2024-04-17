@@ -2,6 +2,7 @@ import json
 import logging
 from typing import List, Optional
 import re
+import warnings
 
 from presidio_analyzer import (
     RecognizerRegistry,
@@ -137,8 +138,8 @@ class AnalyzerEngine:
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
         context: Optional[List[str]] = None,
         allow_list: Optional[List[str]] = None,
-        regex_allow_list: Optional[List[str]] = None,
-        global_regex_flags: Optional[int] = 0,
+        allow_list_match: Optional[str] = None,
+        regex_flags: Optional[int] = None,
         nlp_artifacts: Optional[NlpArtifacts] = None,
     ) -> List[RecognizerResult]:
         """
@@ -159,9 +160,8 @@ class AnalyzerEngine:
         with the recognized entity's recognizer context
         :param allow_list: List of words that the user defines as being allowed to keep
         in the text
-        :param regex_allow_list: List of regex words that the user defines as being allowed to keep
-        in the text
-        :param global_regex_flags: global regex flags to be used for regex allow list
+        :param allow_list_match: How the allow_list should be interpreted either as "exact" or as "regex"
+        :param regex_flags: regex flags to be used for when allow_list_match is "regex"
         :param nlp_artifacts: precomputed NlpArtifacts
         :return: an array of the found entities in the text
 
@@ -179,8 +179,23 @@ class AnalyzerEngine:
         [type: PHONE_NUMBER, start: 19, end: 31, score: 0.85]
         """
 
-        self.global_regex_flags = global_regex_flags
+        if allow_list_match not in [None, "exact", "regex"]:
+            raise ValueError("allow_list_match must be either 'exact', 'regex' or None")
             
+        if allow_list_match == "exact" and regex_flags is not None:
+            warnings.warn("Regex flags are unnecessary when allow_list_match is set to 'exact'")
+
+        if allow_list is not None:
+            if allow_list_match is None:
+                allow_list_match = "exact"
+                warnings.warn("allow_list provided but allow_list_match not set. Defaulting to 'exact'")
+            elif allow_list_match == "regex" and regex_flags is None:
+                regex_flags = re.DOTALL | re.MULTILINE | re.IGNORECASE
+                warnings.warn("Using 'regex' allow_list_match but no regex_flags provided. Defaulting to flags for multiline and case-insensitive matching (re.DOTALL | re.MULTILINE | re.IGNORECASE).")
+        else:
+            if allow_list_match is not None or regex_flags is not None:
+                warnings.warn("Allow list configured without providing the list of allowed terms")
+
         all_fields = not entities
 
         recognizers = self.registry.get_recognizers(
@@ -237,10 +252,7 @@ class AnalyzerEngine:
         results = self.__remove_low_scores(results, score_threshold)
 
         if allow_list:
-            results = self._remove_allow_list(results, allow_list, text)
-
-        if regex_allow_list:
-            results = self._remove_regex_allow_list(results, regex_allow_list, text, self.global_regex_flags)
+            results = self._remove_allow_list(results, allow_list, text, regex_flags, allow_list_match)
 
         if not return_decision_process:
             results = self.__remove_decision_process(results)
@@ -326,7 +338,7 @@ class AnalyzerEngine:
 
     @staticmethod
     def _remove_allow_list(
-        results: List[RecognizerResult], allow_list: List[str], text: str
+        results: List[RecognizerResult], allow_list: List[str], text: str, regex_flags: Optional[int], allow_list_match: str
     ) -> List[RecognizerResult]:
         """
         Remove results which are part of the allow list.
@@ -337,36 +349,22 @@ class AnalyzerEngine:
         :return: List[RecognizerResult]
         """
         new_results = []
-        for result in results:
-            word = text[result.start : result.end]
-            # if the word is not specified to be allowed, keep in the PII entities
-            if word not in allow_list:
-                new_results.append(result)
+        if allow_list_match == "regex":
+            pattern = "|".join(allow_list)
+            re_compiled = re.compile(pattern, flags=regex_flags)
 
-        return new_results
-
-    @staticmethod
-    def _remove_regex_allow_list(
-        results: List[RecognizerResult], regex_allow_list: List[str], text: str, flags: int
-    ) -> List[RecognizerResult]:
-        """
-        Remove results which are part of the regex allow list.
-
-        :param results: List of RecognizerResult
-        :param regex_allow_list: list of allowed terms in regex
-        :param text: the text to analyze
-        :param flags: regex flags
-        :return: List[RecognizerResult]
-        """
-        new_results = []
-        pattern = "|".join(regex_allow_list)
-        re_compiled = re.compile(pattern, flags=flags)
-        for result in results:
-            word = text[result.start : result.end]
-            # if the word is not specified to be allowed, keep in the PII entities
-
-            if not re_compiled.match(word):
-                new_results.append(result)
+            for result in results:
+                word = text[result.start : result.end]
+                # if the word is not specified to be allowed, keep in the PII entities
+                if not re_compiled.match(word):
+                    new_results.append(result)
+        
+        if allow_list_match == "exact":
+            for result in results:
+                word = text[result.start : result.end]
+                # if the word is not specified to be allowed, keep in the PII entities
+                if word not in allow_list:
+                    new_results.append(result)
 
         return new_results
 
