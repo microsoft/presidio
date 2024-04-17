@@ -1,6 +1,9 @@
 from typing import Optional, List, Tuple
 from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
+from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils
+
+
+# from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
 
 
 class InGstinRecognizer(PatternRecognizer):
@@ -22,47 +25,6 @@ class InGstinRecognizer(PatternRecognizer):
     for different strings to be used during pattern matching.
     This can allow a greater variety in input, for example by removing dashes or spaces.
     """
-
-    gstin_country_codes_iso3a = ""
-    utils = Utils()
-    countries = utils.get_country_codes(iso_code="ISO3166-1-Alpha-3")
-    for country in countries:
-        gstin_country_codes_iso3a += country + "|"
-    pattern1 = (
-        "[0-9]{4}"
-        + "("
-        + gstin_country_codes_iso3a.rstrip("|")
-        + ")"
-        + "(?!00000)[0-9]{5}[A-Z]{2}[A-Z0-9]{1}"
-    )
-
-    pattern2 = (
-        "[0-9]{2}[A-Z]{3}[ABCFGHJLPT]{1}[A-Z]{1}(?!0000)[0-9]{4}"
-        + "[A-Z]{1}[1-9A-Z]{1}(Z)[0-9A-Z]{1}"
-    )
-
-    PATTERNS = [
-        Pattern(
-            "GSTIN (High)",
-            pattern2,
-            0.85,
-        ),  # Regular registration pattern
-        Pattern(
-            "GSTIN (Low)",
-            r"\b([0-9]{2}[A-Z]{5}(?!0000)[0-9]{4}[A-Z]{1}[0-9A-Z]{2})\b",
-            0.2,
-        ),
-        Pattern(
-            "GSTIN (Medium)",
-            pattern1,
-            0.6,  # NRTP pattern
-        ),
-        Pattern(
-            "GSTIN (Very Low)",
-            r"\b((?=.*?[A-Z])(?=.*?[0-9]{4})[\w@#$%^?~-]{10})\b",
-            0.05,
-        ),
-    ]
 
     CONTEXT = [
         "GSTIN",
@@ -116,10 +78,54 @@ class InGstinRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "IN_GSTIN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        analyzer_utils=PresidioAnalyzerUtils(),
     ):
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
+
+        self.analyzer_utils = analyzer_utils
+        self.patterns = []
+        gstin_country_codes_iso3a = ""
+        countries = self.analyzer_utils.get_country_codes("ISO3166-1-Alpha-3")
+        for country in countries:
+            gstin_country_codes_iso3a += country + "|"
+        pattern1 = (
+            "[0-9]{4}"
+            + "("
+            + gstin_country_codes_iso3a.rstrip("|")
+            + ")"
+            + "(?!00000)[0-9]{5}[A-Z]{2}[A-Z0-9]{1}"
+        )
+
+        pattern2 = (
+            "[0-9]{2}[A-Z]{3}[ABCFGHJLPT]{1}[A-Z]{1}(?!0000)[0-9]{4}"
+            + "[A-Z]{1}[1-9A-Z]{1}(Z)[0-9A-Z]{1}"
+        )
+
+        self.PATTERNS = [
+            Pattern(
+                "GSTIN (High)",
+                pattern2,
+                0.85,
+            ),  # Regular registration pattern
+            Pattern(
+                "GSTIN (Low)",
+                r"\b([0-9]{2}[A-Z]{5}(?!0000)[0-9]{4}[A-Z]{1}[0-9A-Z]{2})\b",
+                0.2,
+            ),
+            Pattern(
+                "GSTIN (Medium)",
+                pattern1,
+                0.6,  # NRTP pattern
+            ),
+            Pattern(
+                "GSTIN (Very Low)",
+                r"\b((?=.*?[A-Z])(?=.*?[0-9]{4})[\w@#$%^?~-]{10})\b",
+                0.05,
+            ),
+        ]
+
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
         super().__init__(
@@ -127,11 +133,14 @@ class InGstinRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            analyzer_utils=analyzer_utils,
         )
 
     def validate_result(self, pattern_text: str) -> bool:
         """Determine absolute value based on calculation."""
-        sanitized_value = Utils.sanitize_value(pattern_text, self.replacement_pairs)
+        sanitized_value = self.analyzer_utils.sanitize_value(
+            pattern_text, self.replacement_pairs
+        )
         return self.__check_gstin(sanitized_value)
 
     def __check_gstin(self, sanitized_value: str) -> bool:
@@ -142,7 +151,7 @@ class InGstinRecognizer(PatternRecognizer):
             else:
                 if sanitized_value[13] != "Z" or sanitized_value[12] == "0":
                     is_valid_gstin = False
-                elif Utils.get_luhn_mod_n(sanitized_value):
+                elif self.analyzer_utils.get_luhn_mod_n(sanitized_value):
                     is_valid_gstin = True
                 else:
                     is_valid_gstin = False

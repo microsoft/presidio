@@ -43,12 +43,6 @@ class EntityRecognizer:
         analyzer_utils: Optional[PresidioAnalyzerUtils] = None,
     ):
 
-        if analyzer_utils:
-            self.analyzer_utils = analyzer_utils
-        else:
-            self.analyzer_utils = PresidioAnalyzerUtils()
-        self.supported_entities = supported_entities
-
         if name is None:
             self.name = self.__class__.__name__  # assign class name as name
         else:
@@ -60,10 +54,14 @@ class EntityRecognizer:
         self.version = version
         self.is_loaded = False
         self.context = context if context else []
+        self.supported_entities = supported_entities
 
         self.load()
         logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
+
+        if analyzer_utils is not None:
+            self.analyzer_utils = analyzer_utils
 
     @property
     def id(self):
