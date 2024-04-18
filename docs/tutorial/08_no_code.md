@@ -7,7 +7,7 @@ No-code pattern recognizers can be helpful in two scenarios:
 
 Regular expression or deny-list based recognizers can be written in a YAML file, and added to the list of recognizers in Presidio.
 
-An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml).
+An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml).
 
 For more information on the schema, see the `PatternRecognizer` definition on the [API Docs](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Analyzer)).
 

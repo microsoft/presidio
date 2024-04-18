@@ -135,4 +135,4 @@ class NlpEngineProvider:
         default_conf_file: Union[Path, str] = "default.yaml"
     ) -> Path:
         """Return a Path to the default conf file."""
-        return Path(Path(__file__).parent.parent.parent, "conf", default_conf_file)
+        return Path(Path(__file__).parent.parent, "conf", default_conf_file)
