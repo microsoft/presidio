@@ -86,13 +86,15 @@ class RecognizerRegistryProvider:
                 logger.warning(
                     f"configuration file {conf_file} not found.  "
                     f"Using default config."
-                )
+                    )
                 configuration = self._add_missing_keys(
                     configuration=configuration,
                     conf_file=self._get_full_conf_path()
                     )
             except Exception:
-                logger.warning(f"Failed to parse file {conf_file}, resorting to default")
+                logger.warning(f"Failed to parse file {conf_file}, "
+                               f"resorting to default"
+                               )
                 configuration = self._add_missing_keys(
                     configuration=configuration,
                     conf_file=self._get_full_conf_path()
