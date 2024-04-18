@@ -19,7 +19,6 @@ def entities():
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions",
     [
-
         # valid NIE scores
         ("Z8078221M", 1, ((0, 9),),),
         ("X9613851N", 1, ((0, 9),),),
@@ -27,7 +26,8 @@ def entities():
         ("Y8063915-Z", 1, ((0, 10),),),
         ("Mi NIE es X9613851N", 1, ((10, 19),),),
         ("Z8078221M en mi NIE", 1, ((0, 9),),),
-        ("Mi Número de identificación de extranjero es Y8063915-Z", 1, ((45, 55),),),
+        ("Mi Número de identificación de extranjero es Y8063915-Z", 1, \
+            ((45, 55),),),
         # invalid NIE scores
         ("Y8063915Q", 0, ()),
         ("Y806391Q", 0, ()),

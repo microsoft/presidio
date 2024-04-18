@@ -12,7 +12,8 @@ from presidio_analyzer.nlp_engine.transformers_nlp_engine import (
 import yaml
 
 from presidio_analyzer import EntityRecognizer, PatternRecognizer
-from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, StanzaNlpEngine
+from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, \
+      StanzaNlpEngine
 from presidio_analyzer.predefined_recognizers import (
     CreditCardRecognizer,
     CryptoRecognizer,
@@ -32,6 +33,7 @@ from presidio_analyzer.predefined_recognizers import (
     SgFinRecognizer,
     SpacyRecognizer,
     EsNifRecognizer,
+    EsNieRecognizer,
     StanzaRecognizer,
     AuAbnRecognizer,
     AuAcnRecognizer,
@@ -68,7 +70,8 @@ class RecognizerRegistry:
     def __init__(
         self,
         recognizers: Optional[Iterable[EntityRecognizer]] = None,
-        global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
+        global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE |
+            re.IGNORECASE,
     ):
         if recognizers:
             self.recognizers = recognizers
@@ -77,7 +80,8 @@ class RecognizerRegistry:
         self.global_regex_flags = global_regex_flags
 
     def load_predefined_recognizers(
-        self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = None
+        self, languages: Optional[List[str]] = None,
+        nlp_engine: NlpEngine = None
     ) -> None:
         """
         Load the existing recognizers into memory.
@@ -110,7 +114,10 @@ class RecognizerRegistry:
                 InVoterRecognizer,
                 InPassportRecognizer,
             ],
-            "es": [EsNifRecognizer],
+            "es": [
+                EsNifRecognizer,
+                EsNieRecognizer,
+            ],
             "it": [
                 ItDriverLicenseRecognizer,
                 ItFiscalCodeRecognizer,
@@ -183,7 +190,8 @@ class RecognizerRegistry:
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
     ) -> List[EntityRecognizer]:
         """
-        Return a list of recognizers which supports the specified name and language.
+        Return a list of recognizers which supports the specified name and
+        language.
 
         :param entities: the requested entities
         :param language: the requested language
@@ -236,7 +244,8 @@ class RecognizerRegistry:
         )
 
         if not to_return:
-            raise ValueError("No matching recognizers were found to serve the request.")
+            raise ValueError("No matching recognizers were found to serve the\
+                             request.")
 
         return list(to_return)
 
@@ -348,7 +357,8 @@ class RecognizerRegistry:
 
         supported_entities = []
         for language in languages:
-            recognizers = self.get_recognizers(language=language, all_fields=True)
+            recognizers = self.get_recognizers(language=language,
+                                               all_fields=True)
 
             for recognizer in recognizers:
                 supported_entities.extend(recognizer.get_supported_entities())

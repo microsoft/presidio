@@ -17,7 +17,8 @@ class EsNieRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     :param replacement_pairs: List of tuples with potential replacement values
     for different strings to be used during pattern matching.
-    This can allow a greater variety in input, for example by removing dashes or spaces.  
+    This can allow a greater variety in input, for example by removing dashes
+    or spaces.
     """
 
     PATTERNS = [
@@ -27,7 +28,7 @@ class EsNieRecognizer(PatternRecognizer):
             0.5,
         ),
     ]
-    
+
     CONTEXT = ["número de identificación de extranjero", "NIE"]
 
     def __init__(
@@ -49,20 +50,20 @@ class EsNieRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> bool:
         """Validate the pattern by using the control character."""
-        
+
         pattern_text = EsNieRecognizer.__sanitize_value(pattern_text)
 
-        letters = "TRWAGMYFPDXBNJZSQVHLCKE"       
+        letters = "TRWAGMYFPDXBNJZSQVHLCKE"
         letter = pattern_text[-1]
 
-        #check last is a letter, and first is in X,Y,Z
+        # check last is a letter, and first is in X,Y,Z
         if not pattern_text[1:-1].isdigit or pattern_text[:1] not in 'XYZ':
             return False
-        #check size is 8 or 9
-        if len(pattern_text) < 8 or len(pattern_text) > 9 :
+        # check size is 8 or 9
+        if len(pattern_text) < 8 or len(pattern_text) > 9:
             return False
-        
-        # replace XYZ with 012, and 
+
+        # replace XYZ with 012, and check the mod 23
         number = int(str('XYZ'.index(pattern_text[0])) + pattern_text[1:-1])
         return letter == letters[number % 23]
 
