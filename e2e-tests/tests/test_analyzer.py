@@ -1,5 +1,4 @@
 import pytest
-
 from common.assertions import equal_json_strings
 from common.methods import analyze, analyzer_supported_entities
 
