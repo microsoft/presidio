@@ -57,3 +57,18 @@ def test_analyzer_engine_provider_configuration_file_missing_values_expect_defau
         assert predefined_recognizer in names
     assert isinstance(engine.nlp_engine, SpacyNlpEngine)
     assert engine.nlp_engine.engine_name == "spacy"
+
+
+def test_analyzer_engine_provider_defaults(mandatory_recognizers):
+    provider = AnalyzerEngineProvider()
+    engine = provider.create_engine()
+    assert engine.supported_languages == ["en"]
+    assert engine.default_score_threshold == 0
+    recognizer_registry = engine.registry
+    assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
+    assert recognizer_registry.supported_languages == ["en"]
+    names = [recognizer.name for recognizer in recognizer_registry.recognizers]
+    for predefined_recognizer in mandatory_recognizers:
+        assert predefined_recognizer in names
+    assert isinstance(engine.nlp_engine, SpacyNlpEngine)
+    assert engine.nlp_engine.engine_name == "spacy"

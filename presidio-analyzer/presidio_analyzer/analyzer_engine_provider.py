@@ -1,8 +1,7 @@
 import yaml
-import os
 import logging
 from pathlib import Path
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Dict, Any
 
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
@@ -19,16 +18,30 @@ class AnalyzerEngineProvider:
     """
 
     def __init__(self, conf_file: Optional[Union[Path, str]] = None):
-        self.configuration = {}
-        if not conf_file or not os.path.exists(conf_file):
-            logger.warning(
-                "configuration file is missing. "
-                "Using default configuration for analyzer engine"
-            )
-            return
-
-        self.configuration = yaml.safe_load(open(conf_file))
+        self.configuration = self._get_configuration(conf_file=conf_file)
         return
+
+    def _get_configuration(self,
+                           conf_file: Union[Path, str]
+                           ) -> Union[Dict[str, Any]]:
+        configuration = {}
+
+        if not conf_file:
+            configuration = yaml.safe_load(open(self._get_full_conf_path()))
+        else:
+            try:
+                configuration = yaml.safe_load(open(conf_file))
+            except IOError:
+                logger.warning(
+                    f"configuration file {conf_file} not found.  "
+                    f"Using default config."
+                )
+                configuration = yaml.safe_load(open(self._get_full_conf_path()))
+            except Exception:
+                print(f"Failed to parse file {conf_file}, resorting to default")
+                configuration = yaml.safe_load(open(self._get_full_conf_path()))
+
+        return configuration
 
     def create_engine(self) -> AnalyzerEngine:
         """
@@ -78,3 +91,10 @@ class AnalyzerEngineProvider:
         nlp_configuration = self.configuration["nlp_configuration"]
         provider = NlpEngineProvider(nlp_configuration=nlp_configuration)
         return provider.create_engine()
+
+    @staticmethod
+    def _get_full_conf_path(
+        default_conf_file: Union[Path, str] = "default_analyzer.yaml"
+    ) -> Path:
+        """Return a Path to the default conf file."""
+        return Path(Path(__file__).parent, "conf", default_conf_file)

@@ -36,9 +36,7 @@ class Server:
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
         self.logger.info("Starting analyzer engine")
-        self.engine: AnalyzerEngine = AnalyzerEngineProvider(
-            conf_file=os.path.abspath("conf/analyzer.yaml")
-            ).create_engine()
+        self.engine: AnalyzerEngine = AnalyzerEngineProvider().create_engine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
