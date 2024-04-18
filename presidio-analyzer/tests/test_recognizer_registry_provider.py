@@ -1,3 +1,4 @@
+import pytest
 import re
 from pathlib import Path
 from typing import List
@@ -93,3 +94,14 @@ def test_recognizer_registry_provider_with_registry_configuration():
     assert recognizer.supported_language == "en"
     assert recognizer.supported_entities == ["ZIP"]
     assert len(recognizer.patterns) == 1
+
+
+def test_recognizer_registry_provider_when_conf_file_and_registry_configuration_fail():
+    this_path = Path(__file__).parent.absolute()
+    test_yaml = Path(this_path, "conf/recognizer_configuration_missing_keys.yaml")
+    registry_configuration = {
+        "supported_languages": ["de", "es"]
+    }
+
+    with pytest.raises(ValueError):
+        RecognizerRegistryProvider(conf_file=test_yaml, registry_configuration=registry_configuration)

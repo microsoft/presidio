@@ -60,6 +60,11 @@ class RecognizerRegistryProvider:
                            conf_file: Union[Path, str],
                            registry_configuration: Dict
                            ) -> Union[Dict[str, Any]]:
+        if conf_file and registry_configuration:
+            raise ValueError(
+                "Either conf_file or registry_configuration should be provided, not both."
+            )
+
         configuration = {}
 
         if registry_configuration:
