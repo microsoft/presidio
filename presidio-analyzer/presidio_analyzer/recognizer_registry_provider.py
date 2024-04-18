@@ -62,7 +62,8 @@ class RecognizerRegistryProvider:
                            ) -> Union[Dict[str, Any]]:
         if conf_file and registry_configuration:
             raise ValueError(
-                "Either conf_file or registry_configuration should be provided, not both."
+                "Either conf_file or registry_configuration should"
+                " be provided, not both."
             )
 
         configuration = {}
@@ -91,7 +92,7 @@ class RecognizerRegistryProvider:
                     conf_file=self._get_full_conf_path()
                     )
             except Exception:
-                print(f"Failed to parse file {conf_file}, resorting to default")
+                logger.warning(f"Failed to parse file {conf_file}, resorting to default")
                 configuration = self._add_missing_keys(
                     configuration=configuration,
                     conf_file=self._get_full_conf_path()
