@@ -70,8 +70,8 @@ Link to LANGUAGES_CONFIG_FILE=[languages-config.yml](https://github.com/microsof
 
 When packaging the code into a Docker container, NLP models are automatically installed.
 To define which models should be installed,
-update the [conf/default.yaml](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/default.yaml) file. This file is read during
+update the [conf/default.yaml](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default.yaml) file. This file is read during
 the `docker build` phase and the models defined in it are installed automatically.
 
-For `transformers` based models, the configuration [can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/transformers.yaml). 
+For `transformers` based models, the configuration [can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/transformers.yaml). 
 A docker file supporting transformers models [can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/Dockerfile.transformers).
