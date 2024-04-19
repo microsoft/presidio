@@ -81,7 +81,7 @@ class AnalyzerEngineProvider:
                                     "supported_languages": supported_languages})
         return provider.create_recognizer_registry()
 
-    def _load_nlp_engine(self) -> NlpEngine:
+    def _load_nlp_engine(self) -> Optional[NlpEngine]:
         if "nlp_configuration" not in self.configuration:
             logger.warning(
                 "configuration file is missing 'nlp_configuration'."
