@@ -190,8 +190,8 @@ class RecognizerRegistry:
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
     ) -> List[EntityRecognizer]:
         """
-        Return a list of recognizers which supports the specified name and
-        language.
+        Return a list of recognizers which supports the specified name and\
+            language.
 
         :param entities: the requested entities
         :param language: the requested language
