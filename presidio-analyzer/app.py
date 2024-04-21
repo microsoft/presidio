@@ -35,8 +35,17 @@ class Server:
         self.logger = logging.getLogger("presidio-analyzer")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
+
+        analyzer_conf_file = os.environ.get("ANALYZER_CONF_FILE")
+        nlp_engine_conf_file = os.environ.get("NLP_ENGINE_CONF_FILE")
+        recognizer_registry_conf_file = os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE")
+
         self.logger.info("Starting analyzer engine")
-        self.engine: AnalyzerEngine = AnalyzerEngineProvider().create_engine()
+        self.engine: AnalyzerEngine = AnalyzerEngineProvider(
+            analyzer_engine_conf_file=analyzer_conf_file,
+            nlp_engine_conf_file=nlp_engine_conf_file,
+            recognizer_registry_conf_file=recognizer_registry_conf_file,
+        ).create_engine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")

@@ -2,6 +2,26 @@ supported_languages:
   - en
 
 recognizers:
+  # Recognizers listed here can either be loaded from the recognizers defined in code (type: predefined),
+  # or created based on the provided configuration (type: custom).
+  # For predefined:
+  # - If only a recognizer name is provided, a predefined recognizer with this name and default parameters will be loaded.
+  # - If a parameter isn't provided, the default one would be loaded.
+  # For custom:
+  # - See an example configuration here: https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml
+  # - Custom pattern recognizers with this configuration can be added to this file, with type: custom
+  #  For recognizers supporting more than one language, an instance of the recognizer for each language will be created.
+  # For example, see the CreditCardRecognizer definition below:
+  - name: CreditCardRecognizer
+    supported_languages:
+    - language: en
+      context: [credit, card, visa, mastercard, cc,
+      amex, discover, jcb, diners, maestro, instapayment]
+    - language: es
+      context: [tarjeta, credito, visa, mastercard, cc,
+      amex, discover, jcb, diners, maestro, instapayment]
+    type: predefined
+
   - name: UsBankRecognizer
     supported_languages: 
     - en
@@ -107,14 +127,6 @@ recognizers:
     - pl
     type: predefined
 
-  # - name: CreditCardRecognizer
-  #   supported_languages: 
-  #   - en
-  #   - es
-  #   - it
-  #   - pl
-  #   type: predefined
-  - CreditCardRecognizer
 
   - CryptoRecognizer
   - DateRecognizer
@@ -124,3 +136,4 @@ recognizers:
   - MedicalLicenseRecognizer
   - PhoneRecognizer
   - UrlRecognizer
+  - SpacyRecognizer
