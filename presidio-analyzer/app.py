@@ -9,8 +9,7 @@ from typing import Tuple
 from flask import Flask, request, jsonify, Response
 from werkzeug.exceptions import HTTPException
 
-from presidio_analyzer.analyzer_engine import AnalyzerEngine
-from presidio_analyzer.analyzer_request import AnalyzerRequest
+from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider, AnalyzerRequest
 
 DEFAULT_PORT = "3000"
 
@@ -37,7 +36,7 @@ class Server:
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
         self.logger.info("Starting analyzer engine")
-        self.engine = AnalyzerEngine()
+        self.engine: AnalyzerEngine = AnalyzerEngineProvider().create_engine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
