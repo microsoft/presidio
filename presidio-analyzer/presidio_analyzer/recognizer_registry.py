@@ -244,8 +244,7 @@ class RecognizerRegistry:
         )
 
         if not to_return:
-            raise ValueError("No matching recognizers were found to serve the\
-                             request.")
+            raise ValueError("No matching recognizers were found to serve the request.")
 
         return list(to_return)
 
