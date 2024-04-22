@@ -53,6 +53,7 @@ recognizer_registry:
       enabled: false
 
 supported_languages: 
+  - de
   - en
   - es
 default_score_threshold: 0.7

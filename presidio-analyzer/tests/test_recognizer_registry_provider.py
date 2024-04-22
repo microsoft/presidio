@@ -31,10 +31,9 @@ def test_recognizer_registry_provider_configuration_file():
     recognizer_registry = provider.create_recognizer_registry()
     assert recognizer_registry.supported_languages == ["en", "es"]
     assert recognizer_registry.global_regex_flags == 26
-    assert len(recognizer_registry.recognizers) == 6
+    assert len(recognizer_registry.recognizers) == 5
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ItFiscalCodeRecognizer"] == ["en", "es"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "CreditCardRecognizer"] == ["en"]
-    assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ZipCodeRecognizer"] == ["de"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer"] == ["en", "es"]
     snpanish_recognizer = [recognizer for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer" and recognizer.supported_language == "es"][0]
     assert snpanish_recognizer.context == ["tarjeta", "credito"]
@@ -69,7 +68,7 @@ def test_recognizer_registry_provider_conf_file_valid_missing_keys_default_value
 
 def test_recognizer_registry_provider_with_registry_configuration():
     registry_configuration = {
-        "supported_languages": ["de", "es"],
+        "supported_languages": ["de", "es", "en"],
         "recognizers": [
             {
                 "name": "Zip code Recognizer",
@@ -89,7 +88,7 @@ def test_recognizer_registry_provider_with_registry_configuration():
 
     provider = RecognizerRegistryProvider(registry_configuration=registry_configuration)
     recognizer_registry = provider.create_recognizer_registry()
-    assert recognizer_registry.supported_languages == ["de", "es"]
+    assert recognizer_registry.supported_languages == ["de", "es", "en"]
     assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
     assert len(recognizer_registry.recognizers) == 1
     recognizer = recognizer_registry.recognizers[0]
