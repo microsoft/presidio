@@ -53,3 +53,8 @@ class NlpEngine(ABC):
     def get_supported_entities(self) -> List[str]:
         """Return the supported entities for this NLP engine."""
         pass
+
+    @abstractmethod
+    def get_supported_languages(self) -> List[str]:
+        """Return the supported languages for this NLP engine."""
+        pass

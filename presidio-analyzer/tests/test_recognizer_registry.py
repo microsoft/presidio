@@ -232,3 +232,20 @@ def test_recognizer_removed_and_returned_entities_are_correct():
     analyzer = AnalyzerEngine(registry=registry, supported_languages="en")
 
     analyzer.analyze("My name is David", language="en")
+
+
+def test_remove_recognizer_when_multiple_instances_exist():
+    registry = RecognizerRegistry()
+
+    spacy_english = SpacyRecognizer(supported_language="en")
+    spacy_spanish = SpacyRecognizer(supported_language="es")
+    registry.add_recognizer(spacy_english)
+    registry.add_recognizer(spacy_spanish)
+
+    registry.remove_recognizer("SpacyRecognizer", language="en")
+    assert len(registry.recognizers) == 1
+
+    assert registry.recognizers[0].supported_language == "es"
+    assert len([rec for rec in registry.recognizers
+                if rec.name == "SpacyRecognizer"]) == 1
+

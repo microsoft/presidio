@@ -84,6 +84,12 @@ class SpacyNlpEngine(NlpEngine):
             set(self.ner_model_configuration.model_to_presidio_entity_mapping.values())
         )
 
+    def get_supported_languages(self) -> List[str]:
+        """Return the supported languages for this NLP engine."""
+        if not self.nlp:
+            raise ValueError("NLP engine is not loaded. Consider calling .load()")
+        return list(self.nlp.keys())
+
     def is_loaded(self) -> bool:
         """Return True if the model is already loaded."""
         return self.nlp is not None

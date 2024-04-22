@@ -4,16 +4,19 @@ from pathlib import Path
 from typing import List
 
 
-from presidio_analyzer.recognizer_registry_provider import RecognizerRegistryProvider
+from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 from presidio_analyzer import RecognizerRegistry
 
 
-def assert_default_configuration(recognizer_registry: RecognizerRegistry, mandatory_recognizers: List[str]):
+def assert_default_configuration(
+    recognizer_registry: RecognizerRegistry, mandatory_recognizers: List[str]
+):
     assert recognizer_registry.supported_languages == ["en"]
     assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
     names = [recognizer.name for recognizer in recognizer_registry.recognizers]
     for predefined_recognizer in mandatory_recognizers:
         assert predefined_recognizer in names
+
 
 def test_recognizer_registry_provider_default_configuration(mandatory_recognizers):
     provider = RecognizerRegistryProvider()
@@ -99,9 +102,9 @@ def test_recognizer_registry_provider_with_registry_configuration():
 def test_recognizer_registry_provider_when_conf_file_and_registry_configuration_fail():
     this_path = Path(__file__).parent.absolute()
     test_yaml = Path(this_path, "conf/recognizer_configuration_missing_keys.yaml")
-    registry_configuration = {
-        "supported_languages": ["de", "es"]
-    }
+    registry_configuration = {"supported_languages": ["de", "es"]}
 
     with pytest.raises(ValueError):
-        RecognizerRegistryProvider(conf_file=test_yaml, registry_configuration=registry_configuration)
+        RecognizerRegistryProvider(
+            conf_file=test_yaml, registry_configuration=registry_configuration
+        )

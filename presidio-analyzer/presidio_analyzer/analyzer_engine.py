@@ -3,17 +3,20 @@ import logging
 from typing import List, Optional
 
 from presidio_analyzer import (
-    RecognizerRegistry,
     RecognizerResult,
-    EntityRecognizer
+    EntityRecognizer,
 )
+
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.context_aware_enhancers import (
     ContextAwareEnhancer,
     LemmaContextAwareEnhancer,
 )
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
-from presidio_analyzer.recognizer_registry_provider import RecognizerRegistryProvider
+from presidio_analyzer.recognizer_registry import (
+    RecognizerRegistry,
+    RecognizerRegistryProvider,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -71,9 +74,8 @@ class AnalyzerEngine:
         if not registry:
             logger.info("registry not provided, creating default.")
             provider = RecognizerRegistryProvider(
-                registry_configuration={
-                    "supported_languages": self.supported_languages
-                    })
+                registry_configuration={"supported_languages": self.supported_languages}
+            )
             registry = provider.create_recognizer_registry()
             registry.add_nlp_recognizer(nlp_engine=self.nlp_engine)
 
