@@ -356,7 +356,7 @@ class AnalyzerEngine:
             for result in results:
                 word = text[result.start : result.end]
                 # if the word is not specified to be allowed, keep in the PII entities
-                if not re_compiled.match(word):
+                if not re_compiled.search(word):
                     new_results.append(result)
         
         if allow_list_match == "exact":
