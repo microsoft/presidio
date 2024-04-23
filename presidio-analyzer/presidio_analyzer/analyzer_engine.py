@@ -2,7 +2,6 @@ import json
 import logging
 from typing import List, Optional
 import regex as re
-import warnings
 
 from presidio_analyzer import (
     RecognizerRegistry,
