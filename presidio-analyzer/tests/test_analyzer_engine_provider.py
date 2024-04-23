@@ -26,12 +26,12 @@ def test_analyzer_engine_provider_configuration_file():
     test_yaml = Path(this_path, "conf/test_analyzer_engine.yaml")
     provider = AnalyzerEngineProvider(test_yaml)
     engine = provider.create_engine()
-    assert engine.supported_languages == ["en", "es"]
+    assert engine.supported_languages == ["de", "en", "es"]
     assert engine.default_score_threshold == 0.7
     recognizer_registry = engine.registry
     assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
-    assert len(recognizer_registry.recognizers) == 7
-    assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ItFiscalCodeRecognizer"] == ["en", "es"]
+    assert len(recognizer_registry.recognizers) == 8
+    assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ItFiscalCodeRecognizer"] == ["de", "en", "es"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "CreditCardRecognizer"] == ["en"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ZipCodeRecognizer"] == ["de"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer"] == ["en", "es"]
@@ -47,11 +47,11 @@ def test_analyzer_engine_provider_configuration_file_missing_values_expect_defau
     test_yaml = Path(this_path, "conf/test_analyzer_engine_missing_values.yaml")
     provider = AnalyzerEngineProvider(test_yaml)
     engine = provider.create_engine()
-    assert engine.supported_languages == ["de"]
+    assert engine.supported_languages == ["de", "en", "es"]
     assert engine.default_score_threshold == 0
     recognizer_registry = engine.registry
     assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
-    assert recognizer_registry.supported_languages == ["de"]
+    assert recognizer_registry.supported_languages == ["de", "en", "es"]
     names = [recognizer.name for recognizer in recognizer_registry.recognizers]
     for predefined_recognizer in mandatory_recognizers:
         assert predefined_recognizer in names
@@ -98,5 +98,5 @@ def test_analyzer_engine_provider_with_files_per_provider():
 
     # assert recognizer registry is correct
     recognizer_registry = analyzer_engine.registry
-    assert len(recognizer_registry.recognizers) == 7
+    assert len(recognizer_registry.recognizers) == 6
     assert recognizer_registry.supported_languages == ["en", "es"]

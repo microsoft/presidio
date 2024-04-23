@@ -20,6 +20,8 @@ recognizers:
     - language: es
       context: [tarjeta, credito, visa, mastercard, cc,
       amex, discover, jcb, diners, maestro, instapayment]
+    - language: it
+    - language: pl
     type: predefined
 
   - name: UsBankRecognizer

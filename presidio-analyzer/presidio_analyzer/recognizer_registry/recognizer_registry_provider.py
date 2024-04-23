@@ -175,7 +175,8 @@ class RecognizerRegistryProvider:
             ]
 
         return [
-            {"supported_language": language["language"], "context": language["context"]}
+            {"supported_language": language["language"],
+             "context": language.get("context", None)}
             for language in recognizer_conf["supported_languages"]
         ]
 
@@ -278,6 +279,11 @@ class RecognizerRegistryProvider:
         for recognizer_conf in recognizer_instances:
             if isinstance(recognizer_conf, PatternRecognizer):
                 recognizer_conf.global_regex_flags = fields["global_regex_flags"]
+
+        recognizer_instances = [recognizer for recognizer
+                                in recognizer_instances
+                                if recognizer.supported_language
+                                in self.supported_languages]
 
         fields["recognizers"] = recognizer_instances
 
