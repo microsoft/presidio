@@ -107,3 +107,7 @@ Typical tax filing identifier is known as PAN in India also known as permanent a
 #Verify IN PAN mixed case
 IN_PAN
 my PAN number is DJPMS1234Z
+
+#Verify IN PASSPORT context words
+IN_PASSPORT
+my passport number is T1234567. Indian Passport number is of 8 characters long, always starting with a capital letter.
