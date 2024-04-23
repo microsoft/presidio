@@ -3,3 +3,5 @@ recognizer_registry:
 
 supported_languages: 
   - de
+  - en
+  - es
