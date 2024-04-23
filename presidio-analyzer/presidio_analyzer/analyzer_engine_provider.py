@@ -18,7 +18,8 @@ class AnalyzerEngineProvider:
 
     :param analyzer_engine_conf_file: the path to the analyzer configuration file
     :param nlp_engine_conf_file: the path to the nlp engine configuration file
-    :param recognizer_registry_conf_file: the path to the recognizer registry configuration file
+    :param recognizer_registry_conf_file: the path to the recognizer
+    registry configuration file
     """
 
     def __init__(
