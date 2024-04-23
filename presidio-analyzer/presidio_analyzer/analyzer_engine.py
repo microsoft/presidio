@@ -161,7 +161,7 @@ class AnalyzerEngine:
         :param allow_list: List of words that the user defines as being allowed to keep
         in the text
         :param allow_list_match: How the allow_list should be interpreted; either as "exact" or as "regex".
-        - If `regex`, results witch match with any regex condition in the allow_list would be allowed and not be returned as potential PII.
+        - If `regex`, results which match with any regex condition in the allow_list would be allowed and not be returned as potential PII.
         - if `exact`, results which exactly match any value in the allow_list would be allowed and not be returned as potential PII.
         :param regex_flags: regex flags to be used for when allow_list_match is "regex"
         :param nlp_artifacts: precomputed NlpArtifacts
