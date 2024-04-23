@@ -49,6 +49,8 @@ from presidio_analyzer.predefined_recognizers import (
     InVehicleRegistrationRecognizer,
     IsinRecognizer,
     CfiRecognizer,
+    InVoterRecognizer,
+    InPassportRecognizer,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -109,6 +111,8 @@ class RecognizerRegistry:
                 InVehicleRegistrationRecognizer,
                 IsinRecognizer,
                 CfiRecognizer,
+                InVoterRecognizer,
+                InPassportRecognizer,
             ],
             "es": [EsNifRecognizer],
             "it": [
@@ -287,7 +291,7 @@ class RecognizerRegistry:
         Read YAML file and load recognizers into the recognizer registry.
 
         See example yaml file here:
-        https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml
+        https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml
 
         :example:
         >>> yaml_file = "recognizers.yaml"

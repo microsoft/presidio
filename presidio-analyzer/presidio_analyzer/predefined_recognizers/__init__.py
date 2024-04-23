@@ -41,6 +41,9 @@ from .isin_recognizer import IsinRecognizer
 from .cfi_recognizer import CfiRecognizer
 from .in_gstin_recognizer import InGstinRecognizer
 from .sg_uen_recognizer import SgUenRecognizer
+from .in_voter_recognizer import InVoterRecognizer
+from .in_passport_recognizer import InPassportRecognizer
+from .fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -89,4 +92,7 @@ __all__ = [
     "CfiRecognizer",
     "InGstinRecognizer",
     "SgUenRecognizer",
+    "InVoterRecognizer",
+    "InPassportRecognizer",
+    "FiPersonalIdentityCodeRecognizer",
 ]
