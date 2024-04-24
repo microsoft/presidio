@@ -337,7 +337,7 @@ class AnalyzerEngine:
         :param allow_list: list of allowed terms
         :param text: the text to analyze
         :param regex_flags: regex flags to be used for when allow_list_match is "regex"
-        :param allow_list_match: How the allow_list 
+        :param allow_list_match: How the allow_list
         should be interpreted; either as "exact" or as "regex"
         :return: List[RecognizerResult]
         """
