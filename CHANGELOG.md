@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 #### Analyzer
+Recognizer for Spanish Foreigners Identity Code (NIE Numero de Identificacion de Extranjeros).
+
+## [Unreleased]
+
+### Added
+#### Analyzer
 Recognizer for Finnish Personal Identity Codes (Henkilötunnus).
 
 
