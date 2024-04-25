@@ -34,6 +34,7 @@ from presidio_analyzer.predefined_recognizers import (
     SgFinRecognizer,
     SpacyRecognizer,
     EsNifRecognizer,
+    EsNieRecognizer,
     StanzaRecognizer,
     AuAbnRecognizer,
     AuAcnRecognizer,
@@ -70,7 +71,8 @@ class RecognizerRegistry:
     def __init__(
         self,
         recognizers: Optional[Iterable[EntityRecognizer]] = None,
-        global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
+        global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE |
+            re.IGNORECASE,
         supported_languages: Optional[List[str]] = None,
     ):
         if recognizers:
@@ -130,6 +132,8 @@ class RecognizerRegistry:
         if not languages:
             languages = ["en"]
 
+        nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
+
         recognizers_map = {
             "en": [
                 UsBankRecognizer,
@@ -149,7 +153,10 @@ class RecognizerRegistry:
                 InVoterRecognizer,
                 InPassportRecognizer,
             ],
-            "es": [EsNifRecognizer],
+            "es": [
+                EsNifRecognizer,
+                EsNieRecognizer,
+            ],
             "it": [
                 ItDriverLicenseRecognizer,
                 ItFiscalCodeRecognizer,
@@ -403,7 +410,8 @@ class RecognizerRegistry:
 
         supported_entities = []
         for language in languages:
-            recognizers = self.get_recognizers(language=language, all_fields=True)
+            recognizers = self.get_recognizers(language=language,
+                                               all_fields=True)
 
             for recognizer in recognizers:
                 supported_entities.extend(recognizer.get_supported_entities())
