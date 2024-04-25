@@ -108,4 +108,7 @@ def get_dummy_nlp_engine():
             return False
         def get_supported_entities(self) -> List[str]:
             return []
+        def get_supported_languages(self) -> List[str]:
+            return ["en"]
+
     return DummyNlpEngine()
