@@ -27,7 +27,7 @@ steps:
           python -m venv env
           source env/bin/activate
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r --no-cache-dir requirements.txt
           pip install pytest-azurepipelines
           python -m spacy download en_core_web_lg
       workingDirectory: e2e-tests
