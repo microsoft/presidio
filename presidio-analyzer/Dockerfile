@@ -18,9 +18,14 @@ COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
 WORKDIR /usr/bin/${NAME}
 
 COPY ./Pipfile* /usr/bin/${NAME}/
+
+# Install essential build tools
+RUN apt-get update \
+  && apt-get install -y build-essential
+
 RUN pip install pipenv \
   && pipenv install --deploy
-# install nlp models specified in conf/default.yaml
+# install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 
 RUN pipenv run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}

@@ -40,9 +40,13 @@ class AnalyzerEngineProvider:
         """Retrieve the analyzer engine configuration from the provided file."""
 
         if not conf_file:
-            configuration = yaml.safe_load(open(self._get_full_conf_path()))
+            default_conf_file = self._get_full_conf_path()
+            configuration = yaml.safe_load(open(default_conf_file))
+            logger.info(f"Analyzer Engine configuration file "
+                        f"not provided. Using {default_conf_file}.")
         else:
             try:
+                logger.info(f"Reading analyzer configuration from {conf_file}")
                 configuration = yaml.safe_load(open(conf_file))
             except IOError:
                 logger.warning(
@@ -86,6 +90,8 @@ class AnalyzerEngineProvider:
         nlp_engine: NlpEngine,
     ) -> RecognizerRegistry:
         if self.recognizer_registry_conf_file:
+            logger.info(f"Reading recognizer registry "
+                        f"configuration from {self.recognizer_registry_conf_file}")
             provider = RecognizerRegistryProvider(
                 conf_file=self.recognizer_registry_conf_file
             )
@@ -116,6 +122,7 @@ class AnalyzerEngineProvider:
 
     def _load_nlp_engine(self) -> NlpEngine:
         if self.nlp_engine_conf_file:
+            logger.info(f"Reading nlp configuration from {self.nlp_engine_conf_file}")
             provider = NlpEngineProvider(conf_file=self.nlp_engine_conf_file)
         elif "nlp_configuration" in self.configuration:
             nlp_configuration = self.configuration["nlp_configuration"]

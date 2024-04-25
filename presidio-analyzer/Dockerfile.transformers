@@ -21,7 +21,7 @@ RUN pip install pipenv \
   && pipenv install --deploy
 RUN pipenv install torch transformers huggingface_hub --skip-lock
 
-# install nlp models specified in conf/default.yaml
+# install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 
 RUN pipenv run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
