@@ -24,9 +24,10 @@ setuptools.setup(
     url="https://github.com/Microsoft/presidio",
     packages=[
         "presidio_analyzer",
-        "presidio_analyzer.predefined_recognizers",
-        "presidio_analyzer.nlp_engine",
         "presidio_analyzer.context_aware_enhancers",
+        "presidio_analyzer.nlp_engine",
+        "presidio_analyzer.predefined_recognizers",
+        "presidio_analyzer.recognizer_registry",
     ],
     package_data={
         "presidio_analyzer": ["py.typed", "conf/*"],
