@@ -139,7 +139,7 @@ class RecognizerRegistryProvider:
     @staticmethod
     def _get_recognizer_items(
         recognizer_conf: Union[Dict[str, Any], str]
-    ) -> dict[Any, Any] | ItemsView[str, Any]:
+    ) -> Union[dict[Any, Any], ItemsView[str, Any]]:
         if isinstance(recognizer_conf, str):
             return {}
         return recognizer_conf.items()
