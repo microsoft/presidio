@@ -6,9 +6,8 @@ from io import BytesIO
 
 from PIL import Image
 from flask import Flask, request, jsonify, Response
-from presidio_analyzer import AnalyzerEngineProvider
 
-from presidio_image_redactor import ImageAnalyzerEngine, ImageRedactorEngine
+from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor.entities import InvalidParamException
 from presidio_image_redactor.entities.api_request_convertor import (
     get_json_data,
@@ -37,9 +36,7 @@ class Server:
         self.logger = logging.getLogger("presidio-image-redactor")
         self.app = Flask(__name__)
         self.logger.info("Starting image redactor engine")
-
-        image_analyzer = self.__create_image_analyzer_engine()
-        self.engine = ImageRedactorEngine(image_analyzer_engine=image_analyzer)
+        self.engine = ImageRedactorEngine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
@@ -81,20 +78,6 @@ class Server:
         def server_error(e):
             self.logger.error(f"A fatal error occurred during execution: {e}")
             return jsonify(error="Internal server error"), 500
-
-    @staticmethod
-    def __create_image_analyzer_engine() -> ImageAnalyzerEngine:
-        analyzer_conf_file = os.environ.get("ANALYZER_CONF_FILE")
-        nlp_engine_conf_file = os.environ.get("NLP_ENGINE_CONF_FILE")
-        recognizer_registry_conf_file = os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE")
-
-        test_analyzer = AnalyzerEngineProvider(
-            analyzer_engine_conf_file=analyzer_conf_file,
-            nlp_engine_conf_file=nlp_engine_conf_file,
-            recognizer_registry_conf_file=recognizer_registry_conf_file,
-        ).create_engine()
-
-        return ImageAnalyzerEngine(analyzer_engine=test_analyzer)
 
 
 if __name__ == "__main__":
