@@ -1,6 +1,7 @@
 import json
 import logging
 from typing import List, Optional
+import regex as re
 
 from presidio_analyzer import (
     RecognizerRegistry,
@@ -136,6 +137,8 @@ class AnalyzerEngine:
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
         context: Optional[List[str]] = None,
         allow_list: Optional[List[str]] = None,
+        allow_list_match: Optional[str] = "exact",
+        regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
         nlp_artifacts: Optional[NlpArtifacts] = None,
     ) -> List[RecognizerResult]:
         """
@@ -156,6 +159,10 @@ class AnalyzerEngine:
         with the recognized entity's recognizer context
         :param allow_list: List of words that the user defines as being allowed to keep
         in the text
+        :param allow_list_match: How the allow_list should be interpreted; either as "exact" or as "regex".
+        - If `regex`, results which match with any regex condition in the allow_list would be allowed and not be returned as potential PII.
+        - if `exact`, results which exactly match any value in the allow_list would be allowed and not be returned as potential PII.
+        :param regex_flags: regex flags to be used for when allow_list_match is "regex"
         :param nlp_artifacts: precomputed NlpArtifacts
         :return: an array of the found entities in the text
 
@@ -172,6 +179,7 @@ class AnalyzerEngine:
         >>> print(results)
         [type: PHONE_NUMBER, start: 19, end: 31, score: 0.85]
         """
+
         all_fields = not entities
 
         recognizers = self.registry.get_recognizers(
@@ -228,7 +236,9 @@ class AnalyzerEngine:
         results = self.__remove_low_scores(results, score_threshold)
 
         if allow_list:
-            results = self._remove_allow_list(results, allow_list, text)
+            results = self._remove_allow_list(
+                results, allow_list, text, regex_flags, allow_list_match
+            )
 
         if not return_decision_process:
             results = self.__remove_decision_process(results)
@@ -314,7 +324,11 @@ class AnalyzerEngine:
 
     @staticmethod
     def _remove_allow_list(
-        results: List[RecognizerResult], allow_list: List[str], text: str
+        results: List[RecognizerResult],
+        allow_list: List[str],
+        text: str,
+        regex_flags: Optional[int],
+        allow_list_match: str,
     ) -> List[RecognizerResult]:
         """
         Remove results which are part of the allow list.
@@ -322,14 +336,33 @@ class AnalyzerEngine:
         :param results: List of RecognizerResult
         :param allow_list: list of allowed terms
         :param text: the text to analyze
+        :param regex_flags: regex flags to be used for when allow_list_match is "regex"
+        :param allow_list_match: How the allow_list
+        should be interpreted; either as "exact" or as "regex"
         :return: List[RecognizerResult]
         """
         new_results = []
-        for result in results:
-            word = text[result.start : result.end]
-            # if the word is not specified to be allowed, keep in the PII entities
-            if word not in allow_list:
-                new_results.append(result)
+        if allow_list_match == "regex":
+            pattern = "|".join(allow_list)
+            re_compiled = re.compile(pattern, flags=regex_flags)
+
+            for result in results:
+                word = text[result.start : result.end]
+
+                # if the word is not specified to be allowed, keep in the PII entities
+                if not re_compiled.search(word):
+                    new_results.append(result)
+        elif allow_list_match == "exact":
+            for result in results:
+                word = text[result.start : result.end]
+
+                # if the word is not specified to be allowed, keep in the PII entities
+                if word not in allow_list:
+                    new_results.append(result)
+        else:
+            raise ValueError(
+                "allow_list_match must either be set to 'exact' or 'regex'."
+            )
 
         return new_results
 
@@ -357,9 +390,9 @@ class AnalyzerEngine:
                     RecognizerResult.RECOGNIZER_IDENTIFIER_KEY
                 ] = recognizer.id
             if RecognizerResult.RECOGNIZER_NAME_KEY not in result.recognition_metadata:
-                result.recognition_metadata[
-                    RecognizerResult.RECOGNIZER_NAME_KEY
-                ] = recognizer.name
+                result.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] = (
+                    recognizer.name
+                )
 
     @staticmethod
     def __remove_decision_process(
