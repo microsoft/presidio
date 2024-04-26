@@ -115,6 +115,7 @@ class SpacyRecognizer(LocalRecognizer):
             explanation = self.build_explanation(ner_score, textual_explanation)
             spacy_result = RecognizerResult(
                 entity_type=ner_entity.label_,
+                entity_text=text[ner_entity.start_char: ner_entity.end_char],
                 start=ner_entity.start_char,
                 end=ner_entity.end_char,
                 score=ner_score,

@@ -18,6 +18,7 @@ class ImageRecognizerResult(RecognizerResult):
     def __init__(
         self,
         entity_type: str,
+        entity_text: str,
         start: int,
         end: int,
         score: float,
@@ -27,7 +28,7 @@ class ImageRecognizerResult(RecognizerResult):
         height: int,
     ):
 
-        super().__init__(entity_type, start, end, score)
+        super().__init__(entity_type,entity_text, start, end, score)
         self.left = left
         self.top = top
         self.width = width
@@ -52,6 +53,7 @@ class ImageRecognizerResult(RecognizerResult):
         """Return a string representation of the instance."""
         return (
             f"type: {self.entity_type}, "
+            f"type: {self.entity_text}, "
             f"start: {self.start}, "
             f"end: {self.end}, "
             f"score: {self.score}, "

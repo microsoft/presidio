@@ -228,7 +228,7 @@ class AnalyzerEngine:
         if self.log_decision_process:
             self.app_tracer.trace(
                 correlation_id,
-                json.dumps([str(result.to_dict()) for result in results]),
+                json.dumps([str(result.to_dict()) for result in results],indent=4),
             )
 
         # Remove duplicates or low score results

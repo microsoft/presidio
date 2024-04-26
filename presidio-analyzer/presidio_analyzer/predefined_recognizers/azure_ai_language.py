@@ -138,6 +138,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
                 recognizer_results.append(
                     RecognizerResult(
                         entity_type=entity.category,
+                        entity_text=text[entity.offset:entity.offset + entity.length],
                         start=entity.offset,
                         end=entity.offset + entity.length,
                         score=entity.confidence_score,
