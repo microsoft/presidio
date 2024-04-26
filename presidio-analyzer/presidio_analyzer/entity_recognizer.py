@@ -4,6 +4,7 @@ from typing import List, Dict, Optional
 
 from presidio_analyzer import RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -39,9 +40,8 @@ class EntityRecognizer:
         supported_language: str = "en",
         version: str = "0.0.1",
         context: Optional[List[str]] = None,
+        analyzer_utils: Optional[PresidioAnalyzerUtils] = None,
     ):
-
-        self.supported_entities = supported_entities
 
         if name is None:
             self.name = self.__class__.__name__  # assign class name as name
@@ -54,10 +54,14 @@ class EntityRecognizer:
         self.version = version
         self.is_loaded = False
         self.context = context if context else []
+        self.supported_entities = supported_entities
 
         self.load()
         logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
+
+        if analyzer_utils is not None:
+            self.analyzer_utils = analyzer_utils
 
     @property
     def id(self):

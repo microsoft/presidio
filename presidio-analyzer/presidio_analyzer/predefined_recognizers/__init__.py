@@ -37,6 +37,9 @@ from .pl_pesel_recognizer import PlPeselRecognizer
 from .azure_ai_language import AzureAILanguageRecognizer
 from .in_aadhaar_recognizer import InAadhaarRecognizer
 from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
+from .isin_recognizer import IsinRecognizer
+from .cfi_recognizer import CfiRecognizer
+from .in_gstin_recognizer import InGstinRecognizer
 from .sg_uen_recognizer import SgUenRecognizer
 from .in_voter_recognizer import InVoterRecognizer
 from .in_passport_recognizer import InPassportRecognizer
@@ -86,6 +89,9 @@ __all__ = [
     "AzureAILanguageRecognizer",
     "InAadhaarRecognizer",
     "InVehicleRegistrationRecognizer",
+    "IsinRecognizer",
+    "CfiRecognizer",
+    "InGstinRecognizer",
     "SgUenRecognizer",
     "InVoterRecognizer",
     "InPassportRecognizer",

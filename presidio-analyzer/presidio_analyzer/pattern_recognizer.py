@@ -12,6 +12,7 @@ from presidio_analyzer import (
     AnalysisExplanation,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -41,6 +42,7 @@ class PatternRecognizer(LocalRecognizer):
         deny_list_score: float = 1.0,
         global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
         version: str = "0.0.1",
+        analyzer_utils: Optional[PresidioAnalyzerUtils] = None,
     ):
         if not supported_entity:
             raise ValueError("Pattern recognizer should be initialized with entity")
@@ -50,12 +52,13 @@ class PatternRecognizer(LocalRecognizer):
                 "Pattern recognizer should be initialized with patterns"
                 " or with deny list"
             )
-
+        print(supported_entity)
         super().__init__(
             supported_entities=[supported_entity],
             supported_language=supported_language,
             name=name,
             version=version,
+            analyzer_utils=analyzer_utils,
         )
         if patterns is None:
             self.patterns = []
