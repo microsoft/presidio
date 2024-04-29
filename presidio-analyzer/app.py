@@ -37,7 +37,7 @@ class Server:
         self.app = Flask(__name__)
 
         analyzer_conf_file = os.environ.get("ANALYZER_CONF_FILE")
-        nlp_engine_conf_file = os.environ.get("NLP_ENGINE_CONF_FILE")
+        nlp_engine_conf_file = os.environ.get("NLP_CONF_FILE")
         recognizer_registry_conf_file = os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE")
 
         self.logger.info("Starting analyzer engine")

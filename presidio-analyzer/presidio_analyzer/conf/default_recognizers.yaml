@@ -138,4 +138,3 @@ recognizers:
   - MedicalLicenseRecognizer
   - PhoneRecognizer
   - UrlRecognizer
-  - SpacyRecognizer
