@@ -2,18 +2,27 @@ FROM python:3.9-slim
 
 ARG NAME
 ARG NLP_CONF_FILE=presidio_analyzer/conf/transformers.yaml
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
+ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /usr/bin/${NAME}
+
+ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
+ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
+ENV NLP_CONF_FILE=${NLP_CONF_FILE}
+
+COPY ${ANALYZER_CONF_FILE} /usr/bin/${NAME}/${ANALYZER_CONF_FILE}
+COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /usr/bin/${NAME}/${RECOGNIZER_REGISTRY_CONF_FILE}
+COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
 
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv \
   && pipenv install --deploy
 RUN pipenv install torch transformers huggingface_hub --skip-lock
 
-# install nlp models specified in conf/default.yaml
+# install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
-COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
 
 RUN pipenv run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 

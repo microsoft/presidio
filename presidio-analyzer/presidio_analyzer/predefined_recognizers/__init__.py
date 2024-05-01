@@ -43,6 +43,18 @@ from .in_passport_recognizer import InPassportRecognizer
 from .fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecognizer
 from .es_nie_recognizer import EsNieRecognizer
 
+PREDEFINED_RECOGNIZERS = [
+    "PhoneRecognizer",
+    "CreditCardRecognizer",
+    "CryptoRecognizer",
+    "DateRecognizer",
+    "EmailRecognizer",
+    "IpRecognizer",
+    "IbanRecognizer",
+    "MedicalLicenseRecognizer",
+    "UrlRecognizer"
+]
+
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
     "stanza": StanzaRecognizer,
