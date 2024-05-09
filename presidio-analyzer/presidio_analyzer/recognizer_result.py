@@ -34,6 +34,7 @@ class RecognizerResult:
     def __init__(
         self,
         entity_type: str,
+        entity_text:str,
         start: int,
         end: int,
         score: float,
@@ -42,6 +43,7 @@ class RecognizerResult:
     ):
 
         self.entity_type = entity_type
+        self.entity_text = entity_text
         self.start = start
         self.end = end
         self.score = score

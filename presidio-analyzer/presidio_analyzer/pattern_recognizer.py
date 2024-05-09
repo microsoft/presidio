@@ -218,6 +218,7 @@ class PatternRecognizer(LocalRecognizer):
                 )
                 pattern_result = RecognizerResult(
                     entity_type=self.supported_entities[0],
+                    entity_text=text[start:end],
                     start=start,
                     end=end,
                     score=score,

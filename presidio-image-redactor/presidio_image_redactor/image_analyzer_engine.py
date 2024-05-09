@@ -178,6 +178,7 @@ class ImageAnalyzerEngine:
                             bboxes.append(
                                 ImageRecognizerResult(
                                     element.entity_type,
+                                    text_element,
                                     element.start,
                                     element.end,
                                     element.score,
@@ -204,6 +205,7 @@ class ImageAnalyzerEngine:
                                     bboxes.append(
                                         ImageRecognizerResult(
                                             element.entity_type,
+                                            text_element,
                                             element.start,
                                             element.end,
                                             element.score,

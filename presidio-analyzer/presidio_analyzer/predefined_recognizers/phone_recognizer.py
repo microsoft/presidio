@@ -74,6 +74,7 @@ class PhoneRecognizer(LocalRecognizer):
     def _get_recognizer_result(self, match, text, region, nlp_artifacts):
         result = RecognizerResult(
             entity_type="PHONE_NUMBER",
+            entity_text = text[match.start:match.end],
             start=match.start,
             end=match.end,
             score=self.SCORE,
