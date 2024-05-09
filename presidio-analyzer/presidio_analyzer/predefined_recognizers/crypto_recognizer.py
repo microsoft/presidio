@@ -59,7 +59,7 @@ class CryptoRecognizer(PatternRecognizer):
         if pattern_text.startswith("1") or pattern_text.startswith("3"):
             # P2PKH or P2SH address validation
             try:
-                bcbytes = self.__decode_base58(pattern_text, 25)
+                bcbytes = self.__decode_base58(str.encode(pattern_text))
                 checksum = sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]
                 return bcbytes[-4:] == checksum
             except ValueError:
@@ -71,12 +71,15 @@ class CryptoRecognizer(PatternRecognizer):
         return False
 
     @staticmethod
-    def __decode_base58(bc: str, length: int) -> bytes:
-        digits58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    def __decode_base58(bc: bytes) -> bytes:
+        digits58 = b"123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+        origlen = len(bc)
+        bc = bc.lstrip(digits58[0:1])
+
         n = 0
         for char in bc:
             n = n * 58 + digits58.index(char)
-        return n.to_bytes(length, "big")
+        return n.to_bytes(origlen - len(bc) + (n.bit_length() + 7) // 8, "big")
 
     @staticmethod
     def bech32_polymod(values):
