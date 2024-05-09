@@ -134,4 +134,12 @@ stages:
                   inputs:
                       versionSpec: '$(python.version)'
                   displayName: 'Use Python $(python.version)'
+                - task: Bash@3
+                  displayName: 'Linting: Presidio for $(python.version)'
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      set -eux  # fail on error
+                      pip install ruff
+                      ruff check
                 - template: ./build-structured.yml
