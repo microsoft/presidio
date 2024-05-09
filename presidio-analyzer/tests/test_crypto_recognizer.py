@@ -40,6 +40,7 @@ def entities():
         ("my wallet address is: 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ2", 0, ()),
         # Test with empty string
         ("", 0, (),),
+        ("8f953371d3e85eddb89b05ed6b9e680791055315c73e1025ab5dba7bb2aee189", 0, (),),
         # fmt: on
     ],
 )
