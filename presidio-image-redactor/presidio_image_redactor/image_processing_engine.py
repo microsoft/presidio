@@ -1,9 +1,9 @@
+from typing import Optional, Tuple, Union
+
+import cv2
 import numpy as np
 import PIL
 from PIL import Image
-import cv2
-
-from typing import Union, Tuple, Optional
 
 
 class ImagePreprocessor:

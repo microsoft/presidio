@@ -1,4 +1,4 @@
-""" Test the analysis builder """
+"""Test the analysis builder"""
 
 import pandas as pd
 import pytest
@@ -27,16 +27,14 @@ def test_generate_analysis_tabular_with_sampling(tabular_analysis_builder, sampl
     assert structured_analysis.entity_mapping["phone"] == "PHONE_NUMBER"
 
 
-def test_generate_analysis_tabular_with_invalid_sampling(
-    tabular_analysis_builder, sample_df
-):
+def test_generate_analysis_tabular_with_invalid_sampling(tabular_analysis_builder, sample_df):
     with pytest.raises(ValueError):
         tabular_analysis_builder.generate_analysis(sample_df, n=-1)
 
 
 def test_find_most_common_entity(tabular_analysis_builder, sample_df_strategy):
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
-        sample_df_strategy, "en", selection_strategy = "most_common"
+        sample_df_strategy, "en", selection_strategy="most_common"
     )
     assert len(key_recognizer_result_map) == 5
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
@@ -44,19 +42,21 @@ def test_find_most_common_entity(tabular_analysis_builder, sample_df_strategy):
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
     assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
+
 def test_find_highest_confidence_entity(tabular_analysis_builder, sample_df_strategy):
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
-        sample_df_strategy, "en", selection_strategy = "highest_confidence"
+        sample_df_strategy, "en", selection_strategy="highest_confidence"
     )
     assert len(key_recognizer_result_map) == 5
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
     assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
+
 
 def test_find_mixed_strategy_entity(tabular_analysis_builder, sample_df_strategy):
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
-        sample_df_strategy, "en", selection_strategy = "mixed"
+        sample_df_strategy, "en", selection_strategy="mixed"
     )
     assert len(key_recognizer_result_map) == 5
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
@@ -64,29 +64,30 @@ def test_find_mixed_strategy_entity(tabular_analysis_builder, sample_df_strategy
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
     assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
 
+
 def test_find_mixed_strategy_entity_with_custom_mixed_strategy_threshold(tabular_analysis_builder, sample_df):
     key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
-        sample_df, "en", selection_strategy = "mixed", mixed_strategy_threshold = 0.4
+        sample_df, "en", selection_strategy="mixed", mixed_strategy_threshold=0.4
     )
     assert len(key_recognizer_result_map) == 3
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
     assert key_recognizer_result_map["phone"].entity_type == "PHONE_NUMBER"
 
+
 def test_find_entity_with_invalid_strategy_raises_exception(tabular_analysis_builder, sample_df_strategy):
     selection_strategy = "invalid"
     with pytest.raises(ValueError) as excinfo:
         key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
-            sample_df_strategy, "en", selection_strategy = selection_strategy
+            sample_df_strategy, "en", selection_strategy=selection_strategy
         )
 
     assert f"Unsupported entity selection strategy: {selection_strategy}." in str(excinfo.value)
 
+
 def test_find_most_common_entity_with_empty_df(tabular_analysis_builder):
     df = pd.DataFrame()
-    key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(
-        df, "en"
-    )
+    key_recognizer_result_map = tabular_analysis_builder._generate_key_rec_results_map(df, "en")
 
     assert len(key_recognizer_result_map) == 0
 
@@ -118,9 +119,7 @@ def test_generate_analysis_json(json_analysis_builder, sample_json):
     assert structured_analysis.entity_mapping["address.city"] == "LOCATION"
 
 
-def test_generate_analysis_json_with_list_should_raise(
-    json_analysis_builder, sample_json_with_array
-):
+def test_generate_analysis_json_with_list_should_raise(json_analysis_builder, sample_json_with_array):
     # this feature is not supported by the BatchAnalyzerEngine used in the JsonAnalysisBuilder
     with pytest.raises(ValueError):
         json_analysis_builder.generate_analysis(sample_json_with_array)

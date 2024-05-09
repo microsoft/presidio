@@ -1,5 +1,6 @@
 """Hashes the PII text entity."""
-from hashlib import sha256, sha512, md5
+
+from hashlib import md5, sha256, sha512
 from typing import Dict
 
 from presidio_anonymizer.operators import Operator, OperatorType

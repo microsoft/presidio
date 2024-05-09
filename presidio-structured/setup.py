@@ -3,7 +3,7 @@
 import os.path
 from os import path
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 test_requirements = ["pytest>=3", "ruff"]
 
@@ -15,7 +15,9 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 try:
-    with open(os.path.join(parent_directory, "PRESIDIO-STRUCTURED-VERSION")) as version_file:
+    with open(
+        os.path.join(parent_directory, "PRESIDIO-STRUCTURED-VERSION")
+    ) as version_file:
         __version__ = version_file.read().strip()
 except Exception:
     __version__ = os.environ.get("PRESIDIO_STRUCTURED_VERSION", "0.0.1-alpha")

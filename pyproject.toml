@@ -50,8 +50,8 @@ ignore = ["E203", "D100", "D202", "D407", "ANN101", "ANN102", "ANN204",
 
 fixable = ["ALL"]
 
-## Allow unused variables when underscore-prefixed.
-#dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.
@@ -65,15 +65,6 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
-
-
-## 3. Avoid trying to fix flake8-bugbear (`B`) violations.
-#unfixable = ["B"]
-
-## 4. Ignore `E402` (import violations) in all `__init__.py` files, and in select subdirectories.
-#[tool.ruff.lint.per-file-ignores]
-#"__init__.py" = ["E402"]
-#"**/{tests,docs,tools}/*" = ["E402"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"

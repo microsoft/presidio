@@ -1,6 +1,6 @@
+import logging
 import os
 from typing import List, Optional
-import logging
 
 try:
     from azure.ai.textanalytics import TextAnalyticsClient
@@ -9,7 +9,7 @@ try:
 except ImportError:
     TextAnalyticsClient = None
     AzureKeyCredential = None
-from presidio_analyzer import RemoteRecognizer, RecognizerResult, AnalysisExplanation
+from presidio_analyzer import AnalysisExplanation, RecognizerResult, RemoteRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")

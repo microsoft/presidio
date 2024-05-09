@@ -1,4 +1,5 @@
 """Test suite for bbox.py"""
+
 from presidio_image_redactor import BboxProcessor
 from presidio_image_redactor.entities.image_recognizer_result import (
     ImageRecognizerResult,
@@ -419,9 +420,7 @@ def test_match_with_source_happy_path(
     all_pos = []
 
     # Act
-    test_all_pos, test_match_found = mock_bbox_processor.match_with_source(
-        all_pos, source_labels, results, tolerance
-    )
+    test_all_pos, test_match_found = mock_bbox_processor.match_with_source(all_pos, source_labels, results, tolerance)
 
     # Assert
     assert test_all_pos == expected_results

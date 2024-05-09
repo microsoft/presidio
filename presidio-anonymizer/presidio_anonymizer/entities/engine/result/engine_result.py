@@ -1,4 +1,5 @@
 """Handle a serializable anonymizer result."""
+
 import json
 from typing import List
 

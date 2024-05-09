@@ -1,10 +1,10 @@
-from typing import Union, Tuple, Optional, List
+from typing import List, Optional, Tuple, Union
 
-from PIL import Image, ImageDraw, ImageChops
-
-from presidio_image_redactor import ImageAnalyzerEngine, BboxProcessor
 import presidio_analyzer  # required for isinstance check which throws an error when trying to specify PatternRecognizer  # noqa: E501
+from PIL import Image, ImageChops, ImageDraw
 from presidio_analyzer import PatternRecognizer
+
+from presidio_image_redactor import BboxProcessor, ImageAnalyzerEngine
 
 
 class ImageRedactorEngine:

@@ -1,4 +1,5 @@
 """presidio-structured root module."""
+
 import logging
 
 from .analysis_builder import JsonAnalysisBuilder, PandasAnalysisBuilder

@@ -16,9 +16,7 @@ class UsSsnRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern("SSN1 (very weak)", r"\b([0-9]{5})-([0-9]{4})\b", 0.05),  # noqa E501
         Pattern("SSN2 (very weak)", r"\b([0-9]{3})-([0-9]{6})\b", 0.05),  # noqa E501
-        Pattern(
-            "SSN3 (very weak)", r"\b(([0-9]{3})-([0-9]{2})-([0-9]{4}))\b", 0.05
-        ),  # noqa E501
+        Pattern("SSN3 (very weak)", r"\b(([0-9]{3})-([0-9]{2})-([0-9]{4}))\b", 0.05),  # noqa E501
         Pattern("SSN4 (very weak)", r"\b[0-9]{9}\b", 0.05),
         Pattern("SSN5 (medium)", r"\b([0-9]{3})[- .]([0-9]{2})[- .]([0-9]{4})\b", 0.5),
     ]

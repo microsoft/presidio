@@ -1,19 +1,20 @@
-from copy import deepcopy
 import tempfile
+from copy import deepcopy
+from typing import List, Optional, Tuple
+
 import PIL
-from PIL import Image
 import pydicom
+from PIL import Image
+from presidio_analyzer import PatternRecognizer
 
 from presidio_image_redactor import (
     OCR,
-    TesseractOCR,
-    ImageAnalyzerEngine,
+    BboxProcessor,
     DicomImageRedactorEngine,
+    ImageAnalyzerEngine,
+    ImagePiiVerifyEngine,
+    TesseractOCR,
 )
-from presidio_image_redactor import ImagePiiVerifyEngine, BboxProcessor
-from presidio_analyzer import PatternRecognizer
-
-from typing import Tuple, List, Optional
 
 
 class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
@@ -92,21 +93,24 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
         # Get OCR results
-        perform_ocr_kwargs, ocr_threshold = self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)  # noqa: E501
+        perform_ocr_kwargs, ocr_threshold = (
+            self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)
+        )  # noqa: E501
         ocr_results = self.ocr_engine.perform_ocr(image, **perform_ocr_kwargs)
         if ocr_threshold:
             ocr_results = self.image_analyzer_engine.threshold_ocr_result(
-                ocr_results,
-                ocr_threshold
+                ocr_results, ocr_threshold
             )
-        ocr_bboxes = self.bbox_processor.get_bboxes_from_ocr_results(
-            ocr_results
-        )
+        ocr_bboxes = self.bbox_processor.get_bboxes_from_ocr_results(ocr_results)
 
         # Get analyzer results
         analyzer_results = self._get_analyzer_results(
-            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
-            **text_analyzer_kwargs
+            image,
+            instance,
+            use_metadata,
+            ocr_kwargs,
+            ad_hoc_recognizers,
+            **text_analyzer_kwargs,
         )
         analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
             analyzer_results
@@ -114,8 +118,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
         # Prepare for plotting
         pii_bboxes = self.image_analyzer_engine.get_pii_bboxes(
-            ocr_bboxes,
-            analyzer_bboxes
+            ocr_bboxes, analyzer_bboxes
         )
         if is_greyscale:
             use_greyscale_cmap = True
@@ -211,7 +214,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :return: Detected PHI with no duplicate entities.
         """
         dups = []
-        sorted(results, key=lambda x: x['score'], reverse=True)
+        sorted(results, key=lambda x: x["score"], reverse=True)
         results_no_dups = []
         dims = ["left", "top", "width", "height"]
 
@@ -230,8 +233,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                     matching = list(matching_dims.values())
 
                     if all(matching):
-                        lower_scored_index = other if \
-                            results[other]['score'] < results[i]['score'] else i
+                        lower_scored_index = (
+                            other
+                            if results[other]["score"] < results[i]["score"]
+                            else i
+                        )
                         dups.append(lower_scored_index)
 
         # Remove duplicates
@@ -265,7 +271,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
         # Cycle through each positive (TP or FP)
         for analyzer_result in detected_phi:
-
             # See if there are any ground truth matches
             all_pos, gt_match_found = self.bbox_processor.match_with_source(
                 all_pos, gt_labels_dict, analyzer_result, tolerance

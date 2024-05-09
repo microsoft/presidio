@@ -42,11 +42,7 @@ def temp_workspace():
             "was mailed to 123 Any Street, Seattle, WA 98109.\n",
             # non-ASCII chars
             "non-ascii/éçäγλνπ¥/utf-8": (
-                "---\n"
-                "- hétérogénéité\n"
-                "# 19.99 €\n"
-                "- お早う御座います。\n"
-                "# الأَبْجَدِيَّة العَرَبِيَّة\n"
+                "---\n" "- hétérogénéité\n" "# 19.99 €\n" "- お早う御座います。\n" "# الأَبْجَدِيَّة العَرَبِيَّة\n"
             ).encode("utf-8"),
             # dos line endings yaml
             "dos.yml": "---\r\n" "credit_card: 122000000000003",

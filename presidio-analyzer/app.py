@@ -1,4 +1,5 @@
 """REST API server for analyzer."""
+
 import json
 import logging
 import os
@@ -6,10 +7,9 @@ from logging.config import fileConfig
 from pathlib import Path
 from typing import Tuple
 
-from flask import Flask, request, jsonify, Response
-from werkzeug.exceptions import HTTPException
-
+from flask import Flask, Response, jsonify, request
 from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider, AnalyzerRequest
+from werkzeug.exceptions import HTTPException
 
 DEFAULT_PORT = "3000"
 

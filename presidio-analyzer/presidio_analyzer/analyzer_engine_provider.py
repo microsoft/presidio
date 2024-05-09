@@ -1,10 +1,11 @@
-import yaml
 import logging
 from pathlib import Path
-from typing import Optional, Union, List, Dict, Any
+from typing import Any, Dict, List, Optional, Union
+
+import yaml
 
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
-from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
+from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 
 logger = logging.getLogger("presidio-analyzer")
@@ -42,13 +43,15 @@ class AnalyzerEngineProvider:
         if not conf_file:
             default_conf_file = self._get_full_conf_path()
             configuration = yaml.safe_load(open(default_conf_file))
-            logger.info(f"Analyzer Engine configuration file "
-                        f"not provided. Using {default_conf_file}.")
+            logger.info(
+                f"Analyzer Engine configuration file "
+                f"not provided. Using {default_conf_file}."
+            )
         else:
             try:
                 logger.info(f"Reading analyzer configuration from {conf_file}")
                 configuration = yaml.safe_load(open(conf_file))
-            except IOError:
+            except OSError:
                 logger.warning(
                     f"configuration file {conf_file} not found.  "
                     f"Using default config."
@@ -90,8 +93,10 @@ class AnalyzerEngineProvider:
         nlp_engine: NlpEngine,
     ) -> RecognizerRegistry:
         if self.recognizer_registry_conf_file:
-            logger.info(f"Reading recognizer registry "
-                        f"configuration from {self.recognizer_registry_conf_file}")
+            logger.info(
+                f"Reading recognizer registry "
+                f"configuration from {self.recognizer_registry_conf_file}"
+            )
             provider = RecognizerRegistryProvider(
                 conf_file=self.recognizer_registry_conf_file
             )
@@ -138,7 +143,7 @@ class AnalyzerEngineProvider:
 
     @staticmethod
     def _get_full_conf_path(
-        default_conf_file: Union[Path, str] = "default_analyzer.yaml"
+        default_conf_file: Union[Path, str] = "default_analyzer.yaml",
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent, "conf", default_conf_file)

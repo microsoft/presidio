@@ -1,4 +1,5 @@
 """An Enum class designed to manage all types of conflicts among entities or text."""
+
 from enum import Enum
 
 

@@ -1,18 +1,18 @@
 import os
 from io import BytesIO
-
 from typing import Optional, Sequence, Union
 
 import numpy as np
+from azure.ai.formrecognizer import (
+    AnalyzedDocument,
+    DocumentAnalysisClient,
+    DocumentPage,
+    Point,
+)
+from azure.core.credentials import AzureKeyCredential
 from PIL import Image
 
 from presidio_image_redactor import OCR
-
-from azure.ai.formrecognizer import DocumentAnalysisClient, \
-                                    AnalyzedDocument, \
-                                    DocumentPage, \
-                                    Point
-from azure.core.credentials import AzureKeyCredential
 
 
 class DocumentIntelligenceOCR(OCR):
@@ -35,13 +35,15 @@ class DocumentIntelligenceOCR(OCR):
         "prebuilt-invoice",
         "prebuilt-receipt",
         "prebuilt-idDocument",
-        "prebuilt-businessCard"
+        "prebuilt-businessCard",
     ]
 
-    def __init__(self,
-                 endpoint: Optional[str] = None,
-                 key: Optional[str] = None,
-                 model_id: Optional[str] = "prebuilt-document"):
+    def __init__(
+        self,
+        endpoint: Optional[str] = None,
+        key: Optional[str] = None,
+        model_id: Optional[str] = "prebuilt-document",
+    ):
         if model_id not in DocumentIntelligenceOCR.SUPPORTED_MODELS:
             raise ValueError("Unsupported model id: %s" % model_id)
 
@@ -57,13 +59,12 @@ class DocumentIntelligenceOCR(OCR):
             raise ValueError("Endpoint and key must be specified")
 
         self.client = DocumentAnalysisClient(
-            endpoint=endpoint,
-            credential=AzureKeyCredential(key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         self.model_id = model_id
 
     @staticmethod
-    def _polygon_to_bbox(polygon : Sequence[Point]) -> tuple:
+    def _polygon_to_bbox(polygon: Sequence[Point]) -> tuple:
         """Convert polygon to a tuple of left/top/width/height.
 
         The returned bounding box should entirely cover the passed polygon.
@@ -105,8 +106,10 @@ class DocumentIntelligenceOCR(OCR):
 
         :return dictionary in the expected format for presidio
         """
-        bounds = [DocumentIntelligenceOCR._polygon_to_bbox(word.polygon)
-                  for word in page.words]
+        bounds = [
+            DocumentIntelligenceOCR._polygon_to_bbox(word.polygon)
+            for word in page.words
+        ]
 
         return {
             "left": [box[0] for box in bounds],
@@ -114,7 +117,7 @@ class DocumentIntelligenceOCR(OCR):
             "width": [box[2] for box in bounds],
             "height": [box[3] for box in bounds],
             "conf": [w.confidence for w in page.words],
-            "text": [w.content for w in page.words]
+            "text": [w.content for w in page.words],
         }
 
     def get_imgbytes(self, image: Union[bytes, np.ndarray, Image.Image]) -> bytes:
@@ -132,7 +135,7 @@ class DocumentIntelligenceOCR(OCR):
         if isinstance(image, Image.Image):
             # Image is a PIL image, write to bytes stream
             ostream = BytesIO()
-            image.save(ostream, 'PNG')
+            image.save(ostream, "PNG")
             imgbytes = ostream.getvalue()
         elif isinstance(image, str):
             # image is a filename
@@ -141,7 +144,7 @@ class DocumentIntelligenceOCR(OCR):
             raise ValueError("Unsupported image type: %s" % type(image))
         return imgbytes
 
-    def analyze_document(self, imgbytes : bytes, **kwargs) -> AnalyzedDocument:
+    def analyze_document(self, imgbytes: bytes, **kwargs) -> AnalyzedDocument:
         """Analyze the document and return the result.
 
         :param imgbytes: The bytes to send to the API endpoint

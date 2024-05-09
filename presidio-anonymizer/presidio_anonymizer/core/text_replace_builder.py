@@ -1,4 +1,5 @@
 """Handles the original text and creates a new one according to changes requests."""
+
 import logging
 
 from presidio_anonymizer.entities import InvalidParamException

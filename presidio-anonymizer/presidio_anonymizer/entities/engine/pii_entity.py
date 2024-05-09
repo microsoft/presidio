@@ -3,8 +3,8 @@ from abc import ABC
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.services.validators import (
-    validate_parameter_not_empty,
     validate_parameter_exists,
+    validate_parameter_not_empty,
     validate_type,
 )
 

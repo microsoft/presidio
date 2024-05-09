@@ -3,6 +3,7 @@ RecognizerResult is an exact copy of the RecognizerResult object from presidio-a
 
 Represents the findings of detected entity.
 """
+
 import logging
 from typing import Dict
 

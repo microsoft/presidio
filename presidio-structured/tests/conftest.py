@@ -1,4 +1,4 @@
-""" Pytest fixtures for presidio-structured tests. """
+"""Pytest fixtures for presidio-structured tests."""
 
 import pandas as pd
 import pytest
@@ -20,17 +20,19 @@ def sample_df():
     }
     return pd.DataFrame(data)
 
+
 @pytest.fixture
 def sample_df_strategy():
     data = {
-        'name': ['John Doe', 'Jane Smith', 'Alice Johnson'],
-        'email': ['john.doe@example.com', 'jane.smith@example.com', 'alice.johnson@example.com'],
-        'city': ['Anytown', 'Somewhere', 'Elsewhere'],
-        'state': ['CA', 'TX', 'NY'],
-        'postal_code': [12345, 67890, 11223]
+        "name": ["John Doe", "Jane Smith", "Alice Johnson"],
+        "email": ["john.doe@example.com", "jane.smith@example.com", "alice.johnson@example.com"],
+        "city": ["Anytown", "Somewhere", "Elsewhere"],
+        "state": ["CA", "TX", "NY"],
+        "postal_code": [12345, 67890, 11223],
     }
 
     return pd.DataFrame(data)
+
 
 @pytest.fixture
 def sample_json():

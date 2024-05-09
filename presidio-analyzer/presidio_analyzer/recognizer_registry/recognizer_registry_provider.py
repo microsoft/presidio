@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import logging
 import re
 from collections.abc import ItemsView
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
 
 import yaml
-import logging
-from pathlib import Path
-from typing import Optional, Union, List, Tuple, Dict, Any, Type, Set
 
 from presidio_analyzer import EntityRecognizer, PatternRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
@@ -102,7 +102,7 @@ class RecognizerRegistryProvider:
                 configuration = self._add_missing_keys(
                     configuration=configuration, conf_file=conf_file
                 )
-            except IOError:
+            except OSError:
                 logger.warning(
                     f"configuration file {conf_file} not found.  "
                     f"Using default config."
@@ -132,7 +132,7 @@ class RecognizerRegistryProvider:
 
     @staticmethod
     def _get_recognizer_context(
-        recognizer: Union[Dict[str, Any], str]
+        recognizer: Union[Dict[str, Any], str],
     ) -> Optional[List[str]]:
         if isinstance(recognizer, str):
             return None
@@ -140,7 +140,7 @@ class RecognizerRegistryProvider:
 
     @staticmethod
     def _get_recognizer_items(
-        recognizer_conf: Union[Dict[str, Any], str]
+        recognizer_conf: Union[Dict[str, Any], str],
     ) -> Union[dict[Any, Any], ItemsView[str, Any]]:
         if isinstance(recognizer_conf, str):
             return {}
@@ -177,14 +177,16 @@ class RecognizerRegistryProvider:
             ]
 
         return [
-            {"supported_language": language["language"],
-             "context": language.get("context", None)}
+            {
+                "supported_language": language["language"],
+                "context": language.get("context", None),
+            }
             for language in recognizer_conf["supported_languages"]
         ]
 
     @staticmethod
     def _split_recognizers(
-        recognizers_conf: Union[Dict[str, Any], str]
+        recognizers_conf: Union[Dict[str, Any], str],
     ) -> Tuple[List[Union[str, Dict[str, Any]]], List[Union[str, Dict[str, Any]]]]:
         """
         Split the recognizer list to predefined and custom.
@@ -245,7 +247,7 @@ class RecognizerRegistryProvider:
             "global_regex_flags": None,
         }
 
-        for field in fields.keys():
+        for field in fields:
             if field not in self.configuration:
                 logger.warning(
                     f"{field} not present in configuration, "
@@ -282,10 +284,11 @@ class RecognizerRegistryProvider:
             if isinstance(recognizer_conf, PatternRecognizer):
                 recognizer_conf.global_regex_flags = fields["global_regex_flags"]
 
-        recognizer_instances = [recognizer for recognizer
-                                in recognizer_instances
-                                if recognizer.supported_language
-                                in self.supported_languages]
+        recognizer_instances = [
+            recognizer
+            for recognizer in recognizer_instances
+            if recognizer.supported_language in self.supported_languages
+        ]
 
         fields["recognizers"] = recognizer_instances
 
@@ -293,7 +296,7 @@ class RecognizerRegistryProvider:
 
     @staticmethod
     def _get_full_conf_path(
-        default_conf_file: Union[Path, str] = "default_recognizers.yaml"
+        default_conf_file: Union[Path, str] = "default_recognizers.yaml",
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent, "../conf", default_conf_file)

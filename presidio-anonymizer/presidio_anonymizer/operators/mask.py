@@ -1,4 +1,5 @@
 """Mask some or all given text entity PII with given character."""
+
 from typing import Dict
 
 from presidio_anonymizer.entities import InvalidParamException

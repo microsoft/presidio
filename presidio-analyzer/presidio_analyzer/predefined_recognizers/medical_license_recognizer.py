@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -37,7 +37,6 @@ class MedicalLicenseRecognizer(PatternRecognizer):
         supported_entity: str = "MEDICAL_LICENSE",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
-
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )

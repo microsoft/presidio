@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Union, Optional
+from typing import Dict, Optional, Union
 
 from pandas import DataFrame
 from presidio_anonymizer.entities import OperatorConfig
@@ -52,13 +52,12 @@ class StructuredEngine:
         self, operators: Union[Dict[str, OperatorConfig], None]
     ) -> Dict[str, OperatorConfig]:
         """
-        Check if the provided operators dictionary has a default operator. \
-            If not, add a default operator.
+        Check if the provided operators dictionary has a default operator. If not, add a default operator.
 
         :param operators: dictionary of operator configurations.
         :return: operators dictionary with the default operator added \
             if it was not initially present.
-        """
+        """  # noqa: E501
         default_operator = OperatorConfig(DEFAULT)
         if not operators:
             self.logger.debug("No operators provided, using default operator")

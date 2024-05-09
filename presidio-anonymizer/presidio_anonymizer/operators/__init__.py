@@ -1,16 +1,17 @@
 """Initializing all the existing anonymizers."""
-from .operator import OperatorType, Operator
+
+from .aes_cipher import AESCipher
+from .custom import Custom
+from .deanonymize_keep import DeanonymizeKeep
+from .decrypt import Decrypt
+from .encrypt import Encrypt
 from .hash import Hash
+from .keep import Keep
 from .mask import Mask
+from .operator import Operator, OperatorType
+from .operators_factory import OperatorsFactory
 from .redact import Redact
 from .replace import Replace
-from .custom import Custom
-from .keep import Keep
-from .deanonymize_keep import DeanonymizeKeep
-from .encrypt import Encrypt
-from .decrypt import Decrypt
-from .aes_cipher import AESCipher
-from .operators_factory import OperatorsFactory
 
 __all__ = [
     "OperatorType",

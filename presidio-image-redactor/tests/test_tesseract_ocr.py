@@ -17,9 +17,7 @@ def test_given_empty_dict_then_get_text_from_ocr_dict_returns_empty_str():
         ("+", "+Homey+Interiors+was+created+by+Katie++Cromley."),
     ],
 )
-def test_given_valid_dict_then_get_text_from_ocr_dict_returns_correct_str(
-    get_ocr_analyzer_results, sep, expected_text
-):
+def test_given_valid_dict_then_get_text_from_ocr_dict_returns_correct_str(get_ocr_analyzer_results, sep, expected_text):
     ocr_result, t, a = get_ocr_analyzer_results
     text = TesseractOCR.get_text_from_ocr_dict(ocr_result, sep)
     assert expected_text == text
