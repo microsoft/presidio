@@ -10,7 +10,7 @@ steps:
           workingDirectory: ${{ parameters.WORKING_FOLDER }}
           script: |
               set -eux  # fail on error
-              pipenv run flake8
+              pipenv run ruff check
 
     - task: Bash@3
       displayName: 'Unit tests: ${{ parameters.SERVICE }}'

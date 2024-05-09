@@ -31,5 +31,5 @@ setup(
     ],
     install_requires=["presidio-analyzer>=2.2", "pyyaml", "pathspec"],
     trusted_host=["pypi.org"],
-    tests_require=["pytest", "flake8>=3.7.9"],
+    tests_require=["pytest", "ruff"],
 )

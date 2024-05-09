@@ -9,7 +9,5 @@ pycryptodome = ">=3.10,<4.0.0"
 
 [dev-packages]
 pytest = "*"
-flake8 = { version = ">=3.7.9" }
-pep8-naming = "*"
-flake8-docstrings = "*"
+ruff = "*"
 pre_commit = "*"

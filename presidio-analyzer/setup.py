@@ -1,4 +1,5 @@
 """Setup.py for Presidio Analyzer."""
+
 import os.path
 from os import path
 
@@ -27,7 +28,7 @@ setuptools.setup(
         "presidio_analyzer": ["py.typed", "conf/*"],
     },
     trusted_host=["pypi.org"],
-    tests_require=["pytest", "flake8>=3.7.9"],
+    tests_require=["pytest", "ruff"],
     install_requires=[
         "spacy>=3.4.4, <4.0.0",
         "regex",
