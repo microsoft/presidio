@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "presidio_analyzer"
+description = "Presidio Analyzer package"
+license = {text = "MIT"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">= 3.7"
+urls = {Homepage = "https://github.com/Microsoft/presidio"}
+dependencies = [
+    "spacy>=3.4.4, <4.0.0",
+    "regex",
+    "tldextract",
+    "pyyaml",
+    "phonenumbers>=8.12,<9.0.0",
+]
+dynamic = ["version"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+long_description_content_type="text/markdown"
+
+[project.optional-dependencies]
+transformers = ["spacy_huggingface_pipelines"]
+stanza = [
+    "stanza",
+    "spacy_stanza",
+]
+azure-ai-language = [
+    "azure-ai-textanalytics",
+    "azure-core",
+]
+test = ["pytest", "ruff"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages]
+find = {namespaces = false}
+
+[tool.setuptools.package-data]
+presidio_analyzer = [
+    "py.typed",
+    "conf/*",
+]
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION"]}
