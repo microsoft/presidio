@@ -10,8 +10,8 @@ steps:
       targetType: 'inline'
       script: |
         set -eux  # fail on error
-        pip install wheel
-        python setup.py bdist_wheel
+        pip install build
+        python -m build --wheel
       workingDirectory: ${{ parameters.WORKING_FOLDER }}
   - task: Bash@3
     displayName: 'Install twine'
