@@ -5,7 +5,7 @@ pathspec = "*"
 
 [dev-packages]
 pytest = ">=6"
-flake8= {version = ">=3.7"}
+ruff = "*"
 pre_commit = ">=2"
 pytest-cov = "*"
 pytest-mock = "*"

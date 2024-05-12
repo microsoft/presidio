@@ -334,9 +334,9 @@ class RecognizerRegistry:
 
         :example:
         >>> registry = RecognizerRegistry()
-        >>> recognizer = { "name": "Titles Recognizer", "supported_language": "de","supported_entity": "TITLE", "deny_list": ["Mr.","Mrs."]} # noqa: E501
+        >>> recognizer = { "name": "Titles Recognizer", "supported_language": "de","supported_entity": "TITLE", "deny_list": ["Mr.","Mrs."]}
         >>> registry.add_pattern_recognizer_from_dict(recognizer)
-        """
+        """  # noqa: E501
 
         recognizer = PatternRecognizer.from_dict(recognizer_dict)
         self.add_recognizer(recognizer)

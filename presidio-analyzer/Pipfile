@@ -20,8 +20,6 @@ azure-core = "*"
 [dev-packages]
 pytest = "*"
 pytest-mock = "*"
-flake8= {version = ">=3.7.9"}
-pep8-naming = "*"
-flake8-docstrings = "*"
+ruff = "*"
 pre_commit = "*"
 python-dotenv = "*"

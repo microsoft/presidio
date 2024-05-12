@@ -27,7 +27,8 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         azure_ai_endpoint: Optional[str] = None,
     ):
         """
-        Wrapper for the PII detection in Azure AI Language
+        Wrap the PII detection in Azure AI Language.
+
         :param supported_entities: List of supported entities for this recognizer.
         If None, all supported entities will be used.
         :param supported_language: Language code to use for the recognizer.
@@ -36,8 +37,8 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         :param azure_ai_key: Azure AI for language key
         :param azure_ai_endpoint: Azure AI for language endpoint
 
-        For more info, see https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/overview # noqa
-        """
+        For more info, see https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/overview
+        """  # noqa E501
 
         super().__init__(
             supported_entities=supported_entities,
@@ -73,7 +74,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
     @staticmethod
     def __get_azure_ai_supported_entities() -> List[str]:
         """Return the list of all supported entities for Azure AI Language."""
-        from azure.ai.textanalytics._models import PiiEntityCategory # noqa
+        from azure.ai.textanalytics._models import PiiEntityCategory  # noqa
 
         return [r.value.upper() for r in PiiEntityCategory]
 

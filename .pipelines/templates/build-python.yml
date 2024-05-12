@@ -3,14 +3,6 @@ parameters:
     - name: WORKING_FOLDER
 
 steps:
-    - task: Bash@3
-      displayName: 'Linting: ${{ parameters.SERVICE }}'
-      inputs:
-          targetType: 'inline'
-          workingDirectory: ${{ parameters.WORKING_FOLDER }}
-          script: |
-              set -eux  # fail on error
-              pipenv run flake8
 
     - task: Bash@3
       displayName: 'Unit tests: ${{ parameters.SERVICE }}'

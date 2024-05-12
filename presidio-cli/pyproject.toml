@@ -1,0 +1,6 @@
+[tool.ruff]
+line-length = 120
+
+# To be fixed:
+[tool.ruff.lint]
+ignore = ["D205", "D400", "E721"]

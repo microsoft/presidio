@@ -11,6 +11,21 @@ stages:
             steps:
                 - template: ./security-analysis.yml
 
+          - job: Linting
+            displayName: Linting
+            pool:
+              vmImage: 'ubuntu-latest'
+            steps:
+              - task: Bash@3
+                displayName: 'Linting: Presidio for $(python.version)'
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    set -eux  # fail on error
+                    pip install ruff
+                    ruff check
+
+
           - job: TestAnalyzer
             displayName: Test Analyzer
             pool:

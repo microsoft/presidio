@@ -11,7 +11,5 @@ pandas = ">=1.5.2"
 
 [dev-packages]
 pytest = "*"
-flake8 = { version = ">=3.7.9" }
-pep8-naming = "*"
-flake8-docstrings = "*"
+ruff = "*"
 pre_commit = "*"
