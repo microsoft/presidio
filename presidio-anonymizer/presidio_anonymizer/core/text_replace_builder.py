@@ -2,7 +2,7 @@
 
 import logging
 
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 
 
 class TextReplaceBuilder:
@@ -55,4 +55,4 @@ class TextReplaceBuilder:
                 f"Invalid analyzer result, start: {start} and end: "
                 f"{end}, while text length is only {self.text_len}."
             )
-            raise InvalidParamException(err_msg)
+            raise InvalidParamError(err_msg)

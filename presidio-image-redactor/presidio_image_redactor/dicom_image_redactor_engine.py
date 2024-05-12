@@ -962,7 +962,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
             if ad_hoc_recognizers is None:
                 ad_hoc_recognizers = [deny_list_recognizer]
-            elif type(ad_hoc_recognizers) is list:
+            elif isinstance(ad_hoc_recognizers, list):
                 ad_hoc_recognizers.append(deny_list_recognizer)
 
         # Detect PII

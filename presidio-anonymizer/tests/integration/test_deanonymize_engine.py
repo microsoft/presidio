@@ -3,7 +3,7 @@ import pytest
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.deanonymize_engine import DeanonymizeEngine
 from presidio_anonymizer.entities import (
-    InvalidParamException,
+    InvalidParamError,
     RecognizerResult,
     OperatorResult,
     OperatorConfig,
@@ -51,7 +51,7 @@ def test_given_short_key_then_we_fail():
     ]
     engine = DeanonymizeEngine()
     expected_result = "Invalid input, key must be of length 128, 192 or 256 bits"
-    with pytest.raises(InvalidParamException, match=expected_result):
+    with pytest.raises(InvalidParamError, match=expected_result):
         engine.deanonymize(
             text,
             encryption_results,
