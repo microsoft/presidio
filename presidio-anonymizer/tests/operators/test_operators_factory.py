@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 
 
@@ -51,20 +51,20 @@ def test_given_decrypt_operator_class_then_we_get_the_correct_class():
 
 def test_given_wrong_name_class_then_we_fail():
     with pytest.raises(
-        InvalidParamException, match="Invalid operator class 'encrypt'."
+        InvalidParamError, match="Invalid operator class 'encrypt'."
     ):
         OperatorsFactory().create_operator_class("encrypt", OperatorType.Deanonymize)
 
 
 def test_given_wrong_name_for_anonymizer_class_then_we_fail():
     with pytest.raises(
-        InvalidParamException, match="Invalid operator class 'decrypt'."
+        InvalidParamError, match="Invalid operator class 'decrypt'."
     ):
         OperatorsFactory().create_operator_class("decrypt", OperatorType.Anonymize)
 
 
 def test_given_wrong_operator_then_we_fail():
-    with pytest.raises(InvalidParamException, match="Invalid operator type '3'."):
+    with pytest.raises(InvalidParamError, match="Invalid operator type '3'."):
         OperatorsFactory().create_operator_class("bla", 3)
 
 
@@ -101,7 +101,7 @@ def test_remove_anonymizer_removes_operator(mock_anonymizer_cls):
 def test_remove_missing_anonymizer_raises_exception(mock_anonymizer_cls):
     factory = OperatorsFactory()
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Operator MockAnonymizer not found in anonymizers list",
     ):
         factory.remove_anonymize_operator(mock_anonymizer_cls)
@@ -119,7 +119,7 @@ def test_remove_deanonymizer_removes_operator(mock_deanonymizer_cls):
 def test_remove_missing_deanonymizer_raises_exception(mock_deanonymizer_cls):
     factory = OperatorsFactory()
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Operator MockDeanonymizer not found in deanonymizers list",
     ):
         factory.remove_deanonymize_operator(mock_deanonymizer_cls)

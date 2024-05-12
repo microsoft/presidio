@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 
 from presidio_anonymizer.operators import Encrypt, AESCipher
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 
 
 @mock.patch.object(AESCipher, "encrypt")
@@ -41,7 +41,7 @@ def test_given_verifying_an_valid_length_bytes_key_no_exceptions_raised():
 
 def test_given_verifying_an_invalid_length_key_then_ipe_raised():
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Invalid input, key must be of length 128, 192 or 256 bits",
     ):
         Encrypt().validate(params={"key": "key"})

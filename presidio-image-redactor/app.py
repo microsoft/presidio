@@ -8,7 +8,7 @@ from io import BytesIO
 from flask import Flask, Response, jsonify, request
 from PIL import Image
 from presidio_image_redactor import ImageRedactorEngine
-from presidio_image_redactor.entities import InvalidParamException
+from presidio_image_redactor.entities import InvalidParamError
 from presidio_image_redactor.entities.api_request_convertor import (
     color_fill_string_to_value,
     get_json_data,
@@ -66,9 +66,9 @@ class Server:
                 img_byte_arr = image_to_byte_array(redacted_image, im.format)
                 return Response(img_byte_arr, mimetype="application/octet-stream")
             else:
-                raise InvalidParamException("Invalid parameter, please add image data")
+                raise InvalidParamError("Invalid parameter, please add image data")
 
-        @self.app.errorhandler(InvalidParamException)
+        @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
             self.logger.warning(
                 f"failed to redact image with validation error: {err.err_msg}"

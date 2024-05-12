@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.entities import InvalidParamException, RecognizerResult
+from presidio_anonymizer.entities import InvalidParamError, RecognizerResult
 
 
 @pytest.mark.parametrize(
@@ -78,7 +78,7 @@ def test_given_recognizer_results_with_different_indices_then_indices_are_not_eq
     # fmt: on
 )
 def test_given_invalid_string_start_instead_of_int_then_we_fail(start, end, err):
-    with pytest.raises(InvalidParamException, match=err):
+    with pytest.raises(InvalidParamError, match=err):
         create_recognizer_result("bla", 0.2, start, end)
 
 
@@ -206,7 +206,7 @@ def test_given_recognizer_results_with_no_conflicting_indices_then_there_is_no_c
 def test_given_json_for_creating_recognizer_result_without_text_then_creation_fails(
     request_json, result_text
 ):
-    with pytest.raises(InvalidParamException) as e:
+    with pytest.raises(InvalidParamError) as e:
         RecognizerResult.from_json(request_json)
     assert result_text == e.value.err_msg
 
@@ -255,7 +255,7 @@ def test_given_recognizer_result_then_one_is_not_greater_then_another(start, end
 
 
 def test_given_endpoint_larger_then_start_point_then_we_fail():
-    with pytest.raises(InvalidParamException) as e:
+    with pytest.raises(InvalidParamError) as e:
         create_recognizer_result("entity", 0, 10, 0)
     assert (
         e.value.err_msg == "Invalid input, start index '10' "
@@ -279,7 +279,7 @@ def test_given_endpoint_equal_to_start_point_then_we_succeed():
 )
 def test_given_negative_start_or_endpoint_then_we_fail(start, end):
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Invalid input, result start and end must be positive",
     ):
         create_recognizer_result("entity", 0, start, end)

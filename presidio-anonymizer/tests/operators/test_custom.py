@@ -1,12 +1,12 @@
 import pytest
 
 from presidio_anonymizer.operators import Custom
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 
 
 def test_given_non_callable_for_custom_then_ipe_raised():
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="New value must be a callable function",
     ):
         Custom().validate({"lambda": "bla"})
@@ -19,7 +19,7 @@ def test_given_lambda_for_custom_we_get_the_result_back():
 
 def test_given_non_str_lambda_than_ipe_raised():
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Function return type must be a str",
     ):
         Custom().validate({"lambda": lambda x: len(x)})

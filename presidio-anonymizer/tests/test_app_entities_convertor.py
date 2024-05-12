@@ -3,7 +3,7 @@ from typing import List
 import pytest
 
 from presidio_anonymizer.entities import (
-    InvalidParamException,
+    InvalidParamError,
     RecognizerResult,
     OperatorConfig,
 )
@@ -45,7 +45,7 @@ def test_given_valid_json_then_anonymizers_config_list_created_successfully():
     # fmt: on
 )
 def test_given_invalid_json_for_analyzer_result_then_we_fail(request_json, result_text):
-    with pytest.raises(InvalidParamException) as e:
+    with pytest.raises(InvalidParamError) as e:
         AppEntitiesConvertor.analyzer_results_from_json(request_json)
     assert result_text == e.value.err_msg
 
@@ -147,7 +147,7 @@ def test_given_invalid_json_then_we_fail_to_convert():
         ],
     }
     with pytest.raises(
-        InvalidParamException, match="Invalid input, result must contain entity_type"
+        InvalidParamError, match="Invalid input, result must contain entity_type"
     ):
         AppEntitiesConvertor.deanonymize_entities_from_json(data)
 

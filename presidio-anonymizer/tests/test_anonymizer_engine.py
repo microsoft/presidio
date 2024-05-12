@@ -4,7 +4,7 @@ import pytest
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import (
-    InvalidParamException,
+    InvalidParamError,
     RecognizerResult,
     OperatorConfig,
     PIIEntity,
@@ -106,7 +106,7 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail(
         f"Invalid analyzer result, start: {start} and end: "
         f"{end}, while text length is only 11."
     )
-    with pytest.raises(InvalidParamException, match=err_msg):
+    with pytest.raises(InvalidParamError, match=err_msg):
         engine.anonymize(original_text, [analyzer_result], {})
 
 
@@ -119,7 +119,7 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail(
     # fmt: on
 )
 def test_given_invalid_json_for_anonymizers_then_we_fail(anonymizers, result_text):
-    with pytest.raises(InvalidParamException, match=result_text):
+    with pytest.raises(InvalidParamError, match=result_text):
         AnonymizerEngine().anonymize(
             "this is my text", [RecognizerResult("number", 0, 4, 0)], anonymizers
         )

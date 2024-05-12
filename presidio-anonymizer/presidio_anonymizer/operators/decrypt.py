@@ -20,7 +20,7 @@ class Decrypt(Operator):
         :return: The encrypted text
         """
         key = params.get(self.KEY)
-        if type(key) is str:
+        if isinstance(key, str):
             key = key.encode("utf8")
         decrypted_text = AESCipher.decrypt(key=key, text=text)
         return decrypted_text

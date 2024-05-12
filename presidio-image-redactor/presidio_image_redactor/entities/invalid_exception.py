@@ -1,7 +1,7 @@
 """Exception to indicate the request we received is invalid."""
 
 
-class InvalidParamException(Exception):
+class InvalidParamError(Exception):
     """Throw exception with error when user input is not valid."""
 
     def __init__(self, msg: str):

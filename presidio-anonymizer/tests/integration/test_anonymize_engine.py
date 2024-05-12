@@ -4,7 +4,7 @@ import pytest
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import (
-    InvalidParamException,
+    InvalidParamError,
     RecognizerResult,
     OperatorConfig,
 )
@@ -40,7 +40,7 @@ def test_given_operator_decrypt_then_we_fail():
     ]
     engine = AnonymizerEngine()
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Invalid operator class 'decrypt'.",
     ):
         engine.anonymize(text, analyzer_results, anonymizers_config)

@@ -1,6 +1,6 @@
 from typing import Dict
 
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.operators.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
@@ -21,7 +21,7 @@ class Encrypt(Operator):
         :return: The encrypted text
         """
         key = params.get(self.KEY)
-        if type(key) is str:
+        if isinstance(key, str):
             key = key.encode("utf8")
         encrypted_text = AESCipher.encrypt(key, text)
         return encrypted_text
@@ -36,16 +36,16 @@ class Encrypt(Operator):
         :raises InvalidParamException in case on an invalid parameter.
         """
         key = params.get(self.KEY)
-        if type(key) is str:
+        if isinstance(key, str):
             validate_parameter(key, self.KEY, str)
             if not AESCipher.is_valid_key_size(key.encode("utf8")):
-                raise InvalidParamException(
+                raise InvalidParamError(
                     f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
                 )
         else:
             validate_parameter(key, self.KEY, bytes)
         if not AESCipher.is_valid_key_size(key):
-            raise InvalidParamException(
+            raise InvalidParamError(
                 f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
             )
 
