@@ -45,8 +45,6 @@ select = ["E", "F", "I", "D", "N", "W",
         # "SIM", "UP", "ANN", "B"
 ]
 ignore = ["E203", "D100", "D202", "D407", "ANN101", "ANN102", "ANN204"]
-        # To be fixed:
-#        "I001", "E721", "N818"]
 
 fixable = ["ALL"]
 
