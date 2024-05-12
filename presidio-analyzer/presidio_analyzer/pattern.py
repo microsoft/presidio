@@ -12,7 +12,6 @@ class Pattern:
     """
 
     def __init__(self, name: str, regex: str, score: float):
-
         self.name = name
         self.regex = regex
         self.score = score

@@ -1,19 +1,19 @@
 import json
 import logging
 from typing import List, Optional
+
 import regex as re
 
 from presidio_analyzer import (
-    RecognizerResult,
     EntityRecognizer,
+    RecognizerResult,
 )
-
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.context_aware_enhancers import (
     ContextAwareEnhancer,
     LemmaContextAwareEnhancer,
 )
-from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
+from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, NlpEngineProvider
 from presidio_analyzer.recognizer_registry import (
     RecognizerRegistry,
     RecognizerRegistryProvider,

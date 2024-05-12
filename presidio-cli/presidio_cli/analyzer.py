@@ -1,17 +1,14 @@
+from typing import Generator, Optional, Union
+
 from presidio_analyzer import RecognizerResult
-from typing import Optional, Generator, Union
+
 from presidio_cli.config import PresidioCLIConfig
 
 
 class Line(object):
-    """ Represents a line of text source."""
-    def __init__(
-        self,
-        line_no: int,
-        buffer: str,
-        start: int,
-        end: int
-    ) -> None:
+    """Represents a line of text source."""
+
+    def __init__(self, line_no: int, buffer: str, start: int, end: int) -> None:
         self.line_no = line_no
         self.start = start
         self.end = end
@@ -19,14 +16,18 @@ class Line(object):
 
     @property
     def content(self):
+        """
+        Get the content of the line.
+
+        :returns: The encrypted text.
+        """
+
         return self.buffer[self.start : self.end]  # noqa
 
 
-def line_generator(
-    buffer: str
-) -> Generator[Line, None, None]:
-    """Generate Line objects from text source.
-    Returns a generator of Line objects.
+def line_generator(buffer: str) -> Generator[Line, None, None]:
+    """Generate Line objects from text source. Returns a generator of Line objects.
+
     :param buffer: str, string to read from
     """
     line_no = 1
@@ -47,11 +48,7 @@ def line_generator(
 class PIIProblem(object):
     """Represents a PII problem found by presidio-cli."""
 
-    def __init__(
-        self,
-        line: int,
-        recognizer_result: RecognizerResult
-    ) -> None:
+    def __init__(self, line: int, recognizer_result: RecognizerResult) -> None:
         assert isinstance(recognizer_result, RecognizerResult)
         self.recognizer_result = recognizer_result.to_dict()
         #: Line on which the problem was found (starting at 1)
@@ -67,11 +64,10 @@ class PIIProblem(object):
 
 
 def _analyze(
-    buffer: str,
-    conf: 'PresidioCLIConfig'
-) -> Generator['PIIProblem', None, None]:
-    """Analyze a text source.
-    Returns a generator of PIIProblem objects.
+    buffer: str, conf: "PresidioCLIConfig"
+) -> Generator["PIIProblem", None, None]:
+    """Analyze a text source. Returns a generator of PIIProblem objects.
+
     :param buffer: str, string to read from
     :param conf: presidio_cli configuration object
     """
@@ -81,8 +77,10 @@ def _analyze(
 
     for line in line_generator(buffer):
         for result in conf.analyzer.analyze(
-            text=line.content, entities=conf.entities, language=conf.language,
-            allow_list=conf.allow_list
+            text=line.content,
+            entities=conf.entities,
+            language=conf.language,
+            allow_list=conf.allow_list,
         ):
             p = PIIProblem(line.line_no, result)
             if p.score >= conf.threshold:
@@ -90,12 +88,10 @@ def _analyze(
 
 
 def analyze(
-    input: str,
-    conf: 'PresidioCLIConfig',
-    filepath: Optional[str] = None
-) -> Union[tuple, Generator['PIIProblem', None, None], None]:
-    """Analyze a text source.
-    Returns a generator of PIIProblem objects.
+    input: str, conf: "PresidioCLIConfig", filepath: Optional[str] = None
+) -> Union[tuple, Generator["PIIProblem", None, None], None]:
+    """Analyze a text source. Returns a generator of PIIProblem objects.
+
     :param input: buffer, string or stream to read from
     :param conf: presidio_cli configuration object
     :param filepath: string, string with path to file

@@ -1,7 +1,6 @@
 from typing import Dict
 
-from presidio_anonymizer.operators import Operator, Encrypt
-from presidio_anonymizer.operators import OperatorType
+from presidio_anonymizer.operators import Encrypt, Operator, OperatorType
 from presidio_anonymizer.operators.aes_cipher import AESCipher
 
 

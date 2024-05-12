@@ -2,10 +2,9 @@ import copy
 import logging
 from typing import List, Optional
 
-from presidio_analyzer import RecognizerResult
-from presidio_analyzer import EntityRecognizer
-from presidio_analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer import EntityRecognizer, RecognizerResult
 from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
+from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -243,7 +242,10 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
 
     @staticmethod
     def _find_index_of_match_token(
-        word: str, start: int, tokens, tokens_indices: List[int]  # noqa ANN001
+        word: str,
+        start: int,
+        tokens,
+        tokens_indices: List[int],  # noqa ANN001
     ) -> int:
         found = False
         # we use the known start index of the original word to find the actual

@@ -1,12 +1,10 @@
 import copy
 import logging
-from typing import Optional, List, Iterable, Union, Type, Dict
-
-import yaml
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional, Type, Union
 
 import regex as re
-
-from pathlib import Path
+import yaml
 
 from presidio_analyzer import EntityRecognizer, PatternRecognizer
 from presidio_analyzer.nlp_engine import (
@@ -16,42 +14,42 @@ from presidio_analyzer.nlp_engine import (
     TransformersNlpEngine,
 )
 from presidio_analyzer.predefined_recognizers import (
+    AuAbnRecognizer,
+    AuAcnRecognizer,
+    AuMedicareRecognizer,
+    AuTfnRecognizer,
     CreditCardRecognizer,
     CryptoRecognizer,
     DateRecognizer,
     EmailRecognizer,
+    EsNieRecognizer,
+    EsNifRecognizer,
     IbanRecognizer,
+    InAadhaarRecognizer,
+    InPanRecognizer,
+    InPassportRecognizer,
+    InVehicleRegistrationRecognizer,
+    InVoterRecognizer,
     IpRecognizer,
+    ItDriverLicenseRecognizer,
+    ItFiscalCodeRecognizer,
+    ItIdentityCardRecognizer,
+    ItPassportRecognizer,
+    ItVatCodeRecognizer,
     MedicalLicenseRecognizer,
     NhsRecognizer,
     PhoneRecognizer,
-    UrlRecognizer,
-    UsBankRecognizer,
-    UsLicenseRecognizer,
-    UsItinRecognizer,
-    UsPassportRecognizer,
-    UsSsnRecognizer,
+    PlPeselRecognizer,
     SgFinRecognizer,
     SpacyRecognizer,
-    EsNifRecognizer,
-    EsNieRecognizer,
     StanzaRecognizer,
-    AuAbnRecognizer,
-    AuAcnRecognizer,
-    AuTfnRecognizer,
-    AuMedicareRecognizer,
-    ItDriverLicenseRecognizer,
-    ItFiscalCodeRecognizer,
-    ItVatCodeRecognizer,
     TransformersRecognizer,
-    ItPassportRecognizer,
-    ItIdentityCardRecognizer,
-    InPanRecognizer,
-    PlPeselRecognizer,
-    InAadhaarRecognizer,
-    InVehicleRegistrationRecognizer,
-    InVoterRecognizer,
-    InPassportRecognizer,
+    UrlRecognizer,
+    UsBankRecognizer,
+    UsItinRecognizer,
+    UsLicenseRecognizer,
+    UsPassportRecognizer,
+    UsSsnRecognizer,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -356,12 +354,12 @@ class RecognizerRegistry:
         """
 
         try:
-            with open(yml_path, "r") as stream:
+            with open(yml_path) as stream:
                 yaml_recognizers = yaml.safe_load(stream)
 
             for yaml_recognizer in yaml_recognizers["recognizers"]:
                 self.add_pattern_recognizer_from_dict(yaml_recognizer)
-        except IOError as io_error:
+        except OSError as io_error:
             print(f"Error reading file {yml_path}")
             raise io_error
         except yaml.YAMLError as yaml_error:

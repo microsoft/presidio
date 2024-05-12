@@ -1,7 +1,7 @@
 import logging
-from typing import List, Iterable, Dict, Union, Any, Optional, Iterator, Tuple
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, Union
 
-from presidio_analyzer import DictAnalyzerResult, RecognizerResult, AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine, DictAnalyzerResult, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")

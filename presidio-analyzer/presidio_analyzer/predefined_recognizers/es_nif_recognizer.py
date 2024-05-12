@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
 

@@ -1,8 +1,9 @@
 """Replaces the PII text with function result."""
+
 from typing import Dict
 
-from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.operators import Operator, OperatorType
 
 
 class Custom(Operator):

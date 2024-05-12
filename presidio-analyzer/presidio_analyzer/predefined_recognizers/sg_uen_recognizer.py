@@ -1,7 +1,7 @@
-from typing import Optional, List
-from presidio_analyzer import Pattern, PatternRecognizer
-
 from datetime import date
+from typing import List, Optional
+
+from presidio_analyzer import Pattern, PatternRecognizer
 
 # This class includes references to an UEN checksum validation implementation
 # written in Javascript which can be found at:

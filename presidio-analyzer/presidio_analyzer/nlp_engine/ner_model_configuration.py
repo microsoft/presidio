@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import Dict, Optional, Collection, Type
+from typing import Collection, Dict, Optional, Type
 
 logger = logging.getLogger("presidio-analyzer")
 

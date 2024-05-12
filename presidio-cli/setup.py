@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
 import os.path
+
 from presidio_cli import (
+    APP_DESCRIPTION,
     APP_NAME,
     APP_VERSION,
-    APP_DESCRIPTION,
 )
+from setuptools import setup
 
 readme = ""
 here = os.path.abspath(os.path.dirname(__file__))

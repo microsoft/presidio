@@ -1,10 +1,11 @@
 """Deanonymize anonymized text by using deanonymize operators."""
-from typing import List, Dict, Type
+
 import logging
+from typing import Dict, List, Type
 
 from presidio_anonymizer.core.engine_base import EngineBase
-from presidio_anonymizer.entities import OperatorConfig, OperatorResult, EngineResult
-from presidio_anonymizer.operators import OperatorType, Operator
+from presidio_anonymizer.entities import EngineResult, OperatorConfig, OperatorResult
+from presidio_anonymizer.operators import Operator, OperatorType
 
 logger = logging.getLogger("presidio-anonymizer")
 

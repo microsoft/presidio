@@ -1,27 +1,23 @@
 import argparse
-import os
-import sys
 import io
-import locale
-import platform
 import json
+import locale
+import os
+import platform
+import sys
 import traceback
 from typing import Generator, List
 
-from presidio_cli import SHELL_NAME, APP_DESCRIPTION, APP_VERSION
-from presidio_cli.analyzer import analyze, PIIProblem
+from presidio_cli import APP_DESCRIPTION, APP_VERSION, SHELL_NAME
+from presidio_cli.analyzer import PIIProblem, analyze
 from presidio_cli.config import PresidioCLIConfig, PresidioCLIConfigError
 
 
 class Format(object):
-    """
-    Class providing methods for formatting output with information about
-    discovered PII problems.
-    """
+    """Class providing methods for formatting output, with information about discovered PII problems."""  # noqa: E501
+
     @staticmethod
-    def parsable(
-        problem: PIIProblem
-    ) -> str:
+    def parsable(problem: PIIProblem) -> str:
         """
         Format the problem as JSON.
 
@@ -31,9 +27,7 @@ class Format(object):
         return json.dumps(problem.recognizer_result)
 
     @staticmethod
-    def standard(
-        problem: PIIProblem
-    ) -> str:
+    def standard(problem: PIIProblem) -> str:
         """
         Output the problem in standard format.
 
@@ -50,9 +44,7 @@ class Format(object):
         return line
 
     @staticmethod
-    def standard_color(
-        problem: PIIProblem
-    ) -> str:
+    def standard_color(problem: PIIProblem) -> str:
         """
         Output the problem in standard, colored format.
 
@@ -72,28 +64,25 @@ class Format(object):
         return line
 
     @staticmethod
-    def github(
-        problem: PIIProblem,
-        filename: str
-    ) -> str:
+    def github(problem: PIIProblem, filename: str) -> str:
         """
         Output the problem in git-diff-like format.
 
         :param problem: PIIProblem to be formatted.
         :param filename: Filename where the problem occurs.
         """
-        line = f"::{str(problem.score)} file={filename},line={format(problem.line)}," \
-               + f"col={format(problem.column)}::{format(problem.line)}" \
-               + f":{format(problem.column)} [{problem.type}]"
+        line = (
+            f"::{str(problem.score)} file={filename},line={format(problem.line)},"
+            + f"col={format(problem.column)}::{format(problem.line)}"
+            + f":{format(problem.column)} [{problem.type}]"
+        )
         if problem.explanation:
             line += problem.explanation
         return line
 
 
 def supports_color() -> bool:
-    """
-    Check whether the platform supports colored output.
-    """
+    """Check whether the platform supports colored output."""
     supported_platform = not (
         platform.system() == "Windows"
         and not (
@@ -105,10 +94,10 @@ def supports_color() -> bool:
 
 
 def show_problems(
-    problems: Generator['PIIProblem', None, None],
+    problems: Generator["PIIProblem", None, None],
     file: str,
     args_format: str,
-    no_warn: bool
+    no_warn: bool,
 ):
     """
     Show formatted output of discovered problems.
@@ -158,8 +147,7 @@ def show_problems(
 
 
 def find_files_recursively(
-    items: List[str],
-    conf: PresidioCLIConfig
+    items: List[str], conf: PresidioCLIConfig
 ) -> Generator[str, None, None]:
     """
     Generate all file names inside the directories.
@@ -180,9 +168,7 @@ def find_files_recursively(
 
 
 def run() -> None:
-    """
-    Entrypoint of Presidio CLI.
-    """
+    """Entrypoint of Presidio CLI."""
     parser = argparse.ArgumentParser(prog=SHELL_NAME, description=APP_DESCRIPTION)
 
     parser.add_argument("-v", "--version", action="version", version=f"v{APP_VERSION}")

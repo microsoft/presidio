@@ -3,17 +3,17 @@ from typing import Dict, Type
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.operators import (
-    OperatorType,
-    Operator,
     Custom,
+    DeanonymizeKeep,
     Decrypt,
     Encrypt,
     Hash,
     Keep,
     Mask,
+    Operator,
+    OperatorType,
     Redact,
     Replace,
-    DeanonymizeKeep,
 )
 
 logger = logging.getLogger("presidio-anonymizer")
