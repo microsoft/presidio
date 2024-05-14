@@ -10,7 +10,7 @@ recognizer_registry_conf_file = "./analyzer/recognizers-config.yml"
 provider = RecognizerRegistryProvider(
                 conf_file=recognizer_registry_conf_file
             )
-recognizer_registry = provider.create_recognizer_registry()
+registry = provider.create_recognizer_registry()
 analyzer = AnalyzerEngine(
             registry=registry,
             )
