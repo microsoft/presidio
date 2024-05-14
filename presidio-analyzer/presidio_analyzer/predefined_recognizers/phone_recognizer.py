@@ -3,10 +3,10 @@ from typing import List, Optional
 import phonenumbers
 
 from presidio_analyzer import (
+    RecognizerResult,
+    LocalRecognizer,
     AnalysisExplanation,
     EntityRecognizer,
-    LocalRecognizer,
-    RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
@@ -23,7 +23,21 @@ class PhoneRecognizer(LocalRecognizer):
     """
 
     SCORE = 0.4
-    CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
+    CONTEXT = [
+        "phone", 
+        "number", 
+        "telephone", 
+        "cell", 
+        "cellphone", 
+        "mobile", 
+        "call", 
+        "mob",
+        "P",
+        "M",
+        "Ph",
+        "landline",
+        "dial",
+    ]
     DEFAULT_SUPPORTED_REGIONS = ("US", "UK", "DE", "FE", "IL", "IN", "CA", "BR")
 
     def __init__(
@@ -63,9 +77,8 @@ class PhoneRecognizer(LocalRecognizer):
         """
         results = []
         for region in self.supported_regions:
-            for match in phonenumbers.PhoneNumberMatcher(
-                text, region, leniency=self.leniency
-            ):
+            for match in phonenumbers.PhoneNumberMatcher(text, region,
+                                                         leniency=self.leniency):
                 results += [
                     self._get_recognizer_result(match, text, region, nlp_artifacts)
                 ]

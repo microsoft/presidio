@@ -1,5 +1,4 @@
-from typing import List, Optional
-
+from typing import Optional, List
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -38,6 +37,10 @@ class InVoterRecognizer(PatternRecognizer):
         "voter",
         "epic",
         "elector photo identity card",
+        "voterid",
+        "votercard",
+        "voteridcard",
+        "electoral photo identity card",
     ]
 
     def __init__(
@@ -47,6 +50,7 @@ class InVoterRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "IN_VOTER",
     ):
+
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
         super().__init__(

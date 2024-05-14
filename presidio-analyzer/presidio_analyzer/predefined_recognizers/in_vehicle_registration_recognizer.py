@@ -1,6 +1,5 @@
-from typing import List, Optional, Tuple
-
 from presidio_analyzer import Pattern, PatternRecognizer
+from typing import Optional, List, Tuple
 from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
 
 

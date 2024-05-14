@@ -1,6 +1,5 @@
-from typing import List, Optional, Tuple
-
 from presidio_analyzer import Pattern, PatternRecognizer
+from typing import Optional, List, Tuple
 from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
 
 
@@ -25,11 +24,21 @@ class InAadhaarRecognizer(PatternRecognizer):
             r"\b[0-9]{12}\b",
             0.01,
         ),
+        Pattern(
+            "AADHAAR (Medium)",
+            r"\b[2-9]\d{3}[-\s]?\d{4}[-\s]?\d{4}\b",
+            0.4,
+        ),
     ]
 
     CONTEXT = [
         "aadhaar",
         "uidai",
+
+        "aadhar",
+        "aadhar#",
+        "uid",
+        "आधार",
     ]
 
     utils = None

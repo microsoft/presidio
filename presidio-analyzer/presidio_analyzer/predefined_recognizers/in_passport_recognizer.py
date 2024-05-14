@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, List
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -21,12 +21,25 @@ class InPassportRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "PASSPORT",
-            r"\b[A-Z][1-9][0-9]{2}[0-9]{4}[1-9]\b",
-            0.1,
+            r"\b[A-Z][1-9][0-9]{6}[1-9]\b",
+            0.4,
         ),
     ]
 
-    CONTEXT = ["passport", "indian passport", "passport number"]
+    CONTEXT = [
+        "passport",
+        "indian passport",
+        "passport number",
+        "passport#",
+        "passport #",
+        "passportid",
+        "passports",
+        "passportno",
+        "passport no",
+        "passportnumber",
+        "passportnumbers",
+        "passport numbers",
+    ]
 
     def __init__(
         self,
