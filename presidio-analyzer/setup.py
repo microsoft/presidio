@@ -19,7 +19,7 @@ except Exception:
     __version__ = os.environ.get("PRESIDIO_VERSION", "0.0.1-alpha")
 
 setuptools.setup(
-    name="presidio-analyzer",
+    name="presidio_analyzer",
     version=__version__,
     description="Presidio analyzer package",
     url="https://github.com/Microsoft/presidio",
