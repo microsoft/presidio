@@ -86,7 +86,7 @@ from presidio_analyzer.predefined_recognizers import (
     UsBankRecognizer,
     UsItinRecognizer,
     UsLicenseRecognizer,
-    UsPassportRecognizer,
+    # UsPassportRecognizer,
     UsSsnRecognizer,
 )
 
@@ -172,7 +172,7 @@ class RecognizerRegistry:
                 UsBankRecognizer,
                 UsLicenseRecognizer,
                 UsItinRecognizer,
-                UsPassportRecognizer,
+                # UsPassportRecognizer,
                 UsSsnRecognizer,
                 NhsRecognizer,
                 SgFinRecognizer,
