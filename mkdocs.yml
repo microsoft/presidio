@@ -34,12 +34,14 @@ nav:
       - Developing PII recognizers:
         - Tutorial : analyzer/adding_recognizers.md
         - Best practices in developing recognizers : analyzer/developing_recognizers.md
+        - Customizing recognizer registry : analyzer/recognizer_registry_provider.md
       - Multi-language support: analyzer/languages.md
       - Customizing the NLP model: 
         - Home: analyzer/customizing_nlp_models.md
         - Spacy/Stanza: analyzer/nlp_engines/spacy_stanza.md
         - Transformers: analyzer/nlp_engines/transformers.md
       - Tracing the decision process: analyzer/decision_process.md
+      - Customizing analyzer engine: analyzer/analyzer_engine_provider.md
     - Presidio Anonymizer:
       - Home: anonymizer/index.md
       - Developing PII operators: anonymizer/adding_operators.md

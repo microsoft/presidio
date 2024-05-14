@@ -1,0 +1,92 @@
+# Customizing recognizer registry
+To load recognizers from file, use `RecognizerRegistryProvider` to instantiate the recognizer registry and then pass it through to the analyzer engine:
+
+```python
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
+
+recognizer_registry_conf_file = "./analyzer/recognizers-config.yml"
+
+provider = RecognizerRegistryProvider(
+                conf_file=recognizer_registry_conf_file
+            )
+recognizer_registry = provider.create_recognizer_registry()
+analyzer = AnalyzerEngine(
+            registry=registry,
+            )
+
+results = analyzer.analyze(text="My name is Morris")
+print(results)
+```
+
+## Configuration file structure
+
+```yaml
+global_regex_flags: 26
+recognizers: 
+...
+```
+
+The configuration file consists of two parts:
+
+  - `global_regex_flags`: regex flags to be used in regex matching.
+  - `recognizers`: a list of recognizers to be loaded by the recognizer registry. This list consists of two different types of recognizers: 
+    - Predefined: A set of already defined recognizer classes in presidio
+    - Custom: custom created pattern recognizers that are created ad hoc based on the fields provided in the configuration file
+
+## Recognizer list
+
+The recognizer list comprises of both the predefined and custom recognizers, for example: 
+
+```yaml
+...
+    - name: CreditCardRecognizer
+    supported_languages:
+    - language: en
+        context: [credit, card, visa, mastercard, cc,
+        amex, discover, jcb, diners, maestro, instapayment]
+    - language: es
+        context: [tarjeta, credito, visa, mastercard, cc,
+        amex, discover, jcb, diners, maestro, instapayment]
+    - language: it
+    - language: pl
+    type: predefined
+
+    - name: UsBankRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+    - MedicalLicenseRecognizer
+
+    - name: ExampleCustomRecognizer
+    patterns:
+        - name: "zip code (weak)"
+        regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+        score: 0.01
+        - name: "zip code (weak)"
+        regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+        score: 0.01
+    supported_languages:
+        - language: en
+        context: [credit]
+        - language: es
+        context: [tarjeta,credito]
+    supported_entity: "ZIP"
+    deny_list: [Mr., Mrs., Ms., Miss, Dr., Prof.]
+    deny_list_score: 1
+    type: custom
+    enabled: true
+```
+
+The recognizer parameters:
+
+  - `supported_languages`: A list of supported languages that the analyzer will support. In case this field is missing, a recognizer will be created for each supported language provided be `AnalyzerEngine`. 
+  In addition to the language code, this field also contains the context, which increases confidence in the detection (as seen in the credit card example above).
+  - `type`: this could be either predefined or custom.
+  - `name`: Different per the type of the recognizer. For predefined recognizers, this is the class name as defined in presidio, while for custom recognizers, it will be set as the name of the recognizer. Note: for predefined recognizers, it's possible to provide the class name to instantiate the recognizer - see `MedicalLicenseRecognizer` above.
+  - `patterns`: Pattern array that contains a name, score and regex that define matching patterns.
+  - `enabled`: enables or disables the recognizer.
+  - `supported_entity`: the detected entity associated by the recognizer.
+  - `deny_list`: A list of words to detect, in case the recognizer uses a predefined list of words.
+  - `deny_list_score`: confidence score for a term identified using a deny-list.
