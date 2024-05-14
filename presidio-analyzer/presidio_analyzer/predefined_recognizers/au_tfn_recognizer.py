@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional, List, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -31,8 +31,8 @@ class AuTfnRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "TFN (Medium)",
-            r"\b\d{3}\s\d{3}\s\d{3}\b",
-            0.1,
+            r"\b\d{3}[-\s]?\d{3}[-\s]?\d{3}\b",
+            0.4,
         ),
         Pattern(
             "TFN (Low)",
@@ -44,6 +44,14 @@ class AuTfnRecognizer(PatternRecognizer):
     CONTEXT = [
         "tax file number",
         "tfn",
+
+        "australian business number",
+        "marginal tax rate",
+        "medicare levy",
+        "portfolio number",
+        "service veterans",
+        "withholding tax",
+        "individual tax return",
     ]
 
     def __init__(

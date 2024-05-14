@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, List
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -38,6 +38,22 @@ class UsLicenseRecognizer(PatternRecognizer):
     ]
 
     CONTEXT = [
+        "DL",
+        "DLS",
+        "CDL",
+        "CDLS",
+        "ID",
+        "IDs",
+        "DL#",
+        "DLS#",
+        "CDL#",
+        "CDLS#",
+        "ID#",
+        "IDs#",
+        "ID number",
+        "ID numbers",
+        "DLN",
+
         "driver",
         "license",
         "permit",
@@ -47,6 +63,45 @@ class UsLicenseRecognizer(PatternRecognizer):
         "cdls",
         "lic#",
         "driving",
+
+        "DriverLic",
+        "DriverLics",
+        "DriverLicense",
+        "DriverLicenses",
+        "Driver Lic",
+        "Driver Lics",
+        "Driver License",
+        "Driver Licenses",
+        "DriversLic",
+        "DriversLics",
+        "DriversLicense",
+        "DriversLicenses",
+        "Drivers Lic",
+        "Drivers Lics",
+        "Drivers License",
+        "Drivers Licenses",
+        "Driver'Lic",
+        "Driver'Lics",
+        "Driver'License",
+        "Driver'Licenses",
+        "Driver' Lic",
+        "Driver' Lics",
+        "Driver' License",
+        "Driver' Licenses",
+        "Driver'sLic",
+        "Driver'sLics",
+        "Driver'sLicense",
+        "Driver'sLicenses",
+        "Driver's Lic",
+        "Driver's Lics",
+        "Driver's License",
+        "Driver's Licenses",
+        "identification number",
+        "identification numbers",
+        "identification #",
+        "id card",
+        "id cards",
+        "identification card",
     ]
 
     def __init__(

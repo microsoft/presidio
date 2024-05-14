@@ -1,5 +1,5 @@
 import ipaddress
-from typing import List, Optional
+from typing import Optional, List
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -32,7 +32,14 @@ class IpRecognizer(PatternRecognizer):
         ),
     ]
 
-    CONTEXT = ["ip", "ipv4", "ipv6"]
+    CONTEXT = ["ip", 
+            "ipv4", 
+            "ipv6",
+            "IP (case sensitive)",
+            "ip address",
+            "ip addresses",
+            "internet protocol",
+            "IP-כתובת ה",]
 
     def __init__(
         self,

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, List
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -31,6 +31,21 @@ class UsBankRecognizer(PatternRecognizer):
         "bank",
         "save",
         "debit",
+
+        "Checking Account Number",
+        "Checking Account",
+        "Checking Account #",
+        "Checking Acct Number",
+        "Checking Acct #",
+        "Checking Acct No.",
+        "Checking Account No.",
+        "Bank Account Number",
+        "Bank Account #",
+        "Bank Acct Number",
+        "Bank Acct #",
+        "Bank Acct No.",
+        "Bank Account No.",
+        "Savings Account Number",
     ]
 
     def __init__(
