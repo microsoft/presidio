@@ -22,5 +22,5 @@ steps:
           workingDirectory: ${{ parameters.WORKING_FOLDER }}
           script: |
               set -eux  # fail on error
-              pip install wheel
-              python setup.py bdist_wheel
+              pip install build
+              python -m build --wheel
