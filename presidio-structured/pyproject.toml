@@ -3,8 +3,8 @@ requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "presidio_anonymizer"
-description = "Presidio Anonymizer package - replaces analyzed text with desired values."
+name = "presidio_structured"
+description = "Presidio structured package - analyzes and anonymizes structured and semi-structured data."
 license = {text = "MIT License"}
 classifiers = [
     "License :: OSI Approved :: MIT License",
@@ -15,18 +15,23 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">= 3.5"
-keywords = ["presidio_anonymizer"]
-urls = {Homepage = "https://github.com/Microsoft/presidio"}
-dependencies = ["pycryptodome>=3.10.1"]
+keywords = ["presidio_structured"]
+urls = {Homepage = "https://github.com/microsoft/presidio"}
+requires-python = ">=3.5"
+dependencies = [
+    "presidio-analyzer>=2.2",
+    "presidio-anonymizer>=2.2",
+]
 dynamic = ["version"]
+
+
+[project.optional-dependencies]
+test = ["pytest", "ruff"]
+
 
 [project.readme]
 file = "README.md"
 content-type = "text/markdown"
-
-[project.optional-dependencies]
-test = ["pytest", "ruff"]
 
 [tool.setuptools.dynamic]
 version = {file = ["VERSION"]}
