@@ -72,15 +72,15 @@ The configuration file contains the following parameters:
   - `supported_languages`: A list of supported languages that the analyzer will support.
   - `default_score_threshold`: A score that determines the minimal threshold for detection.
   - `nlp_configuration`: Configuration given to the NLP engine which will detect the PIIs and extract features for the downstream logic.
-  - `recognizer_registry`: All the regognizers that will be used by the analyzer. 
+  - `recognizer_registry`: All the recognizers that will be used by the analyzer. 
 
 ## Using multiple files
 
-Create an `AnalyzerEngineProvider` using three different configurations files for each of the following components:
+Create an `AnalyzerEngineProvider` using three different configuration files for each of the following components:
 
   - Analyzer
   - NLP Engine
-  - Container Registry
+  - Recognizer Registry
 
 Note: Each of these parameters is optional and in case it's not set, the default configuration will be used. 
 
@@ -99,7 +99,7 @@ provider = AnalyzerEngineProvider(
     )
 analyzer = provider.create_engine()
 
-results = analyzer.analyze(text="My name is Morris")
+results = analyzer.analyze(text="My name is Morris", language="en")
 print(results)
 ```
 
@@ -126,7 +126,7 @@ from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider
 
 provider = AnalyzerEngineProvider().create_engine()
 
-results = analyzer.analyze(text="My name is Morris")
+results = analyzer.analyze(text="My name is Morris", language="en")
 print(results)
 ```
 
