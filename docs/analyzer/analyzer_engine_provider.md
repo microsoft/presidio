@@ -1,4 +1,4 @@
-# Customizing Analyzer Engine
+# Configuring the Analyzer Engine from file
 
 Presidio uses `AnalyzerEngineProvider` to load `AnalyzerEngine` configuration from file. 
 Configuration can be loaded in three different ways:
@@ -115,7 +115,7 @@ The structure of the configuration files is as follows:
 
 - NLP engine configuration file structure is examined thoroughly in the [Customizing the NLP model](customizing_nlp_models.md) section.
 
-- Recognizer registry configuration file structure is examined thoroughly in the [Customizing recognizer registry](recognizer_registry_provider.md) section.
+- Recognizer registry configuration file structure is examined thoroughly in the [Customizing recognizer registry from file](recognizer_registry_provider.md) section.
 
 ## Using the default configuration
 

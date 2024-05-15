@@ -1,4 +1,4 @@
-# Customizing recognizer registry
+# Customizing recognizer registry from file
 To load recognizers from file, use `RecognizerRegistryProvider` to instantiate the recognizer registry and then pass it through to the analyzer engine:
 
 ```python
@@ -31,8 +31,8 @@ The configuration file consists of two parts:
 
   - `global_regex_flags`: regex flags to be used in regex matching.
   - `recognizers`: a list of recognizers to be loaded by the recognizer registry. This list consists of two different types of recognizers: 
-    - Predefined: A set of already defined recognizer classes in presidio
-    - Custom: custom created pattern recognizers that are created ad hoc based on the fields provided in the configuration file
+    - Predefined: A set of already defined recognizer classes in presidio. This includes all recognizers defined in the codebase (along with user defined recognizers) that inherit from EntityRecognizer.
+    - Custom: custom created pattern recognizers that are created based on the fields provided in the configuration file.
 
 ## Recognizer list
 
@@ -71,19 +71,23 @@ The recognizer list comprises of both the predefined and custom recognizers, for
         - language: en
         context: [credit]
         - language: es
-        context: [tarjeta,credito]
+        context: [zip, code]
     supported_entity: "ZIP"
-    deny_list: [Mr., Mrs., Ms., Miss, Dr., Prof.]
-    deny_list_score: 1
     type: custom
     enabled: true
+
+    - name: "TitlesRecognizer"
+    supported_language: "en"
+    supported_entity: "TITLE"
+    deny_list: [Mr., Mrs., Ms., Miss, Dr., Prof.]
+    deny_list_score: 1
 ```
 
 The recognizer parameters:
 
   - `supported_languages`: A list of supported languages that the analyzer will support. In case this field is missing, a recognizer will be created for each supported language provided to the `AnalyzerEngine`. 
   In addition to the language code, this field also contains a list of context words, which increases confidence in the detection in case it is found in the surroundings of a detected entity (as seen in the credit card example above).
-  - `type`: this could be either predefined or custom.
+  - `type`: this could be either predefined or custom. As this is optional, if not stated otherwise, the default type is custom.
   - `name`: Different per the type of the recognizer. For predefined recognizers, this is the class name as defined in presidio, while for custom recognizers, it will be set as the name of the recognizer. Note: for predefined recognizers, it's possible to provide the class name to instantiate the recognizer - see `MedicalLicenseRecognizer` above.
   - `patterns`: a list of objects of type `Pattern` that contains a name, score and regex that define matching patterns.
   - `enabled`: enables or disables the recognizer.
