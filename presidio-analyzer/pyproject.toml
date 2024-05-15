@@ -43,6 +43,7 @@ azure-ai-language = [
     "azure-core",
 ]
 test = ["pytest", "pytest-mock", "ruff", "python-dotenv"]
+all = ['presidio_analyzer[server,transformers,stanza,azure-ai-language,test]']
 
 [tool.setuptools.package-data]
 presidio_analyzer = [
