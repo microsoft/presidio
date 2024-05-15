@@ -32,6 +32,7 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.optional-dependencies]
+server = ["flask>=1.1"]
 transformers = ["spacy_huggingface_pipelines"]
 stanza = [
     "stanza",
@@ -40,6 +41,9 @@ stanza = [
 azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
+]
+all = [
+    "presidio_analyzer[server,transformers,stanza,azure-ai-language]"
 ]
 test = ["pytest", "ruff"]
 

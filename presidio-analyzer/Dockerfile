@@ -24,7 +24,7 @@ RUN apt-get update \
   && apt-get install -y build-essential
 
 RUN pip install pipenv \
-  && pipenv install --deploy
+  && pipenv install -e ".[server,transformers,azure-ai-language]" --deploy --system
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 

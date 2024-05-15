@@ -16,7 +16,7 @@ steps:
       workingDirectory: 'presidio-analyzer'
       script: |
         set -eux  # fail on error
-        pipenv install --deploy --dev
+        pipenv install -e ".[all]"
         pipenv run python -m spacy download en_core_web_lg
         pipenv run python -m spacy download en_core_web_sm
 
