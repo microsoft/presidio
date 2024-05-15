@@ -49,4 +49,4 @@ build-dir = "docs/_build"
 warning-is-error = "1"
 
 [tool.setuptools.dynamic]
-version = {file = ["VERSION"]}
+version = {attr = "presidio_cli.APP_VERSION"}
