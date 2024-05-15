@@ -17,7 +17,7 @@ provider = AnalyzerEngineProvider(
     )
 analyzer = provider.create_engine()
 
-results = analyzer.analyze(text="My name is Morris")
+results = analyzer.analyze(text="My name is Morris", language="en")
 print(results)
 ```
 
