@@ -42,7 +42,7 @@ azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
 ]
-test = ["pytest", "ruff"]
+test = ["pytest", "ruff", "dotenv"]
 
 [tool.setuptools.package-data]
 presidio_analyzer = [
