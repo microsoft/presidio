@@ -16,7 +16,7 @@ steps:
       workingDirectory: 'presidio-analyzer'
       script: |
         set -eux  # fail on error
-        pipenv install -e ".[server,transformers,azure-ai-language]"
+        pipenv install --deploy --dev
         pipenv run python -m spacy download en_core_web_lg
         pipenv run python -m spacy download en_core_web_sm
 

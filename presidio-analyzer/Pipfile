@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+presidio-analyzer = {extras = ["server", "transformers", "azure-ai-language", "stanza"], file = ".", editable = true}
+
+[dev-packages]
+pytest = "*"
+pytest-mock = "*"
+ruff = "*"
+pre_commit = "*"
+python-dotenv = "*"
