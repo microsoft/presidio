@@ -114,7 +114,7 @@ class RecognizerRegistryProvider:
             configuration = self._add_missing_keys(
                 configuration=configuration,
                 conf_file=self._get_full_conf_path(),
-                oad_predefined_recognizers=load_predefined_recognizers
+                load_predefined_recognizers=load_predefined_recognizers
             )
         else:
             try:
