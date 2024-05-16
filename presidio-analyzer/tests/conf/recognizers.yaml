@@ -1,20 +1,24 @@
 recognizers:
-  - name: ZipCodeRecognizer
+  -
+    name: "Zip code Recognizer"
+    supported_language: "de"
     patterns:
-      - name: "zip code (weak)"
-        regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
-        score: 0.01
-    supported_languages:
-      - language: en
-        context: [zip, code]
-      - language: es
-        context: [zip, code]
+      -
+         name: "zip code (weak)"
+         regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+         score: 0.01
+    context:
+     - zip
+     - code
     supported_entity: "ZIP"
-    type: custom
-    enabled: true
-
-  - name: "TitleRecognizer"
+  -
+    name: "Titles recognizer"
     supported_language: "en"
-    supported_entity: TITLE
-    deny_list: [Mr., Mrs., Ms., Miss, Dr., Prof.]
-    deny_list_score: 1
+    supported_entity: "TITLE"
+    deny_list:
+      - Mr.
+      - Mrs.
+      - Ms.
+      - Miss
+      - Dr.
+      - Prof.

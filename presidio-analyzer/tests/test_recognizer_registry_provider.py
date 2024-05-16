@@ -40,7 +40,7 @@ def test_recognizer_registry_provider_configuration_file():
 
 def test_recognizer_registry_provider_configuration_file_load_predefined(mandatory_recognizers):
     this_path = Path(__file__).parent.absolute()
-    test_yaml = Path(this_path, "conf/recognizers.yaml")
+    test_yaml = Path(this_path, "conf/test_recognizers.yaml")
     provider = RecognizerRegistryProvider(test_yaml, load_predefined_recognizers=True)
     recognizer_registry = provider.create_recognizer_registry()
     assert recognizer_registry.supported_languages == ["en"]
