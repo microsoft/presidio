@@ -50,14 +50,20 @@ class RecognizerRegistryProvider:
         load_predefined_recognizers: bool = False,
     ):
         self.configuration = self._get_configuration(
-            conf_file=conf_file, registry_configuration=registry_configuration, load_predefined_recognizers=load_predefined_recognizers
+            conf_file=conf_file,
+            registry_configuration=registry_configuration,
+            load_predefined_recognizers=load_predefined_recognizers
         )
         self.supported_languages = None
         self.all_existing_recognizers = self._get_all_existing_recognizers()
         return
 
     @staticmethod
-    def _add_missing_keys(configuration: Dict, conf_file: Union[Path, str], load_predefined_recognizers: bool = False) -> Dict:
+    def _add_missing_keys(
+        configuration: Dict,
+        conf_file: Union[Path, str],
+        load_predefined_recognizers: bool = False,
+        ) -> Dict:
         """
         Add missing keys to the configuration.
 
@@ -81,7 +87,10 @@ class RecognizerRegistryProvider:
         return configuration
 
     def _get_configuration(
-        self, conf_file: Union[Path, str], registry_configuration: Dict, load_predefined_recognizers: bool
+        self,
+        conf_file: Union[Path, str],
+        registry_configuration: Dict,
+        load_predefined_recognizers: bool,
     ) -> Union[Dict[str, Any]]:
         """Get the configuration from the provided file or dict.
 
@@ -103,12 +112,16 @@ class RecognizerRegistryProvider:
 
         if not conf_file:
             configuration = self._add_missing_keys(
-                configuration=configuration, conf_file=self._get_full_conf_path(), load_predefined_recognizers=load_predefined_recognizers
+                configuration=configuration,
+                conf_file=self._get_full_conf_path(),
+                oad_predefined_recognizers=load_predefined_recognizers
             )
         else:
             try:
                 configuration = self._add_missing_keys(
-                    configuration=configuration, conf_file=conf_file, load_predefined_recognizers=load_predefined_recognizers
+                    configuration=configuration,
+                    conf_file=conf_file,
+                    load_predefined_recognizers=load_predefined_recognizers,
                 )
             except OSError:
                 logger.warning(
@@ -118,7 +131,7 @@ class RecognizerRegistryProvider:
                 configuration = self._add_missing_keys(
                     configuration=configuration, conf_file=self._get_full_conf_path()
                 )
-            except Exception as e:
+            except Exception:
                 logger.warning(
                     f"Failed to parse file {conf_file}, " f"resorting to default"
                 )
