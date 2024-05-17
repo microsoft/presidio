@@ -24,11 +24,11 @@ class UsBankRecognizer(PatternRecognizer):
     CONTEXT = [
         # Task #603: Support keyphrases: change to "checking account"
         # as part of keyphrase change
-        "check",
-        "account",
-        "account#",
-        "acct",
-        "bank",
+        # "check",
+        # "account",
+        # "account#",
+        # "acct",
+        # "bank",
         "save",
         "debit",
 
@@ -46,6 +46,19 @@ class UsBankRecognizer(PatternRecognizer):
         "Bank Acct No.",
         "Bank Account No.",
         "Savings Account Number",
+        "Savings Account.",
+        "Savings Account #",
+        "Savings Acct Number",
+        "Savings Acct #",
+        "Savings Acct No.",
+        "Savings Account No.",
+        "Debit Account Number",
+        "Debit Account",
+        "Debit Account #",
+        "Debit Acct Number",
+        "Debit Acct #",
+        "Debit Acct No.",
+        "Debit Account No.",
     ]
 
     def __init__(

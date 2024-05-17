@@ -132,3 +132,16 @@ class TransformersNlpEngine(SpacyNlpEngine):
         """
 
         return doc.spans[self.entity_key].attrs["scores"]
+    
+    @staticmethod
+    def custom_tokenizer(nlp: spacy.language, model: str):
+        """
+        
+        """
+        tokenizer = transformers.AutoTokenizer.from_pretrained(model)
+        def _tokenizer(text):
+            tokens = tokenizer.tokenize(text)
+            words = [token.text for token in tokens]
+            spaces = [True] * len(words)
+            return Doc(nlp.vocab, words=words, spaces=spaces)
+        return _tokenizer

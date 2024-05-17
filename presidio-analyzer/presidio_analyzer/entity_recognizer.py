@@ -1,6 +1,6 @@
 import logging
 from abc import abstractmethod
-from typing import Dict, List, Optional
+from typing import List, Dict, Optional
 
 from presidio_analyzer import RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -166,7 +166,8 @@ class EntityRecognizer:
     @staticmethod
     def remove_duplicates(results: List[RecognizerResult]) -> List[RecognizerResult]:
         """
-        Remove duplicate results.
+        Remove duplicate results. This method removes duplicates for every 
+        recognizer in isolation.
 
         Remove duplicates in case the two results
         have identical start and ends and types.
@@ -196,7 +197,7 @@ class EntityRecognizer:
                 filtered_results.append(result)
 
         return filtered_results
-
+    
     @staticmethod
     def sanitize_results(results: List[RecognizerResult]) -> List[RecognizerResult]:
         """
@@ -229,9 +230,9 @@ class EntityRecognizer:
                 final_results.append(result)
 
         return final_results
-
+    
     @staticmethod
-    def rename_entities(entity: str,
+    def rename_entities(entity: str, 
                         supported_entities: List[str],
                         mapping: dict) -> List[RecognizerResult]:
         """Rename entities to maintain unique naming."""

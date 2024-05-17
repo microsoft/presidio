@@ -22,10 +22,9 @@ class PhoneRecognizer(LocalRecognizer):
     Accepts values from 0 to 3, where 0 is the lenient and 3 is the most strictest.
     """
 
-    SCORE = 0.4
+    SCORE = 0.3
     CONTEXT = [
         "phone", 
-        "number", 
         "telephone", 
         "cell", 
         "cellphone", 
