@@ -38,7 +38,6 @@ azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
 ]
-all = ['presidio_analyzer[server,transformers,stanza,azure-ai-language]']
 
 [tool.pdm.build]
 source-includes = ["conf/*",]

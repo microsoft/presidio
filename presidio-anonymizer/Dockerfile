@@ -7,7 +7,7 @@ WORKDIR /usr/bin/${NAME}
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
 COPY ./VERSION /usr/bin/${NAME}/
-RUN pip install pdm && pdm install --prod --no-lock --no-editable
+RUN pip install pdm && pdm install --prod -G server --no-lock --no-editable
 
 COPY . /usr/bin/${NAME}/
 
