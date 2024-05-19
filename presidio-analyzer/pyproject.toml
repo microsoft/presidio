@@ -26,10 +26,7 @@ dependencies = [
     "phonenumbers>=8.12,<9.0.0",
 ]
 dynamic = ["version"]
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+readme = "README.md"
 
 [project.optional-dependencies]
 server = ["flask>=1.1"]
