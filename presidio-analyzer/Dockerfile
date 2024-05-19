@@ -4,6 +4,7 @@ ARG NAME
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
+ENV PDM_VENV_WITH_PIP=1
 ENV PIP_NO_CACHE_DIR=1
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
