@@ -40,12 +40,8 @@ azure-ai-language = [
 ]
 all = ['presidio_analyzer[server,transformers,stanza,azure-ai-language]']
 
-
-[tool.pdm]
-distribution = true
-
 [tool.pdm.build]
-includes = ["conf/*",]
+source-includes = ["conf/*",]
 
 [[tool.pdm.source]]
 url = "https://pypi.org/simple"

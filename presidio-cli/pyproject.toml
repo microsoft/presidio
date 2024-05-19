@@ -32,6 +32,9 @@ presidio = "presidio_cli.cli:run"
 [tool.pdm.dev-dependencies]
 dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
 
+[tool.pdm.build]
+source-includes = ["conf/*",]
+
 [tool.pdm.version]
 source = "file"
 path = "presidio_cli/__init__.py"
