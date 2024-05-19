@@ -31,6 +31,8 @@ RUN apt-get update  \
   && apt-get install ffmpeg libsm6 libxext6  -y
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
+COPY ./README.md /usr/bin/${NAME}/
+COPY ./VERSION /usr/bin/${NAME}/
 RUN pip install pdm && pdm install --prod --no-lock --no-editable
 
 COPY . /usr/bin/${NAME}/

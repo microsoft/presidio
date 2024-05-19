@@ -23,13 +23,14 @@ RUN apt-get update \
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
+COPY ./VERSION /usr/bin/${NAME}/
 
 RUN pip install pdm && pdm install --prod --no-lock --no-editable
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 
-RUN pipenv run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
+RUN pdm run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD pipenv run python app.py --host 0.0.0.0
+CMD pdm run python app.py --host 0.0.0.0
