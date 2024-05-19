@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools>=61.2"]
-build-backend = "setuptools.build_meta"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project]
 name = "presidio_analyzer"
 description = "Presidio Analyzer package"
-license = {text = "MIT License"}
+license = {text = "MIT"}
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">= 3.5"
+requires-python = ">=3.7"
 keywords = ["presidio_analyzer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 dependencies = [
@@ -42,13 +42,20 @@ azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
 ]
-test = ["pytest", "pytest-mock", "ruff", "python-dotenv"]
-all = ['presidio_analyzer[server,transformers,stanza,azure-ai-language,test]']
+all = ['presidio_analyzer[server,transformers,stanza,azure-ai-language]']
 
-[tool.setuptools.package-data]
-presidio_analyzer = [
-    "conf/*",
-]
 
-[tool.setuptools.dynamic]
-version = {file = ["VERSION"]}
+[tool.pdm]
+distribution = true
+
+[tool.pdm.build]
+includes = ["conf/*",]
+
+[[tool.pdm.source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[tool.pdm.dev-dependencies]
+lint = ["ruff"]
+test = ["pytest", "pytest-mock", "python-dotenv"]

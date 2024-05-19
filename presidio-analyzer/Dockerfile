@@ -24,7 +24,7 @@ COPY ./Pipfile* /usr/bin/${NAME}/
 RUN apt-get update \
   && apt-get install -y build-essential
 
-RUN pip install pipenv && pipenv install pipenv install -e '.[server,stanza,azure-ai-language]'
+RUN pip install pdm && pdm install --prod --no-lock --no-editable
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 
