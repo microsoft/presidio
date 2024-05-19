@@ -90,10 +90,10 @@ ENV/
 env.bak/
 venv.bak/
 *venv/
-*Pipfile.lock
-*pdm.lock
+Pipfile.lock
+Pipfile
+pdm.lock
 .pdm-python
-presidio-analyzer/Pipfile
 
 # Spyder project settings
 .spyderproject
