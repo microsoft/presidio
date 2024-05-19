@@ -17,11 +17,12 @@ COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
 
 WORKDIR /usr/bin/${NAME}
 
-COPY ./pyproject.toml /usr/bin/${NAME}/
-
 # Install essential build tools
 RUN apt-get update \
   && apt-get install -y build-essential
+
+COPY ./pyproject.toml /usr/bin/${NAME}/
+COPY ./README.md /usr/bin/${NAME}/
 
 RUN pip install pdm && pdm install --prod --no-lock --no-editable
 # install nlp models specified in NLP_CONF_FILE
