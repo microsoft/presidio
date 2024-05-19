@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.2"]
-build-backend = "setuptools.build_meta"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project]
 name = "presidio_structured"
@@ -33,4 +33,4 @@ dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
 
 [tool.pdm.version]
 source = "file"
-path = "presidio_cli.__init__.py"
+path = "VERSION"
