@@ -24,10 +24,7 @@ dependencies = [
 ]
 
 dynamic = ["version"]
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+readme = "README.md"
 
 [project.scripts]
 presidio = "presidio_cli.cli:run"

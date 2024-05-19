@@ -1,6 +1,5 @@
 FROM python:3.9-windowsservercore
 
-ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /app
 

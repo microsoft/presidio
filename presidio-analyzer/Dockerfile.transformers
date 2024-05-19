@@ -4,7 +4,6 @@ ARG NAME
 ARG NLP_CONF_FILE=presidio_analyzer/conf/transformers.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
-ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /usr/bin/${NAME}
 

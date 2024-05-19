@@ -17,6 +17,8 @@ classifiers = [
 requires-python = ">=3.8"
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 keywords = ["presidio_image_redactor"]
+dynamic = ["version"]
+readme = "README.md"
 dependencies = [
     "pillow>=9.0",
     "pytesseract>=0.3.7,<0.4",
@@ -28,11 +30,6 @@ dependencies = [
     "opencv-python>=4.0.0,<5.0.0",
     "python-gdcm>=3.0.24.1",
 ]
-dynamic = ["version"]
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
 
 [tool.pdm.dev-dependencies]
 dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
@@ -40,3 +37,4 @@ dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
 [tool.pdm.version]
 source = "file"
 path = "VERSION"
+

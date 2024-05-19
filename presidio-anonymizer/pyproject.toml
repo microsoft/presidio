@@ -19,10 +19,7 @@ keywords = ["presidio_anonymizer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 dependencies = ["pycryptodome>=3.10.1"]
 dynamic = ["version"]
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+readme = "README.md"
 
 [project.optional-dependencies]
 server = ["flask>=1.1"]

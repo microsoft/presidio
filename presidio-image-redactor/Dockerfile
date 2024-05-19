@@ -4,7 +4,6 @@ ARG NAME
 ARG NLP_CONF_FILE
 ARG ANALYZER_CONF_FILE
 ARG RECOGNIZER_REGISTRY_CONF_FILE
-ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
@@ -37,4 +36,4 @@ RUN pip install pdm && pdm install --prod --no-lock --no-editable
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD pipenv run python app.py
+CMD pdm run python app.py
