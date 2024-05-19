@@ -25,7 +25,7 @@ dependencies = [
     "phonenumbers>=8.12,<9.0.0",
 ]
 dynamic = ["version"]
-#readme = "README.md"
+readme = "README.md"
 
 [project.optional-dependencies]
 server = ["flask>=1.1"]
@@ -53,4 +53,8 @@ verify_ssl = true
 name = "pypi"
 
 [tool.pdm.dev-dependencies]
-test = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv"]
+dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
+
+[tool.pdm.version]
+source = "file"
+path = "VERSION"

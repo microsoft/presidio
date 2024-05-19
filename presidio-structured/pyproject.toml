@@ -25,13 +25,9 @@ dependencies = [
 dynamic = ["version"]
 
 
-[project.optional-dependencies]
-test = ["pytest", "ruff"]
+[tool.pdm.dev-dependencies]
+dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
 
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
-
-[tool.setuptools.dynamic]
-version = {file = ["VERSION"]}
+[tool.pdm.version]
+source = "file"
+path = "presidio_cli.__init__.py"

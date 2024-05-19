@@ -10,13 +10,13 @@ steps:
               sudo apt show tesseract-ocr
               sudo tesseract -v
     - task: Bash@3
-      displayName: 'Setup pipenv'
+      displayName: 'Setup pdm'
       inputs:
           targetType: 'inline'
           script: |
               set -eux  # fail on error
               python -m pip install --upgrade pip
-              python -m pip install pipenv
+              python -m pip install pdm
 
     - task: Bash@3
       displayName: 'Install deps'
@@ -25,9 +25,9 @@ steps:
           workingDirectory: 'presidio-image-redactor'
           script: |
               set -eux  # fail on error
-              pipenv install --deploy --dev
-              pipenv run python -m spacy download en_core_web_lg
-              pipenv run pip install -e ../presidio-analyzer/.
+              pdm install
+              pdm run python -m spacy download en_core_web_lg
+              pdm run pip install -e ../presidio-analyzer/.
     - template: ./build-python.yml
       parameters:
           SERVICE: 'Image-Redactor'

@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">= 3.5"
+requires-python = ">=3.8"
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 keywords = ["presidio_image_redactor"]
 dependencies = [
@@ -34,8 +34,9 @@ dynamic = ["version"]
 file = "README.md"
 content-type = "text/markdown"
 
-[project.optional-dependencies]
-test = ["pytest", "pytest-mock>=3.10.0", "ruff"]
+[tool.pdm.dev-dependencies]
+dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
 
-[tool.setuptools.dynamic]
-version = {file = ["VERSION"]}
+[tool.pdm.version]
+source = "file"
+path = "VERSION"

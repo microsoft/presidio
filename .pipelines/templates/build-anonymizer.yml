@@ -1,12 +1,12 @@
 steps:
   - task: Bash@3
-    displayName: 'Setup pipenv'
+    displayName: 'Setup pdm'
     inputs:
       targetType: 'inline'
       script: |
         set -eux  # fail on error
         python -m pip install --upgrade pip
-        python -m pip install pipenv
+        python -m pip install pdm
 
   - task: Bash@3
     displayName: 'Install deps: Anonymizer'
@@ -15,7 +15,7 @@ steps:
       workingDirectory: 'presidio-anonymizer'
       script: |
         set -eux  # fail on error
-        pipenv install --deploy --dev
+        pdm install
 
   - template: ./build-python.yml
     parameters:

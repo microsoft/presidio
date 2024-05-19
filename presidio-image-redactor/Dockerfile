@@ -30,10 +30,8 @@ RUN apt-get update \
 RUN apt-get update  \
   && apt-get install ffmpeg libsm6 libxext6  -y
 
-
-COPY ./Pipfile* /usr/bin/${NAME}/
-RUN pip install pipenv \
-  && pipenv install --deploy
+COPY ./pyproject.toml /usr/bin/${NAME}/
+RUN pip install pdm && pdm install --prod --no-lock --no-editable
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}

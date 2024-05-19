@@ -18,7 +18,6 @@ COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
 WORKDIR /usr/bin/${NAME}
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
-COPY ./Pipfile* /usr/bin/${NAME}/
 
 # Install essential build tools
 RUN apt-get update \

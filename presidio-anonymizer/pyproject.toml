@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">= 3.5"
+requires-python = ">=3.8"
 keywords = ["presidio_anonymizer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 dependencies = ["pycryptodome>=3.10.1"]
@@ -26,7 +26,11 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.optional-dependencies]
-test = ["pytest", "ruff"]
+server = ["flask>=1.1"]
 
-[tool.setuptools.dynamic]
-version = {file = ["VERSION"]}
+[tool.pdm.dev-dependencies]
+dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
+
+[tool.pdm.version]
+source = "file"
+path = "VERSION"

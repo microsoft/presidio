@@ -5,9 +5,8 @@ ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /usr/bin/${NAME}
 
-COPY ./Pipfile* /usr/bin/${NAME}/
-RUN pip install pipenv \
-  && pipenv install --deploy
+COPY ./pyproject.toml /usr/bin/${NAME}/
+RUN pip install pdm && pdm install --prod --no-lock --no-editable
 
 COPY . /usr/bin/${NAME}/
 

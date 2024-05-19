@@ -1,6 +1,6 @@
 steps:
   - task: Bash@3
-    displayName: 'Setup pipenv'
+    displayName: 'Setup pdm'
     inputs:
       targetType: 'inline'
       script: |
