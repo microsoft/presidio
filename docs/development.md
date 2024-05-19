@@ -45,7 +45,7 @@ Follow these steps when starting to work on a Presidio service with Pipenv:
     For example, in the `presidio-analyzer` folder, run:
 
     ```
-    pipenv install --dev --skip-lock
+    pipenv install -e '.[all]' --skip-lock
     ```
 
 3. Run all tests:
