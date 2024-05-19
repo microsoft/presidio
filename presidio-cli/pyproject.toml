@@ -42,11 +42,5 @@ testing = [
 [tool.setuptools.package-data]
 presidio_cli = ["conf/*.yaml"]
 
-[tool.build_sphinx]
-all-files = "1"
-source-dir = "docs"
-build-dir = "docs/_build"
-warning-is-error = "1"
-
 [tool.setuptools.dynamic]
 version = {attr = "presidio_cli.APP_VERSION"}
