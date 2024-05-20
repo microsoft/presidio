@@ -44,7 +44,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("Dan May has a bank account.", 1, ((0, 7),), 0),
         ("Mr. May", 1, ((4, 7),), 0),
         ("They call me Mr. May", 1, ((17, 20),), 0),
-        ("Richard (Rick) C. Henderson", 1, ((0, 20),), 0),
+        ("Richard (Rick) C. Henderson", 1, ((0, 27),), 0),
         # Test DATE_TIME Entity
         ("1972", 1, ((0, 4),), 1),
         ("I bought my car in 1972", 1, ((19, 23),), 1),
