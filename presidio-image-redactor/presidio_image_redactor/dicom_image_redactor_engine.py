@@ -1,21 +1,24 @@
-import os
-import uuid
-import shutil
-from copy import deepcopy
-import tempfile
-from pathlib import Path
-from PIL import Image, ImageOps
-import pydicom
-from pydicom.pixel_data_handlers.util import apply_voi_lut
-import png
 import json
-import numpy as np
-from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
-from typing import Tuple, List, Dict, Union, Optional
+import os
+import shutil
+import tempfile
+import uuid
+from copy import deepcopy
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Union
 
-from presidio_image_redactor import ImageRedactorEngine
-from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
+import numpy as np
+import png
+import pydicom
+from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
+from PIL import Image, ImageOps
 from presidio_analyzer import PatternRecognizer
+from pydicom.pixel_data_handlers.util import apply_voi_lut
+
+from presidio_image_redactor import (
+    ImageAnalyzerEngine,  # noqa: F401
+    ImageRedactorEngine,
+)
 from presidio_image_redactor.entities import ImageRecognizerResult
 
 
@@ -338,8 +341,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             image_2d_scaled = image_2d_float
         else:
             # Rescaling grey scale between 0-255
-            image_2d_scaled = ((image_2d_float.max() - image_2d_float) / (
-                    image_2d_float.max() - image_2d_float.min())) * 255.0
+            image_2d_scaled = (
+                (image_2d_float.max() - image_2d_float)
+                / (image_2d_float.max() - image_2d_float.min())
+            ) * 255.0
 
         # Convert to uint
         image_2d_scaled = np.uint8(image_2d_scaled)
@@ -906,9 +911,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             left = bbox["left"]
             width = bbox["width"]
             height = bbox["height"]
-            redacted_instance.pixel_array[
-                top : top + height, left : left + width
-            ] = box_color
+            redacted_instance.pixel_array[top : top + height, left : left + width] = (
+                box_color
+            )
 
         redacted_instance.PixelData = redacted_instance.pixel_array.tobytes()
 
@@ -957,7 +962,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
             if ad_hoc_recognizers is None:
                 ad_hoc_recognizers = [deny_list_recognizer]
-            elif type(ad_hoc_recognizers) is list:
+            elif isinstance(ad_hoc_recognizers, list):
                 ad_hoc_recognizers.append(deny_list_recognizer)
 
         # Detect PII

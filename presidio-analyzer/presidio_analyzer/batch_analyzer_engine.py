@@ -1,7 +1,7 @@
 import logging
-from typing import List, Iterable, Dict, Union, Any, Optional, Iterator, Tuple
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, Union
 
-from presidio_analyzer import DictAnalyzerResult, RecognizerResult, AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine, DictAnalyzerResult, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
@@ -19,7 +19,6 @@ class BatchAnalyzerEngine:
     """
 
     def __init__(self, analyzer_engine: Optional[AnalyzerEngine] = None):
-
         self.analyzer_engine = analyzer_engine
         if not analyzer_engine:
             self.analyzer_engine = AnalyzerEngine()
@@ -42,10 +41,10 @@ class BatchAnalyzerEngine:
         texts = self._validate_types(texts)
 
         # Process the texts as batch for improved performance
-        nlp_artifacts_batch: Iterator[
-            Tuple[str, NlpArtifacts]
-        ] = self.analyzer_engine.nlp_engine.process_batch(
-            texts=texts, language=language
+        nlp_artifacts_batch: Iterator[Tuple[str, NlpArtifacts]] = (
+            self.analyzer_engine.nlp_engine.process_batch(
+                texts=texts, language=language
+            )
         )
 
         list_results = []
@@ -127,7 +126,7 @@ class BatchAnalyzerEngine:
     @staticmethod
     def _validate_types(value_iterator: Iterable[Any]) -> Iterator[Any]:
         for val in value_iterator:
-            if val and not type(val) in (int, float, bool, str):
+            if val and type(val) not in (int, float, bool, str):
                 err_msg = (
                     "Analyzer.analyze_iterator only works "
                     "on primitive types (int, float, bool, str). "

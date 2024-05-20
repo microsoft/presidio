@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -26,11 +26,7 @@ class InPassportRecognizer(PatternRecognizer):
         ),
     ]
 
-    CONTEXT = [
-        "passport",
-        "indian passport",
-        "passport number"
-    ]
+    CONTEXT = ["passport", "indian passport", "passport number"]
 
     def __init__(
         self,

@@ -1,19 +1,19 @@
 import logging
 from typing import Dict, Type
 
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import (
-    OperatorType,
-    Operator,
     Custom,
+    DeanonymizeKeep,
     Decrypt,
     Encrypt,
     Hash,
     Keep,
     Mask,
+    Operator,
+    OperatorType,
     Redact,
     Replace,
-    DeanonymizeKeep,
 )
 
 logger = logging.getLogger("presidio-anonymizer")
@@ -89,7 +89,7 @@ class OperatorsFactory:
             logger.error(
                 f"Operator {operator().operator_name()} not found in anonymizers list"
             )
-            raise InvalidParamException(
+            raise InvalidParamError(
                 f"Operator {operator().operator_name()} not found in anonymizers list"
             )
         self._anonymizers.pop(operator().operator_name(), None)
@@ -103,7 +103,7 @@ class OperatorsFactory:
             logger.error(
                 f"Operator {operator().operator_name()} not found in deanonymizers list"
             )
-            raise InvalidParamException(
+            raise InvalidParamError(
                 f"Operator {operator().operator_name()} not found in deanonymizers list"
             )
         self._deanonymizers.pop(operator().operator_name(), None)
@@ -122,12 +122,12 @@ class OperatorsFactory:
         operators_by_type = self.__get_operators_classes().get(operator_type)
         if not operators_by_type:
             logger.error(f"No such operator type {operator_type}")
-            raise InvalidParamException(f"Invalid operator type '{operator_type}'.")
+            raise InvalidParamError(f"Invalid operator type '{operator_type}'.")
 
         operator = operators_by_type.get(operator_name)
         if not operator:
             logger.error(f"No such operator {operator_name}")
-            raise InvalidParamException(f"Invalid operator class '{operator_name}'.")
+            raise InvalidParamError(f"Invalid operator class '{operator_name}'.")
 
         return operator()
 

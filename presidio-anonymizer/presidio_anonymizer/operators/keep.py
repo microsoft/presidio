@@ -1,4 +1,5 @@
 """Keeps the PII text unmodified."""
+
 from abc import ABC
 from typing import Dict
 

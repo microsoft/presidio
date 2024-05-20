@@ -1,15 +1,15 @@
 import datetime
 import logging
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 import regex as re
 
 from presidio_analyzer import (
+    AnalysisExplanation,
+    EntityRecognizer,
     LocalRecognizer,
     Pattern,
     RecognizerResult,
-    EntityRecognizer,
-    AnalysisExplanation,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 

@@ -1,18 +1,18 @@
 """REST API server for image redactor."""
+
 import base64
 import logging
 import os
 from io import BytesIO
 
+from flask import Flask, Response, jsonify, request
 from PIL import Image
-from flask import Flask, request, jsonify, Response
-
 from presidio_image_redactor import ImageRedactorEngine
-from presidio_image_redactor.entities import InvalidParamException
+from presidio_image_redactor.entities import InvalidParamError
 from presidio_image_redactor.entities.api_request_convertor import (
+    color_fill_string_to_value,
     get_json_data,
     image_to_byte_array,
-    color_fill_string_to_value,
 )
 
 DEFAULT_PORT = "3000"
@@ -51,23 +51,24 @@ class Server:
             color_fill = color_fill_string_to_value(params)
             if request.get_json(silent=True) and "image" in request.json:
                 im = Image.open(BytesIO(base64.b64decode(request.json.get("image"))))
-                analyzer_entities = request.json.get('analyzer_entities')
-                redacted_image = self.engine.redact(im, color_fill,
-                                                    entities=analyzer_entities)
+                analyzer_entities = request.json.get("analyzer_entities")
+                redacted_image = self.engine.redact(
+                    im, color_fill, entities=analyzer_entities
+                )
                 img_byte_arr = image_to_byte_array(redacted_image, im.format)
-                return Response(base64.b64encode(img_byte_arr),
-                                mimetype="application/octet-stream")
+                return Response(
+                    base64.b64encode(img_byte_arr), mimetype="application/octet-stream"
+                )
 
             elif request.files and "image" in request.files:
                 im = Image.open(request.files.get("image"))
                 redacted_image = self.engine.redact(im, color_fill, score_threshold=0.4)
                 img_byte_arr = image_to_byte_array(redacted_image, im.format)
-                return Response(img_byte_arr,
-                                mimetype="application/octet-stream")
+                return Response(img_byte_arr, mimetype="application/octet-stream")
             else:
-                raise InvalidParamException("Invalid parameter, please add image data")
+                raise InvalidParamError("Invalid parameter, please add image data")
 
-        @self.app.errorhandler(InvalidParamException)
+        @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
             self.logger.warning(
                 f"failed to redact image with validation error: {err.err_msg}"

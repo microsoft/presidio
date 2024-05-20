@@ -1,15 +1,15 @@
-from typing import List, Tuple, Optional, Dict, Union
+import io
 from copy import deepcopy
+from typing import Dict, List, Optional, Tuple, Union
+
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image, ImageChops
 from presidio_analyzer import AnalyzerEngine, RecognizerResult
 
-from presidio_image_redactor import OCR, TesseractOCR, ImagePreprocessor
+from presidio_image_redactor import OCR, ImagePreprocessor, TesseractOCR
 from presidio_image_redactor.entities import ImageRecognizerResult
-
-from PIL import Image, ImageChops
-import matplotlib.pyplot as plt
-import matplotlib
-import io
 
 
 class ImageAnalyzerEngine:
@@ -327,8 +327,7 @@ class ImageAnalyzerEngine:
 
     @staticmethod
     def get_pii_bboxes(
-        ocr_bboxes: List[dict],
-        analyzer_bboxes: List[dict]
+        ocr_bboxes: List[dict], analyzer_bboxes: List[dict]
     ) -> List[dict]:
         """Get a list of bboxes with is_PII property.
 
@@ -343,9 +342,15 @@ class ImageAnalyzerEngine:
 
             # Check if we have the same bbox in analyzer results
             for analyzer_bbox in analyzer_bboxes:
-                has_same_position = (ocr_bbox["left"] == analyzer_bbox["left"] and ocr_bbox["top"] == analyzer_bbox["top"])  # noqa: E501
-                has_same_dimension = (ocr_bbox["width"] == analyzer_bbox["width"] and ocr_bbox["height"] == analyzer_bbox["height"])  # noqa: E501
-                is_same = (has_same_position is True and has_same_dimension is True)
+                has_same_position = (
+                    ocr_bbox["left"] == analyzer_bbox["left"]
+                    and ocr_bbox["top"] == analyzer_bbox["top"]
+                )  # noqa: E501
+                has_same_dimension = (
+                    ocr_bbox["width"] == analyzer_bbox["width"]
+                    and ocr_bbox["height"] == analyzer_bbox["height"]
+                )  # noqa: E501
+                is_same = has_same_position is True and has_same_dimension is True
 
                 if is_same is True:
                     current_bbox = analyzer_bbox
@@ -367,7 +372,7 @@ class ImageAnalyzerEngine:
         image: Image,
         bboxes: List[dict],
         show_text_annotation: bool = True,
-        use_greyscale_cmap: bool = False
+        use_greyscale_cmap: bool = False,
     ) -> Image:
         """Add custom bounding boxes to image.
 
@@ -410,10 +415,7 @@ class ImageAnalyzerEngine:
                 x1 = x0 + box["width"]
                 y1 = y0 + box["height"]
                 rect = matplotlib.patches.Rectangle(
-                    (x0, y0),
-                    x1 - x0, y1 - y0,
-                    edgecolor=bbox_color,
-                    facecolor="none"
+                    (x0, y0), x1 - x0, y1 - y0, edgecolor=bbox_color, facecolor="none"
                 )
                 ax.add_patch(rect)
                 if show_text_annotation:

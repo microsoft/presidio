@@ -1,13 +1,13 @@
 import logging
-from typing import Optional, Dict, List
+from typing import Dict, List, Optional
 
 try:
-    import stanza
     import spacy_stanza
+    import stanza
 except ImportError:
     stanza = None
 
-from presidio_analyzer.nlp_engine import SpacyNlpEngine, NerModelConfiguration
+from presidio_analyzer.nlp_engine import NerModelConfiguration, SpacyNlpEngine
 
 logger = logging.getLogger("presidio-analyzer")
 

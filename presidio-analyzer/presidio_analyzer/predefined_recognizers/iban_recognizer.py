@@ -1,20 +1,20 @@
 import logging
 import string
-from typing import Tuple, List, Dict, Optional
+from typing import Dict, List, Optional, Tuple
 
 import regex as re
 
 from presidio_analyzer import (
+    EntityRecognizer,
     Pattern,
     PatternRecognizer,
     RecognizerResult,
-    EntityRecognizer,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.predefined_recognizers.iban_patterns import (
-    regex_per_country,
     BOS,
     EOS,
+    regex_per_country,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -74,7 +74,7 @@ class IbanRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
-            global_regex_flags=regex_flags
+            global_regex_flags=regex_flags,
         )
 
     def validate_result(self, pattern_text: str):  # noqa D102
@@ -188,7 +188,7 @@ class IbanRecognizer(PatternRecognizer):
     def __generate_iban_check_digits(iban: str, letters: Dict[int, str]) -> str:
         transformed_iban = (iban[:2] + "00" + iban[4:]).upper()
         number_iban = IbanRecognizer.__number_iban(transformed_iban, letters)
-        return "{:0>2}".format(98 - (int(number_iban) % 97))
+        return f"{98 - (int(number_iban) % 97):0>2}"
 
     @staticmethod
     def __is_valid_format(

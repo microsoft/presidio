@@ -1,16 +1,19 @@
 """Initializing all the existing anonymizers."""
-from .operator import OperatorType, Operator
+
+from .operator import OperatorType, Operator  # isort:skip
+from .aes_cipher import AESCipher
+from .custom import Custom
+from .deanonymize_keep import DeanonymizeKeep
+from .encrypt import Encrypt
+
+from .decrypt import Decrypt  # isort:skip
 from .hash import Hash
+from .keep import Keep
 from .mask import Mask
 from .redact import Redact
 from .replace import Replace
-from .custom import Custom
-from .keep import Keep
-from .deanonymize_keep import DeanonymizeKeep
-from .encrypt import Encrypt
-from .decrypt import Decrypt
-from .aes_cipher import AESCipher
-from .operators_factory import OperatorsFactory
+
+from .operators_factory import OperatorsFactory  # isort:skip
 
 __all__ = [
     "OperatorType",

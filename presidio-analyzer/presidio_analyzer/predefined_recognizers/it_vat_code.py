@@ -1,5 +1,6 @@
+from typing import List, Optional, Tuple
+
 from presidio_analyzer import Pattern, PatternRecognizer
-from typing import Optional, List, Tuple
 
 
 class ItVatCodeRecognizer(PatternRecognizer):

@@ -1,13 +1,12 @@
 import logging
 from pathlib import Path
-from typing import Optional, Dict, Iterator, Tuple, Union, List
+from typing import Dict, Iterator, List, Optional, Tuple, Union
 
 import spacy
-
 from spacy.language import Language
 from spacy.tokens import Doc, Span
 
-from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, NerModelConfiguration
+from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts, NlpEngine
 
 logger = logging.getLogger("presidio-analyzer")
 

@@ -2,8 +2,7 @@ import logging
 from abc import abstractmethod
 from typing import List, Optional
 
-from presidio_analyzer import RecognizerResult
-from presidio_analyzer import EntityRecognizer
+from presidio_analyzer import EntityRecognizer, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
@@ -33,7 +32,6 @@ class ContextAwareEnhancer:
         context_prefix_count: int,
         context_suffix_count: int,
     ):
-
         self.context_similarity_factor = context_similarity_factor
         self.min_score_with_context_similarity = min_score_with_context_similarity
         self.context_prefix_count = context_prefix_count

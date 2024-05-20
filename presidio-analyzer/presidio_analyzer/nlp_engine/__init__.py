@@ -6,7 +6,8 @@ from .nlp_engine import NlpEngine
 from .spacy_nlp_engine import SpacyNlpEngine
 from .stanza_nlp_engine import StanzaNlpEngine
 from .transformers_nlp_engine import TransformersNlpEngine
-from .nlp_engine_provider import NlpEngineProvider
+
+from .nlp_engine_provider import NlpEngineProvider  # isort:skip
 
 __all__ = [
     "NerModelConfiguration",

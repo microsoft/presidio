@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "presidio-image-redactor"
+description = "Presidio image redactor package"
+license = {text = "MIT License"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">= 3.5"
+urls = {Homepage = "https://github.com/Microsoft/presidio"}
+keywords = ["presidio_image_redactor"]
+dependencies = [
+    "pillow>=9.0",
+    "pytesseract>=0.3.7,<0.4",
+    "presidio-analyzer>=1.9.0",
+    "matplotlib>=3.6",
+    "pydicom>=2.3.0",
+    "pypng>=0.20220715.0",
+    "azure-ai-formrecognizer>=3.3.0,<4.0.0",
+    "opencv-python>=4.0.0,<5.0.0",
+]
+dynamic = ["version"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-mock>=3.10.0", "ruff"]
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION"]}

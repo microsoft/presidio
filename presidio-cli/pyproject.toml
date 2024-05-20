@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "presidio-cli"
+description = "CLI tool that analyzes text for PII Entities using Presidio Analyzer."
+license = {text = "MIT License"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">= 3.5"
+urls = {Homepage = "https://github.com/microsoft/presidio"}
+keywords = ["pii", "checker", "presidio_cli"]
+dependencies = [
+    "presidio-analyzer >= 2.2",
+    "pyyaml",
+    "pathspec",
+]
+
+dynamic = ["version"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.scripts]
+presidio = "presidio_cli.cli:run"
+
+[project.optional-dependencies]
+testing = [
+    "pytest",
+    "ruff",
+]
+
+[tool.setuptools.package-data]
+presidio_cli = ["conf/*.yaml"]
+
+[tool.setuptools.dynamic]
+version = {attr = "presidio_cli.APP_VERSION"}

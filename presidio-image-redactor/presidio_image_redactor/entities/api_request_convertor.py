@@ -5,7 +5,7 @@ from typing import Tuple, Union
 
 from PIL import Image
 
-from presidio_image_redactor.entities import InvalidParamException
+from presidio_image_redactor.entities import InvalidParamError
 
 logger = logging.getLogger("presidio-image-redactor")
 
@@ -24,7 +24,7 @@ def get_json_data(data: str) -> dict:
         return json.loads(data.replace("'", '"'))
     except Exception as e:
         logger.error(f"failed to parse json from string '{data}' with error {e}")
-        raise InvalidParamException(f"Invalid json format '{data}'")
+        raise InvalidParamError(f"Invalid json format '{data}'")
 
 
 def color_fill_string_to_value(json_params: dict) -> Union[int, Tuple[int, int, int]]:
@@ -43,11 +43,11 @@ def color_fill_string_to_value(json_params: dict) -> Union[int, Tuple[int, int, 
         if len(filling_str_split) == 1:
             return int(filling_str_split[0])
         if len(filling_str_split) != 3:
-            raise InvalidParamException(f"Invalid color fill '{filling_str}'")
+            raise InvalidParamError(f"Invalid color fill '{filling_str}'")
         return tuple(map(int, filling_str_split))
     except Exception as e:
         logger.error(f"failed to color fill '{filling_str}' with error {e}")
-        raise InvalidParamException(f"Invalid color fill '{filling_str}'")
+        raise InvalidParamError(f"Invalid color fill '{filling_str}'")
 
 
 def image_to_byte_array(redacted_image: Image, image_format: str):

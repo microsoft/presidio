@@ -23,14 +23,13 @@ class DataProcessorBase(ABC):
         operators: Dict[str, OperatorConfig],
     ) -> Any:
         """
-        Perform operations over the text using the operators, \
-            as per the structured analysis.
+        Perform operations over the text using the operators, as per the structured analysis.
 
         :param data: Data to be operated on.
         :param structured_analysis: Analysis schema as per the structured data.
         :param operators: Dictionary containing operator configuration objects.
         :return: Data after being operated upon.
-        """
+        """  # noqa: E501
         key_to_operator_mapping = self._generate_operator_mapping(
             structured_analysis, operators
         )
