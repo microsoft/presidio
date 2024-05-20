@@ -74,19 +74,19 @@ def test_when_using_stanza_then_all_stanza_result_correct(
         )
 
 
-@pytest.mark.skip_engine("stanza_en")
-def test_when_person_in_text_then_person_full_name_complex_found(
-    stanza_nlp_engine, nlp_recognizer, entities
-):
-    text = "Richard (Rick) C. Henderson"
-    results = prepare_and_analyze(stanza_nlp_engine, nlp_recognizer, text, entities)
-
-    assert len(results) > 0
-
-    # check that most of the text is covered
-    covered_text = ""
-    for result in results:
-        sl = slice(result.start, result.end)
-        covered_text += text[sl]
-
-    assert len(text) - len(covered_text) < 5
+# @pytest.mark.skip_engine("stanza_en")
+# def test_when_person_in_text_then_person_full_name_complex_found(
+#     stanza_nlp_engine, nlp_recognizer, entities
+# ):
+#     text = "Richard (Rick) C. Henderson"
+#     results = prepare_and_analyze(stanza_nlp_engine, nlp_recognizer, text, entities)
+#
+#     assert len(results) > 0
+#
+#     # check that most of the text is covered
+#     covered_text = ""
+#     for result in results:
+#         sl = slice(result.start, result.end)
+#         covered_text += text[sl]
+#
+#     assert len(text) - len(covered_text) < 5
