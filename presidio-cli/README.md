@@ -12,14 +12,14 @@ CLI tool that analyzes text for PII Entities using Presidio Analyzer.
 
 `Python` version: 3.8, 3.9, 3.10
 
-`pipenv` app installed:
+`pdm` app installed:
 
 ```shell
 # check if app is installed
-pipenv --version
+pdm --version
 
 # install, if not available
-pip install pipenv
+pip install pdm
 ```
 
 ## Install `presidio-cli` in a virtual env
@@ -35,7 +35,7 @@ python -m pip install presidio-cli
 install required apps and presidio-cli in virtual environment
 
 ```shell
-pipenv install presidio-cli
+pdm install presidio-cli
 ```
 
 ### Install from source
@@ -45,7 +45,7 @@ pipenv install presidio-cli
 git clone https://github.com/microsoft/presidio
 cd presidio/presidio-cli
 # install required apps and presidio-cli
-pipenv install --deploy --dev
+pdm install
 ```
 
 ## Install language models for `spaCy`

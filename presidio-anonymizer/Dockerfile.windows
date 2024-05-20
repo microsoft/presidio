@@ -3,11 +3,13 @@ FROM python:3.9-windowsservercore
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /app
 
-COPY ./Pipfile* .
+COPY ./pyproject.toml /usr/bin/${NAME}/
+COPY ./README.md /usr/bin/${NAME}/
+COPY ./VERSION /usr/bin/${NAME}/
 RUN pip install --upgrade pip
-RUN pip install pipenv; pipenv install --deploy
+RUN pip install pdm; pdm install --deploy
 
 COPY . .
 
 EXPOSE ${PORT}
-CMD pipenv run python app.py
+CMD pdm run python app.py
