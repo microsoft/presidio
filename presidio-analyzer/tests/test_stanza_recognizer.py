@@ -44,11 +44,12 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("Dan May has a bank account.", 1, ((0, 7),), 0),
         ("Mr. May", 1, ((4, 7),), 0),
         ("They call me Mr. May", 1, ((17, 20),), 0),
+        ("Richard (Rick) C. Henderson", 1, ((0, 20),), 0),
         # Test DATE_TIME Entity
         ("1972", 1, ((0, 4),), 1),
         ("I bought my car in 1972", 1, ((19, 23),), 1),
         ("I bought my car in May", 1, ((19, 22),), 1),
-        # ("May 1st", 1, ((0, 7),), 1),
+        ("May 1st", 1, ((0, 7),), 1),
         ("May 1st, 1977", 1, ((0, 13),), 1),
         ("I bought my car on May 1st, 1977", 1, ((19, 32),), 1),
         # fmt: on
