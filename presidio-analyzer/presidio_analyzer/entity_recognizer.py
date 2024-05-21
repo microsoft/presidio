@@ -28,6 +28,7 @@ class EntityRecognizer:
     :param version: the recognizer current version
     :param context: a list of words which can help boost confidence score
     when they appear in context of the matched entity
+    :param analyzer_utils: Presidio Analyzer Utility class object (optional)
     """
 
     MIN_SCORE = 0
@@ -60,8 +61,7 @@ class EntityRecognizer:
         logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
 
-        if analyzer_utils is not None:
-            self.analyzer_utils = analyzer_utils
+        self.analyzer_utils = analyzer_utils
 
     @property
     def id(self):

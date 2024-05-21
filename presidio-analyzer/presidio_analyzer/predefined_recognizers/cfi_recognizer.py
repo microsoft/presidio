@@ -34,7 +34,7 @@ class CfiRecognizer(PatternRecognizer):
             r"|DA|DN|DD|DM|DY|RA|RS|RP|RW|RF|RD|RM|OC|OP|OM|FF|FC|SR|ST|SE|SC|SF|SM|HR"
             r"|HT|HE|HC|HF|HM|IF|IT|JE|JF|JC|JR|JT|KR|KT|KE|KC|KF|KY|KM|LL"
             r"|LR|LS|TC|TT|TR|TI|TB|TD|TM|MC|MM)[A-Z]{4}$\b",
-            0.50,
+            0.20,
         ),
     ]
 

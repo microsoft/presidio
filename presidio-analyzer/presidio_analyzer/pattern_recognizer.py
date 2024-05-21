@@ -52,7 +52,6 @@ class PatternRecognizer(LocalRecognizer):
                 "Pattern recognizer should be initialized with patterns"
                 " or with deny list"
             )
-        print(supported_entity)
         super().__init__(
             supported_entities=[supported_entity],
             supported_language=supported_language,

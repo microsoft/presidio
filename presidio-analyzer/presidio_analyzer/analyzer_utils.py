@@ -26,7 +26,7 @@ class PresidioAnalyzerUtils:
         self.__load_country_master__()
 
     @staticmethod
-    def is_palindrome(text: str, case_insensitive: bool = False):
+    def is_palindrome(text: str, case_insensitive: bool = False) -> bool:
         """
         Validate if input text is a true palindrome.
 
@@ -53,7 +53,9 @@ class PresidioAnalyzerUtils:
         return text
 
     @staticmethod
-    def get_luhn_mod_n(input_str: str, alphabet="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
+    def get_luhn_mod_n(
+        input_str: str, alphabet="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    ) -> bool:
         """
         Check if the given input number has a valid last checksum as per LUHN algorithm.
 
@@ -73,7 +75,7 @@ class PresidioAnalyzerUtils:
         ) % n == 0
 
     @staticmethod
-    def is_verhoeff_number(input_number: int):
+    def is_verhoeff_number(input_number: int) -> bool:
         """
         Check if the input number is a true verhoeff number.
 
@@ -164,7 +166,7 @@ class PresidioAnalyzerUtils:
             country_information = list(filter(None, country_information))
             return country_information
 
-    def get_country_codes(self, iso_code: str):
+    def get_country_codes(self, iso_code: str) -> List[str]:
         """
         Fetch all defined country codes per required ISO format.
 
@@ -184,7 +186,7 @@ class PresidioAnalyzerUtils:
             # return full country list for given code
             return self.__get_country_master_full_data__(iso_code=iso_code)
 
-    def get_currency_codes(self, iso_code: str = ""):
+    def get_currency_codes(self, iso_code: str = "") -> List[str]:
         """
         ...x .c ,xcRetrieve all defined currency codes across countries.
 
@@ -198,7 +200,9 @@ class PresidioAnalyzerUtils:
             # return full country list for given code
             return self.__get_country_master_full_data__(iso_code=iso_code)
 
-    def get_full_country_information(self, lookup_key: str, lookup_index: str):
+    def get_full_country_information(
+        self, lookup_key: str, lookup_index: str
+    ) -> List[str]:
         """
         Fetch additional information through lookup_index in index of lookup_key.
 
@@ -209,7 +213,7 @@ class PresidioAnalyzerUtils:
         ISO3166-1-Alpha-2,ISO3166-1-Alpha-3, ISO3166-1-Numeric,
         International_licence_plate_country_code, Country_code_top_level_domain,
         Currency_Name, ISO4217-Alpha-3, ISO4217-Numeric, Capital_City, Dialing_Code
-        :return: Dictionary object with additional information enriched from
+        :return: List of strings values with additional information enriched from
         master lookup
 
         """
