@@ -40,43 +40,41 @@ The recognizer list comprises of both the predefined and custom recognizers, for
 
 ```yaml
 ...
-    - name: CreditCardRecognizer
+  - name: CreditCardRecognizer
     supported_languages:
     - language: en
-        context: [credit, card, visa, mastercard, cc,
-        amex, discover, jcb, diners, maestro, instapayment]
+      context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
     - language: es
-        context: [tarjeta, credito, visa, mastercard, cc,
-        amex, discover, jcb, diners, maestro, instapayment]
+      context: [tarjeta, credito, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
     - language: it
     - language: pl
     type: predefined
 
-    - name: UsBankRecognizer
+  - name: UsBankRecognizer
     supported_languages: 
     - en
     type: predefined
 
-    - MedicalLicenseRecognizer
+  - MedicalLicenseRecognizer
 
-    - name: ExampleCustomRecognizer
+  - name: ExampleCustomRecognizer
     patterns:
-        - name: "zip code (weak)"
-        regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
-        score: 0.01
-        - name: "zip code (weak)"
-        regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
-        score: 0.01
+    - name: "zip code (weak)"
+      regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+      score: 0.01
+    - name: "zip code (weak)"
+      regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+      score: 0.01
     supported_languages:
-        - language: en
-        context: [credit]
-        - language: es
-        context: [zip, code]
+    - language: en
+      context: [zip, code]
+    - language: es
+      context: [código, postal]
     supported_entity: "ZIP"
     type: custom
     enabled: true
 
-    - name: "TitlesRecognizer"
+  - name: "TitlesRecognizer"
     supported_language: "en"
     supported_entity: "TITLE"
     deny_list: [Mr., Mrs., Ms., Miss, Dr., Prof.]

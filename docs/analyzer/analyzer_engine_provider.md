@@ -29,25 +29,25 @@ supported_languages:
 default_score_threshold: 0
 
 nlp_configuration:
-    nlp_engine_name: spacy
-    models:
-        -
-        lang_code: en
-        model_name: en_core_web_lg
-        -
-        lang_code: es
-        model_name: es_core_news_md
-    ner_model_configuration:
+  nlp_engine_name: spacy
+  models:
+  -
+    lang_code: en
+    model_name: en_core_web_lg
+    -
+      lang_code: es
+      model_name: es_core_news_md
+      ner_model_configuration:
         model_to_presidio_entity_mapping:
-        PER: PERSON
-        PERSON: PERSON
-        LOC: LOCATION
-        LOCATION: LOCATION
-        GPE: LOCATION
-        ORG: ORGANIZATION
-        DATE: DATE_TIME
-        TIME: DATE_TIME
-        NORP: NRP
+          PER: PERSON
+          PERSON: PERSON
+          LOC: LOCATION
+          LOCATION: LOCATION
+          GPE: LOCATION
+          ORG: ORGANIZATION
+          DATE: DATE_TIME
+          TIME: DATE_TIME
+          NORP: NRP
 
         low_confidence_score_multiplier: 0.4
         low_score_entity_names:
@@ -56,15 +56,15 @@ nlp_configuration:
         default_score: 0.85
 
 recognizer_registry:
-    global_regex_flags: 26
-    recognizers: 
-        - name: CreditCardRecognizer
-        supported_languages: 
-        - en
-        supported_entity: IT_FISCAL_CODE
-        type: predefined
+  global_regex_flags: 26
+  recognizers: 
+  - name: CreditCardRecognizer
+    supported_languages: 
+      - en
+    supported_entity: IT_FISCAL_CODE
+    type: predefined
 
-        - ItFiscalCodeRecognizer
+  - ItFiscalCodeRecognizer
 ```
 
 The configuration file contains the following parameters:

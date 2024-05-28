@@ -15,11 +15,9 @@ recognizers:
   - name: CreditCardRecognizer
     supported_languages:
     - language: en
-      context: [credit, card, visa, mastercard, cc,
-      amex, discover, jcb, diners, maestro, instapayment]
+      context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
     - language: es
-      context: [tarjeta, credito, visa, mastercard, cc,
-      amex, discover, jcb, diners, maestro, instapayment]
+      context: [tarjeta, credito, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
     - language: it
     - language: pl
     type: predefined
