@@ -6,7 +6,8 @@ recognizers:
     supported_entity: IT_FISCAL_CODE
     type: predefined
 
-  - ItFiscalCodeRecognizer
+  - name: ItFiscalCodeRecognizer
+    type: predefined
 
   - name: ExampleCustomRecognizer
     patterns:

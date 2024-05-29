@@ -64,7 +64,8 @@ recognizer_registry:
     supported_entity: IT_FISCAL_CODE
     type: predefined
 
-  - ItFiscalCodeRecognizer
+  - name: ItFiscalCodeRecognizer
+    type: predefined
 ```
 
 The configuration file contains the following parameters:

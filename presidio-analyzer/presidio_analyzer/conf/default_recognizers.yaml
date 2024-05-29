@@ -128,11 +128,26 @@ recognizers:
     type: predefined
 
 
-  - CryptoRecognizer
-  - DateRecognizer
-  - EmailRecognizer
-  - IbanRecognizer
-  - IpRecognizer
-  - MedicalLicenseRecognizer
-  - PhoneRecognizer
-  - UrlRecognizer
+  - name: CryptoRecognizer
+    type: predefined
+
+  - name: DateRecognizer
+    type: predefined
+
+  - name: EmailRecognizer
+    type: predefined
+
+  - name: IbanRecognizer
+    type: predefined
+
+  - name: IpRecognizer
+    type: predefined
+
+  - name: MedicalLicenseRecognizer
+    type: predefined
+
+  - name: PhoneRecognizer
+    type: predefined
+
+  - name: UrlRecognizer
+    type: predefined

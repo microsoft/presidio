@@ -55,7 +55,8 @@ The recognizer list comprises of both the predefined and custom recognizers, for
     - en
     type: predefined
 
-  - MedicalLicenseRecognizer
+  - name: MedicalLicenseRecognizer
+    type: predefined
 
   - name: ExampleCustomRecognizer
     patterns:
@@ -86,7 +87,7 @@ The recognizer parameters:
   - `supported_languages`: A list of supported languages that the analyzer will support. In case this field is missing, a recognizer will be created for each supported language provided to the `AnalyzerEngine`. 
   In addition to the language code, this field also contains a list of context words, which increases confidence in the detection in case it is found in the surroundings of a detected entity (as seen in the credit card example above).
   - `type`: this could be either predefined or custom. As this is optional, if not stated otherwise, the default type is custom.
-  - `name`: Different per the type of the recognizer. For predefined recognizers, this is the class name as defined in presidio, while for custom recognizers, it will be set as the name of the recognizer. Note: for predefined recognizers, it's possible to provide the class name to instantiate the recognizer - see `MedicalLicenseRecognizer` above.
+  - `name`: Different per the type of the recognizer. For predefined recognizers, this is the class name as defined in presidio, while for custom recognizers, it will be set as the name of the recognizer.
   - `patterns`: a list of objects of type `Pattern` that contains a name, score and regex that define matching patterns.
   - `enabled`: enables or disables the recognizer.
   - `supported_entity`: the detected entity associated by the recognizer.
