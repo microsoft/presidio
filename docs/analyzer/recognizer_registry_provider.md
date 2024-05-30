@@ -11,9 +11,7 @@ provider = RecognizerRegistryProvider(
                 conf_file=recognizer_registry_conf_file
             )
 registry = provider.create_recognizer_registry()
-analyzer = AnalyzerEngine(
-            registry=registry,
-            )
+analyzer = AnalyzerEngine(registry=registry)
 
 results = analyzer.analyze(text="My name is Morris", language="en")
 print(results)
