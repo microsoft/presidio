@@ -83,7 +83,9 @@ Create an `AnalyzerEngineProvider` using three different configuration files for
   - NLP Engine
   - Recognizer Registry
 
-Note: Each of these parameters is optional and in case it's not set, the default configuration will be used. 
+!!! note "Note"
+
+        Each of these parameters is optional and in case it's not set, the default configuration will be used. 
 
 
 ```python
