@@ -21,7 +21,7 @@ urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = ">=3.8,<4.0"
 pycryptodome = ">=3.10.1"
 azure-core = { version = "*", optional = true }
 flask = { version = ">=1.1", optional = true }

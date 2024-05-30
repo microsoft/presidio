@@ -22,7 +22,7 @@ readme = "README.md"
 include = ["conf/*", ".presidiocli"]
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = ">=3.8,<4.0"
 presidio-analyzer = ">= 2.2"
 pyyaml = "*"
 pathspec = "*"

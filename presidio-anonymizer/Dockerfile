@@ -6,9 +6,9 @@ WORKDIR /usr/bin/${NAME}
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
-RUN pip install pdm && pdm install --prod -G server --no-lock --no-editable
+RUN pip install poetry && poetry install --only=main -E server
 
 COPY . /usr/bin/${NAME}/
 
 EXPOSE ${PORT}
-CMD pdm run python app.py
+CMD poetry run python app.py

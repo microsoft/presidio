@@ -22,7 +22,7 @@ readme = "README.md"
 include = ["conf/*",]
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = ">=3.8,<4.0"
 spacy= ">=3.4.4, <4.0.0"
 regex = "*"
 tldextract = "*"

@@ -21,7 +21,7 @@ urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = ">=3.8,<4.0"
 pillow = ">=9.0"
 pytesseract = ">=0.3.7,<0.4"
 presidio-analyzer = ">=1.9.0"
