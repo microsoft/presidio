@@ -126,67 +126,13 @@ class RecognizerRegistry:
         :param nlp_engine: The NLP engine to use.
         :return: None
         """
-        if not languages:
-            languages = ["en"]
 
-        recognizers_map = {
-            "en": [
-                UsBankRecognizer,
-                UsLicenseRecognizer,
-                UsItinRecognizer,
-                UsPassportRecognizer,
-                UsSsnRecognizer,
-                NhsRecognizer,
-                SgFinRecognizer,
-                AuAbnRecognizer,
-                AuAcnRecognizer,
-                AuTfnRecognizer,
-                AuMedicareRecognizer,
-                InPanRecognizer,
-                InAadhaarRecognizer,
-                InVehicleRegistrationRecognizer,
-                InVoterRecognizer,
-                InPassportRecognizer,
-            ],
-            "es": [
-                EsNifRecognizer,
-                EsNieRecognizer,
-            ],
-            "it": [
-                ItDriverLicenseRecognizer,
-                ItFiscalCodeRecognizer,
-                ItVatCodeRecognizer,
-                ItIdentityCardRecognizer,
-                ItPassportRecognizer,
-            ],
-            "pl": [PlPeselRecognizer],
-            "ALL": [
-                CreditCardRecognizer,
-                CryptoRecognizer,
-                DateRecognizer,
-                EmailRecognizer,
-                IbanRecognizer,
-                IpRecognizer,
-                MedicalLicenseRecognizer,
-                PhoneRecognizer,
-                UrlRecognizer,
-            ],
-        }
-        for lang in languages:
-            lang_recognizers = [
-                self.__instantiate_recognizer(
-                    recognizer_class=rc, supported_language=lang
-                )
-                for rc in recognizers_map.get(lang, [])
-            ]
-            self.recognizers.extend(lang_recognizers)
-            all_recognizers = [
-                self.__instantiate_recognizer(
-                    recognizer_class=rc, supported_language=lang
-                )
-                for rc in recognizers_map.get("ALL", [])
-            ]
-            self.recognizers.extend(all_recognizers)
+        from .recognizer_registry_provider import RecognizerRegistryProvider
+        registry_configuration = {"global_regex_flags": self.global_regex_flags}
+        if languages is not None:
+            registry_configuration["supported_languages"] = languages
+        recognizers = RecognizerRegistryProvider(registry_configuration=registry_configuration).create_recognizer_registry().recognizers
+        self.recognizers.extend(recognizers)
         self.add_nlp_recognizer(nlp_engine=nlp_engine)
 
     @staticmethod
