@@ -98,7 +98,11 @@ class RecognizerRegistry:
         registry_configuration = {"global_regex_flags": self.global_regex_flags}
         if languages is not None:
             registry_configuration["supported_languages"] = languages
-        recognizers = RecognizerRegistryProvider(registry_configuration=registry_configuration).create_recognizer_registry().recognizers
+
+        recognizers = RecognizerRegistryProvider(
+            registry_configuration=registry_configuration
+        ).create_recognizer_registry().recognizers
+
         self.recognizers.extend(recognizers)
         self.add_nlp_recognizer(nlp_engine=nlp_engine)
 
