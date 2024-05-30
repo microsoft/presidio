@@ -2,7 +2,7 @@
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core"]
 
-[project]
+[tool.poetry]
 name = "presidio_structured"
 version = "0.0.2-alpha"
 description = "Presidio structured package - analyzes and anonymizes structured and semi-structured data."

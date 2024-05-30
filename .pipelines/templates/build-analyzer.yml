@@ -15,7 +15,7 @@ steps:
       workingDirectory: 'presidio-analyzer'
       script: |
         set -eux  # fail on error
-        poetry install -G:all
+        poetry install --all-extras
         poetry run python -m spacy download en_core_web_lg
         poetry run python -m spacy download en_core_web_sm
 

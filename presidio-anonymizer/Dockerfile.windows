@@ -5,7 +5,6 @@ WORKDIR /app
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
-COPY ./VERSION /usr/bin/${NAME}/
 RUN pip install --upgrade pip
 RUN pip install pdm; pdm install --deploy
 

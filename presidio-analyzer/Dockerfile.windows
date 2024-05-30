@@ -20,7 +20,6 @@ RUN ./vc_redist.x64.exe /quiet /install
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
-COPY ./VERSION /usr/bin/${NAME}/
 RUN pip install --upgrade pip
 RUN pip install pdm; pdm install --prod -G server -G transformers --no-lock --no-editable
 

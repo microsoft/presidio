@@ -31,7 +31,6 @@ RUN apt-get update  \
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
-COPY ./VERSION /usr/bin/${NAME}/
 RUN pip install poetry && poetry install --only=main -E server
 
 COPY . /usr/bin/${NAME}/

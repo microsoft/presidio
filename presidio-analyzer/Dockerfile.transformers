@@ -17,7 +17,6 @@ COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
-COPY ./VERSION /usr/bin/${NAME}/
 RUN pip install poetry && poetry install -E server -E transformers
 
 RUN pdm add torch transformers huggingface_hub --no-lock
