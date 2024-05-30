@@ -97,8 +97,8 @@ recognizer_registry_conf_file = "./analyzer/recognizers-config.yml"
 
 provider = AnalyzerEngineProvider(
     analyzer_engine_conf_file=analyzer_conf_file,
-        nlp_engine_conf_file=nlp_engine_conf_file,
-        recognizer_registry_conf_file=recognizer_registry_conf_file,
+    nlp_engine_conf_file=nlp_engine_conf_file,
+    recognizer_registry_conf_file=recognizer_registry_conf_file,
     )
 analyzer = provider.create_engine()
 
