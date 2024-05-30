@@ -1,12 +1,12 @@
 steps:
   - task: Bash@3
-    displayName: 'Setup pdm'
+    displayName: 'Setup poetry'
     inputs:
       targetType: 'inline'
       script: |
         set -eux  # fail on error
         python -m pip install --upgrade pip
-        python -m pip install pdm
+        python -m pip install poetry
 
   - task: Bash@3
     displayName: 'Install deps: Anonymizer'
@@ -15,7 +15,7 @@ steps:
       workingDirectory: 'presidio-anonymizer'
       script: |
         set -eux  # fail on error
-        pdm install
+        poetry install
 
   - template: ./build-python.yml
     parameters:

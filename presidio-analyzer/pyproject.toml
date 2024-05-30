@@ -1,11 +1,13 @@
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
 
-[project]
+[tool.poetry]
 name = "presidio_analyzer"
+version = "2.2.354"
 description = "Presidio Analyzer package"
-license = {text = "MIT"}
+authors = ["Presidio <presidio@microsoft.com>"]
+license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -14,21 +16,27 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">=3.8"
 keywords = ["presidio_analyzer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
-dependencies = [
-    "spacy>=3.4.4, <4.0.0",
-    "regex",
-    "tldextract",
-    "pyyaml",
-    "phonenumbers>=8.12,<9.0.0",
-]
-dynamic = ["version"]
 readme = "README.md"
+include = ["conf/*",]
 
-[project.optional-dependencies]
-server = ["flask>=1.1"]
+[tool.poetry.dependencies]
+python = ">=3.8"
+spacy= ">=3.4.4, <4.0.0"
+regex = "*"
+tldextract = "*"
+pyyaml = "*"
+phonenumbers = ">=8.12,<9.0.0"
+flask = { version = ">=1.1", optional = true }
+spacy_huggingface_pipelines = { version = "*", optional = true }
+stanza = { version = "*", optional = true }
+spacy_stanza = { version = "*", optional = true }
+azure-ai-textanalytics = { version = "*", optional = true }
+azure-core = { version = "*", optional = true }
+
+[tool.poetry.extras]
+server = ["flask"]
 transformers = ["spacy_huggingface_pipelines"]
 stanza = [
     "stanza",
@@ -39,17 +47,10 @@ azure-ai-language = [
     "azure-core",
 ]
 
-[tool.pdm.build]
-source-includes = ["conf/*",]
-
-[[tool.pdm.source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi"
-
-[tool.pdm.dev-dependencies]
-dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
-
-[tool.pdm.version]
-source = "file"
-path = "VERSION"
+[tool.poetry.group.dev.dependencies]
+pip = "*"
+ruff = "*"
+pytest = "*"
+pytest-mock = "*"
+python-dotenv = "*"
+pre_commit = "*"

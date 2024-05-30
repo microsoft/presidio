@@ -1,6 +1,8 @@
 """A Python CLI for analyzing PII Entities with Microsoft Presidio framework."""
 
-__version__ = "0.0.8"
+import importlib.metadata
+
+__version__ = importlib.metadata.version("presidio-cli")
 
 APP_DESCRIPTION = __doc__
 SHELL_NAME = "presidio"

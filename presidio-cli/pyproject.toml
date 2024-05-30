@@ -1,11 +1,13 @@
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
 
-[project]
+[tool.poetry]
 name = "presidio-cli"
+version = "0.0.8"
 description = "CLI tool that analyzes text for PII Entities using Presidio Analyzer."
-license = {text = "MIT License"}
+authors = ["Presidio <presidio@microsoft.com>"]
+license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -14,27 +16,24 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">=3.8"
-urls = {Homepage = "https://github.com/microsoft/presidio"}
 keywords = ["pii", "checker", "presidio_cli"]
-dynamic = ["version"]
+urls = {Homepage = "https://github.com/microsoft/presidio"}
 readme = "README.md"
+include = ["conf/*", ".presidiocli"]
 
-dependencies = [
-    "presidio-analyzer >= 2.2",
-    "pyyaml",
-    "pathspec",
-]
+[tool.poetry.dependencies]
+python = ">=3.8"
+presidio-analyzer = ">= 2.2"
+pyyaml = "*"
+pathspec = "*"
 
-[project.scripts]
+[tool.poetry.scripts]
 presidio = "presidio_cli.cli:run"
 
-[tool.pdm.dev-dependencies]
-dev = ["pip", "ruff", "pytest", "pytest-mock", "python-dotenv", "pre_commit"]
-
-[tool.pdm.build]
-source-includes = ["conf/*",]
-
-[tool.pdm.version]
-source = "file"
-path = "presidio_cli/__init__.py"
+[tool.poetry.group.dev.dependencies]
+pip = "*"
+ruff = "*"
+pytest = "*"
+pytest-mock = "*"
+python-dotenv = "*"
+pre_commit = "*"

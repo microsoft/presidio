@@ -1,12 +1,12 @@
 steps:
   - task: Bash@3
-    displayName: 'Setup pdm'
+    displayName: 'Setup poetry'
     inputs:
       targetType: 'inline'
       script: |
         set -eux  # fail on error
         python -m pip install --upgrade pip
-        python -m pip install pdm
+        python -m pip install poetry
 
   - task: Bash@3
     displayName: 'Install deps'
@@ -15,8 +15,8 @@ steps:
       workingDirectory: 'presidio-cli'
       script: |
         set -eux  # fail on error
-        pdm install
-        pdm run python -m spacy download en_core_web_lg
+        poetry install
+        poetry run python -m spacy download en_core_web_lg
   - template: ./build-python.yml
     parameters:
       SERVICE: 'Cli'

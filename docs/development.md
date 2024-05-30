@@ -16,7 +16,7 @@ The project is structured so that:
 - In the project root directory, you will find common code for using, serving and testing Presidio
     as a cluster of services, as well as CI/CD pipelines codebase and documentation.
 
-### Setting up PDM
+### Setting up Poetry
 
 [PDM](https://daobook.github.io/pdm/) is Python package manager with PEP 582 support. It installs and manages packages
 in a similar way to npm that doesn't need to create a virtualenv at all. It is used by each Presidio service

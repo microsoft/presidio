@@ -4,7 +4,6 @@ ARG NAME
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
-ENV PDM_VENV_WITH_PIP=1
 ENV PIP_NO_CACHE_DIR=1
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
@@ -25,12 +24,12 @@ COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
 COPY ./VERSION /usr/bin/${NAME}/
 
-RUN pip install pdm && pdm install --prod -G server --no-lock --no-editable
+RUN pip install poetry && poetry install --only=main -E server
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 
-RUN pdm run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
+RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD pdm run python app.py --host 0.0.0.0
+CMD poetry run python app.py --host 0.0.0.0

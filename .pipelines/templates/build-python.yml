@@ -12,8 +12,8 @@ steps:
           script: |
               set -eux  # fail on error
               # Install pytest and run tests
-              pdm run pip install pytest pytest-azurepipelines
-              pdm run pytest -vv
+              poetry run pip install pytest pytest-azurepipelines
+              poetry run pytest -vv
 
     - task: Bash@3
       displayName: 'Package Wheel: ${{ parameters.SERVICE }}'
