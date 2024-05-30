@@ -42,3 +42,5 @@ registry.add_recognizers_from_yaml(yaml_file)
 analyzer = AnalyzerEngine(registry=registry)
 analyzer.analyze(text="Mr. Plum wrote a book", language="en")
 ```
+
+Finally, for initializing and customizing recognizer registry from file see the following [section](../analyzer/recognizer_registry_provider.md).
