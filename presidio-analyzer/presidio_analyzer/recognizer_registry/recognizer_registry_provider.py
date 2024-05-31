@@ -4,7 +4,7 @@ import logging
 import re
 from collections.abc import ItemsView
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Type, Union
 
 import yaml
 
@@ -255,9 +255,15 @@ class RecognizerRegistryProvider:
             fields[field] = self.configuration.get(field, self.default_values[field])
 
         self.supported_languages = fields["supported_languages"]
+        self.global_regex_flags = fields["global_regex_flags"]
 
+        fields["recognizers"] = self.init_recognizers(fields["recognizers"])
+
+        return RecognizerRegistry(**fields)
+
+    def init_recognizers(self, recognizers: Dict[str, Any]) -> Iterable[EntityRecognizer]:
         recognizer_instances = []
-        predefined, custom = self._split_recognizers(fields["recognizers"])
+        predefined, custom = self._split_recognizers(recognizers)
         for recognizer_conf in predefined:
             for language_conf in self._get_recognizer_languages(recognizer_conf):
                 if self._is_recognizer_enabled(recognizer_conf):
@@ -281,17 +287,24 @@ class RecognizerRegistryProvider:
 
         for recognizer_conf in recognizer_instances:
             if isinstance(recognizer_conf, PatternRecognizer):
-                recognizer_conf.global_regex_flags = fields["global_regex_flags"]
+                recognizer_conf.global_regex_flags = self.global_regex_flags
 
-        recognizer_instances = [
-            recognizer
-            for recognizer in recognizer_instances
-            if recognizer.supported_language in self.supported_languages
-        ]
+        index = 0
+        while index < len(recognizer_instances):
+            recognizer = recognizer_instances[index]
+            if recognizer.supported_language not in self.supported_languages:
+                logger.warning(
+                    f"Recognizer not added to registry because "
+                    f"language is not supported by registry - "
+                    f"{recognizer.name} supported languages: {recognizer.supported_language}"
+                    f", registry supported languages: {', '.join(self.supported_languages)}"
+                )
+                recognizer_instances.pop(index)
+            else:
+                index += 1
 
-        fields["recognizers"] = recognizer_instances
+        return recognizer_instances
 
-        return RecognizerRegistry(**fields)
 
     @staticmethod
     def _get_full_conf_path(
