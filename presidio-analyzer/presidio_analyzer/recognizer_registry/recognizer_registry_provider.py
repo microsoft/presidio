@@ -262,9 +262,10 @@ class RecognizerRegistryProvider:
         return RecognizerRegistry(**fields)
 
     def init_recognizers(
-            self, 
+            self,
             recognizers: Dict[str, Any]
         ) -> Iterable[EntityRecognizer]:
+        """Create a recognizers according to configuration loaded previously."""
         recognizer_instances = []
         predefined, custom = self._split_recognizers(recognizers)
         for recognizer_conf in predefined:
