@@ -261,7 +261,10 @@ class RecognizerRegistryProvider:
 
         return RecognizerRegistry(**fields)
 
-    def init_recognizers(self, recognizers: Dict[str, Any]) -> Iterable[EntityRecognizer]:
+    def init_recognizers(
+            self, 
+            recognizers: Dict[str, Any]
+        ) -> Iterable[EntityRecognizer]:
         recognizer_instances = []
         predefined, custom = self._split_recognizers(recognizers)
         for recognizer_conf in predefined:
@@ -296,8 +299,10 @@ class RecognizerRegistryProvider:
                 logger.warning(
                     f"Recognizer not added to registry because "
                     f"language is not supported by registry - "
-                    f"{recognizer.name} supported languages: {recognizer.supported_language}"
-                    f", registry supported languages: {', '.join(self.supported_languages)}"
+                    f"{recognizer.name} supported "
+                    f"languages: {recognizer.supported_language}"
+                    f", registry supported languages: "
+                    f"{', '.join(self.supported_languages)}"
                 )
                 recognizer_instances.pop(index)
             else:
