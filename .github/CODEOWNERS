@@ -1,6 +1,2 @@
 # Package dependency changes should be approved by a member of 'presidio-administrators' team
 **/pyproject.toml @microsoft/presidio-administrators
-
-# Version change should be approved by a member of 'presidio-administrators' team
-**/VERSION @microsoft/presidio-administrators
-
