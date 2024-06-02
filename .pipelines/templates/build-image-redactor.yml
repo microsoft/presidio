@@ -10,14 +10,14 @@ steps:
               sudo apt show tesseract-ocr
               sudo tesseract -v
     - task: Bash@3
-      displayName: 'Setup pipenv'
+      displayName: 'Setup poetry'
       inputs:
           targetType: 'inline'
           script: |
               set -eux  # fail on error
               python -m pip install --upgrade pip
-              python -m pip install pipenv
-              pipenv --python 3
+              python -m pip install poetry
+
     - task: Bash@3
       displayName: 'Install deps'
       inputs:
@@ -25,9 +25,9 @@ steps:
           workingDirectory: 'presidio-image-redactor'
           script: |
               set -eux  # fail on error
-              pipenv install --deploy --dev
-              pipenv run python -m spacy download en_core_web_lg
-              pipenv run pip install -e ../presidio-analyzer/.
+              poetry install
+              poetry run python -m spacy download en_core_web_lg
+              poetry run pip install -e ../presidio-analyzer/.
     - template: ./build-python.yml
       parameters:
           SERVICE: 'Image-Redactor'

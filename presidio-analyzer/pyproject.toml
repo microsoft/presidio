@@ -1,37 +1,42 @@
 [build-system]
-requires = ["setuptools>=61.2"]
-build-backend = "setuptools.build_meta"
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
 
-[project]
+[tool.poetry]
 name = "presidio_analyzer"
+version = "2.2.354"
 description = "Presidio Analyzer package"
-license = {text = "MIT License"}
+authors = ["Presidio <presidio@microsoft.com>"]
+license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">= 3.5"
 keywords = ["presidio_analyzer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
-dependencies = [
-    "spacy>=3.4.4, <4.0.0",
-    "regex",
-    "tldextract",
-    "pyyaml",
-    "phonenumbers>=8.12,<9.0.0",
-]
-dynamic = ["version"]
+readme = "README.md"
+include = ["conf/*",]
 
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+spacy= ">=3.4.4, <4.0.0"
+regex = "*"
+tldextract = "*"
+pyyaml = "*"
+phonenumbers = ">=8.12,<9.0.0"
+flask = { version = ">=1.1", optional = true }
+spacy_huggingface_pipelines = { version = "*", optional = true }
+stanza = { version = "*", optional = true }
+spacy_stanza = { version = "*", optional = true }
+azure-ai-textanalytics = { version = "*", optional = true }
+azure-core = { version = "*", optional = true }
 
-[project.optional-dependencies]
+[tool.poetry.extras]
+server = ["flask"]
 transformers = ["spacy_huggingface_pipelines"]
 stanza = [
     "stanza",
@@ -41,12 +46,11 @@ azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
 ]
-test = ["pytest", "ruff"]
 
-[tool.setuptools.package-data]
-presidio_analyzer = [
-    "conf/*",
-]
-
-[tool.setuptools.dynamic]
-version = {file = ["VERSION"]}
+[tool.poetry.group.dev.dependencies]
+pip = "*"
+ruff = "*"
+pytest = "*"
+pytest-mock = "*"
+python-dotenv = "*"
+pre_commit = "*"
