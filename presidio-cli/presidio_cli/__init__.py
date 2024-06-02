@@ -2,7 +2,10 @@
 
 import importlib.metadata
 
-__version__ = importlib.metadata.version("presidio-cli")
+try:
+    __version__ = importlib.metadata.version("presidio-cli")
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "0.0.0"
 
 APP_DESCRIPTION = __doc__
 SHELL_NAME = "presidio"
