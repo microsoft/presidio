@@ -3,7 +3,6 @@ FROM python:3.9-windowsservercore
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
-ENV PDM_VENV_WITH_PIP=1
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /app
 
@@ -21,13 +20,13 @@ RUN ./vc_redist.x64.exe /quiet /install
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
 RUN pip install --upgrade pip
-RUN pip install pdm; pdm install --prod -G server -G transformers --no-lock --no-editable
+RUN pip install poetry; poetry install --no-root --only=main -E server -E transformers
 
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py .
 COPY ${NLP_CONF_FILE} ${NLP_CONF_FILE}
-RUN pdm run python install_nlp_models.py --conf_file $Env:NLP_CONF_FILE
+RUN poetry run python install_nlp_models.py --conf_file $Env:NLP_CONF_FILE
 
 COPY . .
 EXPOSE ${PORT}
-CMD pdm run python app.py --host 0.0.0.0
+CMD poetry run python app.py --host 0.0.0.0

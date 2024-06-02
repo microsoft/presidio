@@ -18,51 +18,50 @@ The project is structured so that:
 
 ### Setting up Poetry
 
-[PDM](https://daobook.github.io/pdm/) is Python package manager with PEP 582 support. It installs and manages packages
-in a similar way to npm that doesn't need to create a virtualenv at all. It is used by each Presidio service
-as the dependencies manager, to be aligned with the specific requirements versions.
-Follow these steps when starting to work on a Presidio service with pdm:
+[Poetry](https://python-poetry.org/) is Python package manager. It is used to manage dependencies and virtual
+environments for Presidio services.
+Follow these steps when starting to work on a Presidio service with poetry:
 
-1. Install PDM
+1. Install poetry
 
     - Using Pip
 
         ```sh
-        pip install --user pdm
+        pip install poetry
         ```
 
     - Using Homebrew (in MacOS)
 
         ```
-        brew install pdm
+        brew install poetry
         ```
 
-    Additional installation instructions for PDM: <https://daobook.github.io/pdm/#installation>
+    Additional installation instructions for poetry: <https://python-poetry.org/docs/#installation>
 
-2. Have PDM create a virtualenv for the project and install all requirements in the pyproject.toml,
+2. Have poetry create a virtualenv for the project and install all requirements in the pyproject.toml,
     including dev requirements.
 
     For example, in the `presidio-analyzer` folder, run:
 
     ```
-    pdm install -G:all
+    poetry install --all-extras
     ```
 
 3. Run all tests:
 
     ```
-    pdm run pytest
+    poetry run pytest
     ```
 
 4. To run arbitrary scripts within the virtual env, start the command with
-    `pdm run`. For example:
-    1. `pdm run ruff check`
-    2. `pdm run pip freeze`
-    3. `pdm run python -m spacy download en_core_web_lg`
+    `poetry run`. For example:
+    1. `poetry run ruff check`
+    2. `poetry run pip freeze`
+    3. `poetry run python -m spacy download en_core_web_lg`
 
     Command 3 downloads the default spacy model needed for Presidio Analyzer.`
 
-#### Alternatively, activate the virtual environment and use the commands using [this method](https://pdm-project.org/latest/usage/venv/#activate-a-virtualenv).
+#### Alternatively, activate the virtual environment and use the commands using [this method](https://python-poetry.org/docs/basic-usage/#activating-the-virtual-environment).
 
 ### Development guidelines
 
@@ -94,9 +93,9 @@ use docker-compose ps:
 ```bash
 >docker-compose ps
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                    NAMES
-6d5a258d19c2   presidio-anonymizer         "/bin/sh -c 'pdm …"   6 minutes ago   Up 6 minutes   0.0.0.0:5001->5001/tcp   presidio_presidio-anonymizer_1
-9aad2b68f93c   presidio-analyzer           "/bin/sh -c 'pdm …"   2 days ago      Up 6 minutes   0.0.0.0:5002->5001/tcp   presidio_presidio-analyzer_1
-1448dfb3ec2b   presidio-image-redactor     "/bin/sh -c 'pdm …"   2 seconds ago   Up 2 seconds   0.0.0.0:5003->5001/tcp   presidio_presidio-image-redactor_1
+6d5a258d19c2   presidio-anonymizer         "/bin/sh -c 'poetry …"   6 minutes ago   Up 6 minutes   0.0.0.0:5001->5001/tcp   presidio_presidio-anonymizer_1
+9aad2b68f93c   presidio-analyzer           "/bin/sh -c 'poetry …"   2 days ago      Up 6 minutes   0.0.0.0:5002->5001/tcp   presidio_presidio-analyzer_1
+1448dfb3ec2b   presidio-image-redactor     "/bin/sh -c 'poetry …"   2 seconds ago   Up 2 seconds   0.0.0.0:5003->5001/tcp   presidio_presidio-image-redactor_1
 ```
 
 Edit docker-compose.yml configuration file to change the default ports.
@@ -139,7 +138,7 @@ Running the tests locally can be done in two ways:
 1. Using cli, from each service directory, run:
 
     ```sh
-    pdm run pytest
+    poetry run pytest
     ```
 
 2. Using your IDE.
@@ -222,7 +221,7 @@ run.bat
 
 Presidio services are PEP8 compliant and continuously enforced on style guide issues during the build process using `ruff`, in turn running `flake8` and other linters.
 
-Running ruff locally, using `pdm run ruff check`, you can check for those issues prior to committing a change.
+Running ruff locally, using `poetry run ruff check`, you can check for those issues prior to committing a change.
 
 Ruff runs linters in addition to the basic `flake8` functionality, Presidio uses linters as part as ruff such as:
 

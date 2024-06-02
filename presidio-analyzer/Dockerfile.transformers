@@ -19,13 +19,13 @@ COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
 RUN pip install poetry && poetry install -E server -E transformers
 
-RUN pdm add torch transformers huggingface_hub --no-lock
+RUN poetry add torch transformers huggingface_hub --no-lock
 
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 
-RUN pdm run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
+RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD pdm run python app.py --host 0.0.0.0
+CMD poetry run python app.py --host 0.0.0.0
