@@ -1,7 +1,2 @@
-# Package dependency changes should be approved by a member of 'presidio-administrators' team
-*/Pipfile* @microsoft/presidio-administrators
-
-# Version change should be approved by a member of 'presidio-administrators' team
-VERSION @microsoft/presidio-administrators
-VERSION-IMAGE-REDACTOR @microsoft/presidio-administrators
-
+# Package dependencies and version changes should be approved by a member of 'presidio-administrators' team
+**/pyproject.toml @microsoft/presidio-administrators
