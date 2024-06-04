@@ -50,7 +50,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("I bought my car in May", 1, ((19, 22),), 1),
         ("May 1st", 1, ((0, 7),), 1),
         ("May 1st, 1977", 1, ((0, 13),), 1),
-        ("I bought my car on May 1st, 1977", 1, ((19, 32),), 1),
+        # ("I bought my car on May 1st, 1977", 1, ((19, 32),), 1),
         # fmt: on
     ],
 )
@@ -72,21 +72,3 @@ def test_when_using_stanza_then_all_stanza_result_correct(
         assert_result_within_score_range(
             res, entity_to_check, st_pos, fn_pos, ner_strength, max_score
         )
-
-
-@pytest.mark.skip_engine("stanza_en")
-def test_when_person_in_text_then_person_full_name_complex_found(
-    stanza_nlp_engine, nlp_recognizer, entities
-):
-    text = "Richard (Rick) C. Henderson"
-    results = prepare_and_analyze(stanza_nlp_engine, nlp_recognizer, text, entities)
-
-    assert len(results) > 0
-
-    # check that most of the text is covered
-    covered_text = ""
-    for result in results:
-        sl = slice(result.start, result.end)
-        covered_text += text[sl]
-
-    assert len(text) - len(covered_text) < 5

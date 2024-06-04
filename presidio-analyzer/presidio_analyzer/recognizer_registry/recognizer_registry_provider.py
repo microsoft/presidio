@@ -201,8 +201,7 @@ class RecognizerRegistryProvider:
         predefined = [
             recognizer_conf
             for recognizer_conf in recognizers_conf
-            if isinstance(recognizer_conf, str)
-            or ("type" in recognizer_conf and recognizer_conf["type"] == "predefined")
+            if ("type" in recognizer_conf and recognizer_conf["type"] == "predefined")
         ]
         custom = [
             recognizer_conf
