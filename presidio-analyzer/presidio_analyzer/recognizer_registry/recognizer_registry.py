@@ -14,7 +14,7 @@ from presidio_analyzer.nlp_engine import (
     TransformersNlpEngine,
 )
 from presidio_analyzer.predefined_recognizers import (
-    ABARoutingNumber,
+    AbaRoutingRecognizer,
     ATPassportNumber,
     AuAbnRecognizer,
     AuAcnRecognizer,
@@ -86,7 +86,7 @@ from presidio_analyzer.predefined_recognizers import (
     UsBankRecognizer,
     UsItinRecognizer,
     UsLicenseRecognizer,
-    # UsPassportRecognizer,
+    UsPassportRecognizer,
     UsSsnRecognizer,
 )
 
@@ -169,10 +169,11 @@ class RecognizerRegistry:
 
         recognizers_map = {
             "en": [
+                AbaRoutingRecognizer,
                 UsBankRecognizer,
                 UsLicenseRecognizer,
                 UsItinRecognizer,
-                # UsPassportRecognizer,
+                UsPassportRecognizer,
                 UsSsnRecognizer,
                 NhsRecognizer,
                 SgFinRecognizer,
@@ -186,7 +187,6 @@ class RecognizerRegistry:
                 InVoterRecognizer,
                 InPassportRecognizer,
 
-                ABARoutingNumber,
                 ATPassportNumber,
                 AUBankAccountNumber,
                 BEPassportNumber,
@@ -225,9 +225,21 @@ class RecognizerRegistry:
                 SWIFTCode,
                 UKPassportNumber,
             ],
+            "de": [
+                DEPassportNumber,
+                EUGPSCoordinates,
+            ],
+            "gr": [
+                EUGPSCoordinates,
+                GRPassportNumber,
+            ],
             "es": [
                 EsNifRecognizer,
                 EsNieRecognizer,
+                ESPassportNumber,
+            ],
+            "fr": [
+                FRPassportNumber,
             ],
             "it": [
                 ItDriverLicenseRecognizer,
@@ -236,7 +248,21 @@ class RecognizerRegistry:
                 ItIdentityCardRecognizer,
                 ItPassportRecognizer,
             ],
-            "pl": [PlPeselRecognizer],
+            "ja": [
+
+            ],
+            "nl": [
+                EUGPSCoordinates,
+            ],
+            "pl": [
+                PlPeselRecognizer
+            ],
+            "pt": [
+                EUGPSCoordinates,
+            ],
+            "zh": [
+
+            ],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,

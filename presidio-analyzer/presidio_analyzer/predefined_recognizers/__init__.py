@@ -4,10 +4,8 @@ from presidio_analyzer.predefined_recognizers.transformers_recognizer import (
     TransformersRecognizer,
 )
 
-from .aba_routing_number import ABARoutingNumber
 from .at_passport_number import ATPassportNumber
-
-# from .aba_routing_recognizer import AbaRoutingRecognizer
+from .aba_routing_recognizer import AbaRoutingRecognizer
 from .au_abn_recognizer import AuAbnRecognizer
 from .au_acn_recognizer import AuAcnRecognizer
 from .au_bank_account_number import AUBankAccountNumber
@@ -81,7 +79,7 @@ from .us_bank_recognizer import UsBankRecognizer
 from .us_driver_license_recognizer import UsLicenseRecognizer
 from .us_itin_recognizer import UsItinRecognizer
 
-# from .us_passport_recognizer import UsPassportRecognizer
+from .us_passport_recognizer import UsPassportRecognizer
 from .us_ssn_recognizer import UsSsnRecognizer
 
 PREDEFINED_RECOGNIZERS = [
@@ -103,7 +101,7 @@ NLP_RECOGNIZERS = {
 }
 
 __all__ = [
-    # "AbaRoutingRecognizer",
+    "AbaRoutingRecognizer",
     "CreditCardRecognizer",
     "CryptoRecognizer",
     "DateRecognizer",
@@ -118,7 +116,7 @@ __all__ = [
     "UsBankRecognizer",
     "UsItinRecognizer",
     "UsLicenseRecognizer",
-    # "UsPassportRecognizer",
+    "UsPassportRecognizer",
     "UsSsnRecognizer",
     "EsNifRecognizer",
     "SpacyRecognizer",
@@ -145,7 +143,6 @@ __all__ = [
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
 
-    "ABARoutingNumber",
     "ATPassportNumber",
     "AUBankAccountNumber",
     "BEPassportNumber",
