@@ -91,15 +91,43 @@ def test_when_analyze_with_predefined_recognizers_then_return_results(
     assert len(results) == 1
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
 
-def test_when_analyze_with_unsupported_language_different_then_fail(
+def test_when_analyze_with_unsupported_language_must_match(
 ):
     with pytest.raises(ValueError):
-        registry = RecognizerRegistryProvider({"supported_language": ["en"]}).create_recognizer_registry()
+        registry = RecognizerRegistryProvider(registry_configuration={"supported_languages": ["en"]}).create_recognizer_registry()
         AnalyzerEngine(
             registry=registry,
             supported_languages=["es", "de"]
         )
 
+    with pytest.raises(ValueError):
+        registry = RecognizerRegistryProvider().create_recognizer_registry()
+        AnalyzerEngine(
+            registry=registry,
+            supported_languages=["es", "de"]
+        )
+
+    with pytest.raises(ValueError):
+        registry = RecognizerRegistryProvider(registry_configuration={"supported_languages": ["es", "de"]}).create_recognizer_registry()
+        AnalyzerEngine(
+            registry=registry
+        )
+
+    registry = RecognizerRegistryProvider(registry_configuration={"supported_languages": ["es", "de"]}).create_recognizer_registry()
+    AnalyzerEngine(
+        registry=registry,
+        supported_languages=["de", "es"]
+    )
+
+    registry = RecognizerRegistryProvider().create_recognizer_registry()
+    AnalyzerEngine(
+        registry=registry
+    )
+
+def test_when_analyze_with_defaults_success(
+):
+    registry = RecognizerRegistryProvider().create_recognizer_registry()
+    AnalyzerEngine(registry=registry)
 
 def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     loaded_registry, unit_test_guid, spacy_nlp_engine, max_score

@@ -238,6 +238,21 @@ class RecognizerRegistryProvider:
         "global_regex_flags": re.DOTALL | re.MULTILINE | re.IGNORECASE,
     }
 
+    def _is_language_supported_globally(
+            self,
+            recognizer: EntityRecognizer) -> bool:
+        if recognizer.supported_language not in self.supported_languages:
+            logger.warning(
+                f"Recognizer not added to registry because "
+                f"language is not supported by registry - "
+                f"{recognizer.name} supported "
+                f"languages: {recognizer.supported_language}"
+                f", registry supported languages: "
+                f"{', '.join(self.supported_languages)}"
+            )
+            return False
+        return True
+
     def create_recognizer_registry(self) -> RecognizerRegistry:
         """Create a recognizer registry according to configuration loaded previously."""
         fields = {
@@ -254,18 +269,25 @@ class RecognizerRegistryProvider:
                 )
             fields[field] = self.configuration.get(field, self.default_values[field])
 
-        self.supported_languages = fields["supported_languages"]
-        self.global_regex_flags = fields["global_regex_flags"]
-
-        fields["recognizers"] = self.init_recognizers(fields["recognizers"])
+        fields["recognizers"] = self.init_recognizers(fields["recognizers"],
+                                                      fields["supported_languages"],
+                                                      fields["global_regex_flags"])
 
         return RecognizerRegistry(**fields)
 
     def init_recognizers(
             self,
-            recognizers: Dict[str, Any]
+            recognizers: Dict[str, Any],
+            supported_languages: Iterable[str],
+            global_regex_flags: int,
         ) -> Iterable[EntityRecognizer]:
-        """Create an iterator of recognizers according to configuration loaded previously."""
+        """
+        Create an iterator of recognizers.
+
+        The recognizers are initialized according to configuration loaded previously.
+        """
+        self.supported_languages = supported_languages
+        self.global_regex_flags = global_regex_flags
         recognizer_instances = []
         predefined, custom = self._split_recognizers(recognizers)
         for recognizer_conf in predefined:
@@ -293,21 +315,12 @@ class RecognizerRegistryProvider:
             if isinstance(recognizer_conf, PatternRecognizer):
                 recognizer_conf.global_regex_flags = self.global_regex_flags
 
-        index = 0
-        while index < len(recognizer_instances):
-            recognizer = recognizer_instances[index]
-            if recognizer.supported_language not in self.supported_languages:
-                logger.warning(
-                    f"Recognizer not added to registry because "
-                    f"language is not supported by registry - "
-                    f"{recognizer.name} supported "
-                    f"languages: {recognizer.supported_language}"
-                    f", registry supported languages: "
-                    f"{', '.join(self.supported_languages)}"
-                )
-                recognizer_instances.pop(index)
-            else:
-                index += 1
+
+        recognizer_instances = [
+            recognizer
+            for recognizer in recognizer_instances
+            if self._is_language_supported_globally(recognizer)
+        ]
 
         return recognizer_instances
 
