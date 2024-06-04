@@ -265,7 +265,7 @@ class RecognizerRegistryProvider:
             self,
             recognizers: Dict[str, Any]
         ) -> Iterable[EntityRecognizer]:
-        """Create a recognizers according to configuration loaded previously."""
+        """Create an iterator of recognizers according to configuration loaded previously."""
         recognizer_instances = []
         predefined, custom = self._split_recognizers(recognizers)
         for recognizer_conf in predefined:

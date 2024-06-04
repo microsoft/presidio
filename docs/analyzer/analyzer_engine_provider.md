@@ -77,7 +77,7 @@ The configuration file contains the following parameters:
 
 !!! note "Note"
 
-    supported_languages must be identical to the same field in recognizer_registry
+    `supported_languages` must be identical to the same field in recognizer_registry
 
 ## Using multiple files
 
