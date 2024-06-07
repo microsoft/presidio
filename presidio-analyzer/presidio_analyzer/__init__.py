@@ -13,7 +13,7 @@ from presidio_analyzer.pattern_recognizer import PatternRecognizer
 from presidio_analyzer.remote_recognizer import RemoteRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
-from presidio_analyzer.analyzer_engine_provider import AnalyzerEngineProvider
+from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils
 from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
