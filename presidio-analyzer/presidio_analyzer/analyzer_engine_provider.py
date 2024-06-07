@@ -29,13 +29,13 @@ class AnalyzerEngineProvider:
         nlp_engine_conf_file: Optional[Union[Path, str]] = None,
         recognizer_registry_conf_file: Optional[Union[Path, str]] = None,
     ):
-        self.configuration = self._get_configuration(
+        self.configuration = self.get_configuration(
             conf_file=analyzer_engine_conf_file
         )
         self.nlp_engine_conf_file = nlp_engine_conf_file
         self.recognizer_registry_conf_file = recognizer_registry_conf_file
 
-    def _get_configuration(
+    def get_configuration(
         self, conf_file: Optional[Union[Path, str]]
     ) -> Union[Dict[str, Any]]:
         """Retrieve the analyzer engine configuration from the provided file."""

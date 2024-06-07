@@ -18,6 +18,10 @@ from presidio_analyzer.predefined_recognizers import (
     StanzaRecognizer,
     TransformersRecognizer,
 )
+from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
+    RecognizerConfigurationLoader,
+    RecognizerListLoader,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -94,14 +98,14 @@ class RecognizerRegistry:
         :return: None
         """
 
-        from .recognizer_registry_provider import RecognizerRegistryProvider
         registry_configuration = {"global_regex_flags": self.global_regex_flags}
         if languages is not None:
             registry_configuration["supported_languages"] = languages
 
-        recognizers = RecognizerRegistryProvider(
+        configuration = RecognizerConfigurationLoader.get(
             registry_configuration=registry_configuration
-        ).create_recognizer_registry().recognizers
+        )
+        recognizers = RecognizerListLoader.get(**configuration)
 
         self.recognizers.extend(recognizers)
         self.add_nlp_recognizer(nlp_engine=nlp_engine)
