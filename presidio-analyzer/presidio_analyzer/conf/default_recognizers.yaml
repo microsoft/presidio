@@ -127,7 +127,6 @@ recognizers:
     - pl
     type: predefined
 
-
   - name: CryptoRecognizer
     type: predefined
 
@@ -150,4 +149,10 @@ recognizers:
     type: predefined
 
   - name: UrlRecognizer
+    type: predefined
+
+  - name: InVoterRecognizer
+    type: predefined
+
+  - name: InPassportRecognizer
     type: predefined
