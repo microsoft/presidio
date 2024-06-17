@@ -2,8 +2,9 @@ import pytest
 import re
 from pathlib import Path
 from typing import List
+from inspect import signature
 
-
+from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 from presidio_analyzer import RecognizerRegistry
 
@@ -60,10 +61,11 @@ def test_recognizer_registry_provider_conf_file_valid_missing_keys_default_value
     test_yaml = Path(this_path, "conf/recognizer_configuration_missing_keys.yaml")
 
     provider = RecognizerRegistryProvider(conf_file=test_yaml)
-    recognizer_registry = provider.create_recognizer_registry()
-    assert recognizer_registry.supported_languages == ["en"]
-    assert recognizer_registry.global_regex_flags == 26
-    assert len(recognizer_registry.recognizers) == 0
+    with pytest.raises(ValueError):
+        provider.create_recognizer_registry()
+    # assert recognizer_registry.supported_languages == ["en"]
+    # assert recognizer_registry.global_regex_flags == 26
+    # assert len(recognizer_registry.recognizers) == 0
 
 
 def test_recognizer_registry_provider_with_registry_configuration():
@@ -107,3 +109,32 @@ def test_recognizer_registry_provider_when_conf_file_and_registry_configuration_
         RecognizerRegistryProvider(
             conf_file=test_yaml, registry_configuration=registry_configuration
         )
+
+
+def test_recognizer_provider_with_minimal_creates_empty_registry():
+    this_path = Path(__file__).parent.absolute()
+    minimal_yaml = Path(this_path, "conf/test_minimal_registry_conf.yaml")
+    provider = RecognizerRegistryProvider(conf_file=minimal_yaml)
+    registry = provider.create_recognizer_registry()
+
+    assert len(registry.recognizers) == 0
+
+
+def test_recognizer_provider_with_nlp_reco_only_creates_nlp_recognizer():
+    this_path = Path(__file__).parent.absolute()
+    nlp_reco_path = Path(this_path, "conf/test_nlp_recognizer_only_conf.yaml")
+    provider = RecognizerRegistryProvider(conf_file=nlp_reco_path)
+    registry = provider.create_recognizer_registry()
+
+    assert len(registry.recognizers) == 1
+    assert isinstance(registry.recognizers[0], SpacyRecognizer)
+
+
+def test_default_attributes_equal_recognizer_registry_signature():
+    registry_init_signature = signature(RecognizerRegistry)
+    registry_fields = set(registry_init_signature.parameters.keys())
+
+    registry_provider = RecognizerRegistryProvider()
+    provider_fields = set(registry_provider.default_values.keys())
+
+    assert registry_fields == provider_fields

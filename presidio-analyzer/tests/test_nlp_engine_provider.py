@@ -160,7 +160,7 @@ def test_when_read_test_nlp_conf_file_then_returns_spacy_nlp_engine(mocker):
 def test_when_read_test_nlp_conf_file_then_returns_stanza_nlp_engine():
     test_conf_file = Path(Path(__file__).parent, "conf", "test_stanza.yaml")
     provider = NlpEngineProvider(conf_file=test_conf_file)
-    nlp_engine = provider.create_engine()
+    nlp_engine = provider.create_engine(download_if_missing=False)
 
     assert isinstance(nlp_engine, StanzaNlpEngine)
     assert nlp_engine.nlp is not None

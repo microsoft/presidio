@@ -68,7 +68,6 @@ def skip_by_engine(request, nlp_engines):
             pytest.skip(f"skipped on this engine: {marker_arg}")
 
 
-@pytest.mark.skip_engine("spacy_en")
 @pytest.fixture(scope="session")
 def spacy_nlp_engine(nlp_engines):
     nlp_engine = nlp_engines.get("spacy_en", None)

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import logging
-import re
-from collections.abc import ItemsView
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Type, Union
 
+import regex as re
 import yaml
 
 from presidio_analyzer import EntityRecognizer, PatternRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
+
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -18,7 +18,7 @@ class RecognizerRegistryProvider:
     r"""
     Utility class for loading Recognizer Registry.
 
-    Use this class to load recognizer registry from a yaml file
+    Use this class to load recognizer registry from a yaml file.
 
     :param conf_file: Path to yaml file containing registry configuration
     :param registry_configuration: Dict containing registry configuration
@@ -48,29 +48,19 @@ class RecognizerRegistryProvider:
         conf_file: Optional[Union[Path, str]] = None,
         registry_configuration: Optional[Dict] = None,
     ):
+
+        self.default_values = {
+            "supported_languages": ["en"],
+            "recognizers": [],
+            "global_regex_flags": re.DOTALL | re.MULTILINE | re.IGNORECASE,
+        }
+
         self.configuration = self._get_configuration(
             conf_file=conf_file, registry_configuration=registry_configuration
         )
-        self.supported_languages = None
+
+        # Create a list of all recognizer classes in the codebase
         self.all_existing_recognizers = self._get_all_existing_recognizers()
-        return
-
-    @staticmethod
-    def _add_missing_keys(configuration: Dict, conf_file: Union[Path, str]) -> Dict:
-        """
-        Add missing keys to the configuration.
-
-        Missing keys are added using the default configuration read from file.
-
-        :param configuration: The configuration to update.
-        :param conf_file: The configuration file to read from.
-        """
-
-        defaults = yaml.safe_load(open(conf_file))
-        configuration.update(
-            {k: v for k, v in defaults.items() if k not in list(configuration.keys())}
-        )
-        return configuration
 
     def _get_configuration(
         self, conf_file: Union[Path, str], registry_configuration: Dict
@@ -89,65 +79,76 @@ class RecognizerRegistryProvider:
             )
 
         configuration = {}
+        config_from_file = {}
 
         if registry_configuration:
             configuration = registry_configuration.copy()
 
-        if not conf_file:
-            configuration = self._add_missing_keys(
-                configuration=configuration, conf_file=self._get_full_conf_path()
-            )
-        else:
+        if conf_file:
             try:
-                configuration = self._add_missing_keys(
-                    configuration=configuration, conf_file=conf_file
-                )
+                config_from_file = yaml.safe_load(open(conf_file))
+
             except OSError:
                 logger.warning(
                     f"configuration file {conf_file} not found.  "
                     f"Using default config."
                 )
-                configuration = self._add_missing_keys(
-                    configuration=configuration, conf_file=self._get_full_conf_path()
-                )
-            except Exception:
-                logger.warning(
-                    f"Failed to parse file {conf_file}, " f"resorting to default"
-                )
-                configuration = self._add_missing_keys(
-                    configuration=configuration, conf_file=self._get_full_conf_path()
-                )
+                config_from_file = yaml.safe_load(open(self._get_full_conf_path()))
 
+            except Exception as e:
+                raise ValueError(f"Failed to parse file {conf_file}."
+                                 f"Error: {str(e)}")
+        else:
+            config_from_file = yaml.safe_load(open(self._get_full_conf_path()))
+
+        configuration = self._add_missing_keys(
+            registry_configuration=configuration,
+            config_from_file=config_from_file
+        )
         return configuration
 
+    def _add_missing_keys(self, registry_configuration: Dict[str, Any],
+                          config_from_file: Dict[str, Any]) -> Dict:
+        """
+        Add missing keys to the configuration.
+
+        Missing keys are added using the configuration read from file.
+
+        :param registry_configuration: The configuration to update.
+        :param config_from_file: The configuration coming from the conf file.
+        """
+
+        registry_configuration.update(
+            {k: v for k, v in config_from_file.items()
+             if k not in list(registry_configuration.keys())}
+        )
+
+        # Add default fields if missing
+        for field in self.default_values:
+            if field not in registry_configuration:
+                logger.warning(
+                    f"{field} not present in configuration, "
+                    f"using default value instead: {self.default_values[field]}"
+                )
+                registry_configuration[field] = self.default_values[field]
+
+        return registry_configuration
+
     @staticmethod
-    def _is_recognizer_enabled(recognizer_conf: Union[Dict[str, Any], str]) -> bool:
+    def _is_recognizer_enabled(recognizer_conf: Dict[str, Any]) -> bool:
         return "enabled" not in recognizer_conf or recognizer_conf["enabled"]
 
     @staticmethod
-    def _get_recognizer_name(recognizer_conf: Union[Dict[str, Any], str]) -> str:
-        if isinstance(recognizer_conf, str):
-            return recognizer_conf
+    def _get_recognizer_name(recognizer_conf: Dict[str, Any]) -> str:
         return recognizer_conf["name"]
 
     @staticmethod
-    def _get_recognizer_context(
-        recognizer: Union[Dict[str, Any], str],
-    ) -> Optional[List[str]]:
-        if isinstance(recognizer, str):
-            return None
+    def _get_recognizer_context(recognizer: Dict[str, Any]) -> Optional[List[str]]:
         return recognizer.get("context", None)
 
-    @staticmethod
-    def _get_recognizer_items(
-        recognizer_conf: Union[Dict[str, Any], str],
-    ) -> Union[dict[Any, Any], ItemsView[str, Any]]:
-        if isinstance(recognizer_conf, str):
-            return {}
-        return recognizer_conf.items()
 
     def _get_recognizer_languages(
-        self, recognizer_conf: Union[Dict[str, Any], str]
+        self, recognizer_conf: Dict[str, Any]
     ) -> List[Dict[str, Any]]:
         """
         Get the different language properties for each recognizer.
@@ -167,7 +168,7 @@ class RecognizerRegistryProvider:
                     "supported_language": language,
                     "context": self._get_recognizer_context(recognizer_conf),
                 }
-                for language in self.supported_languages
+                for language in self.configuration["supported_languages"]
             ]
 
         if isinstance(recognizer_conf["supported_languages"][0], str):
@@ -186,8 +187,8 @@ class RecognizerRegistryProvider:
 
     @staticmethod
     def _split_recognizers(
-        recognizers_conf: Union[Dict[str, Any], str],
-    ) -> Tuple[List[Union[str, Dict[str, Any]]], List[Union[str, Dict[str, Any]]]]:
+        recognizers_conf: List[Dict[str, Any]],
+    ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         """
         Split the recognizer list to predefined and custom.
 
@@ -197,6 +198,8 @@ class RecognizerRegistryProvider:
 
         :param recognizers_conf: The recognizers' configuration
         """
+        for recognizer_conf in recognizers_conf:
+            RecognizerRegistryProvider._validate_recognizer_dict(recognizer_conf)
 
         predefined = [
             recognizer_conf
@@ -210,6 +213,20 @@ class RecognizerRegistryProvider:
             and ("type" not in recognizer_conf or recognizer_conf["type"] == "custom")
         ]
         return predefined, custom
+
+    @staticmethod
+    def _validate_recognizer_dict(recognizer_conf):
+        """Validate that the recognizer dict is correct."""
+
+        if not isinstance(recognizer_conf, dict):
+            raise ValueError(f"Recognizer should be defined as a dictionary "
+                             f"in the configuration. "
+                             f"Got {type(recognizer_conf)}")
+        if "name" not in recognizer_conf:
+            raise ValueError("Recognizers must have a `name` parameter")
+        if "type" in recognizer_conf and recognizer_conf["type"] not in ("predefined", "custom"):
+            raise ValueError("Recognizers types must be either `predefined` "
+                             "or `custom`")
 
     def _create_custom_recognizers(
         self, recognizer_conf: Dict
@@ -232,72 +249,59 @@ class RecognizerRegistryProvider:
 
         return recognizers
 
-    default_values = {
-        "supported_languages": ["en"],
-        "recognizers": [],
-        "global_regex_flags": re.DOTALL | re.MULTILINE | re.IGNORECASE,
-    }
-
     def _is_language_supported_globally(
             self,
             recognizer: EntityRecognizer) -> bool:
-        if recognizer.supported_language not in self.supported_languages:
+        globally_supported_languages = self.configuration["supported_languages"]
+        if recognizer.supported_language not in globally_supported_languages:
             logger.warning(
                 f"Recognizer not added to registry because "
                 f"language is not supported by registry - "
                 f"{recognizer.name} supported "
                 f"languages: {recognizer.supported_language}"
                 f", registry supported languages: "
-                f"{', '.join(self.supported_languages)}"
+                f"{', '.join(globally_supported_languages)}"
             )
             return False
         return True
 
     def create_recognizer_registry(self) -> RecognizerRegistry:
         """Create a recognizer registry according to configuration loaded previously."""
-        fields = {
-            "supported_languages": None,
-            "recognizers": None,
-            "global_regex_flags": None,
-        }
 
-        for field in fields:
-            if field not in self.configuration:
-                logger.warning(
-                    f"{field} not present in configuration, "
-                    f"using default value instead: {self.default_values[field]}"
-                )
-            fields[field] = self.configuration.get(field, self.default_values[field])
+        recognizers = self._init_recognizers()
 
-        fields["recognizers"] = self.init_recognizers(fields["recognizers"],
-                                                      fields["supported_languages"],
-                                                      fields["global_regex_flags"])
+        registry_kwargs = self.configuration.copy()
+        registry_kwargs["recognizers"] = recognizers
 
-        return RecognizerRegistry(**fields)
+        set_diff = set(registry_kwargs) - set(self.default_values)
+        if len(set_diff) > 0:
+            raise ValueError(f"Wrong parameters found in configuration: {set_diff}")
 
-    def init_recognizers(
-            self,
-            recognizers: Dict[str, Any],
-            supported_languages: Iterable[str],
-            global_regex_flags: int,
-        ) -> Iterable[EntityRecognizer]:
+        return RecognizerRegistry(**registry_kwargs)
+
+    def _init_recognizers(self) -> Iterable[EntityRecognizer]:
         """
         Create an iterator of recognizers.
 
-        The recognizers are initialized according to configuration loaded previously.
         """
-        self.supported_languages = supported_languages
-        self.global_regex_flags = global_regex_flags
+
+        config_only_params = ["enabled", "type", "supported_languages", "name"]
+
         recognizer_instances = []
-        predefined, custom = self._split_recognizers(recognizers)
+        recognizers_from_conf = self.configuration["recognizers"]
+        regex_flags = self.configuration["global_regex_flags"]
+        predefined, custom = self._split_recognizers(recognizers_from_conf)
         for recognizer_conf in predefined:
-            for language_conf in self._get_recognizer_languages(recognizer_conf):
-                if self._is_recognizer_enabled(recognizer_conf):
-                    copied_recognizer_conf = {
-                        k: v
-                        for k, v in self._get_recognizer_items(recognizer_conf)
-                        if k not in ["enabled", "type", "supported_languages", "name"]
-                    }
+            if self._is_recognizer_enabled(recognizer_conf):
+
+                copied_recognizer_conf = {
+                    k: v
+                    for k, v in recognizer_conf.items()
+                    if k not in config_only_params
+                }
+
+                # Create a recognizer instance per language
+                for language_conf in self._get_recognizer_languages(recognizer_conf):
                     kwargs = {**copied_recognizer_conf, **language_conf}
                     recognizer_name = self._get_recognizer_name(recognizer_conf)
                     recognizer_cls = self._get_existing_recognizer_cls_by_name(
@@ -313,8 +317,7 @@ class RecognizerRegistryProvider:
 
         for recognizer_conf in recognizer_instances:
             if isinstance(recognizer_conf, PatternRecognizer):
-                recognizer_conf.global_regex_flags = self.global_regex_flags
-
+                recognizer_conf.global_regex_flags = regex_flags
 
         recognizer_instances = [
             recognizer
