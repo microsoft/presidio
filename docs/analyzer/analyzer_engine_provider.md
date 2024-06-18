@@ -75,6 +75,10 @@ The configuration file contains the following parameters:
   - `nlp_configuration`: Configuration given to the NLP engine which will detect the PIIs and extract features for the downstream logic.
   - `recognizer_registry`: All the recognizers that will be used by the analyzer. 
 
+!!! note "Note"
+
+    `supported_languages` must be identical to the same field in recognizer_registry
+
 ## Using multiple files
 
 Create an `AnalyzerEngineProvider` using three different configuration files for each of the following components:

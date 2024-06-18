@@ -1,0 +1,5 @@
+recognizers:
+  - name: SpacyRecognizer
+    supported_languages:
+    - en
+    type: predefined

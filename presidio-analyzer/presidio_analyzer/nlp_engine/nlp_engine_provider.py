@@ -64,8 +64,11 @@ class NlpEngineProvider:
             logger.debug(f"Reading default conf file from {conf_file}")
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
-    def create_engine(self) -> NlpEngine:
-        """Create an NLP engine instance."""
+    def create_engine(self, **kwargs) -> NlpEngine:
+        """Create an NLP engine instance.
+
+        :param kwargs: additional kwargs for the nlp engine instance.
+        """
         if (
             not self.nlp_configuration
             or not self.nlp_configuration.get("models")
@@ -95,7 +98,9 @@ class NlpEngineProvider:
                 )
 
             engine = nlp_engine_class(
-                models=nlp_models, ner_model_configuration=ner_model_configuration
+                models=nlp_models,
+                ner_model_configuration=ner_model_configuration,
+                **kwargs
             )
             engine.load()
             logger.info(
