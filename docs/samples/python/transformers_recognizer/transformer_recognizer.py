@@ -161,7 +161,7 @@ class TransformersRecognizer(EntityRecognizer):
         """
         Analyze text using transformers model to produce NER tagging.
         :param text : The text for analysis.
-        :param entities: Not working properly for this recognizer.
+        :param entities: The list of entities this recognizer is able to detect
         :param nlp_artifacts: Not used by this recognizer.
         :return: The list of Presidio RecognizerResult constructed from the recognized
             transformers detections.
@@ -173,7 +173,7 @@ class TransformersRecognizer(EntityRecognizer):
 
         for res in ner_results:
             res["entity_group"] = self.__check_label_transformer(res["entity_group"])
-            if not res["entity_group"]:
+            if not res["entity_group"] or res["entity_group"] not in entities
                 continue
 
             if res["entity_group"] == self.id_entity_name:
