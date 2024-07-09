@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
 * Loading analyzer engine & recognizer registry from configuration file (#1367)
 * Align ports with documentation and postman collection. (#1375) (Thanks ungana)
 * Analyzer documentation (#1384)
-
+* Fix the entity filtering of the transformer_recognizer.py analzye function (#1403) (Thanks andreas-eberle)
 
 ### Changed
 #### Analyzer
