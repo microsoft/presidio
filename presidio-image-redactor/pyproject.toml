@@ -4,7 +4,7 @@ requires = ["poetry-core"]
 
 [tool.poetry]
 name = "presidio-image-redactor"
-version = "0.0.52"
+version = "0.0.53"
 description = "Presidio image redactor package"
 authors = ["Presidio <presidio@microsoft.com>"]
 license = "MIT"
