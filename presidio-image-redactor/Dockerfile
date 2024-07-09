@@ -4,7 +4,6 @@ ARG NAME
 ARG NLP_CONF_FILE
 ARG ANALYZER_CONF_FILE
 ARG RECOGNIZER_REGISTRY_CONF_FILE
-ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
@@ -30,11 +29,10 @@ RUN apt-get update \
 RUN apt-get update  \
   && apt-get install ffmpeg libsm6 libxext6  -y
 
-
-COPY ./Pipfile* /usr/bin/${NAME}/
-RUN pip install pipenv \
-  && pipenv install --deploy
+COPY ./pyproject.toml /usr/bin/${NAME}/
+COPY ./README.md /usr/bin/${NAME}/
+RUN pip install poetry && poetry install --no-root --only=main -E server
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD pipenv run python app.py
+CMD poetry run python app.py

@@ -46,3 +46,10 @@ steps:
           ANONYMIZER_BASE_URL: ${{ parameters.anonymizer_base_url }}
         TEST_SUITE:  ${{ parameters.test_suite }}
       displayName: Run tests
+    - task: DockerCompose@0
+      displayName: Docker Logs
+      inputs:
+        dockerComposeCommand: logs
+        dockerComposeFile: docker-compose.yml
+        buildImages: false
+      condition: always()
