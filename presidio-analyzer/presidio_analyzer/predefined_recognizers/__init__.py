@@ -65,7 +65,7 @@ PREDEFINED_RECOGNIZERS = [
     "IpRecognizer",
     "IbanRecognizer",
     "MedicalLicenseRecognizer",
-    "UrlRecognizer"
+    "UrlRecognizer",
 ]
 
 NLP_RECOGNIZERS = {

@@ -156,8 +156,9 @@ class PatternRecognizer(LocalRecognizer):
         :param regex_flags: Regex flags used in the regex matching
         :return: Analysis explanation
         """
-        textual_explanation = (f"Detected by `{recognizer_name}` "
-                               f"using pattern `{pattern_name}`")
+        textual_explanation = (
+            f"Detected by `{recognizer_name}` " f"using pattern `{pattern_name}`"
+        )
 
         explanation = AnalysisExplanation(
             recognizer=recognizer_name,
@@ -166,7 +167,7 @@ class PatternRecognizer(LocalRecognizer):
             pattern=pattern,
             validation_result=validation_result,
             regex_flags=regex_flags,
-            textual_explanation=textual_explanation
+            textual_explanation=textual_explanation,
         )
         return explanation
 

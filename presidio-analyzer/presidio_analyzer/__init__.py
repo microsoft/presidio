@@ -16,7 +16,6 @@ from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils
-from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
 from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 
