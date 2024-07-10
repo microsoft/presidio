@@ -14,9 +14,10 @@
 {% if page.nb_url %}
 
     <a href="{{ page.nb_url }}" title="Download Notebook" class="md-content__button md-icon">
-       {% include ".icons/material/download.svg" %}Download
+       {% include ".icons/material/download.svg" %}
     </a><br>
 {% endif %}
 
 {{ super() }}
 {% endblock content %}
+
