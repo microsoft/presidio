@@ -84,4 +84,4 @@ Follow the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.htm
 
 ## Samples
 
-Samples illustrating the usage of the Presidio Analyzer can be found in the [Python samples](../samples/).
+Samples illustrating the usage of the Presidio Analyzer can be found in the [Python samples](../samples/index.md).
