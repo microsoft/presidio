@@ -56,18 +56,6 @@ PREDEFINED_RECOGNIZERS = [
     "UrlRecognizer",
 ]
 
-PREDEFINED_RECOGNIZERS = [
-    "PhoneRecognizer",
-    "CreditCardRecognizer",
-    "CryptoRecognizer",
-    "DateRecognizer",
-    "EmailRecognizer",
-    "IpRecognizer",
-    "IbanRecognizer",
-    "MedicalLicenseRecognizer",
-    "UrlRecognizer",
-]
-
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
     "stanza": StanzaRecognizer,
