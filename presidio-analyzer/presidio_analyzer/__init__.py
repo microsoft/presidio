@@ -18,6 +18,7 @@ from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils
 from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
+from presidio_analyzer.analyzer_engine_provider import AnalyzerEngineProvider
 
 # Define default loggers behavior
 
@@ -46,10 +47,10 @@ __all__ = [
     "RemoteRecognizer",
     "RecognizerRegistry",
     "AnalyzerEngine",
-    "AnalyzerEngineProvider",
     "AnalyzerRequest",
     "ContextAwareEnhancer",
     "LemmaContextAwareEnhancer",
     "BatchAnalyzerEngine",
     "PresidioAnalyzerUtils",
+    "AnalyzerEngineProvider",
 ]
