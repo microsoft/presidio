@@ -12,21 +12,34 @@ import png
 import pydicom
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
 from PIL import Image, ImageOps
-from presidio_analyzer import PatternRecognizer
 from pydicom.pixel_data_handlers.util import apply_voi_lut
+
+import presidio_analyzer # required for isinstance check which throws an error when trying to specify PatternRecognizer  # noqa: E501
+from presidio_analyzer import PatternRecognizer
 
 from presidio_image_redactor import (
     ImageAnalyzerEngine,  # noqa: F401
     ImageRedactorEngine,
+    BboxProcessor
 )
 from presidio_image_redactor.entities import ImageRecognizerResult
 
 
-class DicomImageRedactorEngine(ImageRedactorEngine):
+class DicomImageRedactorEngine:
     """Performs OCR + PII detection + bounding box redaction.
 
-    :param image_analyzer_engine: Engine which performs OCR + PII detection.
     """
+
+    def __init__(
+            self,
+            image_analyzer_engine: ImageAnalyzerEngine = None,
+    ):
+        if not image_analyzer_engine:
+            self.image_analyzer_engine = ImageAnalyzerEngine()
+        else:
+            self.image_analyzer_engine = image_analyzer_engine
+
+        self.bbox_processor = BboxProcessor()
 
     def redact_and_return_bbox(
         self,
@@ -276,6 +289,38 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         print(f"Output written to {output_location}")
 
         return None
+
+    @staticmethod
+    def _check_ad_hoc_recognizer_list(
+            ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
+    ):
+        """Check if the provided ad-hoc recognizer list is valid.
+
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
+        """
+        if isinstance(ad_hoc_recognizers, (list, type(None))):
+            if isinstance(ad_hoc_recognizers, list):
+                if len(ad_hoc_recognizers) >= 1:
+                    are_recognizers = all(
+                        isinstance(
+                            x, presidio_analyzer.pattern_recognizer.PatternRecognizer
+                        )
+                        for x in ad_hoc_recognizers
+                    )
+                    if are_recognizers is False:
+                        raise TypeError(
+                            """All items in ad_hoc_recognizers list must be
+                            PatternRecognizer objects"""
+                        )
+                else:
+                    raise TypeError(
+                        "ad_hoc_recognizers must be None or list of PatternRecognizer"
+                    )
+        else:
+            raise TypeError(
+                "ad_hoc_recognizers must be None or list of PatternRecognizer"
+            )
 
     @staticmethod
     def _get_all_dcm_files(dcm_dir: Path) -> List[Path]:
