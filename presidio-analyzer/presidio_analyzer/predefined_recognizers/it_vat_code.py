@@ -22,7 +22,7 @@ class ItVatCodeRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "IT Vat code (piva)",
-            r"\b(IT|it)[\s,.-]?([0-9][ _]?){11}\b",
+            r"\b([0-9][ _]?){11}\b",
             0.1,
         )
     ]
