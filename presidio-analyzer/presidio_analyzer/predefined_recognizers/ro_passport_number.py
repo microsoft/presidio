@@ -64,3 +64,7 @@ class ROPassportNumber(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (8,9)

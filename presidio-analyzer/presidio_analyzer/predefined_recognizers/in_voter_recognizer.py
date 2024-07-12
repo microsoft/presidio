@@ -22,12 +22,12 @@ class InVoterRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "VOTER",
+            "VOTER (medium)",
             r"\b([A-Za-z]{1}[ABCDGHJKMNPRSYabcdghjkmnprsy]{1}[A-Za-z]{1}([0-9]){7})\b",
             0.4,
         ),
         Pattern(
-            "VOTER",
+            "VOTER (weak)",
             r"\b([A-Za-z]){3}([0-9]){7}\b",
             0.3,
         ),
@@ -59,3 +59,7 @@ class InVoterRecognizer(PatternRecognizer):
             supported_language=supported_language,
             supported_entity=supported_entity,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (10,10)

@@ -22,7 +22,7 @@ class ItVatCodeRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "IT Vat code (piva)",
-            r"\b([0-9][ _]?){11}\b",
+            r"\b(IT|it)[\s,.-]?([0-9][ _]?){11}\b",
             0.1,
         )
     ]
@@ -50,6 +50,10 @@ class ItVatCodeRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (13,16)
 
     def validate_result(self, pattern_text: str) -> bool:
         """

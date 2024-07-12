@@ -46,6 +46,10 @@ class EsNifRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (8,10)
+
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
         pattern_text = EsNifRecognizer.__sanitize_value(pattern_text)
         letter = pattern_text[-1]

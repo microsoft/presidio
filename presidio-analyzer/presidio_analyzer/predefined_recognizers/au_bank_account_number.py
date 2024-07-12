@@ -61,3 +61,7 @@ class AUBankAccountNumber(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (13,18)

@@ -52,6 +52,10 @@ class NZBankAccountNumber(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (14,19)
+
     def validate_result(self, pattern_text: str) -> bool:
         """
         Validate the pattern logic e.g., by running checksum on a detected pattern.

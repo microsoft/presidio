@@ -72,3 +72,7 @@ class DEPassportNumber(PatternRecognizer):
             supported_language=supported_language,
             global_regex_flags=regex_flags
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (10,11)

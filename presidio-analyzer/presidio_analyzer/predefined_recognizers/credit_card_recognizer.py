@@ -333,6 +333,10 @@ class CreditCardRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (13,20)
+
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
         sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
         checksum = self.__luhn_checksum(sanitized_value)

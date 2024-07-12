@@ -93,6 +93,10 @@ class SgUenRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (10,10)
+
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
         Validate the pattern logic e.g., by running checksum on a detected pattern.

@@ -346,6 +346,10 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (5,10)
+
     def validate_result(self, pattern_text: str) -> bool:
         """Determine absolute value based on calculation."""
         sanitized_value = Utils.sanitize_value(pattern_text, self.replacement_pairs)

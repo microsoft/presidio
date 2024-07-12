@@ -71,6 +71,10 @@ class AuAbnRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (11,13)
+
     def validate_result(self, pattern_text: str) -> bool:
         """
         Validate the pattern logic e.g., by running checksum on a detected pattern.

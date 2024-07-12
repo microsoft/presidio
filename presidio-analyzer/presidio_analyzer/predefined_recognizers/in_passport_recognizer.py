@@ -21,7 +21,7 @@ class InPassportRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "PASSPORT",
-            r"\b[A-Z][1-9][0-9]{6}[1-9]\b",
+            r"\b[A-Z][1-9][0-9\s][0-9]{4}[1-9]\b",
             0.4,
         ),
     ]
@@ -56,3 +56,7 @@ class InPassportRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+        
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (8,8)

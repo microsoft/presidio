@@ -16,7 +16,7 @@ class NZInlandRevenueNumber(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "NZInlandRevenueNumber (Medium)",
-            r"\b(?:0[1-9]|[1-9][0-9]|[1-4][0-9]{2}|150)\d{5}(?:\d{2})?\b",
+            r"\b(?:0[1-9]|[1-9][0-9]|[1-4][0-9]{2}|150)[\s-]?\d{3}[\s-]?\d{3}(?:\d{2})?\b",
             0.4,
         ),
     ]
@@ -52,6 +52,10 @@ class NZInlandRevenueNumber(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (8,13)
 
     def validate_result(self, pattern_text: str) -> bool:
         """

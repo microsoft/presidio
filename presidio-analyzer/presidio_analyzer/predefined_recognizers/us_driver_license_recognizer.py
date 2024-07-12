@@ -23,7 +23,7 @@ class UsLicenseRecognizer(PatternRecognizer):
     :param supported_language: Language this recognizer supports
     :param supported_entity: The entity this recognizer can detect
     """
-
+    #TODO - include 50 states individual regexes
     PATTERNS = [
         Pattern(
             "Driver License - Alphanumeric (weak)",
@@ -119,3 +119,7 @@ class UsLicenseRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
         )
+
+        # custom attributes
+        self.type = 'numeric/alphanumeric'
+        self.range = (7,14)

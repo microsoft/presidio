@@ -77,6 +77,10 @@ class IbanRecognizer(PatternRecognizer):
             global_regex_flags=regex_flags
         )
 
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (9,35)
+
     def validate_result(self, pattern_text: str):  # noqa D102
         try:
             pattern_text = self.__sanitize_value(pattern_text, self.replacement_pairs)

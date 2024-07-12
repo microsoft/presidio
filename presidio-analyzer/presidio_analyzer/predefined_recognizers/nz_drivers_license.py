@@ -110,3 +110,7 @@ class NZDriversLicenseNumber(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (8,8)

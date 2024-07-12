@@ -49,6 +49,10 @@ class CryptoRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (26,62)
+
     def validate_result(self, pattern_text: str) -> bool:
         """Validate the Bitcoin address using checksum.
 

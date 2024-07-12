@@ -68,3 +68,7 @@ class UsPassportRecognizer(PatternRecognizer):
             supported_language=supported_language,
             global_regex_flags=regex_flags
         )
+
+        # custom attributes
+        self.type = 'numeric/alphanumeric'
+        self.range = (9,9)

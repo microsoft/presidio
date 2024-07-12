@@ -88,6 +88,8 @@ from presidio_analyzer.predefined_recognizers import (
     UsLicenseRecognizer,
     UsPassportRecognizer,
     UsSsnRecognizer,
+
+    AmazonS3Key,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -168,7 +170,114 @@ class RecognizerRegistry:
             languages = ["en"]
 
         recognizers_map = {
-            "en": [
+            # "en": [
+            #     AbaRoutingRecognizer,
+            #     UsBankRecognizer,
+            #     UsLicenseRecognizer,
+            #     UsItinRecognizer,
+            #     UsPassportRecognizer,
+            #     UsSsnRecognizer,
+            #     NhsRecognizer,
+            #     SgFinRecognizer,
+            #     AuAbnRecognizer,
+            #     AuAcnRecognizer,
+            #     AuTfnRecognizer,
+            #     AuMedicareRecognizer,
+            #     InPanRecognizer,
+            #     InAadhaarRecognizer,
+            #     InVehicleRegistrationRecognizer,
+            #     InVoterRecognizer,
+            #     InPassportRecognizer,
+
+            #     ATPassportNumber,
+            #     AUBankAccountNumber,
+            #     BEPassportNumber,
+            #     BUPassportNumber,
+            #     CRPassportNumber,
+            #     CYPassportNumber,
+            #     CZPassportNumber,
+            #     DEPassportNumber,
+            #     DrugEnforcementAgencyNumber,
+            #     DKPassportNumber,
+            #     EEPassportNumber,
+            #     ESPassportNumber,
+            #     EUGPSCoordinates,
+            #     FIPassportNumber,
+            #     FRPassportNumber,
+            #     GRPassportNumber,
+            #     HKIdentityCardNumber,
+            #     HUPassportNumber,
+            #     HUPersonalIdentificationNumber,
+            #     IEPassportNumber,
+            #     ITPassportNumber,
+            #     LTPassportNumber,
+            #     LVPassportNumber,
+            #     MTPassportNumber,
+            #     NZBankAccountNumber,
+            #     NZDriversLicenseNumber,
+            #     NZInlandRevenueNumber,
+            #     NZMinistryOfHealthNumber,
+            #     NZSocialWelfareNumber,
+            #     PLPassportNumber,
+            #     PTPassportNumber,
+            #     ROPassportNumber,
+            #     SEPassportNumber,
+            #     SKPassportNumber,
+            #     SLPassportNumber,
+                
+            #     UKPassportNumber,
+            # ],
+            # "de": [
+            #     DEPassportNumber,
+            # ],
+            # "gr": [
+                
+            #     GRPassportNumber,
+            # ],
+            # "es": [
+            #     EsNifRecognizer,
+            #     EsNieRecognizer,
+            #     ESPassportNumber,
+            # ],
+            # "fr": [
+            #     FRPassportNumber,
+            # ],
+            # "it": [
+            #     ItDriverLicenseRecognizer,
+            #     ItFiscalCodeRecognizer,
+            #     ItVatCodeRecognizer,
+            #     ItIdentityCardRecognizer,
+            #     ItPassportRecognizer,
+            # ],
+            # "ja": [
+
+            # ],
+            # "nl": [
+            #     EUGPSCoordinates,
+            # ],
+            # "pl": [
+            #     PlPeselRecognizer
+            # ],
+            # "pt": [
+            #     EUGPSCoordinates,
+            # ],
+            # "zh": [
+
+            # ],
+            "ALL": [
+                CreditCardRecognizer,
+                CryptoRecognizer,
+                DateRecognizer,
+                EmailRecognizer,
+                IbanRecognizer,
+                IpRecognizer,
+                MedicalLicenseRecognizer,
+                PhoneRecognizer,
+                UrlRecognizer,
+                AmazonS3Key,
+                SWIFTCode,
+                EUGPSCoordinates,
+
                 AbaRoutingRecognizer,
                 UsBankRecognizer,
                 UsLicenseRecognizer,
@@ -199,7 +308,6 @@ class RecognizerRegistry:
                 DKPassportNumber,
                 EEPassportNumber,
                 ESPassportNumber,
-                EUGPSCoordinates,
                 FIPassportNumber,
                 FRPassportNumber,
                 GRPassportNumber,
@@ -207,7 +315,6 @@ class RecognizerRegistry:
                 HUPassportNumber,
                 HUPersonalIdentificationNumber,
                 IEPassportNumber,
-                ITPassportNumber,
                 LTPassportNumber,
                 LVPassportNumber,
                 MTPassportNumber,
@@ -222,57 +329,16 @@ class RecognizerRegistry:
                 SEPassportNumber,
                 SKPassportNumber,
                 SLPassportNumber,
-                SWIFTCode,
                 UKPassportNumber,
-            ],
-            "de": [
-                DEPassportNumber,
-                EUGPSCoordinates,
-            ],
-            "gr": [
-                EUGPSCoordinates,
-                GRPassportNumber,
-            ],
-            "es": [
-                EsNifRecognizer,
-                EsNieRecognizer,
-                ESPassportNumber,
-            ],
-            "fr": [
-                FRPassportNumber,
-            ],
-            "it": [
+
                 ItDriverLicenseRecognizer,
                 ItFiscalCodeRecognizer,
                 ItVatCodeRecognizer,
                 ItIdentityCardRecognizer,
                 ItPassportRecognizer,
-            ],
-            "ja": [
 
-            ],
-            "nl": [
-                EUGPSCoordinates,
-            ],
-            "pl": [
-                PlPeselRecognizer
-            ],
-            "pt": [
-                EUGPSCoordinates,
-            ],
-            "zh": [
-
-            ],
-            "ALL": [
-                CreditCardRecognizer,
-                CryptoRecognizer,
-                DateRecognizer,
-                EmailRecognizer,
-                IbanRecognizer,
-                IpRecognizer,
-                MedicalLicenseRecognizer,
-                PhoneRecognizer,
-                UrlRecognizer,
+                EsNifRecognizer,
+                EsNieRecognizer,
             ],
         }
         for lang in languages:

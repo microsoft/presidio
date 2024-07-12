@@ -79,6 +79,10 @@ class AbaRoutingRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (9,11)
+
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
         sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
         if len(sanitized_value) != 9 or not sanitized_value.isdigit():

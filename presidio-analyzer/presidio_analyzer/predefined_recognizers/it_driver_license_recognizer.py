@@ -17,7 +17,7 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
         Pattern(
             "Driver License",
             (
-                r"\b(?i)(([A-Z]{2}\d{7}[A-Z])"
+                r"\b(?i)(([A-Z][AV]\d{7}[A-Z])"
                 r"|(^[U]1[BCDEFGHLMNPRSTUWYXZ]\w{6}[A-Z]))\b"
             ),
             0.2,
@@ -102,3 +102,7 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (10,10)
