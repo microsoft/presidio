@@ -4,8 +4,6 @@ from pathlib import Path
 from presidio_analyzer import AnalyzerEngineProvider
 from presidio_analyzer.nlp_engine import SpacyNlpEngine
 
-from presidio_analyzer.nlp_engine.transformers_nlp_engine import TransformersNlpEngine
-
 
 def test_analyzer_engine_provider_default_configuration(mandatory_recognizers):
     provider = AnalyzerEngineProvider()
@@ -35,11 +33,11 @@ def test_analyzer_engine_provider_configuration_file():
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "CreditCardRecognizer"] == ["en"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ZipCodeRecognizer"] == ["de"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer"] == ["en", "es"]
-    assert sorted([recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "TransformersRecognizer"]) == sorted(["en"])
+    assert sorted([recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "SpacyRecognizer"]) == sorted(["en"])
     spanish_recognizer = [recognizer for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer" and recognizer.supported_language == "es"][0]
     assert spanish_recognizer.context == ["tarjeta", "credito"]
-    assert isinstance(engine.nlp_engine, TransformersNlpEngine)
-    assert engine.nlp_engine.engine_name == "transformers"
+    assert isinstance(engine.nlp_engine, SpacyNlpEngine)
+    assert engine.nlp_engine.engine_name == "spacy"
 
 
 def test_analyzer_engine_provider_configuration_file_missing_values_expect_defaults(mandatory_recognizers):
