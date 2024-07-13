@@ -75,8 +75,10 @@ class RecognizerRegistryProvider:
                 )
             fields[field] = self.configuration.get(field, self.default_values[field])
 
-        fields["recognizers"] = RecognizerListLoader.get(fields["recognizers"],
-                                                                  fields["supported_languages"],
-                                                                  fields["global_regex_flags"])
+        fields["recognizers"] = RecognizerListLoader.get(
+            fields["recognizers"],
+            fields["supported_languages"],
+            fields["global_regex_flags"],
+        )
 
         return RecognizerRegistry(**fields)

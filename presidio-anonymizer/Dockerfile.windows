@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
+COPY ./pyproject.toml /app/pyproject.toml
 RUN pip install --upgrade pip
 RUN pip install poetry; poetry install --no-root --only=main -E server
 
