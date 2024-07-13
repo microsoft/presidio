@@ -84,7 +84,8 @@ class RecognizerListLoader:
                 {
                     "supported_language": language,
                     "context": RecognizerListLoader._get_recognizer_context(
-                                                        recognizer=recognizer_conf),
+                        recognizer=recognizer_conf
+                    ),
                 }
                 for language in supported_languages
             ]
@@ -113,7 +114,7 @@ class RecognizerListLoader:
     def _is_language_supported_globally(
         recognizer: EntityRecognizer,
         supported_languages: Iterable[str],
-        ) -> bool:
+    ) -> bool:
         if recognizer.supported_language not in supported_languages:
             logger.warning(
                 f"Recognizer not added to registry because "
@@ -139,8 +140,8 @@ class RecognizerListLoader:
         recognizers = []
 
         for supported_language in RecognizerListLoader._get_recognizer_languages(
-                                                    recognizer_conf=recognizer_conf,
-                                                    supported_languages=supported_languages):
+            recognizer_conf=recognizer_conf, supported_languages=supported_languages
+        ):
             copied_recognizer = {
                 k: v
                 for k, v in recognizer_conf.items()
@@ -173,9 +174,7 @@ class RecognizerListLoader:
         )
 
     @staticmethod
-    def _get_existing_recognizer_cls(
-        recognizer_name: str
-    ) -> Type[EntityRecognizer]:
+    def _get_existing_recognizer_cls(recognizer_name: str) -> Type[EntityRecognizer]:
         """
         Get the recognizer class by name.
 
@@ -197,10 +196,10 @@ class RecognizerListLoader:
 
     @staticmethod
     def get(
-            recognizers: Dict[str, Any],
-            supported_languages: Iterable[str],
-            global_regex_flags: int,
-        ) -> Iterable[EntityRecognizer]:
+        recognizers: Dict[str, Any],
+        supported_languages: Iterable[str],
+        global_regex_flags: int,
+    ) -> Iterable[EntityRecognizer]:
         """
         Create an iterator of recognizers.
 
@@ -210,23 +209,23 @@ class RecognizerListLoader:
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
-                                                        recognizer_conf=recognizer_conf,
-                                                        supported_languages=supported_languages):
+                recognizer_conf=recognizer_conf, supported_languages=supported_languages
+            ):
                 if RecognizerListLoader._is_recognizer_enabled(recognizer_conf):
                     copied_recognizer_conf = {
                         k: v
                         for k, v in RecognizerListLoader._get_recognizer_items(
-                                                            recognizer_conf=recognizer_conf
-                                                            )
+                            recognizer_conf=recognizer_conf
+                        )
                         if k not in ["enabled", "type", "supported_languages", "name"]
                     }
                     kwargs = {**copied_recognizer_conf, **language_conf}
                     recognizer_name = RecognizerListLoader._get_recognizer_name(
-                                                                recognizer_conf=recognizer_conf
-                                                                )
+                        recognizer_conf=recognizer_conf
+                    )
                     recognizer_cls = RecognizerListLoader._get_existing_recognizer_cls(
-                                                            recognizer_name=recognizer_name
-                                                            )
+                        recognizer_name=recognizer_name
+                    )
                     recognizer_instances.append(recognizer_cls(**kwargs))
 
         for recognizer_conf in custom:
@@ -234,23 +233,24 @@ class RecognizerListLoader:
                 recognizer_instances.extend(
                     RecognizerListLoader._create_custom_recognizers(
                         recognizer_conf=recognizer_conf,
-                        supported_languages=supported_languages)
+                        supported_languages=supported_languages,
+                    )
                 )
 
         for recognizer_conf in recognizer_instances:
             if isinstance(recognizer_conf, PatternRecognizer):
                 recognizer_conf.global_regex_flags = global_regex_flags
 
-
         recognizer_instances = [
             recognizer
             for recognizer in recognizer_instances
             if RecognizerListLoader._is_language_supported_globally(
-                                    recognizer=recognizer,
-                                    supported_languages=supported_languages)
+                recognizer=recognizer, supported_languages=supported_languages
+            )
         ]
 
         return recognizer_instances
+
 
 class RecognizerConfigurationLoader:
     """A utility class that initializes recognizer registry configuraton."""
@@ -297,8 +297,8 @@ class RecognizerConfigurationLoader:
 
         if not conf_file:
             configuration = RecognizerConfigurationLoader._add_missing_keys(
-                                                            configuration=configuration,
-                                                            conf_file=RecognizerConfigurationLoader._get_full_conf_path()
+                configuration=configuration,
+                conf_file=RecognizerConfigurationLoader._get_full_conf_path(),
             )
         else:
             try:
@@ -311,16 +311,16 @@ class RecognizerConfigurationLoader:
                     f"Using default config."
                 )
                 configuration = RecognizerConfigurationLoader._add_missing_keys(
-                                                                configuration=configuration,
-                                                                conf_file=RecognizerConfigurationLoader._get_full_conf_path()
+                    configuration=configuration,
+                    conf_file=RecognizerConfigurationLoader._get_full_conf_path(),
                 )
             except Exception:
                 logger.warning(
                     f"Failed to parse file {conf_file}, " f"resorting to default"
                 )
                 configuration = RecognizerConfigurationLoader._add_missing_keys(
-                                                                configuration=configuration,
-                                                                conf_file=RecognizerConfigurationLoader._get_full_conf_path()
+                    configuration=configuration,
+                    conf_file=RecognizerConfigurationLoader._get_full_conf_path(),
                 )
 
         return configuration
