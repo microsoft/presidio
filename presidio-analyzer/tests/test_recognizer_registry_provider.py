@@ -42,7 +42,7 @@ def test_recognizer_registry_provider_configuration_file():
 def test_recognizer_registry_provider_configuration_file_load_predefined(mandatory_recognizers):
     this_path = Path(__file__).parent.absolute()
     test_yaml = Path(this_path, "conf/test_recognizers.yaml")
-    provider = RecognizerRegistryProvider(test_yaml, load_predefined_recognizers=True)
+    provider = RecognizerRegistryProvider(test_yaml)
     recognizer_registry = provider.create_recognizer_registry()
     assert recognizer_registry.supported_languages == ["en"]
     assert recognizer_registry.global_regex_flags == 26
@@ -132,7 +132,7 @@ def test_recognizer_registry_provider_with_registry_configuration_load_predefine
         ]
     }
 
-    provider = RecognizerRegistryProvider(registry_configuration=registry_configuration, load_predefined_recognizers=True)
+    provider = RecognizerRegistryProvider(registry_configuration=registry_configuration)
     recognizer_registry = provider.create_recognizer_registry()
     assert recognizer_registry.supported_languages == ["de", "es", "en"]
     assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE

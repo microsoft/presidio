@@ -81,8 +81,9 @@ class AnalyzerEngine:
             registry = provider.create_recognizer_registry()
             registry.add_nlp_recognizer(nlp_engine=self.nlp_engine)
         else:
-            if Counter(
-                registry.supported_languages) != Counter(self.supported_languages):
+            if Counter(registry.supported_languages) != Counter(
+                self.supported_languages
+            ):
                 raise ValueError(
                     f"Misconfigured engine, supported languages have to be consistent"
                     f"registry.supported_languages: {registry.supported_languages}, "
