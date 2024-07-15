@@ -1,5 +1,6 @@
 supported_languages: 
   - en
+global_regex_flags: 26
 
 recognizers:
   # Recognizers listed here can either be loaded from the recognizers defined in code (type: predefined),

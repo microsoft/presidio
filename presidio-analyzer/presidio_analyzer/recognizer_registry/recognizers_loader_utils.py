@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from collections.abc import ItemsView
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Type, Union
@@ -255,22 +256,38 @@ class RecognizerListLoader:
 class RecognizerConfigurationLoader:
     """A utility class that initializes recognizer registry configuraton."""
 
+    mandatory_keys = [
+            "supported_languages",
+            "recognizers",
+            "global_regex_flags",
+        ]
+
     @staticmethod
-    def _add_missing_keys(configuration: Dict, conf_file: Union[Path, str]) -> Dict:
+    def _merge_configuration(
+        registry_configuration: Dict, config_from_file: Dict[str, Any]
+    ) -> Dict:
         """
         Add missing keys to the configuration.
-
-        Missing keys are added using the default configuration read from file.
-
-        :param configuration: The configuration to update.
-        :param conf_file: The configuration file to read from.
+        Missing keys are added using the configuration read from file.
+        :param registry_configuration: The configuration to update.
+        :param config_from_file: The configuration coming from the conf file.
         """
 
-        defaults = yaml.safe_load(open(conf_file))
-        configuration.update(
-            {k: v for k, v in defaults.items() if k not in list(configuration.keys())}
+        registry_configuration.update(
+            {
+                k: v
+                for k, v in config_from_file.items()
+                if k not in list(registry_configuration.keys())
+            }
         )
-        return configuration
+
+        missing_keys = [key for key in RecognizerConfigurationLoader.mandatory_keys if key not in registry_configuration]
+        if len(missing_keys) > 0:
+            raise ValueError(
+                    f"Missing the following keys: {', '.join(missing_keys)}"
+                )
+
+        return registry_configuration
 
     @staticmethod
     def get(
@@ -295,34 +312,43 @@ class RecognizerConfigurationLoader:
         if registry_configuration:
             configuration = registry_configuration.copy()
 
-        if not conf_file:
-            configuration = RecognizerConfigurationLoader._add_missing_keys(
-                configuration=configuration,
-                conf_file=RecognizerConfigurationLoader._get_full_conf_path(),
-            )
-        else:
+        if conf_file:
             try:
-                configuration = RecognizerConfigurationLoader._add_missing_keys(
-                    configuration=configuration, conf_file=conf_file
-                )
+                config_from_file = yaml.safe_load(open(conf_file))
+
             except OSError:
                 logger.warning(
                     f"configuration file {conf_file} not found.  "
                     f"Using default config."
                 )
-                configuration = RecognizerConfigurationLoader._add_missing_keys(
-                    configuration=configuration,
-                    conf_file=RecognizerConfigurationLoader._get_full_conf_path(),
-                )
-            except Exception:
-                logger.warning(
-                    f"Failed to parse file {conf_file}, " f"resorting to default"
-                )
-                configuration = RecognizerConfigurationLoader._add_missing_keys(
-                    configuration=configuration,
-                    conf_file=RecognizerConfigurationLoader._get_full_conf_path(),
+                config_from_file = yaml.safe_load(
+                    open(RecognizerConfigurationLoader._get_full_conf_path())
                 )
 
+            except Exception as e:
+                raise ValueError(
+                    f"Failed to parse file {conf_file}." f"Error: {str(e)}"
+                )
+        else:
+            config_from_file = yaml.safe_load(
+                open(RecognizerConfigurationLoader._get_full_conf_path())
+            )
+
+        if config_from_file and not isinstance(config_from_file, dict):
+            raise TypeError(
+                f"The configuration in file {conf_file} should be a valid YAML, "
+                f"got {type(config_from_file)}"
+            )
+
+        if registry_configuration and not isinstance(registry_configuration, dict):
+            raise TypeError(
+                f"Expected registry_configuration to be a dict, "
+                f"got {type(registry_configuration)}"
+            )
+
+        configuration = RecognizerConfigurationLoader._merge_configuration(
+            registry_configuration=configuration, config_from_file=config_from_file
+        )
         return configuration
 
     @staticmethod

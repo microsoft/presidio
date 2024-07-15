@@ -53,32 +53,14 @@ class RecognizerRegistryProvider:
         )
         return
 
-    default_values = {
-        "supported_languages": ["en"],
-        "recognizers": [],
-        "global_regex_flags": re.DOTALL | re.MULTILINE | re.IGNORECASE,
-    }
-
     def create_recognizer_registry(self) -> RecognizerRegistry:
         """Create a recognizer registry according to configuration loaded previously."""
-        fields = {
-            "supported_languages": None,
-            "recognizers": None,
-            "global_regex_flags": None,
-        }
-
-        for field in fields:
-            if field not in self.configuration:
-                logger.warning(
-                    f"{field} not present in configuration, "
-                    f"using default value instead: {self.default_values[field]}"
-                )
-            fields[field] = self.configuration.get(field, self.default_values[field])
-
-        fields["recognizers"] = RecognizerListLoader.get(
-            fields["recognizers"],
-            fields["supported_languages"],
-            fields["global_regex_flags"],
+        supported_languages = self.configuration.get("supported_languages")
+        global_regex_flags = self.configuration.get("global_regex_flags")
+        recognizers = RecognizerListLoader.get(
+            self.configuration.get("recognizers"),
+            supported_languages,
+            global_regex_flags,
         )
 
-        return RecognizerRegistry(**fields)
+        return RecognizerRegistry(recognizers=recognizers, supported_languages=supported_languages, global_regex_flags=global_regex_flags)
