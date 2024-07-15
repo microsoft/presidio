@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -63,4 +62,8 @@ class RecognizerRegistryProvider:
             global_regex_flags,
         )
 
-        return RecognizerRegistry(recognizers=recognizers, supported_languages=supported_languages, global_regex_flags=global_regex_flags)
+        return RecognizerRegistry(
+            recognizers=recognizers,
+            supported_languages=supported_languages,
+            global_regex_flags=global_regex_flags,
+        )

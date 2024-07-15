@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from collections.abc import ItemsView
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Type, Union
@@ -257,10 +256,10 @@ class RecognizerConfigurationLoader:
     """A utility class that initializes recognizer registry configuraton."""
 
     mandatory_keys = [
-            "supported_languages",
-            "recognizers",
-            "global_regex_flags",
-        ]
+        "supported_languages",
+        "recognizers",
+        "global_regex_flags",
+    ]
 
     @staticmethod
     def _merge_configuration(
@@ -268,6 +267,7 @@ class RecognizerConfigurationLoader:
     ) -> Dict:
         """
         Add missing keys to the configuration.
+
         Missing keys are added using the configuration read from file.
         :param registry_configuration: The configuration to update.
         :param config_from_file: The configuration coming from the conf file.
@@ -281,11 +281,13 @@ class RecognizerConfigurationLoader:
             }
         )
 
-        missing_keys = [key for key in RecognizerConfigurationLoader.mandatory_keys if key not in registry_configuration]
+        missing_keys = [
+            key
+            for key in RecognizerConfigurationLoader.mandatory_keys
+            if key not in registry_configuration
+        ]
         if len(missing_keys) > 0:
-            raise ValueError(
-                    f"Missing the following keys: {', '.join(missing_keys)}"
-                )
+            raise ValueError(f"Missing the following keys: {', '.join(missing_keys)}")
 
         return registry_configuration
 
