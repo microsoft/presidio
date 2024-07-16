@@ -17,7 +17,7 @@ COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
 ADD https://aka.ms/vs/16/release/vc_redist.x64.exe .
 RUN ./vc_redist.x64.exe /quiet /install
 
-COPY ./pyproject.toml /usr/bin/${NAME}/
+COPY ./pyproject.toml /app/pyproject.toml
 COPY ./README.md /usr/bin/${NAME}/
 RUN pip install --upgrade pip
 RUN pip install poetry; poetry install --no-root --only=main -E server -E transformers
