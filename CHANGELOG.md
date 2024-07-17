@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [2.2.355] - July 9th 2024
 
+> Note: A new YAML based mechanism has been added to support no-code customization and creation of recognizers. 
+The default recognizers are now automatically loaded from file.
+
+
 ### Added
 #### Analyzer
 * Recognizer for Spanish Foreigners Identity Code (NIE Numero de Identificacion de Extranjeros).
@@ -22,6 +26,10 @@ All notable changes to this project will be documented in this file.
 * Update conf files location (#1358)
 * Fix OverflowError in crypto_recognizer (#1377)
 * Improve url detector (#1398) (Thanks afogel)
+* Update Dockerfile.windows (#1413) (thanks markvantilburg)
+* Changing predefined recognizers to use the config file (#1393) (Thanks RoeyBC)
+#### Anonymizer
+* Update Dockerfile.windows (#1414) (thanks markvantilburg)
 
 #### General
 * Add Ruff linter + Apply Ruff fix (#1379)
