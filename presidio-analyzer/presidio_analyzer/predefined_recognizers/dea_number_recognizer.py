@@ -1,5 +1,6 @@
 from presidio_analyzer import Pattern, PatternRecognizer
 from typing import Optional, List, Tuple
+import regex as re
 
 class DrugEnforcementAgencyNumberRecognizer(PatternRecognizer):
     """
@@ -38,6 +39,7 @@ class DrugEnforcementAgencyNumberRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "DEA_NUMBER",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        regex_flags: int = re.ASCII,
     ):
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
@@ -50,6 +52,7 @@ class DrugEnforcementAgencyNumberRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            global_regex_flags=regex_flags
         )
 
         # custom attributes

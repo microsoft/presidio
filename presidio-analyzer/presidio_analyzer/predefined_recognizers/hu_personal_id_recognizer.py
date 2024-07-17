@@ -17,8 +17,8 @@ class HuPersonalIdentificationRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "HuPersonalIdentificationNumber (Medium)",
-            r"\b(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}\b",
-            0.4,
+            r"\b[12]\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}\b",
+            0.5,
         ),
     ]
 
@@ -29,7 +29,8 @@ class HuPersonalIdentificationRecognizer(PatternRecognizer):
         "sz. ig.",
         "sz.ig.",
         "személyazonosító igazolvány",
-        "személyi igazolvány"
+        "személyi igazolvány",
+        "Nemzeti személyazonosító jel",
     ]
 
     utils = None
@@ -44,7 +45,7 @@ class HuPersonalIdentificationRecognizer(PatternRecognizer):
     ):
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
-        )   
+        )
          
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -57,7 +58,7 @@ class HuPersonalIdentificationRecognizer(PatternRecognizer):
 
         # custom attributes
         self.type = 'numeric'
-        self.range = (12,12)
+        self.range = (11,11)
 
     def validate_result(self, pattern_text: str) -> bool:
         """
@@ -75,7 +76,7 @@ class HuPersonalIdentificationRecognizer(PatternRecognizer):
             return False
 
         # Weights for the checksum calculation
-        weights = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]  
+        weights = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
         total = sum(int(digit) * weight for digit, weight in zip(text[:-1], weights))
 
         checksum_calculated = total % 11

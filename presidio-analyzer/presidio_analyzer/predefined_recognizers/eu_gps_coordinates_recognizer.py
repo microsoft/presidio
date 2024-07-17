@@ -17,22 +17,23 @@ class EUGPSCoordinatesRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "EUGPSCoordinates (Medium)",
-            r"""\b(?:
-                # Latitude (DD format)
-                (([1-8]?\d|90)(\.\d+)?)°\s?[N]
-                |
-                # Latitude (DMS format)
-                (([1-8]?\d|90)°\s?[0-5]?\d'\s?[0-5]?\d(?:\.\d+)?"\s?[N])
-                |
-                # Longitude (DD format)
-                (([1-9]?\d|1[0-7]\d|180)(\.\d+)?)°\s?[E]
-                |
-                # Longitude (DMS format)
-                (([1-9]?\d|1[0-7]\d|180)°\s?[0-5]?\d'\s?[0-5]?\d(?:\.\d+)?"\s?[E]
-                )
-                )
-                \b""",
+            "EUGPSCoordinates Latitude (DD format) (Medium)",
+            r"""\b((?:[1-8]?\d|90)(?:[.]\d+)?°\s?[N])\b""",
+            0.5,
+        ),
+        Pattern(
+            "EUGPSCoordinates Latitude (DMS format) (Medium)",
+            r"""\b((?:[1-8]?\d|90)°\s?[0-5]?\d[']\s?[0-5]?\d(?:[.]\d+)?[\"]\s?[N])\b""",
+            0.5,
+        ),
+        Pattern(
+            "EUGPSCoordinates Longitude (DD format) (Medium)",
+            r"""\b((?:[1-9]?\d|1[0-7]\d|180)(?:[.]\d+)?°\s?[E])\b""",
+            0.5,
+        ),
+        Pattern(
+            "EUGPSCoordinates Longitude (DMS format) (Medium)",
+            r"""\b((?:[1-9]?\d|1[0-7]\d|180)°\s?[0-5]?\d'\s?[0-5]?\d(?:[.]\d+)?"\s?[E])\b""",
             0.5,
         ),
     ]

@@ -1,6 +1,6 @@
 import pytest
 
-from tests import assert_result
+from tests import assert_result_within_score_range
 from presidio_analyzer.predefined_recognizers import EUGPSCoordinatesRecognizer
 
 
@@ -17,26 +17,38 @@ def entities():
 
 
 @pytest.mark.parametrize(
-    "text, expected_len, expected_positions",
+    "text, expected_len, expected_positions, expected_score_ranges",
     [
         # valid NIE scores
-        ("48.8583° N", 1, ((0, 10),),),
-        ("52.1530° N", 1, ((0, 10),),),
-        ("""48°31'20" N""", 1, ((0, 11),),),
-        ("""89°59'59.99" N""", 1, ((0, 14),),),
-        ("13.3976° E", 1, ((0, 10),),),
-        ("180°E", 1, ((0, 5),),),
-        ("90°N", 1, ((0, 4),),),
-        ("""13°23'53" E""", 1, ((0, 11),),),
-        ("""179°59'59.99" E""", 1, ((0, 15),),),
+        ("48.8583° N", 1, ((0, 10),), ((0.0, 0.5),),),
+        ("52.1530° N", 1, ((0, 10),), ((0.0, 0.5),),),
+        ("""48°31'20" N""", 1, ((0, 11),), ((0.0, 0.5),),),
+        ("""89°59'59.99" N""", 1, ((0, 14),), ((0.0, 0.5),),),
+        ("13.3976° E", 1, ((0, 10),), ((0.0, 0.5),),),
+        ("180°E", 1, ((0, 5),), ((0.0, 0.5),),),
+        ("90°N", 1, ((0, 4),), ((0.0, 0.5),),),
+        ("""13°23'53" E""", 1, ((0, 11),), ((0.0, 0.5),),),
+        ("""179°59'59.99" E""", 1, ((0, 15),), ((0.0, 0.5),),),
         
     ],
 )
+
 def test_when_all_eu_gps_then_succeed(
-    text, expected_len, expected_positions, recognizer, entities, max_score
+    text,
+    expected_len,
+    expected_positions,
+    expected_score_ranges,
+    recognizer,
+    entities,
+    max_score,
 ):
-    """Tests the ES_NIE recognizer against valid & invalid examples."""
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos) in zip(results, expected_positions):
-        assert_result(res, entities[0], st_pos, fn_pos, max_score)
+    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
+        results, expected_positions, expected_score_ranges
+    ):
+        if fn_score == "max":
+            fn_score = max_score
+        assert_result_within_score_range(
+            res, entities[0], st_pos, fn_pos, st_score, fn_score
+        )

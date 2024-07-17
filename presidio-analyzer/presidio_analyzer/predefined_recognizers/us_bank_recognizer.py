@@ -25,10 +25,10 @@ class UsBankRecognizer(PatternRecognizer):
         # Task #603: Support keyphrases: change to "checking account"
         # as part of keyphrase change
         # "check",
-        # "account",
-        # "account#",
+        "account",
+        "account#",
         # "acct",
-        # "bank",
+        "bank",
         "save",
         "debit",
 

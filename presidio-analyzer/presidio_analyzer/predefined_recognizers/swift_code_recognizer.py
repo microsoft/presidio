@@ -18,7 +18,7 @@ class SWIFTCodeRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "SWIFTCode (Weak)",
-            r"\b[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?\b",
+            r"\b[A-Z]{4}[ ]?[A-Z]{2}[A-Z0-9]{2}[ ]?([A-Z0-9]{3})?\b",
             0.3,
         ),
     ]
@@ -69,7 +69,7 @@ class SWIFTCodeRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "SWIFT_CODE",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
-        regex_flags = re.IGNORECASE
+        regex_flags: int = re.ASCII
     ):
         
         patterns = patterns if patterns else self.PATTERNS

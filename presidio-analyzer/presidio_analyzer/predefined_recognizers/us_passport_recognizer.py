@@ -24,6 +24,7 @@ class UsPassportRecognizer(PatternRecognizer):
         ),
     ]
     CONTEXT = [
+        "passport",
         "passport#",
         "passport #",
         "passportid",

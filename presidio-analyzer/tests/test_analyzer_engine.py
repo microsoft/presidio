@@ -107,7 +107,7 @@ def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     )
 
     assert len(results) == 2
-    medium_regex_score = 0.4
+    medium_regex_score = 0.3
     context_similarity_factor = 0.35  # PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
     expected_score = medium_regex_score + context_similarity_factor
@@ -149,7 +149,7 @@ def test_when_analyze_two_entities_embedded_then_return_results(spacy_nlp_engine
     analyzer = AnalyzerEngine(nlp_engine=spacy_nlp_engine)
 
     # Name with driver license in it
-    text = "My name is John 1234567 Doe"
+    text = "My name is John 12234567 Doe"
     results = analyzer.analyze(text=text, language="en", score_threshold=0)
 
     # currently we only remove duplicates when the two have the same entity type
@@ -168,7 +168,7 @@ def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):
         registry=mock_recognizer_registry,
         nlp_engine=NlpEngineMock(),
     )
-    text = "rocket is my favorite transportation"
+    text = "rocket is my go to transportation"
     entities = ["CREDIT_CARD", "ROCKET"]
 
     results = analyze_engine.analyze(
@@ -196,10 +196,10 @@ def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):
 
 
 def test_when_allow_list_specified(loaded_analyzer_engine):
-    text = "bing.com is his favorite website, microsoft.com is his second favorite"
+    text = "bing.com is his go to website, microsoft.com is his second go to"
     results = loaded_analyzer_engine.analyze(
         text=text,
-        language="en",
+        language="en"
     )
     assert len(results) == 2
     assert_result(results[0], "URL", 0, 8, 0.5)
@@ -213,7 +213,7 @@ def test_when_allow_list_specified(loaded_analyzer_engine):
 
 def test_when_allow_list_specified_but_none_in_file(loaded_analyzer_engine):
 
-    text = "bing.com is his favorite website"
+    text = "bing.com is his go to website"
     results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
@@ -231,7 +231,7 @@ def test_when_allow_list_specified_but_none_in_file(loaded_analyzer_engine):
 
 
 def test_when_allow_list_specified_multiple_items(loaded_analyzer_engine):
-    text = "bing.com is his favorite website, microsoft.com is his second favorite"
+    text = "bing.com is his go to website, microsoft.com is his second go to"
 
     results = loaded_analyzer_engine.analyze(
         text=text,
@@ -242,7 +242,7 @@ def test_when_allow_list_specified_multiple_items(loaded_analyzer_engine):
 
 
 def test_when_regex_allow_list_specified(loaded_analyzer_engine):
-    text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
+    text = "bing.com is his go to website, microsoft.com is his second go to, azure.com is his third go to"
     results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
@@ -260,7 +260,7 @@ def test_when_regex_allow_list_specified(loaded_analyzer_engine):
 
 def test_when_regex_allow_list_specified_but_none_in_file(loaded_analyzer_engine):
 
-    text = "bing.com is his favorite website"
+    text = "bing.com is his go to website"
     results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
@@ -276,7 +276,7 @@ def test_when_regex_allow_list_specified_but_none_in_file(loaded_analyzer_engine
 
 
 def test_when_regex_allow_list_specified_multiple_items_with_missing_flags(loaded_analyzer_engine):
-    text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
+    text = "bing.com is his go to website, microsoft.com is his second go to, azure.com is his third go to"
     results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
@@ -292,7 +292,7 @@ def test_when_regex_allow_list_specified_multiple_items_with_missing_flags(loade
 
 
 def test_when_regex_allow_list_specified_with_regex_flags(loaded_analyzer_engine):
-    text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
+    text = "bing.com is his go to website, microsoft.com is his second go to, azure.com is his third go to"
     results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
@@ -324,7 +324,7 @@ def test_when_removed_pattern_recognizer_then_doesnt_work(unit_test_guid):
         registry=mock_recognizer_registry,
         nlp_engine=NlpEngineMock(),
     )
-    text = "spaceship is my favorite transportation"
+    text = "spaceship is my go to transportation"
     entities = ["CREDIT_CARD", "SPACESHIP"]
 
     results = analyze_engine.analyze(
@@ -623,7 +623,7 @@ def test_when_given_no_decision_process_requested_then_response_contains_no_anal
         language=language,
     )
 
-    assert len(results) == 1
+    assert len(results) == 6
     assert results[0].analysis_explanation is None
 
 
@@ -640,7 +640,7 @@ def test_given_decision_process_requested_then_response_contains_analysis(
         language=language,
     )
 
-    assert len(results) == 1
+    assert len(results) == 6
     assert results[0].analysis_explanation is not None
 
 

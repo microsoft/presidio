@@ -17,14 +17,14 @@ class EePassportRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "EEPassport (Medium)",
+            "EEPassport (Weak)",
             r"\b[A-Z]{1,2}\d{7}\b",
-            0.3,
+            0.2,
         ),
         Pattern(
-            "ESPassport (weak)",
+            "ESPassport (Medium)",
             r"\b\d{8}[FGHJK]\b",
-            0.2
+            0.3
         )
     ]
 

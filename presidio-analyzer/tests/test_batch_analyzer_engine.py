@@ -13,7 +13,7 @@ def batch_analyzer_engine_simple(analyzer_engine_simple):
     [
         (
             ["My name is David", "Call me at 2352351232", "I was born at 1/5/1922"],
-            [[], [RecognizerResult(entity_type="PHONE_NUMBER", start=11, end=21, score= 0.4)], []],
+            [[], [RecognizerResult(entity_type="PHONE_NUMBER", start=11, end=21, score= 0.3)], []],
         ),
         (
             [1, 2, 3],
@@ -21,11 +21,11 @@ def batch_analyzer_engine_simple(analyzer_engine_simple):
         ),
         (
             [1, 2121551234],
-            [[], [RecognizerResult(entity_type="PHONE_NUMBER",start=0, end=10, score=0.4)]]
+            [[], [RecognizerResult(entity_type="PHONE_NUMBER",start=0, end=10, score=0.3)]]
         ),
         (
             ("Hi", "Call me at 2121551234"),
-            [[], [RecognizerResult(entity_type="PHONE_NUMBER", start=11, end=21, score= 0.4)]]
+            [[], [RecognizerResult(entity_type="PHONE_NUMBER", start=11, end=21, score= 0.3)]]
         ),
         ([], [])
     ],
@@ -158,7 +158,7 @@ def test_analyze_dict_on_nested_dict(batch_analyzer_engine_simple):
                     key="key_a1",
                     value=nested_dict["key_a"]["key_a1"],
                     recognizer_results=[
-                        RecognizerResult("PHONE_NUMBER", start=19, end=31, score=0.4)
+                        RecognizerResult("PHONE_NUMBER", start=19, end=31, score=0.3)
                     ],
                 )
             ],

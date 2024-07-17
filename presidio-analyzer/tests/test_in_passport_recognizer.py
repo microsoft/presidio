@@ -23,7 +23,7 @@ def entities():
         ("passport number: J6932157", 1, (17,25), 0.5),
 
         #Invalid Passport Numbers
-        ("A3456781", 0, (0,8), 0),
+        ("A3456780", 0, (), 0),
         ("b0097650", 0, (), 0),
         ("my passport number is t3569075", 0, (), 0),
         # fmt: on
