@@ -365,7 +365,7 @@ def test_use_other_language_in_analyze(get_dummy_nlp_engine, get_mock_png):
     # Create a dummy recognizer. It's necessary at least one recognizer to use the AnalyzerEngine
     pattern = Pattern(name="character_a_pattern", regex=r"####-DUMMY-####", score=1.0)
     dummy_recognizer = PatternRecognizer("DUMMY", patterns=[pattern], supported_language="pt")
-    registry = RecognizerRegistry(recognizers=[dummy_recognizer])
+    registry = RecognizerRegistry(recognizers=[dummy_recognizer], supported_languages=["pt"])
 
     # Create an AnalyzerEngine to suport another language
     analyzer_engine = AnalyzerEngine(nlp_engine=get_dummy_nlp_engine, registry=registry, supported_languages=["pt"])

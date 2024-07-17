@@ -229,7 +229,7 @@ def test_recognizer_removed_and_returned_entities_are_correct():
     assert "DATE_TIME" in supported_entities
     assert "PERSON" not in supported_entities
 
-    analyzer = AnalyzerEngine(registry=registry, supported_languages="en")
+    analyzer = AnalyzerEngine(registry=registry, supported_languages=["en"])
 
     analyzer.analyze("My name is David", language="en")
 

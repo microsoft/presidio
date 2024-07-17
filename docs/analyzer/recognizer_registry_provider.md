@@ -21,6 +21,10 @@ print(results)
 
 ```yaml
 global_regex_flags: 26
+
+supported_languages: 
+  - en
+
 recognizers: 
 ...
 ```
@@ -28,9 +32,14 @@ recognizers:
 The configuration file consists of two parts:
 
   - `global_regex_flags`: regex flags to be used in regex matching (see [regex flags](https://docs.python.org/3/library/re.html#flags)).
+  - `supported_languages`: A list of supported languages that the registry will support.
   - `recognizers`: a list of recognizers to be loaded by the recognizer registry. This list consists of two different types of recognizers: 
     - Predefined: A set of already defined recognizer classes in presidio. This includes all recognizers defined in the codebase (along with user defined recognizers) that inherit from EntityRecognizer.
     - Custom: custom created pattern recognizers that are created based on the fields provided in the configuration file.
+
+!!! note "Note"
+
+    supported_languages must be identical to the same field in analyzer_engine
 
 ## Recognizer list
 
