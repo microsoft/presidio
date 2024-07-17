@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
-class AmazonS3Key(PatternRecognizer):
+class AmazonS3KeyRecognizer(PatternRecognizer):
     """
 
     :param patterns: List of patterns to be used by this recognizer
@@ -19,7 +19,7 @@ class AmazonS3Key(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "AmazonS3Key (Medium)",
-            r"\br'[A-Za-z0-9/+=]{40}'\b",
+            r"\b[A-Za-z0-9/+=]{40}\b",
             0.5,
         ),
     ]

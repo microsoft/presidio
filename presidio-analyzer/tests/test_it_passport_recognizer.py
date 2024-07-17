@@ -11,15 +11,15 @@ def recognizer():
 
 @pytest.fixture(scope="module")
 def entities():
-    return ["IT_PASSPORT"]
+    return ["IT_PASSPORT_NUMBER"]
 
 
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        ("AA1234567", 1, ((0, 9),), ((0.0, 0.05),),),
-        ("aa7654321", 1, ((0, 9),), ((0.0, 0.05),),)
+        ("AA1234567", 1, ((0, 9),), ((0.0, 0.3),),),
+        ("aa7654321", 1, ((0, 9),), ((0.0, 0.3),),)
         # fmt: on
     ],
 )

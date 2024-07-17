@@ -24,12 +24,12 @@ class PhoneRecognizer(LocalRecognizer):
 
     SCORE = 0.3
     CONTEXT = [
-        "phone", 
-        "telephone", 
-        "cell", 
-        "cellphone", 
-        "mobile", 
-        "call", 
+        "phone",
+        "telephone",
+        "cell",
+        "cellphone",
+        "mobile",
+        "call",
         "mob",
         "P",
         "M",

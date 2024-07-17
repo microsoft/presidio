@@ -19,8 +19,8 @@ class UsPassportRecognizer(PatternRecognizer):
         Pattern("USPassport Next Generation (very weak)", r"(\b[A-Z][0-9]{8}\b)", 0.1),
         Pattern(
             "USPassportNumber Next Generation (medium)",
-            r"\b[A-Z\d]{1}\d{8}\b",
-            0.5,
+            r"\b[A-Z0-9]{1}\d{8}\b",
+            0.3,
         ),
     ]
     CONTEXT = [

@@ -1,7 +1,6 @@
-from typing import List, Optional
-
 from presidio_analyzer import Pattern, PatternRecognizer
-
+from typing import Optional, List, Tuple
+import re
 
 class ItPassportRecognizer(PatternRecognizer):
     """
@@ -15,30 +14,51 @@ class ItPassportRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "Passport (very weak)",
-            r"(?i)\b[A-Z]{2}\d{7}\b",  # noqa: E501
-            0.01,
+            "ItPassportRecognizer (Medium)",
+            r"\b[A-Z0-9]{2}\d{7}\b",
+            0.3,
         ),
     ]
 
     CONTEXT = [
-        "passaporto",
-        "elettronico",
-        "italiano",
-        "viaggio",
-        "viaggiare",
-        "estero",
-        "documento",
-        "dogana",
+        "passport#",
+        "passport #",
+        "passportid",
+        "passports",
+        "passportno",
+        "passport no",
+        "passportnumber",
+        "passport number",
+        "passportnumbers",
+        "passport numbers",
+        
+        "italiana passaporto",
+        "passaporto italiana",
+        "passaporto numero",
+        "numéro passeport",
+        "numero di passaporto",
+        "numeri del passaporto",
+        "passeport italien",
+
+        "date of issue",
+        "date of expiry"
     ]
+
+    utils = None
 
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
-        supported_language: str = "it",
-        supported_entity: str = "IT_PASSPORT",
+        supported_language: str = "en",
+        supported_entity: str = "IT_PASSPORT_NUMBER",
+        replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        regex_flags = re.IGNORECASE
     ):
+        self.replacement_pairs = (
+            replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
+        )   
+         
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
         super().__init__(
@@ -46,4 +66,9 @@ class ItPassportRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            global_regex_flags=regex_flags
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (9,9)

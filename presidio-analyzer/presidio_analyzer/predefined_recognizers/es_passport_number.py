@@ -2,8 +2,9 @@ from presidio_analyzer import Pattern, PatternRecognizer
 from typing import Optional, List, Tuple
 import re
 
-class ESPassportNumber(PatternRecognizer):
+class EsPassportRecognizer(PatternRecognizer):
     """
+    Recognizes Spanish passport numbers using regex.
     
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -16,9 +17,9 @@ class ESPassportNumber(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "ESPassportNumber (Medium)",
-            r"\b[A-Z\d]{2}[A-Z\d]?\d{6}\b",
-            0.4,
+            "EsPassport (Medium)",
+            r"\b[A-Z0-9]{2}[A-Z0-9]?\d{6}\b",
+            0.3,
         ),
     ]
 

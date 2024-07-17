@@ -21,12 +21,12 @@ class AbaRoutingRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "ABA routing number (weak)",
+            "ABARoutingNumber (weak)",
             r"\b[0123678]\d{8}\b",
             0.05,
         ),
         Pattern(
-            "ABA routing number",
+            "ABARoutingNumber",
             r"\b[0123678]\d{3}-\d{4}-\d\b",
             0.3,
         ),

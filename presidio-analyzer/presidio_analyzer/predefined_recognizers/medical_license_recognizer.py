@@ -20,14 +20,23 @@ class MedicalLicenseRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "USA DEA Certificate Number (weak)",
+            "Medical License Number (weak)",
             r"[abcdefghjklmprstuxABCDEFGHJKLMPRSTUX]{1}[a-zA-Z]{1}\d{7}|"
             r"[abcdefghjklmprstuxABCDEFGHJKLMPRSTUX]{1}9\d{7}",
-            0.4,
+            0.3,
         ),
     ]
 
-    CONTEXT = ["medical", "certificate", "DEA"]
+    CONTEXT = [
+                "medical",
+                "certificate",
+                "DEA",
+                "medical license",
+                "medical license number",
+                "certificate number",
+                "license number",
+                "license",
+    ]
 
     def __init__(
         self,
