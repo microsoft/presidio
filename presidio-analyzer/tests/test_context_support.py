@@ -113,18 +113,16 @@ def test_when_text_with_aditional_context_lemma_based_context_enhancer_then_anal
         recognizer_results,
         nlp_artifacts,
         [us_license_recognizer],
-        ["Drivers license"],
+        ["Drivers License"],
     )
 
     assert (
-        results_without_additional_context[
-            0
-        ].analysis_explanation.supportive_context_word
+        results_without_additional_context[0].analysis_explanation.supportive_context_word
         == "license"
     )
     assert (
         results_with_additional_context[0].analysis_explanation.supportive_context_word
-        == "driver"
+        == "drivers license"
     )
 
 
@@ -156,14 +154,12 @@ def test_when_text_with_only_additional_context_lemma_based_context_enhancer_the
 
     assert results_without_additional_context[0].score == 0.3
     assert (
-        results_without_additional_context[
-            0
-        ].analysis_explanation.supportive_context_word
+        results_without_additional_context[0].analysis_explanation.supportive_context_word
         == ""
     )
     assert (
         results_with_additional_context[0].analysis_explanation.supportive_context_word
-        == "driver"
+        == "driver license"
     )
     assert results_with_additional_context[0].score == 0.6499999999999999
 

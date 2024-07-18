@@ -76,7 +76,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         if not context:
             context = []
         else:
-            context = [word.lower() for word in context]
+            context = [w for word in context for w in word.lower().split()]
 
         # Sanity
         if nlp_artifacts is None:
@@ -141,7 +141,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                 # Update the explainability object with context information
                 # helped to improve the score
                 result.analysis_explanation.set_supportive_context_word(
-                    supportive_context_word
+                    supportive_context_word.lower()
                 )
                 result.analysis_explanation.set_improved_score(result.score)
         return results
@@ -161,29 +161,35 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         :param recognizer_context_list a list of words considered as
                 context keywords manually specified by the recognizer's author
         """
-        word = ""
         # If the context list is empty, no need to continue
         if context_list is None or recognizer_context_list is None:
-            return word
+            return ""
 
+        context_words = []
         for predefined_context_word in recognizer_context_list:
             # result == true only if any of the predefined context words
             # is found exactly or as a substring in any of the collected
             # context words
-            result = next(
-                (
-                    True
-                    for keyword in context_list
-                    if predefined_context_word in keyword
-                ),
-                False,
+            # result = next(
+            #     (
+            #         True
+            #         for keyword in context_list
+            #         if predefined_context_word in keyword
+            #     ),
+            #     False,
+            # )
+            result = all(
+                word in context_list
+                for word in predefined_context_word.lower().split()
             )
             if result:
                 logger.debug("Found context keyword '%s'", predefined_context_word)
-                word = predefined_context_word
-                break
+                context_words.append(predefined_context_word)
 
-        return word
+        if not context_words:
+            return ""
+
+        return max(context_words, key=len)
 
     def _extract_surrounding_words(
         self, nlp_artifacts: NlpArtifacts, word: str, start: int
