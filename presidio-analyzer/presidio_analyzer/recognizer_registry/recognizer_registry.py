@@ -277,7 +277,7 @@ class RecognizerRegistry:
                 IpRecognizer,
                 MedicalLicenseRecognizer,
                 PhoneRecognizer,
-                SpacyRecognizer,
+                # SpacyRecognizer,
                 # TransformersRecognizer,
                 SWIFTCodeRecognizer,
                 UrlRecognizer,
