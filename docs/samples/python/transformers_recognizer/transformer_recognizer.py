@@ -173,7 +173,7 @@ class TransformersRecognizer(EntityRecognizer):
 
         for res in ner_results:
             res["entity_group"] = self.__check_label_transformer(res["entity_group"])
-            if not res["entity_group"] or res["entity_group"] not in entities
+            if not res["entity_group"] or res["entity_group"] not in entities:
                 continue
 
             if res["entity_group"] == self.id_entity_name:
