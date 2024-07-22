@@ -1,1 +1,0 @@
-"""Presidio + Text Analytics example."""
