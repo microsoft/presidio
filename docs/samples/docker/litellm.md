@@ -1,35 +1,44 @@
 # LiteLLM (OpenAI Proxy) with Presidio
 
-LiteLLM supports [Microsoft Presidio](https://github.com/microsoft/presidio/) for PII masking. 
+Run Presidio PII Masking across Anthropic/Gemini/Bedrock/etc. calls with [LiteLLM](https://github.com/BerriAI/litellm)
 
 [👉 **Refer to LiteLLM Docs for detailed guide**](https://docs.litellm.ai/docs/proxy/pii_masking)
 
+## Pre-Requiesites
+- Run `pip install 'litellm[proxy]'` [Docs](https://docs.litellm.ai/docs/proxy/quick_start)
+- Setup [Presidio Docker](https://microsoft.github.io/presidio/installation/#using-docker)
+
 ## Quick Start
-### Step 1. Add env
+
+### Step 1. Add to env
 
 ```bash
 export PRESIDIO_ANALYZER_API_BASE="http://localhost:5002"
 export PRESIDIO_ANONYMIZER_API_BASE="http://localhost:5001"
+export OPENAI_API_KEY="sk-..."
 ```
 
-### Step 2. Set it as a callback in config.yaml
+### Step 2. Set Presidio as a callback in config.yaml
 
 ```yaml
+model_list:
+  - model_name: my-openai-model ### RECEIVED MODEL NAME ###
+    litellm_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
+      model: gpt-3.5-turbo ### MODEL NAME sent to `litellm.completion()` ###
+
 litellm_settings: 
-    callbacks = ["presidio", ...] # e.g. ["presidio", custom_callbacks.proxy_handler_instance]
+    callbacks = ["presidio"]
 ```
 
 ### Step 3. Start proxy 
 
 
-```
+```bash
 litellm --config /path/to/config.yaml
 ```
 
 
 This will mask the input going to the llm provider
-
-<Image img={require('../../img/presidio_screenshot.png')} />
 
 ## Output parsing 
 
@@ -75,7 +84,7 @@ litellm --config /path/to/config.yaml --debug
 
 Make a chat completions request, example:
 
-```
+```bash
 {
   "model": "azure-gpt-3.5",
   "messages": [{"role": "user", "content": "John Smith AHV number is 756.3026.0705.92. Zip code: 1334023"}]
@@ -83,7 +92,7 @@ Make a chat completions request, example:
 ```
 
 And search for any log starting with `Presidio PII Masking`, example:
-```
+```bash
 Presidio PII Masking: Redacted pii message: <PERSON> AHV number is <AHV_NUMBER>. Zip code: <US_DRIVER_LICENSE>
 ```
 
@@ -154,7 +163,7 @@ chat_completion = client.chat.completions.create(
 
 **Step 3: See response**
 
-```
+```bash
 {
   "id": "chatcmpl-8c5qbGTILZa1S4CK3b31yj5N40hFN",
   "choices": [

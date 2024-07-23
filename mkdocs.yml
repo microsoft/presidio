@@ -53,11 +53,11 @@ nav:
   - Samples: 
     - Home: samples/index.md  
     - Selected samples:
-      - LiteLLM (OpenAI Proxy): samples/docker/litellm.md
       - Customizing Presidio Analyzer: samples/python/customizing_presidio_analyzer.ipynb
       - NER model configuration: samples/python/ner_model_configuration.ipynb
       - Presidio Structured Basic Usage: samples/python/example_structured.ipynb
       - Using an allow list with image redaction: samples/python/image_redaction_allow_list_approach.ipynb
+      - LiteLLM (OpenAI Proxy): samples/docker/litellm.md
       - Redacting Text PII from DICOM images: samples/python/example_dicom_image_redactor.ipynb
       - Annotating PII in a PDF: samples/python/example_pdf_annotation.ipynb
       - Pseudonomization: samples/python/pseudonomyzation.ipynb
