@@ -58,8 +58,6 @@ stages:
             WORKING_FOLDER: 'presidio-image-redactor'
           Structured:
             WORKING_FOLDER: 'presidio-structured'
-          Cli:
-            WORKING_FOLDER: 'presidio-cli'
       steps:
         - template: ./publish-to-pypi.yml
           parameters:
