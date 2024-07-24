@@ -24,6 +24,7 @@
 | Usage | Text      | Python file                            | [Pseudonomization (replace PII values using mappings)](python/pseudonomyzation.ipynb)|
 | Usage | Text      | Python file                            | [Passing a lambda as a Presidio anonymizer using Faker](python/example_custom_lambda_anonymizer.py)|
 | Usage | Text      | Python file                            | [Synthetic data generation with OpenAI](python/synth_data_with_openai.ipynb)|
+| Usage | Text      | LiteLLM Proxy                            | [PII Masking LLM calls across Anthropic/Gemini/Bedrock/Azure, etc.](docker/litellm.md)|
 | Usage      | | REST API (postman)                          | [Presidio as a REST endpoint](docker/index.md)|
 | Deployment | | App Service                                 | [Presidio with App Service](deployments/app-service/index.md)|
 | Deployment | | Kubernetes                                  | [Presidio with Kubernetes](deployments/k8s/index.md)|
