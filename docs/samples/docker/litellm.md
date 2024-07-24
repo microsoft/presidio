@@ -4,6 +4,8 @@ Run Presidio PII Masking across Anthropic/Gemini/Bedrock/etc. calls with [LiteLL
 
 [👉 **Refer to LiteLLM Docs for detailed guide**](https://docs.litellm.ai/docs/proxy/pii_masking)
 
+**Flow:** App <-> `LiteLLM Proxy + Presidio PII Masking` <-> LLM Provider
+
 ## Pre-Requiesites
 - Run `pip install 'litellm[proxy]'` [Docs](https://docs.litellm.ai/docs/proxy/quick_start)
 - Setup [Presidio Docker](https://microsoft.github.io/presidio/installation/#using-docker)
@@ -99,6 +101,8 @@ Presidio PII Masking: Redacted pii message: <PERSON> AHV number is <AHV_NUMBER>.
 
 ## Turn on/off per key 
 
+LiteLLM lets you create [virtual keys](https://docs.litellm.ai/docs/proxy/virtual_keys) for calling the proxy. You can use these to control model access, set budgets, track usage, etc. 
+
 Turn off PII masking for a given key. 
 
 Do this by setting `permissions: {"pii": false}`, when generating a key. 
@@ -115,10 +119,10 @@ curl --location 'http://0.0.0.0:4000/key/generate' \
 
 ## Turn on/off per request 
 
-The proxy support 2 request-level PII controls:
+The proxy supports 2 request-level PII controls:
 
 - *no-pii*: Optional(bool) - Allow user to turn off pii masking per request.
-- *output_parse_pii*: Optional(bool) - Allow user to turn off pii output parsing per request.
+- *output_parse_pii*: Optional(bool) - Allow user to turn off pii output parsing per request. [**Output Parsing**](#output-parsing)
 
 ### Usage 
 
