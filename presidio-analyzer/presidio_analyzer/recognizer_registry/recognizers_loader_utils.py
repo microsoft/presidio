@@ -316,25 +316,24 @@ class RecognizerConfigurationLoader:
 
         if conf_file:
             try:
-                config_from_file = yaml.safe_load(open(conf_file))
+                with open(conf_file) as file:
+                    config_from_file = yaml.safe_load(file)
 
             except OSError:
                 logger.warning(
                     f"configuration file {conf_file} not found.  "
                     f"Using default config."
                 )
-                config_from_file = yaml.safe_load(
-                    open(RecognizerConfigurationLoader._get_full_conf_path())
-                )
+                with open(RecognizerConfigurationLoader._get_full_conf_path()) as file:
+                    config_from_file = yaml.safe_load(file)
 
             except Exception as e:
                 raise ValueError(
                     f"Failed to parse file {conf_file}." f"Error: {str(e)}"
                 )
         else:
-            config_from_file = yaml.safe_load(
-                open(RecognizerConfigurationLoader._get_full_conf_path())
-            )
+            with open(RecognizerConfigurationLoader._get_full_conf_path()) as file:
+                config_from_file = yaml.safe_load(file)
 
         if config_from_file and not isinstance(config_from_file, dict):
             raise TypeError(
