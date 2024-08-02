@@ -1,5 +1,6 @@
 import copy
 from abc import ABC
+from contextlib import nullcontext
 from typing import List, Optional
 import re
 
@@ -91,38 +92,23 @@ def test_when_analyze_with_predefined_recognizers_then_return_results(
     assert len(results) == 1
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
 
-def test_when_analyze_with_unsupported_language_must_match(
-):
-    with pytest.raises(ValueError):
-        registry = RecognizerRegistryProvider(registry_configuration={"supported_languages": ["en"]}).create_recognizer_registry()
+@pytest.mark.parametrize(
+    "registry_config,analyzer_lang,expectation",
+    [
+        ({"supported_languages": ["en"]}, ["es", "de"], pytest.raises(ValueError)),
+        (None, ["es", "de"], pytest.raises(ValueError)),
+        ({"supported_languages": ["es", "de"]}, None, pytest.raises(ValueError)),
+        ({"supported_languages": ["es", "de"]}, ["de", "es"], nullcontext()),
+        (None, None, nullcontext()),
+    ]
+)
+def test_when_analyze_with_unsupported_language_must_match(registry_config, analyzer_lang, expectation):
+    with expectation:
+        registry = RecognizerRegistryProvider(registry_configuration=registry_config).create_recognizer_registry()
         AnalyzerEngine(
             registry=registry,
-            supported_languages=["es", "de"]
+            supported_languages=analyzer_lang,
         )
-
-    with pytest.raises(ValueError):
-        registry = RecognizerRegistryProvider().create_recognizer_registry()
-        AnalyzerEngine(
-            registry=registry,
-            supported_languages=["es", "de"]
-        )
-
-    with pytest.raises(ValueError):
-        registry = RecognizerRegistryProvider(registry_configuration={"supported_languages": ["es", "de"]}).create_recognizer_registry()
-        AnalyzerEngine(
-            registry=registry
-        )
-
-    registry = RecognizerRegistryProvider(registry_configuration={"supported_languages": ["es", "de"]}).create_recognizer_registry()
-    AnalyzerEngine(
-        registry=registry,
-        supported_languages=["de", "es"]
-    )
-
-    registry = RecognizerRegistryProvider().create_recognizer_registry()
-    AnalyzerEngine(
-        registry=registry
-    )
 
 def test_when_analyze_with_defaults_success(
 ):
