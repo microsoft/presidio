@@ -59,11 +59,6 @@ def unit_test_guid():
     return "00000000-0000-0000-0000-000000000000"
 
 
-@pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    return nlp_engines["spacy_en"]
-
-
 def test_simple():
     dic = {
         "text": "John Smith drivers license is AC432223",
