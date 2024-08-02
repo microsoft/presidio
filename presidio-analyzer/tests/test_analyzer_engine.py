@@ -108,6 +108,7 @@ def test_when_analyze_with_unsupported_language_must_match(registry_config, anal
         AnalyzerEngine(
             registry=registry,
             supported_languages=analyzer_lang,
+            nlp_engine=NlpEngineMock(),
         )
 
 def test_when_analyze_with_defaults_success(
