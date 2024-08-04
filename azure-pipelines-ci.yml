@@ -39,8 +39,9 @@ stages:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           TAG: ':$(Build.BuildId)'
         steps:
-          - task: DockerCompose@1
+          - task: DockerCompose@0
             displayName: Pull Presidio Images from ACR
+            projectName: 'microsoft_presidio'
             inputs:
               action: Run a Docker Compose command
               dockerComposeCommand: pull
