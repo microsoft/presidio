@@ -21,7 +21,7 @@ stages:
         REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
         TAG: ':$(Build.BuildId)'
       steps:
-        - task: DockerCompose@0
+        - task: DockerCompose@1
           displayName: Build Presidio Images
           inputs:
               action: Build services
