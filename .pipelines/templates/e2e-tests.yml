@@ -13,11 +13,11 @@ steps:
       displayName: Start Presidio Cluster
       inputs:
           action: Run services
+          projectName: 'microsoft_presidio'
           dockerComposeFile: docker-compose.yml
           buildImages: false
       # Start cluster when testing against remote cluster, when an external url is not provided.
       condition: eq('${{ parameters.anonymizer_base_url }}', '')
-      projectName: 'microsoft_presidio'
       
     - task: UsePythonVersion@0
       inputs:
@@ -50,6 +50,7 @@ steps:
     - task: DockerCompose@0
       displayName: Docker Logs
       inputs:
+        projectName: 'microsoft_presidio'
         dockerComposeCommand: logs
         dockerComposeFile: docker-compose.yml
         buildImages: false
