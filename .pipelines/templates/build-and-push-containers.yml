@@ -14,7 +14,7 @@ parameters:
   type: string
   default: 'docker-compose.yml'
 steps:
-  - task: DockerCompose@0
+  - task: DockerCompose@1
     displayName: Build Presidio Images
     inputs:
         action: Build services
