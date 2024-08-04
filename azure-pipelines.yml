@@ -23,8 +23,10 @@ stages:
       steps:
         - task: DockerCompose@0
           displayName: Build Presidio Images
+
           inputs:
               action: Build services
+              projectName: 'microsoft_presidio'
               dockerComposeFile: docker-compose.yml
               dockerComposeFileArgs: |
                 REGISTRY_NAME=$(REGISTRY_NAME)
