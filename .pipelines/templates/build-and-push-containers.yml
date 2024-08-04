@@ -23,13 +23,15 @@ steps:
           REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
           IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
           TAG=${{ parameters.TAG }}
-  - task: DockerCompose@0
+        projectName: 'microsoft_presidio'
+  - task: DockerCompose@1
     displayName: Push Presidio Images to ACR
     inputs:
         action: 'Push services'
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
         containerregistrytype: 'Container Registry'
         dockerRegistryEndpoint: 'presidio-acr'
+        projectName: 'microsoft_presidio'
         dockerComposeFileArgs: |
           REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
           IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
