@@ -16,7 +16,7 @@ steps:
     versionSpec: '>= 10.x'
     checkLatest: true
 
-- task: DockerCompose@0
+- task: DockerCompose@1
   displayName: 'Run service with docker compose'
   inputs:
     containerregistrytype: 'Azure Container Registry'
