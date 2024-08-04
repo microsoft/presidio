@@ -18,9 +18,9 @@ steps:
 
 - task: DockerCompose@0
   displayName: 'Run service with docker compose'
-  projectName: 'microsoft_presidio'
   inputs:
     containerregistrytype: 'Azure Container Registry'
+    projectName: 'microsoft_presidio'
     dockerComposeFile: '**/docker-compose.yml'
     action: 'Run services'
 
