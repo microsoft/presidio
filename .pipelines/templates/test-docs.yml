@@ -16,8 +16,9 @@ steps:
     versionSpec: '>= 10.x'
     checkLatest: true
 
-- task: DockerCompose@1
+- task: DockerCompose@0
   displayName: 'Run service with docker compose'
+  projectName: 'microsoft_presidio'
   inputs:
     containerregistrytype: 'Azure Container Registry'
     dockerComposeFile: '**/docker-compose.yml'
