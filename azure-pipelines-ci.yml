@@ -41,9 +41,9 @@ stages:
         steps:
           - task: DockerCompose@0
             displayName: Pull Presidio Images from ACR
-            projectName: 'microsoft_presidio'
             inputs:
               action: Run a Docker Compose command
+              projectName: 'microsoft_presidio'
               dockerComposeCommand: pull
               dockerComposeFile: docker-compose.yml
               containerregistrytype: 'Container Registry'
