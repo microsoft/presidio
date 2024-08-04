@@ -9,7 +9,7 @@ parameters:
     type: string
     default: ''
 steps:
-    - task: DockerCompose@0
+    - task: DockerCompose@1
       displayName: Start Presidio Cluster
       inputs:
           action: Run services
