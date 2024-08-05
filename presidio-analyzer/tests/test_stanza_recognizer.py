@@ -23,13 +23,6 @@ def nlp_recognizer(nlp_recognizers):
     return nlp_recognizers.get("stanza", None)
 
 
-def prepare_and_analyze(nlp, recognizer, text, ents):
-    nlp.load()
-    nlp_artifacts = nlp.process_text(text, "en")
-    results = recognizer.analyze(text, ents, nlp_artifacts)
-    return results
-
-
 @pytest.mark.skip_engine("stanza_en")
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",
@@ -65,7 +58,8 @@ def test_when_using_stanza_then_all_stanza_result_correct(
     ner_strength,
     max_score,
 ):
-    results = prepare_and_analyze(stanza_nlp_engine, nlp_recognizer, text, entities)
+    nlp_artifacts = stanza_nlp_engine.process_text(text, "en")
+    results = nlp_recognizer.analyze(text, entities, nlp_artifacts)
     assert len(results) == expected_len
     entity_to_check = entities[entity_num]
     for res, (st_pos, fn_pos) in zip(results, expected_positions):

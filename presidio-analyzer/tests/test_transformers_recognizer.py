@@ -23,13 +23,6 @@ def nlp_engine(nlp_engines):
     return nlp_engine
 
 
-def prepare_and_analyze(nlp, recognizer, text, entities):
-    nlp.load()
-    nlp_artifacts = nlp.process_text(text, "en")
-    results = recognizer.analyze(text, entities, nlp_artifacts)
-    return results
-
-
 @pytest.mark.skip_engine("transformers_en")
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",
@@ -65,7 +58,8 @@ def test_when_using_transformers_then_all_transformers_result_correct(
     min_score,
     max_score,
 ):
-    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
+    nlp_artifacts = nlp_engine.process_text(text, "en")
+    results = nlp_recognizer.analyze(text, entities, nlp_artifacts)
     assert len(results) == expected_len
     entity_to_check = entities[entity_num]
     for res, (st_pos, fn_pos) in zip(results, expected_positions):
@@ -85,7 +79,8 @@ def test_when_person_in_text_then_person_full_name_complex_found(
     nlp_engine, nlp_recognizer, entities
 ):
     text = "Richard (Rick) C. Henderson"
-    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
+    nlp_artifacts = nlp_engine.process_text(text, "en")
+    results = nlp_recognizer.analyze(text, entities, nlp_artifacts)
 
     assert len(results) > 0
 

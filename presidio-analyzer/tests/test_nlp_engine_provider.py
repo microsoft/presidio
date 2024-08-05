@@ -47,17 +47,6 @@ def nlp_configuration_dict() -> Dict:
     return nlp_configuration
 
 
-@pytest.fixture(scope="session")
-def ner_model_configuration_dict() -> Dict:
-    ner_model_configuration = {
-        "nlp_engine_name": "transformers",
-        "aggregation_strategy": "simple",
-        "alignment_mode": "strict",
-        "low_score_entity_names": ["O"],
-    }
-    return ner_model_configuration
-
-
 def test_when_create_nlp_engine__then_return_default_configuration():
     provider = NlpEngineProvider()
     engine = provider.create_engine()
