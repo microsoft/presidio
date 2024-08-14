@@ -232,17 +232,21 @@ class RecognizerRegistry:
             ],
             "de": [
                 DePassportRecognizer,
+                SpacyRecognizer,
             ],
             "gr": [
                 GrPassportRecognizer,
+                SpacyRecognizer,
             ],
             "es": [
                 EsNifRecognizer,
                 EsNieRecognizer,
                 EsPassportRecognizer,
+                SpacyRecognizer,
             ],
             "fr": [
                 FrPassportRecognizer,
+                SpacyRecognizer,
             ],
             "it": [
                 ItDriverLicenseRecognizer,
@@ -250,20 +254,24 @@ class RecognizerRegistry:
                 ItVatCodeRecognizer,
                 ItIdentityCardRecognizer,
                 ItPassportRecognizer,
+                SpacyRecognizer,
             ],
             "ja": [
-
+                SpacyRecognizer,
             ],
             "nl": [
+                SpacyRecognizer,
             ],
             "pl": [
                 PlPeselRecognizer,
+                SpacyRecognizer,
             ],
             "pt": [
                 PtPassportRecognizer,
+                SpacyRecognizer,
             ],
             "zh": [
-
+                SpacyRecognizer,
             ],
             "ALL": [
                 AmazonS3KeyRecognizer,
