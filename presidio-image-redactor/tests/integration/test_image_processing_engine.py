@@ -1,10 +1,13 @@
 import PIL
+from PIL import Image
 import numpy as np
 import pytest
 from methods import get_resource_image
+from unittest.mock import patch, MagicMock
 
 
 from presidio_image_redactor import (
+    ImagePreprocessor,
     ContrastSegmentedImageEnhancer,
     BilateralFilter,
     SegmentedAdaptiveThreshold,
@@ -104,3 +107,28 @@ def test_contrast_segmented_image_enhancer__improve_contrast():
     assert isinstance(result[1], np.float64)
     assert isinstance(result[2], np.float64)
     assert result[1] <= result[2]
+
+@patch('presidio_image_redactor.ImagePreprocessor.convert_image_to_array')
+def test_preprocess_image_with_pil_image(mocked_convert):
+    # Create a mock PIL image
+    pil_image = Image.new('RGB', (256, 256))
+
+    # Call the preprocess_image method with the PIL image
+    SegmentedAdaptiveThreshold().preprocess_image(pil_image)
+
+    # Assert that convert_image_to_array was NOT called
+    mocked_convert.assert_not_called()
+
+@patch('presidio_image_redactor.ImagePreprocessor.convert_image_to_array')
+def test_preprocess_image_with_ndarray(mocker):
+    # Create a mock numpy array
+    array_image = np.array([[0, 255], [255, 0]])
+
+    # Mock the convert_image_to_array method
+    mock_convert = mocker.patch.object(ImagePreprocessor, 'convert_image_to_array')
+
+    # Call the preprocess_image method with the numpy array
+    SegmentedAdaptiveThreshold().preprocess_image(array_image)
+
+    # Assert that convert_image_to_array was called once
+    mock_convert.assert_called_once_with(array_image)
