@@ -105,4 +105,5 @@ __all__ = [
     "InPassportRecognizer",
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
+    "UkNinoRecognizer",
 ]
