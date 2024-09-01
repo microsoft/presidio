@@ -1,10 +1,13 @@
 import PIL
+from PIL import Image
 import numpy as np
 import pytest
 from methods import get_resource_image
+from unittest import mock
 
 
 from presidio_image_redactor import (
+    ImagePreprocessor,
     ContrastSegmentedImageEnhancer,
     BilateralFilter,
     SegmentedAdaptiveThreshold,
@@ -104,3 +107,31 @@ def test_contrast_segmented_image_enhancer__improve_contrast():
     assert isinstance(result[1], np.float64)
     assert isinstance(result[2], np.float64)
     assert result[1] <= result[2]
+
+
+def test_preprocess_image_with_pil_image():
+    # Create a mock PIL image
+    pil_image = Image.new("RGB", (256, 256))
+
+    with mock.patch(
+        "presidio_image_redactor.ImagePreprocessor.convert_image_to_array",
+        side_effect=Exception("Skip the rest"),
+    ) as mocked_function:
+        with pytest.raises(Exception, match="Skip the rest"):
+            SegmentedAdaptiveThreshold().preprocess_image(pil_image)
+
+        # Assert 'convert_image_to_array' was called
+        mocked_function.assert_called_once()
+
+
+def test_preprocess_image_with_ndarray():
+    # Create a mock numpy array
+    array_image = np.zeros((512, 512), dtype=np.uint8)
+
+    with mock.patch(
+        "presidio_image_redactor.ImagePreprocessor.convert_image_to_array"
+    ) as mocked_function:
+        SegmentedAdaptiveThreshold().preprocess_image(array_image)
+
+        # Assert 'convert_image_to_array' was not called
+        mocked_function.assert_not_called()
