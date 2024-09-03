@@ -23,10 +23,9 @@ def nlp_recognizer(nlp_recognizers):
     return nlp_recognizers.get("stanza", None)
 
 
-def prepare_and_analyze(nlp, recognizer, text, ents):
-    nlp.load()
+def prepare_and_analyze(nlp, recognizer, text, entities):
     nlp_artifacts = nlp.process_text(text, "en")
-    results = recognizer.analyze(text, ents, nlp_artifacts)
+    results = recognizer.analyze(text, entities, nlp_artifacts)
     return results
 
 
