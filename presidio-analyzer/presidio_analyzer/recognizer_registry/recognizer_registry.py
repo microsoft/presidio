@@ -204,6 +204,9 @@ class RecognizerRegistry:
         if not isinstance(recognizer, EntityRecognizer):
             raise ValueError("Input is not of type EntityRecognizer")
 
+        recognizer_lang = recognizer.get_supported_language()
+        if recognizer_lang not in self.supported_languages:
+            self.supported_languages.append(recognizer_lang)
         self.recognizers.append(recognizer)
 
     def remove_recognizer(
