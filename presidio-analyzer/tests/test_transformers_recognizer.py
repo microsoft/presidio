@@ -24,7 +24,6 @@ def nlp_engine(nlp_engines):
 
 
 def prepare_and_analyze(nlp, recognizer, text, entities):
-    nlp.load()
     nlp_artifacts = nlp.process_text(text, "en")
     results = recognizer.analyze(text, entities, nlp_artifacts)
     return results
