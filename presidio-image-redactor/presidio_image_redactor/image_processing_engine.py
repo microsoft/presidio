@@ -188,7 +188,7 @@ class SegmentedAdaptiveThreshold(ImagePreprocessor):
 
         :return: The processed image and metadata (C, background_color, contrast).
         """
-        if isinstance(image, np.ndarray):
+        if not isinstance(image, np.ndarray):
             image = self.convert_image_to_array(image)
 
         # Determine background color
