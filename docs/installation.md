@@ -143,13 +143,7 @@ Then, build the containers locally.
 From the root folder of the repo:
 
 ```sh
-docker-compose --build
-```
-
-To run all Presidio services:
-
-```sh
-docker-compose up -d
+docker-compose up --build
 ```
 
 Alternatively, you can build and run individual services.
