@@ -1,11 +1,15 @@
 FROM python:3.9-slim
 
+ARG DEV_MODE=dev
+ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
+ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 
+ENV DEV_MODE=${DEV_MODE}
 ENV PIP_NO_CACHE_DIR=1
-ENV ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
-ENV RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
-ENV NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
-ENV DEV_MODE="dev"
+ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
+ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
+ENV NLP_CONF_FILE=${NLP_CONF_FILE}
 
 # Install essential build tools
 RUN apt-get update \

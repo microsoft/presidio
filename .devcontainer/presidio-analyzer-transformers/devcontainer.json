@@ -1,12 +1,17 @@
 {
     "name": "Presidio Analyzer Transformers",
     "build": {
-        "dockerfile": "../../presidio-analyzer/Dockerfile.transformers.dev",  // Specify the path to your Dockerfile
-        "context": "../../presidio-analyzer"  // Specify the build context where your Dockerfile is located
+        "dockerfile": "../../presidio-analyzer/Dockerfile.dev",  // Specify the path to your Dockerfile
+        "context": "../../presidio-analyzer",  // Specify the build context where your Dockerfile is located
+        "args": {
+          "DEV_MODE": "transformers",
+          "NLP_CONF_FILE": "presidio_analyzer/conf/transformers.yaml"
+        }
     },
     "workspaceMount": "source=${localWorkspaceFolder}/presidio-analyzer,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
-  "postAttachCommand": "chmod +x ./install_dependencies.sh && ./install_dependencies.sh && poetry shell",
+    "postCreateCommand": "chmod +x ./install_dependencies.sh && ./install_dependencies.sh",
+  "postAttachCommand": "poetry shell",
   "customizations": {
     "extensions": [
       "ms-python.python", 

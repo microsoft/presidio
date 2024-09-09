@@ -2,7 +2,10 @@
     "name": "Presidio Analyzer",
     "build": {
         "dockerfile": "../../presidio-analyzer/Dockerfile.dev",  // Specify the path to your Dockerfile
-        "context": "../../presidio-analyzer"  // Specify the build context where your Dockerfile is located
+        "context": "../../presidio-analyzer",  // Specify the build context where your Dockerfile is located
+        "args": {
+          "DEV_MODE": "dev"
+        }
     },
     "workspaceMount": "source=${localWorkspaceFolder}/presidio-analyzer,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
