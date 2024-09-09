@@ -146,12 +146,6 @@ From the root folder of the repo:
 docker-compose up --build
 ```
 
-To run all Presidio services:
-
-```sh
-docker-compose up -d
-```
-
 Alternatively, you can build and run individual services.
 For example, for the `presidio-anonymizer` service:
 
