@@ -1,8 +1,8 @@
 {
-    "name": "Python 3.9 with Tesseract",
+    "name": "Presidio Image Redactor",
     "build": {
-        "dockerfile": "presidio-image-redactor/Dockerfile.dev",  // Specify the path to your Dockerfile
-        "context": "presidio-image-redactor"  // Specify the build context where your Dockerfile is located
+        "dockerfile": "../../presidio-image-redactor/Dockerfile.dev",  // Specify the path to your Dockerfile
+        "context": "../../presidio-image-redactor"  // Specify the build context where your Dockerfile is located
     },
     "workspaceMount": "source=${localWorkspaceFolder}/presidio-image-redactor,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
