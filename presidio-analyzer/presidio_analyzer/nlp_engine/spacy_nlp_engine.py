@@ -121,7 +121,9 @@ class SpacyNlpEngine(NlpEngine):
             raise ValueError("NLP engine is not loaded. Consider calling .load()")
 
         texts = (str(text) for text in texts)
-        docs = self.nlp[language].pipe(texts, as_tuples=as_tuples, batch_size=batch_size)
+        docs = self.nlp[language].pipe(texts,
+                                       as_tuples=as_tuples,
+                                       batch_size=batch_size)
         for doc in docs:
             yield doc.text, self._doc_to_nlp_artifact(doc, language)
 
