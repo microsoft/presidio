@@ -1,8 +1,8 @@
 {
     "name": "Presidio Anonymizer",
     "build": {
-        "dockerfile": "../../presidio-anonymizer/Dockerfile.dev",  // Specify the path to your Dockerfile
-        "context": "../../presidio-anonymizer"  // Specify the build context where your Dockerfile is located
+        "dockerfile": "../../presidio-anonymizer/Dockerfile.dev",
+        "context": "../../presidio-anonymizer"
     },
     "workspaceMount": "source=${localWorkspaceFolder}/presidio-anonymizer,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
