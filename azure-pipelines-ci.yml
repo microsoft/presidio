@@ -43,6 +43,7 @@ stages:
             displayName: Pull Presidio Images from ACR
             inputs:
               action: Run a Docker Compose command
+              projectName: 'microsoft_presidio'
               dockerComposeCommand: pull
               dockerComposeFile: docker-compose.yml
               containerregistrytype: 'Container Registry'

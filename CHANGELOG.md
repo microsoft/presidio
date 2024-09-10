@@ -2,14 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [2.2.355] - July 9th 2024
+
+> Note: A new YAML based mechanism has been added to support no-code customization and creation of recognizers. 
+The default recognizers are now automatically loaded from file.
+
 
 ### Added
 #### Analyzer
 * Recognizer for Spanish Foreigners Identity Code (NIE Numero de Identificacion de Extranjeros).
-* Recognizer for Finnish Personal Identity Codes (Henkilötunnus).
-* Fixed Transformer Recognizer Sample's analyze method to respect selected entities (@andreas-eberle).
+* Recognizer for Finnish Personal Identity Codes (Henkilötunnus) (#1394) (Thanks honderr).
+* New Predefined Recognizer for Indian Passport #1350 (#1351) (Thanks Hiten-98)
+* Add new recognizer for IN_VOTER #1344 (#1345) (Thanks kjdeveloper8)
+* Spanish NIE (Foreigners ID card) recognizer (#1359) (Thanks areyesfalcon)
+* Added regex functionality for allow lists in the analyzer (#1357) (Thanks NarekAra)
+* Loading analyzer engine & recognizer registry from configuration file (#1367)
+* Align ports with documentation and postman collection. (#1375) (Thanks ungana)
+* Analyzer documentation (#1384)
+* Fix the entity filtering of the transformer_recognizer.py analzye function (#1403) (Thanks andreas-eberle)
 
+### Changed
+#### Analyzer
+* Update conf files location (#1358)
+* Fix OverflowError in crypto_recognizer (#1377)
+* Improve url detector (#1398) (Thanks afogel)
+* Update Dockerfile.windows (#1413) (thanks markvantilburg)
+* Changing predefined recognizers to use the config file (#1393) (Thanks RoeyBC)
+#### Anonymizer
+* Update Dockerfile.windows (#1414) (thanks markvantilburg)
+
+#### General
+* Add Ruff linter + Apply Ruff fix (#1379)
+* Auto-formatting, fix D rules (#1381)
+* Fix N818, E721 (#1382)
+* Migrate Python Packaging to pyproject.toml (#1383) 
+* From Pipenv to Poetry (#1391)
+* Fix ports in docs (#1408)
 
 ## [2.2.353] - March 31st 2024
 
@@ -404,7 +432,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.354...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.355...HEAD
+[2.2.355]: https://github.com/microsoft/presidio/compare/2.2.354...2.2.355
 [2.2.354]: https://github.com/microsoft/presidio/compare/2.2.353...2.2.354
 [2.2.353]: https://github.com/microsoft/presidio/compare/2.2.352...2.2.353
 [2.2.352]: https://github.com/microsoft/presidio/compare/2.2.351...2.2.352

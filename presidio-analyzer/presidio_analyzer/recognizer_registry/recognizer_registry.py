@@ -14,81 +14,14 @@ from presidio_analyzer.nlp_engine import (
     TransformersNlpEngine,
 )
 from presidio_analyzer.predefined_recognizers import (
-    AbaRoutingRecognizer,
-    AmazonS3KeyRecognizer,
-    AtPassportRecognizer,
-    AuAbnRecognizer,
-    AuAcnRecognizer,
-    AuBankAccountRecognizer,
-    AuMedicareRecognizer,
-    AuTfnRecognizer,
-    BePassportRecognizer,
-    BuPassportRecognizer,
-    CreditCardRecognizer,
-    CrPassportRecognizer,
-    CryptoRecognizer,
-    CyPassportRecognizer,
-    CzPassportRecognizer,
-    DateRecognizer,
-    DePassportRecognizer,
-    DkPassportRecognizer,
-    DrugEnforcementAgencyNumberRecognizer,
-    EePassportRecognizer,
-    EmailRecognizer,
-    EsNieRecognizer,
-    EsNifRecognizer,
-    EsPassportRecognizer,
-    EUGPSCoordinatesRecognizer,
-    FiPassportRecognizer,
-    FiPersonalIdentityCodeRecognizer,
-    FrPassportRecognizer,
-    GrPassportRecognizer,
-    HkIdentityCardRecognizer,
-    HuPassportRecognizer,
-    HuPersonalIdentificationRecognizer,
-    IbanRecognizer,
-    IePassportRecognizer,
-    InAadhaarRecognizer,
-    InPanRecognizer,
-    InPassportRecognizer,
-    InVehicleRegistrationRecognizer,
-    InVoterRecognizer,
-    IpRecognizer,
-    ItDriverLicenseRecognizer,
-    ItFiscalCodeRecognizer,
-    ItIdentityCardRecognizer,
-    ItPassportRecognizer,
-    ItVatCodeRecognizer,
-    LtPassportRecognizer,
-    LvPassportRecognizer,
-    MedicalLicenseRecognizer,
-    MtPassportRecognizer,
-    NhsRecognizer,
-    NzBankAccountRecognizer,
-    NzDriversLicenseRecognizer,
-    NzInlandRevenueNumberRecognizer,
-    NzMinistryOfHealthNumberRecognizer,
-    NZSocialWelfareNumberRecognizer,
-    PhoneRecognizer,
-    PlPassportRecognizer,
-    PlPeselRecognizer,
-    PtPassportRecognizer,
-    RoPassportRecognizer,
-    SePassportRecognizer,
-    SgFinRecognizer,
-    SkPassportRecognizer,
-    SlPassportRecognizer,
     SpacyRecognizer,
     StanzaRecognizer,
     SWIFTCodeRecognizer,
     TransformersRecognizer,
-    UkPassportRecognizer,
-    UrlRecognizer,
-    UsBankRecognizer,
-    UsItinRecognizer,
-    UsLicenseRecognizer,
-    UsPassportRecognizer,
-    UsSsnRecognizer,
+)
+from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
+    RecognizerConfigurationLoader,
+    RecognizerListLoader,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -165,147 +98,17 @@ class RecognizerRegistry:
         :param nlp_engine: The NLP engine to use.
         :return: None
         """
-        if not languages:
-            languages = ["en"]
 
-        recognizers_map = {
-            "en": [
-                AbaRoutingRecognizer,
-                AtPassportRecognizer,
-                AuAbnRecognizer,
-                AuAcnRecognizer,
-                AuBankAccountRecognizer,
-                AuMedicareRecognizer,
-                AuTfnRecognizer,
-                BePassportRecognizer,
-                BuPassportRecognizer,
-                CrPassportRecognizer,
-                CyPassportRecognizer,
-                CzPassportRecognizer,
-                DePassportRecognizer,
-                DkPassportRecognizer,
-                EePassportRecognizer,
-                EsNieRecognizer,
-                EsNifRecognizer,
-                EsPassportRecognizer,
-                FiPassportRecognizer,
-                FiPersonalIdentityCodeRecognizer,
-                FrPassportRecognizer,
-                GrPassportRecognizer,
-                HkIdentityCardRecognizer,
-                HuPassportRecognizer,
-                HuPersonalIdentificationRecognizer,
-                IePassportRecognizer,
-                InAadhaarRecognizer,
-                InPanRecognizer,
-                InPassportRecognizer,
-                InVehicleRegistrationRecognizer,
-                InVoterRecognizer,
-                ItDriverLicenseRecognizer,
-                ItFiscalCodeRecognizer,
-                ItIdentityCardRecognizer,
-                ItPassportRecognizer,
-                ItVatCodeRecognizer,
-                LtPassportRecognizer,
-                LvPassportRecognizer,
-                MtPassportRecognizer,
-                NhsRecognizer,
-                NzBankAccountRecognizer,
-                NzDriversLicenseRecognizer,
-                NzInlandRevenueNumberRecognizer,
-                NzMinistryOfHealthNumberRecognizer,
-                NZSocialWelfareNumberRecognizer,
-                PlPassportRecognizer,
-                PlPeselRecognizer,
-                PtPassportRecognizer,
-                RoPassportRecognizer,
-                SePassportRecognizer,
-                SgFinRecognizer,
-                SkPassportRecognizer,
-                SlPassportRecognizer,
-                UkPassportRecognizer,
-                UsBankRecognizer,
-                UsItinRecognizer,
-                UsLicenseRecognizer,
-                UsPassportRecognizer,
-                UsSsnRecognizer,
-            ],
-            "de": [
-                DePassportRecognizer,
-                SpacyRecognizer,
-            ],
-            "el": [
-                GrPassportRecognizer,
-                SpacyRecognizer,
-            ],
-            "es": [
-                EsNifRecognizer,
-                EsNieRecognizer,
-                EsPassportRecognizer,
-                SpacyRecognizer,
-            ],
-            "fr": [
-                FrPassportRecognizer,
-                SpacyRecognizer,
-            ],
-            "it": [
-                ItDriverLicenseRecognizer,
-                ItFiscalCodeRecognizer,
-                ItVatCodeRecognizer,
-                ItIdentityCardRecognizer,
-                ItPassportRecognizer,
-                SpacyRecognizer,
-            ],
-            "ja": [
-                SpacyRecognizer,
-            ],
-            "nl": [
-                SpacyRecognizer,
-            ],
-            "pl": [
-                PlPeselRecognizer,
-                SpacyRecognizer,
-            ],
-            "pt": [
-                PtPassportRecognizer,
-                SpacyRecognizer,
-            ],
-            "zh": [
-                SpacyRecognizer,
-            ],
-            "ALL": [
-                AmazonS3KeyRecognizer,
-                CreditCardRecognizer,
-                CryptoRecognizer,
-                DateRecognizer,
-                DrugEnforcementAgencyNumberRecognizer,
-                EmailRecognizer,
-                EUGPSCoordinatesRecognizer,
-                IbanRecognizer,
-                IpRecognizer,
-                MedicalLicenseRecognizer,
-                PhoneRecognizer,
-                # SpacyRecognizer,
-                # TransformersRecognizer,
-                SWIFTCodeRecognizer,
-                UrlRecognizer,
-            ],
-        }
-        for lang in languages:
-            lang_recognizers = [
-                self.__instantiate_recognizer(
-                    recognizer_class=rc, supported_language=lang
-                )
-                for rc in recognizers_map.get(lang, [])
-            ]
-            self.recognizers.extend(lang_recognizers)
-            all_recognizers = [
-                self.__instantiate_recognizer(
-                    recognizer_class=rc, supported_language=lang
-                )
-                for rc in recognizers_map.get("ALL", [])
-            ]
-            self.recognizers.extend(all_recognizers)
+        registry_configuration = {"global_regex_flags": self.global_regex_flags}
+        if languages is not None:
+            registry_configuration["supported_languages"] = languages
+
+        configuration = RecognizerConfigurationLoader.get(
+            registry_configuration=registry_configuration
+        )
+        recognizers = RecognizerListLoader.get(**configuration)
+
+        self.recognizers.extend(recognizers)
         self.add_nlp_recognizer(nlp_engine=nlp_engine)
 
     @staticmethod

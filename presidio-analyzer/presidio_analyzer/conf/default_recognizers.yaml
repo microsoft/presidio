@@ -1,5 +1,6 @@
 supported_languages: 
   - en
+global_regex_flags: 26
 
 recognizers:
   # Recognizers listed here can either be loaded from the recognizers defined in code (type: predefined),
@@ -92,7 +93,17 @@ recognizers:
     - en
     type: predefined
 
+  - name: InPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
   - name: EsNifRecognizer
+    supported_languages: 
+    - es
+    type: predefined
+
+  - name: EsNieRecognizer
     supported_languages: 
     - es
     type: predefined
@@ -127,7 +138,6 @@ recognizers:
     - pl
     type: predefined
 
-
   - name: CryptoRecognizer
     type: predefined
 
@@ -150,4 +160,7 @@ recognizers:
     type: predefined
 
   - name: UrlRecognizer
+    type: predefined
+
+  - name: InVoterRecognizer
     type: predefined

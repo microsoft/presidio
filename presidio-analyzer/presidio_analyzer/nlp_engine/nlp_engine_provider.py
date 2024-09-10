@@ -121,7 +121,8 @@ class NlpEngineProvider:
             )
 
         else:
-            nlp_configuration = yaml.safe_load(open(conf_file))
+            with open(conf_file) as file:
+                nlp_configuration = yaml.safe_load(file)
 
         if "ner_model_configuration" not in nlp_configuration:
             logger.warning(

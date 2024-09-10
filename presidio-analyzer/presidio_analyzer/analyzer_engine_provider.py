@@ -29,20 +29,19 @@ class AnalyzerEngineProvider:
         nlp_engine_conf_file: Optional[Union[Path, str]] = None,
         recognizer_registry_conf_file: Optional[Union[Path, str]] = None,
     ):
-        self.configuration = self._get_configuration(
-            conf_file=analyzer_engine_conf_file
-        )
+        self.configuration = self.get_configuration(conf_file=analyzer_engine_conf_file)
         self.nlp_engine_conf_file = nlp_engine_conf_file
         self.recognizer_registry_conf_file = recognizer_registry_conf_file
 
-    def _get_configuration(
+    def get_configuration(
         self, conf_file: Optional[Union[Path, str]]
     ) -> Union[Dict[str, Any]]:
         """Retrieve the analyzer engine configuration from the provided file."""
 
         if not conf_file:
             default_conf_file = self._get_full_conf_path()
-            configuration = yaml.safe_load(open(default_conf_file))
+            with open(default_conf_file) as file:
+                configuration = yaml.safe_load(file)
             logger.info(
                 f"Analyzer Engine configuration file "
                 f"not provided. Using {default_conf_file}."
@@ -50,16 +49,19 @@ class AnalyzerEngineProvider:
         else:
             try:
                 logger.info(f"Reading analyzer configuration from {conf_file}")
-                configuration = yaml.safe_load(open(conf_file))
+                with open(conf_file) as file:
+                    configuration = yaml.safe_load(file)
             except OSError:
                 logger.warning(
                     f"configuration file {conf_file} not found.  "
                     f"Using default config."
                 )
-                configuration = yaml.safe_load(open(self._get_full_conf_path()))
+                with open(self._get_full_conf_path()) as file:
+                    configuration = yaml.safe_load(file)
             except Exception:
                 print(f"Failed to parse file {conf_file}, resorting to default")
-                configuration = yaml.safe_load(open(self._get_full_conf_path()))
+                with open(self._get_full_conf_path()) as file:
+                    configuration = yaml.safe_load(file)
 
         return configuration
 

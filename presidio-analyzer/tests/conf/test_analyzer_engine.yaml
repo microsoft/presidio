@@ -60,13 +60,11 @@ supported_languages:
 default_score_threshold: 0.7
 
 nlp_configuration:
-  nlp_engine_name: transformers
+  nlp_engine_name: spacy
   models:
     -
       lang_code: en
-      model_name:
-        spacy: en_core_web_sm
-        transformers: StanfordAIMI/stanford-deidentifier-base
+      model_name: en_core_web_lg
 
   ner_model_configuration:
     labels_to_ignore:

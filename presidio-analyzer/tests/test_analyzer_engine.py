@@ -1,5 +1,6 @@
 import copy
 from abc import ABC
+from contextlib import nullcontext
 from typing import List, Optional
 import re
 
@@ -16,6 +17,9 @@ from presidio_analyzer import (
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
     SpacyNlpEngine,
+)
+from presidio_analyzer.recognizer_registry import (
+    RecognizerRegistryProvider
 )
 
 # noqa: F401
@@ -55,11 +59,6 @@ def unit_test_guid():
     return "00000000-0000-0000-0000-000000000000"
 
 
-@pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    return nlp_engines["spacy_en"]
-
-
 def test_simple():
     dic = {
         "text": "John Smith drivers license is AC432223",
@@ -88,6 +87,29 @@ def test_when_analyze_with_predefined_recognizers_then_return_results(
     assert len(results) == 1
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
 
+@pytest.mark.parametrize(
+    "registry_config,analyzer_lang,expectation",
+    [
+        ({"supported_languages": ["en"]}, ["es", "de"], pytest.raises(ValueError)),
+        (None, ["es", "de"], pytest.raises(ValueError)),
+        ({"supported_languages": ["es", "de"]}, None, pytest.raises(ValueError)),
+        ({"supported_languages": ["es", "de"]}, ["de", "es"], nullcontext()),
+        (None, None, nullcontext()),
+    ]
+)
+def test_when_analyze_with_unsupported_language_must_match(registry_config, analyzer_lang, expectation):
+    with expectation:
+        registry = RecognizerRegistryProvider(registry_configuration=registry_config).create_recognizer_registry()
+        AnalyzerEngine(
+            registry=registry,
+            supported_languages=analyzer_lang,
+            nlp_engine=NlpEngineMock(),
+        )
+
+def test_when_analyze_with_defaults_success(
+):
+    registry = RecognizerRegistryProvider().create_recognizer_registry()
+    AnalyzerEngine(registry=registry)
 
 def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     loaded_registry, unit_test_guid, spacy_nlp_engine, max_score

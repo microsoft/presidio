@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import phonenumbers
+from phonenumbers.phonenumberutil import NumberParseException
 
 from presidio_analyzer import (
     RecognizerResult,
@@ -85,11 +86,19 @@ class PhoneRecognizer(LocalRecognizer):
         """
         results = []
         for region in self.supported_regions:
-            for match in phonenumbers.PhoneNumberMatcher(text, region,
-                                                         leniency=self.leniency):
-                results += [
+            for match in phonenumbers.PhoneNumberMatcher(
+                text, region, leniency=self.leniency
+            ):
+                try:
+                    parsed_number = phonenumbers.parse(text[match.start:match.end])
+                    region = phonenumbers.region_code_for_number(parsed_number)
+                    results += [
                     self._get_recognizer_result(match, text, region, nlp_artifacts)
                 ]
+                except NumberParseException:
+                    results += [
+                        self._get_recognizer_result(match, text, region, nlp_artifacts)
+                    ]
 
         return EntityRecognizer.remove_duplicates(results)
 
