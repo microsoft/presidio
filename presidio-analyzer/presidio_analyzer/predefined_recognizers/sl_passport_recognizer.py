@@ -18,7 +18,7 @@ class SlPassportRecognizer(PatternRecognizer):
         Pattern(
             "SlPassport (Medium)",
             r"\bP[A-Z]{1}\d{7}\b",
-            0.4,
+            0.3,
         ),
     ]
 

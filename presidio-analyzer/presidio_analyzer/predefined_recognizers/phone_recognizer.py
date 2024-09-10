@@ -36,6 +36,15 @@ class PhoneRecognizer(LocalRecognizer):
         "Ph",
         "landline",
         "dial",
+        "office",
+        "home",
+        "work",
+        "number",
+        "contact",
+        "reach",
+        "communicate",
+        "communicating",
+        "cellular",
     ]
     DEFAULT_SUPPORTED_REGIONS = ("US", "UK", "DE", "FE", "IL", "IN", "CA", "BR")
 
@@ -44,7 +53,7 @@ class PhoneRecognizer(LocalRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         # For all regions, use phonenumbers.SUPPORTED_REGIONS
-        supported_regions=DEFAULT_SUPPORTED_REGIONS,
+        supported_regions=phonenumbers.SUPPORTED_REGIONS,
         leniency: Optional[int] = 1,
     ):
         context = context if context else self.CONTEXT

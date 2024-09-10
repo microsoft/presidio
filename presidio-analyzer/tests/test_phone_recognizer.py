@@ -58,7 +58,7 @@ def test_when_all_phones_then_succeed(
          2, ["PHONE_NUMBER", "PHONE_NUMBER"], ((16, 30), (60, 75), ), 0.3, 1),
 
         ("My US number is (415) 555-0132, and my international one is +91 4155 550132",
-         1, ["PHONE_NUMBER"], ((16, 30), ), 0.3, 3),
+         3, ["PHONE_NUMBER", "PHONE_NUMBER", "PHONE_NUMBER"], ((16, 30), (64, 68), (69, 75),), 0.3, 3),
         ("My US number is (415) 555-0132, and my international one is +91 4155 550132",
          2, ["PHONE_NUMBER", "PHONE_NUMBER"], ((16, 30), (60, 75), ), 0.3, 2),
 

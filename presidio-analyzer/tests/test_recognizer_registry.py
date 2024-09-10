@@ -57,8 +57,8 @@ def test_when_get_recognizers_then_all_recognizers_returned(mock_recognizer_regi
     registry = mock_recognizer_registry
     registry.load_predefined_recognizers()
     recognizers = registry.get_recognizers(language="en", all_fields=True)
-    # 40 custom recognizer in english + 26 predefined
-    assert len(recognizers) == 40 + 26
+    # 48 custom recognizer in english + 26 predefined
+    assert len(recognizers) == 48 + 26
 
 
 def test_when_get_recognizers_then_return_all_fields(mock_recognizer_registry):

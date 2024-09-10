@@ -1,5 +1,5 @@
 from typing import Optional, List
-
+import re
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -76,7 +76,7 @@ class DateRecognizer(PatternRecognizer):
         ),
     ]
 
-    CONTEXT = ["date", "birthday"]
+    CONTEXT = ["date", "birthday", "expiry", "expiration", "dob", "anniversary"]
 
     def __init__(
         self,
@@ -84,6 +84,7 @@ class DateRecognizer(PatternRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "DATE_TIME",
+        regex_flags: int = re.IGNORECASE,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -92,6 +93,7 @@ class DateRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            global_regex_flags=regex_flags,
         )
 
         # custom attributes

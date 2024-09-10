@@ -17,7 +17,7 @@ class HkIdentityCardRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "HkIdentityCard (Medium)",
-            r"^[A-Z]{1,2}\d{6}[\(]?[0-9A][\)]?$",
+            r"(?<![\w\d])[A-Z]{1,2}\d{6}(?:\([0-9A]\)|[0-9A])(?![\w\d])",
             0.4,
         ),
     ]

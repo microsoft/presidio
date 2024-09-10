@@ -18,12 +18,12 @@ class AuBankAccountRecognizer(PatternRecognizer):
         Pattern(
             "AuBankAccount (medium)",
             r"\b(\d{3}[- ]?\d{3})[- ]?(\d{6,10})\b",
-            0.4,
+            0.3,
         ),
         Pattern(
             "AuBankAccount (weak)",
             r"\b(\d{3}[- ]?\d{3})[- ]?(\d{5,9})\b",
-            0.3,
+            0.2,
         )
     ]
 

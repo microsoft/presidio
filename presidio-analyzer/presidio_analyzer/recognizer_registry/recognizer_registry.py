@@ -234,7 +234,7 @@ class RecognizerRegistry:
                 DePassportRecognizer,
                 SpacyRecognizer,
             ],
-            "gr": [
+            "el": [
                 GrPassportRecognizer,
                 SpacyRecognizer,
             ],

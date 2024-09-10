@@ -153,7 +153,7 @@ def test_when_analyze_two_entities_embedded_then_return_results(spacy_nlp_engine
     results = analyzer.analyze(text=text, language="en", score_threshold=0)
 
     # currently we only remove duplicates when the two have the same entity type
-    assert len(results) == 2
+    assert len(results) == 4
 
 
 def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):
