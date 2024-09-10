@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Tuple, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -21,23 +21,42 @@ class AbaRoutingRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "ABA routing number (weak)",
+            "ABARoutingNumber (weak)",
             r"\b[0123678]\d{8}\b",
             0.05,
         ),
         Pattern(
-            "ABA routing number",
+            "ABARoutingNumber",
             r"\b[0123678]\d{3}-\d{4}-\d\b",
             0.3,
+        ),
+        Pattern(
+            "ABARoutingNumber (Medium)",
+            r"\b(0[1-9]|1[0-2]|2[1-9]|3[0-2]|6[1-9]|7[0-2]|80)\d{2}[- ]?\d{4}[- ]?\d\b",
+            0.4,
         ),
     ]
 
     CONTEXT = [
+        "aba number",
+        "aba#",
         "aba",
         "routing",
         "abarouting",
+        "abarouting#",
+        "abaroutingnumber",
+        "americanbankassociationrouting#",
+        "americanbankassociationroutingnumber",
         "association",
         "bankrouting",
+        "bankrouting#",
+        "bankroutingnumber",
+        "routing #",
+        "routing no",
+        "routing number",
+        "routing transit number",
+        "routing#",
+        "RTN",
     ]
 
     def __init__(
@@ -48,7 +67,9 @@ class AbaRoutingRecognizer(PatternRecognizer):
         supported_entity: str = "ABA_ROUTING_NUMBER",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
-        self.replacement_pairs = replacement_pairs or [("-", "")]
+        self.replacement_pairs = (
+            replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
+        )
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
         super().__init__(
@@ -58,8 +79,14 @@ class AbaRoutingRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (9,11)
+
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
         sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
+        if len(sanitized_value) != 9 or not sanitized_value.isdigit():
+            return False  # Routing number must contain exactly 9 digits
         return self.__checksum(sanitized_value)
 
     @staticmethod

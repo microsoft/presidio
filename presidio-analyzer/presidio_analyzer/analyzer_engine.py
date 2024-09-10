@@ -223,8 +223,24 @@ class AnalyzerEngine:
                 correlation_id, "nlp artifacts:" + nlp_artifacts.to_json()
             )
 
+        # # extract meta attributes to skip unnecessary analyzers
+        # meta_attrs = self._extract_meta_attrs(text)
+
         results = []
         for recognizer in recognizers:
+            # # Skip the recognizer if either its type is not present in text or 
+            # # its pattern's length is non-overlapping.
+            # if hasattr(recognizer, "type"):
+            #     if not meta_attrs.get(recognizer.type, True): # True in case of 'numeric/alphanumeric'
+            #         continue
+            #     if recognizer.type in ['numeric', 'alphanumeric']:
+            #         if (meta_attrs.get("min_"+recognizer.type+"_len") > recognizer.range[1] or
+            #             meta_attrs.get("max_"+recognizer.type+"_len") < recognizer.range[0]):
+            #             continue
+            #     elif (min(meta_attrs.get("min_numeric_len"), meta_attrs.get("min_alphanumeric_len")) > recognizer.range[1] or
+            #         max(meta_attrs.get("max_numeric_len"), meta_attrs.get("max_alphanumeric_len")) < recognizer.range[0]):
+            #         continue
+
             # Lazy loading of the relevant recognizers
             if not recognizer.is_loaded:
                 recognizer.load()
@@ -423,3 +439,46 @@ class AnalyzerEngine:
             result.analysis_explanation = None
 
         return results
+    
+    @staticmethod
+    def _extract_meta_attrs(text: str) -> dict:
+        """
+        Extracts information about numerics and alphanumerics from the text.
+
+        Args:
+            text: The text string to analyze.
+
+        Returns:
+            A dictionary containing the following information:
+                has_numeric: True if there's at least one numeric element, False otherwise.
+                has_alphanumeric: True if there's at least one alphanumeric element, False otherwise.
+                min_numeric_len: Minimum length of any numeric element found.
+                max_numeric_len: Maximum length of any numeric element found.
+                min_alphanumeric_len: Minimum length of any alphanumeric element found.
+                alphanumeric_len: Length of the longest alphanumeric element found.
+        """
+        _meta_attrs = {"numeric": False, "alphanumeric": False,
+                    "min_numeric_len": 0, "max_numeric_len": 0,
+                    "min_alphanumeric_len": 0, "max_alphanumeric_len": 0}
+
+        for part in text.split(" "):  # Split on whitespace characters
+                part = part.strip()  # Remove leading/trailing whitespace
+
+                numeric_pattern = r"^(\d+[_\s\-/,]?\d*)+$"
+                if part.isdigit() or re.match(numeric_pattern, part):
+                    _meta_attrs["numeric"] = True
+                    numeric_len = len(part)
+                    _meta_attrs["min_numeric_len"] = min(_meta_attrs["min_numeric_len"], numeric_len)
+                    _meta_attrs["max_numeric_len"] = max(_meta_attrs["max_numeric_len"], numeric_len)
+                    
+                else:
+                    # Regular expression for strict alphanumeric (at least one digit and one letter)
+                    # Delimiters -> , . \s - \ _ ( )
+                    strict_alphanumeric_pattern = r"^(?=.*\d)(?=.*[a-zA-Z])(?=.*\s_,\.-\\\(\))?.*$"
+                    if re.match(strict_alphanumeric_pattern, part):
+                        alphanumeric_len = len(part)
+                        _meta_attrs["alphanumeric"] = True
+                        _meta_attrs["min_alphanumeric_len"] = min(_meta_attrs["min_alphanumeric_len"], alphanumeric_len)
+                        _meta_attrs["max_alphanumeric_len"] = max(_meta_attrs["max_alphanumeric_len"], alphanumeric_len)
+
+        return _meta_attrs

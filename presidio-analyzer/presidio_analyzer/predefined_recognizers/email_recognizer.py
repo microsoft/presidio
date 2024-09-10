@@ -1,5 +1,5 @@
 from typing import List, Optional
-
+import re
 import tldextract
 
 from presidio_analyzer import Pattern, PatternRecognizer
@@ -17,10 +17,20 @@ class EmailRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
+            "Email (High)",
+            r"(?:^|(?<=[^\w@.)]))([\w+-](\.(?!\.))?)*?[\w+-](@|[(<{\[]at[)>}\]])(?:(?:[a-z\\u00a1-\\uffff0-9]-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\.(?:[a-z\\u00a1-\\uffff0-9]-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\.(?:[a-z\\u00a1-\\uffff]{2,}))",
+            0.6
+        ),
+        Pattern(
             "Email (Medium)",
-            r"\b((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)\b",  # noqa: E501
+            r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x3f\x41-\x5a\x61-\x7e]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]\.)){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9][0-9]|[0-9])\])",
             0.5,
         ),
+        Pattern(
+            "Email (weak)",
+            r"\b((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)\b",  # noqa: E501
+            0.4,
+        )
     ]
 
     CONTEXT = ["email"]
@@ -31,6 +41,7 @@ class EmailRecognizer(PatternRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "EMAIL_ADDRESS",
+        regex_flags: int = re.IGNORECASE | re.UNICODE
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -39,6 +50,7 @@ class EmailRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            global_regex_flags=regex_flags
         )
 
     def validate_result(self, pattern_text: str):  # noqa D102

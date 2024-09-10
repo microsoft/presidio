@@ -1,6 +1,5 @@
-from typing import List, Optional, Tuple
-
 from presidio_analyzer import Pattern, PatternRecognizer
+from typing import Optional, List, Tuple
 
 
 class ItVatCodeRecognizer(PatternRecognizer):
@@ -23,8 +22,8 @@ class ItVatCodeRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "IT Vat code (piva)",
-            r"\b([0-9][ _]?){11}\b",
-            0.1,
+            r"\b(?:IT[\s.,-]?)?[0-9]{11}\b",
+            0.4,
         )
     ]
 
@@ -41,7 +40,7 @@ class ItVatCodeRecognizer(PatternRecognizer):
         self.replacement_pairs = (
             replacement_pairs
             if replacement_pairs
-            else [("-", ""), (" ", ""), ("_", "")]
+            else [("-", ""), (" ", ""), ("_", ""), (".", ""), (",", "")]
         )
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -51,6 +50,10 @@ class ItVatCodeRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (13,16)
 
     def validate_result(self, pattern_text: str) -> bool:
         """
@@ -63,6 +66,7 @@ class ItVatCodeRecognizer(PatternRecognizer):
 
         # Pre-processing before validation checks
         text = self.__sanitize_value(pattern_text, self.replacement_pairs)
+        text = text.lower().replace("it", "").strip()
 
         # Edge-case that passes the checksum even though it is not a
         # valid italian vat code.

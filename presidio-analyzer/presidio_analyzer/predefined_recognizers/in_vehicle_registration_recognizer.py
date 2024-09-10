@@ -1,6 +1,5 @@
-from typing import List, Optional, Tuple
-
 from presidio_analyzer import Pattern, PatternRecognizer
+from typing import Optional, List, Tuple
 from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
 
 
@@ -346,6 +345,10 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (5,10)
 
     def validate_result(self, pattern_text: str) -> bool:
         """Determine absolute value based on calculation."""

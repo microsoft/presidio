@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Tuple, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -45,6 +45,10 @@ class EsNifRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (8,10)
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
         pattern_text = EsNifRecognizer.__sanitize_value(pattern_text)

@@ -1,5 +1,5 @@
-from typing import List, Optional
-
+from typing import Optional, List
+import regex as re
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -20,13 +20,26 @@ class InPassportRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "PASSPORT",
-            r"\b[A-Z][1-9][0-9]{2}[0-9]{4}[1-9]\b",
-            0.1,
+            "InPassport (Medium)",
+            r"\b[A-Z][1-9][0-9\s][0-9]{4}[1-9]\b",
+            0.5,
         ),
     ]
 
-    CONTEXT = ["passport", "indian passport", "passport number"]
+    CONTEXT = [
+        "passport",
+        "indian passport",
+        "passport number",
+        "passport#",
+        "passport #",
+        "passportid",
+        "passports",
+        "passportno",
+        "passport no",
+        "passportnumber",
+        "passportnumbers",
+        "passport numbers",
+    ]
 
     def __init__(
         self,
@@ -34,6 +47,8 @@ class InPassportRecognizer(PatternRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "IN_PASSPORT",
+        regex_flags: int = re.ASCII,
+
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -42,4 +57,9 @@ class InPassportRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            global_regex_flags=regex_flags
         )
+        
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (8,8)

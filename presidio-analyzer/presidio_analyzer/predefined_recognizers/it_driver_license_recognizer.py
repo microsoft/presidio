@@ -17,13 +17,75 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
         Pattern(
             "Driver License",
             (
-                r"\b(?i)(([A-Z]{2}\d{7}[A-Z])"
+                r"\b(?i)(([A-Z][AV]\d{7}[A-Z])"
                 r"|(^[U]1[BCDEFGHLMNPRSTUWYXZ]\w{6}[A-Z]))\b"
             ),
             0.2,
         ),
     ]
-    CONTEXT = ["patente", "patente di guida", "licenza", "licenza di guida"]
+    CONTEXT = [
+        "driverlic",
+        "driverlics",
+        "driverlicense",
+        "driverlicenses",
+        "driverlicence",
+        "driverlicences",
+        "driver lic",
+        "driver lics",
+        "driver license",
+        "driver licenses",
+        "driver licence",
+        "driver licences",
+        "driverslic",
+        "driverslics",
+        "driverslicence",
+        "driverslicences",
+        "driverslicense",
+        "driverslicenses",
+        "drivers lic",
+        "drivers lics",
+        "drivers license",
+        "drivers licenses",
+        "drivers licence",
+        "drivers licences",
+        "driver'lic",
+        "driver'lics",
+        "driver'license",
+        "driver'licenses",
+        "driver'licence",
+        "driver'licences",
+        "driver' lic",
+        "driver' lics",
+        "driver' license",
+        "driver' licenses",
+        "driver' licence",
+        "driver' licences",
+        "driver'slic",
+        "driver'slics",
+        "driver'slicense",
+        "driver'slicenses",
+        "driver'slicence",
+        "driver'slicences",
+        "driver's lic",
+        "driver's lics",
+        "driver's license",
+        "driver's licenses",
+        "driver's licence",
+        "driver's licences",
+        "dl#",
+        "dls#",
+        "driverlic#",
+        "driverlics#",
+        "driverlicense#",
+        "driverlicenses#",
+        "driverlicence#",
+        "driverlicences#",
+        "driver lic#",
+        "driver lics#",
+        "driver license#",
+        "driver licenses#",
+        
+        "patente", "patente di guida", "licenza", "licenza di guida"]
 
     def __init__(
         self,
@@ -40,3 +102,7 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (10,10)

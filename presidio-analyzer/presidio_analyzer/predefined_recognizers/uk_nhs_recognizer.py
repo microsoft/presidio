@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional, List, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -50,6 +50,10 @@ class NhsRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (10,12)
 
     def validate_result(self, pattern_text: str) -> bool:
         """

@@ -4,10 +4,10 @@ import phonenumbers
 from phonenumbers.phonenumberutil import NumberParseException
 
 from presidio_analyzer import (
+    RecognizerResult,
+    LocalRecognizer,
     AnalysisExplanation,
     EntityRecognizer,
-    LocalRecognizer,
-    RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
@@ -23,8 +23,30 @@ class PhoneRecognizer(LocalRecognizer):
     Accepts values from 0 to 3, where 0 is the lenient and 3 is the most strictest.
     """
 
-    SCORE = 0.4
-    CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
+    SCORE = 0.3
+    CONTEXT = [
+        "phone",
+        "telephone",
+        "cell",
+        "cellphone",
+        "mobile",
+        "call",
+        "mob",
+        "P",
+        "M",
+        "Ph",
+        "landline",
+        "dial",
+        "office",
+        "home",
+        "work",
+        "number",
+        "contact",
+        "reach",
+        "communicate",
+        "communicating",
+        "cellular",
+    ]
     DEFAULT_SUPPORTED_REGIONS = ("US", "UK", "DE", "FE", "IL", "IN", "CA", "BR")
 
     def __init__(
@@ -32,7 +54,7 @@ class PhoneRecognizer(LocalRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         # For all regions, use phonenumbers.SUPPORTED_REGIONS
-        supported_regions=DEFAULT_SUPPORTED_REGIONS,
+        supported_regions=phonenumbers.SUPPORTED_REGIONS,
         leniency: Optional[int] = 1,
     ):
         context = context if context else self.CONTEXT

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, List
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -31,7 +31,23 @@ class UsItinRecognizer(PatternRecognizer):
         ),
     ]
 
-    CONTEXT = ["individual", "taxpayer", "itin", "tax", "payer", "taxid", "tin"]
+    CONTEXT = [
+        "individual", 
+        "taxpayer", 
+        "itin", 
+        "tax", 
+        "payer", 
+        "taxid", 
+        "tin"
+        
+        "tax id",
+        "tax identification",
+        "i.t.i.n.",
+        "ssn",
+        "social security",
+        "tax payer",
+        "itins",
+]
 
     def __init__(
         self,
@@ -48,3 +64,7 @@ class UsItinRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (8,11)

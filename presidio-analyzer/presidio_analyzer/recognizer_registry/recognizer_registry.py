@@ -16,6 +16,7 @@ from presidio_analyzer.nlp_engine import (
 from presidio_analyzer.predefined_recognizers import (
     SpacyRecognizer,
     StanzaRecognizer,
+    SWIFTCodeRecognizer,
     TransformersRecognizer,
 )
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (

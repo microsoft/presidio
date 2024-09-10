@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional, List, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -44,6 +44,9 @@ class InPanRecognizer(PatternRecognizer):
     CONTEXT = [
         "permanent account number",
         "pan",
+        "pan#",
+        "pan number",
+        "pan no",
     ]
 
     def __init__(
@@ -65,3 +68,7 @@ class InPanRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (10,10)

@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional, List, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -26,18 +26,27 @@ class AuMedicareRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "Australian Medicare Number (Medium)",
-            r"\b[2-6]\d{3}\s\d{5}\s\d\b",
-            0.1,
+            r"\b[2-6]\d{3}[-\s]?\d{4}[-\s]?\d[-\s]?\d{1,2}\b",
+            0.4,
         ),
         Pattern(
             "Australian Medicare Number (Low)",
-            r"\b[2-6]\d{9}\b",
+            r"\b[2-6]\d{9,10}\b",
             0.01,
         ),
     ]
 
     CONTEXT = [
         "medicare",
+
+        "bank account details",
+        "medicare payments",
+        "mortgage account",
+        "bank payments",
+        "information branch",
+        "credit card loan",
+        "department of human services",
+        "local service",
     ]
 
     def __init__(
@@ -59,6 +68,10 @@ class AuMedicareRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (10,14)
 
     def validate_result(self, pattern_text: str) -> bool:
         """

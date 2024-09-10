@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, List
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -39,3 +39,7 @@ class SgFinRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (9,9)

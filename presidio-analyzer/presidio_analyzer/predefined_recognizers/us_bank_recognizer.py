@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, List
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -24,13 +24,41 @@ class UsBankRecognizer(PatternRecognizer):
     CONTEXT = [
         # Task #603: Support keyphrases: change to "checking account"
         # as part of keyphrase change
-        "check",
+        # "check",
         "account",
         "account#",
-        "acct",
+        # "acct",
         "bank",
         "save",
         "debit",
+
+        "Checking Account Number",
+        "Checking Account",
+        "Checking Account #",
+        "Checking Acct Number",
+        "Checking Acct #",
+        "Checking Acct No.",
+        "Checking Account No.",
+        "Bank Account Number",
+        "Bank Account #",
+        "Bank Acct Number",
+        "Bank Acct #",
+        "Bank Acct No.",
+        "Bank Account No.",
+        "Savings Account Number",
+        "Savings Account.",
+        "Savings Account #",
+        "Savings Acct Number",
+        "Savings Acct #",
+        "Savings Acct No.",
+        "Savings Account No.",
+        "Debit Account Number",
+        "Debit Account",
+        "Debit Account #",
+        "Debit Acct Number",
+        "Debit Acct #",
+        "Debit Acct No.",
+        "Debit Account No.",
     ]
 
     def __init__(
@@ -48,3 +76,7 @@ class UsBankRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (8,17)

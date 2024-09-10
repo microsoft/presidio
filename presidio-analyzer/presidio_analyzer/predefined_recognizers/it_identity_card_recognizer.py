@@ -68,3 +68,7 @@ class ItIdentityCardRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (9,10)

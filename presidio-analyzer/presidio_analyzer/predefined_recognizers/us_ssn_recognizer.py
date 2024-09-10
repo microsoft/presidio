@@ -16,7 +16,9 @@ class UsSsnRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern("SSN1 (very weak)", r"\b([0-9]{5})-([0-9]{4})\b", 0.05),  # noqa E501
         Pattern("SSN2 (very weak)", r"\b([0-9]{3})-([0-9]{6})\b", 0.05),  # noqa E501
-        Pattern("SSN3 (very weak)", r"\b(([0-9]{3})-([0-9]{2})-([0-9]{4}))\b", 0.05),  # noqa E501
+        Pattern(
+            "SSN3 (very weak)", r"\b(([0-9]{3})-([0-9]{2})-([0-9]{4}))\b", 0.05
+        ),  # noqa E501
         Pattern("SSN4 (very weak)", r"\b[0-9]{9}\b", 0.05),
         Pattern("SSN5 (medium)", r"\b([0-9]{3})[- .]([0-9]{2})[- .]([0-9]{4})\b", 0.5),
     ]
@@ -30,6 +32,14 @@ class UsSsnRecognizer(PatternRecognizer):
         "ssn#",
         "ss#",
         "ssid",
+
+        "SSA Number",
+        "social security number",
+        "social security #",
+        "social security#",
+        "social security no",
+        "Social Security#",
+        "Soc Sec",
     ]
 
     def __init__(
@@ -47,6 +57,10 @@ class UsSsnRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (9,11)
 
     def invalidate_result(self, pattern_text: str) -> bool:
         """

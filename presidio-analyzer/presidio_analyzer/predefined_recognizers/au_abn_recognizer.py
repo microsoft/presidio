@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional, List, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -28,8 +28,8 @@ class AuAbnRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "ABN (Medium)",
-            r"\b\d{2}\s\d{3}\s\d{3}\s\d{3}\b",
-            0.1,
+            r"\b\d{2}[-\s]?\d{3}[-\s]?\d{3}[-\s]?\d{3}\b",
+            0.4,
         ),
         Pattern(
             "ABN (Low)",
@@ -41,6 +41,14 @@ class AuAbnRecognizer(PatternRecognizer):
     CONTEXT = [
         "australian business number",
         "abn",
+
+        "australia business no",
+        "business number",
+        "abn#",
+        "businessid#",
+        "business ID",
+        "abn",
+        "businessno#",
     ]
 
     def __init__(
@@ -62,6 +70,10 @@ class AuAbnRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (11,13)
 
     def validate_result(self, pattern_text: str) -> bool:
         """

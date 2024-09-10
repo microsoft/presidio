@@ -1,6 +1,6 @@
 import logging
 from abc import abstractmethod
-from typing import Dict, List, Optional
+from typing import List, Dict, Optional
 
 from presidio_analyzer import RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -166,7 +166,8 @@ class EntityRecognizer:
     @staticmethod
     def remove_duplicates(results: List[RecognizerResult]) -> List[RecognizerResult]:
         """
-        Remove duplicate results.
+        Remove duplicate results. This method removes duplicates for every 
+        recognizer in isolation.
 
         Remove duplicates in case the two results
         have identical start and ends and types.
@@ -196,3 +197,50 @@ class EntityRecognizer:
                 filtered_results.append(result)
 
         return filtered_results
+    
+    @staticmethod
+    def sanitize_results(results: List[RecognizerResult]) -> List[RecognizerResult]:
+        """
+        Remove duplicate results, results contained in other.
+
+        Remove duplicates in case the two results
+        have identical start and ends and types.
+        :param results: List[RecognizerResult]
+        :return: List[RecognizerResult]
+        """
+        results = list(set(results))
+        results = sorted(results, key=lambda x: (-x.score, x.start, -(x.end - x.start)))
+        final_results = []
+
+        for result in results:
+            filtered_results = results.copy()
+            filtered_results.remove(result)
+            to_keep = True
+            for filtered in filtered_results:
+                # If result is contained in one of the other results or equal indices
+                if (
+                    result.has_conflict(filtered) 
+                    and result.entity_type == filtered.entity_type
+                ):
+                    to_keep = False
+                    results.remove(result)
+                    break
+
+            if to_keep:
+                final_results.append(result)
+
+        return final_results
+    
+    @staticmethod
+    def rename_entities(entity: str, 
+                        supported_entities: List[str],
+                        mapping: dict) -> List[RecognizerResult]:
+        """Rename entities to maintain unique naming."""
+        base_type = entity.split('-')[-1]  # Get base type (ignore prefixes like B-, I-, L-)
+        if base_type in mapping:
+            entity = mapping[base_type]  # Rename based on mapping
+        else:
+            if entity not in supported_entities:
+                entity = 'OTHER'  # Default category if no mapping found
+
+        return entity

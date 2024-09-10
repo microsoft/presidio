@@ -1,7 +1,7 @@
-from datetime import date
-from typing import List, Optional
-
+from typing import Optional, List
 from presidio_analyzer import Pattern, PatternRecognizer
+
+from datetime import date
 
 # This class includes references to an UEN checksum validation implementation
 # written in Javascript which can be found at:
@@ -22,7 +22,7 @@ class SgUenRecognizer(PatternRecognizer):
         Pattern(
             "UEN (low)",
             r"\b\d{8}[A-Z]\b|\b\d{9}[A-Z]\b|\b(T|S)\d{2}[A-Z]{2}\d{4}[A-Z]\b",
-            0.3,
+            0.4,
         )
     ]
 
@@ -92,6 +92,10 @@ class SgUenRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (10,10)
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """

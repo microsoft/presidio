@@ -21,6 +21,7 @@ def entities():
         # valid email addresses
         ("info@presidio.site", 1, ((0, 18),),),
         ("my email address is info@presidio.site", 1, ((20, 38),),),
+        ("Meeting notes: POC: J. Doe (jdoe@co.uk), DOB: 1/1/80, SSN: 123-45-6789", 0, ((28, 38),),),
         ("try one of these emails: info@presidio.site or anotherinfo@presidio.site",
             2,
          ((25, 43), (47, 72),),),

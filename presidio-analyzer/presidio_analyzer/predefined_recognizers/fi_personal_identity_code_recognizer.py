@@ -44,6 +44,10 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (11,11)
+
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """Validate the pattern by using the control character."""
 

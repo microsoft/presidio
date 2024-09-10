@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Tuple, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -20,14 +20,23 @@ class MedicalLicenseRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "USA DEA Certificate Number (weak)",
+            "Medical License Number (weak)",
             r"[abcdefghjklmprstuxABCDEFGHJKLMPRSTUX]{1}[a-zA-Z]{1}\d{7}|"
             r"[abcdefghjklmprstuxABCDEFGHJKLMPRSTUX]{1}9\d{7}",
-            0.4,
+            0.3,
         ),
     ]
 
-    CONTEXT = ["medical", "certificate", "DEA"]
+    CONTEXT = [
+                "medical",
+                "certificate",
+                "DEA",
+                "medical license",
+                "medical license number",
+                "certificate number",
+                "license number",
+                "license",
+    ]
 
     def __init__(
         self,
@@ -37,6 +46,7 @@ class MedicalLicenseRecognizer(PatternRecognizer):
         supported_entity: str = "MEDICAL_LICENSE",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
+
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
@@ -48,6 +58,10 @@ class MedicalLicenseRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'alphanumeric'
+        self.range = (9,9)
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
         sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)

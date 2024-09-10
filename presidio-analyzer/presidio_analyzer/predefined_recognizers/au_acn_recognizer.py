@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional, List, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -26,7 +26,7 @@ class AuAcnRecognizer(PatternRecognizer):
         Pattern(
             "ACN (Medium)",
             r"\b\d{3}\s\d{3}\s\d{3}\b",
-            0.1,
+            0.4,
         ),
         Pattern(
             "ACN (Low)",
@@ -38,6 +38,13 @@ class AuAcnRecognizer(PatternRecognizer):
     CONTEXT = [
         "australian company number",
         "acn",
+
+        "australia company no",
+        "australia company no#",
+        "australia company number",
+        "australian company no",
+        "australian company no#",
+        "australian company number",
     ]
 
     def __init__(
@@ -59,6 +66,10 @@ class AuAcnRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+
+        # custom attributes
+        self.type = 'numeric'
+        self.range = (9,11)
 
     def validate_result(self, pattern_text: str) -> bool:
         """
