@@ -7,7 +7,6 @@
         "DEV_MODE": "dev"
       }
   },
-  "remoteUser": "vscode",
   "workspaceMount": "source=${localWorkspaceFolder}/presidio-analyzer,target=/workspace,type=bind",
   "workspaceFolder": "/workspace",
   "postAttachCommand": "chmod +x ./install_dependencies.sh && ./install_dependencies.sh && poetry shell",
