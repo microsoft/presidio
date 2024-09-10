@@ -34,9 +34,6 @@ stanza = { version = "*", optional = true }
 spacy_stanza = { version = "*", optional = true }
 azure-ai-textanalytics = { version = "*", optional = true }
 azure-core = { version = "*", optional = true }
-torch = "^2.4.1"
-transformers = "^4.44.2"
-huggingface-hub = "^0.24.6"
 
 [tool.poetry.extras]
 server = ["flask"]
