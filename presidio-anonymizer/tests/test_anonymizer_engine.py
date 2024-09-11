@@ -16,7 +16,7 @@ from presidio_anonymizer.operators import OperatorType
 
 def test_given_request_anonymizers_return_list():
     engine = AnonymizerEngine()
-    expected_list = {"hash", "mask", "redact", "replace", "custom", "keep", "encrypt"}
+    expected_list = {"hash", "mask", "redact", "replace", "custom", "keep", "encrypt", "entity_counter"}
     anon_list = set(engine.get_anonymizers())
 
     assert anon_list == expected_list

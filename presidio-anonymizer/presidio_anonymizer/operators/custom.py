@@ -18,13 +18,13 @@ class Custom(Operator):
     def operate(self, text: str = None, params: Dict = None) -> str:
         """:return: result of function executed on the text."""
         new_val = params.get(self.LAMBDA)
-        return new_val(text, is_validate=False)
+        return new_val(text)
 
     def validate(self, params: Dict) -> None:
         """Validate the provided function is returning a string."""
         new_val = params.get(self.LAMBDA)
         if callable(new_val):
-            if not isinstance(new_val("PII", is_validate=True), str):
+            if not isinstance(new_val("PII"), str):
                 raise InvalidParamError("Function return type must be a str")
 
         else:

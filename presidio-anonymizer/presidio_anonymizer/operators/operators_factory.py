@@ -7,6 +7,8 @@ from presidio_anonymizer.operators import (
     DeanonymizeKeep,
     Decrypt,
     Encrypt,
+    EntityCounterAnonymizer,
+    EntityCounterDeanonymizer,
     Hash,
     Keep,
     Mask,
@@ -19,8 +21,8 @@ from presidio_anonymizer.operators import (
 logger = logging.getLogger("presidio-anonymizer")
 
 # Predefined operators
-ANONYMIZERS = [Custom, Encrypt, Hash, Keep, Mask, Redact, Replace]
-DEANONYMIZERS = [Decrypt, DeanonymizeKeep]
+ANONYMIZERS = [Custom, Encrypt, EntityCounterAnonymizer, Hash, Keep, Mask, Redact, Replace]
+DEANONYMIZERS = [Decrypt, DeanonymizeKeep, EntityCounterDeanonymizer]
 
 
 class OperatorsFactory:

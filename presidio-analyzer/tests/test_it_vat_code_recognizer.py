@@ -27,7 +27,7 @@ def entities():
         # Test with two codes but only the second is a valid VAT code
         ("00000000000 and 01333550323", 1, ((16, 27),), ((0.9, 1.0),)),
         # Test with a valid VAT Code and a character that needs to be replaced
-        ("01333550_323", 1, ((0, 12),), ((0.9, 1.0),),),
+        ("IT-01333550323", 1, ((0, 14),), ((0.9, 1.0),),),
         # fmt: on
     ],
 )

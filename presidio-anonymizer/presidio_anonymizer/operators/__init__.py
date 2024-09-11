@@ -3,8 +3,10 @@
 from .operator import OperatorType, Operator  # isort:skip
 from .aes_cipher import AESCipher
 from .custom import Custom
+from .deanonymize_entity_counter import EntityCounterDeanonymizer
 from .deanonymize_keep import DeanonymizeKeep
 from .encrypt import Encrypt
+from .entity_counter import EntityCounterAnonymizer
 
 from .decrypt import Decrypt  # isort:skip
 from .hash import Hash
@@ -29,4 +31,6 @@ __all__ = [
     "Decrypt",
     "AESCipher",
     "OperatorsFactory",
+    "EntityCounterAnonymizer",
+    "EntityCounterDeanonymizer",
 ]

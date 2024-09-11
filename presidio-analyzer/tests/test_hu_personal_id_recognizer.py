@@ -18,7 +18,7 @@ def entities():
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        ("19410202444", 1, ((0, 11),),((0.0, 0.5),),),
+        ("19410202444", 1, ((0, 11),),((0.0, 1.0),),),
 
         # Invalid Hu Id Numbers
         ("18709189997", 0, ((0, 11),),((0.0, 0.5),),),

@@ -1,6 +1,23 @@
 supported_languages: 
+  - de
+  - el
   - en
+  - es
+  - fr
+  - it
+  - ja
+  - nl
+  - pt
+  - zh
+
+# The global_regex_flags field is a 5-bit binary number that represents the flags that should be applied to all regex recognizers.
+# 1 (first bit): Could correspond to IGNORECASE
+# 1 (second bit): Could correspond to MULTILINE
+# 0 (third bit): No flag for that position.
+# 1 (fourth bit): Could correspond to DOTALL
+# 0 (fifth bit): No flag for that position.
 global_regex_flags: 26
+
 
 recognizers:
   # Recognizers listed here can either be loaded from the recognizers defined in code (type: predefined),
@@ -13,16 +30,295 @@ recognizers:
   # - Custom pattern recognizers with this configuration can be added to this file, with type: custom
   #  For recognizers supporting more than one language, an instance of the recognizer for each language will be created.
   # For example, see the CreditCardRecognizer definition below:
-  - name: CreditCardRecognizer
-    supported_languages:
-    - language: en
-      context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
-    - language: es
-      context: [tarjeta, credito, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
-    - language: it
-    - language: pl
+  - name: AbaRoutingRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: AtPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: AuAbnRecognizer
+    supported_languages: 
+    - en
     type: predefined
 
+  - name: AuAcnRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+  - name: AuBankAccountRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+  - name: AuMedicareRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: AuTfnRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: BePassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+  - name: BuPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: CrPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: CyPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: CzPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: DePassportRecognizer
+    supported_languages: 
+    - de
+    - en
+    type: predefined
+  
+  - name: DkPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: EePassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: EsNifRecognizer
+    supported_languages: 
+    - es
+    - en
+    type: predefined
+
+  - name: EsNieRecognizer
+    supported_languages: 
+    - es
+    - en
+    type: predefined
+  
+  - name: EsPassportRecognizer
+    supported_languages: 
+    - es
+    - en
+    type: predefined
+  
+  - name: FiPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: FiPersonalIdentityCodeRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: FrPassportRecognizer
+    supported_languages: 
+    - fr
+    - en
+    type: predefined
+  
+  - name: GrPassportRecognizer
+    supported_languages: 
+    - el
+    - en
+    type: predefined
+  
+  - name: HkIdentityCardRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: HuPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: HuPersonalIdentificationRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: IePassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: InAadhaarRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: InPanRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+  - name: InPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+  - name: InVehicleRegistrationRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+  - name: InVoterRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: ItDriverLicenseRecognizer
+    supported_languages: 
+    - it
+    - en
+    type: predefined
+  
+  - name: ItFiscalCodeRecognizer
+    supported_languages: 
+    - it
+    - en
+    type: predefined
+  
+  - name: ItIdentityCardRecognizer
+    supported_languages: 
+    - it
+    - en
+    type: predefined
+  
+  - name: ItPassportRecognizer
+    supported_languages: 
+    - it
+    - en
+    type: predefined
+
+  - name: ItVatCodeRecognizer
+    supported_languages: 
+    - it
+    - en
+    type: predefined
+  
+  - name: LtPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: LvPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: MtPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: NzBankAccountRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: NzDriversLicenseRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: NzInlandRevenueNumberRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: NzMinistryOfHealthNumberRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: NZSocialWelfareNumberRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: PlPassportRecognizer
+    supported_languages: 
+    - pl
+    - en
+    type: predefined
+  
+  - name: PlPeselRecognizer
+    supported_languages: 
+    - pl
+    - en
+    type: predefined
+  
+  - name: PtPassportRecognizer
+    supported_languages: 
+    - pt
+    - en
+    type: predefined
+  
+  - name: RoPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: SePassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: SgFinRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: SgUenRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+  - name: SkPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: SlPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+
+  - name: NhsRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
+  - name: UkPassportRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+  
   - name: UsBankRecognizer
     supported_languages: 
     - en
@@ -48,103 +344,25 @@ recognizers:
     - en
     type: predefined
 
-  - name: NhsRecognizer
-    supported_languages: 
-    - en
+  - name : AmazonS3KeyRecognizer
     type: predefined
-
-  - name: SgFinRecognizer
-    supported_languages: 
-    - en
+  
+  - name: CreditCardRecognizer
     type: predefined
-
-  - name: AuAbnRecognizer
-    supported_languages: 
-    - en
-    type: predefined
-
-  - name: AuAcnRecognizer
-    supported_languages: 
-    - en
-    type: predefined
-
-  - name: AuTfnRecognizer
-    supported_languages: 
-    - en
-    type: predefined
-
-  - name: AuMedicareRecognizer
-    supported_languages: 
-    - en
-    type: predefined
-
-  - name: InPanRecognizer
-    supported_languages: 
-    - en
-    type: predefined
-
-  - name: InAadhaarRecognizer
-    supported_languages: 
-    - en
-    type: predefined
-
-  - name: InVehicleRegistrationRecognizer
-    supported_languages: 
-    - en
-    type: predefined
-
-  - name: InPassportRecognizer
-    supported_languages: 
-    - en
-    type: predefined
-
-  - name: EsNifRecognizer
-    supported_languages: 
-    - es
-    type: predefined
-
-  - name: EsNieRecognizer
-    supported_languages: 
-    - es
-    type: predefined
-
-  - name: ItDriverLicenseRecognizer
-    supported_languages: 
-    - it
-    type: predefined
-
-  - name: ItFiscalCodeRecognizer
-    supported_languages: 
-    - it
-    type: predefined
-
-  - name: ItVatCodeRecognizer
-    supported_languages: 
-    - it
-    type: predefined
-
-  - name: ItIdentityCardRecognizer
-    supported_languages: 
-    - it
-    type: predefined
-
-  - name: ItPassportRecognizer
-    supported_languages: 
-    - it
-    type: predefined
-
-  - name: PlPeselRecognizer
-    supported_languages: 
-    - pl
-    type: predefined
-
+  
   - name: CryptoRecognizer
     type: predefined
 
   - name: DateRecognizer
     type: predefined
+  
+  - name: DrugEnforcementAgencyNumberRecognizer
+    type: predefined
 
   - name: EmailRecognizer
+    type: predefined
+  
+  - name: EUGPSCoordinatesRecognizer
     type: predefined
 
   - name: IbanRecognizer
@@ -158,9 +376,12 @@ recognizers:
 
   - name: PhoneRecognizer
     type: predefined
-
-  - name: UrlRecognizer
+  
+  # - name: SpacyRecognizer
+  #   type: predefined
+  
+  - name: SWIFTCodeRecognizer
     type: predefined
 
-  - name: InVoterRecognizer
+  - name: UrlRecognizer
     type: predefined

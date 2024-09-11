@@ -6,7 +6,7 @@ from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 
 def test_given_anonymizers_list_then_all_classes_are_there():
     anonymizers = OperatorsFactory().get_anonymizers()
-    assert len(anonymizers) == 7
+    assert len(anonymizers) == 8
     for class_name in [
         "hash",
         "mask",
@@ -15,13 +15,14 @@ def test_given_anonymizers_list_then_all_classes_are_there():
         "encrypt",
         "custom",
         "keep",
+        "entity_counter",
     ]:
         assert anonymizers.get(class_name)
 
 
 def test_given_decryptors_list_then_all_classes_are_there():
     decryptors = OperatorsFactory().get_deanonymizers()
-    assert len(decryptors) == 2
+    assert len(decryptors) == 3
     for class_name in ["decrypt"]:
         assert decryptors.get(class_name)
 

@@ -94,7 +94,7 @@ def test_when_analyze_with_predefined_recognizers_then_return_results(
         (None, ["es", "de"], pytest.raises(ValueError)),
         ({"supported_languages": ["es", "de"]}, None, pytest.raises(ValueError)),
         ({"supported_languages": ["es", "de"]}, ["de", "es"], nullcontext()),
-        (None, None, nullcontext()),
+        (None, ['de', 'el', 'en', 'es', 'fr', 'it', 'ja', 'nl', 'pt', 'zh'], nullcontext()),
     ]
 )
 def test_when_analyze_with_unsupported_language_must_match(registry_config, analyzer_lang, expectation):
@@ -109,7 +109,7 @@ def test_when_analyze_with_unsupported_language_must_match(registry_config, anal
 def test_when_analyze_with_defaults_success(
 ):
     registry = RecognizerRegistryProvider().create_recognizer_registry()
-    AnalyzerEngine(registry=registry)
+    AnalyzerEngine(registry=registry, supported_languages=['de', 'el', 'en', 'es', 'fr', 'it', 'ja', 'nl', 'pt', 'zh'])
 
 def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     loaded_registry, unit_test_guid, spacy_nlp_engine, max_score
@@ -175,7 +175,7 @@ def test_when_analyze_two_entities_embedded_then_return_results(spacy_nlp_engine
     results = analyzer.analyze(text=text, language="en", score_threshold=0)
 
     # currently we only remove duplicates when the two have the same entity type
-    assert len(results) == 4
+    assert len(results) == 9
 
 
 def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):

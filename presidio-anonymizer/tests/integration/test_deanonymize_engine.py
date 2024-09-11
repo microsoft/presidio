@@ -92,7 +92,7 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
 
 def test_given_request_deanonymizers_return_list():
     engine = DeanonymizeEngine()
-    expected_list = ["deanonymize_keep", "decrypt"]
+    expected_list = ["deanonymize_keep", "decrypt", "entity_counter_deanonymizer"]
     anon_list = engine.get_deanonymizers()
 
     assert len(anon_list) == len(expected_list)

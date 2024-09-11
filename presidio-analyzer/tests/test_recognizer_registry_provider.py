@@ -13,7 +13,7 @@ from presidio_analyzer import RecognizerRegistry
 def assert_default_configuration(
     recognizer_registry: RecognizerRegistry, mandatory_recognizers: List[str]
 ):
-    assert recognizer_registry.supported_languages == ["en"]
+    assert recognizer_registry.supported_languages == ["de", "el", "en", "es", "fr", "it", "ja", "nl", "pt", "zh"]
     assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
     names = [recognizer.name for recognizer in recognizer_registry.recognizers]
     for predefined_recognizer in mandatory_recognizers:
