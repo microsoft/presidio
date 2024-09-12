@@ -27,6 +27,7 @@ class BatchAnalyzerEngine:
         self,
         texts: Iterable[Union[str, bool, float, int]],
         language: str,
+        batch_size: Optional[int] = None,
         **kwargs,
     ) -> List[List[RecognizerResult]]:
         """
@@ -34,7 +35,9 @@ class BatchAnalyzerEngine:
 
         :param texts: An list containing strings to be analyzed.
         :param language: Input language
+        :param batch_size: Batch size to process in a single iteration
         :param kwargs: Additional parameters for the `AnalyzerEngine.analyze` method.
+        (default value depends on the nlp engine implementation)
         """
 
         # validate types
@@ -43,7 +46,7 @@ class BatchAnalyzerEngine:
         # Process the texts as batch for improved performance
         nlp_artifacts_batch: Iterator[Tuple[str, NlpArtifacts]] = (
             self.analyzer_engine.nlp_engine.process_batch(
-                texts=texts, language=language
+                texts=texts, language=language, batch_size=batch_size
             )
         )
 

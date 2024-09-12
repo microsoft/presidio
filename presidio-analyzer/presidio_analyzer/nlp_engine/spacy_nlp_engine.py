@@ -105,6 +105,7 @@ class SpacyNlpEngine(NlpEngine):
         self,
         texts: Union[List[str], List[Tuple[str, object]]],
         language: str,
+        batch_size: Optional[int] = None,
         as_tuples: bool = False,
     ) -> Iterator[Optional[NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts using spacy pipe.
@@ -120,7 +121,9 @@ class SpacyNlpEngine(NlpEngine):
             raise ValueError("NLP engine is not loaded. Consider calling .load()")
 
         texts = (str(text) for text in texts)
-        docs = self.nlp[language].pipe(texts, as_tuples=as_tuples)
+        docs = self.nlp[language].pipe(texts,
+                                       as_tuples=as_tuples,
+                                       batch_size=batch_size)
         for doc in docs:
             yield doc.text, self._doc_to_nlp_artifact(doc, language)
 
