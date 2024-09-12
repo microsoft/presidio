@@ -2,34 +2,73 @@ nlp_engine_name: spacy
 models:
   -
     lang_code: en
-    model_name: en_core_web_lg
+    model_name: en_core_web_trf
+  -
+    lang_code: de
+    model_name: de_core_news_md
+  -
+    lang_code: es
+    model_name: es_core_news_md
+  -
+    lang_code: nl
+    model_name: nl_core_news_md
+  -
+    lang_code: it
+    model_name: it_core_news_md
+  -
+    lang_code: fr
+    model_name: fr_core_news_md
+  -
+    lang_code: ja
+    model_name: ja_core_news_md
+  -
+    lang_code: zh
+    model_name: zh_core_web_md
+  -
+    lang_code: pt
+    model_name: pt_core_news_md
+  -
+    lang_code: el
+    model_name: el_core_news_md
 
 ner_model_configuration:
+  labels_to_ignore:
+    - O
+    - LAW
+    - CARDINALMONEY
+    - WORK_OF_ART
+    - QUANTITY
+    - ORDINAL
+    - QUANTITY
+    - PERCENT
+    - PRODUCT
+  aggregation_strategy: first # "simple", "first", "average", "max"
+  stride: 128
+  alignment_mode: expand # "strict", "contract", "expand"
   model_to_presidio_entity_mapping:
     PER: PERSON
     PERSON: PERSON
-    NORP: NRP
-    FAC: LOCATION
     LOC: LOCATION
-    GPE: LOCATION
     LOCATION: LOCATION
+    GPE: LOCATION
+    FAC: LOCATION
     ORG: ORGANIZATION
-    ORGANIZATION: ORGANIZATION
     DATE: DATE_TIME
     TIME: DATE_TIME
+    NORP: NRP
+    EMAIL: EMAIL
+    PATIENT: PERSON
+    STAFF: PERSON
+    HOSP: ORGANIZATION
+    PATORG: ORGANIZATION
+    PHONE: PHONE_NUMBER
+    HCW: PERSON
+    HOSPITAL: ORGANIZATION
+    ID: ID
+    AGE: AGE
 
   low_confidence_score_multiplier: 0.4
-  low_score_entity_names:
-  -
-  labels_to_ignore:
-  - ORGANIZATION # Has many false positives
-  - CARDINAL
-  - EVENT
-  - LANGUAGE
-  - LAW
-  - MONEY
-  - ORDINAL
-  - PERCENT
-  - PRODUCT
-  - QUANTITY
-  - WORK_OF_ART
+  # low_score_entity_names:
+  #   - ORGANIZATION
+  #   - ORG
+  default_score: 0.6
