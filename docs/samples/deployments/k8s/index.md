@@ -40,7 +40,7 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 
 1. A Kubernetes 1.18+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled. If you are using [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) RBAC is enabled by default.
 
-   > [!NOTE]
+   > **NOTE**:  
    > Note the pod's resource requirements (CPU and memory) and plan the cluster accordingly.
 
 2. [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) installed. Verify you can communicate with the cluster by running:
@@ -59,7 +59,7 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 
 2. Optional - Ingress controller for presidio API, e.g., [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls).
 
-   > [!NOTE]
+   > **NOTE**:  
    > Presidio is deployed with an ingress controller by default, and uses `nginx` as `ingress.class`.  To change
    > this behavior, deploy the helm chart with `ingress.enabled=false`.
 
