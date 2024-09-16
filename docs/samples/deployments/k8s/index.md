@@ -40,8 +40,8 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 
 1. A Kubernetes 1.18+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled. If you are using [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) RBAC is enabled by default.
 
-   !!! note: Note
-      Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
+   > [!NOTE]
+   > Note the pod's resource requirements (CPU and memory) and plan the cluster accordingly.
 
 2. [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) installed. Verify you can communicate with the cluster by running:
 
@@ -59,12 +59,26 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 
 2. Optional - Ingress controller for presidio API, e.g., [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls).
 
-   > Note: Presidio is not deployed with an ingress controller by default.  
-   to change this behavior, deploy the helm chart with `ingress.enabled=true` and specify they type of ingress controller to be used with `ingress.class=nginx` (supported classes are: `nginx`).
+   > [!NOTE]
+   > Presidio is deployed with an ingress controller by default, and uses `nginx` as `ingress.class`.  To change
+   > this behavior, deploy the helm chart with `ingress.enabled=false`.
 
 3. Deploy from `/docs/samples/deployments/k8s/charts/presidio`
 
    ```sh
-   # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
-   helm install --name demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
+   # Choose a namespace and ensure it is created
+   NAMESPACE=presidio
+
+   # Choose the tag, from mcr.microsoft.com, e.g. `latest`
+   TAG=latest
+
+   # Choose a name for the deployment
+   NAME=<name>
+
+   # Use Helm to install all required components
+   helm install $NAME . --set tag=$PRESIDIO_LABEL --namespace $NAMESPACE
+
+   # If you have your own images in a separate ACR, run
+   DOCKER_REGISTRY=<your_registry>
+   helm install $NAME . --set registry=$DOCKER_REGISTRY,tag=$PRESIDIO_LABEL . --namespace $NAMESPACE
    ```
