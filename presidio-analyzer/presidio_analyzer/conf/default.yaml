@@ -2,34 +2,34 @@ nlp_engine_name: spacy
 models:
   -
     lang_code: en
-    model_name: en_core_web_trf
+    model_name: en_core_web_sm
   -
     lang_code: de
-    model_name: de_core_news_md
+    model_name: de_core_news_sm
   -
     lang_code: es
-    model_name: es_core_news_md
+    model_name: es_core_news_sm
   -
     lang_code: nl
-    model_name: nl_core_news_md
+    model_name: nl_core_news_sm
   -
     lang_code: it
-    model_name: it_core_news_md
+    model_name: it_core_news_sm
   -
     lang_code: fr
-    model_name: fr_core_news_md
+    model_name: fr_core_news_sm
   -
     lang_code: ja
-    model_name: ja_core_news_md
+    model_name: ja_core_news_sm
   -
     lang_code: zh
-    model_name: zh_core_web_md
+    model_name: zh_core_web_sm
   -
     lang_code: pt
-    model_name: pt_core_news_md
+    model_name: pt_core_news_sm
   -
     lang_code: el
-    model_name: el_core_news_md
+    model_name: el_core_news_sm
 
 ner_model_configuration:
   labels_to_ignore:
@@ -42,6 +42,7 @@ ner_model_configuration:
     - QUANTITY
     - PERCENT
     - PRODUCT
+    - MISC
   aggregation_strategy: first # "simple", "first", "average", "max"
   stride: 128
   alignment_mode: expand # "strict", "contract", "expand"
