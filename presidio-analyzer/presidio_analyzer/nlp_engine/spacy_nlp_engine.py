@@ -73,6 +73,22 @@ class SpacyNlpEngine(NlpEngine):
         if not isinstance(model["model_name"], str):
             raise ValueError("model_name must be a string")
 
+    def get_supported_entities(self) -> List[str]:
+        """Return the supported entities for this NLP engine."""
+        if not self.ner_model_configuration.model_to_presidio_entity_mapping:
+            raise ValueError(
+                "model_to_presidio_entity_mapping is missing from model configuration"
+            )
+        entities_from_mapping = list(
+            set(self.ner_model_configuration.model_to_presidio_entity_mapping.values())
+        )
+        entities = [
+            ent
+            for ent in entities_from_mapping
+            if ent not in self.ner_model_configuration.labels_to_ignore
+        ]
+        return entities
+
     def get_supported_languages(self) -> List[str]:
         """Return the supported languages for this NLP engine."""
         if not self.nlp:
