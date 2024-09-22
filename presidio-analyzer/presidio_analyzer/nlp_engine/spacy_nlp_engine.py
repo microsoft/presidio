@@ -79,9 +79,15 @@ class SpacyNlpEngine(NlpEngine):
             raise ValueError(
                 "model_to_presidio_entity_mapping is missing from model configuration"
             )
-        return list(
+        entities_from_mapping = list(
             set(self.ner_model_configuration.model_to_presidio_entity_mapping.values())
         )
+        entities = [
+            ent
+            for ent in entities_from_mapping
+            if ent not in self.ner_model_configuration.labels_to_ignore
+        ]
+        return entities
 
     def get_supported_languages(self) -> List[str]:
         """Return the supported languages for this NLP engine."""
@@ -121,9 +127,9 @@ class SpacyNlpEngine(NlpEngine):
             raise ValueError("NLP engine is not loaded. Consider calling .load()")
 
         texts = (str(text) for text in texts)
-        docs = self.nlp[language].pipe(texts,
-                                       as_tuples=as_tuples,
-                                       batch_size=batch_size)
+        docs = self.nlp[language].pipe(
+            texts, as_tuples=as_tuples, batch_size=batch_size
+        )
         for doc in docs:
             yield doc.text, self._doc_to_nlp_artifact(doc, language)
 

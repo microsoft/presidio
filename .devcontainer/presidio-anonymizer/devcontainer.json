@@ -1,0 +1,20 @@
+{
+    "name": "Presidio Anonymizer",
+    "build": {
+        "dockerfile": "../../presidio-anonymizer/Dockerfile.dev",
+        "context": "../../presidio-anonymizer"
+    },
+    "workspaceMount": "source=${localWorkspaceFolder}/presidio-anonymizer,target=/workspace,type=bind",
+    "workspaceFolder": "/workspace",
+    "onCreateCommand": [
+    "poetry",
+    "install",
+    "--no-interaction"
+  ],
+  "postAttachCommand": "poetry shell",
+  "customizations": {
+    "extensions": [
+      "ms-python.python", 
+    ],
+  }
+}
