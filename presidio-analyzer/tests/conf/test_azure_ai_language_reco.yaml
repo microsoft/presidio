@@ -3,7 +3,7 @@ recognizer_registry:
   recognizers:
     - name: MockAzureAiLanguageRecognizer
       type: predefined
-      ta_client: "test"
+      ta_client: "test" # This is a placeholder for testing purposes
 
 
 supported_languages:
