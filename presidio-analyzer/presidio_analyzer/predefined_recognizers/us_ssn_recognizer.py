@@ -27,8 +27,8 @@ class UsSsnRecognizer(PatternRecognizer):
         # "sec", # Task #603: Support keyphrases ("social sec")
         "ssn",
         "ssns",
-        "ssn#",
-        "ss#",
+        # "ssn#",  # iss:1452 - a # does not work with LemmaContextAwareEnhancer
+        # "ss#",  # iss:1452 - a # does not work with LemmaContextAwareEnhancer
         "ssid",
     ]
 
