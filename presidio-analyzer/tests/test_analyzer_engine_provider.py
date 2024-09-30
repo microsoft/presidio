@@ -182,6 +182,4 @@ def test_analyzer_engine_provider_with_azure_ai_language():
 
     assert len(azure_ai_recognizers) == 1
 
-    azure_ai_recognizer = azure_ai_recognizers[0]
-
     assert len(analyzer_engine.analyze("This is a test", language="en")) > 0
