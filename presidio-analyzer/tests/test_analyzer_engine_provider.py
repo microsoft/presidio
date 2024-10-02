@@ -1,10 +1,13 @@
 import re
 from pathlib import Path
+from typing import List
 
-from presidio_analyzer import AnalyzerEngineProvider
-from presidio_analyzer.nlp_engine import SpacyNlpEngine
+from presidio_analyzer import AnalyzerEngineProvider, RecognizerResult
+from presidio_analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 
 from presidio_analyzer.nlp_engine.transformers_nlp_engine import TransformersNlpEngine
+from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer
+
 
 def get_full_paths(analyzer_yaml, nlp_engine_yaml=None, recognizer_registry_yaml=None):
     this_path = Path(__file__).parent.absolute()
@@ -83,7 +86,9 @@ def test_analyzer_engine_provider_configuration_file():
     assert engine.nlp_engine.engine_name == "spacy"
 
 
-def test_analyzer_engine_provider_configuration_file_missing_values_expect_defaults(mandatory_recognizers):
+def test_analyzer_engine_provider_configuration_file_missing_values_expect_defaults(
+    mandatory_recognizers,
+):
     test_yaml, _, _ = get_full_paths("conf/test_analyzer_engine_missing_values.yaml")
     provider = AnalyzerEngineProvider(test_yaml)
     engine = provider.create_engine()
@@ -133,10 +138,6 @@ def test_analyzer_engine_provider_with_files_per_provider():
         recognizer_registry_conf_file=recognizer_registry_yaml,
     )
 
-    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml,
-                                      nlp_engine_conf_file=nlp_engine_yaml,
-                                      recognizer_registry_conf_file=recognizer_registry_yaml)
-
     analyzer_engine = provider.create_engine()
 
     # assert analyzer instance is correct
@@ -153,3 +154,32 @@ def test_analyzer_engine_provider_with_files_per_provider():
     recognizer_registry = analyzer_engine.registry
     assert len(recognizer_registry.recognizers) == 6
     assert recognizer_registry.supported_languages == ["en", "es"]
+
+
+def test_analyzer_engine_provider_with_azure_ai_language():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_azure_ai_language_reco.yaml",
+    )
+
+    class MockAzureAiLanguageRecognizer(AzureAILanguageRecognizer):
+        def analyze(
+            self,
+            text: str,
+            entities: List[str] = None,
+            nlp_artifacts: NlpArtifacts = None,
+        ) -> List[RecognizerResult]:
+            return [RecognizerResult(entity_type="PERSON", start=0, end=4, score=0.9)]
+
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+
+    analyzer_engine = provider.create_engine()
+
+    azure_ai_recognizers = [
+        rec
+        for rec in analyzer_engine.registry.recognizers
+        if rec.name == "Azure AI Language PII"
+    ]
+
+    assert len(azure_ai_recognizers) == 1
+
+    assert len(analyzer_engine.analyze("This is a test", language="en")) > 0
