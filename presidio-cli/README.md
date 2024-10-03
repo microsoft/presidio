@@ -126,7 +126,7 @@ presidio -d "ignore: |
   *.cfg" tests/
 
 # limit list of entities to CREDIT_CARD
-presidio-d "entities:
+presidio -d "entities:
   - CREDIT_CARD" tests/
 
 # equivalent to use -c parameter
