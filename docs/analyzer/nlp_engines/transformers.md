@@ -75,9 +75,9 @@ models:
 ner_model_configuration:
   labels_to_ignore:
   - O
-  aggregation_strategy: simple # "simple", "first", "average", "max"
+  aggregation_strategy: max # "simple", "first", "average", "max"
   stride: 16
-  alignment_mode: strict # "strict", "contract", "expand"
+  alignment_mode: expand # "strict", "contract", "expand"
   model_to_presidio_entity_mapping:
     PER: PERSON
     LOC: LOCATION
@@ -92,7 +92,8 @@ ner_model_configuration:
     DATE: DATE_TIME
     PHONE: PHONE_NUMBER
     HCW: PERSON
-    HOSPITAL: ORGANIZATION
+    HOSPITAL: LOCATION
+    VENDOR: ORGANIZATION
 
   low_confidence_score_multiplier: 0.4
   low_score_entity_names:
