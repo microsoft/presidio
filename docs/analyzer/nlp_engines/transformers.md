@@ -55,7 +55,75 @@ Then, also download a spaCy pipeline/model:
 python -m spacy download en_core_web_sm
 ```
 
-#### Creating a configuration file
+
+### Configuring the NER pipeline
+
+Once the models are downloaded, one option to configure them is to create a YAML configuration file.
+Note that the configuration needs to contain both a `spaCy` pipeline name and a transformers model name.
+In addition, different configurations for parsing the results of the transformers model can be added.
+
+The NER model configuration can be done in a YAML file or in Python:
+
+#### Configuring the NER pipeline via code
+
+Example configuration in Python:
+
+```python
+# Transformer model config
+model_config = [
+    {"lang_code": "en",
+     "model_name": {
+         "spacy": "en_core_web_sm", # for tokenization, lemmatization
+         "transformers": "StanfordAIMI/stanford-deidentifier-base" # for NER
+    }
+}]
+
+# Entity mappings between the model's and Presidio's
+mapping = dict(
+    PER="PERSON",
+    LOC="LOCATION",
+    ORG="ORGANIZATION",
+    AGE="AGE",
+    ID="ID",
+    EMAIL="EMAIL",
+    DATE="DATE_TIME",
+    PHONE="PHONE_NUMBER",
+    PERSON="PERSON",
+    LOCATION="LOCATION",
+    GPE="LOCATION",
+    ORGANIZATION="ORGANIZATION",
+    NORP="NRP",
+    PATIENT="PERSON",
+    STAFF="PERSON",
+    HOSP="LOCATION",
+    PATORG="ORGANIZATION",
+    TIME="DATE_TIME",
+    HCW="PERSON",
+    HOSPITAL="LOCATION",
+    FACILITY="LOCATION",
+    VENDOR="ORGANIZATION",
+)
+
+labels_to_ignore = ["O"]
+
+ner_model_configuration = NerModelConfiguration(
+    model_to_presidio_entity_mapping=mapping,
+    alignment_mode="expand", # "strict", "contract", "expand"
+    aggregation_strategy="max", # "simple", "first", "average", "max"
+    labels_to_ignore = labels_to_ignore)
+
+transformers_nlp_engine = TransformersNlpEngine(
+    models=model_config,
+    ner_model_configuration=ner_model_configuration)
+
+# Transformer-based analyzer
+analyzer = AnalyzerEngine(
+    nlp_engine=transformers_nlp_engine, 
+    supported_languages=["en"]
+)
+```
+
+#### Creating a YAML configuration file
 
 Once the models are downloaded, one option to configure them is to create a YAML configuration file.
 Note that the configuration needs to contain both a `spaCy` pipeline name and a transformers model name.
@@ -100,26 +168,7 @@ ner_model_configuration:
   - ID
 ```
 
-Where:
-
-- `model_name.spacy` is a name of a spaCy model/pipeline, which would wrap the transformers NER model. For example, `en_core_web_sm`.
-- The `model_name.transformers` is the full path for a huggingface model. Models can be found on [HuggingFace Models Hub](https://huggingface.co/models?pipeline_tag=token-classification). For example, `obi/deid_roberta_i2b2`
-
-The `ner_model_configuration` section contains the following parameters:
-
-- `labels_to_ignore`: A list of labels to ignore. For example, `O` (no entity) or entities you are not interested in returning.
-- `aggregation_strategy`: The strategy to use when aggregating the results of the transformers model.
-- `stride`: The value is the length of the window overlap in transformer tokenizer tokens.
-- `alignment_mode`: The strategy to use when aligning the results of the transformers model to the original text.
-- `model_to_presidio_entity_mapping`: A mapping between the transformers model labels and the Presidio entity types.
-- `low_confidence_score_multiplier`: A multiplier to apply to the score of entities with low confidence.
-- `low_score_entity_names`: A list of entity types to apply the low confidence score multiplier to.
-
-See more information on parameters on the [spacy-huggingface-pipelines Github repo](https://github.com/explosion/spacy-huggingface-pipelines#token-classification).
-  
-Once created, see [the NLP configuration documentation](../customizing_nlp_models.md#Configure-Presidio-to-use-the-new-model) for more information.
-
-#### Calling the new model
+##### Calling the new model
 
 Once the configuration file is created, it can be used to create a new `TransformersNlpEngine`:
 
@@ -143,6 +192,26 @@ Once the configuration file is created, it can be used to create a new `Transfor
     results_english = analyzer.analyze(text="My name is Morris", language="en")
     print(results_english)
 ```
+
+#### Explaning the configuration options
+
+- `model_name.spacy` is a name of a spaCy model/pipeline, which would wrap the transformers NER model. For example, `en_core_web_sm`.
+- The `model_name.transformers` is the full path for a huggingface model. Models can be found on [HuggingFace Models Hub](https://huggingface.co/models?pipeline_tag=token-classification). For example, `obi/deid_roberta_i2b2`
+
+The `ner_model_configuration` section contains the following parameters:
+
+- `labels_to_ignore`: A list of labels to ignore. For example, `O` (no entity) or entities you are not interested in returning.
+- `aggregation_strategy`: The strategy to use when aggregating the results of the transformers model.
+- `stride`: The value is the length of the window overlap in transformer tokenizer tokens.
+- `alignment_mode`: The strategy to use when aligning the results of the transformers model to the original text.
+- `model_to_presidio_entity_mapping`: A mapping between the transformers model labels and the Presidio entity types.
+- `low_confidence_score_multiplier`: A multiplier to apply to the score of entities with low confidence.
+- `low_score_entity_names`: A list of entity types to apply the low confidence score multiplier to.
+
+See more information on parameters on the [spacy-huggingface-pipelines Github repo](https://github.com/explosion/spacy-huggingface-pipelines#token-classification).
+  
+Once created, see [the NLP configuration documentation](../customizing_nlp_models.md#Configure-Presidio-to-use-the-new-model) for more information.
+
 
 ### Training your own model
 
