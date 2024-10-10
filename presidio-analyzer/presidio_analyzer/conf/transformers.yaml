@@ -36,8 +36,9 @@ ner_model_configuration:
     TIME: DATE_TIME
     PHONE: PHONE_NUMBER
     HCW: PERSON
-    HOSPITAL: ORGANIZATION
+    HOSPITAL: LOCATION
     FACILITY: LOCATION
+    VENDOR: ORGANIZATION
 
   low_confidence_score_multiplier: 0.4
   low_score_entity_names:
