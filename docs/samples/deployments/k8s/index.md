@@ -40,8 +40,8 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 
 1. A Kubernetes 1.18+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled. If you are using [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) RBAC is enabled by default.
 
-   > **NOTE**:  
-   > Note the pod's resource requirements (CPU and memory) and plan the cluster accordingly.
+!!! note: Note 
+   Note the pod's resource requirements (CPU and memory) and plan the cluster accordingly.
 
 2. [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) installed. Verify you can communicate with the cluster by running:
 
