@@ -37,6 +37,7 @@ from .sg_uen_recognizer import SgUenRecognizer
 from .spacy_recognizer import SpacyRecognizer
 from .stanza_recognizer import StanzaRecognizer
 from .uk_nhs_recognizer import NhsRecognizer
+from .uk_nino_recognizer import UkNinoRecognizer
 from .url_recognizer import UrlRecognizer
 from .us_bank_recognizer import UsBankRecognizer
 from .us_driver_license_recognizer import UsLicenseRecognizer
@@ -104,4 +105,5 @@ __all__ = [
     "InPassportRecognizer",
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
+    "UkNinoRecognizer",
 ]

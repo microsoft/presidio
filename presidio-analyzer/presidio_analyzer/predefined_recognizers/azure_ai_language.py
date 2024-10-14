@@ -25,6 +25,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         ta_client: Optional["TextAnalyticsClient"] = None,
         azure_ai_key: Optional[str] = None,
         azure_ai_endpoint: Optional[str] = None,
+        **kwargs
     ):
         """
         Wrap the PII detection in Azure AI Language.
@@ -36,6 +37,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         the client will be created using the key and endpoint.
         :param azure_ai_key: Azure AI for language key
         :param azure_ai_endpoint: Azure AI for language endpoint
+        :param kwargs: Additional arguments required by the parent class
 
         For more info, see https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/overview
         """  # noqa E501
@@ -45,6 +47,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
             supported_language=supported_language,
             name="Azure AI Language PII",
             version="5.2.0",
+            **kwargs
         )
 
         is_available = bool(TextAnalyticsClient)
