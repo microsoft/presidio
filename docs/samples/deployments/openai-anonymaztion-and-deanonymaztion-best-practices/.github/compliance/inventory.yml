@@ -1,0 +1,6 @@
+inventory:
+- source: DirectOwners
+  items:
+  - id: rofaucon@microsoft.com
+  - id: ityer@microsoft.com
+  isProduction: false
