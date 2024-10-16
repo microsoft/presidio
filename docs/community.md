@@ -14,5 +14,6 @@ This section collects different resources developed with Presidio.
 | [HebSafeHarbor](https://github.com/8400TheHealthNetwork/HebSafeHarbor) | Clinical notes anonymization in Hebrew. |
 | [Presidio Github Action](https://github.com/marketplace/actions/presidio-action) | Github Action that analyzes text for PII entities with Microsoft's Presidio framework. |
 | [Presidio CLI](https://github.com/insightsengineering/presidio-cli) | CLI tool that analyzes text for PII Entities with Microsoft Presidio framework. |
+| [HashiCorp Vault Operator](https://github.com/sahajsoft/presidio-vault) | A library that allows to integrate Presidio with HashiCorp Vault for anonymization and deanonymization. |
 
 * Please create a PR if you're interested in adding your tool to this list.
