@@ -67,3 +67,16 @@ def test_default_configuration_correct():
     )
 
     assert actual_config_json == expected_config_json
+
+
+def test_get_supported_entities_doesnt_include_ignored():
+    ner_config = NerModelConfiguration(labels_to_ignore=["A","B"],
+                                       model_to_presidio_entity_mapping=dict(A="A",
+                                                                             B="B",
+                                                                             C="C"))
+    spacy_nlp_engine = SpacyNlpEngine(ner_model_configuration=ner_config)
+    entities = spacy_nlp_engine.get_supported_entities()
+
+    assert "A" not in entities
+    assert "B" not in entities
+    assert "C" in entities

@@ -40,6 +40,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |Entity Type|Description|Detection Method|
 |--- |--- |--- |
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
+|UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
 
 ### Spain
 

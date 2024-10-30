@@ -70,9 +70,9 @@ def dataset(recognizers_map):
             raise ValueError(f"bad entity type {entity_type}")
 
         test_items.append((item, recognizer, [entity_type]))
-    # Currently we have 31 sentences, this is a sanity check
-    if not len(test_items) == 32:
-        raise ValueError(f"expected 31 context sentences but found {len(test_items)}")
+    # Currently we have 34 sentences, this is a sanity check
+    if not len(test_items) == 34:
+        raise ValueError(f"expected 34 context sentences but found {len(test_items)}")
 
     yield test_items
 

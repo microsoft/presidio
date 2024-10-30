@@ -53,6 +53,11 @@ recognizers:
     - en
     type: predefined
 
+  - name: UkNinoRecognizer
+    supported_languages:
+    - en
+    type: predefined
+
   - name: SgFinRecognizer
     supported_languages: 
     - en
