@@ -1,3 +1,4 @@
+import re
 from typing import Dict
 
 from presidio_analyzer import PatternRecognizer
@@ -34,3 +35,6 @@ class AnalyzerRequest:
                 PatternRecognizer.from_dict(rec) for rec in ad_hoc_recognizers
             ]
         self.context = req_data.get("context")
+        self.allow_list = req_data.get("allow_list")
+        self.allow_list_match = req_data.get("allow_list_match", "exact")
+        self.regex_flags = req_data.get("regex_flags", re.DOTALL | re.MULTILINE | re.IGNORECASE)
