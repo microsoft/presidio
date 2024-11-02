@@ -11,17 +11,17 @@ license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 keywords = ["presidio_image_redactor"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+python = ">=3.9,<4.0"
 pillow = ">=9.0"
 pytesseract = ">=0.3.7,<0.4"
 presidio-analyzer = ">=1.9.0"

@@ -32,14 +32,14 @@ stages:
                 vmImage: 'ubuntu-latest'
             strategy:
                 matrix:
-                    Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
                     Python311:
                         python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
@@ -54,14 +54,14 @@ stages:
                 vmImage: 'ubuntu-latest'
             strategy:
                 matrix:
-                    Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
                     Python311:
                         python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
@@ -76,14 +76,14 @@ stages:
                 vmImage: 'ubuntu-latest'
             strategy:
                 matrix:
-                    Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
                     Python311:
                         python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
@@ -99,13 +99,14 @@ stages:
             strategy:
                 matrix:
                     Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
                     Python311:
                         python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
@@ -120,14 +121,14 @@ stages:
                 vmImage: 'ubuntu-latest'
             strategy:
                 matrix:
-                    Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
                     Python311:
                         python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
