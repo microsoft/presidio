@@ -21,7 +21,7 @@ steps:
       
     - task: UsePythonVersion@0
       inputs:
-          versionSpec: '3.9'
+          versionSpec: '3.10'
 
     - script: |
           set -eux  # fail on error
