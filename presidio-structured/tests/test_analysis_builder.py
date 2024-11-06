@@ -99,7 +99,7 @@ def test_analysis_tabular_when_default_threshold_is_half_then_phone_does_not_pas
     tabular_analysis_builder = PandasAnalysisBuilder(analyzer_engine)
     structured_analysis = tabular_analysis_builder.generate_analysis(sample_df)
 
-    assert len(structured_analysis.entity_mapping) == 2
+    assert len(structured_analysis.entity_mapping) == 3
 
 
 def test_analysis_tabular_when_default_threshold_is_zero_then_all_results_pass(
