@@ -28,7 +28,7 @@ def sample_df_strategy():
         "email": ["john.doe@example.com", "jane.smith@example.com", "alice.johnson@example.com"],
         "city": ["Anytown", "Somewhere", "Elsewhere"],
         "state": ["CA", "TX", "NY"],
-        "postal_code": [12345, 67890, 11223],
+        "non_pii": ["reallynotpii", "reallynotapii", "reallynotapiiatall"],
     }
 
     return pd.DataFrame(data)
@@ -44,7 +44,7 @@ def sample_json():
             "street": "123 Main St",
             "city": "Anytown",
             "state": "CA",
-            "postal_code": "12345",
+            "non_pii": "nonpii",
         },
     }
     return data
