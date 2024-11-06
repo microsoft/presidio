@@ -72,7 +72,7 @@ def test_find_mixed_strategy_entity_with_custom_mixed_strategy_threshold(tabular
     assert len(key_recognizer_result_map) == 3
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
-    assert key_recognizer_result_map["date"].entity_type == "DATE_TIME"
+    assert key_recognizer_result_map["phone"].entity_type == "PHONE_NUMBER"
 
 
 def test_find_entity_with_invalid_strategy_raises_exception(tabular_analysis_builder, sample_df_strategy):
@@ -99,7 +99,7 @@ def test_analysis_tabular_when_default_threshold_is_half_then_phone_does_not_pas
     tabular_analysis_builder = PandasAnalysisBuilder(analyzer_engine)
     structured_analysis = tabular_analysis_builder.generate_analysis(sample_df)
 
-    assert len(structured_analysis.entity_mapping) == 3
+    assert len(structured_analysis.entity_mapping) == 2
 
 
 def test_analysis_tabular_when_default_threshold_is_zero_then_all_results_pass(

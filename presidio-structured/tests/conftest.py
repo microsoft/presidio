@@ -16,7 +16,7 @@ def sample_df():
             "jane@example.com",
             "johnsmith@example.com",
         ],
-        "date": ["1234567890", "0987654321", "1122334455"],
+        "phone": ["(212) 456-7890", "(213) 456-7590", "(214) 456-2830"],
     }
     return pd.DataFrame(data)
 
