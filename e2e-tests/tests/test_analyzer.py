@@ -531,7 +531,7 @@ def test_given_allow_list_without_setting_allow_list_match_then_normal_entity_is
     {
         "text": "email: admin@github.com", 
         "language": "en", 
-        "allow_list": [".*@github.com"],
+        "allow_list": [".*@github.com"]
     }
     """
 
@@ -539,7 +539,7 @@ def test_given_allow_list_without_setting_allow_list_match_then_normal_entity_is
 
     expected_response = """
      [
-         {"entity_type": "EMAIL_ADDRESS", "start": 7, "end": 23, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "EMAIL_ADDRESS", "start": 7, "end": 23, "score": 0.85, "analysis_explanation":null}
      ]
     """
     assert response_status == 200
@@ -564,7 +564,7 @@ def test_given_regex_flags_and_normal_entities_are_returned():
 
     expected_response = """
      [
-         {"entity_type": "EMAIL_ADDRESS", "start": 7, "end": 23, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "EMAIL_ADDRESS", "start": 7, "end": 23, "score": 0.85, "analysis_explanation":null}
      ]
     """
     assert response_status == 200
