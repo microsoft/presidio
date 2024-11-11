@@ -552,11 +552,11 @@ def test_given_allow_list_without_setting_allow_list_match_then_normal_entity_is
 def test_given_regex_flags_and_normal_entities_are_returned():
     request_body = """
     {
-        "text": "email: admin@GitHub.com", 
+        "text": "email: admin@GitHub.com", # case sensitive
         "language": "en", 
         "allow_list": [".*@github.com"],
         "allow_list_match": "regex",
-        "regex_flags": 0
+        "regex_flags": 0 # case insensitive flag is turned off
     }
     """
 
