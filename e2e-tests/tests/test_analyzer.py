@@ -550,13 +550,14 @@ def test_given_allow_list_without_setting_allow_list_match_then_normal_entity_is
 
 @pytest.mark.api
 def test_given_regex_flags_and_normal_entities_are_returned():
+    # case sensitive flags are turned off, GitHub != github
     request_body = """
     {
-        "text": "email: admin@GitHub.com", # case sensitive
+        "text": "email: admin@GitHub.com",
         "language": "en", 
         "allow_list": [".*@github.com"],
         "allow_list_match": "regex",
-        "regex_flags": 0 # case insensitive flag is turned off
+        "regex_flags": 0
     }
     """
 
