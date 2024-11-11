@@ -22,5 +22,6 @@ This section collects different resources developed with Presidio.
 | [Presidio in LLMGuard](https://llm-guard.com/input_scanners/anonymize) | Integrate Presidio into LLM Guard - The Security Toolkit for LLM Interactions. |
 | [Privy](https://blog.px.dev/detect-pii/) | Integrate Presidio into Privy. |
 | [Huggingface](https://huggingface.co/blog/presidio-pii-detection) | Automatic PII detection on Huggingface datasets. |
-
+| [KNIME](https://hub.knime.com/knime/extensions/org.knime.python.features.presidio/latest/org.knime.python3.nodes.extension.ExtensionNodeSetFactory$DynamicExtensionNodeFactory:290c90e1) | Use Presidio within the KNIME framework. |
+| [OpenMetadata](https://docs.open-metadata.org/latest/how-to-guides/data-quality-observability/profiler/auto-pii-tagging) | Auto PII tagging for Sensitive/NonSensitive at the column level. |
 * Please create a PR if you're interested in adding your tool to this list.
