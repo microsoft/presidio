@@ -31,7 +31,7 @@ steps:
         action: Push services
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
         containerregistrytype: Azure Container Registry
-        azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
+        zureContainerRegistry: '{"loginServer":"$(ACR_REGISTRY_NAME).azurecr.io"}'
         azureSubscriptionEndpoint: ${{ parameters.AZURE_SUBSCRIPTION }}
         projectName: 'microsoft_presidio'
         dockerComposeFileArgs: |
