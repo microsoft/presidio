@@ -33,5 +33,5 @@ steps:
         azureSubscriptionEndpoint: presidio
         projectName: 'microsoft_presidio'
         dockerComposeFileArgs: |
-          REGISTRY_NAME=''
+          REGISTRY_NAME=
           TAG=${{ parameters.TAG }}
