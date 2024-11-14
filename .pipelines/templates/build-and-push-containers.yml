@@ -14,14 +14,14 @@ parameters:
   type: string
   default: 'docker-compose.yml'
 steps:
-  - task: DockerCompose@1
+  - task: DockerCompose@0
     displayName: Build Presidio Images
     inputs:
         action: Build services
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
-        azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
         dockerComposeFileArgs: |
-          REGISTRY_NAME=
+          REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
+          IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
           TAG=${{ parameters.TAG }}
         projectName: 'microsoft_presidio'
         
