@@ -39,16 +39,16 @@ stages:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io'
           TAG: ':$(Build.BuildId)'
         steps:
-          - task: DockerCompose@1
+          - task: DockerCompose@0
             displayName: Pull Presidio Images from ACR
             inputs:
               action: Run a Docker Compose command
               projectName: 'microsoft_presidio'
               dockerComposeCommand: pull
               dockerComposeFile: docker-compose.yml
-              containerregistrytype: 'Azure Container Registry'
-              azureSubscriptionEndpoint: 'bcb257e6-1ea3-45cd-9a11-a4e26dcff645'
-              azureContainerRegistry: $(REGISTRY_NAME)
+              containerregistrytype: Azure Container Registry
+              azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
+              azureContainerRegistry: '$(ACR_REGISTRY_NAME).azurecr.io'
               dockerComposeFileArgs: |
                 REGISTRY_NAME=$(REGISTRY_NAME)
                 TAG=$(TAG)
