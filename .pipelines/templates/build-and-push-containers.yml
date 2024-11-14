@@ -25,13 +25,13 @@ steps:
           TAG=${{ parameters.TAG }}
         projectName: 'microsoft_presidio'
         
-  - task: DockerCompose@0
+  - task: DockerCompose@1
     displayName: Push Presidio Images to ACR
     inputs:
         action: 'Push services'
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
         containerregistrytype: 'Azure Container Registry'
-        azureContainerRegistry: '$(ACR_REGISTRY_NAME)'
+        azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
         azureSubscriptionEndpoint: presidio
         projectName: 'microsoft_presidio'
         dockerComposeFileArgs: |
