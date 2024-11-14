@@ -31,7 +31,8 @@ steps:
         action: 'Push services'
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
         containerregistrytype: 'Azure Container Registry'
-        dockerRegistryEndpoint: 'presidio-acr'
+        azureSubscription: 'presidio-acr'
+        azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
         projectName: 'microsoft_presidio'
         dockerComposeFileArgs: |
           REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
