@@ -33,5 +33,4 @@ steps:
         azureSubscriptionEndpoint: presidio
         projectName: 'microsoft_presidio'
         dockerComposeFileArgs: |
-          IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
           TAG=${{ parameters.TAG }}
