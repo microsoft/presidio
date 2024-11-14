@@ -32,6 +32,7 @@ steps:
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
         containerregistrytype: 'Azure Container Registry'
         azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
+        azureSubscriptionEndpoint: presidio
         projectName: 'microsoft_presidio'
         dockerComposeFileArgs: |
           REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
