@@ -46,8 +46,9 @@ stages:
               projectName: 'microsoft_presidio'
               dockerComposeCommand: pull
               dockerComposeFile: docker-compose.yml
-              containerregistrytype: 'Container Registry'
-              dockerRegistryEndpoint: 'presidio-acr'
+              containerregistrytype: 'Azure Container Registry'
+              azureSubscriptionEndpoint: presidio
+              azureContainerRegistry: $(REGISTRY_NAME)
               dockerComposeFileArgs: |
                 REGISTRY_NAME=$(REGISTRY_NAME)
                 TAG=$(TAG)
