@@ -19,6 +19,7 @@ steps:
     inputs:
         action: Build services
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
+        azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
         dockerComposeFileArgs: |
           TAG=${{ parameters.TAG }}
         projectName: 'microsoft_presidio'
