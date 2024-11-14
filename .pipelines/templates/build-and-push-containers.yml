@@ -20,7 +20,6 @@ steps:
         action: Build services
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
         dockerComposeFileArgs: |
-          REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
           IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
           TAG=${{ parameters.TAG }}
         projectName: 'microsoft_presidio'
