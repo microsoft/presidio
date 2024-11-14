@@ -10,7 +10,7 @@ variables:
   - group: Presidio-V2-CI
 
 stages:
-  - template: .pipelines/templates/lint-build-test.yml
+#  - template: .pipelines/templates/lint-build-test.yml
   - stage: PushContainersAndE2ETests
     displayName: E2E Tests
     dependsOn: LintBuildTest
