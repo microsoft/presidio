@@ -1,9 +1,8 @@
 import collections
-from typing import Any, List, Dict, Union, Iterable, Optional
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import DictRecognizerResult
-from presidio_anonymizer.entities import RecognizerResult
+from presidio_anonymizer.entities import DictRecognizerResult, RecognizerResult
 
 
 class BatchAnonymizerEngine:
@@ -21,7 +20,7 @@ class BatchAnonymizerEngine:
         self,
         texts: List[Optional[Union[str, bool, int, float]]],
         recognizer_results_list: List[List[RecognizerResult]],
-        **kwargs
+        **kwargs,
     ) -> List[Union[str, Any]]:
         """
         Anonymize a list of strings.
@@ -69,7 +68,7 @@ class BatchAnonymizerEngine:
                 resp = self.anonymizer_engine.anonymize(
                     text=result.value,
                     analyzer_results=result.recognizer_results,
-                    **kwargs
+                    **kwargs,
                 )
                 return_dict[result.key] = resp.text
 
@@ -77,7 +76,7 @@ class BatchAnonymizerEngine:
                 anonymize_response = self.anonymize_list(
                     texts=result.value,
                     recognizer_results_list=result.recognizer_results,
-                    **kwargs
+                    **kwargs,
                 )
                 return_dict[result.key] = anonymize_response
             else:

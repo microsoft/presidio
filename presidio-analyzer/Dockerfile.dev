@@ -1,0 +1,20 @@
+FROM python:3.10-slim
+
+ARG DEV_MODE=dev
+ARG POETRY_EXTRAS=""
+ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
+ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
+
+ENV DEV_MODE=${DEV_MODE}
+ENV PIP_NO_CACHE_DIR=1
+ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
+ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
+ENV NLP_CONF_FILE=${NLP_CONF_FILE}
+ENV POETRY_EXTRAS=${POETRY_EXTRAS}
+
+# Install essential build tools
+RUN apt-get update \
+  && apt-get install -y build-essential
+
+RUN pip install poetry

@@ -1,6 +1,6 @@
 import logging
 from abc import abstractmethod
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from presidio_analyzer import RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -40,7 +40,6 @@ class EntityRecognizer:
         version: str = "0.0.1",
         context: Optional[List[str]] = None,
     ):
-
         self.supported_entities = supported_entities
 
         if name is None:

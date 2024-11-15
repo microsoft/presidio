@@ -83,7 +83,7 @@ print(results)
 
 For pattern based recognizers, it is possible to change the regex flags, either for
 one recognizer or for all.
-For one recognizer, use the `global_regex_flags` parameter 
+For one recognizer, use the `global_regex_flags` parameter
 in the `PatternRecognizer` constructor.
 For all recognizers, use the `global_regex_flags` parameter in the `RecognizerRegistry` constructor:
 
@@ -97,7 +97,6 @@ registry = RecognizerRegistry(global_regex_flags=re.DOTALL | re.MULTILINE | re.I
 engine = AnalyzerEngine(registry=registry)
 engine.analyze(...)
 ```
-
 
 ### Creating a new `EntityRecognizer` in code
 
@@ -151,7 +150,7 @@ To add a recognizer to the list of pre-defined recognizers:
 
 1. Clone the repo.
 2. Create a file containing the new recognizer Python class.
-3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
+3. Add the recognizer to the `recognizers` in the [`default_recognizers`](../../presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) config. Details of recognizer paramers are given [Here](./recognizer_registry_provider.md#the-recognizer-parameters).
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
 ### Azure AI Language recognizer
@@ -219,7 +218,7 @@ Additional examples can be found in the [OpenAPI spec](../api-docs/api-docs.html
 ### Reading pattern recognizers from YAML
 
 Recognizers can be loaded from a YAML file, which allows users to add recognition logic without writing code.
-An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml).
+An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml).
 
 Once the YAML file is created, it can be loaded into the `RecognizerRegistry` instance.
 

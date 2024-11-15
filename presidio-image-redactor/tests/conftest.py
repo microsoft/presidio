@@ -75,9 +75,7 @@ def get_mock_dicom_instance():
 @pytest.fixture(scope="module")
 def get_mock_dicom_verify_results():
     """Loaded json results file"""
-    with open(
-        f"{SCRIPT_DIR}/integration/resources/dicom_pii_verify_integration.json"
-    ) as json_file:
+    with open(f"{SCRIPT_DIR}/integration/resources/dicom_pii_verify_integration.json") as json_file:
         results_json = json.load(json_file)
 
     return results_json
@@ -88,24 +86,39 @@ def get_mock_png():
     filepath = f"{SCRIPT_DIR}/test_data/png_images/0_ORIGINAL.png"
     return Image.open(filepath)
 
+
 @pytest.fixture(scope="module")
 def get_dummy_nlp_engine():
     """Dummy NLP engine to use in testing"""
+
     class DummyNlpEngine(NlpEngine):
         def load(self) -> None:
             return None
+
         def is_loaded(self) -> bool:
             return True
+
         def process_text(self, text: str, language: str) -> NlpArtifacts:
             return None
+
         def process_batch(
-            self, texts: Iterable[str], language: str, **kwargs  # noqa ANN003
+            self,
+            texts: Iterable[str],
+            language: str,
+            **kwargs,  # noqa ANN003
         ) -> Iterator[Tuple[str, NlpArtifacts]]:
             return None
+
         def is_stopword(self, word: str, language: str) -> bool:
             return False
+
         def is_punct(self, word: str, language: str) -> bool:
             return False
+
         def get_supported_entities(self) -> List[str]:
             return []
+
+        def get_supported_languages(self) -> List[str]:
+            return ["en"]
+
     return DummyNlpEngine()

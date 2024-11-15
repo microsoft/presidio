@@ -1,15 +1,15 @@
 import logging
 from pathlib import Path
-from typing import Optional, Dict, Union, Tuple
+from typing import Dict, Optional, Tuple, Union
 
 import yaml
 
 from presidio_analyzer.nlp_engine import (
-    StanzaNlpEngine,
-    SpacyNlpEngine,
-    NlpEngine,
-    TransformersNlpEngine,
     NerModelConfiguration,
+    NlpEngine,
+    SpacyNlpEngine,
+    StanzaNlpEngine,
+    TransformersNlpEngine,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -121,7 +121,8 @@ class NlpEngineProvider:
             )
 
         else:
-            nlp_configuration = yaml.safe_load(open(conf_file))
+            with open(conf_file) as file:
+                nlp_configuration = yaml.safe_load(file)
 
         if "ner_model_configuration" not in nlp_configuration:
             logger.warning(
@@ -132,7 +133,7 @@ class NlpEngineProvider:
 
     @staticmethod
     def _get_full_conf_path(
-        default_conf_file: Union[Path, str] = "default.yaml"
+        default_conf_file: Union[Path, str] = "default.yaml",
     ) -> Path:
         """Return a Path to the default conf file."""
-        return Path(Path(__file__).parent.parent.parent, "conf", default_conf_file)
+        return Path(Path(__file__).parent.parent, "conf", default_conf_file)

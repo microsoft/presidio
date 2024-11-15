@@ -1,7 +1,7 @@
 import pytest
 
 from presidio_anonymizer.operators import Mask
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 
 
 @pytest.mark.parametrize(
@@ -47,7 +47,7 @@ def test_when_masking_char_is_missing_then_ipe_raised():
     params = _get_default_mask_parameters()
     params.pop("masking_char")
 
-    with pytest.raises(InvalidParamException, match="Expected parameter masking_char"):
+    with pytest.raises(InvalidParamError, match="Expected parameter masking_char"):
         Mask().validate(params)
 
 
@@ -56,7 +56,7 @@ def test_when_masking_char_is_bad_typed_then_ipe_raised():
     params["masking_char"] = 1
 
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Invalid parameter value for masking_char. "
         "Expecting 'string', but got 'number'.",
     ):
@@ -68,7 +68,7 @@ def test_when_masking_char_length_is_greater_than_one_then_ipe_raised():
     params["masking_char"] = "string_not_character"
 
     with pytest.raises(
-        InvalidParamException, match="Invalid input, masking_char must be a character"
+        InvalidParamError, match="Invalid input, masking_char must be a character"
     ):
         Mask().validate(params)
 
@@ -77,7 +77,7 @@ def test_when_chars_to_mask_is_missing_then_ipe_raised():
     params = _get_default_mask_parameters()
     params.pop("chars_to_mask")
 
-    with pytest.raises(InvalidParamException, match="Expected parameter chars_to_mask"):
+    with pytest.raises(InvalidParamError, match="Expected parameter chars_to_mask"):
         Mask().validate(params)
 
 
@@ -86,7 +86,7 @@ def test_when_chars_to_mask_bad_typed_then_ipe_raised():
     params["chars_to_mask"] = "not_an_integer"
 
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Invalid parameter value for chars_to_mask. "
         "Expecting 'number', but got 'string'.",
     ):
@@ -97,7 +97,7 @@ def test_when_from_end_is_missing_then_ipe_raised():
     params = _get_default_mask_parameters()
     params.pop("from_end")
 
-    with pytest.raises(InvalidParamException, match="Expected parameter from_end"):
+    with pytest.raises(InvalidParamError, match="Expected parameter from_end"):
         Mask().validate(params)
 
 
@@ -106,7 +106,7 @@ def test_when_from_end_is_bad_typed_then_ipe_raised():
     params["from_end"] = "not_a_boolean"
 
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Invalid parameter value for from_end. "
         "Expecting 'boolean', but got 'string'.",
     ):

@@ -40,12 +40,14 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |Entity Type|Description|Detection Method|
 |--- |--- |--- |
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
+|UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
 
 ### Spain
 
 |Entity Type|Description|Detection Method|
 |--- |--- |--- |
 |ES_NIF| A spanish NIF number (Personal tax ID) .|Pattern match, context and checksum|
+|ES_NIE| A spanish NIE number (Foreigners ID card) .|Pattern match, context and checksum|
 
 ### Italy
 
@@ -85,6 +87,13 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | IN_PAN     | The Indian Permanent Account Number (PAN) is a unique 12 character alphanumeric identifier issued to all business and individual entities registered as Tax Payers. | Pattern match, context |
 | IN_AADHAAR | Indian government issued unique 12 digit individual identity number                                                                                                 | Pattern match, context, and checksum |
 | IN_VEHICLE_REGISTRATION | Indian government issued transport (govt, personal, diplomatic, defence)  vehicle registration number                                                               | Pattern match, context, and checksum |
+| IN_VOTER | Indian Election Commission issued 10 digit alpha numeric voter id for all indian citizens (age 18 or above) | Pattern match, context |
+| IN_PASSPORT | Indian Passport Number | Pattern match, Context |
+
+### Finland
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| FI_PERSONAL_IDENTITY_CODE     | The Finnish Personal Identity Code (Henkilötunnus) is a unique 11 character individual identity number. | Pattern match, context and custom logic. |
 
 ## Adding a custom PII entity
 

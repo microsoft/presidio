@@ -1,7 +1,8 @@
 """Mask some or all given text entity PII with given character."""
+
 from typing import Dict
 
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.services.validators import validate_parameter
 
@@ -45,7 +46,7 @@ class Mask(Operator):
         masking_char = params.get(self.MASKING_CHAR)
         validate_parameter(masking_char, self.MASKING_CHAR, str)
         if len(masking_char) > 1:
-            raise InvalidParamException(
+            raise InvalidParamError(
                 f"Invalid input, {self.MASKING_CHAR} must be a character"
             )
 

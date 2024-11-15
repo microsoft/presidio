@@ -90,7 +90,7 @@ ENV/
 env.bak/
 venv.bak/
 *venv/
-*Pipfile.lock
+poetry.lock
 
 # Spyder project settings
 .spyderproject
@@ -136,3 +136,4 @@ vendor/
 
 #mkdocs
 mkdocs/
+/presidio_mkdocs

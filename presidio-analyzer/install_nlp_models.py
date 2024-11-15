@@ -2,10 +2,10 @@
 
 import argparse
 import logging
-from typing import Union, Dict
+from typing import Dict, Union
 
-from spacy.cli import download as spacy_download
 import yaml
+from spacy.cli import download as spacy_download
 
 try:
     import stanza
@@ -16,7 +16,7 @@ except ImportError:
 try:
     import transformers
     from huggingface_hub import snapshot_download
-    from transformers import AutoTokenizer, AutoModelForTokenClassification
+    from transformers import AutoModelForTokenClassification, AutoTokenizer
 except ImportError:
     # transformers should be installed manually
     transformers = None
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--conf_file",
         required=False,
-        default="conf/default.yaml",
+        default="presidio_analyzer/conf/default.yaml",
         help="Location of nlp configuration yaml file. Default: conf/default.yaml",
     )
     args = parser.parse_args()

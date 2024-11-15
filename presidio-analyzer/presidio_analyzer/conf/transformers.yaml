@@ -1,0 +1,45 @@
+nlp_engine_name: transformers
+models:
+  -
+    lang_code: en
+    model_name:
+      spacy: en_core_web_sm
+      transformers: StanfordAIMI/stanford-deidentifier-base
+
+ner_model_configuration:
+  labels_to_ignore:
+  - O
+  aggregation_strategy: max # "simple", "first", "average", "max"
+  stride: 16                # If stride >= 0, process long texts in
+                            # overlapping windows of the model max
+                            # length. The value is the length of the
+                            # window overlap in transformer tokenizer
+                            # tokens, NOT the length of the stride.
+  alignment_mode: expand # "strict", "contract", "expand"
+  model_to_presidio_entity_mapping:
+    PER: PERSON
+    PERSON: PERSON
+    LOC: LOCATION
+    LOCATION: LOCATION
+    GPE: LOCATION
+    ORG: ORGANIZATION
+    ORGANIZATION: ORGANIZATION
+    NORP: NRP
+    AGE: AGE
+    ID: ID
+    EMAIL: EMAIL
+    PATIENT: PERSON
+    STAFF: PERSON
+    HOSP: ORGANIZATION
+    PATORG: ORGANIZATION
+    DATE: DATE_TIME
+    TIME: DATE_TIME
+    PHONE: PHONE_NUMBER
+    HCW: PERSON
+    HOSPITAL: LOCATION
+    FACILITY: LOCATION
+    VENDOR: ORGANIZATION
+
+  low_confidence_score_multiplier: 0.4
+  low_score_entity_names:
+  - ID

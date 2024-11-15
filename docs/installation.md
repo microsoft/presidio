@@ -17,11 +17,10 @@ Presidio suite using `pip` (as Python packages) or using `Docker` (As containeri
 
 Presidio is supported for the following python versions:
 
-* 3.7
-* 3.8
 * 3.9
 * 3.10
 * 3.11
+* 3.12
 
 ### PII anonymization on text
 
@@ -99,9 +98,9 @@ docker pull mcr.microsoft.com/presidio-analyzer
 docker pull mcr.microsoft.com/presidio-anonymizer
 
 # Run containers with default ports
-docker run -d -p 5001:3000 mcr.microsoft.com/presidio-analyzer:latest
+docker run -d -p 5002:3000 mcr.microsoft.com/presidio-analyzer:latest
 
-docker run -d -p 5002:3000 mcr.microsoft.com/presidio-anonymizer:latest
+docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
 ```
 
 ### For PII redaction in images
@@ -143,13 +142,7 @@ Then, build the containers locally.
 From the root folder of the repo:
 
 ```sh
-docker-compose --build
-```
-
-To run all Presidio services:
-
-```sh
-docker-compose up -d
+docker-compose up --build
 ```
 
 Alternatively, you can build and run individual services.
@@ -162,7 +155,7 @@ docker build ./presidio-anonymizer -t presidio/presidio-anonymizer
 And run:
 
 ```sh
-docker run -d -p 5002:5001 presidio/presidio-anonymizer
+docker run -d -p 5001:5001 presidio/presidio-anonymizer
 ```
 
 ---

@@ -1,8 +1,10 @@
-from PIL import Image, ImageChops
-from presidio_image_redactor.image_redactor_engine import ImageRedactorEngine
-from presidio_analyzer import PatternRecognizer
 import io
-from typing import Optional, List
+from typing import List, Optional
+
+from PIL import Image, ImageChops
+from presidio_analyzer import PatternRecognizer
+
+from presidio_image_redactor.image_redactor_engine import ImageRedactorEngine
 
 
 def fig2img(fig):
@@ -26,7 +28,7 @@ class ImagePiiVerifyEngine(ImageRedactorEngine):
         show_text_annotation: bool = True,
         ocr_kwargs: Optional[dict] = None,
         ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
-        **text_analyzer_kwargs
+        **text_analyzer_kwargs,
     ) -> Image:
         """Annotate image with the detect PII entity.
 
@@ -52,15 +54,15 @@ class ImagePiiVerifyEngine(ImageRedactorEngine):
         self._check_ad_hoc_recognizer_list(ad_hoc_recognizers)
 
         # Detect text
-        perform_ocr_kwargs, ocr_threshold = self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)  # noqa: E501
+        perform_ocr_kwargs, ocr_threshold = (
+            self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)
+        )  # noqa: E501
         ocr_results = self.image_analyzer_engine.ocr.perform_ocr(
-            image,
-            **perform_ocr_kwargs
+            image, **perform_ocr_kwargs
         )
         if ocr_threshold:
             ocr_results = self.image_analyzer_engine.threshold_ocr_result(
-                ocr_results,
-                ocr_threshold
+                ocr_results, ocr_threshold
             )
         ocr_bboxes = self.bbox_processor.get_bboxes_from_ocr_results(ocr_results)
 
@@ -84,8 +86,7 @@ class ImagePiiVerifyEngine(ImageRedactorEngine):
 
         # Prepare for plotting
         pii_bboxes = self.image_analyzer_engine.get_pii_bboxes(
-            ocr_bboxes,
-            analyzer_bboxes
+            ocr_bboxes, analyzer_bboxes
         )
         if is_greyscale:
             use_greyscale_cmap = True

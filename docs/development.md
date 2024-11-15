@@ -16,66 +16,52 @@ The project is structured so that:
 - In the project root directory, you will find common code for using, serving and testing Presidio
     as a cluster of services, as well as CI/CD pipelines codebase and documentation.
 
-### Setting up Pipenv
+### Setting up Poetry
 
-[Pipenv](https://pipenv.pypa.io/en/latest/) is a Python workflow manager, handling
-dependencies and environment for Python packages. It is used by each Presidio service
-as the dependencies manager, to be aligned with the specific requirements versions.
-Follow these steps when starting to work on a Presidio service with Pipenv:
+[Poetry](https://python-poetry.org/) is Python package manager. It is used to manage dependencies and virtual
+environments for Presidio services.
+Follow these steps when starting to work on a Presidio service with poetry:
 
-1. Install Pipenv
+1. Install poetry
 
     - Using Pip
 
         ```sh
-        pip install --user pipenv
+        pip install poetry
         ```
 
     - Using Homebrew (in MacOS)
 
         ```
-        brew install pipenv
+        brew install poetry
         ```
 
-    Additional installation instructions for Pipenv: <https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv>
+    Additional installation instructions for poetry: <https://python-poetry.org/docs/#installation>
 
-2. Have Pipenv create a virtualenv for the project and install all requirements in the Pipfile,
+2. Have poetry create a virtualenv for the project and install all requirements in the pyproject.toml,
     including dev requirements.
 
     For example, in the `presidio-analyzer` folder, run:
 
     ```
-    pipenv install --dev --skip-lock
+    poetry install --all-extras
     ```
 
 3. Run all tests:
 
     ```
-    pipenv run pytest
+    poetry run pytest
     ```
 
 4. To run arbitrary scripts within the virtual env, start the command with
-    `pipenv run`. For example:
-    1. `pipenv run flake8`
-    2. `pipenv run pip freeze`
-    3. `pipenv run python -m spacy download en_core_web_lg`
+    `poetry run`. For example:
+    1. `poetry run ruff check`
+    2. `poetry run pip freeze`
+    3. `poetry run python -m spacy download en_core_web_lg`
 
     Command 3 downloads the default spacy model needed for Presidio Analyzer.`
 
-#### Alternatively, activate the virtual environment and use the commands by starting a pipenv shell
-
-1. Start shell:
-
-    ```
-    pipenv shell
-    ```
-
-2. Run commands in the shell
-
-    ```
-    pytest
-    pip freeze
-    ```
+#### Alternatively, activate the virtual environment and use the commands using [this method](https://python-poetry.org/docs/basic-usage/#activating-the-virtual-environment).
 
 ### Development guidelines
 
@@ -107,9 +93,9 @@ use docker-compose ps:
 ```bash
 >docker-compose ps
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                    NAMES
-6d5a258d19c2   presidio-anonymizer         "/bin/sh -c 'pipenv …"   6 minutes ago   Up 6 minutes   0.0.0.0:5001->5001/tcp   presidio_presidio-anonymizer_1
-9aad2b68f93c   presidio-analyzer           "/bin/sh -c 'pipenv …"   2 days ago      Up 6 minutes   0.0.0.0:5002->5001/tcp   presidio_presidio-analyzer_1
-1448dfb3ec2b   presidio-image-redactor     "/bin/sh -c 'pipenv …"   2 seconds ago   Up 2 seconds   0.0.0.0:5003->5001/tcp   presidio_presidio-image-redactor_1
+6d5a258d19c2   presidio-anonymizer         "/bin/sh -c 'poetry …"   6 minutes ago   Up 6 minutes   0.0.0.0:5001->5001/tcp   presidio_presidio-anonymizer_1
+9aad2b68f93c   presidio-analyzer           "/bin/sh -c 'poetry …"   2 days ago      Up 6 minutes   0.0.0.0:5002->5001/tcp   presidio_presidio-analyzer_1
+1448dfb3ec2b   presidio-image-redactor     "/bin/sh -c 'poetry …"   2 seconds ago   Up 2 seconds   0.0.0.0:5003->5001/tcp   presidio_presidio-image-redactor_1
 ```
 
 Edit docker-compose.yml configuration file to change the default ports.
@@ -152,7 +138,7 @@ Running the tests locally can be done in two ways:
 1. Using cli, from each service directory, run:
 
     ```sh
-    pipenv run pytest
+    poetry run pytest
     ```
 
 2. Using your IDE.
@@ -233,39 +219,36 @@ run.bat
 
 ### Linting
 
-Presidio services are PEP8 compliant and continuously enforced on style guide issues during the build process using `flake8`.
+Presidio services are PEP8 compliant and continuously enforced on style guide issues during the build process using `ruff`, in turn running `flake8` and other linters.
 
-Running flake8 locally, using `pipenv run flake8`, you can check for those issues prior to committing a change.
+Running ruff locally, using `poetry run ruff check`, you can check for those issues prior to committing a change.
 
-In addition to the basic `flake8` functionality, Presidio uses the following extensions:
+Ruff runs linters in addition to the basic `flake8` functionality, Presidio uses linters as part as ruff such as:
 
 - _pep8-naming_: To check that variable names are PEP8 compliant.
 - _flake8-docstrings_: To check that docstrings are compliant.
 
 ### Automatically format code and check for code styling
 
-To make the linting process easier, you can use pre-commit hooks to verify and automatically format code upon a git commit, using `black`:
+To make the linting process easier, you can use pre-commit hooks to verify and automatically format code upon a git commit, using `ruff-format`:
 
 1. [Install pre-commit package manager locally.](https://pre-commit.com/#install)
 
 2. From the project's root, enable pre-commit, installing git hooks in the `.git/` directory by running: `pre-commit install`.
 
 3. Commit non PEP8 compliant code will cause commit failure and automatically
-    format your code using `black`, as well as checking code formatting using `flake8`
+    format your code using, as well as checking code formatting using `ruff`
 
-        ```sh
-        >git commit -m 'autoformat' presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
-
-        black....................................................................Failed
-        - hook id: black
-        - files were modified by this hook
-
-        reformatted presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
-        All done!
-        1 file reformatted.
-
-        flake8...................................................................Passed
-
-        ```
+```sh
+[INFO] Initializing environment for https://github.com/astral-sh/ruff-pre-commit.
+[INFO] Installing environment for https://github.com/astral-sh/ruff-pre-commit.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+ruff.....................................................................Passed
+ruff-format..............................................................Failed
+- hook id: ruff-format
+- files were modified by this hook
+  5 files reformatted, 4 files left unchanged
+```
 
 4. Committing again will finish successfully, with a well-formatted code.

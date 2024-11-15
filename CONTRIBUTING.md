@@ -38,7 +38,7 @@ To get started, refer to the documentation for [setting up a development environ
 
 ### How to test?
 
-For Python, Presidio leverages `pytest` and `flake8`. See [this tutorial](docs/development.md#testing) on more information on testing presidio modules.
+For Python, Presidio leverages `pytest` and `ruff`. See [this tutorial](docs/development.md#testing) on more information on testing presidio modules.
 
 ### Adding new recognizers for new PII types
 

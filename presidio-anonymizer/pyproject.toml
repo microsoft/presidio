@@ -1,0 +1,38 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.poetry]
+name = "presidio_anonymizer"
+version = "2.2.355"
+description = "Presidio Anonymizer package - replaces analyzed text with desired values."
+authors = ["Presidio <presidio@microsoft.com>"]
+license = "MIT"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["presidio_anonymizer"]
+urls = {Homepage = "https://github.com/Microsoft/presidio"}
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+pycryptodome = ">=3.10.1"
+azure-core = { version = "*", optional = true }
+flask = { version = ">=1.1", optional = true }
+
+[tool.poetry.extras]
+server = ["flask"]
+
+[tool.poetry.group.dev.dependencies]
+pip = "*"
+ruff = "*"
+pytest = "*"
+pytest-mock = "*"
+python-dotenv = "*"
+pre_commit = "*"

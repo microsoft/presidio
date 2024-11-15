@@ -1,4 +1,4 @@
-""" Pytest fixtures for presidio-structured tests. """
+"""Pytest fixtures for presidio-structured tests."""
 
 import pandas as pd
 import pytest
@@ -16,21 +16,23 @@ def sample_df():
             "jane@example.com",
             "johnsmith@example.com",
         ],
-        "phone": ["1234567890", "0987654321", "1122334455"],
+        "phone": ["(212) 456-7890", "(213) 456-7590", "(214) 456-2830"],
     }
     return pd.DataFrame(data)
+
 
 @pytest.fixture
 def sample_df_strategy():
     data = {
-        'name': ['John Doe', 'Jane Smith', 'Alice Johnson'],
-        'email': ['john.doe@example.com', 'jane.smith@example.com', 'alice.johnson@example.com'],
-        'city': ['Anytown', 'Somewhere', 'Elsewhere'],
-        'state': ['CA', 'TX', 'NY'],
-        'postal_code': [12345, 67890, 11223]
+        "name": ["John Doe", "Jane Smith", "Alice Johnson"],
+        "email": ["john.doe@example.com", "jane.smith@example.com", "alice.johnson@example.com"],
+        "city": ["Anytown", "Somewhere", "Elsewhere"],
+        "state": ["CA", "TX", "NY"],
+        "non_pii": ["reallynotpii", "reallynotapii", "reallynotapiiatall"],
     }
 
     return pd.DataFrame(data)
+
 
 @pytest.fixture
 def sample_json():
@@ -42,7 +44,7 @@ def sample_json():
             "street": "123 Main St",
             "city": "Anytown",
             "state": "CA",
-            "postal_code": "12345",
+            "non_pii": "nonpii",
         },
     }
     return data

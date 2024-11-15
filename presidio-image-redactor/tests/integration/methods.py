@@ -7,11 +7,12 @@ import numpy as np
 
 from PIL import Image, ImageChops
 
-IMAGE_SIMILARITY_PROPORTION=0.95
+IMAGE_SIMILARITY_PROPORTION = 0.95
+
 
 def image_sim(image_one: Image, image_two: Image) -> float:
     # Compare if two images are similar, by thresholding
-    delta = ImageChops.difference(image_one, image_two).convert('L')
+    delta = ImageChops.difference(image_one, image_two).convert("L")
     # Count number of black pixels, those that are exactly the same
     num_zero = (np.array(delta.getdata()) == 0).sum()
     num_nonzero = (np.array(delta.getdata()) != 0).sum()

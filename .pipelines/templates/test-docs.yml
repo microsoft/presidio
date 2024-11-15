@@ -7,7 +7,7 @@ pool:
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.9'
+    versionSpec: '3.10'
     addToPath: true
     architecture: 'x64'
 
@@ -20,6 +20,7 @@ steps:
   displayName: 'Run service with docker compose'
   inputs:
     containerregistrytype: 'Azure Container Registry'
+    projectName: 'microsoft_presidio'
     dockerComposeFile: '**/docker-compose.yml'
     action: 'Run services'
 

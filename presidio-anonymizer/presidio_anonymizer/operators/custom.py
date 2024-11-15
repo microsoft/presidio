@@ -1,8 +1,9 @@
 """Replaces the PII text with function result."""
+
 from typing import Dict
 
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import Operator, OperatorType
-from presidio_anonymizer.entities import InvalidParamException
 
 
 class Custom(Operator):
@@ -23,11 +24,11 @@ class Custom(Operator):
         """Validate the provided function is returning a string."""
         new_val = params.get(self.LAMBDA)
         if callable(new_val):
-            if not type(new_val("PII")) == str:
-                raise InvalidParamException("Function return type must be a str")
+            if not isinstance(new_val("PII"), str):
+                raise InvalidParamError("Function return type must be a str")
 
         else:
-            raise InvalidParamException("New value must be a callable function")
+            raise InvalidParamError("New value must be a callable function")
 
     def operator_name(self) -> str:
         """Return operator name."""

@@ -79,7 +79,6 @@ def test_run_current_dir(temp_workspace, mocker):
 
 
 def test_run_with_config(temp_workspace, mocker):
-
     with open(os.path.join(temp_workspace, ".presidiocli"), "w") as f:
         f.write("extends: default\n")
 

@@ -1,14 +1,15 @@
 """Handle the entire text operations using the operators."""
+
 import logging
 from abc import ABC
-from typing import List, Dict
+from typing import Dict, List
 
 from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
 from presidio_anonymizer.entities import (
-    PIIEntity,
-    OperatorConfig,
     EngineResult,
+    OperatorConfig,
     OperatorResult,
+    PIIEntity,
 )
 from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 
@@ -26,7 +27,7 @@ class EngineBase(ABC):
         pii_entities: List[PIIEntity],
         operators_metadata: Dict[str, OperatorConfig],
         operator_type: OperatorType,
-        **operator_kwargs: Dict
+        **operator_kwargs: Dict,
     ) -> EngineResult:
         """
         Operate will do the operations required by the user over the text.

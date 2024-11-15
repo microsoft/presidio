@@ -1,4 +1,6 @@
+# isort: skip_file
 """Image Redactor root module."""
+
 import logging
 
 from .ocr import OCR

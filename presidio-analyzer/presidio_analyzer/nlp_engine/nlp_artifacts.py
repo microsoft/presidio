@@ -40,7 +40,9 @@ class NlpArtifacts:
 
     @staticmethod
     def set_keywords(
-        nlp_engine, lemmas: List[str], language: str  # noqa ANN001
+        nlp_engine,
+        lemmas: List[str],
+        language: str,  # noqa ANN001
     ) -> List[str]:
         """
         Return keywords fpr text.

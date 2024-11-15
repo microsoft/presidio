@@ -6,12 +6,7 @@ from presidio_cli import config
 
 def test_parse_config():
     new = config.PresidioCLIConfig(
-        "entities:\n"
-        "  - PERSON\n"
-        "  - IP_ADDRESS\n"
-        "  - CREDIT_CARD\n"
-        "threshold: 1.0\n"
-        "locale: en_US.UTF-8\n"
+        "entities:\n" "  - PERSON\n" "  - IP_ADDRESS\n" "  - CREDIT_CARD\n" "threshold: 1.0\n" "locale: en_US.UTF-8\n"
     )
 
     assert new.entities == ["PERSON", "IP_ADDRESS", "CREDIT_CARD"]
@@ -54,7 +49,6 @@ def test_is_file(temp_workspace, config):
 
 
 def test_invalid_value(temp_workspace):
-
     with pytest.raises(config.PresidioCLIConfigError):
         config.PresidioCLIConfig("ignore: 1\n")
 

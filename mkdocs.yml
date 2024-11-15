@@ -32,14 +32,16 @@ nav:
     - Presidio Analyzer:
       - Home: analyzer/index.md
       - Developing PII recognizers:
-        - Tutorial : analyzer/adding_recognizers.md
-        - Best practices in developing recognizers : analyzer/developing_recognizers.md
+        - Tutorial: analyzer/adding_recognizers.md
+        - Best practices in developing recognizers: analyzer/developing_recognizers.md
+        - Customizing recognizer registry from file: analyzer/recognizer_registry_provider.md
       - Multi-language support: analyzer/languages.md
       - Customizing the NLP model: 
         - Home: analyzer/customizing_nlp_models.md
         - Spacy/Stanza: analyzer/nlp_engines/spacy_stanza.md
         - Transformers: analyzer/nlp_engines/transformers.md
       - Tracing the decision process: analyzer/decision_process.md
+      - Configuring the Analyzer Engine from file: analyzer/analyzer_engine_provider.md
     - Presidio Anonymizer:
       - Home: anonymizer/index.md
       - Developing PII operators: anonymizer/adding_operators.md
@@ -48,7 +50,18 @@ nav:
     - Evaluating DICOM redaction: image-redactor/evaluating_dicom_redaction.md
   - Handling structured data:
     - Home: structured/index.md
-  - Samples: samples/index.md  
+  - Samples: 
+    - Home: samples/index.md  
+    - Selected samples:
+      - Customizing Presidio Analyzer: samples/python/customizing_presidio_analyzer.ipynb
+      - NER model configuration: samples/python/ner_model_configuration.ipynb
+      - Presidio Structured Basic Usage: samples/python/example_structured.ipynb
+      - Using an allow list with image redaction: samples/python/image_redaction_allow_list_approach.ipynb
+      - Redacting Text PII from DICOM images: samples/python/example_dicom_image_redactor.ipynb
+      - Annotating PII in a PDF: samples/python/example_pdf_annotation.ipynb
+      - Pseudonomization: samples/python/pseudonomyzation.ipynb
+      - Encrypting and Decrypting: samples/python/encrypt_decrypt.ipynb
+
   - General:
     - Supported entities: supported_entities.md
     - Development and design:
@@ -93,11 +106,8 @@ plugins:
       python:
         options:
           docstring_style: sphinx
-- mknotebooks:
-    binder: false
-    binder_service_name: "gh"
-    binder_branch: "main"
-    binder_ui: "lab"
+- mkdocs-jupyter:
+    ignore_h1_titles: True
 
 extra:
   social:

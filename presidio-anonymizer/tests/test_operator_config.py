@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.entities import InvalidParamException, OperatorConfig
+from presidio_anonymizer.entities import InvalidParamError, OperatorConfig
 
 
 def test_given_valid_json_then_we_parse_it_to_operator_config():
@@ -17,7 +17,7 @@ def test_given_valid_json_then_we_parse_it_to_operator_config():
 
 def test_given_invalid_json_then_we_fail_to_parse_it_to_operator_config():
     expected_error = "Invalid input, operator config must contain operator_name"
-    with pytest.raises(InvalidParamException, match=expected_error):
+    with pytest.raises(InvalidParamError, match=expected_error):
         OperatorConfig.from_json(
             {"masking_char": "*", "chars_to_mask": 4, "from_end": True}
         )

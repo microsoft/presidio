@@ -1,14 +1,15 @@
 FROM python:3.9-windowsservercore
 
-ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /app
 
-COPY ./Pipfile* .
+COPY ./pyproject.toml /usr/bin/${NAME}/
+COPY ./README.md /usr/bin/${NAME}/
+COPY ./pyproject.toml /app/pyproject.toml
 RUN pip install --upgrade pip
-RUN pip install pipenv; pipenv install --deploy
+RUN pip install poetry; poetry install --no-root --only=main -E server
 
 COPY . .
 
 EXPOSE ${PORT}
-CMD pipenv run python app.py
+CMD poetry run python app.py

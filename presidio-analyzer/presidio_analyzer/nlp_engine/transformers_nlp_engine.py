@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Dict, List
+from typing import Dict, List, Optional
 
 import spacy
 from spacy.tokens import Doc, Span
@@ -12,8 +12,8 @@ except ImportError:
     transformers = None
 
 from presidio_analyzer.nlp_engine import (
-    SpacyNlpEngine,
     NerModelConfiguration,
+    SpacyNlpEngine,
 )
 
 logger = logging.getLogger("presidio-analyzer")

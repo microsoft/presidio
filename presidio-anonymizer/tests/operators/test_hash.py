@@ -1,7 +1,7 @@
 import pytest
 
 from presidio_anonymizer.operators import Hash
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 
 
 @pytest.mark.parametrize(
@@ -97,7 +97,7 @@ def test_when_hash_type_not_in_range_then_ipe_raised():
     params["hash_type"] = "not_a_hash"
 
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Parameter hash_type value not_a_hash is not in range of values"
         " \\['sha256', 'sha512', 'md5'\\]",
     ):
@@ -116,7 +116,7 @@ def test_when_hash_type_is_empty_string_then_ipe_raised():
     params["hash_type"] = ""
 
     with pytest.raises(
-        InvalidParamException,
+        InvalidParamError,
         match="Parameter hash_type value  is not in range of values"
         " \\['sha256', 'sha512', 'md5'\\]",
     ):

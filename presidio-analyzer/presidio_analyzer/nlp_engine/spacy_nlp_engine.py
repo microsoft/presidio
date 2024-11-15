@@ -1,13 +1,12 @@
 import logging
 from pathlib import Path
-from typing import Optional, Dict, Iterator, Tuple, Union, List
+from typing import Dict, Iterator, List, Optional, Tuple, Union
 
 import spacy
-
 from spacy.language import Language
 from spacy.tokens import Doc, Span
 
-from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, NerModelConfiguration
+from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts, NlpEngine
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -80,9 +79,21 @@ class SpacyNlpEngine(NlpEngine):
             raise ValueError(
                 "model_to_presidio_entity_mapping is missing from model configuration"
             )
-        return list(
+        entities_from_mapping = list(
             set(self.ner_model_configuration.model_to_presidio_entity_mapping.values())
         )
+        entities = [
+            ent
+            for ent in entities_from_mapping
+            if ent not in self.ner_model_configuration.labels_to_ignore
+        ]
+        return entities
+
+    def get_supported_languages(self) -> List[str]:
+        """Return the supported languages for this NLP engine."""
+        if not self.nlp:
+            raise ValueError("NLP engine is not loaded. Consider calling .load()")
+        return list(self.nlp.keys())
 
     def is_loaded(self) -> bool:
         """Return True if the model is already loaded."""
@@ -100,6 +111,7 @@ class SpacyNlpEngine(NlpEngine):
         self,
         texts: Union[List[str], List[Tuple[str, object]]],
         language: str,
+        batch_size: Optional[int] = None,
         as_tuples: bool = False,
     ) -> Iterator[Optional[NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts using spacy pipe.
@@ -115,7 +127,9 @@ class SpacyNlpEngine(NlpEngine):
             raise ValueError("NLP engine is not loaded. Consider calling .load()")
 
         texts = (str(text) for text in texts)
-        docs = self.nlp[language].pipe(texts, as_tuples=as_tuples)
+        docs = self.nlp[language].pipe(
+            texts, as_tuples=as_tuples, batch_size=batch_size
+        )
         for doc in docs:
             yield doc.text, self._doc_to_nlp_artifact(doc, language)
 

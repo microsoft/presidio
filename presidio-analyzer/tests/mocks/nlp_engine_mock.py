@@ -39,3 +39,6 @@ class NlpEngineMock(NlpEngine):
 
     def get_supported_entities(self) -> List[str]:
         pass
+
+    def get_supported_languages(self) -> List[str]:
+        return ["en"]

@@ -1,5 +1,6 @@
+from typing import Dict, List, Tuple, Union
+
 from presidio_image_redactor.entities import ImageRecognizerResult
-from typing import List, Tuple, Dict, Union
 
 
 class BboxProcessor:
@@ -95,7 +96,7 @@ class BboxProcessor:
                         "width": bbox["width"],
                         "height": bbox["height"],
                         "label": bbox["label"],
-                        "entity_type": bbox["entity_type"]
+                        "entity_type": bbox["entity_type"],
                     }
                     for bbox in analyzer_bboxes
                 ]
@@ -106,7 +107,7 @@ class BboxProcessor:
                         "top": max(0, bbox["top"] - padding_width),
                         "width": bbox["width"],
                         "height": bbox["height"],
-                        "label": bbox["label"]
+                        "label": bbox["label"],
                     }
                     for bbox in analyzer_bboxes
                 ]
@@ -117,7 +118,7 @@ class BboxProcessor:
                         "top": max(0, bbox["top"] - padding_width),
                         "width": bbox["width"],
                         "height": bbox["height"],
-                        "entity_type": bbox["entity_type"]
+                        "entity_type": bbox["entity_type"],
                     }
                     for bbox in analyzer_bboxes
                 ]
@@ -127,7 +128,7 @@ class BboxProcessor:
                         "left": max(0, bbox["left"] - padding_width),
                         "top": max(0, bbox["top"] - padding_width),
                         "width": bbox["width"],
-                        "height": bbox["height"]
+                        "height": bbox["height"],
                     }
                     for bbox in analyzer_bboxes
                 ]

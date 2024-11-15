@@ -1,6 +1,6 @@
 mkdocs
 mkdocs-material
-mknotebooks
+mkdocs-jupyter
 pymdown-extensions
 markdown
 mkdocstrings-python

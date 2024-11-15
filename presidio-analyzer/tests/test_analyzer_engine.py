@@ -1,6 +1,8 @@
 import copy
 from abc import ABC
+from contextlib import nullcontext
 from typing import List, Optional
+import re
 
 import pytest
 
@@ -15,6 +17,9 @@ from presidio_analyzer import (
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
     SpacyNlpEngine,
+)
+from presidio_analyzer.recognizer_registry import (
+    RecognizerRegistryProvider
 )
 
 # noqa: F401
@@ -54,11 +59,6 @@ def unit_test_guid():
     return "00000000-0000-0000-0000-000000000000"
 
 
-@pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    return nlp_engines["spacy_en"]
-
-
 def test_simple():
     dic = {
         "text": "John Smith drivers license is AC432223",
@@ -87,6 +87,29 @@ def test_when_analyze_with_predefined_recognizers_then_return_results(
     assert len(results) == 1
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
 
+@pytest.mark.parametrize(
+    "registry_config,analyzer_lang,expectation",
+    [
+        ({"supported_languages": ["en"]}, ["es", "de"], pytest.raises(ValueError)),
+        (None, ["es", "de"], pytest.raises(ValueError)),
+        ({"supported_languages": ["es", "de"]}, None, pytest.raises(ValueError)),
+        ({"supported_languages": ["es", "de"]}, ["de", "es"], nullcontext()),
+        (None, None, nullcontext()),
+    ]
+)
+def test_when_analyze_with_unsupported_language_must_match(registry_config, analyzer_lang, expectation):
+    with expectation:
+        registry = RecognizerRegistryProvider(registry_configuration=registry_config).create_recognizer_registry()
+        AnalyzerEngine(
+            registry=registry,
+            supported_languages=analyzer_lang,
+            nlp_engine=NlpEngineMock(),
+        )
+
+def test_when_analyze_with_defaults_success(
+):
+    registry = RecognizerRegistryProvider().create_recognizer_registry()
+    AnalyzerEngine(registry=registry)
 
 def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     loaded_registry, unit_test_guid, spacy_nlp_engine, max_score
@@ -236,6 +259,76 @@ def test_when_allow_list_specified_multiple_items(loaded_analyzer_engine):
         text=text,
         language="en",
         allow_list=["bing.com", "microsoft.com"],
+    )
+    assert len(results) == 0
+
+
+def test_when_regex_allow_list_specified(loaded_analyzer_engine):
+    text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
+    results = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+    )
+    assert len(results) == 3
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+    results = loaded_analyzer_engine.analyze(
+        text=text, language="en", allow_list=["bing"], allow_list_match = "regex"
+    )
+    assert len(results) == 2
+    assert text[results[0].start : results[0].end] == "microsoft.com"
+    assert text[results[1].start : results[1].end] == "azure.com"
+
+
+def test_when_regex_allow_list_specified_but_none_in_file(loaded_analyzer_engine):
+
+    text = "bing.com is his favorite website"
+    results = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+    )
+    assert len(results) == 1
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+    results = loaded_analyzer_engine.analyze(
+        text=text, language="en", allow_list=["microsoft"], allow_list_match = "regex"
+    )
+    assert len(results) == 1
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+
+def test_when_regex_allow_list_specified_multiple_items_with_missing_flags(loaded_analyzer_engine):
+    text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
+    results = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+    )
+    assert len(results) == 3
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+    results = loaded_analyzer_engine.analyze(
+        text=text, language="en", allow_list=["bing", "microsoft"], allow_list_match = "regex", 
+    )
+    assert len(results) == 1
+    assert text[results[0].start : results[0].end] == "azure.com"
+
+
+def test_when_regex_allow_list_specified_with_regex_flags(loaded_analyzer_engine):
+    text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
+    results = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+    )
+    assert len(results) == 3
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+    results = loaded_analyzer_engine.analyze(
+        text=text, language="en", allow_list=["BING", "MICROSOFT", "AZURE"], allow_list_match = "regex", regex_flags=0
+    )
+    assert len(results) == 3
+
+    results = loaded_analyzer_engine.analyze(
+        text=text, language="en", allow_list=["BING", "MICROSOFT", "AZURE"], allow_list_match = "regex", regex_flags=re.IGNORECASE
     )
     assert len(results) == 0
 

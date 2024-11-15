@@ -40,7 +40,6 @@ class RecognizerResult:
         analysis_explanation: AnalysisExplanation = None,
         recognition_metadata: Dict = None,
     ):
-
         self.entity_type = entity_type
         self.start = start
         self.end = end
