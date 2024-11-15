@@ -11,10 +11,10 @@ license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 keywords = ["pii", "checker", "presidio_cli"]
 urls = {Homepage = "https://github.com/microsoft/presidio"}
@@ -22,7 +22,7 @@ readme = "README.md"
 include = ["conf/*", ".presidiocli"]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+python = ">=3.9,<4.0"
 presidio-analyzer = ">= 2.2"
 pyyaml = "*"
 pathspec = "*"

@@ -74,6 +74,9 @@ class Server:
                     return_decision_process=req_data.return_decision_process,
                     ad_hoc_recognizers=req_data.ad_hoc_recognizers,
                     context=req_data.context,
+                    allow_list=req_data.allow_list,
+                    allow_list_match=req_data.allow_list_match,
+                    regex_flags=req_data.regex_flags
                 )
 
                 return Response(
