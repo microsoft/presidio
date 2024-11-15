@@ -1,4 +1,3 @@
-version: '3'
 services:
   presidio-anonymizer:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer${TAG}

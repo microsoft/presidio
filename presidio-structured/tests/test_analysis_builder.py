@@ -40,7 +40,7 @@ def test_find_most_common_entity(tabular_analysis_builder, sample_df_strategy):
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "URL"
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
-    assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
+    assert key_recognizer_result_map["non_pii"].entity_type == "NON_PII"
 
 
 def test_find_highest_confidence_entity(tabular_analysis_builder, sample_df_strategy):
@@ -51,7 +51,7 @@ def test_find_highest_confidence_entity(tabular_analysis_builder, sample_df_stra
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
-    assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
+    assert key_recognizer_result_map["non_pii"].entity_type == "NON_PII"
 
 
 def test_find_mixed_strategy_entity(tabular_analysis_builder, sample_df_strategy):
@@ -62,7 +62,7 @@ def test_find_mixed_strategy_entity(tabular_analysis_builder, sample_df_strategy
     assert key_recognizer_result_map["name"].entity_type == "PERSON"
     assert key_recognizer_result_map["email"].entity_type == "EMAIL_ADDRESS"
     assert key_recognizer_result_map["city"].entity_type == "LOCATION"
-    assert key_recognizer_result_map["postal_code"].entity_type == "NON_PII"
+    assert key_recognizer_result_map["non_pii"].entity_type == "NON_PII"
 
 
 def test_find_mixed_strategy_entity_with_custom_mixed_strategy_threshold(tabular_analysis_builder, sample_df):
@@ -135,7 +135,7 @@ def test_generate_analysis_json_with_empty_data(json_analysis_builder):
 def test_analysis_json_when_default_threshold_is_high_then_only_email_passes(
     sample_json,
 ):
-    analyzer_engine = AnalyzerEngine(default_score_threshold=0.9)
+    analyzer_engine = AnalyzerEngine(default_score_threshold=0.9, log_decision_process=True)
     json_analysis_builder = JsonAnalysisBuilder(analyzer_engine)
     structured_analysis = json_analysis_builder.generate_analysis(sample_json)
 
