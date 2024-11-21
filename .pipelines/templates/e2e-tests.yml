@@ -8,9 +8,6 @@ parameters:
   - name: anonymizer_base_url
     type: string
     default: ''
-variables:
-  DOCKER_BUILDKIT: "1"
-  COMPOSE_DOCKER_CLI_BUILD: "1"
 steps:
   - script: |
       docker buildx create --use --name mybuilder
