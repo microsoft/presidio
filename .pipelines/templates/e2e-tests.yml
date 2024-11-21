@@ -9,10 +9,11 @@ parameters:
     type: string
     default: ''
 steps:
-  - script: |
+    - script: |
       docker buildx create --use --name mybuilder
       docker buildx inspect mybuilder --bootstrap
-    displayName: Set up Docker Buildx
+      displayName: Set up Docker Buildx
+
     - task: DockerCompose@0
       displayName: Start Presidio Cluster
       inputs:
