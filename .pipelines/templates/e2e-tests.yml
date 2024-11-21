@@ -23,9 +23,9 @@ steps:
           projectName: 'microsoft_presidio'
           dockerComposeFile: docker-compose.yml
           buildImages: false
+          buildArguments: '--platform linux/amd64,linux/arm64'
       # Start cluster when testing against remote cluster, when an external url is not provided.
       condition: eq('${{ parameters.anonymizer_base_url }}', '')
-      buildArguments: '--platform linux/amd64,linux/arm64'
 
     - task: UsePythonVersion@0
       inputs:
