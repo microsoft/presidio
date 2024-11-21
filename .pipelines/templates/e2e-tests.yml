@@ -8,7 +8,14 @@ parameters:
   - name: anonymizer_base_url
     type: string
     default: ''
+variables:
+  DOCKER_BUILDKIT: "1"
+  COMPOSE_DOCKER_CLI_BUILD: "1"
 steps:
+  - script: |
+      docker buildx create --use --name mybuilder
+      docker buildx inspect mybuilder --bootstrap
+    displayName: Set up Docker Buildx
     - task: DockerCompose@0
       displayName: Start Presidio Cluster
       inputs:
@@ -18,7 +25,8 @@ steps:
           buildImages: false
       # Start cluster when testing against remote cluster, when an external url is not provided.
       condition: eq('${{ parameters.anonymizer_base_url }}', '')
-      
+      buildArguments: '--platform linux/amd64,linux/arm64'
+
     - task: UsePythonVersion@0
       inputs:
           versionSpec: '3.10'
