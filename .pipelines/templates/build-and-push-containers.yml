@@ -30,8 +30,7 @@ steps:
           IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
           TAG=${{ parameters.TAG }}
         projectName: 'microsoft_presidio'
-    env:
-      DOCKER_CLI_EXPERIMENTAL: 'enabled'
+        buildArguments: '--platform linux/amd64,linux/arm64'
 
         
   - task: DockerCompose@0
@@ -48,5 +47,4 @@ steps:
           REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
           IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
           TAG=${{ parameters.TAG }}
-    env:
-      DOCKER_CLI_EXPERIMENTAL: 'enabled'
+        buildArguments: '--platform linux/amd64,linux/arm64'
