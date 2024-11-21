@@ -18,6 +18,9 @@ services:
       context: ./presidio-analyzer
       args:
         - NAME=presidio-analyzer
+       platforms:
+        - linux/amd64
+        - linux/arm64     
     environment:
       - PORT=5001
     ports:
