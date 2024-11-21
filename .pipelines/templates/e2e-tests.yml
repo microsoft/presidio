@@ -10,8 +10,8 @@ parameters:
     default: ''
 steps:
     - script: |
-      docker buildx create --use --name mybuilder
-      docker buildx inspect mybuilder --bootstrap
+          docker buildx create --use --name mybuilder
+          docker buildx inspect mybuilder --bootstrap
       displayName: Set up Docker Buildx
 
     - task: DockerCompose@0
