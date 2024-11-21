@@ -15,6 +15,10 @@ parameters:
   default: 'docker-compose.yml'
 steps:
   - script: |
+      docker buildx create --use --name mybuilder
+      docker buildx inspect mybuilder --bootstrap
+      displayName: Set up Docker Buildx
+  - script: |
       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     displayName: 'Set up QEMU'
   - task: DockerCompose@0
