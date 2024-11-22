@@ -14,14 +14,15 @@ parameters:
   type: string
   default: 'docker-compose.yml'
 steps:
-    - script: |
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  - script: |
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     displayName: 'Set up QEMU'
 
-    - script: |
+  - script: |
         docker buildx create --use --name mybuilder
         docker buildx inspect mybuilder --bootstrap
     displayName: Set up Docker Buildx
+
   - task: DockerCompose@0
     displayName: Build Presidio Images
     inputs:
