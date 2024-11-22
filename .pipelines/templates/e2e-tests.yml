@@ -10,8 +10,8 @@ parameters:
     default: ''
 steps:
     - script: |
-      docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    displayName: 'Set up QEMU'
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      displayName: 'Set up QEMU'
 
     - script: |
           docker buildx create --use --name mybuilder
