@@ -196,10 +196,9 @@ class PatternRecognizer(LocalRecognizer):
             matches = pattern.compiled_regex.finditer(text)
             match_time = datetime.datetime.now() - match_start_time
             logger.debug(
-                "--- match_time[%s]: %s.%s seconds",
+                "--- match_time[%s]: %.6f seconds",
                 pattern.name,
-                match_time.seconds,
-                match_time.microseconds,
+                match_time.total_seconds()
             )
 
             for match in matches:
