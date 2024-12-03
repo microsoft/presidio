@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [2.2.356] - Oct 28th 2024
+## [2.2.355] - 2024-10-28
+### Added
+#### Docs
+ * Add a link to HashiCorp vault operator resource ([#1468](https://github.com/microsoft/presidio/pull/1468)) (Thanks [Akshay Karle](https://github.com/akshaykarle))
+### Changed
+#### Analyzer
+ * Updates to the transformers conf docs and yaml file ([#1467](https://github.com/microsoft/presidio/pull/1467)) 
+
+#### Docs
+ * docs: clarify the docs on deploying presidio to k8s ([#1453](https://github.com/microsoft/presidio/pull/1453)) (Thanks [Roel Fauconnier](https://github.com/roel4ez))
+
+
 ## [2.2.355] - July 9th 2024
 
 > Note: A new YAML based mechanism has been added to support no-code customization and creation of recognizers. 
@@ -431,8 +445,8 @@ Upgrade Analyzer spacy version to 3.0.5
 
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
-
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.355...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.356...HEAD
+[2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...356
 [2.2.355]: https://github.com/microsoft/presidio/compare/2.2.354...2.2.355
 [2.2.354]: https://github.com/microsoft/presidio/compare/2.2.353...2.2.354
 [2.2.353]: https://github.com/microsoft/presidio/compare/2.2.352...2.2.353
