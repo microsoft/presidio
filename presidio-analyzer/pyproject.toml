@@ -36,7 +36,6 @@ azure-ai-textanalytics = { version = "*", optional = true }
 azure-core = { version = "*", optional = true }
 transformers = { version = "*", optional = true }
 huggingface_hub = { version = "*", optional = true }
-spacy = "!=3.7.0"  # Exclude spaCy 3.7.0 -> https://github.com/microsoft/presidio/issues/1487
 
 [tool.poetry.extras]
 server = ["flask"]
