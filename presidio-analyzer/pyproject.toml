@@ -23,7 +23,7 @@ include = ["conf/*",]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
-spacy= ">=3.4.4, <4.0.0"
+spacy= ">=3.4.4, <4.0.0, !=3.7.0"
 regex = "*"
 tldextract = "*"
 pyyaml = "*"
