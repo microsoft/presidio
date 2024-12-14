@@ -135,7 +135,7 @@ class Server:
         def http_exception(e):
             return jsonify(error=e.description), e.code
 
-def create_app():
+def create_app(): # noqa
     server = Server()
     return server.app
 
