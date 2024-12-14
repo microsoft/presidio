@@ -80,7 +80,7 @@ class Server:
             self.logger.error(f"A fatal error occurred during execution: {e}")
             return jsonify(error="Internal server error"), 500
 
-def create_app():
+def create_app(): # noqa
     server = Server()
     return server.app
 
