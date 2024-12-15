@@ -32,9 +32,10 @@ azure-ai-formrecognizer = ">=3.3.0,<4.0.0"
 opencv-python = ">=4.0.0,<5.0.0"
 python-gdcm = ">=3.0.24.1"
 flask = { version = ">=1.1", optional = true }
+gunicorn = {version = "*", optional = true}
 
 [tool.poetry.extras]
-server = ["flask"]
+server = ["flask", "gunicorn"]
 
 [tool.poetry.group.dev.dependencies]
 pip = "*"
