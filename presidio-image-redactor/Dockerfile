@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 ARG NAME
 ARG NLP_CONF_FILE
@@ -9,6 +9,9 @@ ENV PIP_NO_CACHE_DIR=1
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
 ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
 ENV NLP_CONF_FILE=${NLP_CONF_FILE}
+
+ENV PORT=3000
+ENV WORKERS=1
 
 COPY ${ANALYZER_CONF_FILE} /usr/bin/${NAME}/${ANALYZER_CONF_FILE}
 COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /usr/bin/${NAME}/${RECOGNIZER_REGISTRY_CONF_FILE}
@@ -35,4 +38,4 @@ RUN pip install poetry && poetry install --no-root --only=main -E server
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD poetry run python app.py
+CMD poetry run gunicorn -w $WORKERS -b 0.0.0.0:$PORT 'app:create_app()'

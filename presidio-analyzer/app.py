@@ -74,6 +74,9 @@ class Server:
                     return_decision_process=req_data.return_decision_process,
                     ad_hoc_recognizers=req_data.ad_hoc_recognizers,
                     context=req_data.context,
+                    allow_list=req_data.allow_list,
+                    allow_list_match=req_data.allow_list_match,
+                    regex_flags=req_data.regex_flags
                 )
 
                 return Response(
@@ -132,8 +135,11 @@ class Server:
         def http_exception(e):
             return jsonify(error=e.description), e.code
 
+def create_app(): # noqa
+    server = Server()
+    return server.app
 
 if __name__ == "__main__":
+    app = create_app()
     port = int(os.environ.get("PORT", DEFAULT_PORT))
-    server = Server()
-    server.app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port)
