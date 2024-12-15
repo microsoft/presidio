@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Analyzer
+
+### Anonymizer
+
+### Image Redactor
+
+### Presidio Structured
+
+### General
+
+## [2.3.356] - 2024-12-15
+
+### Analyzer
+- Added logic to handle phone numbers with country code (#1426) (Thanks @kauabh)
+- Added UK National Insurance Number Recognizer (#1446) (Thanks @hhobson)
+- Fixed regex match_time output (#1488) (Thanks @andrewisplinghoff)
+- Added fix to ensure configuration files are closed properly when loading them (#1423) (Thanks @saulbein)
+- Closing handles for YAML file (#1424) (Thanks @roeybc)
+- Reduce memory usage of Analyzer test suite (#1429) (Thanks @hhobson)
+- Added `batch_size` parameter to `BatchAnalyzerEngine` (#1449) (Thanks @roeybc)
+- Remove ignored labels from supported entities (#1454) (Thanks @omri374)
+- Update US_SSN CONTEXT and unit test (#1455) (Thanks @claesmk)
+- Fixed bug with Azure AI language context (#1458) (Thanks @omri374)
+- Add support for allow_list, allow_list_match, regex_flags in REST API (#1484) (Thanks @hdw868)
+- Add a link to model classes to simplify configuration (#1472) (Thanks @omri374)
+- Restricting spacy.cli for version 3.7.0 (#1495) (Thanks @kshitijcode)
+
+### Anonymizer
+- No changes specified for Anonymizer in this release.
+
+
+### Presidio-Structured
+- Fix presidio-structured build - lock numpy version (#1465) (Thanks @SharonHart)
+
+
+### Image Redactor
+- Fix bug with image conversion (#1445) (Thanks @omri374)
+
+### General
+- Removed Python 3.8 support (EOL) and added 3.12 (#1479) (Thanks @omri374)
+- Update Docker build to use gunicorn for containers (#1497) (Thanks @RKapadia01)
+- New Dev containers for analyzer, analyzer+transformers, anonymizer (#1459) (Thanks @roeybc)
+- Added dev containers for: analyzer, analyzer+transformers, anonymizer, and image redaction (#1450) (Thanks @roeybc)
+- Added support for allow_list, allow_list_match, regex_flags in REST API (#1488) (Thanks @hdw868)
+- Typo fix in if condition (#1419) (Thanks @omri374)
+- Minor notebook changes (#1420) (Thanks @omri374)
+- Do not release `presidio-cli` as part of the release pipeline (#1422) (Thanks @SharonHart)
+- (Docs) Use Presidio across Anthropic, Bedrock, VertexAI, Azure OpenAI, etc. with LiteLLM Proxy (#1421) (Thanks @krrishdholakia)
+- Update CI due to DockerCompose project name issue (#1428) (Thanks @omri374)
+- Update docker-compose installation docs (#1439) (Thanks @MWest2020)
+- Fix space typo in docs (#1459) (Thanks @artfuldev)
+- Unlock numpy after dropping 3.8 (#1480) (Thanks @SharonHart)
+
+
+## [2.2.355] - 2024-10-28
+### Added
+#### Docs
+ * Add a link to HashiCorp vault operator resource ([#1468](https://github.com/microsoft/presidio/pull/1468)) (Thanks [Akshay Karle](https://github.com/akshaykarle))
+### Changed
+#### Analyzer
+ * Updates to the transformers conf docs and yaml file ([#1467](https://github.com/microsoft/presidio/pull/1467)) 
+
+#### Docs
+ * docs: clarify the docs on deploying presidio to k8s ([#1453](https://github.com/microsoft/presidio/pull/1453)) (Thanks [Roel Fauconnier](https://github.com/roel4ez))
+
+
 ## [2.2.355] - July 9th 2024
 
 > Note: A new YAML based mechanism has been added to support no-code customization and creation of recognizers. 
@@ -431,8 +499,8 @@ Upgrade Analyzer spacy version to 3.0.5
 
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
-
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.355...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.356...HEAD
+[2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...356
 [2.2.355]: https://github.com/microsoft/presidio/compare/2.2.354...2.2.355
 [2.2.354]: https://github.com/microsoft/presidio/compare/2.2.353...2.2.354
 [2.2.353]: https://github.com/microsoft/presidio/compare/2.2.352...2.2.353
