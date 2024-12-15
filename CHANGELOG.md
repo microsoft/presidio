@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Analyzer
+
+### Anonymizer
+
+### Image Redactor
+
+### Presidio Structured
+
+### General
+
 ## [2.3.356] - 2024-12-15
 
 ### Analyzer
@@ -15,7 +27,6 @@ All notable changes to this project will be documented in this file.
 - Remove ignored labels from supported entities (#1454) (Thanks @omri374)
 - Update US_SSN CONTEXT and unit test (#1455) (Thanks @claesmk)
 - Fixed bug with Azure AI language context (#1458) (Thanks @omri374)
-- Updates to the transformers conf docs and yaml file (#1467) (Thanks @omri374)
 - Add support for allow_list, allow_list_match, regex_flags in REST API (#1484) (Thanks @hdw868)
 - Add a link to model classes to simplify configuration (#1472) (Thanks @omri374)
 - Restricting spacy.cli for version 3.7.0 (#1495) (Thanks @kshitijcode)
@@ -44,8 +55,6 @@ All notable changes to this project will be documented in this file.
 - Update CI due to DockerCompose project name issue (#1428) (Thanks @omri374)
 - Update docker-compose installation docs (#1439) (Thanks @MWest2020)
 - Fix space typo in docs (#1459) (Thanks @artfuldev)
-- Clarify the docs on deploying Presidio to Kubernetes (#1453) (Thanks @roel4ez)
-- Add a link to HashiCorp vault operator resource (#1468) (Thanks @akshaykarle)
 - Unlock numpy after dropping 3.8 (#1480) (Thanks @SharonHart)
 
 
