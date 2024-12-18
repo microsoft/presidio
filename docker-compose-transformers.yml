@@ -5,6 +5,9 @@ services:
       context: ./presidio-anonymizer
       args:
         - NAME=presidio-anonymizer
+      platforms:
+        - linux/amd64
+        - linux/arm64
     environment:
       - PORT=5001
     ports:
@@ -16,6 +19,9 @@ services:
       args:
         - NAME=presidio-analyzer
         - NLP_CONF_FILE=presidio_analyzer/conf/transformers.yaml
+      platforms:
+        - linux/amd64
+        - linux/arm64
       dockerfile: Dockerfile.transformers
     environment:
       - PORT=5001
