@@ -21,10 +21,12 @@
 | Usage | Text      | Python                                 | [Using Flair as an external PII model](https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py)|
 | Usage | Text      | Python file                            | [Using Span Marker as an external PII model](https://github.com/microsoft/presidio/blob/main/docs/samples/python/span_marker_recognizer.py)|
 | Usage | Text      | Python file                            | [Using Transformers as an external PII model](python/transformers_recognizer/index.md)|
-| Usage | Text      | Python file                            | [Pseudonomization (replace PII values using mappings)](python/pseudonomyzation.ipynb)|
+| Usage | Text      | Python file                            | [Pseudonymization (replace PII values using mappings)](python/pseudonymization.ipynb)|
 | Usage | Text      | Python file                            | [Passing a lambda as a Presidio anonymizer using Faker](python/example_custom_lambda_anonymizer.py)|
 | Usage | Text      | Python file                            | [Synthetic data generation with OpenAI](python/synth_data_with_openai.ipynb)|
+| Usage | Text      | Python file                            | [Keeping some entities from being anonymized](python/keep_entities.ipynb)|
 | Usage | Text      | LiteLLM Proxy                            | [PII Masking LLM calls across Anthropic/Gemini/Bedrock/Azure, etc.](docker/litellm.md)|
+| Usage | Text     | Python Notebook                         | [YAML based no-code configuration](python/no_code_config.ipynb) |
 | Usage      | | REST API (postman)                          | [Presidio as a REST endpoint](docker/index.md)|
 | Deployment | | App Service                                 | [Presidio with App Service](deployments/app-service/index.md)|
 | Deployment | | Kubernetes                                  | [Presidio with Kubernetes](deployments/k8s/index.md)|

@@ -50,9 +50,9 @@ anonymized_df = input_df.withColumn(
 
 ## Pre-requisites
 
-If you do not have an instance of Azure Databricks, follow through with the following steps to provision and setup the required infrastrucutre.
+If you do not have an instance of Azure Databricks, follow through with the following steps to provision and setup the required infrastructure.
 
-If you do have a Databricks workspace and a cluster you wish to configure to run Presidio, jump over to the [Configure an existing cluster](#Configure-an-existing-cluster) section.
+If you do have a Databricks workspace and a cluster you wish to configure to run Presidio, jump over to the [Configure an existing cluster](#configure-an-existing-cluster) section.
 
 ### Deploy Infrastructure
 
@@ -152,7 +152,7 @@ Run the first code-cell and note the following parameters on the top end of the 
 
 ### Run the notebook
 
-Upload a text file to the blob storage input folder, using any preferd method ([Azure Portal](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal), [Azure Storage Explorer](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-storage-explorer), [Azure CLI](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-cli)).
+Upload a text file to the blob storage input folder, using any preferred method ([Azure Portal](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal), [Azure Storage Explorer](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-storage-explorer), [Azure CLI](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-cli)).
 
 ```bash
 az storage blob upload --account-name $STORAGE_ACCOUNT_NAME  --container $STORAGE_CONTAINER_NAME --file ./[file name] --name input/[file name]
