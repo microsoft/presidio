@@ -33,7 +33,6 @@ class ImagePreprocessor:
         """Convert PIL image to numpy array.
 
         :param image: Loaded PIL image.
-        :param convert_to_greyscale: Whether to convert the image to greyscale.
 
         :return: image pixels as a numpy array.
 
@@ -167,8 +166,8 @@ class SegmentedAdaptiveThreshold(ImagePreprocessor):
 
         :param block_size: Size of the neighborhood area for threshold calculation.
         :param contrast_threshold: Threshold for low contrast images.
-        :param C_low_contrast: Constant added to the mean for low contrast images.
-        :param C_high_contrast: Constant added to the mean for high contrast images.
+        :param c_low_contrast: Constant added to the mean for low contrast images.
+        :param c_high_contrast: Constant added to the mean for high contrast images.
         :param bg_threshold: Threshold for background color.
         """
 

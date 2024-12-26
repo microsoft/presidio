@@ -53,7 +53,9 @@ class RecognizerRegistry:
         )
 
     def _create_nlp_recognizer(
-        self, nlp_engine: NlpEngine = None, supported_language: str = None
+        self,
+        nlp_engine: Optional[NlpEngine] = None,
+        supported_language: Optional[str] = None
     ) -> SpacyRecognizer:
         nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
 
