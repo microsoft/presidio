@@ -85,19 +85,19 @@ nav:
         - Anonymizing known values: samples/python/Anonymizing known values.ipynb
         - Keeping some entities from being anonymized: samples/python/keep_entities.ipynb
         - Integrating with external services: samples/python/integrating_with_external_services.ipynb
-        - Remote Recognizer: samples/python/example_remote_recognizer.py
+        - Remote Recognizer: https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_remote_recognizer.py
         - Azure AI Language as a Remote Recognizer: samples/python/text_analytics/index.md
-        - Using Flair as an external PII model: samples/python/flair_recognizer.py
+        - Using Flair as an external PII model: https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py
         - Using Span Marker as an external PII model: samples/python/span_marker_recognizer.py
         - Using Transformers as an external PII model: samples/python/transformers_recognizer/index.md
         - Pseudonymization (replace PII values using mappings): samples/python/pseudonymization.ipynb
-        - Passing a lambda as a Presidio anonymizer using Faker: samples/python/example_custom_lambda_anonymizer.py
+        - Passing a lambda as a Presidio anonymizer using Faker: https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_custom_lambda_anonymizer.py
         - Synthetic data generation with OpenAI: samples/python/synth_data_with_openai.ipynb
         - YAML based no-code configuration: samples/python/no_code_config.ipynb
       - Data:
         - Analyzing structured / semi-structured data in batch: samples/python/batch_processing.ipynb
         - Presidio Structured Basic Usage Notebook: samples/python/example_structured.ipynb
-        - Analyze and Anonymize CSV file: samples/python/process_csv_file.py
+        - Analyze and Anonymize CSV file: https://github.com/microsoft/presidio/blob/main/docs/samples/python/process_csv_file.py
       - Images:
         - Redacting Text PII from DICOM images: samples/python/example_dicom_image_redactor.ipynb
         - Using an allow list with image redaction: samples/python/image_redaction_allow_list_approach.ipynb
