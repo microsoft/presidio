@@ -88,7 +88,7 @@ nav:
         - Remote Recognizer: https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_remote_recognizer.py
         - Azure AI Language as a Remote Recognizer: samples/python/text_analytics/index.md
         - Using Flair as an external PII model: https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py
-        - Using Span Marker as an external PII model: samples/python/span_marker_recognizer.py
+        - Using Span Marker as an external PII model: https://github.com/microsoft/presidio/blob/main/docs/samples/python/span_marker_recognizer.py
         - Using Transformers as an external PII model: samples/python/transformers_recognizer/index.md
         - Pseudonymization (replace PII values using mappings): samples/python/pseudonymization.ipynb
         - Passing a lambda as a Presidio anonymizer using Faker: https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_custom_lambda_anonymizer.py
