@@ -159,7 +159,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :param input_dicom_path: String path to DICOM image.
         :param output_dir: String path to parent output directory.
-        :param padding_width : Padding width to use when running OCR.
+        :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
@@ -228,7 +228,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :param input_dicom_path: String path to directory of DICOM images.
         :param output_dir: String path to parent output directory.
-        :param padding_width : Padding width to use when running OCR.
+        :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box

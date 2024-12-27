@@ -32,8 +32,9 @@ class RecognizerRegistry:
 
     :param recognizers: An optional list of recognizers,
     that will be available instead of the predefined recognizers
-    :param global_regex_flags : regex flags to be used in regex matching,
+    :param global_regex_flags: regex flags to be used in regex matching,
     including deny-lists
+    :param supported_languages: List of languages supported by this registry.
 
     """
 

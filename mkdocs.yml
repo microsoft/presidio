@@ -181,8 +181,7 @@ plugins:
               functions: true
               modules: false
             filters:
-            - "!^_"
-            - "^__"
+              - "!^_"
   - mkdocs-jupyter:
       ignore_h1_titles: True
 
