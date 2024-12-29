@@ -4,7 +4,7 @@
   - [What is Presidio?](#what-is-presidio)
   - [Why did Microsoft create Presidio?](#why-did-microsoft-create-presidio)
   - [Is Microsoft Presidio an official Microsoft product?](#is-microsoft-presidio-an-official-microsoft-product)
-  - [What is the difference between Presidio and different PII detection services like Azure Text Analytics and Amazon Comprehend?](#what-is-the-difference-between-presidio-and-different-pii-detection-services-like-azure-text-analytics-and-amazon-comprehend)
+  - [What is the difference between Presidio and different PII detection services like Azure AI Language and Amazon Comprehend?](#what-is-the-difference-between-presidio-and-different-pii-detection-services-like-azure-ai-language-and-amazon-comprehend)
 - [Using Presidio](#using-presidio)
   - [How can I start using Presidio?](#how-can-i-start-using-presidio)
   - [What are the main building blocks in Presidio?](#what-are-the-main-building-blocks-in-presidio)
@@ -33,7 +33,7 @@ Presidio (Origin from Latin praesidium ‘protection, garrison’) helps to ensu
     Presidio is a library or SDK rather than a service. It is meant to be customized to the user's or organization's specific needs.
 
 !!! warning "Warning"
-    Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
+    Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
 ### Why did Microsoft create Presidio?
 
@@ -50,11 +50,11 @@ The authors and maintainers of Presidio come from the [Industry Solutions Engine
 !!! note "Note"
     Microsoft Presidio is not an official Microsoft product. Usage terms are defined in the [repository's license](https://github.com/microsoft/presidio/blob/main/LICENSE).
 
-### What is the difference between Presidio and different PII detection services like Azure Text Analytics and Amazon Comprehend?
+### What is the difference between Presidio and different PII detection services like Azure AI Language and Amazon Comprehend?
 
 In a nutshell, Presidio is a library which is meant to be customized, whereas different SaaS tools for PII detection have less customization capabilities. Most of these SaaS offerings use dedicated ML models and other logic for PII detection and often have better entity coverage or accuracy than Presidio.
 
-Based on our internal research, leveraging Presidio in parallel to 3rd party PII detection services like Azure Text Analytics can bring optimal results mainly when the data in hand has entity types or values not supported by the 3rd party service. ([see example here](https://microsoft.github.io/presidio/samples/python/text_analytics/)).
+Based on our internal research, leveraging Presidio in parallel to 3rd party PII detection services like Azure AI Language can bring optimal results mainly when the data in hand has entity types or values not supported by the 3rd party service. ([see example here](https://microsoft.github.io/presidio/samples/python/text_analytics/)).
 
 ## Using Presidio
 
@@ -71,7 +71,8 @@ Presidio is a suite built of several packages and building blocks:
 1. [Presidio Analyzer](https://microsoft.github.io/presidio/analyzer/): a package for detecting PII entities in natural language.
 2. [Presidio Anonymizer](https://microsoft.github.io/presidio/anonymizer/): a package for manipulating PII entities in text (e.g. remove, redact, hash, encrypt).
 3. [Presidio Image Redactor](https://microsoft.github.io/presidio/image-redactor/): A package for detecting PII entities in image using OCR.
-4. A set of sample deployments as Python packages or Docker containers for Kubernetes, Azure Data Factory, Spark and more.
+4. [Presidio Structured](https://microsoft.github.io/presidio/structured/): A package for detecting PII entities in structured/semi-structured data.
+5. A set of sample deployments as Python packages or Docker containers for Kubernetes, Azure Data Factory, Spark and more.
 
 ## Customizing Presidio
 
@@ -99,17 +100,20 @@ Pseudonymization is a de-identification technique in which the real data is repl
 
 ### Does Presidio work on structured/tabular data?
 
-This is an area we are actively looking into. We have an [example implementation](https://microsoft.github.io/presidio/samples/python/batch_processing/) of using Presidio on structured/semi-structured data. Also see the different discussions on this topic on the [Discussions](https://github.com/microsoft/presidio/discussions) section. If you have a question, suggestion, or a contribution in this area, please reach out by opening an issue, starting a discussion or reaching us directly at <presidio@microsoft.com>
+[Presidio-structured](https://microsoft.github.io/presidio/structured/) is a new capability in Presidio for detecting PII entities in structured/semi-structured data, and is still in alpha. If you have a question, suggestion, or a contribution in this area, please reach out by opening an issue, starting a discussion or reaching us directly at <presidio@microsoft.com>
 
 ## Improving detection accuracy
 
 ### What can I do if Presidio does not detect some of the PII entities in my data (False Negatives)?
 
-Presidio comes loaded with several PII recognizers (see [list here](https://microsoft.github.io/presidio/supported_entities/)), however its main strength lies in its customization capabilities to new entities, specific datasets, languages or use cases. For a recommended process for improving detection accuracy, see [these guidelines](https://github.com/microsoft/presidio/discussions/767#discussion-3567223).
+Presidio comes loaded with several PII recognizers (see [list here](https://microsoft.github.io/presidio/supported_entities/)),
+however its main strength lies in its customization capabilities to new entities, specific datasets, file types, languages or use cases.
 
 ### What can I do if Presidio falsely detects text as PII entities (False Positives)?
 
-Some PII recognizers are less specific than others. A driver's license number, for example, could be any 9-digit number. While Presidio leverages context words and other logic to improve the detection quality, it could still falsely detect non-entity values as PII entities.
+Some PII recognizers are less specific than others. A driver's license number, for example, could be any 9-digit number.
+While Presidio leverages context words and other logic to improve the detection quality,
+it could still falsely detect non-entity values as PII entities.
 
 In order to avoid false positives, one could try to:
 

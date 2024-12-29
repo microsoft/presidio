@@ -14,7 +14,7 @@ class BatchAnalyzerEngine:
     Wrapper class to run Presidio Analyzer Engine on multiple values,
     either lists/iterators of strings, or dictionaries.
 
-    :param: analyzer_engine: AnalyzerEngine instance to use
+    :param analyzer_engine: AnalyzerEngine instance to use
     for handling the values in those collections.
     """
 

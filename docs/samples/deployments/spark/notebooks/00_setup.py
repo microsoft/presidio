@@ -4,7 +4,7 @@
 # MAGIC
 # MAGIC <br>Mount an Azure Storage blob container to a databricks cluster.
 # MAGIC
-# MAGIC <br>This sciprt requires the following environment variables to be set.
+# MAGIC <br>This script requires the following environment variables to be set.
 # MAGIC
 # MAGIC <ol>
 # MAGIC <li>STORAGE_MOUNT_NAME - Name of mount which will be used by notebooks accessing the mount point.</li>
@@ -12,7 +12,7 @@
 # MAGIC <li>STORAGE_CONTAINER_NAME - Blob container name</li>
 # MAGIC </ol>
 # MAGIC
-# MAGIC <br>Additionaly, the following secrets are used.
+# MAGIC <br>Additionally, the following secrets are used.
 # MAGIC
 # MAGIC <ol>
 # MAGIC <li>storage_account_access_key under scope storage_scope - storage account key.</li>
