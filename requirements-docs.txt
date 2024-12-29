@@ -7,4 +7,6 @@ mkdocstrings-python
 presidio_analyzer
 presidio_anonymizer
 presidio_image_redactor
+presidio_structured
 pygments>=2.10
+black

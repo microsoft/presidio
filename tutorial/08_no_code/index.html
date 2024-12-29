@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="PII anonymization for text and images.">
+        <meta name="description" content="PII anonymization for text, images, and structured data.">
       
       
         <meta name="author" content="Microsoft">
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#example-8-creating-no-code-pattern-recognizers" class="md-skip">
+        <a href="#no-code-configuration" class="md-skip">
           Skip to content
         </a>
       
@@ -97,7 +97,7 @@
 
   
 
-<header class="md-header md-header--shadow" data-md-component="header">
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
@@ -182,13 +182,123 @@
     
   </nav>
   
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  Presidio
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting_started/" class="md-tabs__link">
+          
+  
+  Quick start
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../learn_presidio/" class="md-tabs__link">
+          
+  
+  Learn Presidio
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../supported_entities/" class="md-tabs__link">
+          
+  
+  Resources
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../samples/" class="md-tabs__link">
+          
+  
+  Samples
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
 </header>
     
     <div class="md-container" data-md-component="container">
       
       
-        
-          
         
       
       <main class="md-main" data-md-component="main">
@@ -202,8 +312,10 @@
                     
 
 
+  
 
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
@@ -233,6 +345,44 @@
   
   
   
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Presidio
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Presidio
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
         
@@ -246,9 +396,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -266,23 +417,32 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/" class="md-nav__link">
+      <a href="../../faq/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Quickstart
+    FAQ
   </span>
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -291,36 +451,37 @@
       
   
   
-    
   
   
-  
     
     
     
+      
+      
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Handling text
+    Quick start
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Handling text
+            Quick start
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -331,7 +492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../text_anonymization/" class="md-nav__link">
+      <a href="../../getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -349,6 +510,76 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/getting_started_text/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Text
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/getting_started_images/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Images
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/getting_started_structured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Semi/Structured data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -356,29 +587,117 @@
     
     
     
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   <span class="md-ellipsis">
-    Step by step tutorial
+    Learn Presidio
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Step by step tutorial
+            Learn Presidio
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn_presidio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn_presidio/concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -587,6 +906,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    No-code recognizers
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -596,6 +926,118 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#defining-the-configuration-in-yaml-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining the configuration in YAML format
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining the configuration in YAML format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-analyzer-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      General Analyzer parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recognizer-registry-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recognizer Registry parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nlp-engine-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      NLP Engine parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-the-analyzer-engine-and-running-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating the analyzer engine and running it
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating the analyzer engine and running it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-unified-yaml-file-and-save-it-as-a-temp-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a unified YAML file and save it as a temp file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pass-the-yaml-file-to-analyzerengineprovider-to-create-an-analyzerengine-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pass the YAML file to AnalyzerEngineProvider to create an AnalyzerEngine instance
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#print-the-loaded-configuration-for-both-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Print the loaded configuration for both languages
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-two-requests-one-in-english-and-one-in-spanish" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run two requests, one in English and one in Spanish
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -724,15 +1166,77 @@
     
     
     
+      
+      
+    
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Text de-identification
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Text de-identification
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../text_anonymization/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4_2" id="__nav_3_4_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -743,8 +1247,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_2">
             <span class="md-nav__icon md-icon"></span>
             Presidio Analyzer
           </label>
@@ -780,15 +1284,18 @@
     
     
     
+      
+      
+    
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_2_2" >
         
           
-          <label class="md-nav__link" for="__nav_4_3_2" id="__nav_4_3_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_4_2_2" id="__nav_3_4_2_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -799,8 +1306,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3_2">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_4_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_2_2">
             <span class="md-nav__icon md-icon"></span>
             Developing PII recognizers
           </label>
@@ -838,7 +1345,7 @@
         
   
   <span class="md-ellipsis">
-    Best practices in developing recognizers
+    Best practices
   </span>
   
 
@@ -859,7 +1366,7 @@
         
   
   <span class="md-ellipsis">
-    Customizing recognizer registry from file
+    Recognizer registry from file
   </span>
   
 
@@ -907,15 +1414,18 @@
     
     
     
+      
+      
+    
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_2_4" >
         
           
-          <label class="md-nav__link" for="__nav_4_3_4" id="__nav_4_3_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_4_2_4" id="__nav_3_4_2_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -926,8 +1436,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3_4">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_4_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_2_4">
             <span class="md-nav__icon md-icon"></span>
             Customizing the NLP model
           </label>
@@ -1036,7 +1546,7 @@
         
   
   <span class="md-ellipsis">
-    Configuring the Analyzer Engine from file
+    Configure from file
   </span>
   
 
@@ -1063,15 +1573,18 @@
     
     
     
+      
+      
+    
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_3" >
         
           
-          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_4_3" id="__nav_3_4_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1082,8 +1595,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_3">
             <span class="md-nav__icon md-icon"></span>
             Presidio Anonymizer
           </label>
@@ -1121,7 +1634,7 @@
         
   
   <span class="md-ellipsis">
-    Developing PII operators
+    Developing PII anonymization operators
   </span>
   
 
@@ -1145,39 +1658,43 @@
     </li>
   
 
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
     
       
       
-  
-  
-  
-  
-    
-    
     
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Handling images
+    Image de-identification
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
-            Handling images
+            Image de-identification
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1229,39 +1746,43 @@
     </li>
   
 
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
     
       
       
-  
-  
-  
-  
-    
-    
     
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Handling structured data
+    Structured and Semi-structured
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
             <span class="md-nav__icon md-icon"></span>
-            Handling structured data
+            Structured and Semi-structured
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1292,117 +1813,6 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
-        
-          
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Samples
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
-            <span class="md-nav__icon md-icon"></span>
-            Samples
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../samples/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Home
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Selected samples
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_2">
-            <span class="md-nav__icon md-icon"></span>
-            Selected samples
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../samples/python/customizing_presidio_analyzer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Customizing Presidio Analyzer
-  </span>
-  
-
-      </a>
-    </li>
-  
-
               
             
               
@@ -1412,137 +1822,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../samples/python/ner_model_configuration.ipynb" class="md-nav__link">
+      <a href="../../evaluation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    NER model configuration
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../samples/python/example_structured/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Presidio Structured Basic Usage
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../samples/python/image_redaction_allow_list_approach/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Using an allow list with image redaction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../samples/python/example_dicom_image_redactor/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Redacting Text PII from DICOM images
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../samples/python/example_pdf_annotation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Annotating PII in a PDF
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../samples/python/pseudonomyzation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Pseudonomization
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../samples/python/encrypt_decrypt/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Encrypting and Decrypting
+    PII detection evaluation
   </span>
   
 
@@ -1558,14 +1842,6 @@
     </li>
   
 
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
     
       
       
@@ -1575,30 +1851,33 @@
   
     
     
+    
+      
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    General
+    Resources
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
-            General
+            Resources
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1629,34 +1908,20 @@
   
   
   
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
+    <li class="md-nav__item">
+      <a href="../../community/" class="md-nav__link">
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
-            
   
   <span class="md-ellipsis">
-    Development and design
+    Community
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_2">
-            <span class="md-nav__icon md-icon"></span>
-            Development and design
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1665,11 +1930,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../design/" class="md-nav__link">
+      <a href="https://github.com/microsoft/presidio/blob/main/CHANGELOG.md" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Design
+    Change log
   </span>
   
 
@@ -1751,15 +2016,18 @@
     
     
     
+      
+      
+    
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_7" >
         
           
-          <label class="md-nav__link" for="__nav_8_2_5" id="__nav_8_2_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_7" id="__nav_4_7_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1770,8 +2038,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_8_2_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_2_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_7">
             <span class="md-nav__icon md-icon"></span>
             Python API reference
           </label>
@@ -1861,6 +2129,27 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/structured_python/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Presidio Structured Python API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1896,7 +2185,82 @@
     </li>
   
 
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Samples
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Samples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
               
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Usage
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Usage
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -1905,11 +2269,70 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/" class="md-nav__link">
+      <a href="../../samples/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Community
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_2" id="__nav_5_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Text
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            Text
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/presidio_notebook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Presidio Basic Usage Notebook
   </span>
   
 
@@ -1926,11 +2349,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../faq/" class="md-nav__link">
+      <a href="../../samples/python/customizing_presidio_analyzer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    FAQ
+    Customizing Presidio Analyzer
   </span>
   
 
@@ -1947,15 +2370,937 @@
   
   
     <li class="md-nav__item">
-      <a href="https://huggingface.co/spaces/presidio/presidio_demo" target="_blank" class="md-nav__link">
+      <a href="../../samples/python/ner_model_configuration/" class="md-nav__link">
         
+  
+  <span class="md-ellipsis">
+    Configuring The NLP engine
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/encrypt_decrypt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Encrypting and Decrypting identified entities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/getting_entity_values/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting the identified entity value using a custom Operator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/Anonymizing%20known%20values/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Anonymizing known values
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/keep_entities/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Keeping some entities from being anonymized
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/integrating_with_external_services/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Integrating with external services
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_remote_recognizer.py" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Remote Recognizer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/text_analytics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Azure AI Language as a Remote Recognizer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Flair as an external PII model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/microsoft/presidio/blob/main/docs/samples/python/span_marker_recognizer.py" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Span Marker as an external PII model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/transformers_recognizer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Transformers as an external PII model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/pseudonymization/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pseudonymization (replace PII values using mappings)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_custom_lambda_anonymizer.py" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Passing a lambda as a Presidio anonymizer using Faker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/synth_data_with_openai/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Synthetic data generation with OpenAI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/no_code_config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    YAML based no-code configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_3" id="__nav_5_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Data
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            Data
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/batch_processing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Analyzing structured / semi-structured data in batch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/example_structured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Presidio Structured Basic Usage Notebook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/microsoft/presidio/blob/main/docs/samples/python/process_csv_file.py" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Analyze and Anonymize CSV file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_4" id="__nav_5_1_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Images
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            Images
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/example_dicom_image_redactor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Redacting Text PII from DICOM images
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/image_redaction_allow_list_approach/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using an allow list with image redaction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/plot_custom_bboxes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plot custom bounding boxes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/example_dicom_redactor_evaluation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Example DICOM redaction evaluation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_5" id="__nav_5_1_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PDF
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            PDF
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/example_pdf_annotation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Annotating PII in a PDF
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_6" id="__nav_5_1_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Deployment
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_6">
+            <span class="md-nav__icon md-icon"></span>
+            Deployment
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/deployments/app-service/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Presidio with App Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/deployments/k8s/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Presidio with Kubernetes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/deployments/spark/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Presidio with Spark
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_6_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_6_4" id="__nav_5_1_6_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Azure Data Factory
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            Azure Data Factory
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/deployments/data-factory/presidio-data-factory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ETL using AppService/Databricks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/deployments/data-factory/presidio-data-factory-template-gallery-http/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Add Presidio as an HTTP service to your Azure Data Factory
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/deployments/data-factory/presidio-data-factory-template-gallery-databricks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Add Presidio on Databricks to your Azure Data Factory
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/docker/litellm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PII Masking LLM calls using LiteLLM proxy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_7" id="__nav_5_1_7_label" tabindex="0">
+            
   
   <span class="md-ellipsis">
     Demo
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_7">
+            <span class="md-nav__icon md-icon"></span>
+            Demo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/python/streamlit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create a simple demo app using Streamlit
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1988,6 +3333,107 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#defining-the-configuration-in-yaml-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining the configuration in YAML format
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining the configuration in YAML format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-analyzer-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      General Analyzer parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recognizer-registry-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recognizer Registry parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nlp-engine-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      NLP Engine parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-the-analyzer-engine-and-running-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating the analyzer engine and running it
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating the analyzer engine and running it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-unified-yaml-file-and-save-it-as-a-temp-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a unified YAML file and save it as a temp file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pass-the-yaml-file-to-analyzerengineprovider-to-create-an-analyzerengine-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pass the YAML file to AnalyzerEngineProvider to create an AnalyzerEngine instance
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#print-the-loaded-configuration-for-both-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Print the loaded configuration for both languages
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-two-requests-one-in-english-and-one-in-spanish" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run two requests, one in English and one in Spanish
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2004,41 +3450,196 @@
                   
 
 
-<h1 id="example-8-creating-no-code-pattern-recognizers">Example 8: Creating no-code pattern recognizers</h1>
-<p>No-code pattern recognizers can be helpful in two scenarios:</p>
+<h1 id="no-code-configuration">No code configuration</h1>
+<p>No-code configuration can be helpful in three scenarios:</p>
 <ol>
-<li>There's an existing set of regular expressions / deny-lists which needs to be added to Presidio.</li>
-<li>Non-technical team members who require adding logic without writing code.</li>
+<li>There's an existing set of regular expressions / deny-lists that should be leveraged within Presidio.</li>
+<li>As a simple way to configure which recognizers to enable and disable, and how to configure the NLP engine.</li>
+<li>For team members interested in changing the configuration without writing code.</li>
 </ol>
-<p>Regular expression or deny-list based recognizers can be written in a YAML file, and added to the list of recognizers in Presidio.</p>
-<p>An example YAML file can be found <a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml">here</a>.</p>
-<p>For more information on the schema, see the <code>PatternRecognizer</code> definition on the <a href="https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Analyzer">API Docs</a>).</p>
-<p>Once the YAML file is created, it can be loaded into the <code>RecognizerRegistry</code> instance.</p>
-<p>This example creates a <code>RecognizerRegistry</code> holding only the recognizers in the YAML file:</p>
-<!--pytest-codeblocks:skip-->
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span><span class="p">,</span> <span class="n">RecognizerRegistry</span>
-
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s2">&quot;recognizers.yaml&quot;</span>
-<span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_recognizers_from_yaml</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
-
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
-<span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mr. and Mrs. Smith&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+<p>In this example, we'll show how to create a no-code configuration in Presidio.
+We start by creating YAML configuration files that are based on the default ones.
+Te default configuration files for Presidio can be found here:</p>
+<ul>
+<li><a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml">Analyzer configuration</a></li>
+<li><a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml">Recognizer registry configuration</a></li>
+<li><a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default.yaml">NLP engine configuration</a></li>
+</ul>
+<p>Alternatively, one can create one configuration file for all three components.
+In this example, we'll tweak the configuration to reduce the number of predefinedrecognizers to only a few, and add a new custom one. We'll also adjust the context words to support the detection of a different language (Spanish).</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngineProvider</span>
 </code></pre></div>
-<p>This example adds the new recognizers to the predefined recognizers in Presidio:</p>
-<!--pytest-codeblocks:skip-->
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span><span class="p">,</span> <span class="n">RecognizerRegistry</span>
-
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s2">&quot;recognizers.yaml&quot;</span>  <span class="c1"># path to YAML file</span>
-<span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">load_predefined_recognizers</span><span class="p">()</span>  <span class="c1"># Loads all the predefined recognizers (Credit card, phone number etc.)</span>
-
-<span class="n">registry</span><span class="o">.</span><span class="n">add_recognizers_from_yaml</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
-
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
-<span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mr. Plum wrote a book&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+<p>In this example we're going to create the yaml as a string for illustration purposes, but the more common scenario is to create these YAML files and load them into the <code>PresidioAnalyzerProvider</code>.</p>
+<h2 id="defining-the-configuration-in-yaml-format">Defining the configuration in YAML format</h2>
+<h3 id="general-analyzer-parameters">General Analyzer parameters</h3>
+<p>(<a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml">default file</a>)</p>
+<div class="highlight"><pre><span></span><code><span class="n">analyzer_config_yaml</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">supported_languages: </span>
+<span class="s2">  - en</span>
+<span class="s2">  - es</span>
+<span class="s2">default_score_threshold: 0.4</span>
+<span class="s2">&quot;&quot;&quot;</span>
 </code></pre></div>
-<p>Finally, for initializing and customizing recognizer registry from file see the following <a href="../../analyzer/recognizer_registry_provider/">section</a>.</p>
+<h3 id="recognizer-registry-parameters">Recognizer Registry parameters</h3>
+<p>(<a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml">default file</a>)</p>
+<div class="highlight"><pre><span></span><code><span class="n">recognizer_registry_config_yaml</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">recognizer_registry:</span>
+<span class="s2">  supported_languages: </span>
+<span class="s2">  - en</span>
+<span class="s2">  - es</span>
+<span class="s2">  global_regex_flags: 26</span>
+
+<span class="s2">  recognizers:</span>
+<span class="s2">  - name: CreditCardRecognizer</span>
+<span class="s2">    supported_languages:</span>
+<span class="s2">    - language: en</span>
+<span class="s2">      context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]</span>
+<span class="s2">    - language: es</span>
+<span class="s2">      context: [tarjeta, credito, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]</span>
+<span class="s2">    type: predefined</span>
+
+<span class="s2">  - name: DateRecognizer</span>
+<span class="s2">    supported_languages:</span>
+<span class="s2">    - language: en</span>
+<span class="s2">      context: [date, time, birthday, birthdate, dob]</span>
+<span class="s2">    - language: es</span>
+<span class="s2">      context: [fecha, tiempo, hora, nacimiento, dob]</span>
+<span class="s2">    type: predefined</span>
+
+<span class="s2">  - name: EmailRecognizer</span>
+<span class="s2">    supported_languages:</span>
+<span class="s2">    - language: en</span>
+<span class="s2">      context: [email, mail, address]</span>
+<span class="s2">    - language: es</span>
+<span class="s2">      context: [correo, electrónico, email]</span>
+<span class="s2">    type: predefined</span>
+
+<span class="s2">  - name: PhoneRecognizer</span>
+<span class="s2">    type: predefined</span>
+<span class="s2">    supported_languages:</span>
+<span class="s2">    - language: en</span>
+<span class="s2">      context: [phone, number, telephone, fax]</span>
+<span class="s2">    - language: es</span>
+<span class="s2">      context: [teléfono, número, fax]</span>
+
+<span class="s2">  - name: &quot;Titles recognizer (en)&quot;</span>
+<span class="s2">    supported_language: &quot;en&quot;</span>
+<span class="s2">    supported_entity: &quot;TITLE&quot;</span>
+<span class="s2">    deny_list:</span>
+<span class="s2">      - Mr.</span>
+<span class="s2">      - Mrs.</span>
+<span class="s2">      - Ms.</span>
+<span class="s2">      - Miss</span>
+<span class="s2">      - Dr.</span>
+<span class="s2">      - Prof.</span>
+<span class="s2">      - Doctor</span>
+<span class="s2">      - Professor</span>
+<span class="s2">  - name: &quot;Titles recognizer (es)&quot;</span>
+<span class="s2">    supported_language: &quot;es&quot;</span>
+<span class="s2">    supported_entity: &quot;TITLE&quot;</span>
+<span class="s2">    deny_list:</span>
+<span class="s2">      - Sr.</span>
+<span class="s2">      - Señor</span>
+<span class="s2">      - Sra.</span>
+<span class="s2">      - Señora</span>
+<span class="s2">      - Srta.</span>
+<span class="s2">      - Señorita</span>
+<span class="s2">      - Dr.</span>
+<span class="s2">      - Doctor</span>
+<span class="s2">      - Doctora</span>
+<span class="s2">      - Prof.</span>
+<span class="s2">      - Profesor</span>
+<span class="s2">      - Profesora</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</code></pre></div>
+<h3 id="nlp-engine-parameters">NLP Engine parameters</h3>
+<p>(<a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default.yaml">default file</a>)</p>
+<div class="highlight"><pre><span></span><code><span class="n">nlp_engine_yaml</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">nlp_configuration:</span>
+<span class="s2">    nlp_engine_name: transformers</span>
+<span class="s2">    models:</span>
+<span class="s2">      -</span>
+<span class="s2">        lang_code: en</span>
+<span class="s2">        model_name:</span>
+<span class="s2">          spacy: en_core_web_sm</span>
+<span class="s2">          transformers: StanfordAIMI/stanford-deidentifier-base</span>
+<span class="s2">      -</span>
+<span class="s2">        lang_code: es</span>
+<span class="s2">        model_name:</span>
+<span class="s2">          spacy: es_core_news_sm</span>
+<span class="s2">          transformers: MMG/xlm-roberta-large-ner-spanish  </span>
+<span class="s2">    ner_model_configuration:</span>
+<span class="s2">      labels_to_ignore:</span>
+<span class="s2">      - O</span>
+<span class="s2">      aggregation_strategy: first # &quot;simple&quot;, &quot;first&quot;, &quot;average&quot;, &quot;max&quot;</span>
+<span class="s2">      stride: 16</span>
+<span class="s2">      alignment_mode: expand # &quot;strict&quot;, &quot;contract&quot;, &quot;expand&quot;</span>
+<span class="s2">      model_to_presidio_entity_mapping:</span>
+<span class="s2">        PER: PERSON</span>
+<span class="s2">        PERSON: PERSON</span>
+<span class="s2">        LOC: LOCATION</span>
+<span class="s2">        LOCATION: LOCATION</span>
+<span class="s2">        GPE: LOCATION</span>
+<span class="s2">        ORG: ORGANIZATION</span>
+<span class="s2">        ORGANIZATION: ORGANIZATION</span>
+<span class="s2">        NORP: NRP</span>
+<span class="s2">        AGE: AGE</span>
+<span class="s2">        ID: ID</span>
+<span class="s2">        EMAIL: EMAIL</span>
+<span class="s2">        PATIENT: PERSON</span>
+<span class="s2">        STAFF: PERSON</span>
+<span class="s2">        HOSP: ORGANIZATION</span>
+<span class="s2">        PATORG: ORGANIZATION</span>
+<span class="s2">        DATE: DATE_TIME</span>
+<span class="s2">        TIME: DATE_TIME</span>
+<span class="s2">        PHONE: PHONE_NUMBER</span>
+<span class="s2">        HCW: PERSON</span>
+<span class="s2">        HOSPITAL: LOCATION</span>
+<span class="s2">        FACILITY: LOCATION</span>
+<span class="s2">        VENDOR: ORGANIZATION</span>
+<span class="s2">        MISC: ID</span>
+
+<span class="s2">      low_confidence_score_multiplier: 0.4</span>
+<span class="s2">      low_score_entity_names:</span>
+<span class="s2">      - ID</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</code></pre></div>
+<h2 id="creating-the-analyzer-engine-and-running-it">Creating the analyzer engine and running it</h2>
+<h3 id="create-a-unified-yaml-file-and-save-it-as-a-temp-file">Create a unified YAML file and save it as a temp file</h3>
+<div class="highlight"><pre><span></span><code><span class="n">full_config</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">analyzer_config_yaml</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">recognizer_registry_config_yaml</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">nlp_engine_yaml</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w+&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.yaml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">temp_file</span><span class="p">:</span>
+    <span class="c1"># Write the YAML string to the temp file</span>
+    <span class="n">temp_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">full_config</span><span class="p">)</span>
+    <span class="n">temp_file_path</span> <span class="o">=</span> <span class="n">temp_file</span><span class="o">.</span><span class="n">name</span>
+</code></pre></div>
+<h3 id="pass-the-yaml-file-to-analyzerengineprovider-to-create-an-analyzerengine-instance">Pass the YAML file to <code>AnalyzerEngineProvider</code> to create an <code>AnalyzerEngine</code> instance</h3>
+<div class="highlight"><pre><span></span><code><span class="n">analyzer_engine</span> <span class="o">=</span> <span class="n">AnalyzerEngineProvider</span><span class="p">(</span><span class="n">analyzer_engine_conf_file</span><span class="o">=</span><span class="n">temp_file_path</span><span class="p">)</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="print-the-loaded-configuration-for-both-languages">Print the loaded configuration for both languages</h3>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">lang</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="s2">&quot;es&quot;</span><span class="p">):</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Supported entities for </span><span class="si">{</span><span class="n">lang</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">analyzer_engine</span><span class="o">.</span><span class="n">get_supported_entities</span><span class="p">(</span><span class="n">lang</span><span class="p">),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Loaded recognizers for </span><span class="si">{</span><span class="n">lang</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">([</span><span class="n">rec</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">analyzer_engine</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_recognizers</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">all_fields</span><span class="o">=</span><span class="kc">True</span><span class="p">)],</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Loaded NER models:&quot;</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">analyzer_engine</span><span class="o">.</span><span class="n">nlp_engine</span><span class="o">.</span><span class="n">models</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="run-two-requests-one-in-english-and-one-in-spanish">Run two requests, one in English and one in Spanish</h2>
+<div class="highlight"><pre><span></span><code><span class="n">es_text</span> <span class="o">=</span> <span class="s2">&quot;Hola, me llamo David Johnson y soy originalmente de Liverpool. Mi número de tarjeta de crédito es 4095260993934932&quot;</span>
+<span class="n">analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">es_text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;es&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">en_text</span> <span class="o">=</span> <span class="s2">&quot;Hi, my name is David Johnson and I&#39;m originally from Liverpool. My credit card number is 4095260993934932&quot;</span>
+<span class="n">analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">en_text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+</code></pre></div>
 
 
 
@@ -2122,7 +3723,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "content.tabs.link", "navigation.tabs", "navigation.tabs.sticky"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
