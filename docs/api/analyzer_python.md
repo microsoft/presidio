@@ -14,7 +14,7 @@
 ::: presidio_analyzer.recognizer_result.RecognizerResult
     handler: python
 
-## Batch
+## Batch modules
 
 ::: presidio_analyzer.batch_analyzer_engine.BatchAnalyzerEngine
     handler: python
@@ -22,7 +22,7 @@
 ::: presidio_analyzer.dict_analyzer_result.DictAnalyzerResult
     handler: python
 
-## Recognizers and patters
+## Recognizers and patterns
 
 ::: presidio_analyzer.entity_recognizer.EntityRecognizer
     handler: python
@@ -39,15 +39,7 @@
 ::: presidio_analyzer.remote_recognizer.RemoteRecognizer
     handler: python
 
-## Misc
-
-::: presidio_analyzer.analyzer_request.AnalyzerRequest
-    handler: python
-
-::: presidio_analyzer.analyzer_utils.PresidioAnalyzerUtils
-    handler: python
-
-## Recognizer registry
+## Recognizer registry modules
 
 ::: presidio_analyzer.recognizer_registry.RecognizerRegistry
     handler: python
@@ -55,11 +47,11 @@
 ::: presidio_analyzer.recognizer_registry.RecognizerRegistryProvider
     handler: python
 
-## Context awareness
+## Context awareness modules
 
 ::: presidio_analyzer.context_aware_enhancers
 
-## NLP Engine classes
+## NLP Engine modules
 
 ::: presidio_analyzer.nlp_engine
     handler: python
@@ -67,3 +59,11 @@
 ## Predefined Recognizers
 
 ::: presidio_analyzer.predefined_recognizers
+
+## Misc
+
+::: presidio_analyzer.analyzer_request.AnalyzerRequest
+    handler: python
+
+::: presidio_analyzer.analyzer_utils.PresidioAnalyzerUtils
+    handler: python
