@@ -27,7 +27,7 @@
 | Usage | Text      | Python file                            | [Keeping some entities from being anonymized](python/keep_entities.ipynb)|
 | Usage | Text     | LiteLLM Proxy                           | [PII Masking LLM calls across Anthropic/Gemini/Bedrock/Azure, etc.](docker/litellm.md)|
 | Usage | Text     | Python Notebook                         | [YAML based no-code configuration](python/no_code_config.ipynb) |
-| Usage | Text     | Python file                             | [Using GLiNER within Presidio](gliner.md) |
+| Usage | Text     | Python file                             | [Using GLiNER within Presidio](python/gliner.md) |
 | Usage      | | REST API (postman)                          | [Presidio as a REST endpoint](docker/index.md)|
 | Deployment | | App Service                                 | [Presidio with App Service](deployments/app-service/index.md)|
 | Deployment | | Kubernetes                                  | [Presidio with Kubernetes](deployments/k8s/index.md)|
