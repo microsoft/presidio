@@ -17,6 +17,7 @@ from .email_recognizer import EmailRecognizer
 from .es_nie_recognizer import EsNieRecognizer
 from .es_nif_recognizer import EsNifRecognizer
 from .fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecognizer
+from .gliner_recognizer import GLiNERRecognizer
 from .iban_recognizer import IbanRecognizer
 from .in_aadhaar_recognizer import InAadhaarRecognizer
 from .in_pan_recognizer import InPanRecognizer
@@ -96,6 +97,7 @@ __all__ = [
     "ItIdentityCardRecognizer",
     "ItPassportRecognizer",
     "InPanRecognizer",
+    "GLiNERRecognizer",
     "PlPeselRecognizer",
     "AzureAILanguageRecognizer",
     "InAadhaarRecognizer",

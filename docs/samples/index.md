@@ -25,14 +25,15 @@
 | Usage | Text      | Python file                            | [Passing a lambda as a Presidio anonymizer using Faker](python/example_custom_lambda_anonymizer.py)|
 | Usage | Text      | Python file                            | [Synthetic data generation with OpenAI](python/synth_data_with_openai.ipynb)|
 | Usage | Text      | Python file                            | [Keeping some entities from being anonymized](python/keep_entities.ipynb)|
-| Usage | Text      | LiteLLM Proxy                            | [PII Masking LLM calls across Anthropic/Gemini/Bedrock/Azure, etc.](docker/litellm.md)|
+| Usage | Text     | LiteLLM Proxy                           | [PII Masking LLM calls across Anthropic/Gemini/Bedrock/Azure, etc.](docker/litellm.md)|
 | Usage | Text     | Python Notebook                         | [YAML based no-code configuration](python/no_code_config.ipynb) |
+| Usage | Text     | Python file                             | [Using GLiNER within Presidio](python/gliner.md) |
 | Usage      | | REST API (postman)                          | [Presidio as a REST endpoint](docker/index.md)|
 | Deployment | | App Service                                 | [Presidio with App Service](deployments/app-service/index.md)|
 | Deployment | | Kubernetes                                  | [Presidio with Kubernetes](deployments/k8s/index.md)|
 | Deployment | | Spark/Azure Databricks                      | [Presidio with Spark](deployments/spark/index.md)|
 | Deployment | | Azure Data Factory with App Service         | [ETL for small dataset](deployments/data-factory/presidio-data-factory.md#option-1-presidio-as-an-http-rest-endpoint) |
 | Deployment | | Azure Data Factory with Databricks          | [ETL for large datasets](deployments/data-factory/presidio-data-factory.md#option-2-presidio-on-azure-databricks) |
-| ADF Pipeline | | Azure Data Factory | [Add Presidio as an HTTP service to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-http.md) |
-| ADF Pipeline | | Azure Data Factory | [Add Presidio on Databricks to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-databricks.md) |
-| Demo |  | Streamlit app | [Create a simple demo app using Streamlit](python/streamlit/index.md)
+| ADF Pipeline | | Azure Data Factory                        | [Add Presidio as an HTTP service to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-http.md) |
+| ADF Pipeline | | Azure Data Factory                        | [Add Presidio on Databricks to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-databricks.md) |
+| Demo |  | Streamlit app                                    | [Create a simple demo app using Streamlit](python/streamlit/index.md)
