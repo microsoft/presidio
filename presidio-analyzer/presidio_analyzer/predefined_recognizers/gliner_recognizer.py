@@ -102,7 +102,8 @@ class GLiNERRecognizer(LocalRecognizer):
 
     def load(self) -> None:
         """Load the GLiNER model."""
-
+        if not GLiNER:
+            raise ImportError("GLiNER is not installed. Please install it.")
         self.gliner = GLiNER.from_pretrained(self.model_name)
 
     def analyze(
