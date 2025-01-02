@@ -166,7 +166,7 @@ plugins:
             docstring_style: sphinx
             docstring_section_style: spacy
             show_root_heading: true
-            show_submodules: true
+            show_submodules: false
             show_bases: true
             merge_init_into_class: false
             group_by_category: false
@@ -194,6 +194,8 @@ extra:
       link: https://hub.docker.com/_/microsoft-presidio
     - icon: fontawesome/solid/envelope
       link: mailto:presidio@microsoft.com
+    - icon: fontawesome/solid/meteor
+      link: https://huggingface.co/spaces/presidio/presidio_demo
 
 markdown_extensions:
   - meta
