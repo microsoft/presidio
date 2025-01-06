@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 from unittest.mock import MagicMock, patch
 
@@ -9,6 +11,9 @@ def mock_gliner():
     """
     Fixture to mock GLiNER class and its methods.
     """
+
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
     # Mock the GLiNER class and its methods
     mock_gliner_instance = MagicMock()
     # Mock the from_pretrained method to return the mock instance
@@ -19,6 +24,10 @@ def mock_gliner():
 def test_analyze_passed_entities_are_subset_of_entity_mapping(
     mock_gliner
 ):
+
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+
     # Mock GLiNER predict_entities
     mock_gliner.predict_entities.return_value = [
         {"label": "person", "start": 11, "end": 19, "score": 0.95},
@@ -59,6 +68,12 @@ def test_analyze_passed_entities_are_subset_of_entity_mapping(
 
 
 def test_analyze_with_unsupported_entity(mock_gliner):
+
+
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+
+
     # Mock GLiNER predict_entities
     mock_gliner.gliner.predict_entities.return_value = [
         {"label": "BIRD", "start": 0, "end": 5, "score": 0.75},

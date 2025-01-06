@@ -34,14 +34,13 @@ stanza = { version = "*", optional = true }
 spacy_stanza = { version = "*", optional = true }
 azure-ai-textanalytics = { version = "*", optional = true }
 azure-core = { version = "*", optional = true }
-gliner = {version = ">=0.2.13,<1.0.0", optional = true}
+gliner = {version = ">=0.2.13,<1.0.0", markers = "python_version >= '3.10'", optional = true}
 transformers = { version = "*", optional = true }
 huggingface_hub = { version = "*", optional = true }
 gunicorn = {version = "*", optional = true}
 
 onnxruntime-gpu = [
-    {version = ">=1.18,<1.19", markers = "python_version < '3.10'", optional = true },
-    {version = ">=1.19", markers = "python_version >= '3.10'", optional = true }
+    {version = ">=1.19", markers = "python_version >= '3.10'", optional = true },
 ]
 
 [tool.poetry.extras]
