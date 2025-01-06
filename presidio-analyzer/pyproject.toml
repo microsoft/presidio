@@ -38,8 +38,11 @@ gliner = {version = ">=0.2.13,<1.0.0", optional = true}
 transformers = { version = "*", optional = true }
 huggingface_hub = { version = "*", optional = true }
 gunicorn = {version = "*", optional = true}
-onnxruntime-gpu = { version = "^1.19.1", python = ">=3.10", optional=true}
-onnxruntime-gpu = { version = ">=1.18,<=1.18.1", python = "<3.10", optional=true}
+
+onnxruntime-gpu = [
+    {version = ">=1.18,<1.19", markers = "python_version < '3.10'", optional = true },
+    {version = ">=1.20", markers = "python_version >= '3.10'", optional = true }
+]
 
 [tool.poetry.extras]
 server = ["flask", "gunicorn"]
@@ -58,8 +61,8 @@ azure-ai-language = [
 gliner = [
     "transformers",
     "huggingface_hub",
+    "gliner",
     "onnxruntime-gpu"
-    "gliner"
 ]
 
 [tool.poetry.group.dev.dependencies]
