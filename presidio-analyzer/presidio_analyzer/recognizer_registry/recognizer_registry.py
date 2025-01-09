@@ -163,7 +163,6 @@ class RecognizerRegistry:
             all_possible_recognizers.extend(ad_hoc_recognizers)
 
         for rec in all_possible_recognizers:
-            print(rec.supported_entities)
             if type(rec.supported_entities) == list and len(rec.supported_entities) > 0:
                 all_entity_recognizers.update(dict.fromkeys(rec.supported_entities, rec))
             elif type(rec.supported_entities) == str:
