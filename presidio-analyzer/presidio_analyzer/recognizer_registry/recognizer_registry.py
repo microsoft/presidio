@@ -156,10 +156,18 @@ class RecognizerRegistry:
 
         if entities is None and all_fields is False:
             raise ValueError("No entities provided")
+        all_entity_recognizers = dict()
 
         all_possible_recognizers = copy.copy(self.recognizers)
         if ad_hoc_recognizers:
             all_possible_recognizers.extend(ad_hoc_recognizers)
+
+        for rec in all_possible_recognizers:
+            print(rec.supported_entities)
+            if type(rec.supported_entities) == list and len(rec.supported_entities) > 0:
+                all_entity_recognizers.update(dict.fromkeys(rec.supported_entities, rec))
+            elif type(rec.supported_entities) == str:
+                all_entity_recognizers[rec.supported_entities] = rec
 
         # filter out unwanted recognizers
         to_return = set()
@@ -170,23 +178,21 @@ class RecognizerRegistry:
                 if language == rec.supported_language
             ]
         else:
-            for entity in entities:
-                subset = [
-                    rec
-                    for rec in all_possible_recognizers
-                    if entity in rec.supported_entities
-                    and language == rec.supported_language
-                ]
-
-                if not subset:
-                    logger.warning(
-                        "Entity %s doesn't have the corresponding"
-                        " recognizer in language : %s",
-                        entity,
-                        language,
-                    )
-                else:
-                    to_return.update(set(subset))
+            subset = [
+                all_entity_recognizers[entity]
+                for entity in entities
+                if entity in all_entity_recognizers
+                and language == all_entity_recognizers[entity].supported_language
+            ]
+            if not subset:
+                logger.warning(
+                    "Entity %s doesn't have the corresponding"
+                    " recognizer in language : %s",
+                    entity,
+                    language,
+                )
+            else:
+                to_return.update(set(subset))
 
         logger.debug(
             "Returning a total of %s recognizers",
