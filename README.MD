@@ -29,7 +29,7 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ### :flight_departure: [Examples](https://microsoft.github.io/presidio/samples/)
 
-### :people_holding_hands: [contributing guide](CONTRIBUTING.md)
+### :people_holding_hands: [Contributing guide](CONTRIBUTING.md)
 
 ---
 
