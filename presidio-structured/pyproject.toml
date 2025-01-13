@@ -4,7 +4,7 @@ requires = ["poetry-core"]
 
 [tool.poetry]
 name = "presidio_structured"
-version = "0.0.3-alpha"
+version = "0.0.4-alpha"
 description = "Presidio structured package - analyzes and anonymizes structured and semi-structured data."
 authors = ["Presidio <presidio@microsoft.com>"]
 license = "MIT"

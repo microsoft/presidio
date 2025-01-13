@@ -4,7 +4,7 @@ requires = ["poetry-core"]
 
 [tool.poetry]
 name = "presidio_analyzer"
-version = "2.2.356"
+version = "2.2.357"
 description = "Presidio Analyzer package"
 authors = ["Presidio <presidio@microsoft.com>"]
 license = "MIT"
@@ -34,9 +34,14 @@ stanza = { version = "*", optional = true }
 spacy_stanza = { version = "*", optional = true }
 azure-ai-textanalytics = { version = "*", optional = true }
 azure-core = { version = "*", optional = true }
+gliner = {version = ">=0.2.13,<1.0.0", markers = "python_version >= '3.10'", optional = true}
 transformers = { version = "*", optional = true }
 huggingface_hub = { version = "*", optional = true }
 gunicorn = {version = "*", optional = true}
+
+onnxruntime-gpu = [
+    {version = ">=1.19", markers = "python_version >= '3.10'", optional = true },
+]
 
 [tool.poetry.extras]
 server = ["flask", "gunicorn"]
@@ -51,6 +56,12 @@ stanza = [
 azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
+]
+gliner = [
+    "transformers",
+    "huggingface_hub",
+    "gliner",
+    "onnxruntime-gpu"
 ]
 
 [tool.poetry.group.dev.dependencies]
