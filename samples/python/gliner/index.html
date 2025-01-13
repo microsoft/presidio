@@ -12,13 +12,13 @@
         <meta name="author" content="Microsoft">
       
       
-        <link rel="canonical" href="https://microsoft.github.io/presidio/analyzer/nlp_engines/transformers/">
+        <link rel="canonical" href="https://microsoft.github.io/presidio/samples/python/gliner/">
       
       
-        <link rel="prev" href="../spacy_stanza/">
+        <link rel="prev" href="../transformers_recognizer/">
       
       
-        <link rel="next" href="../../decision_process/">
+        <link rel="next" href="../pseudonymization/">
       
       
       <link rel="icon" href="../../../assets/ms_icon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Transformers - Microsoft Presidio</title>
+        <title>Using GLiNER as an external PII model - Microsoft Presidio</title>
       
     
     
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#transformers-based-named-entity-recognition-models" class="md-skip">
+        <a href="#using-gliner-within-presidio" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Transformers
+              Using GLiNER as an external PII model
             
           </span>
         </div>
@@ -227,12 +227,10 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../../../learn_presidio/" class="md-tabs__link">
           
   
@@ -265,11 +263,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../samples/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
           
   
   Samples
@@ -571,28 +571,23 @@
       
   
   
-    
   
   
-  
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -603,7 +598,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Learn Presidio
@@ -1017,8 +1012,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1028,11 +1021,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
           <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
@@ -1046,7 +1039,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_4">
             <span class="md-nav__icon md-icon"></span>
             Text de-identification
@@ -1078,8 +1071,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1089,11 +1080,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_2" >
         
           
           <label class="md-nav__link" for="__nav_3_4_2" id="__nav_3_4_2_label" tabindex="0">
@@ -1107,7 +1098,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_4_2">
             <span class="md-nav__icon md-icon"></span>
             Presidio Analyzer
@@ -1121,7 +1112,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../" class="md-nav__link">
+      <a href="../../../analyzer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1180,7 +1171,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adding_recognizers/" class="md-nav__link">
+      <a href="../../../analyzer/adding_recognizers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1201,7 +1192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../developing_recognizers/" class="md-nav__link">
+      <a href="../../../analyzer/developing_recognizers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1222,7 +1213,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../recognizer_registry_provider/" class="md-nav__link">
+      <a href="../../../analyzer/recognizer_registry_provider/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1251,7 +1242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../languages/" class="md-nav__link">
+      <a href="../../../analyzer/languages/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1269,8 +1260,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1280,11 +1269,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_2_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_2_4" >
         
           
           <label class="md-nav__link" for="__nav_3_4_2_4" id="__nav_3_4_2_4_label" tabindex="0">
@@ -1298,7 +1287,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_4_2_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_4_2_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_4_2_4">
             <span class="md-nav__icon md-icon"></span>
             Customizing the NLP model
@@ -1312,7 +1301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../customizing_nlp_models/" class="md-nav__link">
+      <a href="../../../analyzer/customizing_nlp_models/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1333,7 +1322,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../spacy_stanza/" class="md-nav__link">
+      <a href="../../../analyzer/nlp_engines/spacy_stanza/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1351,30 +1340,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Transformers
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../analyzer/nlp_engines/transformers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1383,149 +1352,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#how-ner-results-flow-within-presidio" class="md-nav__link">
-    <span class="md-ellipsis">
-      How NER results flow within Presidio
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#adding-a-new-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Adding a new model
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Adding a new model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-a-public-pre-trained-transformers-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Using a public pre-trained transformers model
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using a public pre-trained transformers model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#downloading-a-pre-trained-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Downloading a pre-trained model
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuring-the-ner-pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuring the NER pipeline
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configuring the NER pipeline">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#configuring-the-ner-pipeline-via-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuring the NER pipeline via code
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#creating-a-yaml-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Creating a YAML configuration file
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Creating a YAML configuration file">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#calling-the-new-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Calling the new model
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#explaining-the-configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Explaining the configuration options
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#training-your-own-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Training your own model
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-a-transformers-model-as-an-entityrecognizer" class="md-nav__link">
-    <span class="md-ellipsis">
-      Using a transformers model as an EntityRecognizer
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1546,7 +1372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../decision_process/" class="md-nav__link">
+      <a href="../../../analyzer/decision_process/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1567,7 +1393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer_engine_provider/" class="md-nav__link">
+      <a href="../../../analyzer/analyzer_engine_provider/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2215,23 +2041,28 @@
       
   
   
+    
   
   
+  
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -2242,7 +2073,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Samples
@@ -2256,7 +2087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2274,6 +2105,8 @@
                 
   
   
+    
+  
   
   
     
@@ -2283,11 +2116,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
         
           
           <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
@@ -2301,7 +2134,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_2">
             <span class="md-nav__icon md-icon"></span>
             Text
@@ -2315,7 +2148,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/presidio_notebook/" class="md-nav__link">
+      <a href="../presidio_notebook/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2336,7 +2169,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/customizing_presidio_analyzer/" class="md-nav__link">
+      <a href="../customizing_presidio_analyzer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2357,7 +2190,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/ner_model_configuration/" class="md-nav__link">
+      <a href="../ner_model_configuration/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2378,7 +2211,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/encrypt_decrypt/" class="md-nav__link">
+      <a href="../encrypt_decrypt/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2399,7 +2232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/getting_entity_values/" class="md-nav__link">
+      <a href="../getting_entity_values/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2420,7 +2253,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/Anonymizing%20known%20values/" class="md-nav__link">
+      <a href="../Anonymizing%20known%20values/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2441,7 +2274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/keep_entities/" class="md-nav__link">
+      <a href="../keep_entities/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2462,7 +2295,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/integrating_with_external_services/" class="md-nav__link">
+      <a href="../integrating_with_external_services/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2504,7 +2337,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/text_analytics/" class="md-nav__link">
+      <a href="../text_analytics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2567,7 +2400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/transformers_recognizer/" class="md-nav__link">
+      <a href="../transformers_recognizer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2585,10 +2418,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../samples/python/gliner/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Using GLiNER as an external PII model
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -2597,6 +2450,77 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-gliner" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is GLiNER
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pii-detection-with-gliner" class="md-nav__link">
+    <span class="md-ellipsis">
+      PII Detection with GLiNER
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-gliner-with-presidio" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using GLiNER with Presidio
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using GLiNER with Presidio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2609,7 +2533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/pseudonymization/" class="md-nav__link">
+      <a href="../pseudonymization/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2651,7 +2575,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/synth_data_with_openai/" class="md-nav__link">
+      <a href="../synth_data_with_openai/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2672,7 +2596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/no_code_config/" class="md-nav__link">
+      <a href="../no_code_config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2739,7 +2663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/batch_processing/" class="md-nav__link">
+      <a href="../batch_processing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2760,7 +2684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/example_structured/" class="md-nav__link">
+      <a href="../example_structured/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2848,7 +2772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/example_dicom_image_redactor/" class="md-nav__link">
+      <a href="../example_dicom_image_redactor/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2869,7 +2793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/image_redaction_allow_list_approach/" class="md-nav__link">
+      <a href="../image_redaction_allow_list_approach/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2890,7 +2814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/plot_custom_bboxes/" class="md-nav__link">
+      <a href="../plot_custom_bboxes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2911,7 +2835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/example_dicom_redactor_evaluation/" class="md-nav__link">
+      <a href="../example_dicom_redactor_evaluation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2978,7 +2902,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/example_pdf_annotation/" class="md-nav__link">
+      <a href="../example_pdf_annotation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3045,7 +2969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/deployments/app-service/" class="md-nav__link">
+      <a href="../../deployments/app-service/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3066,7 +2990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/deployments/k8s/" class="md-nav__link">
+      <a href="../../deployments/k8s/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3087,7 +3011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/deployments/spark/" class="md-nav__link">
+      <a href="../../deployments/spark/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3146,7 +3070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/deployments/data-factory/presidio-data-factory/" class="md-nav__link">
+      <a href="../../deployments/data-factory/presidio-data-factory/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3167,7 +3091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/deployments/data-factory/presidio-data-factory-template-gallery-http/" class="md-nav__link">
+      <a href="../../deployments/data-factory/presidio-data-factory-template-gallery-http/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3188,7 +3112,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/deployments/data-factory/presidio-data-factory-template-gallery-databricks/" class="md-nav__link">
+      <a href="../../deployments/data-factory/presidio-data-factory-template-gallery-databricks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3217,7 +3141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/docker/litellm/" class="md-nav__link">
+      <a href="../../docker/litellm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3284,7 +3208,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../samples/python/streamlit/" class="md-nav__link">
+      <a href="../streamlit/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3340,118 +3264,46 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-ner-results-flow-within-presidio" class="md-nav__link">
+  <a href="#what-is-gliner" class="md-nav__link">
     <span class="md-ellipsis">
-      How NER results flow within Presidio
+      What is GLiNER
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-a-new-model" class="md-nav__link">
+  <a href="#pii-detection-with-gliner" class="md-nav__link">
     <span class="md-ellipsis">
-      Adding a new model
+      PII Detection with GLiNER
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Adding a new model">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-gliner-with-presidio" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using GLiNER with Presidio
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using GLiNER with Presidio">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-a-public-pre-trained-transformers-model" class="md-nav__link">
+  <a href="#installation" class="md-nav__link">
     <span class="md-ellipsis">
-      Using a public pre-trained transformers model
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using a public pre-trained transformers model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#downloading-a-pre-trained-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Downloading a pre-trained model
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuring-the-ner-pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuring the NER pipeline
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configuring the NER pipeline">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#configuring-the-ner-pipeline-via-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuring the NER pipeline via code
+      Installation
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#creating-a-yaml-configuration-file" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating a YAML configuration file
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Creating a YAML configuration file">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#calling-the-new-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Calling the new model
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#explaining-the-configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Explaining the configuration options
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#training-your-own-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Training your own model
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-a-transformers-model-as-an-entityrecognizer" class="md-nav__link">
-    <span class="md-ellipsis">
-      Using a transformers model as an EntityRecognizer
+      Example
     </span>
   </a>
   
@@ -3480,201 +3332,70 @@
                   
 
 
-<h1 id="transformers-based-named-entity-recognition-models">Transformers based Named Entity Recognition models</h1>
-<p>Presidio's <code>TransformersNlpEngine</code> consists of a spaCy pipeline which encapsulates a Huggingface Transformers model instead of the spaCy NER component:</p>
-<p><img alt="image" src="../../../assets/spacy-transformers-ner.png" /></p>
-<p>Presidio leverages other types of information from spaCy such as tokens, lemmas and part-of-speech.
-Therefore the pipeline returns both the NER model results as well as results from other pipeline components.</p>
-<h2 id="how-ner-results-flow-within-presidio">How NER results flow within Presidio</h2>
-<p>This diagram describes the flow of NER results within Presidio, and the relationship between the <code>TransformersNlpEngine</code> component and the <code>TransformersRecognizer</code> component:</p>
-<pre class="mermaid"><code>sequenceDiagram
-    AnalyzerEngine-&gt;&gt;TransformersNlpEngine: Call engine.process_text(text) &lt;br&gt;to get model results
-    TransformersNlpEngine-&gt;&gt;spaCy: Call spaCy pipeline
-    spaCy-&gt;&gt;transformers: call NER model
-    transformers-&gt;&gt;spaCy: get entities
-    spaCy-&gt;&gt;TransformersNlpEngine: return transformers entities &lt;BR&gt;+ spaCy attributes
-    Note over TransformersNlpEngine: Map entity names to Presidio's, &lt;BR&gt;update scores, &lt;BR&gt;remove unwanted entities &lt;BR&gt; based on NerModelConfiguration
-    TransformersNlpEngine-&gt;&gt;AnalyzerEngine: Pass NlpArtifacts&lt;BR&gt;(Entities, lemmas, tokens, scores etc.)
-    Note over AnalyzerEngine: Call all recognizers
-    AnalyzerEngine-&gt;&gt;TransformersRecognizer: Pass NlpArtifacts
-    Note over TransformersRecognizer: Extract PII entities out of NlpArtifacts
-    TransformersRecognizer-&gt;&gt;AnalyzerEngine: Return List[RecognizerResult]
-</code></pre>
-<h2 id="adding-a-new-model">Adding a new model</h2>
-<p>As the underlying transformers model, you can choose from either a public pretrained model or a custom model.</p>
-<h3 id="using-a-public-pre-trained-transformers-model">Using a public pre-trained transformers model</h3>
-<h4 id="downloading-a-pre-trained-model">Downloading a pre-trained model</h4>
-<p>To download the desired NER model from HuggingFace:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">transformers</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">huggingface_hub</span><span class="w"> </span><span class="kn">import</span> <span class="n">snapshot_download</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForTokenClassification</span>
-
-<span class="n">transformers_model</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">PATH_TO_MODEL</span><span class="o">&gt;</span> <span class="c1"># e.g. &quot;obi/deid_roberta_i2b2&quot;</span>
-
-<span class="n">snapshot_download</span><span class="p">(</span><span class="n">repo_id</span><span class="o">=</span><span class="n">transformers_model</span><span class="p">)</span>
-
-<span class="c1"># Instantiate to make sure it&#39;s downloaded during installation and not runtime</span>
-<span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">transformers_model</span><span class="p">)</span>
-<span class="n">AutoModelForTokenClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">transformers_model</span><span class="p">)</span>
+<h1 id="using-gliner-within-presidio">Using GLiNER within Presidio</h1>
+<h2 id="what-is-gliner">What is GLiNER</h2>
+<p>GLiNER is a Named Entity Recognition (NER) model capable of identifying any entity type using a bidirectional transformer encoder (BERT-like). It provides a practical alternative to traditional NER models, which are limited to predefined entities, and Large Language Models (LLMs) that, despite their flexibility, are costly and large for resource-constrained scenarios.</p>
+<p>Paper: <a href="https://arxiv.org/abs/2311.08526">GLiNER: Generalist Model for Named Entity Recognition using Bidirectional Transformer</a></p>
+<p>Since GLiNER takes as input both the sentence/text and entity types, it can be used for zero-shot named entity recognition. This means that it can recognize entities that were not seen during training.</p>
+<h2 id="pii-detection-with-gliner">PII Detection with GLiNER</h2>
+<p>GLiNER has a trained PII detection model: 🔍 <a href="https://huggingface.co/urchade/gliner_multi_pii-v1"><code>urchade/gliner_multi_pii-v1</code></a> <em>(Apache 2.0)</em></p>
+<p>This model is capable of recognizing various types of <em>personally identifiable information</em> (PII), including but not limited to these entity types: <code>person</code>, <code>organization</code>, <code>phone number</code>, <code>address</code>, <code>passport number</code>, <code>email</code>, <code>credit card number</code>, <code>social security number</code>, <code>health insurance id number</code>, <code>date of birth</code>, <code>mobile phone number</code>, <code>bank account number</code>, <code>medication</code>, <code>cpf</code>, <code>driver's license number</code>, <code>tax identification number</code>, <code>medical condition</code>, <code>identity card number</code>, <code>national id number</code>, <code>ip address</code>, <code>email address</code>, <code>iban</code>, <code>credit card expiration date</code>, <code>username</code>, <code>health insurance number</code>, <code>registration number</code>, <code>student id number</code>, <code>insurance number</code>, <code>flight number</code>, <code>landline phone number</code>, <code>blood type</code>, <code>cvv</code>, <code>reservation number</code>, <code>digital signature</code>, <code>social media handle</code>, <code>license plate number</code>, <code>cnpj</code>, <code>postal code</code>, <code>passport_number</code>, <code>serial number</code>, <code>vehicle registration number</code>, <code>credit card brand</code>, <code>fax number</code>, <code>visa number</code>, <code>insurance company</code>, <code>identity document number</code>, <code>transaction number</code>, <code>national health insurance number</code>, <code>cvc</code>, <code>birth certificate number</code>, <code>train ticket number</code>, <code>passport expiration date</code>, and <code>social_security_number</code>.</p>
+<h2 id="using-gliner-with-presidio">Using GLiNER with Presidio</h2>
+<p>Presidio has a built-in <code>EntityRecognizer</code> for GLiNER: <code>GLiNERRecognizer</code>. This recognizer can be used to detect PII entities in text using the GLiNER model.</p>
+<h3 id="installation">Installation</h3>
+<p>To use GLiNER with Presidio, you need to install the <code>presidio-analyzer</code> with the <code>gliner</code> extra:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;presidio-analyzer[gliner]&#39;</span>
 </code></pre></div>
-<p>Then, also download a spaCy pipeline/model:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>spacy<span class="w"> </span>download<span class="w"> </span>en_core_web_sm
-</code></pre></div>
-<h3 id="configuring-the-ner-pipeline">Configuring the NER pipeline</h3>
-<p>Once the models are downloaded, one option to configure them is to create a YAML configuration file.
-Note that the configuration needs to contain both a <code>spaCy</code> pipeline name and a transformers model name.
-In addition, different configurations for parsing the results of the transformers model can be added.</p>
-<p>The NER model configuration can be done in a YAML file or in Python:</p>
-<h4 id="configuring-the-ner-pipeline-via-code">Configuring the NER pipeline via code</h4>
-<p>Example configuration in Python:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Transformer model config</span>
-<span class="n">model_config</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;lang_code&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
-     <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="s2">&quot;spacy&quot;</span><span class="p">:</span> <span class="s2">&quot;en_core_web_sm&quot;</span><span class="p">,</span> <span class="c1"># for tokenization, lemmatization</span>
-         <span class="s2">&quot;transformers&quot;</span><span class="p">:</span> <span class="s2">&quot;StanfordAIMI/stanford-deidentifier-base&quot;</span> <span class="c1"># for NER</span>
-    <span class="p">}</span>
-<span class="p">}]</span>
-
-<span class="c1"># Entity mappings between the model&#39;s and Presidio&#39;s</span>
-<span class="n">mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">PER</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span>
-    <span class="n">LOC</span><span class="o">=</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span>
-    <span class="n">ORG</span><span class="o">=</span><span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">,</span>
-    <span class="n">AGE</span><span class="o">=</span><span class="s2">&quot;AGE&quot;</span><span class="p">,</span>
-    <span class="n">ID</span><span class="o">=</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>
-    <span class="n">EMAIL</span><span class="o">=</span><span class="s2">&quot;EMAIL&quot;</span><span class="p">,</span>
-    <span class="n">DATE</span><span class="o">=</span><span class="s2">&quot;DATE_TIME&quot;</span><span class="p">,</span>
-    <span class="n">PHONE</span><span class="o">=</span><span class="s2">&quot;PHONE_NUMBER&quot;</span><span class="p">,</span>
-    <span class="n">PERSON</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span>
-    <span class="n">LOCATION</span><span class="o">=</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span>
-    <span class="n">GPE</span><span class="o">=</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span>
-    <span class="n">ORGANIZATION</span><span class="o">=</span><span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">,</span>
-    <span class="n">NORP</span><span class="o">=</span><span class="s2">&quot;NRP&quot;</span><span class="p">,</span>
-    <span class="n">PATIENT</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span>
-    <span class="n">STAFF</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span>
-    <span class="n">HOSP</span><span class="o">=</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span>
-    <span class="n">PATORG</span><span class="o">=</span><span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">,</span>
-    <span class="n">TIME</span><span class="o">=</span><span class="s2">&quot;DATE_TIME&quot;</span><span class="p">,</span>
-    <span class="n">HCW</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span>
-    <span class="n">HOSPITAL</span><span class="o">=</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span>
-    <span class="n">FACILITY</span><span class="o">=</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span>
-    <span class="n">VENDOR</span><span class="o">=</span><span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">labels_to_ignore</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">]</span>
-
-<span class="n">ner_model_configuration</span> <span class="o">=</span> <span class="n">NerModelConfiguration</span><span class="p">(</span>
-    <span class="n">model_to_presidio_entity_mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span>
-    <span class="n">alignment_mode</span><span class="o">=</span><span class="s2">&quot;expand&quot;</span><span class="p">,</span> <span class="c1"># &quot;strict&quot;, &quot;contract&quot;, &quot;expand&quot;</span>
-    <span class="n">aggregation_strategy</span><span class="o">=</span><span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="c1"># &quot;simple&quot;, &quot;first&quot;, &quot;average&quot;, &quot;max&quot;</span>
-    <span class="n">labels_to_ignore</span> <span class="o">=</span> <span class="n">labels_to_ignore</span><span class="p">)</span>
-
-<span class="n">transformers_nlp_engine</span> <span class="o">=</span> <span class="n">TransformersNlpEngine</span><span class="p">(</span>
-    <span class="n">models</span><span class="o">=</span><span class="n">model_config</span><span class="p">,</span>
-    <span class="n">ner_model_configuration</span><span class="o">=</span><span class="n">ner_model_configuration</span><span class="p">)</span>
-
-<span class="c1"># Transformer-based analyzer</span>
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span>
-    <span class="n">nlp_engine</span><span class="o">=</span><span class="n">transformers_nlp_engine</span><span class="p">,</span> 
-    <span class="n">supported_languages</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span>
-<span class="p">)</span>
-</code></pre></div>
-<h4 id="creating-a-yaml-configuration-file">Creating a YAML configuration file</h4>
-<p>Once the models are downloaded, one option to configure them is to create a YAML configuration file.
-Note that the configuration needs to contain both a <code>spaCy</code> pipeline name and a transformers model name.
-In addition, different configurations for parsing the results of the transformers model can be added.</p>
-<p>Example configuration (in YAML):</p>
-<div class="highlight"><pre><span></span><code><span class="nt">nlp_engine_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transformers</span>
-<span class="nt">models</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span>
-<span class="w">    </span><span class="nt">lang_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">en</span>
-<span class="w">    </span><span class="nt">model_name</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">spacy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">en_core_web_sm</span>
-<span class="w">      </span><span class="nt">transformers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StanfordAIMI/stanford-deidentifier-base</span>
-
-<span class="nt">ner_model_configuration</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">labels_to_ignore</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">O</span>
-<span class="w">  </span><span class="nt">aggregation_strategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">max</span><span class="w"> </span><span class="c1"># &quot;simple&quot;, &quot;first&quot;, &quot;average&quot;, &quot;max&quot;</span>
-<span class="w">  </span><span class="nt">stride</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span>
-<span class="w">  </span><span class="nt">alignment_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">expand</span><span class="w"> </span><span class="c1"># &quot;strict&quot;, &quot;contract&quot;, &quot;expand&quot;</span>
-<span class="w">  </span><span class="nt">model_to_presidio_entity_mapping</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">PER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PERSON</span>
-<span class="w">    </span><span class="nt">LOC</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LOCATION</span>
-<span class="w">    </span><span class="nt">ORG</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORGANIZATION</span>
-<span class="w">    </span><span class="nt">AGE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AGE</span>
-<span class="w">    </span><span class="nt">ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ID</span>
-<span class="w">    </span><span class="nt">EMAIL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EMAIL</span>
-<span class="w">    </span><span class="nt">PATIENT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PERSON</span>
-<span class="w">    </span><span class="nt">STAFF</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PERSON</span>
-<span class="w">    </span><span class="nt">HOSP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORGANIZATION</span>
-<span class="w">    </span><span class="nt">PATORG</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORGANIZATION</span>
-<span class="w">    </span><span class="nt">DATE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DATE_TIME</span>
-<span class="w">    </span><span class="nt">PHONE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PHONE_NUMBER</span>
-<span class="w">    </span><span class="nt">HCW</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PERSON</span>
-<span class="w">    </span><span class="nt">HOSPITAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LOCATION</span>
-<span class="w">    </span><span class="nt">VENDOR</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORGANIZATION</span>
-
-<span class="w">  </span><span class="nt">low_confidence_score_multiplier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.4</span>
-<span class="w">  </span><span class="nt">low_score_entity_names</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ID</span>
-</code></pre></div>
-<h5 id="calling-the-new-model">Calling the new model</h5>
-<p>Once the configuration file is created, it can be used to create a new <code>TransformersNlpEngine</code>:</p>
-<div class="highlight"><pre><span></span><code>    <span class="kn">from</span><span class="w"> </span><span class="nn">presidio_analyzer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalyzerEngine</span><span class="p">,</span> <span class="n">RecognizerRegistry</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">presidio_analyzer.nlp_engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">NlpEngineProvider</span>
-
-    <span class="c1"># Create configuration containing engine name and models</span>
-    <span class="n">conf_file</span> <span class="o">=</span> <span class="n">PATH_TO_CONF_FILE</span>
-
-    <span class="c1"># Create NLP engine based on configuration</span>
-    <span class="n">provider</span> <span class="o">=</span> <span class="n">NlpEngineProvider</span><span class="p">(</span><span class="n">conf_file</span><span class="o">=</span><span class="n">conf_file</span><span class="p">)</span>
-    <span class="n">nlp_engine</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
-
-    <span class="c1"># Pass the created NLP engine and supported_languages to the AnalyzerEngine</span>
-    <span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span>
-        <span class="n">nlp_engine</span><span class="o">=</span><span class="n">nlp_engine</span><span class="p">,</span> 
-        <span class="n">supported_languages</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span>
-    <span class="p">)</span>
-
-    <span class="n">results_english</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is Morris&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">results_english</span><span class="p">)</span>
-</code></pre></div>
-<h4 id="explaining-the-configuration-options">Explaining the configuration options</h4>
-<ul>
-<li><code>model_name.spacy</code> is a name of a spaCy model/pipeline, which would wrap the transformers NER model. For example, <code>en_core_web_sm</code>.</li>
-<li>The <code>model_name.transformers</code> is the full path for a huggingface model. Models can be found on <a href="https://huggingface.co/models?pipeline_tag=token-classification">HuggingFace Models Hub</a>. For example, <code>obi/deid_roberta_i2b2</code></li>
-</ul>
-<p>The <code>ner_model_configuration</code> section contains the following parameters:</p>
-<ul>
-<li><code>labels_to_ignore</code>: A list of labels to ignore. For example, <code>O</code> (no entity) or entities you are not interested in returning.</li>
-<li><code>aggregation_strategy</code>: The strategy to use when aggregating the results of the transformers model.</li>
-<li><code>stride</code>: The value is the length of the window overlap in transformer tokenizer tokens.</li>
-<li><code>alignment_mode</code>: The strategy to use when aligning the results of the transformers model to the original text.</li>
-<li><code>model_to_presidio_entity_mapping</code>: A mapping between the transformers model labels and the Presidio entity types.</li>
-<li><code>low_confidence_score_multiplier</code>: A multiplier to apply to the score of entities with low confidence.</li>
-<li><code>low_score_entity_names</code>: A list of entity types to apply the low confidence score multiplier to.</li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Defining the entity mapping</p>
-<p>To be able to create the <code>model_to_presidio_entity_mapping</code> dictionary, it is advised to check which classes the model is able to predict.
-This can be found on the huggingface hub site for the model in some cases. In other, one can check the model's <code>config.json</code> under <code>id2label</code>.
-For example, for <code>bert-base-NER-uncased</code>, it can be found here: <a href="https://huggingface.co/dslim/bert-base-NER-uncased/blob/main/config.json">https://huggingface.co/dslim/bert-base-NER-uncased/blob/main/config.json</a>.
-Note that most NER models add a prefix to the class (e.g. <code>B-PER</code> for class <code>PER</code>). When creating the mapping, do not add the prefix.</p>
-</div>
-<p>See more information on parameters on the <a href="https://github.com/explosion/spacy-huggingface-pipelines#token-classification">spacy-huggingface-pipelines Github repo</a>.</p>
-<p>Once created, see <a href="../../customizing_nlp_models/#Configure-Presidio-to-use-the-new-model">the NLP configuration documentation</a> for more information.</p>
-<h3 id="training-your-own-model">Training your own model</h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>A labeled dataset containing text and labeled PII entities is required for training a new model.</p>
+<p>GLiNER only supports python 3.10 and above, while Presidio supports version 3.9 and above.</p>
 </div>
-<p>For more information on model training and evaluation for Presidio, see the <a href="https://github.com/microsoft/presidio-research">Presidio-Research Github repository</a>.</p>
-<p>To train your own model, see this tutorial: <a href="https://huggingface.co/docs/transformers/training">Train your own transformers model</a>.</p>
-<h3 id="using-a-transformers-model-as-an-entityrecognizer">Using a transformers model as an <code>EntityRecognizer</code></h3>
-<p>In addition to the approach described in this document, one can decide to integrate a transformers model as a recognizer.
-We allow these two options, as a user might want to have multiple NER models running in parallel. In this case, one can create multiple <code>EntityRecognizer</code> instances, each serving a different model, instead of one model used in an <code>NlpEngine</code>. <a href="../../../samples/python/transformers_recognizer/">See this sample</a> for more info on integrating a transformers model as a Presidio recognizer and not as a Presidio <code>NLPEngine</code>.</p>
+<h3 id="example">Example</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">presidio_analyzer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalyzerEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">presidio_analyzer.nlp_engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">NlpEngineProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">presidio_analyzer.predefined_recognizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">GLiNERRecognizer</span>
+
+
+<span class="c1"># Load a small spaCy model as we don&#39;t need spaCy&#39;s NER</span>
+<span class="n">nlp_engine</span> <span class="o">=</span> <span class="n">NlpEngineProvider</span><span class="p">(</span>
+    <span class="n">nlp_configuration</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">:</span> <span class="s2">&quot;spacy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;lang_code&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;en_core_web_sm&quot;</span><span class="p">}],</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Create an analyzer engine </span>
+<span class="n">analyzer_engine</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
+
+<span class="c1"># Define and create the GLiNER recognizer</span>
+<span class="n">entity_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;person&quot;</span><span class="p">:</span> <span class="s2">&quot;PERSON&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;PERSON&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;LOCATION&quot;</span>
+<span class="p">}</span>
+
+<span class="n">gliner_recognizer</span> <span class="o">=</span> <span class="n">GLiNERRecognizer</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;urchade/gliner_multi_pii-v1&quot;</span><span class="p">,</span>
+    <span class="n">entity_mapping</span><span class="o">=</span><span class="n">entity_mapping</span><span class="p">,</span>
+    <span class="n">flat_ner</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">multi_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">map_location</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Add the GLiNER recognizer to the registry</span>
+<span class="n">analyzer_engine</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">gliner_recognizer</span><span class="p">)</span>
+
+<span class="c1"># Remove the spaCy recognizer to avoid NER coming from spaCy</span>
+<span class="n">analyzer_engine</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">remove_recognizer</span><span class="p">(</span><span class="s2">&quot;SpacyRecognizer&quot;</span><span class="p">)</span>
+
+<span class="c1"># Analyze text</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Hello, my name is Rafi Mor, I&#39;m from Binyamina and I work at Microsoft. &quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</code></pre></div>
 
 
 
