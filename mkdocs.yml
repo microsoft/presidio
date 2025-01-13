@@ -74,48 +74,49 @@ nav:
           - Presidio Structured Python API: api/structured_python.md
       - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
   - Samples:
-    - Usage:
-      - Home: samples/index.md
-      - Text:
-        - Presidio Basic Usage Notebook: samples/python/presidio_notebook.ipynb
-        - Customizing Presidio Analyzer: samples/python/customizing_presidio_analyzer.ipynb
-        - Configuring The NLP engine: samples/python/ner_model_configuration.ipynb
-        - Encrypting and Decrypting identified entities: samples/python/encrypt_decrypt.ipynb
-        - Getting the identified entity value using a custom Operator: samples/python/getting_entity_values.ipynb
-        - Anonymizing known values: samples/python/Anonymizing known values.ipynb
-        - Keeping some entities from being anonymized: samples/python/keep_entities.ipynb
-        - Integrating with external services: samples/python/integrating_with_external_services.ipynb
-        - Remote Recognizer: https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_remote_recognizer.py
-        - Azure AI Language as a Remote Recognizer: samples/python/text_analytics/index.md
-        - Using Flair as an external PII model: https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py
-        - Using Span Marker as an external PII model: https://github.com/microsoft/presidio/blob/main/docs/samples/python/span_marker_recognizer.py
-        - Using Transformers as an external PII model: samples/python/transformers_recognizer/index.md
-        - Pseudonymization (replace PII values using mappings): samples/python/pseudonymization.ipynb
-        - Passing a lambda as a Presidio anonymizer using Faker: https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_custom_lambda_anonymizer.py
-        - Synthetic data generation with OpenAI: samples/python/synth_data_with_openai.ipynb
-        - YAML based no-code configuration: samples/python/no_code_config.ipynb
-      - Data:
-        - Analyzing structured / semi-structured data in batch: samples/python/batch_processing.ipynb
-        - Presidio Structured Basic Usage Notebook: samples/python/example_structured.ipynb
-        - Analyze and Anonymize CSV file: https://github.com/microsoft/presidio/blob/main/docs/samples/python/process_csv_file.py
-      - Images:
-        - Redacting Text PII from DICOM images: samples/python/example_dicom_image_redactor.ipynb
-        - Using an allow list with image redaction: samples/python/image_redaction_allow_list_approach.ipynb
-        - Plot custom bounding boxes: samples/python/plot_custom_bboxes.ipynb
-        - Example DICOM redaction evaluation: samples/python/example_dicom_redactor_evaluation.ipynb
-      - PDF:
-        - Annotating PII in a PDF: samples/python/example_pdf_annotation.ipynb
-      - Deployment:
-        - Presidio with App Service: samples/deployments/app-service/index.md
-        - Presidio with Kubernetes: samples/deployments/k8s/index.md
-        - Presidio with Spark: samples/deployments/spark/index.md
-        - Azure Data Factory:
-          - ETL using AppService/Databricks: samples/deployments/data-factory/presidio-data-factory.md
-          - Add Presidio as an HTTP service to your Azure Data Factory: samples/deployments/data-factory/presidio-data-factory-template-gallery-http.md
-          - Add Presidio on Databricks to your Azure Data Factory: samples/deployments/data-factory/presidio-data-factory-template-gallery-databricks.md
-        - PII Masking LLM calls using LiteLLM proxy: samples/docker/litellm.md
-      - Demo:
-        - Create a simple demo app using Streamlit: samples/python/streamlit/index.md
+
+    - Home: samples/index.md
+    - Text:
+      - Presidio Basic Usage Notebook: samples/python/presidio_notebook.ipynb
+      - Customizing Presidio Analyzer: samples/python/customizing_presidio_analyzer.ipynb
+      - Configuring The NLP engine: samples/python/ner_model_configuration.ipynb
+      - Encrypting and Decrypting identified entities: samples/python/encrypt_decrypt.ipynb
+      - Getting the identified entity value using a custom Operator: samples/python/getting_entity_values.ipynb
+      - Anonymizing known values: samples/python/Anonymizing known values.ipynb
+      - Keeping some entities from being anonymized: samples/python/keep_entities.ipynb
+      - Integrating with external services: samples/python/integrating_with_external_services.ipynb
+      - Remote Recognizer: https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_remote_recognizer.py
+      - Azure AI Language as a Remote Recognizer: samples/python/text_analytics/index.md
+      - Using Flair as an external PII model: https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py
+      - Using Span Marker as an external PII model: https://github.com/microsoft/presidio/blob/main/docs/samples/python/span_marker_recognizer.py
+      - Using Transformers as an external PII model: samples/python/transformers_recognizer/index.md
+      - Using GLiNER as an external PII model: samples/python/gliner.md
+      - Pseudonymization (replace PII values using mappings): samples/python/pseudonymization.ipynb
+      - Passing a lambda as a Presidio anonymizer using Faker: https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_custom_lambda_anonymizer.py
+      - Synthetic data generation with OpenAI: samples/python/synth_data_with_openai.ipynb
+      - YAML based no-code configuration: samples/python/no_code_config.ipynb
+    - Data:
+      - Analyzing structured / semi-structured data in batch: samples/python/batch_processing.ipynb
+      - Presidio Structured Basic Usage Notebook: samples/python/example_structured.ipynb
+      - Analyze and Anonymize CSV file: https://github.com/microsoft/presidio/blob/main/docs/samples/python/process_csv_file.py
+    - Images:
+      - Redacting Text PII from DICOM images: samples/python/example_dicom_image_redactor.ipynb
+      - Using an allow list with image redaction: samples/python/image_redaction_allow_list_approach.ipynb
+      - Plot custom bounding boxes: samples/python/plot_custom_bboxes.ipynb
+      - Example DICOM redaction evaluation: samples/python/example_dicom_redactor_evaluation.ipynb
+    - PDF:
+      - Annotating PII in a PDF: samples/python/example_pdf_annotation.ipynb
+    - Deployment:
+      - Presidio with App Service: samples/deployments/app-service/index.md
+      - Presidio with Kubernetes: samples/deployments/k8s/index.md
+      - Presidio with Spark: samples/deployments/spark/index.md
+      - Azure Data Factory:
+        - ETL using AppService/Databricks: samples/deployments/data-factory/presidio-data-factory.md
+        - Add Presidio as an HTTP service to your Azure Data Factory: samples/deployments/data-factory/presidio-data-factory-template-gallery-http.md
+        - Add Presidio on Databricks to your Azure Data Factory: samples/deployments/data-factory/presidio-data-factory-template-gallery-databricks.md
+      - PII Masking LLM calls using LiteLLM proxy: samples/docker/litellm.md
+    - Demo app:
+      - Create a simple demo app using Streamlit: samples/python/streamlit/index.md
 not_in_nav : |
   design.md
   samples/deployments/index.md
