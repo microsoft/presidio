@@ -14,6 +14,16 @@ All notable changes to this project will be documented in this file.
 
 ### General
 
+
+## [2.3.357] - 2025-01-13
+
+### Analyzer
+- Example GLiNER integration (#1504)
+
+### General
+- Docs revamp and docstring bug fixes (#1500)
+- Minor updates to the mkdocstrings config (#1503)
+
 ## [2.3.356] - 2024-12-15
 
 ### Analyzer
@@ -499,8 +509,9 @@ Upgrade Analyzer spacy version to 3.0.5
 
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.356...HEAD
-[2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...356
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.357...HEAD
+[2.2.357]: https://github.com/microsoft/presidio/compare/2.2.356...2.2.357
+[2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...2.2.356
 [2.2.355]: https://github.com/microsoft/presidio/compare/2.2.354...2.2.355
 [2.2.354]: https://github.com/microsoft/presidio/compare/2.2.353...2.2.354
 [2.2.353]: https://github.com/microsoft/presidio/compare/2.2.352...2.2.353
