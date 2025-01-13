@@ -156,7 +156,6 @@ class RecognizerRegistry:
 
         if entities is None and all_fields is False:
             raise ValueError("No entities provided")
-        all_entity_recognizers = dict()
 
         all_possible_recognizers = copy.copy(self.recognizers)
         if ad_hoc_recognizers:
