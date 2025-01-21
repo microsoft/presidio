@@ -298,15 +298,13 @@ try:
     analyzer = analyzer_engine(*analyzer_params)
     analyzer_load_state.empty()
 
-    st_analyze_results = analyze(
-        *analyzer_params,
+    st_analyze_results = analyzer.analyze(
         text=st_text,
         entities=st_entities,
         language="en",
         score_threshold=st_threshold,
         return_decision_process=st_return_decision_process,
-        allow_list=st_allow_list,
-        deny_list=st_deny_list,
+        allow_list=st_allow_list
     )
 
     # After
