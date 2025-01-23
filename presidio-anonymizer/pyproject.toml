@@ -23,7 +23,6 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
 pycryptodome = ">=3.10.1"
-azure-core = { version = "*", optional = true }
 flask = { version = ">=1.1", optional = true }
 gunicorn = {version = "*", optional = true}
 
