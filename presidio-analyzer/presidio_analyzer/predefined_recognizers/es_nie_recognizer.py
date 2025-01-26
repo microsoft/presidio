@@ -1,5 +1,7 @@
 from typing import List, Optional, Tuple
 
+from validation.validation_utils import ValidationUtils
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -39,6 +41,9 @@ class EsNieRecognizer(PatternRecognizer):
         supported_entity: str = "ES_NIE",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
+        self.replacement_pairs = (
+            replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
+        )
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
         super().__init__(
@@ -51,7 +56,9 @@ class EsNieRecognizer(PatternRecognizer):
     def validate_result(self, pattern_text: str) -> bool:
         """Validate the pattern by using the control character."""
 
-        pattern_text = EsNieRecognizer.__sanitize_value(pattern_text)
+        pattern_text = ValidationUtils.sanitize_value(
+            pattern_text, self.replacement_pairs
+        )
 
         letters = "TRWAGMYFPDXBNJZSQVHLCKE"
         letter = pattern_text[-1]
@@ -66,7 +73,3 @@ class EsNieRecognizer(PatternRecognizer):
         # replace XYZ with 012, and check the mod 23
         number = int(str("XYZ".index(pattern_text[0])) + pattern_text[1:-1])
         return letter == letters[number % 23]
-
-    @staticmethod
-    def __sanitize_value(text: str) -> str:
-        return text.replace("-", "").replace(" ", "")

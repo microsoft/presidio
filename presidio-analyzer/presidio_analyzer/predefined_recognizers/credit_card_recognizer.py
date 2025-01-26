@@ -1,5 +1,7 @@
 from typing import List, Optional, Tuple
 
+from validation.validation_utils import ValidationUtils
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -59,7 +61,9 @@ class CreditCardRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
-        sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
+        sanitized_value = ValidationUtils.sanitize_value(
+            pattern_text, self.replacement_pairs
+        )
         checksum = self.__luhn_checksum(sanitized_value)
 
         return checksum
@@ -76,9 +80,3 @@ class CreditCardRecognizer(PatternRecognizer):
         for d in even_digits:
             checksum += sum(digits_of(str(d * 2)))
         return checksum % 10 == 0
-
-    @staticmethod
-    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
-        for search_string, replacement_string in replacement_pairs:
-            text = text.replace(search_string, replacement_string)
-        return text

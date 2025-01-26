@@ -1,5 +1,7 @@
 from typing import List, Optional, Tuple
 
+from validation.validation_utils import ValidationUtils
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -69,7 +71,7 @@ class AuMedicareRecognizer(PatternRecognizer):
         :return: A bool indicating whether the validation was successful.
         """
         # Pre-processing before validation checks
-        text = self.__sanitize_value(pattern_text, self.replacement_pairs)
+        text = ValidationUtils.sanitize_value(pattern_text, self.replacement_pairs)
         medicare_list = [int(digit) for digit in text if not digit.isspace()]
 
         # Set weights based on digit position
@@ -81,9 +83,3 @@ class AuMedicareRecognizer(PatternRecognizer):
             sum_product += medicare_list[i] * weight[i]
         remainder = sum_product % 10
         return remainder == medicare_list[8]
-
-    @staticmethod
-    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
-        for search_string, replacement_string in replacement_pairs:
-            text = text.replace(search_string, replacement_string)
-        return text
