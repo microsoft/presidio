@@ -1,8 +1,7 @@
 from typing import List, Optional, Tuple
 
-from validation.validation_utils import ValidationUtils
-
 from presidio_analyzer import Pattern, PatternRecognizer
+from presidio_analyzer.validation import ValidationUtils
 
 
 class AbaRoutingRecognizer(PatternRecognizer):

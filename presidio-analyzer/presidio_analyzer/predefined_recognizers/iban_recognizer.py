@@ -3,7 +3,6 @@ import string
 from typing import Dict, List, Optional, Tuple
 
 import regex as re
-from validation.validation_utils import ValidationUtils
 
 from presidio_analyzer import (
     EntityRecognizer,
@@ -17,6 +16,7 @@ from presidio_analyzer.predefined_recognizers.iban_patterns import (
     EOS,
     regex_per_country,
 )
+from presidio_analyzer.validation import ValidationUtils
 
 logger = logging.getLogger("presidio-analyzer")
 

@@ -1,4 +1,4 @@
-from presidio_analyzer import PresidioAnalyzerUtils
+from presidio_analyzer.validation import ValidationUtils
 import pytest
 
 sanitizer_test_set = [
@@ -16,4 +16,4 @@ def test_sanitize_value(input_text, params, expected_output):
     :param expected_output: sanitized value
     :return: True/False
     """
-    assert PresidioAnalyzerUtils.sanitize_value(input_text, params) == expected_output
+    assert ValidationUtils.sanitize_value(input_text, params) == expected_output

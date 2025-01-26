@@ -1,8 +1,7 @@
 from typing import List, Optional, Tuple
 
-from validation.validation_utils import ValidationUtils as Utils
-
 from presidio_analyzer import Pattern, PatternRecognizer
+from presidio_analyzer.validation import ValidationUtils
 
 
 class InVehicleRegistrationRecognizer(PatternRecognizer):
@@ -350,7 +349,9 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> bool:
         """Determine absolute value based on calculation."""
-        sanitized_value = Utils.sanitize_value(pattern_text, self.replacement_pairs)
+        sanitized_value = ValidationUtils.sanitize_value(
+            pattern_text, self.replacement_pairs
+        )
         return self.__check_vehicle_registration(sanitized_value)
 
     def __check_vehicle_registration(self, sanitized_value: str) -> bool:
