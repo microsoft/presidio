@@ -120,7 +120,6 @@ def test_when_remove_duplicates_contained_shorter_length_results_removed():
     results = EntityRecognizer.remove_duplicates(arr)
     assert len(results) == 1
 
-from presidio_analyzer.validation import ValidationUtils
 import pytest
 
 sanitizer_test_set = [
@@ -138,4 +137,4 @@ def test_sanitize_value(input_text, params, expected_output):
     :param expected_output: sanitized value
     :return: True/False
     """
-    assert ValidationUtils.sanitize_value(input_text, params) == expected_output
+    assert EntityRecognizer.sanitize_value(input_text, params) == expected_output
