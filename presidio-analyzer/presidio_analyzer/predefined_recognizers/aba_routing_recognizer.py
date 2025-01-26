@@ -1,5 +1,7 @@
 from typing import List, Optional, Tuple
 
+from validation.validation_utils import ValidationUtils
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -59,7 +61,9 @@ class AbaRoutingRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
-        sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
+        sanitized_value = ValidationUtils.sanitize_value(
+            pattern_text, self.replacement_pairs
+        )
         return self.__checksum(sanitized_value)
 
     @staticmethod
@@ -68,9 +72,3 @@ class AbaRoutingRecognizer(PatternRecognizer):
         for idx, m in enumerate([3, 7, 1, 3, 7, 1, 3, 7, 1]):
             s += int(sanitized_value[idx]) * m
         return s % 10 == 0
-
-    @staticmethod
-    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
-        for search_string, replacement_string in replacement_pairs:
-            text = text.replace(search_string, replacement_string)
-        return text

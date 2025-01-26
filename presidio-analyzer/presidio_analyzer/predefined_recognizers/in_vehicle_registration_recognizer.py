@@ -1,7 +1,8 @@
 from typing import List, Optional, Tuple
 
+from validation.validation_utils import ValidationUtils as Utils
+
 from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.analyzer_utils import PresidioAnalyzerUtils as Utils
 
 
 class InVehicleRegistrationRecognizer(PatternRecognizer):
@@ -350,21 +351,17 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
     def validate_result(self, pattern_text: str) -> bool:
         """Determine absolute value based on calculation."""
         sanitized_value = Utils.sanitize_value(pattern_text, self.replacement_pairs)
-        # print('Sanitized value:' + sanitized_value)
         return self.__check_vehicle_registration(sanitized_value)
 
     def __check_vehicle_registration(self, sanitized_value: str) -> bool:
         # print('check function called')
         is_valid_registration = None  # deliberately not typecasted or set to bool False
         # logic here
-        # print(sanitized_value)
         if len(sanitized_value) >= 8:
             first_two_char = sanitized_value[:2].upper()
             dist_code: str = ""
-            # print(first_two_char)
 
             if first_two_char in self.two_factor_registration_prefix:
-                # print("Got into processing loop")
                 if sanitized_value[2].isdigit():
                     if sanitized_value[3].isdigit():
                         dist_code = sanitized_value[2:4]
@@ -394,11 +391,3 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
                             is_valid_registration = True
 
         return is_valid_registration
-
-    def list_length(self):
-        """
-        Unimplemented functon with primary job of running content length test case.
-
-        :return: None
-        """
-        pass

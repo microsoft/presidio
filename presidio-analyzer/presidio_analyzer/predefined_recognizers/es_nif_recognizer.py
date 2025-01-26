@@ -1,5 +1,7 @@
 from typing import List, Optional, Tuple
 
+from validation.validation_utils import ValidationUtils
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -47,12 +49,10 @@ class EsNifRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
-        pattern_text = EsNifRecognizer.__sanitize_value(pattern_text)
+        pattern_text = ValidationUtils.sanitize_value(
+            pattern_text, self.replacement_pairs
+        )
         letter = pattern_text[-1]
         number = int("".join(filter(str.isdigit, pattern_text)))
         letters = "TRWAGMYFPDXBNJZSQVHLCKE"
         return letter == letters[number % 23]
-
-    @staticmethod
-    def __sanitize_value(text: str) -> str:
-        return text.replace("-", "").replace(" ", "")

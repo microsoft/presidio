@@ -3,6 +3,7 @@ import string
 from typing import Dict, List, Optional, Tuple
 
 import regex as re
+from validation.validation_utils import ValidationUtils
 
 from presidio_analyzer import (
     EntityRecognizer,
@@ -79,7 +80,9 @@ class IbanRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str):  # noqa D102
         try:
-            pattern_text = self.__sanitize_value(pattern_text, self.replacement_pairs)
+            pattern_text = ValidationUtils.sanitize_value(
+                pattern_text, self.replacement_pairs
+            )
             is_valid_checksum = (
                 self.__generate_iban_check_digits(pattern_text, self.LETTERS)
                 == pattern_text[2:4]
@@ -204,9 +207,3 @@ class IbanRecognizer(PatternRecognizer):
             return country_regex and re.match(country_regex, iban, flags=flags)
 
         return False
-
-    @staticmethod
-    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
-        for search_string, replacement_string in replacement_pairs:
-            text = text.replace(search_string, replacement_string)
-        return text
