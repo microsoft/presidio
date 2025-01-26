@@ -1,7 +1,6 @@
 from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.validation import ValidationUtils
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 
 class EsNieRecognizer(PatternRecognizer):
@@ -55,7 +54,7 @@ class EsNieRecognizer(PatternRecognizer):
     def validate_result(self, pattern_text: str) -> bool:
         """Validate the pattern by using the control character."""
 
-        pattern_text = ValidationUtils.sanitize_value(
+        pattern_text = EntityRecognizer.sanitize_value(
             pattern_text, self.replacement_pairs
         )
 

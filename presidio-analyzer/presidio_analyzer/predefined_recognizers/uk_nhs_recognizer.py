@@ -1,7 +1,6 @@
 from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.validation import ValidationUtils
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 
 class NhsRecognizer(PatternRecognizer):
@@ -60,7 +59,7 @@ class NhsRecognizer(PatternRecognizer):
         Only the part in text that was detected by the regex engine
         :return: A bool indicating whether the validation was successful.
         """
-        text = ValidationUtils.sanitize_value(pattern_text, self.replacement_pairs)
+        text = EntityRecognizer.sanitize_value(pattern_text, self.replacement_pairs)
         total = sum(
             [int(c) * multiplier for c, multiplier in zip(text, reversed(range(11)))]
         )

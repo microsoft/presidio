@@ -1,7 +1,6 @@
 from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.validation import ValidationUtils
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 
 class AuAcnRecognizer(PatternRecognizer):
@@ -70,7 +69,7 @@ class AuAcnRecognizer(PatternRecognizer):
         :return: A bool indicating whether the validation was successful.
         """
         # Pre-processing before validation checks
-        text = ValidationUtils.sanitize_value(pattern_text, self.replacement_pairs)
+        text = EntityRecognizer.sanitize_value(pattern_text, self.replacement_pairs)
         acn_list = [int(digit) for digit in text if not digit.isspace()]
 
         # Set weights based on digit position

@@ -16,7 +16,6 @@ from presidio_analyzer.predefined_recognizers.iban_patterns import (
     EOS,
     regex_per_country,
 )
-from presidio_analyzer.validation import ValidationUtils
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -80,7 +79,7 @@ class IbanRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str):  # noqa D102
         try:
-            pattern_text = ValidationUtils.sanitize_value(
+            pattern_text = EntityRecognizer.sanitize_value(
                 pattern_text, self.replacement_pairs
             )
             is_valid_checksum = (

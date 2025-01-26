@@ -1,7 +1,6 @@
 from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.validation import ValidationUtils
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 # https://www.meditec.com/blog/dea-numbers-what-do-they-mean
 
@@ -51,7 +50,7 @@ class MedicalLicenseRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
-        sanitized_value = ValidationUtils.sanitize_value(
+        sanitized_value = EntityRecognizer.sanitize_value(
             pattern_text, self.replacement_pairs
         )
         checksum = self.__luhn_checksum(sanitized_value)

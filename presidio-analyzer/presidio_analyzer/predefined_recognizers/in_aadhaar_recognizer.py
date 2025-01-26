@@ -1,7 +1,6 @@
 from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.validation import ValidationUtils
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 
 class InAadhaarRecognizer(PatternRecognizer):
@@ -58,7 +57,7 @@ class InAadhaarRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> bool:
         """Determine absolute value based on calculation."""
-        sanitized_value = ValidationUtils.sanitize_value(
+        sanitized_value = EntityRecognizer.sanitize_value(
             pattern_text, self.replacement_pairs
         )
         return self.__check_aadhaar(sanitized_value)

@@ -1,7 +1,6 @@
 from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.validation import ValidationUtils
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 
 class ItVatCodeRecognizer(PatternRecognizer):
@@ -63,7 +62,7 @@ class ItVatCodeRecognizer(PatternRecognizer):
         """
 
         # Pre-processing before validation checks
-        text = ValidationUtils.sanitize_value(pattern_text, self.replacement_pairs)
+        text = EntityRecognizer.sanitize_value(pattern_text, self.replacement_pairs)
 
         # Edge-case that passes the checksum even though it is not a
         # valid italian vat code.

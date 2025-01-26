@@ -1,7 +1,6 @@
 from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
-from presidio_analyzer.validation import ValidationUtils
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 
 class AbaRoutingRecognizer(PatternRecognizer):
@@ -60,7 +59,7 @@ class AbaRoutingRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
-        sanitized_value = ValidationUtils.sanitize_value(
+        sanitized_value = EntityRecognizer.sanitize_value(
             pattern_text, self.replacement_pairs
         )
         return self.__checksum(sanitized_value)
