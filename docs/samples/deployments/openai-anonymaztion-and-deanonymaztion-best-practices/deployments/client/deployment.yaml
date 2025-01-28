@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+  labels:
+    app: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - name: preshack-client
+        image: preshack.azurecr.io/preshack-client
+        ports:
+        - containerPort: 8081
+        envFrom:
+          - configMapRef:
+              name: client-config
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-ai-key
+              key: OPENAI_API_KEY
