@@ -41,11 +41,14 @@ class PlPeselRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str) -> bool:  # noqa D102
+    def validate_result(self, pattern_text: str) -> bool:
+        if len(pattern_text) != 11 or not pattern_text.isdigit():
+            return False
+
         digits = [int(digit) for digit in pattern_text]
         weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
 
-        checksum = sum(digit * weight for digit, weight in zip(digits[:10], weights))
-        checksum %= 10
+        checksum = sum(digit * weight for digit, weight in zip(digits[:10], weights)) % 10
+        check_digit = (10 - checksum) % 10
 
-        return checksum == digits[10]
+        return check_digit == digits[10]
