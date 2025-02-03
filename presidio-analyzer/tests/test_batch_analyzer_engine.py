@@ -41,8 +41,10 @@ def test_analyze_iterator_returns_list_of_recognizer_results(
         assert result == expected_result
 # fmt: on
 
-
-def test_analyze_dict_one_value_per_key(batch_analyzer_engine_simple):
+@pytest.mark.parametrize("n_process, batch_size", [(1,1), (4,2), (2,1)])
+def test_analyze_dict_one_value_per_key(batch_analyzer_engine_simple,
+                                        n_process,
+                                        batch_size):
 
     d = {
         "url": "https://microsoft.com",
@@ -51,7 +53,10 @@ def test_analyze_dict_one_value_per_key(batch_analyzer_engine_simple):
         "misc": "microsoft.com or (202)-555-1234",
     }
 
-    results = batch_analyzer_engine_simple.analyze_dict(input_dict=d, language="en")
+    results = batch_analyzer_engine_simple.analyze_dict(input_dict=d, 
+                                                        language="en",
+                                                        n_process=n_process,
+                                                        batch_size=batch_size)
     results = list(results)
 
     # url

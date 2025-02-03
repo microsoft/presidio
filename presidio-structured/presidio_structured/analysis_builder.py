@@ -26,8 +26,16 @@ class AnalysisBuilder(ABC):
         self,
         analyzer: Optional[AnalyzerEngine] = None,
         analyzer_score_threshold: Optional[float] = None,
+        n_process: Optional[int] = 1,
+        batch_size: Optional[int] = 1
     ) -> None:
-        """Initialize the configuration generator."""
+        """Initialize the configuration generator.
+        
+        :param analyzer: AnalyzerEngine instance
+        :param analyzer_score_threshold: threshold for filtering out results
+        :param batch_size: Batch size to process in a single iteration
+        :param n_process: Number of processors to use. Defaults to `1`
+        """
         default_score_threshold = (
             analyzer_score_threshold if analyzer_score_threshold is not None else 0
         )
@@ -37,6 +45,8 @@ class AnalysisBuilder(ABC):
             else analyzer
         )
         self.batch_analyzer = BatchAnalyzerEngine(analyzer_engine=self.analyzer)
+        self.n_process = n_process
+        self.batch_size = batch_size
 
     @abstractmethod
     def generate_analysis(
@@ -92,7 +102,10 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         """
         logger.debug("Starting JSON BatchAnalyzer analysis")
         analyzer_results = self.batch_analyzer.analyze_dict(
-            input_dict=data, language=language
+            input_dict=data, 
+            language=language,
+            n_process=self.n_process,
+            batch_size=self.batch_size
         )
 
         key_recognizer_result_map = self._generate_analysis_from_results_json(
@@ -240,7 +253,10 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         for column in df.columns:
             logger.debug(f"Finding most common PII entity for column {column}")
             analyzer_results = self.batch_analyzer.analyze_iterator(
-                [val for val in df[column]], language=language
+                [val for val in df[column]], 
+                language=language, 
+                n_process=self.n_process, 
+                batch_size=self.batch_size
             )
             column_analyzer_results_map[column] = analyzer_results
 
