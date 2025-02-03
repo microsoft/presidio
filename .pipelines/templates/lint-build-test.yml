@@ -2,10 +2,6 @@ stages:
     - stage: LintBuildTest
       displayName: Presidio Build
       jobs:
-          - job: Inclusivelint
-            displayName: 'Inclusive linting validation'
-            steps:
-                - template: ./inclusive-lint.yml
 
           - job: SecurityAnalysis
             displayName: Security Analysis
@@ -15,22 +11,35 @@ stages:
             steps:
                 - template: ./security-analysis.yml
 
+          - job: Linting
+            displayName: Linting
+            pool:
+              vmImage: 'ubuntu-latest'
+            steps:
+              - task: Bash@3
+                displayName: 'Linting: Presidio for $(python.version)'
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    set -eux  # fail on error
+                    pip install ruff
+                    ruff check
+
+
           - job: TestAnalyzer
             displayName: Test Analyzer
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
                 matrix:
-                    Python37:
-                        python.version: '3.7'
-                    Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
+                    Python311:
+                        python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
@@ -41,20 +50,18 @@ stages:
 
           - job: TestAnonymizer
             displayName: Test Anonymizer
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
                 matrix:
-                    Python37:
-                        python.version: '3.7'
-                    Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
+                    Python311:
+                        python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
@@ -65,20 +72,18 @@ stages:
 
           - job: TestImageRedactor
             displayName: Test Image Redactor
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
                 matrix:
-                    Python37:
-                        python.version: '3.7'
-                    Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
+                    Python311:
+                        python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
@@ -86,22 +91,21 @@ stages:
                       versionSpec: '$(python.version)'
                   displayName: 'Use Python $(python.version)'
                 - template: ./build-image-redactor.yml
+
           - job: TestCli
             displayName: Test Cli
-            dependsOn:
-                - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-latest'
             strategy:
                 matrix:
-                    Python37:
-                        python.version: '3.7'
-                    Python38:
-                        python.version: '3.8'
                     Python39:
                         python.version: '3.9'
                     Python310:
                         python.version: '3.10'
+                    Python311:
+                        python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
 
             steps:
                 - task: UsePythonVersion@0
@@ -109,3 +113,25 @@ stages:
                       versionSpec: '$(python.version)'
                   displayName: 'Use Python $(python.version)'
                 - template: ./build-cli.yml
+
+          - job: TestStructured
+            displayName: Test Presidio Structured
+            pool:
+                vmImage: 'ubuntu-latest'
+            strategy:
+                matrix:
+                    Python39:
+                        python.version: '3.9'
+                    Python310:
+                        python.version: '3.10'
+                    Python311:
+                        python.version: '3.11'
+                    Python312:
+                        python.version: '3.12'
+
+            steps:
+                - task: UsePythonVersion@0
+                  inputs:
+                      versionSpec: '$(python.version)'
+                  displayName: 'Use Python $(python.version)'
+                - template: ./build-structured.yml

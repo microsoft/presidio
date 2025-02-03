@@ -158,7 +158,7 @@ def test_analyze_dict_on_nested_dict(batch_analyzer_engine_simple):
                     key="key_a1",
                     value=nested_dict["key_a"]["key_a1"],
                     recognizer_results=[
-                        RecognizerResult("PHONE_NUMBER", start=19, end=31, score=0.75)
+                        RecognizerResult("PHONE_NUMBER", start=19, end=31, score=0.4)
                     ],
                 )
             ],
@@ -266,3 +266,15 @@ def test_analyze_dict_with_nones_returns_empty_result(batch_analyzer_engine_simp
     assert len(res) == len(input_list)
     for r in res:
         assert not r
+
+def test_batch_analyze_iterator_returns_list_of_recognizer_results(
+    batch_analyzer_engine_simple
+):
+    texts = ["My name is David", "Call me at 2352351232", "I was born at 1/5/1922"]
+    expected_output = [[], [RecognizerResult(entity_type="PHONE_NUMBER", start=11, end=21, score= 0.4)], []]
+
+    results = batch_analyzer_engine_simple.analyze_iterator(texts=texts, language="en", batch_size=2)
+
+    assert len(results) == len(expected_output)
+    for result, expected_result in zip(results, expected_output):
+        assert result == expected_result

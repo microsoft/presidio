@@ -1,4 +1,5 @@
 """REST API server for analyzer."""
+
 import json
 import logging
 import os
@@ -6,11 +7,9 @@ from logging.config import fileConfig
 from pathlib import Path
 from typing import Tuple
 
-from flask import Flask, request, jsonify, Response
+from flask import Flask, Response, jsonify, request
+from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider, AnalyzerRequest
 from werkzeug.exceptions import HTTPException
-
-from presidio_analyzer.analyzer_engine import AnalyzerEngine
-from presidio_analyzer.analyzer_request import AnalyzerRequest
 
 DEFAULT_PORT = "3000"
 
@@ -36,8 +35,17 @@ class Server:
         self.logger = logging.getLogger("presidio-analyzer")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
+
+        analyzer_conf_file = os.environ.get("ANALYZER_CONF_FILE")
+        nlp_engine_conf_file = os.environ.get("NLP_CONF_FILE")
+        recognizer_registry_conf_file = os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE")
+
         self.logger.info("Starting analyzer engine")
-        self.engine = AnalyzerEngine()
+        self.engine: AnalyzerEngine = AnalyzerEngineProvider(
+            analyzer_engine_conf_file=analyzer_conf_file,
+            nlp_engine_conf_file=nlp_engine_conf_file,
+            recognizer_registry_conf_file=recognizer_registry_conf_file,
+        ).create_engine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
@@ -66,6 +74,9 @@ class Server:
                     return_decision_process=req_data.return_decision_process,
                     ad_hoc_recognizers=req_data.ad_hoc_recognizers,
                     context=req_data.context,
+                    allow_list=req_data.allow_list,
+                    allow_list_match=req_data.allow_list_match,
+                    regex_flags=req_data.regex_flags
                 )
 
                 return Response(
@@ -124,8 +135,11 @@ class Server:
         def http_exception(e):
             return jsonify(error=e.description), e.code
 
+def create_app(): # noqa
+    server = Server()
+    return server.app
 
 if __name__ == "__main__":
+    app = create_app()
     port = int(os.environ.get("PORT", DEFAULT_PORT))
-    server = Server()
-    server.app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port)

@@ -2,10 +2,291 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [unreleased]
+
+### Analyzer
+
+### Anonymizer
+
+### Image Redactor
+
+### Presidio Structured
+
+### General
+
+
+## [2.3.357] - 2025-01-13
+
+### Analyzer
+- Example GLiNER integration (#1504)
+
+### General
+- Docs revamp and docstring bug fixes (#1500)
+- Minor updates to the mkdocstrings config (#1503)
+
+## [2.3.356] - 2024-12-15
+
+### Analyzer
+- Added logic to handle phone numbers with country code (#1426) (Thanks @kauabh)
+- Added UK National Insurance Number Recognizer (#1446) (Thanks @hhobson)
+- Fixed regex match_time output (#1488) (Thanks @andrewisplinghoff)
+- Added fix to ensure configuration files are closed properly when loading them (#1423) (Thanks @saulbein)
+- Closing handles for YAML file (#1424) (Thanks @roeybc)
+- Reduce memory usage of Analyzer test suite (#1429) (Thanks @hhobson)
+- Added `batch_size` parameter to `BatchAnalyzerEngine` (#1449) (Thanks @roeybc)
+- Remove ignored labels from supported entities (#1454) (Thanks @omri374)
+- Update US_SSN CONTEXT and unit test (#1455) (Thanks @claesmk)
+- Fixed bug with Azure AI language context (#1458) (Thanks @omri374)
+- Add support for allow_list, allow_list_match, regex_flags in REST API (#1484) (Thanks @hdw868)
+- Add a link to model classes to simplify configuration (#1472) (Thanks @omri374)
+- Restricting spacy.cli for version 3.7.0 (#1495) (Thanks @kshitijcode)
+
+### Anonymizer
+- No changes specified for Anonymizer in this release.
+
+
+### Presidio-Structured
+- Fix presidio-structured build - lock numpy version (#1465) (Thanks @SharonHart)
+
+
+### Image Redactor
+- Fix bug with image conversion (#1445) (Thanks @omri374)
+
+### General
+- Removed Python 3.8 support (EOL) and added 3.12 (#1479) (Thanks @omri374)
+- Update Docker build to use gunicorn for containers (#1497) (Thanks @RKapadia01)
+- New Dev containers for analyzer, analyzer+transformers, anonymizer (#1459) (Thanks @roeybc)
+- Added dev containers for: analyzer, analyzer+transformers, anonymizer, and image redaction (#1450) (Thanks @roeybc)
+- Added support for allow_list, allow_list_match, regex_flags in REST API (#1488) (Thanks @hdw868)
+- Typo fix in if condition (#1419) (Thanks @omri374)
+- Minor notebook changes (#1420) (Thanks @omri374)
+- Do not release `presidio-cli` as part of the release pipeline (#1422) (Thanks @SharonHart)
+- (Docs) Use Presidio across Anthropic, Bedrock, VertexAI, Azure OpenAI, etc. with LiteLLM Proxy (#1421) (Thanks @krrishdholakia)
+- Update CI due to DockerCompose project name issue (#1428) (Thanks @omri374)
+- Update docker-compose installation docs (#1439) (Thanks @MWest2020)
+- Fix space typo in docs (#1459) (Thanks @artfuldev)
+- Unlock numpy after dropping 3.8 (#1480) (Thanks @SharonHart)
+
+
+## [2.2.355] - 2024-10-28
+### Added
+#### Docs
+ * Add a link to HashiCorp vault operator resource ([#1468](https://github.com/microsoft/presidio/pull/1468)) (Thanks [Akshay Karle](https://github.com/akshaykarle))
+### Changed
+#### Analyzer
+ * Updates to the transformers conf docs and yaml file ([#1467](https://github.com/microsoft/presidio/pull/1467)) 
+
+#### Docs
+ * docs: clarify the docs on deploying presidio to k8s ([#1453](https://github.com/microsoft/presidio/pull/1453)) (Thanks [Roel Fauconnier](https://github.com/roel4ez))
+
+
+## [2.2.355] - July 9th 2024
+
+> Note: A new YAML based mechanism has been added to support no-code customization and creation of recognizers. 
+The default recognizers are now automatically loaded from file.
+
+
+### Added
+#### Analyzer
+* Recognizer for Spanish Foreigners Identity Code (NIE Numero de Identificacion de Extranjeros).
+* Recognizer for Finnish Personal Identity Codes (Henkilötunnus) (#1394) (Thanks honderr).
+* New Predefined Recognizer for Indian Passport #1350 (#1351) (Thanks Hiten-98)
+* Add new recognizer for IN_VOTER #1344 (#1345) (Thanks kjdeveloper8)
+* Spanish NIE (Foreigners ID card) recognizer (#1359) (Thanks areyesfalcon)
+* Added regex functionality for allow lists in the analyzer (#1357) (Thanks NarekAra)
+* Loading analyzer engine & recognizer registry from configuration file (#1367)
+* Align ports with documentation and postman collection. (#1375) (Thanks ungana)
+* Analyzer documentation (#1384)
+* Fix the entity filtering of the transformer_recognizer.py analzye function (#1403) (Thanks andreas-eberle)
+
+### Changed
+#### Analyzer
+* Update conf files location (#1358)
+* Fix OverflowError in crypto_recognizer (#1377)
+* Improve url detector (#1398) (Thanks afogel)
+* Update Dockerfile.windows (#1413) (thanks markvantilburg)
+* Changing predefined recognizers to use the config file (#1393) (Thanks RoeyBC)
+#### Anonymizer
+* Update Dockerfile.windows (#1414) (thanks markvantilburg)
+
+#### General
+* Add Ruff linter + Apply Ruff fix (#1379)
+* Auto-formatting, fix D rules (#1381)
+* Fix N818, E721 (#1382)
+* Migrate Python Packaging to pyproject.toml (#1383) 
+* From Pipenv to Poetry (#1391)
+* Fix ports in docs (#1408)
+
+## [2.2.353] - March 31st 2024
+
+### Added
+#### Analyzer
+* Support 'M' prefix in SG_NRIC_FIN Recognizer and expand tests (#1304) (Thanks @miltonsim)
+* Add Bech32 and Bech32m Bitcoin Address Validation in Crypto Recognizer and expand tests (#1307) (Thanks @miltonsim)
+* Predefined pattern recognizer : IN_VEHICLE_REGISTRATION (#1288) (Thanks @devopam)
+* Addition of leniency parameter in predefined PhoneRecognizer (#1311) (Thanks @VMD7)
+* Add Singapore UEN Recognizer (#1315) (Thanks @miltonsim)
+* Update spacy_stanza.md (#1325) (Thanks @AndreasThinks)
+* Adding Span Marker Recognizer Sample (#1321) (Thanks @VMD7)
+* Cache compiled regexes in analyzer (#1335) (Thanks @Edward-Upton)
+
+#### Anonymizer
+* Added pseudonimyzation sample (#1296)
+
+
+#### Image redactor
+* Added tesseract to installation (#1312)
+  
+#### Structured
+* Analysis builder improvements (#1295) (Thanks @ebotiab)
+* Implement user-defined entity selection strategies in Presidio Structured (#1319) (Thanks @miltonsim)
+
+### Changed
+#### Analyzer
+* Fix for incorrectly referenced recognizer in analysis_explaination using PhoneRecognizer (#1330) *Thanks @egillv021)
+* Fix bug where "bank" and "check" wouldn't work (#1333) (Thanks @usr-ein and @Samuel Prevost)
+* Bugfix in tutorial (#1310)
+* Changed default aggregation_strategy to max (#1342)
+
+#### Image Redactor
+* Fixed wrong condition for dicom metadata (#1347)
+
+## [2.2.353] - Feb 12th 2024
+
+### Added
+#### Analyzer
+* Add predefined_recognizer: IN_AADHAAR (#1256)
+
+#### Anonymizer
+* Added the option to add custom operators + pseudonymization sample (#1284)
+
+### Changed
+
+#### Analyzer
+* Fix failing test due to optional package (#1258)
+* Update publish-to-pypi.yml (#1259)
+* Allow local Spacy Models to be loaded in NLP Engine (#1269)
+* Upgrade pip in windows containers (#1272)
+
+#### Image Redactor
+* Bugfix in ImageAnalyzerEngine  #1274
+
+
+## [2.2.352] - Jan 22nd 2024
+### Added
+#### Structured
+* Added alpha of presidio-structured, a library (presidio-structured) which re-uses existing logic from existing presidio components to allow anonymization of (semi-)structured data. (#1192)
+
+#### Analyzer
+* Add PL PESEL recognizer (#1209)
+* Azure AI language recognizer (#1228)
+* Add_conf_to_package_data (#1243)
+
+#### Anonymizer
+* Add keep operator as deanonymizer (#1255)
+* Update anonymize_list type hints and document that sometimes items will be ignored. (#1252)
+
+
+#### General
+* Add Dockerfile for Windows containers (#1194)
+
+### Changed
+#### Analyzer
+* Drop WA driver license number (#1214)
+* Change ner_model_configuration from list to map (#1222)
+* Bugfix in SpacyRecognizer (#1221)
+* Bugfix in NerModelConfiguration (#1230)
+* Add_conf_to_package_data (#1243)
+
+#### Anonymizer
+* Improved the logic of conflict handling in AnonymizerEngine (#1196)
+
+#### Image Redactor
+* Change default score threshold in image redactor (#1210)
+* fixes bug #1227 (#1231)
+* Added missing dependencies for opencv-python and azure forms recognizer (#1257)
+
+#### General
+* Remove inclusive-lint step (#1207)
+* Updates to demo website with new NLP Engine (#1181)
+
+
+## [2.2.351] - Nov. 6th 2024
+### Changed
+#### Analyzer
+* Hotfix for NerModelConfiguration not created correctly (#1208)
+
+## [2.2.350] - Nov. 2nd 2024
+### Changed
+#### Analyzer
+* Hotfix: default.yaml is not parsed correctly (#1202)
+
+## [2.2.35] - Nov. 2nd 2024
+### Changed
+#### Analyzer
+* Put org in ignore as it has many FPs (#1200)
+
+
+## [2.2.34] - Oct. 30th 2024
+
+### Added
+#### Analyzer
+* New Predefined Recognizer: IN_PAN (#1100)
+  
+#### Anonymizer
+* Anonymizer - Pass bytes key to Encrypt / Decrypt (#1147)
+  
+#### Image redactor
+* DICOM redactor improvement: Enabling more photometric interpretations (#1103)
+* DICOM redactor improvement: Adding exceptions for when DICOM file does not have pixel data (#1104)
+* Small reordering of kwargs as prereq for allow list functionality (#1110)
+* DICOM redactor improvement: Preventing distortion when multiple sets of pixels are in one instance (#1109)
+* DICOM redactor improvement: Enabling compatibility with compressed images (#1105)
+* DICOM redactor improvement: Enable return of redacted bboxes (#1111)
+* DICOM redactor improvement: Enable selection of redact approach (#1113)
+* Enable toggle of printing output location after redacting from file (#1144)
+* Changing test exception type check (#1148)
+* Enabling allow list approach with all image redaction (#1145)
+* Improve process names method in DICOM image redactor (#1150)
+* Adding examples of toggling metadata usage and saving bboxes (#1158)
+* Updating verification engines to include latest updates to redactor engines (#1162)
+* Improved bbox processor (#1163)
+* Updating verification engines and enable plotting of custom bboxes (#1164)
+* Added image processing class to preprocess the image before running OCR (#1166)
+* Added support for Microsoft's document intelligence OCR
+  
+### Changed
+#### Analyzer
+* Refactored the `NlpEngine` and Ner recognizers (`SpacyRecognizer`, `TransformersRecognizer`, `StanzaRecognizer`) to allow simpler integration of huggingface and transformers models (#1159). This includes:
+    - Changes in how NER results flow through Presidio (see docs)
+    - NER/model definition is now defined using a conf file or a `NerModelConfiguration` object.
+    - Integrated `spacy-huggingface-pipelines` for a more robust integration of huggingface models.        
+* As a result, `SpacyRecognizer` logic has changed, please see #1159. Some fields within the class are now deprecated.
+* Updated type checks (#1175)
+* Enabled regex flags manipulation (#1193)
+  
+#### Anonymizer
+* Initial logic check for merging 2 entities (#1092)
+* Fix Sphinx warning in OperatorConfig (#1143)
+* Fix type mismatch in check_label_groups parameter in spacy_recognizer (#1130)
+* anonymize_list return type hint fix (#1178)
+* 
+#### General
+* We no longer use Pipenv.lock. Locking happens as part of the CI. (#1152)
+* Changed the ACR instance (#1089)
+* Updated to Cred Scan V3 (#1154) 
+
+## [2.2.33] - June 1st 2023
 ### Added
 #### Anonymizer
-* Added `keep`, an no-op anonymizer that allows preserving some types of PII while keeping track of its position in anonymized output.
+* Added `keep`, an no-op anonymizer that allows preserving some types of PII while keeping track of its position in anonymized output. (#1062)
+* Added `BatchAnonymizerEngine` to complement the `BatchAnalyzerEngine` for lists, and dicts (#993)
+
+### General
+* Drop support for Python 3.7
+* Add support for Python 3.11
+* New demo app for Presidio, based on Streamlit (#1054)
+* GPT based synthetic data generation (#1051)
 
 ## [2.2.32] - 25.01.2023
 ### Changed
@@ -228,8 +509,18 @@ Upgrade Analyzer spacy version to 3.0.5
 
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
-
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.32...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.357...HEAD
+[2.2.357]: https://github.com/microsoft/presidio/compare/2.2.356...2.2.357
+[2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...2.2.356
+[2.2.355]: https://github.com/microsoft/presidio/compare/2.2.354...2.2.355
+[2.2.354]: https://github.com/microsoft/presidio/compare/2.2.353...2.2.354
+[2.2.353]: https://github.com/microsoft/presidio/compare/2.2.352...2.2.353
+[2.2.352]: https://github.com/microsoft/presidio/compare/2.2.351...2.2.352
+[2.2.351]: https://github.com/microsoft/presidio/compare/2.2.350...2.2.351
+[2.2.350]: https://github.com/microsoft/presidio/compare/2.2.35...2.2.350
+[2.2.35]: https://github.com/microsoft/presidio/compare/2.2.34...2.2.35
+[2.2.34]: https://github.com/microsoft/presidio/compare/2.2.33...2.2.34
+[2.2.33]: https://github.com/microsoft/presidio/compare/2.2.32...2.2.33
 [2.2.32]: https://github.com/microsoft/presidio/compare/2.2.31...2.2.32
 [2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
 [2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30

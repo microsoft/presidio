@@ -13,7 +13,7 @@ In this example we will configure Presidio to use spaCy as its underlying NLP fr
 
 <!--pytest-codeblocks:cont-->
 ```python
-from presidio import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 
 # import spacy
@@ -47,10 +47,10 @@ print("Results from English request:")
 print(results_english)
 ```
 
-[See this documentation](https://microsoft.github.io/presidio/analyzer/languages/) for more details on how to configure Presidio support additional NLP models and languages.
+[See this documentation](https://microsoft.github.io/presidio/analyzer/languages/) for more details on setting up additional NLP models and languages.
 
 ## Using external models/frameworks
 
-Some languages are not supported by spaCy/Stanza, or have very limited support in those. In this case, other frameworks could be leveraged. (see [example 4](04_external_services.md) for more information).
+Some languages are not supported by spaCy/Stanza/huggingface, or have very limited support in those. In this case, other frameworks could be leveraged. (see [example 4](04_external_services.md) for more information).
 
 Since Presidio requires a spaCy model to be passed, we propose to use a simple spaCy pipeline such as `en_core_web_sm` as the NLP engine's model, and a recognizer calling an external framework/service as the Named Entity Recognition (NER) model.

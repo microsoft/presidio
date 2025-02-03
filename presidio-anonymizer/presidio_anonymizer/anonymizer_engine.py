@@ -1,12 +1,21 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
+
 import logging
-from typing import List, Dict, Optional
+import re
+from typing import Dict, List, Optional, Type
 
 from presidio_anonymizer.core import EngineBase
-from presidio_anonymizer.entities import OperatorConfig, RecognizerResult, EngineResult
-from presidio_anonymizer.operators import OperatorType
+from presidio_anonymizer.entities import (
+    ConflictResolutionStrategy,
+    EngineResult,
+    OperatorConfig,
+    RecognizerResult,
+)
+from presidio_anonymizer.operators import Operator, OperatorType
 
 DEFAULT = "replace"
+
+logger = logging.getLogger("presidio-anonymizer")
 
 
 class AnonymizerEngine(EngineBase):
@@ -17,16 +26,14 @@ class AnonymizerEngine(EngineBase):
     and replaces the PII entities with the desired anonymizers.
     """
 
-    logger = logging.getLogger("presidio-anonymizer")
-
-    def __init__(self):
-        EngineBase.__init__(self)
-
     def anonymize(
-            self,
-            text: str,
-            analyzer_results: List[RecognizerResult],
-            operators: Optional[Dict[str, OperatorConfig]] = None,
+        self,
+        text: str,
+        analyzer_results: List[RecognizerResult],
+        operators: Optional[Dict[str, OperatorConfig]] = None,
+        conflict_resolution: ConflictResolutionStrategy = (
+            ConflictResolutionStrategy.MERGE_SIMILAR_OR_CONTAINED
+        ),
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -36,6 +43,8 @@ class AnonymizerEngine(EngineBase):
         :param operators: The configuration of the anonymizers we would like
         to use for each entity e.g.: {"PHONE_NUMBER":OperatorConfig("redact", {})}
         received from the analyzer
+        :param conflict_resolution: The configuration designed to handle conflicts
+        among entities
         :return: the anonymized text and a list of information about the
         anonymized entities.
 
@@ -75,15 +84,44 @@ class AnonymizerEngine(EngineBase):
 
         """
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
-            analyzer_results
+            analyzer_results, conflict_resolution
+        )
+
+        merged_results = self._merge_entities_with_whitespace_between(
+            text, analyzer_results
         )
 
         operators = self.__check_or_add_default_operator(operators)
 
-        return self._operate(text, analyzer_results, operators, OperatorType.Anonymize)
+        return self._operate(
+            text=text,
+            pii_entities=merged_results,
+            operators_metadata=operators,
+            operator_type=OperatorType.Anonymize,
+        )
+
+    def add_anonymizer(self, anonymizer_cls: Type[Operator]) -> None:
+        """
+        Add a new anonymizer to the engine.
+
+        anonymizer_cls: The anonymizer class to add to the engine.
+        """
+        logger.info(f"Added anonymizer {anonymizer_cls.__name__}")
+        self.operators_factory.add_anonymize_operator(anonymizer_cls)
+
+    def remove_anonymizer(self, anonymizer_cls: Type[Operator]) -> None:
+        """
+        Remove an anonymizer from the engine.
+
+        anonymizer_cls: The anonymizer class to remove from the engine.
+        """
+        logger.info(f"Removed anonymizer {anonymizer_cls.__name__}")
+        self.operators_factory.remove_anonymize_operator(anonymizer_cls)
 
     def _remove_conflicts_and_get_text_manipulation_data(
-            self, analyzer_results: List[RecognizerResult]
+        self,
+        analyzer_results: List[RecognizerResult],
+        conflict_resolution: ConflictResolutionStrategy,
     ) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
@@ -117,8 +155,9 @@ class AnonymizerEngine(EngineBase):
                 other_elements.append(result)
                 tmp_analyzer_results.append(result)
             else:
-                self.logger.debug(f"removing element {result} from "
-                                  f"results list due to merge")
+                self.logger.debug(
+                    f"removing element {result} from " f"results list due to merge"
+                )
 
         unique_text_metadata_elements = []
         # This list contains all elements which we need to check a single result
@@ -137,7 +176,50 @@ class AnonymizerEngine(EngineBase):
                 self.logger.debug(
                     f"removing element {result} from results list due to conflict"
                 )
+
+        # This further improves the quality of handling the conflict between the
+        # various entities overlapping. This will not drop the results insted
+        # it adjust the start and end positions of overlapping results and removes
+        # All types of conflicts among entities as well as text.
+        if conflict_resolution == ConflictResolutionStrategy.REMOVE_INTERSECTIONS:
+            unique_text_metadata_elements.sort(key=lambda element: element.start)
+            elements_length = len(unique_text_metadata_elements)
+            index = 0
+            while index < elements_length - 1:
+                current_entity = unique_text_metadata_elements[index]
+                next_entity = unique_text_metadata_elements[index + 1]
+                if current_entity.end <= next_entity.start:
+                    index += 1
+                else:
+                    if current_entity.score >= next_entity.score:
+                        next_entity.start = current_entity.end
+                    else:
+                        current_entity.end = next_entity.start
+                    unique_text_metadata_elements.sort(
+                        key=lambda element: element.start
+                    )
+            unique_text_metadata_elements = [
+                element
+                for element in unique_text_metadata_elements
+                if element.start <= element.end
+            ]
         return unique_text_metadata_elements
+
+    def _merge_entities_with_whitespace_between(
+        self, text: str, analyzer_results: List[RecognizerResult]
+    ) -> List[RecognizerResult]:
+        """Merge adjacent entities of the same type separated by whitespace."""
+        merged_results = []
+        prev_result = None
+        for result in analyzer_results:
+            if prev_result is not None:
+                if prev_result.entity_type == result.entity_type:
+                    if re.search(r"^( )+$", text[prev_result.end : result.start]):
+                        merged_results.remove(prev_result)
+                        result.start = prev_result.start
+            merged_results.append(result)
+            prev_result = result
+        return merged_results
 
     def get_anonymizers(self) -> List[str]:
         """Return a list of supported anonymizers."""
@@ -152,7 +234,7 @@ class AnonymizerEngine(EngineBase):
 
     @staticmethod
     def __check_or_add_default_operator(
-            operators: Dict[str, OperatorConfig]
+        operators: Dict[str, OperatorConfig],
     ) -> Dict[str, OperatorConfig]:
         default_operator = OperatorConfig(DEFAULT)
         if not operators:

@@ -1,6 +1,6 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 # https://www.meditec.com/blog/dea-numbers-what-do-they-mean
 
@@ -37,7 +37,6 @@ class MedicalLicenseRecognizer(PatternRecognizer):
         supported_entity: str = "MEDICAL_LICENSE",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
-
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
@@ -51,7 +50,9 @@ class MedicalLicenseRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa D102
-        sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
+        sanitized_value = EntityRecognizer.sanitize_value(
+            pattern_text, self.replacement_pairs
+        )
         checksum = self.__luhn_checksum(sanitized_value)
 
         return checksum
@@ -68,9 +69,3 @@ class MedicalLicenseRecognizer(PatternRecognizer):
         checksum *= -1
         checksum += 2 * sum(even_digits) + sum(odd_digits)
         return checksum % 10 == 0
-
-    @staticmethod
-    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
-        for search_string, replacement_string in replacement_pairs:
-            text = text.replace(search_string, replacement_string)
-        return text

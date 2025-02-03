@@ -28,13 +28,22 @@ bitcoin wallets, US phone numbers, financial data and more.
 !!! warning "Warning"
     Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-## [Demo](https://aka.ms/presidio-demo) | [Frequently Asked Questions](faq.md)
+## Demo
+
+Link to demo: <https://aka.ms/presidio-demo>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/RPJ3-kEUybU?si=9HolTiQRZmxV7BqV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Provide feedback
+
+Are you using Presidio? We'd love to know how! Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u).
 
 ## Presidio's modules
 
 1. [Presidio analyzer](analyzer/index.md): PII identification in text
 2. [Presidio anonymizer](anonymizer/index.md): De-identify detected PII entities using different operators
 3. [Presidio image redactor](image-redactor/index.md): Redact PII entities from images using OCR and PII identification
+4. [Presidio structured](structured/index.md): PII identification in structured/semi-structured data
 
 ## Installing Presidio
 
@@ -46,12 +55,12 @@ bitcoin wallets, US phone numbers, financial data and more.
 
 ## Running Presidio
 
-1. [Running Presidio via code](samples/python/index.md)
+1. [Samples for running Presidio via code](samples/index.md)
 2. [Running Presidio as an HTTP service](samples/docker/index.md)
 3. [Setting up a development environment](development.md)
 4. [Perform PII identification using presidio-analyzer](analyzer/index.md)
-5. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
-6. [Perform PII identification and anonymization in images using presidio-image-redactor](image-redactor/index.md)
+5. [Perform PII de-identification using presidio-anonymizer](anonymizer/index.md)
+6. [Perform PII identification and redaction in images using presidio-image-redactor](image-redactor/index.md)
 7. [Example deployments](samples/deployments/index.md)
 
 ---

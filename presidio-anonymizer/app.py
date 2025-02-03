@@ -1,15 +1,15 @@
 """REST API server for anonymizer."""
+
 import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
 
-from flask import Flask, request, jsonify, Response
-from werkzeug.exceptions import BadRequest, HTTPException
-
+from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
+from werkzeug.exceptions import BadRequest, HTTPException
 
 DEFAULT_PORT = "3000"
 
@@ -96,7 +96,7 @@ class Server:
             """Return a list of supported deanonymizers."""
             return jsonify(self.deanonymize.get_deanonymizers())
 
-        @self.app.errorhandler(InvalidParamException)
+        @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
             self.logger.warning(
                 f"Request failed with parameter validation error: {err.err_msg}"
@@ -112,8 +112,11 @@ class Server:
             self.logger.error(f"A fatal error occurred during execution: {e}")
             return jsonify(error="Internal server error"), 500
 
+def create_app(): # noqa
+    server = Server()
+    return server.app
 
 if __name__ == "__main__":
+    app = create_app()
     port = int(os.environ.get("PORT", DEFAULT_PORT))
-    server = Server()
-    server.app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port)

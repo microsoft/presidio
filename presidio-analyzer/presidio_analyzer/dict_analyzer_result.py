@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Union, Iterator
+from typing import Iterator, List, Union
 
 from presidio_analyzer import RecognizerResult
 

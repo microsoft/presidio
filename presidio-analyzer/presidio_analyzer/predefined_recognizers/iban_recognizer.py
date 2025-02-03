@@ -1,20 +1,20 @@
 import logging
 import string
-from typing import Tuple, List, Dict, Optional
+from typing import Dict, List, Optional, Tuple
 
 import regex as re
 
 from presidio_analyzer import (
+    EntityRecognizer,
     Pattern,
     PatternRecognizer,
     RecognizerResult,
-    EntityRecognizer,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.predefined_recognizers.iban_patterns import (
-    regex_per_country,
     BOS,
     EOS,
+    regex_per_country,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -67,7 +67,6 @@ class IbanRecognizer(PatternRecognizer):
         self.replacement_pairs = replacement_pairs or [("-", ""), (" ", "")]
         self.exact_match = exact_match
         self.BOSEOS = bos_eos if exact_match else ()
-        self.flags = regex_flags
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
         super().__init__(
@@ -75,11 +74,14 @@ class IbanRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            global_regex_flags=regex_flags,
         )
 
     def validate_result(self, pattern_text: str):  # noqa D102
         try:
-            pattern_text = self.__sanitize_value(pattern_text, self.replacement_pairs)
+            pattern_text = EntityRecognizer.sanitize_value(
+                pattern_text, self.replacement_pairs
+            )
             is_valid_checksum = (
                 self.__generate_iban_check_digits(pattern_text, self.LETTERS)
                 == pattern_text[2:4]
@@ -126,9 +128,10 @@ class IbanRecognizer(PatternRecognizer):
         :param flags: regex flags
         :return: A list of RecognizerResult
         """
+        flags = flags if flags else self.global_regex_flags
         results = []
         for pattern in self.patterns:
-            matches = re.finditer(pattern.regex, text, flags=self.flags)
+            matches = re.finditer(pattern.regex, text, flags=flags)
 
             for match in matches:
                 for grp_num in reversed(range(1, len(match.groups()) + 1)):
@@ -148,7 +151,12 @@ class IbanRecognizer(PatternRecognizer):
 
                     validation_result = self.validate_result(current_match)
                     description = PatternRecognizer.build_regex_explanation(
-                        self.name, pattern.name, pattern.regex, score, validation_result
+                        self.name,
+                        pattern.name,
+                        pattern.regex,
+                        score,
+                        validation_result,
+                        flags,
                     )
                     pattern_result = RecognizerResult(
                         entity_type=self.supported_entities[0],
@@ -182,7 +190,7 @@ class IbanRecognizer(PatternRecognizer):
     def __generate_iban_check_digits(iban: str, letters: Dict[int, str]) -> str:
         transformed_iban = (iban[:2] + "00" + iban[4:]).upper()
         number_iban = IbanRecognizer.__number_iban(transformed_iban, letters)
-        return "{:0>2}".format(98 - (int(number_iban) % 97))
+        return f"{98 - (int(number_iban) % 97):0>2}"
 
     @staticmethod
     def __is_valid_format(
@@ -198,9 +206,3 @@ class IbanRecognizer(PatternRecognizer):
             return country_regex and re.match(country_regex, iban, flags=flags)
 
         return False
-
-    @staticmethod
-    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
-        for search_string, replacement_string in replacement_pairs:
-            text = text.replace(search_string, replacement_string)
-        return text

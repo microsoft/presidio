@@ -1,4 +1,5 @@
 """Replaces the PII text entity with empty string."""
+
 from typing import Dict
 
 from presidio_anonymizer.operators import Operator, OperatorType

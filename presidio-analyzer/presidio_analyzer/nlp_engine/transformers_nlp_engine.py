@@ -1,96 +1,44 @@
 import logging
-from typing import Optional, Dict
+from typing import Dict, List, Optional
 
 import spacy
-from spacy.language import Language
 from spacy.tokens import Doc, Span
 
-from presidio_analyzer.nlp_engine import SpacyNlpEngine
-
-
 try:
-    import torch
+    import spacy_huggingface_pipelines
     import transformers
-    from transformers import (
-        AutoTokenizer,
-        AutoModelForTokenClassification,
-        pipeline,
-    )
 except ImportError:
-    torch = None
+    spacy_huggingface_pipelines = None
     transformers = None
 
-logger = logging.getLogger("presidio-analyzer")
-
-
-@Language.factory(
-    "transformers",
-    default_config={"pretrained_model_name_or_path": "dslim/bert-base-NER"},
+from presidio_analyzer.nlp_engine import (
+    NerModelConfiguration,
+    SpacyNlpEngine,
 )
-def create_transformer_component(nlp, name, pretrained_model_name_or_path: str):
-    """Spacy Language factory for creating custom component."""
-    return TransformersComponent(
-        pretrained_model_name_or_path=pretrained_model_name_or_path
-    )
 
-
-class TransformersComponent:
-    """
-    Custom component to use in spacy pipeline.
-
-    Using HaggingFace transformers pretrained models for entity recognition.
-    :param pretrained_model_name_or_path: HaggingFace pretrained_model_name_or_path
-    """
-
-    def __init__(self, pretrained_model_name_or_path: str) -> None:
-        Span.set_extension("confidence_score", default=1.0, force=True)
-        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
-        model = AutoModelForTokenClassification.from_pretrained(
-            pretrained_model_name_or_path
-        )
-        self.nlp = pipeline(
-            "ner", model=model, tokenizer=tokenizer, aggregation_strategy="simple"
-        )
-
-    def __call__(self, doc: Doc) -> Doc:
-        """Write transformers results to doc entities."""
-
-        res = self.nlp(doc.text)
-        ents = []
-        for d in res:
-            span = doc.char_span(
-                d["start"], d["end"], label=d["entity_group"], alignment_mode="expand"
-            )
-            if span is not None:
-                span._.confidence_score = d["score"]
-                ents.append(span)
-            else:
-                logger.warning(
-                    f"Transformers model returned {d} but no valid span was found."
-                )
-        doc.ents = ents
-        return doc
+logger = logging.getLogger("presidio-analyzer")
 
 
 class TransformersNlpEngine(SpacyNlpEngine):
     """
 
-    SpacyTransformersNlpEngine is a transformers based NlpEngine.
+    TransformersNlpEngine is a transformers based NlpEngine.
 
     It comprises a spacy pipeline used for tokenization,
     lemmatization, pos, and a transformers component for NER.
 
     Both the underlying spacy pipeline and the transformers engine could be
     configured by the user.
-
-    :param models: a dictionary containing the model names per language.
+    :param models: A dict holding the model's configuration.
     :example:
-    {
-        "en": {
+    [{"lang_code": "en", "model_name": {
             "spacy": "en_core_web_sm",
             "transformers": "dslim/bert-base-NER"
-        }
-    }
+            }
+    }]
+    :param ner_model_configuration: Parameters for the NER model.
+    See conf/transformers.yaml for an example
+
 
     Note that since the spaCy model is not used for NER,
     we recommend using a simple model, such as en_core_web_sm for English.
@@ -98,57 +46,89 @@ class TransformersNlpEngine(SpacyNlpEngine):
     https://huggingface.co/models?pipeline_tag=token-classification
     It is further recommended to fine-tune these models
     to the specific scenario in hand.
+
     """
 
     engine_name = "transformers"
-    is_available = bool(spacy) and bool(transformers)
+    is_available = bool(spacy_huggingface_pipelines)
 
-    def __init__(self, models: Optional[Dict[str, Dict[str, str]]] = None):
-        # default models if not specified
+    def __init__(
+        self,
+        models: Optional[List[Dict]] = None,
+        ner_model_configuration: Optional[NerModelConfiguration] = None,
+    ):
         if not models:
-            models = {
-                "en": {"spacy": "en_core_web_sm", "transformers": "dslim/bert-base-NER"}
-            }
-        # validate models type
-        elif type(models) is not dict:
-            logger.error(f"''models' argument must be dict, not {type(models)}")
-            raise KeyError(f"Expected 'models' argument to be dict, not {type(models)}")
-        # validate models[model_lang] type is dict for all model_lang
-        elif any(
-            [type(model_dict) is not dict for model_lang, model_dict in models.items()]
-        ):
-            # elif type(models["model_name"]) is not dict:
-            logger.error(
-                "'models.model_name' argument must be dict,"
-                f"not {type(models['model_name'])}"
-            )
-            raise KeyError(
-                "Expected 'models.model_name' argument to be dict,"
-                f"not {type(models['model_name'])}"
-            )
-        # chack that model_name dict includes the keys: "spacy" and "transformers"
-        elif any(
-            [
-                any([key not in model_dict for key in ("spacy", "transformers")])
-                for model_lang, model_dict in models.items()
+            models = [
+                {
+                    "lang_code": "en",
+                    "model_name": {
+                        "spacy": "en_core_web_sm",
+                        "transformers": "obi/deid_roberta_i2b2",
+                    },
+                }
             ]
-        ):
-            logger.error(
-                "'models.model_name' must contains 'spacy' and 'transformers' keys"
-            )
-            raise KeyError(
-                "Expected keys ('spacy' and 'transformers') was not found in "
-                "models.model_name dict"
-            )
+        super().__init__(models=models, ner_model_configuration=ner_model_configuration)
+        self.entity_key = "bert-base-ner"
 
-        logger.debug(f"Loading SpaCy and transformers models: {models.values()}")
+    def load(self) -> None:
+        """Load the spaCy and transformers models."""
 
+        logger.debug(f"Loading SpaCy and transformers models: {self.models}")
         self.nlp = {}
-        for lang_code, model_name in models.items():
-            nlp = spacy.load(model_name["spacy"], disable=["parser", "ner"])
+
+        for model in self.models:
+            self._validate_model_params(model)
+            spacy_model = model["model_name"]["spacy"]
+            transformers_model = model["model_name"]["transformers"]
+            self._download_spacy_model_if_needed(spacy_model)
+
+            nlp = spacy.load(spacy_model, disable=["parser", "ner"])
             nlp.add_pipe(
-                "transformers",
-                config={"pretrained_model_name_or_path": model_name["transformers"]},
-                last=True,
+                "hf_token_pipe",
+                config={
+                    "model": transformers_model,
+                    "annotate": "spans",
+                    "stride": self.ner_model_configuration.stride,
+                    "alignment_mode": self.ner_model_configuration.alignment_mode,
+                    "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa E501
+                    "annotate_spans_key": self.entity_key,
+                },
             )
-            self.nlp[lang_code] = nlp
+            self.nlp[model["lang_code"]] = nlp
+
+    @staticmethod
+    def _validate_model_params(model: Dict) -> None:
+        if "lang_code" not in model:
+            raise ValueError("lang_code is missing from model configuration")
+        if "model_name" not in model:
+            raise ValueError("model_name is missing from model configuration")
+        if not isinstance(model["model_name"], dict):
+            raise ValueError("model_name must be a dictionary")
+        if "spacy" not in model["model_name"]:
+            raise ValueError("spacy model name is missing from model configuration")
+        if "transformers" not in model["model_name"]:
+            raise ValueError(
+                "transformers model name is missing from model configuration"
+            )
+
+    def _get_entities(self, doc: Doc) -> List[Span]:
+        """
+        Extract entities out of a spaCy pipeline, depending on the type of pipeline.
+
+        For spacy-huggingface-pipeline, this would be doc.spans[key]
+        :param doc: the output spaCy doc.
+        :return: List of entities
+        """
+
+        return doc.spans[self.entity_key]
+
+    def _get_scores_for_entities(self, doc: Doc) -> List[float]:
+        """Extract scores for entities from the doc.
+
+        While spaCy does not provide confidence scores,
+        the spacy-huggingface-pipeline flow adds confidence scores
+        as SpanGroup attributes.
+        :param doc: SpaCy doc
+        """
+
+        return doc.spans[self.entity_key].attrs["scores"]

@@ -2,10 +2,10 @@
 
 import argparse
 import logging
-from typing import Union, Dict
+from typing import Dict, Union
 
-import spacy
 import yaml
+from spacy.cli import download as spacy_download
 
 try:
     import stanza
@@ -16,7 +16,7 @@ except ImportError:
 try:
     import transformers
     from huggingface_hub import snapshot_download
-    from transformers import AutoTokenizer, AutoModelForTokenClassification
+    from transformers import AutoModelForTokenClassification, AutoTokenizer
 except ImportError:
     # transformers should be installed manually
     transformers = None
@@ -53,7 +53,7 @@ def install_models(conf_file: str) -> None:
 
 def _download_model(engine_name: str, model_name: Union[str, Dict[str, str]]) -> None:
     if engine_name == "spacy":
-        spacy.cli.download(model_name)
+        spacy_download(model_name)
     elif engine_name == "stanza":
         if stanza:
             stanza.download(model_name)
@@ -84,7 +84,7 @@ def _install_transformers_spacy_models(model_name: Dict[str, str]) -> None:
 
     # download spacy model/pipeline
     logger.info(f"Installing spaCy model: {spacy_model}")
-    spacy.cli.download(spacy_model)
+    spacy_download(spacy_model)
 
     # download transformers model
     logger.info(f"Installing transformers model: {transformers_model}")
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--conf_file",
         required=False,
-        default="conf/default.yaml",
+        default="presidio_analyzer/conf/default.yaml",
         help="Location of nlp configuration yaml file. Default: conf/default.yaml",
     )
     args = parser.parse_args()

@@ -1,10 +1,10 @@
 import logging
 from abc import ABC
 
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.services.validators import (
-    validate_parameter_not_empty,
     validate_parameter_exists,
+    validate_parameter_not_empty,
     validate_type,
 )
 
@@ -47,11 +47,11 @@ class PIIEntity(ABC):
         validate_type(self.end, "end", int)
         validate_parameter_not_empty(self.entity_type, "result", "entity_type")
         if self.start < 0 or self.end < 0:
-            raise InvalidParamException(
+            raise InvalidParamError(
                 "Invalid input, result start and end must be positive"
             )
         if self.start > self.end:
-            raise InvalidParamException(
+            raise InvalidParamError(
                 f"Invalid input, start index '{self.start}' "
                 f"must be smaller than end index '{self.end}'"
             )

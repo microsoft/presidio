@@ -1,79 +1,69 @@
 # Presidio Analyzer API Reference
 
-## AnalyzerEngine
+## Objects at the top of the presidio-analyzer package
 
 ::: presidio_analyzer.AnalyzerEngine
     handler: python
-    selection:
-      docstring_style: restructured-text
 
-## RecognizerRegistry
-
-::: presidio_analyzer.RecognizerRegistry
+::: presidio_analyzer.analyzer_engine_provider.AnalyzerEngineProvider
     handler: python
-    selection:
-      docstring_style: restructured-text
 
-## EntityRecognizer
-
-::: presidio_analyzer.EntityRecognizer
+::: presidio_analyzer.analysis_explanation.AnalysisExplanation
     handler: python
-    selection:
-      docstring_style: restructured-text
-
-## RemoteRecognizer
-
-::: presidio_analyzer.RemoteRecognizer
-    handler: python
-    selection:
-      docstring_style: restructured-text
-
-## LocalRecognizer
-
-::: presidio_analyzer.LocalRecognizer
-    handler: python
-    selection:
-      docstring_style: restructured-text
-
-## PatternRecognizer
-
-::: presidio_analyzer.PatternRecognizer
-    handler: python
-    selection:
-      docstring_style: restructured-text
-
-## NlpArtifacts
-
-::: presidio_analyzer.nlp_engine.NlpArtifacts
-    handler: python
-    selection:
-      docstring_style: restructured-text
-
-::: presidio_analyzer.nlp_engine.NlpEngine
-    handler: python
-    selection:
-      docstring_style: restructured-text
-
-::: presidio_analyzer.nlp_engine.SpacyNlpEngine
-    handler: python
-    selection:
-      docstring_style: restructured-text
-
-::: presidio_analyzer.nlp_engine.NlpEngineProvider
-    handler: python
-    selection:
-      docstring_style: restructured-text
-
-## RecognizerResult
 
 ::: presidio_analyzer.recognizer_result.RecognizerResult
     handler: python
-    selection:
-      docstring_style: restructured-text
 
-## Pattern
+## Batch modules
 
-::: presidio_analyzer.Pattern
+::: presidio_analyzer.batch_analyzer_engine.BatchAnalyzerEngine
     handler: python
-    selection:
-      docstring_style: restructured-text
+
+::: presidio_analyzer.dict_analyzer_result.DictAnalyzerResult
+    handler: python
+
+## Recognizers and patterns
+
+::: presidio_analyzer.entity_recognizer.EntityRecognizer
+    handler: python
+
+::: presidio_analyzer.local_recognizer.LocalRecognizer
+    handler: python
+
+::: presidio_analyzer.pattern.Pattern
+    handler: python
+
+::: presidio_analyzer.pattern_recognizer.PatternRecognizer
+    handler: python
+
+::: presidio_analyzer.remote_recognizer.RemoteRecognizer
+    handler: python
+
+## Recognizer registry modules
+
+::: presidio_analyzer.recognizer_registry.RecognizerRegistry
+    handler: python
+
+::: presidio_analyzer.recognizer_registry.RecognizerRegistryProvider
+    handler: python
+
+## Context awareness modules
+
+::: presidio_analyzer.context_aware_enhancers
+
+## NLP Engine modules
+
+::: presidio_analyzer.nlp_engine
+    handler: python
+
+## Predefined Recognizers
+
+::: presidio_analyzer.predefined_recognizers
+
+## Misc
+
+::: presidio_analyzer.analyzer_request.AnalyzerRequest
+    handler: python
+
+::: presidio_analyzer.analyzer_utils.PresidioAnalyzerUtils
+    handler: python

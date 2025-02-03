@@ -1,0 +1,26 @@
+steps:
+  - task: Bash@3
+    displayName: 'Setup poetry'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+        python -m pip install --upgrade pip
+        python -m pip install poetry
+
+  - task: Bash@3
+    displayName: 'Install deps'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: 'presidio-structured'
+      script: |
+        set -eux  # fail on error
+        poetry install
+        poetry run pip install -e ../presidio-analyzer/. # Use the existing analyzer and not the one in PyPI
+        poetry run pip install -e ../presidio-anonymizer/. # Use the existing analyzer and not the one in PyPI
+
+  - template: ./build-python.yml
+    parameters:
+      SERVICE: 'Structured'
+      WORKING_FOLDER: 'presidio-structured'
+

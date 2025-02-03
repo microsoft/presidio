@@ -14,12 +14,11 @@ class BatchAnalyzerEngine:
     Wrapper class to run Presidio Analyzer Engine on multiple values,
     either lists/iterators of strings, or dictionaries.
 
-    :param: analyzer_engine: AnalyzerEngine instance to use
+    :param analyzer_engine: AnalyzerEngine instance to use
     for handling the values in those collections.
     """
 
     def __init__(self, analyzer_engine: Optional[AnalyzerEngine] = None):
-
         self.analyzer_engine = analyzer_engine
         if not analyzer_engine:
             self.analyzer_engine = AnalyzerEngine()
@@ -37,8 +36,8 @@ class BatchAnalyzerEngine:
         :param texts: An list containing strings to be analyzed.
         :param language: Input language
         :param batch_size: Batch size to process in a single iteration
-        (default value depends on the nlp engine implementation)
         :param kwargs: Additional parameters for the `AnalyzerEngine.analyze` method.
+        (default value depends on the nlp engine implementation)
         """
 
         # validate types
@@ -130,7 +129,7 @@ class BatchAnalyzerEngine:
     @staticmethod
     def _validate_types(value_iterator: Iterable[Any]) -> Iterator[Any]:
         for val in value_iterator:
-            if val and not type(val) in (int, float, bool, str):
+            if val and type(val) not in (int, float, bool, str):
                 err_msg = (
                     "Analyzer.analyze_iterator only works "
                     "on primitive types (int, float, bool, str). "

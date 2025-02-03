@@ -1,5 +1,5 @@
 import pytest
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.core import TextReplaceBuilder
 
 
@@ -60,5 +60,5 @@ def test_given_text_and_bad_indices_then_we_get_fail(original_text, start, end):
         f"Invalid analyzer result, start: {start} and end: {end}, "
         f"while text length is only 11."
     )
-    with pytest.raises(InvalidParamException, match=err_msg):
+    with pytest.raises(InvalidParamError, match=err_msg):
         text_replace_builder.get_text_in_position(start, end)

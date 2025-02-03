@@ -1,0 +1,7 @@
+recognizer_registry:
+  global_regex_flags: 26
+
+supported_languages: 
+  - de
+  - en
+  - es

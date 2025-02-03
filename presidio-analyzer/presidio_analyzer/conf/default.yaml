@@ -1,0 +1,35 @@
+nlp_engine_name: spacy
+models:
+  -
+    lang_code: en
+    model_name: en_core_web_lg
+
+ner_model_configuration:
+  model_to_presidio_entity_mapping:
+    PER: PERSON
+    PERSON: PERSON
+    NORP: NRP
+    FAC: LOCATION
+    LOC: LOCATION
+    GPE: LOCATION
+    LOCATION: LOCATION
+    ORG: ORGANIZATION
+    ORGANIZATION: ORGANIZATION
+    DATE: DATE_TIME
+    TIME: DATE_TIME
+
+  low_confidence_score_multiplier: 0.4
+  low_score_entity_names:
+  -
+  labels_to_ignore:
+  - ORGANIZATION # Has many false positives
+  - CARDINAL
+  - EVENT
+  - LANGUAGE
+  - LAW
+  - MONEY
+  - ORDINAL
+  - PERCENT
+  - PRODUCT
+  - QUANTITY
+  - WORK_OF_ART

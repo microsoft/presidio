@@ -8,16 +8,22 @@ IP_ADDRESS
 my ip: 192.168.0.1
 
 US_SSN
-my ssn is 078-051120 07805-1120
+my ssn is 078-051121
 
 US_SSN
 my social security number is 078051120
 
 US_SSN
-my social security number is 078-05-1120
+my social security number is 078-05-1121
 
 US_SSN
-my social security number is 078051120
+my social security number is 078051121
+
+US_SSN
+my ssns is 078-05-1121
+
+US_SSN
+my ssid is 078-05-1121
 
 PHONE_NUMBER
 my phone number is (425) 882-9090
@@ -94,3 +100,20 @@ Special NRIC numbers e.g. S0000001I that are numerically significant have been i
 # Verify SG NRIC/FIN mixed case (e.g. lower case )
 FIN
 my fin is g3300299L
+
+#Verify IN PAN in adjacent context words
+IN_PAN
+my pan is DJPMS1234Z amongst so many other things
+
+#Verify IN PAN context words
+IN_PAN
+Typical tax filing identifier is known as PAN in India also known as permanent account number
+
+
+#Verify IN PAN mixed case
+IN_PAN
+my PAN number is DJPMS1234Z
+
+#Verify IN PASSPORT context words
+IN_PASSPORT
+my passport number is T1234567. Indian Passport number is of 8 characters long, always starting with a capital letter.

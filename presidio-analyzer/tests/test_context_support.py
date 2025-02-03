@@ -15,6 +15,9 @@ from presidio_analyzer.predefined_recognizers import (
     IpRecognizer,
     UsSsnRecognizer,
     SgFinRecognizer,
+    InPanRecognizer,
+    InPassportRecognizer,
+
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
@@ -32,6 +35,8 @@ def recognizers_map():
         "US_BANK_NUMBER": UsBankRecognizer(),
         "US_PASSPORT": UsPassportRecognizer(),
         "FIN": SgFinRecognizer(),
+        "IN_PAN": InPanRecognizer(),
+        "IN_PASSPORT": InPassportRecognizer(),
     }
     return rec_map
 
@@ -42,11 +47,6 @@ def recognizers_list(recognizers_map):
     for item in recognizers_map:
         rec_list.append(recognizers_map[item])
     return rec_list
-
-
-@pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    return nlp_engines["spacy_en"]
 
 
 @pytest.fixture(scope="module")
@@ -70,9 +70,9 @@ def dataset(recognizers_map):
             raise ValueError(f"bad entity type {entity_type}")
 
         test_items.append((item, recognizer, [entity_type]))
-    # Currently we have 28 sentences, this is a sanity check
-    if not len(test_items) == 28:
-        raise ValueError(f"expected 28 context sentences but found {len(test_items)}")
+    # Currently we have 34 sentences, this is a sanity check
+    if not len(test_items) == 34:
+        raise ValueError(f"expected 34 context sentences but found {len(test_items)}")
 
     yield test_items
 
@@ -93,7 +93,7 @@ def us_license_recognizer():
 
 
 def test_when_text_with_aditional_context_lemma_based_context_enhancer_then_analysis_explanation_include_correct_supportive_context_word(  # noqa: E501
-    nlp_engine, lemma_context, us_license_recognizer
+    spacy_nlp_engine, lemma_context, us_license_recognizer
 ):
     """This test checks that LemmaContextAwareEnhancer uses supportive context
     word from analyze input as if it was in the text itself.
@@ -103,7 +103,7 @@ def test_when_text_with_aditional_context_lemma_based_context_enhancer_then_anal
     return that word as supportive_context_word instead of other recognizer context word
     """
     text = "John Smith license is AC432223"
-    nlp_artifacts = nlp_engine.process_text(text, "en")
+    nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
     recognizer_results = us_license_recognizer.analyze(text, nlp_artifacts)
     results_without_additional_context = lemma_context.enhance_using_context(
         text, recognizer_results, nlp_artifacts, [us_license_recognizer]
@@ -128,8 +128,8 @@ def test_when_text_with_aditional_context_lemma_based_context_enhancer_then_anal
     )
 
 
-def test_when_text_with_only_aditional_context_lemma_based_context_enhancer_then_analysis_explanation_include_correct_supportive_context_word(  # noqa: E501
-    nlp_engine, lemma_context, us_license_recognizer
+def test_when_text_with_only_additional_context_lemma_based_context_enhancer_then_analysis_explanation_include_correct_supportive_context_word(  # noqa: E501
+    spacy_nlp_engine, lemma_context, us_license_recognizer
 ):
     """This test checks that LemmaContextAwareEnhancer uses supportive context
     word from analyze input as if it was in the text itself but no other words apear
@@ -141,7 +141,7 @@ def test_when_text_with_only_aditional_context_lemma_based_context_enhancer_then
     return that word as supportive_context_word and raise the score.
     """
     text = "John Smith D.R is AC432223"
-    nlp_artifacts = nlp_engine.process_text(text, "en")
+    nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
     recognizer_results = us_license_recognizer.analyze(text, nlp_artifacts)
     results_without_additional_context = lemma_context.enhance_using_context(
         text, recognizer_results, nlp_artifacts, [us_license_recognizer]
@@ -169,11 +169,11 @@ def test_when_text_with_only_aditional_context_lemma_based_context_enhancer_then
 
 
 def test_when_text_with_context_then_improves_score(
-    dataset, nlp_engine, mock_nlp_artifacts, lemma_context, recognizers_list
+    dataset, spacy_nlp_engine, mock_nlp_artifacts, lemma_context, recognizers_list
 ):
     for item in dataset:
         text, recognizer, entities = item
-        nlp_artifacts = nlp_engine.process_text(text, "en")
+        nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
         results_without_context = recognizer.analyze(text, entities, mock_nlp_artifacts)
         results_with_context = recognizer.analyze(text, entities, nlp_artifacts)
 
@@ -192,7 +192,7 @@ def test_when_text_with_context_then_improves_score(
                 assert res_wo.score <= res_w.score
 
 
-def test_when_context_custom_recognizer_then_succeed(nlp_engine, mock_nlp_artifacts):
+def test_when_context_custom_recognizer_then_succeed(spacy_nlp_engine, mock_nlp_artifacts):
     """This test checks that a custom recognizer is also enhanced by context.
 
     However this test also verifies a specific case in which the pattern also
@@ -209,7 +209,7 @@ def test_when_context_custom_recognizer_then_succeed(nlp_engine, mock_nlp_artifa
     text = "hi, this is a cool ROCKET"
     recognizer = rocket_recognizer
     entities = ["ROCKET"]
-    nlp_artifacts = nlp_engine.process_text(text, "en")
+    nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
     results_without_context = recognizer.analyze(text, entities, mock_nlp_artifacts)
     results_with_context = recognizer.analyze(text, entities, nlp_artifacts)
     assert len(results_without_context) == len(results_with_context)

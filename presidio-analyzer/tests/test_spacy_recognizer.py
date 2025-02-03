@@ -1,5 +1,10 @@
-import pytest
 
+import pytest
+from spacy.tokens import Span, Doc
+from spacy.util import get_lang_class
+
+from presidio_analyzer.nlp_engine import NlpArtifacts, SpacyNlpEngine
+from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from tests import assert_result_within_score_range
 
 
@@ -11,6 +16,24 @@ def entities():
 @pytest.fixture(scope="module")
 def nlp_recognizer(nlp_recognizers):
     return nlp_recognizers["spacy"]
+
+
+@pytest.fixture(scope="module")
+def mock_nlp_artifacts():
+    en_vocab=get_lang_class("en")().vocab
+    doc = Doc(en_vocab, words=["My", "name", "is", "Mitchell"])
+    doc.ents = [Span(doc, 2, 3, label="PERSON")]
+
+    nlp_artifacts = NlpArtifacts(
+            entities=doc.ents,
+            tokens=doc,
+            tokens_indices=[token.idx for token in doc],
+            lemmas=[token.lemma_ for token in doc],
+            nlp_engine=None,
+            language="en",
+            scores=[0.9 for _ in doc.ents],
+        )
+    return nlp_artifacts
 
 
 def prepare_and_analyze(nlp, recognizer, text, ents):
@@ -47,13 +70,13 @@ def test_when_using_spacy_then_all_spacy_result_found(
     expected_len,
     expected_positions,
     entity_num,
-    nlp_engine,
+    spacy_nlp_engine,
     nlp_recognizer,
     entities,
     ner_strength,
     max_score,
 ):
-    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
+    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
     assert len(results) == expected_len
     entity_to_check = entities[entity_num]
     for res, (st_pos, fn_pos) in zip(results, expected_positions):
@@ -63,10 +86,10 @@ def test_when_using_spacy_then_all_spacy_result_found(
 
 
 def test_when_person_in_text_then_person_full_name_complex_found(
-    nlp_engine, nlp_recognizer, entities
+    spacy_nlp_engine, nlp_recognizer, entities
 ):
     text = "William Bill Alexander"
-    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
+    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
 
     assert len(results) > 0
 
@@ -77,3 +100,18 @@ def test_when_person_in_text_then_person_full_name_complex_found(
         covered_text += text[sl]
 
     assert len(text) - len(covered_text) < 5
+
+
+def test_analyze_no_nlp_artifacts():
+    spacy_recognizer = SpacyRecognizer()
+    res = spacy_recognizer.analyze(text="text", nlp_artifacts=None, entities=["PERSON"])
+    assert len(res) == 0
+
+
+def test_entity_not_returned_if_not_in_supported_entities(mock_nlp_artifacts):
+    spacy_recognizer = SpacyRecognizer(supported_entities=["NRP"])
+
+    res = spacy_recognizer.analyze(
+        text="text", nlp_artifacts=mock_nlp_artifacts, entities=["DATE_TIME"]
+    )
+    assert len(res) == 0

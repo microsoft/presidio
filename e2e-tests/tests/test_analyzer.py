@@ -1,5 +1,4 @@
 import pytest
-
 from common.assertions import equal_json_strings
 from common.methods import analyze, analyzer_supported_entities
 
@@ -477,6 +476,98 @@ def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
          {"entity_type": "MR_TITLE", "start": 0, "end": 3, "score": 1.0, "analysis_explanation":null}
      ]
      """
+    assert response_status == 200
+    assert equal_json_strings(
+        expected_response, response_content, ignore_keys=["recognition_metadata"]
+    )
+
+
+@pytest.mark.api
+def test_given_allow_list_then_no_entity_is_returned():
+    request_body = """
+    {
+        "text": "email: admin@github.com", 
+        "language": "en", 
+        "allow_list": ["admin@github.com"]
+    }
+    """
+
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+     []
+    """
+    assert response_status == 200
+    assert equal_json_strings(
+        expected_response, response_content
+    )
+
+
+@pytest.mark.api
+def test_given_allow_list_with_regex_match_then_no_entity_is_returned():
+    request_body = """
+    {
+        "text": "email: admin@github.com", 
+        "language": "en", 
+        "allow_list": [".*@github.com"],
+        "allow_list_match": "regex"
+    }
+    """
+
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+     []
+    """
+    assert response_status == 200
+    assert equal_json_strings(
+        expected_response, response_content
+    )
+
+
+@pytest.mark.api
+def test_given_allow_list_without_setting_allow_list_match_then_normal_entity_is_returned():
+    request_body = """
+    {
+        "text": "email: admin@github.com", 
+        "language": "en", 
+        "allow_list": [".*@github.com"]
+    }
+    """
+
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+     [
+         {"entity_type": "EMAIL_ADDRESS", "start": 7, "end": 23, "score": 0.85, "analysis_explanation":null}
+     ]
+    """
+    assert response_status == 200
+    assert equal_json_strings(
+        expected_response, response_content, ignore_keys=["recognition_metadata"]
+    )
+
+
+@pytest.mark.api
+def test_given_regex_flags_and_normal_entities_are_returned():
+    # case sensitive flags are turned off, GitHub != github
+    request_body = """
+    {
+        "text": "email: admin@GitHub.com",
+        "language": "en", 
+        "allow_list": [".*@github.com"],
+        "allow_list_match": "regex",
+        "regex_flags": 0
+    }
+    """
+
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+     [
+         {"entity_type": "EMAIL_ADDRESS", "start": 7, "end": 23, "score": 0.85, "analysis_explanation":null}
+     ]
+    """
     assert response_status == 200
     assert equal_json_strings(
         expected_response, response_content, ignore_keys=["recognition_metadata"]

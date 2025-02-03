@@ -3,7 +3,6 @@ from presidio_cli.analyzer import analyze, line_generator
 
 
 def test_line_generator():
-
     e = list(line_generator(""))
     assert len(e) == 1
     assert e[0].line_no == 1
@@ -37,7 +36,6 @@ def test_line_generator():
 
 
 def test_analyze(en_core_web_lg, config):
-
     result = list(
         analyze(
             "His name is Mr. Jones and his phone number is 212-555-5555\n"
@@ -51,22 +49,9 @@ def test_analyze(en_core_web_lg, config):
 
 
 def test_analyze_with_allow_list(en_core_web_lg, config, config_with_allow_list):
+    result_without_allow_list = list(analyze("John Sample\n" "example@example.com", config))
 
-    result_without_allow_list = list(
-        analyze(
-            "John Sample\n"
-            "example@example.com",
-            config
-        )
-    )
-
-    result_with_allow_list = list(
-        analyze(
-            "John Sample\n"
-            "example@example.com",
-            config_with_allow_list
-        )
-    )
+    result_with_allow_list = list(analyze("John Sample\n" "example@example.com", config_with_allow_list))
 
     assert len(result_without_allow_list) - len(result_with_allow_list) == 3
 

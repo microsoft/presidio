@@ -23,8 +23,8 @@ class AnalysisExplanation:
         pattern: str = None,
         validation_result: float = None,
         textual_explanation: str = None,
+        regex_flags: int = None,
     ):
-
         self.recognizer = recognizer
         self.pattern_name = pattern_name
         self.pattern = pattern
@@ -34,6 +34,7 @@ class AnalysisExplanation:
         self.score_context_improvement = 0
         self.supportive_context_word = ""
         self.validation_result = validation_result
+        self.regex_flags = regex_flags
 
     def __repr__(self):
         """Create string representation of the object."""
@@ -53,7 +54,7 @@ class AnalysisExplanation:
         if self.textual_explanation is None:
             self.textual_explanation = text
         else:
-            self.textual_explanation = "{}\n{}".format(self.textual_explanation, text)
+            self.textual_explanation = f"{self.textual_explanation}\n{text}"
 
     def to_dict(self) -> Dict:
         """

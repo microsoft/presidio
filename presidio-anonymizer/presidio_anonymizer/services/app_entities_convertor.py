@@ -1,9 +1,9 @@
-from typing import List, Dict
+from typing import Dict, List
 
-from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities import (
-    OperatorResult,
+    InvalidParamError,
     OperatorConfig,
+    OperatorResult,
     RecognizerResult,
 )
 
@@ -19,7 +19,7 @@ class AppEntitiesConvertor:
         :param data: contains the anonymizers and analyzer_results_json
         """
         if data is None:
-            raise InvalidParamException(
+            raise InvalidParamError(
                 "Invalid input, " "request must contain analyzer results"
             )
         return [RecognizerResult.from_json(analyzer_result) for analyzer_result in data]

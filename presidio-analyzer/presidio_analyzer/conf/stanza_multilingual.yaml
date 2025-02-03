@@ -1,0 +1,22 @@
+nlp_engine_name: stanza
+models:
+  -
+    lang_code: en
+    model_name: en
+  -
+    lang_code: de
+    model_name: de
+
+ner_model_configuration:
+  model_to_presidio_entity_mapping:
+    PER: PERSON
+    PERSON: PERSON
+    NORP: NRP
+    FAC: LOCATION
+    LOC: LOCATION
+    LOCATION: LOCATION
+    GPE: LOCATION
+    ORG: ORGANIZATION
+    ORGANIZATION: ORGANIZATION
+    DATE: DATE_TIME
+    TIME: DATE_TIME

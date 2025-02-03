@@ -77,8 +77,25 @@ analyzer = AnalyzerEngine()
 
 analyzer.registry.add_recognizer(titles_recognizer)
 
-results = analyzer.analyze(text=text,language="en")
+results = analyzer.analyze(text=text, language="en")
 print(results)
+```
+
+For pattern based recognizers, it is possible to change the regex flags, either for
+one recognizer or for all.
+For one recognizer, use the `global_regex_flags` parameter
+in the `PatternRecognizer` constructor.
+For all recognizers, use the `global_regex_flags` parameter in the `RecognizerRegistry` constructor:
+
+<!--pytest-codeblocks:cont-->
+```python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+
+import regex as re
+
+registry = RecognizerRegistry(global_regex_flags=re.DOTALL | re.MULTILINE | re.IGNORECASE)
+engine = AnalyzerEngine(registry=registry)
+engine.analyze(...)
 ```
 
 ### Creating a new `EntityRecognizer` in code
@@ -133,12 +150,12 @@ To add a recognizer to the list of pre-defined recognizers:
 
 1. Clone the repo.
 2. Create a file containing the new recognizer Python class.
-3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
+3. Add the recognizer to the `recognizers` in the [`default_recognizers`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) config. Details of recognizer parameters are given [Here](./recognizer_registry_provider.md#the-recognizer-parameters).
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
-### Azure Text Analytics recognizer
+### Azure AI Language recognizer
 
-On how to integrate Presidio with Azure Text Analytics,
+On how to integrate Presidio with Azure AI Language PII detection service,
 and a sample for a Text Analytics Remote Recognizer, refer to the
 [Azure Text Analytics Integration document](../samples/python/text_analytics/index.md).
 
@@ -201,7 +218,7 @@ Additional examples can be found in the [OpenAPI spec](../api-docs/api-docs.html
 ### Reading pattern recognizers from YAML
 
 Recognizers can be loaded from a YAML file, which allows users to add recognition logic without writing code.
-An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml).
+An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml).
 
 Once the YAML file is created, it can be loaded into the `RecognizerRegistry` instance.
 
@@ -209,14 +226,19 @@ This example creates a `RecognizerRegistry` holding only the recognizers in the 
 
  <!--pytest-codeblocks:skip-->
 ``` python
-from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 
-yaml_file = "recognizers.yaml"
-registry = RecognizerRegistry()
-registry.add_recognizers_from_yaml(yaml_file)
+recognizer_registry_conf_file = "./analyzer/recognizers-config.yml"
 
+provider = RecognizerRegistryProvider(
+                conf_file=recognizer_registry_conf_file
+            )
+registry = provider.create_recognizer_registry()
 analyzer = AnalyzerEngine(registry=registry)
-analyzer.analyze(text="Mr. and Mrs. Smith", language="en")
+
+results = analyzer.analyze(text="My name is Morris", language="en")
+print(results)
 ```
 
 This example adds the new recognizers to the predefined recognizers in Presidio:

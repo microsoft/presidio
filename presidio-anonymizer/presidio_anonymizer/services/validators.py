@@ -1,5 +1,6 @@
 """Anomnymizers validations utility methods."""
-from presidio_anonymizer.entities import InvalidParamException
+
+from presidio_anonymizer.entities import InvalidParamError
 
 
 def validate_parameter_in_range(
@@ -14,7 +15,7 @@ def validate_parameter_in_range(
     """
     validate_parameter(parameter_value, parameter_name, object)
     if parameter_value not in values_range:
-        raise InvalidParamException(
+        raise InvalidParamError(
             f"Parameter {parameter_name} value {parameter_value} is not in "
             f"range of values {values_range}"
         )
@@ -25,7 +26,7 @@ def validate_parameter_not_empty(
 ) -> None:
     """Validate parameter exists and not only empty."""
     if not parameter_value:
-        raise InvalidParamException(
+        raise InvalidParamError(
             f"Invalid input, {entity} must contain {parameter_name}"
         )
 
@@ -35,7 +36,7 @@ def validate_parameter_exists(
 ) -> None:
     """Validate parameter is not empty."""
     if parameter_value is None:
-        raise InvalidParamException(
+        raise InvalidParamError(
             f"Invalid input, {entity} must contain {parameter_name}"
         )
 
@@ -50,7 +51,7 @@ def validate_parameter(
     InvalidParamException with the parameter_name as content.
     """
     if parameter_value is None:
-        raise InvalidParamException(f"Expected parameter {parameter_name}")
+        raise InvalidParamError(f"Expected parameter {parameter_name}")
     validate_type(parameter_value, parameter_name, parameter_type)
 
 
@@ -68,7 +69,7 @@ def validate_type(parameter_value, parameter_name, parameter_type):
             expected_type=parameter_type,
             actual_type=type(parameter_value),
         )
-        raise InvalidParamException(message)
+        raise InvalidParamError(message)
 
 
 def _get_bad_typed_parameter_error_message(parameter_name, expected_type, actual_type):

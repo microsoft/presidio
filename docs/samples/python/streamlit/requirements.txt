@@ -1,9 +1,12 @@
-presidio-analyzer
+presidio-analyzer[transformers]
+presidio-analyzer[stanza]
 presidio-anonymizer
 streamlit
+streamlit-tags
 pandas
+python-dotenv
 st-annotated-text
 torch
-transformers
 flair
 openai
+azure-ai-textanalytics

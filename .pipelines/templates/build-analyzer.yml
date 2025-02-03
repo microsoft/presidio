@@ -1,13 +1,12 @@
 steps:
   - task: Bash@3
-    displayName: 'Setup pipenv'
+    displayName: 'Setup poetry'
     inputs:
       targetType: 'inline'
       script: |
         set -eux  # fail on error
         python -m pip install --upgrade pip
-        python -m pip install pipenv
-        pipenv --python 3
+        python -m pip install poetry
 
   - task: Bash@3
     displayName: 'Install deps'
@@ -16,8 +15,9 @@ steps:
       workingDirectory: 'presidio-analyzer'
       script: |
         set -eux  # fail on error
-        pipenv sync --dev
-        pipenv run python -m spacy download en_core_web_lg
+        poetry install --all-extras
+        poetry run python -m spacy download en_core_web_lg
+        poetry run python -m spacy download en_core_web_sm
 
   - template: ./build-python.yml
     parameters:

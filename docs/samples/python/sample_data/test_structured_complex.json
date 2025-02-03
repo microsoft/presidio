@@ -1,0 +1,37 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "address": {
+                "street": "123 Main St",
+                "city": "Anytown",
+                "state": "CA",
+                "non_pii": "reallynotpii"
+            }
+        },
+        {
+            "id": 2,
+            "name": "Jane Smith",
+            "email": "jane.smith@example.com",
+            "address": {
+                "street": "456 Elm St",
+                "city": "Somewhere",
+                "state": "TX",
+                "non_pii": "reallynotapii"
+            }
+        },
+        {
+            "id": 3,
+            "name": "Alice Johnson",
+            "email": "alice.johnson@example.com",
+            "address": {
+                "street": "789 Pine St",
+                "city": "Elsewhere",
+                "state": "NY",
+                "non_pii": "reallynotapiiatall"
+            }
+        }
+    ]
+}

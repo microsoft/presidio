@@ -1,18 +1,16 @@
 from pathlib import Path
 
 import pytest
+import regex as re
 
 from presidio_analyzer import (
     RecognizerRegistry,
     PatternRecognizer,
     EntityRecognizer,
     Pattern,
+    AnalyzerEngine,
 )
-
-
-@pytest.fixture(scope="module")
-def request_id():
-    return "UT"
+from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 
 
 def create_mock_pattern_recognizer(lang, entity, name):
@@ -54,8 +52,8 @@ def test_when_get_recognizers_then_all_recognizers_returned(mock_recognizer_regi
     registry = mock_recognizer_registry
     registry.load_predefined_recognizers()
     recognizers = registry.get_recognizers(language="en", all_fields=True)
-    # 1 custom recognizer in english + 21 predefined
-    assert len(recognizers) == 1 + 21
+    # 1 custom recognizer in english + 27 predefined
+    assert len(recognizers) == 1 + 27
 
 
 def test_when_get_recognizers_then_return_all_fields(mock_recognizer_registry):
@@ -204,3 +202,45 @@ def test_recognizer_registry_exception_erroneous_yaml():
     with pytest.raises(TypeError):
         registry = RecognizerRegistry()
         registry.add_recognizers_from_yaml(test_yaml)
+
+
+def test_predefined_pattern_recognizers_have_the_right_regex_flags():
+    registry = RecognizerRegistry(global_regex_flags=re.DOTALL)
+    registry.load_predefined_recognizers()
+    for rec in registry.recognizers:
+        if isinstance(rec, PatternRecognizer):
+            assert rec.global_regex_flags == re.DOTALL
+
+
+def test_recognizer_removed_and_returned_entities_are_correct():
+    registry = RecognizerRegistry()
+    registry.load_predefined_recognizers()
+    registry.remove_recognizer("SpacyRecognizer")
+    sr = SpacyRecognizer(supported_entities=["DATE_TIME", "NRP"])
+    registry.add_recognizer(sr)
+
+    supported_entities = registry.get_supported_entities(languages=["en"])
+
+    assert "DATE_TIME" in supported_entities
+    assert "PERSON" not in supported_entities
+
+    analyzer = AnalyzerEngine(registry=registry, supported_languages=["en"])
+
+    analyzer.analyze("My name is David", language="en")
+
+
+def test_remove_recognizer_when_multiple_instances_exist():
+    registry = RecognizerRegistry()
+
+    spacy_english = SpacyRecognizer(supported_language="en")
+    spacy_spanish = SpacyRecognizer(supported_language="es")
+    registry.add_recognizer(spacy_english)
+    registry.add_recognizer(spacy_spanish)
+
+    registry.remove_recognizer("SpacyRecognizer", language="en")
+    assert len(registry.recognizers) == 1
+
+    assert registry.recognizers[0].supported_language == "es"
+    assert len([rec for rec in registry.recognizers
+                if rec.name == "SpacyRecognizer"]) == 1
+

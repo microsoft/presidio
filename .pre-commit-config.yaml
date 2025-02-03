@@ -1,29 +1,7 @@
 repos:
-  -   repo: https://github.com/ambv/black
-      rev: 22.3.0
-      hooks:
-        - id: black
-          language_version: python3
-      exclude: ^tests/
-  -   repo: https://github.com/pycqa/flake8
-      rev: 3.9.0
-      hooks:
-        - id: flake8
-          additional_dependencies: [
-              'pep8-naming',
-              'flake8-docstrings',
-          ]
-          args: ['--max-line-length=88', 
-                 '--docstring-convention=numpy',
-                  # 'PEP8 Rules' to ignore in tests. Ignore documentation rules for all tests
-                  # and ignore long lines / whitespaces for e2e-tests where we define jsons in-code.
-                 '--per-file-ignores=**/tests/**.py:D docs/**.py:D e2e-tests/**.py:D,E501,W291,W293 docs/samples/deployments/spark/notebooks/*.py:E501,F821,D103',
-                 '--extend-ignore=
-                 		E203,
-                 		D100,
-                 		D202,
-                 		ANN101,
-                 		ANN102,
-                 		ANN204,
-                 		ANN203'
-                 		]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.3
+    hooks:
+      - id: ruff
+        args: [ --fix ]
+      - id: ruff-format

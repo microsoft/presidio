@@ -1,4 +1,6 @@
-"""Recognizer registry init."""
-from .recognizer_registry import RecognizerRegistry
+"""Recognizer Registry."""
 
-__all__ = ["RecognizerRegistry"]
+from .recognizer_registry import RecognizerRegistry
+from .recognizer_registry_provider import RecognizerRegistryProvider
+
+__all__ = ["RecognizerRegistry", "RecognizerRegistryProvider"]

@@ -1,15 +1,15 @@
 import datetime
 import logging
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 import regex as re
 
 from presidio_analyzer import (
+    AnalysisExplanation,
+    EntityRecognizer,
     LocalRecognizer,
     Pattern,
     RecognizerResult,
-    EntityRecognizer,
-    AnalysisExplanation,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
@@ -26,6 +26,8 @@ class PatternRecognizer(LocalRecognizer):
     :param context: list of context words
     :param deny_list_score: confidence score for a term
     identified using a deny-list
+    :param global_regex_flags: regex flags to be used in regex matching,
+    including deny-lists.
     """
 
     def __init__(
@@ -37,9 +39,9 @@ class PatternRecognizer(LocalRecognizer):
         deny_list: List[str] = None,
         context: List[str] = None,
         deny_list_score: float = 1.0,
+        global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
         version: str = "0.0.1",
     ):
-
         if not supported_entity:
             raise ValueError("Pattern recognizer should be initialized with entity")
 
@@ -61,6 +63,7 @@ class PatternRecognizer(LocalRecognizer):
             self.patterns = patterns
         self.context = context
         self.deny_list_score = deny_list_score
+        self.global_regex_flags = global_regex_flags
 
         if deny_list:
             deny_list_pattern = self._deny_list_to_regex(deny_list)
@@ -76,8 +79,8 @@ class PatternRecognizer(LocalRecognizer):
         self,
         text: str,
         entities: List[str],
-        nlp_artifacts: NlpArtifacts = None,
-        regex_flags: int = None,
+        nlp_artifacts: Optional[NlpArtifacts] = None,
+        regex_flags: Optional[int] = None,
     ) -> List[RecognizerResult]:
         """
         Analyzes text to detect PII using regular expressions or deny-lists.
@@ -85,7 +88,7 @@ class PatternRecognizer(LocalRecognizer):
         :param text: Text to be analyzed
         :param entities: Entities this recognizer can detect
         :param nlp_artifacts: Output values from the NLP engine
-        :param regex_flags:
+        :param regex_flags: regex flags to be used in regex matching
         :return:
         """
         results = []
@@ -140,6 +143,7 @@ class PatternRecognizer(LocalRecognizer):
         pattern: str,
         original_score: float,
         validation_result: bool,
+        regex_flags: int,
     ) -> AnalysisExplanation:
         """
         Construct an explanation for why this entity was detected.
@@ -149,14 +153,21 @@ class PatternRecognizer(LocalRecognizer):
         :param pattern: Regex pattern logic
         :param original_score: Score given by the recognizer
         :param validation_result: Whether validation was used and its result
+        :param regex_flags: Regex flags used in the regex matching
         :return: Analysis explanation
         """
+        textual_explanation = (
+            f"Detected by `{recognizer_name}` " f"using pattern `{pattern_name}`"
+        )
+
         explanation = AnalysisExplanation(
             recognizer=recognizer_name,
             original_score=original_score,
             pattern_name=pattern_name,
             pattern=pattern,
             validation_result=validation_result,
+            regex_flags=regex_flags,
+            textual_explanation=textual_explanation,
         )
         return explanation
 
@@ -172,17 +183,22 @@ class PatternRecognizer(LocalRecognizer):
         :param flags: regex flags
         :return: A list of RecognizerResult
         """
-        flags = flags if flags else re.DOTALL | re.MULTILINE
+        flags = flags if flags else self.global_regex_flags
         results = []
         for pattern in self.patterns:
             match_start_time = datetime.datetime.now()
-            matches = re.finditer(pattern.regex, text, flags=flags)
+
+            # Compile regex if flags differ from flags the regex was compiled with
+            if not pattern.compiled_regex or pattern.compiled_with_flags != flags:
+                pattern.compiled_with_flags = flags
+                pattern.compiled_regex = re.compile(pattern.regex, flags=flags)
+
+            matches = pattern.compiled_regex.finditer(text)
             match_time = datetime.datetime.now() - match_start_time
             logger.debug(
-                "--- match_time[%s]: %s.%s seconds",
+                "--- match_time[%s]: %.6f seconds",
                 pattern.name,
-                match_time.seconds,
-                match_time.microseconds,
+                match_time.total_seconds()
             )
 
             for match in matches:
@@ -197,7 +213,12 @@ class PatternRecognizer(LocalRecognizer):
 
                 validation_result = self.validate_result(current_match)
                 description = self.build_regex_explanation(
-                    self.name, pattern.name, pattern.regex, score, validation_result
+                    self.name,
+                    pattern.name,
+                    pattern.regex,
+                    score,
+                    validation_result,
+                    flags,
                 )
                 pattern_result = RecognizerResult(
                     entity_type=self.supported_entities[0],

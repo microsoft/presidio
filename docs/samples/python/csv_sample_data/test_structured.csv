@@ -1,0 +1,4 @@
+id,name,email,street,city,state,non_pii
+1,John Doe,john.doe@example.com,123 Main St,Anytown,CA,reallynotpii
+2,Jane Smith,jane.smith@example.com,456 Elm St,Somewhere,TX,reallynotapii
+3,Alice Johnson,alice.johnson@example.com,789 Pine St,Elsewhere,NY,reallynotapiiatall

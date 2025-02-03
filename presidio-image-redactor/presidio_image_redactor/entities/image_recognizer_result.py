@@ -26,7 +26,6 @@ class ImageRecognizerResult(RecognizerResult):
         width: int,
         height: int,
     ):
-
         super().__init__(entity_type, start, end, score)
         self.left = left
         self.top = top

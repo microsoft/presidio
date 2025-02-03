@@ -1,0 +1,93 @@
+recognizer_registry:
+  global_regex_flags: 26
+  recognizers: 
+    - name: CreditCardRecognizer
+      supported_languages: 
+      - en
+      supported_entity: IT_FISCAL_CODE
+      type: predefined
+
+    - name: ItFiscalCodeRecognizer
+      type: predefined
+
+    - name: ExampleCustomRecognizer
+      patterns:
+        - name: "zip code (weak)"
+          regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+          score: 0.01
+        - name: "zip code (weak)"
+          regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+          score: 0.01
+      supported_languages:
+        - language: en
+          context: [credit]
+        - language: es
+          context: [tarjeta,credito]
+      supported_entity: "ZIP"
+      deny_list: [Mr., Mrs., Ms., Miss, Dr., Prof.]
+      deny_list_score: 1
+      type: custom
+      enabled: true
+
+    - name: "ZipCodeRecognizer"
+      supported_language: "de"
+      patterns:
+        -
+          name: "zip code (weak)"
+          regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+          score: 0.01
+      context:
+      - zip
+      - code
+      supported_entity: "ZIP"
+
+    - name: "TitlesRecognizer"
+      supported_language: "en"
+      supported_entity: "TITLE"
+      deny_list:
+        - Mr.
+        - Mrs.
+        - Ms.
+        - Miss
+        - Dr.
+        - Prof.
+      enabled: false
+
+supported_languages: 
+  - de
+  - en
+  - es
+default_score_threshold: 0.7
+
+nlp_configuration:
+  nlp_engine_name: spacy
+  models:
+    -
+      lang_code: en
+      model_name: en_core_web_lg
+
+  ner_model_configuration:
+    labels_to_ignore:
+    - O
+    aggregation_strategy: simple # "simple", "first", "average", "max"
+    stride: 16
+    alignment_mode: strict # "strict", "contract", "expand"
+    model_to_presidio_entity_mapping:
+      PER: PERSON
+      LOC: LOCATION
+      ORG: ORGANIZATION
+      AGE: AGE
+      ID: ID
+      EMAIL: EMAIL
+      PATIENT: PERSON
+      STAFF: PERSON
+      HOSP: ORGANIZATION
+      PATORG: ORGANIZATION
+      DATE: DATE_TIME
+      PHONE: PHONE_NUMBER
+      HCW: PERSON
+      HOSPITAL: ORGANIZATION
+
+    low_confidence_score_multiplier: 0.4
+    low_score_entity_names:
+    - ID

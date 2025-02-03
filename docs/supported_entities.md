@@ -27,7 +27,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 
 ### USA
 
-|FieldType|Description|Detection Method|
+|Entity Type|Description|Detection Method|
 |--- |--- |--- |
 |US_BANK_NUMBER|A US bank account number is between 8 to 17 digits.|Pattern match and context|
 |US_DRIVER_LICENSE|A US driver license according to <https://ntsi.com/drivers-license-format/>|Pattern match and context|
@@ -37,19 +37,21 @@ For more information, refer to the [adding new recognizers documentation](analyz
 
 ### UK
 
-|FieldType|Description|Detection Method|
+|Entity Type|Description|Detection Method|
 |--- |--- |--- |
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
+|UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
 
 ### Spain
 
-|FieldType|Description|Detection Method|
+|Entity Type|Description|Detection Method|
 |--- |--- |--- |
 |ES_NIF| A spanish NIF number (Personal tax ID) .|Pattern match, context and checksum|
+|ES_NIE| A spanish NIE number (Foreigners ID card) .|Pattern match, context and checksum|
 
 ### Italy
 
-|FieldType|Description|Detection Method|
+|Entity Type|Description|Detection Method|
 |--- |--- |--- |
 |IT_FISCAL_CODE| An Italian personal identification code. <https://en.wikipedia.org/wiki/Italian_fiscal_code>|Pattern match, context and checksum|
 |IT_DRIVER_LICENSE| An Italian driver license number.|Pattern match and context|
@@ -57,11 +59,18 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |IT_PASSPORT|An Italian passport number.|Pattern match and context|
 |IT_IDENTITY_CARD|An Italian identity card number. <https://en.wikipedia.org/wiki/Italian_electronic_identity_card>|Pattern match and context|
 
+### Poland
+
+|Entity Type|Description|Detection Method|
+|--- |--- |--- |
+|PL_PESEL|Polish PESEL number|Pattern match, context and checksum|
+
 ### Singapore
 
 |FieldType|Description|Detection Method|
 |--- |--- |--- |
 |SG_NRIC_FIN| A National Registration Identification Card | Pattern match and context |
+|SG_UEN| A Unique Entity Number (UEN) is a standard identification number for entities registered in Singapore. | Pattern match, context, and checksum |
 
 ### Australia
 
@@ -72,9 +81,32 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |AU_TFN| The tax file number (TFN) is a unique identifier issued by the Australian Taxation Office to each taxpaying entity | Pattern match, context, and checksum |
 |AU_MEDICARE| Medicare number is a unique identifier issued by Australian Government that enables the cardholder to receive a rebates of medical expenses under Australia's Medicare system| Pattern match, context, and checksum |
 
+### India
+| FieldType  | Description                                                                                                                                                         |Detection Method|
+|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|--- |
+| IN_PAN     | The Indian Permanent Account Number (PAN) is a unique 12 character alphanumeric identifier issued to all business and individual entities registered as Tax Payers. | Pattern match, context |
+| IN_AADHAAR | Indian government issued unique 12 digit individual identity number                                                                                                 | Pattern match, context, and checksum |
+| IN_VEHICLE_REGISTRATION | Indian government issued transport (govt, personal, diplomatic, defence)  vehicle registration number                                                               | Pattern match, context, and checksum |
+| IN_VOTER | Indian Election Commission issued 10 digit alpha numeric voter id for all indian citizens (age 18 or above) | Pattern match, context |
+| IN_PASSPORT | Indian Passport Number | Pattern match, Context |
+
+### Finland
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| FI_PERSONAL_IDENTITY_CODE     | The Finnish Personal Identity Code (Henkilötunnus) is a unique 11 character individual identity number. | Pattern match, context and custom logic. |
+
 ## Adding a custom PII entity
 
 See [this documentation](analyzer/adding_recognizers.md) for instructions on how to add a new Recognizer for a new type of PII entity.
+
+## Complementing Presidio with Azure AI Language PII
+
+[Azure AI Language PII](https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/overview)
+ is a cloud-based service that provides Natural Language Processing (NLP) features for detecting PII in text.
+
+A list of supported entities by Azure AI Language PII [can be found here](https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/concepts/entity-categories).
+
+To add Azure AI language into Presidio, [see this sample](samples/python/text_analytics/index.md#how-to-integrate-azure-ai-language-into-presidio).
 
 ### Connecting to 3rd party PII detectors
 

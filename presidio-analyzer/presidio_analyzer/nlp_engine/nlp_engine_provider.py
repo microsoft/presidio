@@ -1,13 +1,14 @@
 import logging
 from pathlib import Path
-from typing import Optional, Dict, Union, Tuple
+from typing import Dict, Optional, Tuple, Union
 
 import yaml
 
 from presidio_analyzer.nlp_engine import (
-    StanzaNlpEngine,
-    SpacyNlpEngine,
+    NerModelConfiguration,
     NlpEngine,
+    SpacyNlpEngine,
+    StanzaNlpEngine,
     TransformersNlpEngine,
 )
 
@@ -37,7 +38,6 @@ class NlpEngineProvider:
         conf_file: Optional[Union[Path, str]] = None,
         nlp_configuration: Optional[Dict] = None,
     ):
-
         if not nlp_engines:
             nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
 
@@ -59,7 +59,7 @@ class NlpEngineProvider:
         if conf_file:
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
-        if not conf_file and not nlp_configuration:
+        if conf_file is None and nlp_configuration is None:
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
             self.nlp_configuration = self._read_nlp_conf(conf_file)
@@ -84,11 +84,20 @@ class NlpEngineProvider:
             )
         try:
             nlp_engine_class = self.nlp_engines[nlp_engine_name]
-            nlp_engine_opts = {
-                m["lang_code"]: m["model_name"]
-                for m in self.nlp_configuration["models"]
-            }
-            engine = nlp_engine_class(nlp_engine_opts)
+            nlp_models = self.nlp_configuration["models"]
+
+            ner_model_configuration = self.nlp_configuration.get(
+                "ner_model_configuration"
+            )
+            if ner_model_configuration:
+                ner_model_configuration = NerModelConfiguration.from_dict(
+                    ner_model_configuration
+                )
+
+            engine = nlp_engine_class(
+                models=nlp_models, ner_model_configuration=ner_model_configuration
+            )
+            engine.load()
             logger.info(
                 f"Created NLP engine: {engine.engine_name}. "
                 f"Loaded models: {list(engine.nlp.keys())}"
@@ -112,13 +121,19 @@ class NlpEngineProvider:
             )
 
         else:
-            nlp_configuration = yaml.safe_load(open(conf_file))
+            with open(conf_file) as file:
+                nlp_configuration = yaml.safe_load(file)
+
+        if "ner_model_configuration" not in nlp_configuration:
+            logger.warning(
+                "configuration file is missing 'ner_model_configuration'. Using default"
+            )
 
         return nlp_configuration
 
     @staticmethod
     def _get_full_conf_path(
-        default_conf_file: Union[Path, str] = "default.yaml"
+        default_conf_file: Union[Path, str] = "default.yaml",
     ) -> Path:
         """Return a Path to the default conf file."""
-        return Path(Path(__file__).parent.parent.parent, "conf", default_conf_file)
+        return Path(Path(__file__).parent.parent, "conf", default_conf_file)

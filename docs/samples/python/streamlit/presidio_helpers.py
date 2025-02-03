@@ -1,79 +1,87 @@
 """
 Helper methods for the Presidio Streamlit app
 """
-from typing import List, Optional
-
-import spacy
+from typing import List, Optional, Tuple
+import logging
 import streamlit as st
-from presidio_analyzer import AnalyzerEngine, RecognizerResult, RecognizerRegistry
-from presidio_analyzer.nlp_engine import NlpEngineProvider
+from presidio_analyzer import (
+    AnalyzerEngine,
+    RecognizerResult,
+    RecognizerRegistry,
+    PatternRecognizer,
+    Pattern,
+)
+from presidio_analyzer.nlp_engine import NlpEngine
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 
-from flair_recognizer import FlairRecognizer
 from openai_fake_data_generator import (
-    set_openai_key,
     call_completion_model,
+    OpenAIParams,
     create_prompt,
 )
-from transformers_rec import (
-    STANFORD_COFIGURATION,
-    TransformersRecognizer,
-    BERT_DEID_CONFIGURATION,
+from presidio_nlp_engine_config import (
+    create_nlp_engine_with_spacy,
+    create_nlp_engine_with_flair,
+    create_nlp_engine_with_transformers,
+    create_nlp_engine_with_azure_ai_language,
+    create_nlp_engine_with_stanza,
 )
+
+logger = logging.getLogger("presidio-streamlit")
 
 
 @st.cache_resource
-def analyzer_engine(model_path: str):
-    """Return AnalyzerEngine.
+def nlp_engine_and_registry(
+    model_family: str,
+    model_path: str,
+    ta_key: Optional[str] = None,
+    ta_endpoint: Optional[str] = None,
+) -> Tuple[NlpEngine, RecognizerRegistry]:
+    """Create the NLP Engine instance based on the requested model.
+    :param model_family: Which model package to use for NER.
+    :param model_path: Which model to use for NER. E.g.,
+        "StanfordAIMI/stanford-deidentifier-base",
+        "obi/deid_roberta_i2b2",
+        "en_core_web_lg"
+    :param ta_key: Key to the Text Analytics endpoint (only if model_path = "Azure Text Analytics")
+    :param ta_endpoint: Endpoint of the Text Analytics instance (only if model_path = "Azure Text Analytics")
+    """
 
+    # Set up NLP Engine according to the model of choice
+    if "spacy" in model_family.lower():
+        return create_nlp_engine_with_spacy(model_path)
+    if "stanza" in model_family.lower():
+        return create_nlp_engine_with_stanza(model_path)
+    elif "flair" in model_family.lower():
+        return create_nlp_engine_with_flair(model_path)
+    elif "huggingface" in model_family.lower():
+        return create_nlp_engine_with_transformers(model_path)
+    elif "azure ai language" in model_family.lower():
+        return create_nlp_engine_with_azure_ai_language(ta_key, ta_endpoint)
+    else:
+        raise ValueError(f"Model family {model_family} not supported")
+
+
+@st.cache_resource
+def analyzer_engine(
+    model_family: str,
+    model_path: str,
+    ta_key: Optional[str] = None,
+    ta_endpoint: Optional[str] = None,
+) -> AnalyzerEngine:
+    """Create the NLP Engine instance based on the requested model.
+    :param model_family: Which model package to use for NER.
     :param model_path: Which model to use for NER:
         "StanfordAIMI/stanford-deidentifier-base",
         "obi/deid_roberta_i2b2",
         "en_core_web_lg"
+    :param ta_key: Key to the Text Analytics endpoint (only if model_path = "Azure Text Analytics")
+    :param ta_endpoint: Endpoint of the Text Analytics instance (only if model_path = "Azure Text Analytics")
     """
-
-    registry = RecognizerRegistry()
-    registry.load_predefined_recognizers()
-
-    # Set up NLP Engine according to the model of choice
-    if model_path == "en_core_web_lg":
-        if not spacy.util.is_package("en_core_web_lg"):
-            spacy.cli.download("en_core_web_lg")
-        nlp_configuration = {
-            "nlp_engine_name": "spacy",
-            "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-        }
-    elif model_path == "flair/ner-english-large":
-        flair_recognizer = FlairRecognizer()
-        nlp_configuration = {
-            "nlp_engine_name": "spacy",
-            "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
-        }
-        registry.add_recognizer(flair_recognizer)
-        registry.remove_recognizer("SpacyRecognizer")
-    else:
-        if not spacy.util.is_package("en_core_web_sm"):
-            spacy.cli.download("en_core_web_sm")
-        # Using a small spaCy model + a HF NER model
-        transformers_recognizer = TransformersRecognizer(model_path=model_path)
-        registry.remove_recognizer("SpacyRecognizer")
-        if model_path == "StanfordAIMI/stanford-deidentifier-base":
-            transformers_recognizer.load_transformer(**STANFORD_COFIGURATION)
-        elif model_path == "obi/deid_roberta_i2b2":
-            transformers_recognizer.load_transformer(**BERT_DEID_CONFIGURATION)
-
-        # Use small spaCy model, no need for both spacy and HF models
-        # The transformers model is used here as a recognizer, not as an NlpEngine
-        nlp_configuration = {
-            "nlp_engine_name": "spacy",
-            "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
-        }
-
-        registry.add_recognizer(transformers_recognizer)
-
-    nlp_engine = NlpEngineProvider(nlp_configuration=nlp_configuration).create_engine()
-
+    nlp_engine, registry = nlp_engine_and_registry(
+        model_family, model_path, ta_key, ta_endpoint
+    )
     analyzer = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry)
     return analyzer
 
@@ -85,17 +93,36 @@ def anonymizer_engine():
 
 
 @st.cache_data
-def get_supported_entities(st_model: str):
+def get_supported_entities(
+    model_family: str, model_path: str, ta_key: str, ta_endpoint: str
+):
     """Return supported entities from the Analyzer Engine."""
-    return analyzer_engine(st_model).get_supported_entities()
+    return analyzer_engine(
+        model_family, model_path, ta_key, ta_endpoint
+    ).get_supported_entities() + ["GENERIC_PII"]
 
 
 @st.cache_data
-def analyze(st_model: str, **kwargs):
+def analyze(
+    model_family: str, model_path: str, ta_key: str, ta_endpoint: str, **kwargs
+):
     """Analyze input using Analyzer engine and input arguments (kwargs)."""
     if "entities" not in kwargs or "All" in kwargs["entities"]:
         kwargs["entities"] = None
-    return analyzer_engine(st_model).analyze(**kwargs)
+
+    if "deny_list" in kwargs and kwargs["deny_list"] is not None:
+        ad_hoc_recognizer = create_ad_hoc_deny_list_recognizer(kwargs["deny_list"])
+        kwargs["ad_hoc_recognizers"] = [ad_hoc_recognizer] if ad_hoc_recognizer else []
+        del kwargs["deny_list"]
+
+    if "regex_params" in kwargs and len(kwargs["regex_params"]) > 0:
+        ad_hoc_recognizer = create_ad_hoc_regex_recognizer(*kwargs["regex_params"])
+        kwargs["ad_hoc_recognizers"] = [ad_hoc_recognizer] if ad_hoc_recognizer else []
+        del kwargs["regex_params"]
+
+    return analyzer_engine(model_family, model_path, ta_key, ta_endpoint).analyze(
+        **kwargs
+    )
 
 
 def anonymize(
@@ -184,20 +211,47 @@ def annotate(text: str, analyze_results: List[RecognizerResult]):
 def create_fake_data(
     text: str,
     analyze_results: List[RecognizerResult],
-    openai_key: str,
-    openai_model_name: str,
+    openai_params: OpenAIParams,
 ):
     """Creates a synthetic version of the text using OpenAI APIs"""
-    if not openai_key:
+    if not openai_params.openai_key:
         return "Please provide your OpenAI key"
     results = anonymize(text=text, operator="replace", analyze_results=analyze_results)
-    set_openai_key(openai_key)
     prompt = create_prompt(results.text)
-    fake = call_openai_api(prompt, openai_model_name)
+    print(f"Prompt: {prompt}")
+    fake = call_completion_model(prompt=prompt, openai_params=openai_params)
     return fake
 
 
 @st.cache_data
-def call_openai_api(prompt: str, openai_model_name: str) -> str:
-    fake_data = call_completion_model(prompt, model=openai_model_name)
+def call_openai_api(
+    prompt: str, openai_model_name: str, openai_deployment_name: Optional[str] = None
+) -> str:
+    fake_data = call_completion_model(
+        prompt, model=openai_model_name, deployment_id=openai_deployment_name
+    )
     return fake_data
+
+
+def create_ad_hoc_deny_list_recognizer(
+    deny_list=Optional[List[str]],
+) -> Optional[PatternRecognizer]:
+    if not deny_list:
+        return None
+
+    deny_list_recognizer = PatternRecognizer(
+        supported_entity="GENERIC_PII", deny_list=deny_list
+    )
+    return deny_list_recognizer
+
+
+def create_ad_hoc_regex_recognizer(
+    regex: str, entity_type: str, score: float, context: Optional[List[str]] = None
+) -> Optional[PatternRecognizer]:
+    if not regex:
+        return None
+    pattern = Pattern(name="Regex pattern", regex=regex, score=score)
+    regex_recognizer = PatternRecognizer(
+        supported_entity=entity_type, patterns=[pattern], context=context
+    )
+    return regex_recognizer

@@ -31,14 +31,11 @@ class RemoteRecognizer(ABC, EntityRecognizer):
             context=context,
         )
 
-    @abstractmethod
     def load(self):  # noqa D102
         pass
 
     @abstractmethod
-    def analyze(
-        self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts
-    ):  # noqa ANN201
+    def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):  # noqa ANN201
         """
         Call an external service for PII detection.
 

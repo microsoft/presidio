@@ -1,0 +1,73 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.poetry]
+name = "presidio_analyzer"
+version = "2.2.357"
+description = "Presidio Analyzer package"
+authors = ["Presidio <presidio@microsoft.com>"]
+license = "MIT"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["presidio_analyzer"]
+urls = {Homepage = "https://github.com/Microsoft/presidio"}
+readme = "README.md"
+include = ["conf/*",]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+spacy= ">=3.4.4, <4.0.0, !=3.7.0"
+regex = "*"
+tldextract = "*"
+pyyaml = "*"
+phonenumbers = ">=8.12,<9.0.0"
+flask = { version = ">=1.1", optional = true }
+spacy_huggingface_pipelines = { version = "*", optional = true }
+stanza = { version = "*", optional = true }
+spacy_stanza = { version = "*", optional = true }
+azure-ai-textanalytics = { version = "*", optional = true }
+azure-core = { version = "*", optional = true }
+gliner = {version = ">=0.2.13,<1.0.0", markers = "python_version >= '3.10'", optional = true}
+transformers = { version = "*", optional = true }
+huggingface_hub = { version = "*", optional = true }
+gunicorn = {version = "*", optional = true}
+
+onnxruntime-gpu = [
+    {version = ">=1.19", markers = "python_version >= '3.10'", optional = true },
+]
+
+[tool.poetry.extras]
+server = ["flask", "gunicorn"]
+transformers = [
+    "transformers",
+    "huggingface_hub",
+    "spacy_huggingface_pipelines"]
+stanza = [
+    "stanza",
+    "spacy_stanza",
+]
+azure-ai-language = [
+    "azure-ai-textanalytics",
+    "azure-core",
+]
+gliner = [
+    "transformers",
+    "huggingface_hub",
+    "gliner",
+    "onnxruntime-gpu"
+]
+
+[tool.poetry.group.dev.dependencies]
+pip = "*"
+ruff = "*"
+pytest = "*"
+pytest-mock = "*"
+python-dotenv = "*"
+pre_commit = "*"

@@ -3,15 +3,15 @@ parameters:
 steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.8'
+      versionSpec: '3.10'
   - task: Bash@3
     displayName: 'Package Wheel'
     inputs:
       targetType: 'inline'
       script: |
         set -eux  # fail on error
-        pip install wheel
-        python setup.py bdist_wheel
+        pip install build
+        python -m build --wheel
       workingDirectory: ${{ parameters.WORKING_FOLDER }}
   - task: Bash@3
     displayName: 'Install twine'
