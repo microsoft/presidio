@@ -27,8 +27,8 @@ class BatchAnalyzerEngine:
         self,
         texts: Iterable[Union[str, bool, float, int]],
         language: str,
-        batch_size: Optional[int] = 1,
-        n_process: Optional[int] = 1,
+        batch_size: int = 1,
+        n_process: int = 1,
         **kwargs,
     ) -> List[List[RecognizerResult]]:
         """
@@ -70,8 +70,8 @@ class BatchAnalyzerEngine:
         input_dict: Dict[str, Union[Any, Iterable[Any]]],
         language: str,
         keys_to_skip: Optional[List[str]] = None,
-        batch_size: Optional[int] = 1,
-        n_process: Optional[int] = 1,
+        batch_size: int = 1,
+        n_process: int = 1,
         **kwargs,
     ) -> Iterator[DictAnalyzerResult]:
         """

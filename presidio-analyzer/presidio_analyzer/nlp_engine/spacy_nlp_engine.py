@@ -115,8 +115,8 @@ class SpacyNlpEngine(NlpEngine):
         self,
         texts: Union[List[str], List[Tuple[str, object]]],
         language: str,
-        batch_size: Optional[int] = 1,
-        n_process: Optional[int] = 1,
+        batch_size: int = 1,
+        n_process: int = 1,
         as_tuples: bool = False,
     ) -> Iterator[Optional[NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts using spacy pipe.

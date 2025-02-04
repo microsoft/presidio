@@ -26,11 +26,11 @@ class AnalysisBuilder(ABC):
         self,
         analyzer: Optional[AnalyzerEngine] = None,
         analyzer_score_threshold: Optional[float] = None,
-        n_process: Optional[int] = 1,
-        batch_size: Optional[int] = 1
+        n_process: int = 1,
+        batch_size: int = 1
     ) -> None:
         """Initialize the configuration generator.
-        
+
         :param analyzer: AnalyzerEngine instance
         :param analyzer_score_threshold: threshold for filtering out results
         :param batch_size: Batch size to process in a single iteration
@@ -102,7 +102,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         """
         logger.debug("Starting JSON BatchAnalyzer analysis")
         analyzer_results = self.batch_analyzer.analyze_dict(
-            input_dict=data, 
+            input_dict=data,
             language=language,
             n_process=self.n_process,
             batch_size=self.batch_size
@@ -253,9 +253,9 @@ class PandasAnalysisBuilder(TabularAnalysisBuilder):
         for column in df.columns:
             logger.debug(f"Finding most common PII entity for column {column}")
             analyzer_results = self.batch_analyzer.analyze_iterator(
-                [val for val in df[column]], 
-                language=language, 
-                n_process=self.n_process, 
+                [val for val in df[column]],
+                language=language,
+                n_process=self.n_process,
                 batch_size=self.batch_size
             )
             column_analyzer_results_map[column] = analyzer_results
