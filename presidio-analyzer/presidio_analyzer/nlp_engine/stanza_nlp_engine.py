@@ -1,6 +1,6 @@
 import logging
-from typing import Union, Dict, List, Optional
 import warnings
+from typing import Dict, List, Optional, Union
 
 try:
     import stanza
@@ -8,13 +8,13 @@ except ImportError:
     stanza = None
 
 
-from spacy.tokens import Doc
+from spacy import Language, blank
+from spacy.tokens import Doc, Token
 from spacy.util import registry
-from spacy import blank, Language
 from stanza import Pipeline
-from stanza.resources.common import DEFAULT_MODEL_DIR
-from stanza.models.common.vocab import UNK_ID
 from stanza.models.common.pretrain import Pretrain
+from stanza.models.common.vocab import UNK_ID
+from stanza.resources.common import DEFAULT_MODEL_DIR
 
 from presidio_analyzer.nlp_engine import NerModelConfiguration, SpacyNlpEngine
 
@@ -79,8 +79,11 @@ def load_pipeline(
     use_gpu: bool = True,
     **kwargs,
 ) -> Language:
-    """Create a blank nlp object for a given language code with a stanza
-    pipeline as part of the tokenizer. To use the default stanza pipeline with
+    """Create a blank nlp object for a given language code.
+
+    with a stanza pipeline as part of the tokenizer.
+
+    To use the default stanza pipeline with
     the same language code, leave the tokenizer config empty. Otherwise, pass
     in the stanza pipeline settings in config["nlp"]["tokenizer"].
 
@@ -128,6 +131,17 @@ def create_tokenizer(
     use_gpu: bool = True,
     kwargs: dict = None,
 ):
+    """Create a tokenizer factory for a given language code.
+
+    :param lang: The language code, e.g. "en".
+    :param dir: The model directory.
+    :param package: The model package.
+    :param processors: The processors to use.
+    :param logging_level: The logging level.
+    :param verbose: Whether to be verbose.
+    :param use_gpu: Whether to use the GPU.
+    :param kwargs: Additional keyword arguments.
+    """
     if not processors:
         processors = {}
     if not kwargs:
@@ -167,7 +181,9 @@ def create_tokenizer(
 # Code taken from https://github.com/explosion/spacy-stanza
 # Supports Stanza > 1.7.0
 class StanzaTokenizer(object):
-    """Because we're only running the Stanza pipeline once and don't split
+    """The entire stanza pipeline in a custom tokenizer.
+
+    Because we're only running the Stanza pipeline once and don't split
     it up into spaCy pipeline components, we'll set all the attributes within
     a custom tokenizer.
     """
@@ -196,7 +212,7 @@ class StanzaTokenizer(object):
 
         snlp_doc = self.snlp(text)
         text = snlp_doc.text
-        snlp_tokens, snlp_heads = self.get_tokens_with_heads(snlp_doc)
+        snlp_tokens, snlp_heads = self.__get_tokens_with_heads(snlp_doc)
         pos = []
         tags = []
         morphs = []
@@ -206,7 +222,7 @@ class StanzaTokenizer(object):
         token_texts = [t.text for t in snlp_tokens]
         is_aligned = True
         try:
-            words, spaces = self.get_words_and_spaces(token_texts, text)
+            words, spaces = self.__get_words_and_spaces(token_texts, text)
         except ValueError:
             words = token_texts
             spaces = [True] * len(words)
@@ -281,7 +297,7 @@ class StanzaTokenizer(object):
                 f"expansion or because the character offsets don't map to "
                 f"valid tokens produced by the Stanza tokenizer:\n"
                 f"Words: {words}\n"
-                f"Entities: {[(e.text, e.type, e.start_char, e.end_char) for e in snlp_doc.entities]}",
+                f"Entities: {[(e.text, e.type, e.start_char, e.end_char) for e in snlp_doc.entities]}", # noqa
                 stacklevel=4,
             )
         else:
@@ -302,9 +318,10 @@ class StanzaTokenizer(object):
             yield self(text)
 
     @staticmethod
-    def get_tokens_with_heads(snlp_doc):
-        """Flatten the tokens in the Stanza Doc and extract the token indices
-        of the sentence start tokens to set is_sent_start.
+    def __get_tokens_with_heads(snlp_doc):
+        """Flatten the tokens in the Stanza Doc and extract the token indices.
+
+        extract the token indices of the sentence start tokens to set is_sent_start.
 
         snlp_doc (stanza.Document): The processed Stanza doc.
         RETURNS (list): The tokens (words).
@@ -328,7 +345,7 @@ class StanzaTokenizer(object):
         return tokens, heads
 
     @staticmethod
-    def get_words_and_spaces(words, text):
+    def __get_words_and_spaces(words, text):
         if "".join("".join(words).split()) != "".join(text.split()):
             raise ValueError("Unable to align mismatched text and words.")
         text_words = []
@@ -357,14 +374,16 @@ class StanzaTokenizer(object):
             text_spaces.append(False)
         return text_words, text_spaces
 
-    def token_vector(self, token):
+    def token_vector(self, token:Token):
         """Get Stanza's pretrained word embedding for given token.
 
-        token (Token): The token whose embedding will be returned
-        RETURNS (np.ndarray[ndim=1, dtype='float32']): the embedding/vector.
+        :param token: The token whose embedding will be returned
+        :return (np.ndarray[ndim=1, dtype='float32']): the embedding/vector.
             token.vector.size > 0 if Stanza pipeline contains a processor with
-            embeddings, else token.vector.size == 0. A 0-vector (origin) will be returned
-            when the token doesn't exist in snlp's pretrained embeddings."""
+            embeddings, else token.vector.size == 0.
+            A 0-vector (origin) will be returned
+        when the token doesn't exist in snlp's pretrained embeddings.
+        """
         unit_id = self.svecs.vocab.unit2id(token.text)
         return self.svecs.emb[unit_id]
 
