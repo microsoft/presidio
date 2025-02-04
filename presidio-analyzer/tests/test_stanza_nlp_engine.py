@@ -1,4 +1,4 @@
-""" "Tests adapted from the spacy_stanza repo"""
+"""Tests adapted from the spacy_stanza repo"""
 
 from spacy.lang.en import EnglishDefaults, English
 from spacy.lang.de import GermanDefaults
