@@ -4,6 +4,11 @@ from typing import Dict, List, Optional, Union
 
 try:
     import stanza
+    from stanza import Pipeline
+    from stanza.models.common.pretrain import Pretrain
+    from stanza.models.common.vocab import UNK_ID
+    from stanza.resources.common import DEFAULT_MODEL_DIR
+
 except ImportError:
     stanza = None
 
@@ -11,10 +16,6 @@ except ImportError:
 from spacy import Language, blank
 from spacy.tokens import Doc, Token
 from spacy.util import registry
-from stanza import Pipeline
-from stanza.models.common.pretrain import Pretrain
-from stanza.models.common.vocab import UNK_ID
-from stanza.resources.common import DEFAULT_MODEL_DIR
 
 from presidio_analyzer.nlp_engine import NerModelConfiguration, SpacyNlpEngine
 
