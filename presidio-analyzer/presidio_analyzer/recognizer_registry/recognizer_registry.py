@@ -178,15 +178,15 @@ class RecognizerRegistry:
                     elif type(rec.supported_entities) == str:
                         self.add_recognizer_map(all_entity_recognizers, supported_entity, rec)
             for entity in entities:
-                if entity in all_entity_recognizers:
-                    to_return.update(all_entity_recognizers[entity])
-                else:
+                if entity not in all_entity_recognizers:
                     logger.warning(
                         "Entity %s doesn't have the corresponding"
                         " recognizer in language : %s",
                         entity,
                         language,
                     )
+                else:
+                    to_return.update(all_entity_recognizers[entity])
         logger.debug(
             "Returning a total of %s recognizers",
             str(len(to_return)),
