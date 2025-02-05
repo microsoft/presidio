@@ -187,6 +187,7 @@ class RecognizerRegistry:
                     )
                 else:
                     to_return.update(all_entity_recognizers[entity])
+
         logger.debug(
             "Returning a total of %s recognizers",
             str(len(to_return)),
