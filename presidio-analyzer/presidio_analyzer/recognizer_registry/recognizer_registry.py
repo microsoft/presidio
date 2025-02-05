@@ -174,11 +174,9 @@ class RecognizerRegistry:
                 if language == rec.supported_language:
                     if type(rec.supported_entities) == list and len(rec.supported_entities) > 0:
                         for supported_entity in rec.supported_entities:
-                            all_entity_recognizers[supported_entity] = all_entity_recognizers[supported_entity].add(
-                                rec) if supported_entity in all_entity_recognizers else {rec}
+                            self.add_recognizer_map(all_entity_recognizers, supported_entity, rec)
                     elif type(rec.supported_entities) == str:
-                        all_entity_recognizers[rec.supported_entities] = all_entity_recognizers[rec.supported_entities].add(
-                            rec) if rec.supported_entities in all_entity_recognizers else {rec}
+                        self.add_recognizer_map(all_entity_recognizers, supported_entity, rec)
             for entity in entities:
                 if entity in all_entity_recognizers:
                     to_return.update(all_entity_recognizers[entity])
@@ -198,6 +196,12 @@ class RecognizerRegistry:
             raise ValueError("No matching recognizers were found to serve the request.")
 
         return list(to_return)
+
+    def add_recognizer_map(self, all_entity_recognizers, supported_entity, rec):
+        if supported_entity in all_entity_recognizers:
+            all_entity_recognizers[supported_entity].add(rec)
+        else:
+            all_entity_recognizers[supported_entity] = {rec}
 
     def add_recognizer(self, recognizer: EntityRecognizer) -> None:
         """
