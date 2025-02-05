@@ -160,6 +160,7 @@ class RecognizerRegistry:
         all_possible_recognizers = copy.copy(self.recognizers)
         if ad_hoc_recognizers:
             all_possible_recognizers.extend(ad_hoc_recognizers)
+
         to_return = set()
         if all_fields:
             to_return = [
@@ -168,16 +169,16 @@ class RecognizerRegistry:
                 if language == rec.supported_language
             ]
         else:
-            # filter out unwanted recognizers
             all_entity_recognizers = dict()
             for rec in all_possible_recognizers:
-                if type(rec.supported_entities) == list and len(rec.supported_entities) > 0:
-                    for supported_entity in rec.supported_entities:
-                        all_entity_recognizers[supported_entity] = all_entity_recognizers[supported_entity].add(
-                            rec) if supported_entity in all_entity_recognizers else {rec}
-                elif type(rec.supported_entities) == str:
-                    all_entity_recognizers[rec.supported_entities] = all_entity_recognizers[rec.supported_entities].add(
-                        rec) if rec.supported_entities in all_entity_recognizers else {rec}
+                if language == rec.supported_language:
+                    if type(rec.supported_entities) == list and len(rec.supported_entities) > 0:
+                        for supported_entity in rec.supported_entities:
+                            all_entity_recognizers[supported_entity] = all_entity_recognizers[supported_entity].add(
+                                rec) if supported_entity in all_entity_recognizers else {rec}
+                    elif type(rec.supported_entities) == str:
+                        all_entity_recognizers[rec.supported_entities] = all_entity_recognizers[rec.supported_entities].add(
+                            rec) if rec.supported_entities in all_entity_recognizers else {rec}
             for entity in entities:
                 if entity in all_entity_recognizers:
                     to_return.update(all_entity_recognizers[entity])
