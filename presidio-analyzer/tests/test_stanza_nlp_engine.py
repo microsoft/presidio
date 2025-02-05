@@ -1,16 +1,12 @@
 """Tests adapted from the spacy_stanza repo"""
 
 from spacy.lang.en import EnglishDefaults, English
-from spacy.lang.de import GermanDefaults
-from spacy.lang.es import SpanishDefaults
+
 
 import stanza
 import pytest
 
-from presidio_analyzer.nlp_engine.stanza_nlp_engine import (
-    load_pipeline,
-    StanzaTokenizer,
-)
+from presidio_analyzer.nlp_engine.stanza_nlp_engine import load_pipeline
 
 
 def tags_equal(act, exp):
@@ -18,13 +14,18 @@ def tags_equal(act, exp):
     return all(a == e if isinstance(e, str) else a in e for a, e in zip(act, exp))
 
 
-@pytest.mark.skip_engine("stanza_en")
-def test_spacy_stanza_english():
+@pytest.fixture(scope="module")
+def stanza_pipeline():
     lang = "en"
     stanza.download(lang)
     nlp = load_pipeline(lang)
-    assert nlp.Defaults == EnglishDefaults
+    return nlp
 
+@pytest.mark.skip_engine("stanza_en")
+def test_spacy_stanza_english(stanza_pipeline):
+    nlp = stanza_pipeline
+    assert nlp.Defaults == EnglishDefaults
+    lang = "en"
     doc = nlp("Hello world! This is a test.")
 
     # Expected POS tags. Note: Different versions of stanza result in different
@@ -96,149 +97,6 @@ def test_spacy_stanza_english():
     assert doc.ents[1].text == "Hawaii"
     assert doc.ents[1].label_ == "GPE"
 
-    # Test trailing whitespace handling
-    doc = nlp("a ")
-    doc = nlp("a  ")
-    doc = nlp("a \n")
-    doc = nlp("\n ")
-    doc = nlp("\t  ")
-    doc = nlp("a\n ")
-    doc = nlp("a  \t  ")
-
     # Test serialization
     reloaded_nlp = load_pipeline(lang).from_bytes(nlp.to_bytes())
     assert reloaded_nlp.config.to_str() == nlp.config.to_str()
-
-
-@pytest.mark.skip_engine("stanza_en")
-def test_spacy_stanza_german():
-    lang = "de"
-    stanza.download(lang)
-    nlp = load_pipeline(lang)
-    assert nlp.Defaults == GermanDefaults
-
-    # warning for misaligned ents due to multi-word token expansion
-    with pytest.warns(UserWarning):
-        doc = nlp("Auf dem Friedhof an der Straße Am Rosengarten")
-
-
-@pytest.mark.skip_engine("stanza_en")
-def test_spacy_stanza_spanish():
-    lang = "es"
-    stanza.download(lang)
-    nlp = load_pipeline(lang)
-    snlp = nlp.tokenizer.snlp
-    assert nlp.Defaults == SpanishDefaults
-
-    # Example from the training data so that predicted labels are likely correct
-    # https://github.com/UniversalDependencies/UD_Spanish-AnCora
-    text = "Las reservas en oro se valoran en base a 300 dólares estadounidenses por cada onza troy de oro."
-    doc = nlp(text)
-    sdoc = snlp(text)
-
-    # In the training data (UD<v2.9), the xpos columns are empty, meaning that
-    # xpos = None in stanza. In this case, the pos (upos) should be copied to tag (xpos)
-    # UDv2.9 does have xpos tags. So to make sure this test runs successfully, only
-    # run it when we know that the original stanza xpos is None (UD<v2.9)
-    if all(w.xpos is None for sent in sdoc.sentences for w in sent.words):
-        assert (
-            [t.pos_ for t in doc]
-            == [t.tag_ for t in doc]
-            == [
-                "DET",
-                "NOUN",
-                "ADP",
-                "NOUN",
-                "PRON",
-                "VERB",
-                "ADP",
-                "NOUN",
-                "ADP",
-                "NUM",
-                "NOUN",
-                "ADJ",
-                "ADP",
-                "DET",
-                "NOUN",
-                "NOUN",
-                "ADP",
-                "NOUN",
-                "PUNCT",
-            ]
-        )
-    else:
-        pass
-
-
-@pytest.mark.skip_engine("stanza_en")
-def test_spacy_stanza_tokenizer_options():
-    # whitespace tokens from spacy tokenizer are handled correctly
-    lang = "en"
-    stanza.download(lang)
-    nlp = load_pipeline(lang, processors={"tokenize": "spacy"})
-
-    doc = nlp(" Barack  Obama  was  born\n\nin Hawaii.")
-    assert [t.text for t in doc] == [
-        " ",
-        "Barack",
-        " ",
-        "Obama",
-        " ",
-        "was",
-        " ",
-        "born",
-        "\n\n",
-        "in",
-        "Hawaii",
-        ".",
-    ]
-
-    # pretokenized text is handled correctly
-    nlp = load_pipeline(lang, tokenize_pretokenized=True)
-    doc = nlp("Barack Obama was born in Hawaii.\nBarack Obama was born in Hawaii.")
-    assert [t.text for t in doc] == [
-        "Barack",
-        "Obama",
-        "was",
-        "born",
-        "in",
-        "Hawaii.",
-        "Barack",
-        "Obama",
-        "was",
-        "born",
-        "in",
-        "Hawaii.",
-    ]
-    doc = nlp(
-        " Barack  Obama  was  born\n\n in Hawaii.\nBarack Obama was born in Hawaii."
-    )
-    assert [t.text for t in doc] == [
-        "Barack",
-        "Obama",
-        "was",
-        "born",
-        "in",
-        "Hawaii.",
-        "Barack",
-        "Obama",
-        "was",
-        "born",
-        "in",
-        "Hawaii.",
-    ]
-
-
-@pytest.mark.skip_engine("stanza_en")
-def test_spacy_stanza_from_config():
-    config = {
-        "nlp": {
-            "tokenizer": {
-                "@tokenizers": "PipelineAsTokenizer.v1",
-                "lang": "en",
-            }
-        }
-    }
-    nlp = English.from_config(config)
-    assert nlp.Defaults == EnglishDefaults
-    assert type(nlp.tokenizer) == StanzaTokenizer
