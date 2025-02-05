@@ -161,6 +161,7 @@ class RecognizerRegistry:
         if ad_hoc_recognizers:
             all_possible_recognizers.extend(ad_hoc_recognizers)
 
+        # filter out unwanted recognizers
         to_return = set()
         if all_fields:
             to_return = [
@@ -177,6 +178,7 @@ class RecognizerRegistry:
                             self.add_recognizer_map(all_entity_recognizers, supported_entity, rec)
                     elif type(rec.supported_entities) == str:
                         self.add_recognizer_map(all_entity_recognizers, supported_entity, rec)
+
             for entity in entities:
                 if entity not in all_entity_recognizers:
                     logger.warning(
