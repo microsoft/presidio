@@ -110,6 +110,9 @@ nav:
       - Presidio with App Service: samples/deployments/app-service/index.md
       - Presidio with Kubernetes: samples/deployments/k8s/index.md
       - Presidio with Spark: samples/deployments/spark/index.md
+      - Presidio with Fabric:
+        - Environment Setup:
+        - Running PII Detection & Anonymization::
       - Azure Data Factory:
         - ETL using AppService/Databricks: samples/deployments/data-factory/presidio-data-factory.md
         - Add Presidio as an HTTP service to your Azure Data Factory: samples/deployments/data-factory/presidio-data-factory-template-gallery-http.md
