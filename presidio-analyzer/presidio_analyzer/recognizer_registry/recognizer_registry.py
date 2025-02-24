@@ -177,7 +177,7 @@ class RecognizerRegistry:
                         for supported_entity in rec.supported_entities:
                             self.add_recognizer_map(all_entity_recognizers, supported_entity, rec)
                     elif type(rec.supported_entities) == str:
-                        self.add_recognizer_map(all_entity_recognizers, supported_entity, rec)
+                        self.add_recognizer_map(all_entity_recognizers, rec.supported_entities, rec)
 
             for entity in entities:
                 if entity not in all_entity_recognizers:
