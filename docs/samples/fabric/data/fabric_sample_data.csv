@@ -1,0 +1,21 @@
+name,email,street,city,state,non_pii,user_query
+John Doe,john.doe@example.com,123 Elm St,Dallas,TX,abc123,My phone number is 212-555-1111 and my SSN is 123-45-6789.
+Jane Smith,jane.smith@example.com,456 Oak Rd,Miami,FL,xyz789,Please call me at 555-99-4321 and note my card is 4111-1111-1111-1111.
+Alice Brown,alice.brown@example.com,99 Pine Dr,Seattle,WA,cust-123,SSN is 987-65-4321; credit card: 4444-3333-2222-1111.
+Bob Davis,bob.davis@example.com,10 Maple Ave,New York,NY,info999,"Passport number is X1234567, phone number 212-555-2222."
+Carol Jones,carol.jones@example.com,777 Cedar Ln,Los Angeles,CA,test111,My phone 333-777-9090 and SSN 111-22-3333 need to be anonymized.
+David Green,david.green@example.com,321 Birch St,Chicago,IL,npii-01,He said credit card 4123-4567-8901-2345 and phone 646-555-0123 are on file.
+Emily Clark,emily.clark@example.com,555 Aspen Rd,Boston,MA,npii-02,Passport A9876543 and SSN 222-33-4444 must be masked.
+Frank Wilson,frank.wilson@example.com,1010 Walnut,Phoenix,AZ,npii-03,SSN 666-77-8888 and phone 480-555-0000 for reference.
+Grace Lee,grace.lee@example.com,2020 Palm St,Orlando,FL,npii-04,Use my card 4000-0000-0000-0002 and phone 407-555-9999.
+Henry King,henry.king@example.com,3030 Peach,Atlanta,GA,npii-05,NHSNO 0123456789 and phone 404-555-1212 are important details.
+Irene Adams,irene.adams@example.com,4040 Plum,Denver,CO,npii-06,SSN 000-11-2222 and card 6011-1234-5678-9012 must remain private.
+Jack Miller,jack.miller@example.com,5050 Lily,Houston,TX,npii-07,My phone 713-555-0101 and passport B1234567 please anonymize.
+Kate Allen,kate.allen@example.com,6060 Poplar,Philadelphia,PA,npii-08,"SSN: 123-00-4567, phone: 215-555-2222."
+Leo Clark,leo.clark@example.com,7070 Pine,Las Vegas,NV,npii-09,He used card # 4444-4444-4444-4444 and SSN 555-66-7777.
+Mona Reed,mona.reed@example.com,8080 Bay,San Diego,CA,npii-10,Call me at 619-555-9090; also my passport is Z9998887.
+Nancy Ward,nancy.ward@example.com,9090 Moss,San Francisco,CA,npii-11,"Passport is L1234M567, phone 415-555-1010."
+Oscar Hill,oscar.hill@example.com,1111 Hill,Portland,OR,npii-12,My card is 4002-1234-5678-9999 and SSN 135-79-2468.
+Paula Ray,paula.ray@example.com,2222 Cliff,Austin,TX,npii-13,CC 4012-8888-9999-1111 and phone 512-555-3333 are on record.
+Ray Foster,ray.foster@example.com,3333 Rock,Nashville,TN,npii-14,"Card # 5555-6666-7777-8888, phone 615-555-1000."
+Sara White,sara.white@example.com,4444 Shell,Raleigh,NC,npii-15,SSN 111-22-9999 and phone 919-555-5678. Anonymize both.
