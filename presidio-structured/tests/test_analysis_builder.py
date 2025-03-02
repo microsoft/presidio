@@ -112,6 +112,19 @@ def test_analysis_tabular_when_default_threshold_is_zero_then_all_results_pass(
     assert len(structured_analysis.entity_mapping) == 3
 
 
+def test_analysis_tabular_when_multiprocess_then_results_are_correct(
+    sample_df,
+):
+    analyzer_engine = AnalyzerEngine(default_score_threshold=0)
+    tabular_analysis_builder = PandasAnalysisBuilder(analyzer_engine,
+                                                     n_process=4,
+                                                     batch_size=2)
+    structured_analysis = tabular_analysis_builder.generate_analysis(sample_df)
+
+    assert len(structured_analysis.entity_mapping) == 3
+
+
+
 def test_generate_analysis_json(json_analysis_builder, sample_json):
     structured_analysis = json_analysis_builder.generate_analysis(sample_json)
 
