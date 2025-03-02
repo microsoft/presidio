@@ -31,7 +31,7 @@ pypng = ">=0.20220715.0"
 azure-ai-formrecognizer = ">=3.3.0,<4.0.0"
 opencv-python = ">=4.0.0,<5.0.0"
 python-gdcm = ">=3.0.24.1"
-spacy = { version = "<3.8.4", python = "<3.10" }
+spacy = { version = "<3.8.4", python = "<3.10" }  #Remove once 3.9 is EOL
 flask = { version = ">=1.1", optional = true }
 gunicorn = {version = "*", optional = true}
 
