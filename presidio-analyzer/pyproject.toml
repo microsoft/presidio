@@ -30,10 +30,6 @@ dependencies = [
     "phonenumbers (>=8.12,<9.0.0)"
 ]
 
-onnxruntime = [
-    {version = ">=1.19", markers = "python_version >= '3.10'", optional = true },
-]
-
 [project.optional-dependencies]
 server = [
     "flask (>=1.1)",
