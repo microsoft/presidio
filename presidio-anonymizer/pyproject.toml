@@ -22,7 +22,7 @@ readme = "README.md"
 
 requires-python = ">=3.9,<4.0"
 dependencies = [
-    "pycryptodome (>=3.10.1)"
+    "cryptography (<44.1)"
 ]
 
 [project.optional-dependencies]
