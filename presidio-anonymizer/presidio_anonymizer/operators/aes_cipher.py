@@ -44,9 +44,8 @@ class AESCipher:
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
         decryptor = cipher.decryptor()
         unpadder = padding.PKCS7(128).unpadder()
-        decrpted_text = decryptor.update(ct) + decryptor.finalize()
-        return (unpadder.update(decrpted_text) + unpadder.finalize()).decode("utf-8")
-
+        decrypted_text = decryptor.update(ct) + decryptor.finalize()
+        return (unpadder.update(decrypted_text) + unpadder.finalize()).decode("utf-8")
     @staticmethod
     def is_valid_key_size(key: bytes) -> bool:
         """
