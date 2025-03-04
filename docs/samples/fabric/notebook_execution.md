@@ -1,5 +1,3 @@
-# notebook_execution.md
-
 ## Running Presidio and Spark in a Fabric Notebook
 This guide details how to run the [`presidio_and_spark.ipynb`](./presidio_and_spark.ipynb) notebook for PII detection and anonymization using Presidio, Spark, and (optionally) SpaCy models from the Lakehouse.
 For sample data, see [`fabric_sample_data.csv`](./fabric_sample_data.csv).
@@ -16,11 +14,12 @@ For sample data, see [`fabric_sample_data.csv`](./fabric_sample_data.csv).
 ![Configure env to the notebook](./images/env_to_notebook.png)
 
 ### 3. Two Methods to Load SpaCy Models
-1. **Via the Environment** (for smaller models, e.g., `en_core_web_md` < 300MB).  
+1. **Via the Environment** (for smaller models, e.g., `en_core_web_md` < 300MB) (Small models are not recommended as they might impact accuracy).  
 2. **From the Lakehouse** (for larger models, e.g., `en_core_web_lg` > 300MB).  
    - First, upload the `.whl` file to your Lakehouse.  
    - Then install it within the notebook:  
      ```python
+     # Please update the path to your model path.
      %pip install /lakehouse/default/Files/presidio/models/en_core_web_lg-3.8.0-py3-none-any.whl
      ```
 
@@ -68,5 +67,14 @@ df_anon.write.format("delta") \
 
 
 ## Conclusion
-You have successfully executed the`presidio_and_spark.ipynb` notebook in Fabric, leveraging Presidio for PII detection/anonymization and Spark for scalable data processing. You can also configure this notebook as a `Spark Definition` job or incorporate it into a `Fabric pipeline` for scheduled runs and integrated workflows. For any further customization—like adding detection rules, additional anonymization methods, or advanced Spark configurations—refer to the official Presidio documentation and your Fabric environment’s settings
+You have successfully executed the`presidio_and_spark.ipynb` notebook in Fabric, leveraging Presidio for PII detection/anonymization and Spark for scalable data processing. 
+You can  incorporate it into a `Fabric pipeline` for scheduled runs and integrated workflows. For any further customization—like adding detection rules, additional anonymization methods, or advanced Spark configurations—refer to the official Presidio documentation and your Fabric environment’s settings
 Enjoy building robust PII compliance workflows!
+
+# samples/index.md
+
+- [Azure App Service](app-service/index.md)
+- [Azure Data Factory](data-factory/index.md)
+- [Fabric](fabric/index.md)
+- [Kubernetes](k8s/index.md)
+- [Spark/Azure Databricks](spark/index.md)

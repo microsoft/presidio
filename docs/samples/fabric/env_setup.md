@@ -1,5 +1,3 @@
-# env_setup.md
-
 ## Environment Setup for Presidio in Fabric
 
 ### 1. Requirements
@@ -30,7 +28,7 @@ Make sure to create (or select) a valid Spark pool that you can attach to your F
    
    ![Adding dependencies in Fabric](./images/custom_env_2.png)
 
-### 5. Upload a Large SpaCy Model (Optional)
+### 5. Upload a Large SpaCy Model
 If you want to use `en_core_web_lg` (which typically exceeds 300MB):
 1. Upload the `.whl` file to your Lakehouse (or any location accessible by Spark).
 2. You will install it **within the notebook** rather than from this environment.
