@@ -1,9 +1,9 @@
 ## Environment Setup for Presidio in Fabric
+The spaCy model can be downloaded from here: [English · spaCy Models Documentation](https://spacy.io/models/en#en_core_web_lg)
 
 ### 1. Requirements
 - **Fabric workspace** with sufficient permissions to create and manage custom environments.
 - **Lakehouse** access for uploading large models or data files.
-
 
 ### 2. Configure Spark Pool
 Make sure to create (or select) a valid Spark pool that you can attach to your Fabric environment.
@@ -14,7 +14,6 @@ Make sure to create (or select) a valid Spark pool that you can attach to your F
 1. In your Fabric workspace, go to **Settings** and select **New Environment**.
 2. Provide a name (e.g., `presidio-env`) and choose the appropriate Python version.
 3. Configure any required settings (e.g., pinned versions, advanced options).
-
 
 ### 4. Add Dependencies
 1. Under **Public Library**, add the essential libraries:
@@ -44,4 +43,14 @@ Configure your compute, make sure to use the pool configured before
 - Confirm your chosen libraries appear under the **Custom Library** or **Public Library** tabs.
 - Click **Save** to finalize your environment setup.
 
-Once this is complete, proceed to the next guide (`notebook_execution.md`) to run your Presidio & Spark notebook.
+### 8. Run the Sample Notebook
+1. Open the [`presidio_and_spark.ipynb`](./presidio_and_spark.ipynb) notebook.
+2. When opening your notebook, ensure you pick the **custom environment** you created.
+3. Confirm you have selected the valid **Spark pool** you configured earlier.
+
+![Configure env to the notebook](./images/env_to_notebook.png)
+
+4. Within the notebook, if you're using a large SpaCy model, install it using:
+   ```python
+   # Please update the path to your model path.
+   %pip install /lakehouse/default/Files/presidio/models/en_core_web_lg-3.8.0-py3-none-any.whl
