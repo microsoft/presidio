@@ -44,7 +44,7 @@ Configure your compute, make sure to use the pool configured before
 - Click **Save** to finalize your environment setup.
 
 ### 8. Run the Sample Notebook
-1. Open the [`presidio_and_spark.ipynb`](./presidio_and_spark.ipynb) notebook.
+1. Open the [`presidio_and_spark.ipynb`](./artifacts/presidio_and_spark.ipynb) notebook.
 2. When opening your notebook, ensure you pick the **custom environment** you created.
 3. Confirm you have selected the valid **Spark pool** you configured earlier.
 
