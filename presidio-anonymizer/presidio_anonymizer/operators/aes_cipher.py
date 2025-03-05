@@ -1,8 +1,8 @@
 import base64
+import os
 
-from Crypto import Random
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad, unpad
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
 class AESCipher:
@@ -19,10 +19,14 @@ class AESCipher:
         :returns: The encrypted text.
         """
         encoded_text = text.encode("utf-8")
-        padded_text = pad(encoded_text, AES.block_size)
-        iv = Random.new().read(AES.block_size)
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        encrypted_text = base64.b64encode(iv + cipher.encrypt(padded_text))
+        padder = padding.PKCS7(algorithms.AES.block_size).padder()
+        padded_text = padder.update(encoded_text) + padder.finalize()
+        iv = os.urandom(16)
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+        encryptor = cipher.encryptor()
+        encrypted_text = base64.urlsafe_b64encode(
+            iv + encryptor.update(padded_text) + encryptor.finalize()
+        )
         return encrypted_text.decode()
 
     @staticmethod
@@ -34,14 +38,14 @@ class AESCipher:
         :param text: The text for decryption.
         :returns: The decrypted text.
         """
-        decoded_text = base64.b64decode(text)
-        iv = decoded_text[: AES.block_size]
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        decrypted_text = unpad(
-            cipher.decrypt(decoded_text[AES.block_size :]), AES.block_size
-        )
-        return decrypted_text.decode("utf-8")
-
+        decoded_text = base64.urlsafe_b64decode(text)
+        iv = decoded_text[:16]
+        ct = decoded_text[16:]
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+        decryptor = cipher.decryptor()
+        unpadder = padding.PKCS7(128).unpadder()
+        decrypted_text = decryptor.update(ct) + decryptor.finalize()
+        return (unpadder.update(decrypted_text) + unpadder.finalize()).decode("utf-8")
     @staticmethod
     def is_valid_key_size(key: bytes) -> bool:
         """
@@ -50,4 +54,4 @@ class AESCipher:
         :param key: AES encryption key in bytes.
         :returns: True if the key is of valid size, False otherwise.
         """
-        return len(key) in AES.key_size
+        return len(key) * 8 in algorithms.AES.key_sizes

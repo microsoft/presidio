@@ -31,7 +31,7 @@ def test_given_valid_key_and_text_then_text_encryption_and_decryption_returns_sa
 
 def test_given_invalid_key_length_then_value_error_raised():
     invalid_length_key = b"1111"
-    with pytest.raises(ValueError, match="Incorrect AES key length"):
+    with pytest.raises(ValueError, match="Invalid key size \(32\) for AES"):
         AESCipher.encrypt(invalid_length_key, "text")
 
 
