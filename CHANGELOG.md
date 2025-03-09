@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 
 ### Image Redactor
 
+- Changed: Updated the return type annotation of `ocr_bboxes` in `verify_dicom_instance()` from `dict` to `list`.  
+
 ### Presidio Structured
 
 ### General
