@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 
 ### General
 
+- Updated the `Evaluating DICOM Redaction` documentation to reflect changes in verify_dicom_instance() within the DicomImagePiiVerifyEngine class.
 
 ## [2.3.357] - 2025-01-13
 
