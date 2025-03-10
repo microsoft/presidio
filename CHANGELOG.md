@@ -10,10 +10,13 @@ All notable changes to this project will be documented in this file.
 
 ### Image Redactor
 
+- Changed: Updated the return type annotation of `ocr_bboxes` in `verify_dicom_instance()` from `dict` to `list`.  
+
 ### Presidio Structured
 
 ### General
 
+- Updated the `Evaluating DICOM Redaction` documentation to reflect changes in verify_dicom_instance() within the DicomImagePiiVerifyEngine class.
 
 ## [2.3.357] - 2025-01-13
 
