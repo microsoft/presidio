@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: preshack-api
+        image: preshack.azurecr.io/preshack-api
+        ports:
+        - containerPort: 80
+        envFrom:
+          - configMapRef:
+              name: api-config
+        env:
+        - name: REDIS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: redis-key
+              key: REDIS_KEY
