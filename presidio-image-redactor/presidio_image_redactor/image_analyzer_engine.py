@@ -378,7 +378,6 @@ class ImageAnalyzerEngine:
 
         :param image: Standard image of DICOM pixels.
         :param bboxes: List of bounding boxes to display (with is_PII field).
-        :param gt_bboxes: Ground truth bboxes (list of dictionaries).
         :param show_text_annotation: True if you want text annotation for
         PHI status to display.
         :param use_greyscale_cmap: Use greyscale color map.

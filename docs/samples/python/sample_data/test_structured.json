@@ -6,6 +6,6 @@
         "street": "123 Main St",
         "city": "Anytown",
         "state": "CA",
-        "postal_code": "12345"
+        "non_pii": "reallynotapiiatall"
     }
 }

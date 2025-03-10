@@ -123,7 +123,7 @@ Configuration can be done in two ways:
 
 ## Leverage frameworks other than spaCy, Stanza and transformers for ML based PII detection
 
-In addition to the built-in spaCy/Stanza/transformers capabitilies, it is possible to create new recognizers which serve as interfaces to other models.
+In addition to the built-in spaCy/Stanza/transformers capabilities, it is possible to create new recognizers which serve as interfaces to other models.
 For more information:
 
 - [Remote recognizer documentation](adding_recognizers.md#creating-a-remote-recognizer) and [samples](../samples/python/integrating_with_external_services.ipynb).

@@ -8,7 +8,7 @@
                 "street": "123 Main St",
                 "city": "Anytown",
                 "state": "CA",
-                "postal_code": "12345"
+                "non_pii": "reallynotpii"
             }
         },
         {
@@ -19,7 +19,7 @@
                 "street": "456 Elm St",
                 "city": "Somewhere",
                 "state": "TX",
-                "postal_code": "67890"
+                "non_pii": "reallynotapii"
             }
         },
         {
@@ -30,7 +30,7 @@
                 "street": "789 Pine St",
                 "city": "Elsewhere",
                 "state": "NY",
-                "postal_code": "11223"
+                "non_pii": "reallynotapiiatall"
             }
         }
     ]

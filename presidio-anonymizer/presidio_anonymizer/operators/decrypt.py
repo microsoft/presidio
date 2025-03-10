@@ -32,7 +32,7 @@ class Decrypt(Operator):
         :param params:
             * *key* The key supplied by the user for the encryption.
                     Should be a string of 128, 192 or 256 bits length.
-        :raises InvalidParamException in case on an invalid parameter.
+        :raises InvalidParamException: in case on an invalid parameter.
         """
         Encrypt().validate(params)
 

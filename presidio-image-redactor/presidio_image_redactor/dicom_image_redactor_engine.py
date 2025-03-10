@@ -23,10 +23,7 @@ from presidio_image_redactor.entities import ImageRecognizerResult
 
 
 class DicomImageRedactorEngine(ImageRedactorEngine):
-    """Performs OCR + PII detection + bounding box redaction.
-
-    :param image_analyzer_engine: Engine which performs OCR + PII detection.
-    """
+    """Performs OCR + PII detection + bounding box redaction."""
 
     def redact_and_return_bbox(
         self,
@@ -160,12 +157,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> None:
         """Redact method to redact from a given file.
 
-        Please notice, this method duplicates the file, creates
-        new instance and manipulate them.
-
         :param input_dicom_path: String path to DICOM image.
         :param output_dir: String path to parent output directory.
-        :param padding_width : Padding width to use when running OCR.
+        :param padding_width: Padding width to use when running OCR.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
         :param use_metadata: Whether to redact text in the image that
@@ -177,6 +173,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
+
+        Please notice, this method duplicates the file, creates
+        new instance and manipulate them.
+
         """
         # Verify the given paths
         if Path(input_dicom_path).is_dir() is True:
@@ -226,24 +226,25 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> None:
         """Redact method to redact from a directory of files.
 
-        Please notice, this method duplicates the files, creates
-        new instances and manipulate them.
-
         :param input_dicom_path: String path to directory of DICOM images.
         :param output_dir: String path to parent output directory.
-        :param padding_width : Padding width to use when running OCR.
+        :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
         :param use_metadata: Whether to redact text in the image that
         are present in the metadata.
-        :param save_bboxes: True if we want to save boundings boxes.
+        :param save_bboxes: True if we want to save bounding boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param ad_hoc_recognizers: List of PatternRecognizer objects to use
         for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
+
+        Please notice, this method duplicates the files, creates
+        new instances and manipulate them.
+
         """
         # Verify the given paths
         if Path(input_dicom_path).is_dir() is False:
@@ -641,7 +642,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def augment_word(word: str, case_sensitive: bool = False) -> list:
         """Apply multiple types of casing to the provided string.
 
-        :param words: String containing the word or term of interest.
+        :param word: String containing the word or term of interest.
         :param case_sensitive: True if we want to preserve casing.
 
         :return: List of the same string with different casings and spacing.

@@ -71,7 +71,7 @@ class DocumentIntelligenceOCR(OCR):
 
         :param polygon: A sequence of points
 
-        :return a tuple of left/top/width/height in pixel dimensions
+        :return: a tuple of left/top/width/height in pixel dimensions
 
         """
         # We need at least two points for a valid bounding box.
@@ -104,7 +104,7 @@ class DocumentIntelligenceOCR(OCR):
 
         :param page: The documentpage object from the DI client library
 
-        :return dictionary in the expected format for presidio
+        :return: dictionary in the expected format for presidio
         """
         bounds = [
             DocumentIntelligenceOCR._polygon_to_bbox(word.polygon)
@@ -125,7 +125,7 @@ class DocumentIntelligenceOCR(OCR):
 
         :param image:  Any of bytes/numpy array /PIL image object
 
-        :return raw image bytes
+        :return: raw image bytes
         """
         if isinstance(image, bytes):
             return image
@@ -150,7 +150,7 @@ class DocumentIntelligenceOCR(OCR):
         :param imgbytes: The bytes to send to the API endpoint
         :param kwargs: additional arguments for begin_analyze_document
 
-        :return the result of the poller, an AnalyzedDocument object.
+        :return: the result of the poller, an AnalyzedDocument object.
         """
         poller = self.client.begin_analyze_document(self.model_id, imgbytes, **kwargs)
         return poller.result()

@@ -85,15 +85,11 @@ padding_width = 25
 
 # Get OCR and NER results
 verification_image, ocr_results, analyzer_results = dicom_engine.verify_dicom_instance(instance, padding_width)
-
-# Format results for more direct comparison
-ocr_results_formatted = dicom_engine.bbox_processor.get_bboxes_from_ocr_results(ocr_results)
-analyzer_results_formatted = dicom_engine.bbox_processor.get_bboxes_from_analyzer_results(analyzer_results)
 ```
 
 By looking at the output of `verify_dicom_instance`, we can create a ground truth labels json.
 
-Save `analyzer_results_formatted` as a json file and then perform the following
+Save `analyzer_results` as a json file and then perform the following
 
 1. Group the results into a new item with the file name set as the key.
 2. For each item in this group:
@@ -108,10 +104,10 @@ Pixel position and size data can be obtained using any labeling software or imag
 
 ### Example
 
-Let's say we ran the above code block and see the following for `ocr_results_formatted` and `analyzer_results_formatted`.
+Let's say we ran the above code block and see the following for `ocr_results` and `analyzer_results`.
 
 ```json
-// OCR Results (formatted)
+// OCR Results
 [
     {
         "left": 25,
@@ -131,7 +127,7 @@ Let's say we ran the above code block and see the following for `ocr_results_for
     }
 ]
 
-// Analyzer Results (formatted)
+// Analyzer Results
 [
     {
         "entity_type": "PERSON",

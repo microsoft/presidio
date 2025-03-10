@@ -83,7 +83,7 @@ $APP_SERVICE_ID --logs   '[{"category": "AppServicePlatformLogs","enabled": true
 
 ## Using an ARM template
 
-Alternatlively, you can use the provided ARM template which can deploy either both or any of the presidio services.
+Alternatively, you can use the provided ARM template which can deploy either both or any of the presidio services.
 Note that while Log Analytics integration with Azure App Service is in preview, the ARM template deployment will not create a Log Analytics resource or configure the diagnostics settings from the App Service to a Log Analytics workspace.
 To deploy the app services using the provided ARM template, fill in the provided values.json file with the required values and run the following script.
 

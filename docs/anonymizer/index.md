@@ -155,6 +155,85 @@ see [Installing Presidio](../installation.md).
     ]}
     ```
 
+## Main concepts
+
+The following class diagram shows a simplified view of the main classes in Presidio Anonymizer:
+
+```mermaid
+classDiagram
+    direction LR
+
+    class RecognizerResult {
+        +entity_type: str
+        +start: int
+        +end: int
+        +score: float
+    }
+
+    class AnonymizerEngine {
+        +anonymize(text: str, analyzer_results: List[RecognizerResult], operators: Dict[str, OperatorConfig], ...) EngineResult
+        +add_anonymizer(anonymizer_cls: Type[Operator]) None
+        +remove_anonymizer(deanonymizer_cls: Type[Operator]) None
+    }
+    class DeanonymizeEngine {
+        +deanonymize(text: str, entities: List[OperatorResult], operators: Dict[str, OperatorConfig]) EngineResult
+        +get_deanonymizers() List[str]
+        +add_deanonymizer(deanonymizer_cls: Type[Operator]) None
+        +remove_deanonymizer(deanonymizer_cls: Type[Operator]) None
+    }
+    class Operator {
+        +operate(text: str, params: Dict) str
+    }
+    class OperatorConfig {
+        +operator_name: str
+        +params: Dict
+    }
+
+    class EngineResult {
+        +text: str
+        +items: List[OperatorResult]
+    }
+
+    class OperatorResult {
+        +start: int
+        +end: int
+        +entity_type: str
+        +text: str
+        +operator: str
+    }
+
+
+    RecognizerResult <-- AnonymizerEngine
+    RecognizerResult <-- DeanonymizeEngine
+    AnonymizerEngine o-- "1..*"  Operator
+    AnonymizerEngine --o OperatorConfig
+    DeanonymizeEngine o-- "1..*"  Operator
+    DeanonymizeEngine --o OperatorConfig
+    EngineBase --|> DeanonymizeEngine
+    EngineBase --|> AnonymizerEngine
+    EngineResult --o OperatorResult
+
+
+ %% Defining styles
+    style Operator fill:#E6F7FF,stroke:#005BAC,stroke-width:2px
+    style AnonymizerEngine fill:#FFF5E6,stroke:#FFA500,stroke-width:2px
+    style DeanonymizeEngine fill:#FFF5E6,stroke:#FFA500,stroke-width:2px
+    style EngineBase fill:#FFF5E6,stroke:#FFA500,stroke-width:2px
+    style OperatorConfig fill:#E6FFE6,stroke:#008000,stroke-width:2px
+    style EngineResult fill:#FFF0F5,stroke:#FF69B4,stroke-width:2px
+    style OperatorResult fill:#FFF0F5,stroke:#FF69B4,stroke-width:2px
+
+note for RecognizerResult "RecognizerResults 
+are the output 
+of the AnalyzerEngine"
+
+```
+
+- The **AnonymizerEngine** is the main class in Presidio that is responsible for anonymizing PII entities in text. It uses the results from the **AnalyzerEngine** to perform the anonymization.
+- The **DeanonymizerEngine** is a class in Presidio that is responsible for deanonymizing text that has been anonymized by the **AnonymizerEngine**, given that the operation is reversible (e.g. encryption).
+- An **Operator** is an object in Presidio that is responsible for performing the anonymization operation on a PII entity. Presidio provides several built-in operators, such as **Replace**, **Redact**, and **Encrypt**, and allows users to create custom operators.
+- The **BatchAnonymizerEngine** is a class in Presidio that is responsible for anonymizing PII entities in a batch of texts. It uses the **AnonymizerEngine** to perform the anonymization on each text in the batch. ([see more here](../samples/python/batch_processing.ipynb)).
+
 ## Built-in operators
 
 | Operator type | Operator name | Description | Parameters |
@@ -181,7 +260,7 @@ anonymization scenarios:
 - **No overlap (single PII)**: When there is no overlap in spans of entities,
     Presidio Anonymizer uses a given or default anonymization operator to anonymize
     and replace the PII text entity.
-- **Full overlap of PII entitie spans**: When entities have overlapping substrings,  
+- **Full overlap of PII entity spans**: When entities have overlapping substrings,  
     the PII with the higher score will be taken.
     Between PIIs with identical scores, the selection is arbitrary.
 - **One PII is contained in another**: Presidio Anonymizer will use the PII with the larger text even if it's score is lower.

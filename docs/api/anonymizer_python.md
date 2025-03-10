@@ -2,5 +2,3 @@
 
 ::: presidio_anonymizer
     handler: python
-    options:
-      docstring_style: sphinx

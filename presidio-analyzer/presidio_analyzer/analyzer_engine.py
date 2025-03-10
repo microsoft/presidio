@@ -185,18 +185,20 @@ class AnalyzerEngine:
         :param nlp_artifacts: precomputed NlpArtifacts
         :return: an array of the found entities in the text
 
-        :example:
+        :Example:
 
-        >>> from presidio_analyzer import AnalyzerEngine
+        ```python
+        from presidio_analyzer import AnalyzerEngine
 
-        >>> # Set up the engine, loads the NLP module (spaCy model by default)
-        >>> # and other PII recognizers
-        >>> analyzer = AnalyzerEngine()
+        # Set up the engine, loads the NLP module (spaCy model by default)
+        # and other PII recognizers
+        analyzer = AnalyzerEngine()
 
-        >>> # Call analyzer to get results
-        >>> results = analyzer.analyze(text='My phone number is 212-555-5555', entities=['PHONE_NUMBER'], language='en') # noqa D501
-        >>> print(results)
-        [type: PHONE_NUMBER, start: 19, end: 31, score: 0.85]
+        # Call analyzer to get results
+        results = analyzer.analyze(text='My phone number is 212-555-5555', entities=['PHONE_NUMBER'], language='en')
+        print(results)
+        ```
+
         """  # noqa: E501
 
         all_fields = not entities

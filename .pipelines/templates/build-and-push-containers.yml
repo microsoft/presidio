@@ -28,10 +28,12 @@ steps:
   - task: DockerCompose@0
     displayName: Push Presidio Images to ACR
     inputs:
-        action: 'Push services'
+        action: Push services
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
-        containerregistrytype: 'Container Registry'
-        dockerRegistryEndpoint: 'presidio-acr'
+        containerregistrytype: Azure Container Registry
+        # Passing as an object since by default a double forward-slash is added to the end of the registry name (https://presidio.azurecr.io//oauth2/exchange)
+        azureContainerRegistry: '{"loginServer":"$(ACR_REGISTRY_NAME).azurecr.io"}'
+        azureSubscriptionEndpoint: ${{ parameters.AZURE_SUBSCRIPTION }}
         projectName: 'microsoft_presidio'
         dockerComposeFileArgs: |
           REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}

@@ -1,4 +1,3 @@
-version: '3'
 services:
   presidio-image-redactor:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor${TAG}
