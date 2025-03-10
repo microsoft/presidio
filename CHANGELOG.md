@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Analyzer
+- Fixed: Updated URL regex pattern to correctly exclude trailing single (') and double (") quotes from matched URLs.
 
 ### Anonymizer
 
