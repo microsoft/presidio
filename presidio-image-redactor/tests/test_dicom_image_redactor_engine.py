@@ -893,11 +893,8 @@ def test_set_bbox_color_happy_path(
     # Arrange
     test_instance = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
 
-    mock_convert_dcm_to_png = mocker.patch.object(
-        DicomImageRedactorEngine, "_convert_dcm_to_png", return_value=[None, True]
-    )
-    mock_Image_open = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
+    mock_Image_fromarray = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.Image.fromarray",
         return_value=None,
     )
     mock_get_bg_color = mocker.patch.object(
@@ -911,8 +908,7 @@ def test_set_bbox_color_happy_path(
     test_box_color = mock_engine._set_bbox_color(test_instance, fill)
 
     # Assert
-    assert mock_convert_dcm_to_png.call_count == 1
-    assert mock_Image_open.call_count == 1
+    assert mock_Image_fromarray.call_count == 1
     assert mock_get_bg_color.call_count == 1
     assert test_box_color == mock_box_color
 
@@ -1318,12 +1314,8 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._rescale_dcm_pixel_array",
         return_value=None,
     )
-    mock_save_pixel_array = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._save_pixel_array_as_png",
-        return_value=None,
-    )
-    mock_image_open = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
+    mock_image_fromarray = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.Image.fromarray",
         return_value=None,
     )
     mock_add_padding = mocker.patch(
@@ -1358,8 +1350,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     # assertions for test_bboxes type causes silent failures/hangups for Python 3.11
     mock_check_greyscale.assert_called_once()
     mock_rescale_dcm.assert_called_once()
-    mock_save_pixel_array.assert_called_once()
-    mock_image_open.assert_called_once()
+    mock_image_fromarray.assert_called_once()
     mock_add_padding.assert_called_once()
     mock_analyze.assert_called_once()
     mock_get_analyze_bbox.assert_called_once()
@@ -1531,12 +1522,8 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._copy_files_for_processing",
         return_value=dcm_path,
     )
-    mock_convert_dcm_to_png = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._convert_dcm_to_png",
-        return_value=[None, None],
-    )
-    mock_image_open = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
+    mock_image_fromarray = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.Image.fromarray",
         return_value=None,
     )
     mock_add_padding = mocker.patch(
@@ -1585,8 +1572,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         assert mock_copy_files.call_count == 0
     else:
         assert mock_copy_files.call_count == 1
-    assert mock_convert_dcm_to_png.call_count == 1
-    assert mock_image_open.call_count == 1
+    assert mock_image_fromarray.call_count == 1
     assert mock_add_padding.call_count == 1
     assert mock_analyze.call_count == 1
     assert mock_get_analyze_bbox.call_count == 1
