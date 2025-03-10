@@ -21,6 +21,7 @@ def test_simple_process_text(spacy_nlp_engine):
     assert nlp_artifacts.lemmas[1] == "text"
 
 
+
 def test_process_batch_strings(spacy_nlp_engine):
     nlp_artifacts_batch = spacy_nlp_engine.process_batch(
         ["simple text", "simple text"], language="en"

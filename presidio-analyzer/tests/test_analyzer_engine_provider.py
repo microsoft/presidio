@@ -5,9 +5,9 @@ from typing import List
 from presidio_analyzer import AnalyzerEngineProvider, RecognizerResult
 from presidio_analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 
-from presidio_analyzer.nlp_engine.transformers_nlp_engine import TransformersNlpEngine
 from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer
 
+import pytest
 
 def get_full_paths(analyzer_yaml, nlp_engine_yaml=None, recognizer_registry_yaml=None):
     this_path = Path(__file__).parent.absolute()
@@ -155,7 +155,7 @@ def test_analyzer_engine_provider_with_files_per_provider():
     assert len(recognizer_registry.recognizers) == 6
     assert recognizer_registry.supported_languages == ["en", "es"]
 
-
+@pytest.mark.skipif(pytest.importorskip("azure"), reason="Optional dependency not installed") # noqa: E501
 def test_analyzer_engine_provider_with_azure_ai_language():
     analyzer_yaml, _, _ = get_full_paths(
         "conf/test_azure_ai_language_reco.yaml",

@@ -55,7 +55,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         ocr_kwargs: Optional[dict] = None,
         ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
-    ) -> Tuple[Optional[PIL.Image.Image], dict, list]:
+    ) -> Tuple[Optional[PIL.Image.Image], list, list]:
         """Verify PII on a single DICOM instance.
 
         :param instance: Loaded DICOM instance including pixel data and metadata.
