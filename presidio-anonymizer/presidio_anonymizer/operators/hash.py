@@ -32,7 +32,7 @@ class Hash(Operator):
     def validate(self, params: Dict = None) -> None:
         """Validate the hash type is string and in range of allowed hash types."""
         validate_parameter_in_range(
-            [self.SHA256, self.SHA512, self.BLAKE2],
+            [self.SHA256, self.SHA512, self.BLAKE2B],
             self._get_hash_type_or_default(params),
             self.HASH_TYPE,
             str,
