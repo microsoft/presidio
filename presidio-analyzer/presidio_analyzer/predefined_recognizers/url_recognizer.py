@@ -24,7 +24,9 @@ class UrlRecognizer(PatternRecognizer):
         Pattern("Standard Url", "(?i)(?:https?://)" + BASE_URL_REGEX, 0.6),
         Pattern("Non schema URL", "(?i)" + BASE_URL_REGEX, 0.5),
         Pattern("Quoted URL", r'(?i)["\'](https?://' + BASE_URL_REGEX + r')["\']', 0.6),
-        Pattern("Quoted Non-schema URL", r'(?i)["\'](' + BASE_URL_REGEX + r')["\']', 0.5),
+        Pattern(
+            "Quoted Non-schema URL", r'(?i)["\'](' + BASE_URL_REGEX + r')["\']', 0.5
+        ),
     ]
 
     CONTEXT = ["url", "website", "link"]
