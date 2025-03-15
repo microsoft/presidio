@@ -1,0 +1,18 @@
+architecture-beta
+    group k8s(cloud)[k8s cluster]
+
+    service db(database)[Redis] in k8s
+    service toolkit_api(server)[Toolkit Anonymization API] in k8s
+    service client_app(internet)[Chat App as a website] in k8s
+
+    db:R <--> L:toolkit_api
+    client_app:B --> T:toolkit_api
+
+    service local_client_app(server)[Chat App in local terminal]
+
+    service llm(internet)[OpenAI LLM]
+
+    local_client_app:R --> L:llm
+    client_app:R --> T:llm
+
+    local_client_app:T --> B:toolkit_api
