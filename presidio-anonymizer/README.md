@@ -30,10 +30,10 @@ Presidio anonymizer comes by default with the following anonymizers:
 
 -   **Redact**: Removes the PII completely from text.
     -   Parameters: None
--   **Hash**: Hashes the PII using either sha256, sha512 or md5. 
+-   **Hash**: Hashes the PII using either sha256, sha512 or blake2b. 
     -   Parameters:
         - `hash_type`: Sets the type of hashing. 
-          Can be either `sha256`, `sha512` or `md5`.
+          Can be either `sha256`, `sha512` or `blake2b` (`md5` is deprecated as of version 2.2.358).
           The default hash type is `sha256`.
 -   **Mask**: Replaces the PII with a sequence of a given character.
     -   Parameters:
