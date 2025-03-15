@@ -9,6 +9,15 @@ parameters:
     type: string
     default: ''
 steps:
+    - script: |
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      displayName: 'Set up QEMU'
+
+    - script: |
+          docker buildx create --use --name mybuilder
+          docker buildx inspect mybuilder --bootstrap
+      displayName: Set up Docker Buildx
+
     - task: DockerCompose@0
       displayName: Start Presidio Cluster
       inputs:
@@ -16,9 +25,10 @@ steps:
           projectName: 'microsoft_presidio'
           dockerComposeFile: docker-compose.yml
           buildImages: false
+          buildArguments: '--platform linux/amd64,linux/arm64'
       # Start cluster when testing against remote cluster, when an external url is not provided.
       condition: eq('${{ parameters.anonymizer_base_url }}', '')
-      
+
     - task: UsePythonVersion@0
       inputs:
           versionSpec: '3.10'
