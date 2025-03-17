@@ -159,13 +159,6 @@ def test_given_intersecting_the_same_entities_then_we_anonymize_correctly():
     "hash_type,result",
     [
         ("sha256",
-         '{"text": "hello world, my name is 9784349bcc3a48a6fe6e344c0701d31ee9ec1bd4. '
-         'My number is: 4c43f855362f7ab55108b2a83d50aae7cac3acec", "items": [{"start": 80, '
-         '"end": 120, "entity_type": "PHONE_NUMBER", "text": '
-         '"4c43f855362f7ab55108b2a83d50aae7cac3acec", "operator": "hash"}, '
-         '{"start": 24, "end": 64, "entity_type": "NAME", "text": '
-         '"9784349bcc3a48a6fe6e344c0701d31ee9ec1bd4", "operator": "hash"}]}'),
-        ("sha256",
          '{"text": "hello world, my name is '
          '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a. '
          'My number is: 230451ebc7df208f1d5227aceaebf6d8e9'
