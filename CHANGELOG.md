@@ -8,9 +8,9 @@ All notable changes to this project will be documented in this file.
 - Fixed: Updated URL regex pattern to correctly exclude trailing single (') and double (") quotes from matched URLs.
 
 ### Anonymizer
+- Changed: Deprecate `MD5` hash type option, defaulting into `sha256`. Added `blake2b` hash type instead, as a new option.
 
 ### Image Redactor
-
 - Changed: Updated the return type annotation of `ocr_bboxes` in `verify_dicom_instance()` from `dict` to `list`.  
 
 ### Presidio Structured

@@ -666,11 +666,11 @@ components:
           type: string
           description: "The hashing algorithm"
           enum:
-            - md5
+            - blake2b
             - sha256
             - sha512
-          example: md5
-          default: md5
+          example: blake2b
+          default: blake2b
 
     Encrypt:
       title: Encrypt
