@@ -158,7 +158,7 @@ def test_given_intersecting_the_same_entities_then_we_anonymize_correctly():
     # fmt: off
     "hash_type,result",
     [
-        ("blake2b",
+        ("sha256",
          '{"text": "hello world, my name is 9784349bcc3a48a6fe6e344c0701d31ee9ec1bd4. '
          'My number is: 4c43f855362f7ab55108b2a83d50aae7cac3acec", "items": [{"start": 80, '
          '"end": 120, "entity_type": "PHONE_NUMBER", "text": '

@@ -70,14 +70,6 @@ def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_re
             "8500ce5af27e4db23f533e54c8c1ad74de62e93ca77c05e8de90e9eb27c7abe155"
             "e01d47868eded3106ccf6ac1f5c33bbaa95d55d40e9d89091c3d4617cc6d60",
         ),  # Sha512  Hash 'Unicode EmojiSources' character
-        ("123456", "blake2b", "a0f92ddfdea4892ff18a48f7e0f9fcffc55745f5"),  # blake2b Hash 123456
-        ("54321", "blake2b", "d0aaf44602cea8280a6bbdc62edc32762028183c"),  # blake2b Hash 54321
-        (
-            "😈😈😈😈",
-            "blake2b",
-            "70d6bc6f072a94ddb04ed81a04d65f2a7304b021",
-        ),
-        # blake2b Hash 'Unicode EmojiSources' character
         # fmt: on
     ],
 )
@@ -99,7 +91,7 @@ def test_when_hash_type_not_in_range_then_ipe_raised():
     with pytest.raises(
         InvalidParamError,
         match="Parameter hash_type value not_a_hash is not in range of values"
-        " \\['sha256', 'sha512', 'blake2b'\\]",
+        " \\['sha256', 'sha512'\\]",
     ):
         Hash().validate(params)
 
@@ -118,7 +110,7 @@ def test_when_hash_type_is_empty_string_then_ipe_raised():
     with pytest.raises(
         InvalidParamError,
         match="Parameter hash_type value  is not in range of values"
-        " \\['sha256', 'sha512', 'blake2b'\\]",
+        " \\['sha256', 'sha512'\\]",
     ):
         Hash().validate(params)
 
