@@ -4,7 +4,7 @@ requires = ["poetry-core"]
 
 [project]
 name = "presidio-cli"
-version = "0.0.8"
+version = "0.0.9"
 description = "CLI tool that analyzes text for PII Entities using Presidio Analyzer."
 authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
 license = "MIT"
