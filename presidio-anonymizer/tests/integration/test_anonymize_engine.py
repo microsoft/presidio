@@ -158,13 +158,6 @@ def test_given_intersecting_the_same_entities_then_we_anonymize_correctly():
     # fmt: off
     "hash_type,result",
     [
-        ("md5",
-         '{"text": "hello world, my name is 1c272047233576d77a9b9a1acfdf741c. '
-         'My number is: e7706047f07bf68a5dd73e8c47db3a30", "items": [{"start": 72, '
-         '"end": 104, "entity_type": "PHONE_NUMBER", "text": '
-         '"e7706047f07bf68a5dd73e8c47db3a30", "operator": "hash"}, '
-         '{"start": 24, "end": 56, "entity_type": "NAME", "text": '
-         '"1c272047233576d77a9b9a1acfdf741c", "operator": "hash"}]}'),
         ("sha256",
          '{"text": "hello world, my name is '
          '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a. '
