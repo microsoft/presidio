@@ -350,60 +350,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return image_2d_scaled
 
     @staticmethod
-    def _save_pixel_array_as_png(
-        pixel_array: np.array,
-        is_greyscale: bool,
-        output_file_name: str = "example",
-        output_dir: str = "temp_dir",
-    ) -> None:
-        """Save the pixel data from a loaded DICOM instance as PNG.
-
-        :param pixel_array: Pixel data from the instance.
-        :param is_greyscale: True if image is greyscale.
-        :param output_file_name: Name of output file (no file extension).
-        :param output_dir: String path to output directory.
-        """
-        shape = pixel_array.shape
-
-        # Write the PNG file
-        os.makedirs(output_dir, exist_ok=True)
-        if is_greyscale:
-            with open(f"{output_dir}/{output_file_name}.png", "wb") as png_file:
-                w = png.Writer(shape[1], shape[0], greyscale=True)
-                w.write(png_file, pixel_array)
-        else:
-            with open(f"{output_dir}/{output_file_name}.png", "wb") as png_file:
-                w = png.Writer(shape[1], shape[0], greyscale=False)
-                # Semi-flatten the pixel array to RGB representation in 2D
-                pixel_array = np.reshape(pixel_array, (shape[0], shape[1] * 3))
-                w.write(png_file, pixel_array)
-
-        return None
-
-    @classmethod
-    def _convert_dcm_to_png(cls, filepath: Path, output_dir: str = "temp_dir") -> tuple:
-        """Convert DICOM image to PNG file.
-
-        :param filepath: pathlib Path to a single dcm file.
-        :param output_dir: String path to output directory.
-
-        :return: Shape of pixel array and if image mode is greyscale.
-        """
-        ds = pydicom.dcmread(filepath)
-
-        # Check if image is grayscale using the Photometric Interpretation element
-        is_greyscale = cls._check_if_greyscale(ds)
-
-        # Rescale pixel array
-        image = cls._rescale_dcm_pixel_array(ds, is_greyscale)
-        shape = image.shape
-
-        # Write to PNG file
-        cls._save_pixel_array_as_png(image, is_greyscale, filepath.stem, output_dir)
-
-        return shape, is_greyscale
-
-    @staticmethod
     def _get_bg_color(
         image: Image.Image, is_greyscale: bool, invert: bool = False
     ) -> Union[int, Tuple[int, int, int]]:

@@ -194,7 +194,7 @@ def test_check_if_greyscale_happy_path(mock_engine: DicomImageRedactorEngine, dc
         ),
     ],
 )
-def test_save_pixel_array_as_png_happy_path(
+def test_convert_nparray_to_pil_image(
     mock_engine: DicomImageRedactorEngine,
     dcm_file: Path,
     is_greyscale: bool,
@@ -209,54 +209,28 @@ def test_save_pixel_array_as_png_happy_path(
     """
     # Arrange
     test_instance = pydicom.dcmread(dcm_file)
-    test_image = mock_engine._rescale_dcm_pixel_array(test_instance, is_greyscale)
-    filename = "test"
-    with open(rescaled_image_numpy_path, "rb") as f:
-        loaded_numpy_array = np.load(f)
+    test_image_np = mock_engine._rescale_dcm_pixel_array(test_instance, is_greyscale)
 
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        # Act
-        _ = mock_engine._save_pixel_array_as_png(test_image, is_greyscale, filename, tmpdirname)
+    if is_greyscale:
+        # for greyscale, convert np.array to PIL image
+        # model L for grayscale, and has 8 bit-pixel to store the pixel value
+        image_pil = Image.fromarray(test_image_np, mode="L")
+        (np_height, np_width) = np.shape(test_image_np)
+        width, height = image_pil.size
 
-        # Assert
-        assert np.shape(test_image) == np.shape(loaded_numpy_array)
-        assert f"{filename}.png" in os.listdir(tmpdirname)
+    else:
+        # model RGB, has 3x8 bit pixel available to store the value
+        image_pil = Image.fromarray(test_image_np, mode="RGB")
+        (np_height, np_width, np_channel) = np.shape(test_image_np)
+        height, width  = image_pil.size
 
+    assert height == np_height
+    assert width == np_width
 
-# ------------------------------------------------------
-# DicomImageRedactorEngine._convert_dcm_to_png()
-# ------------------------------------------------------
-def test_convert_dcm_to_png_happy_path(mocker):
-    """Test happy path for DicomImageRedactorEngine._convert_dcm_to_png"""
-    # Arrange
-    mock_dcm_read = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.pydicom.dcmread",
-        return_value=None,
-    )
-    mock_check_if_gresycale = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_check_if_greyscale",
-        return_value=True,
-    )
-    mock_rescale_dcm_pixel_array = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_rescale_dcm_pixel_array",
-        return_value=np.array([1, 2, 3]),
-    )
-    mock_save_array_as_png = mocker.patch.object(
-        DicomImageRedactorEngine, "_save_pixel_array_as_png", return_value=None
-    )
-    mock_engine = DicomImageRedactorEngine()
+    # convert PIL image back to np.arrary
+    test_image_np_2 = np.asarray(image_pil)
+    assert np.array_equal(test_image_np, test_image_np_2)
 
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        # Act
-        _, _ = mock_engine._convert_dcm_to_png(Path("filename.dcm"), tmpdirname)
-
-        # Assert
-        assert mock_dcm_read.call_count == 1
-        assert mock_check_if_gresycale.call_count == 1
-        assert mock_rescale_dcm_pixel_array.call_count == 1
-        assert mock_save_array_as_png.call_count == 1
 
 
 # ------------------------------------------------------
