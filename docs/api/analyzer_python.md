@@ -64,6 +64,3 @@
 
 ::: presidio_analyzer.analyzer_request.AnalyzerRequest
     handler: python
-
-::: presidio_analyzer.analyzer_utils.PresidioAnalyzerUtils
-    handler: python
