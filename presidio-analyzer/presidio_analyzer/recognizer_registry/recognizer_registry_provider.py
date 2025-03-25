@@ -164,7 +164,7 @@ class RecognizerRegistryProvider:
         # Case 3: There is a mismatch between the NLP Engine and the NLP Recognizer
         nlp_recognizer = nlp_recognizers[0]
         expected_nlp_recognizer = RecognizerRegistry.get_nlp_recognizer(nlp_engine)
-        if not isinstance(nlp_recognizer.__class__, expected_nlp_recognizer):
+        if not isinstance(nlp_recognizer, expected_nlp_recognizer):
             raise ValueError(
                 f"There is a mismatch between the NLP Engine defined ({nlp_engine.__class__.__name__}),"
                 f"and the configured NLP recognizer ({nlp_recognizer.__class__.__name__})."
