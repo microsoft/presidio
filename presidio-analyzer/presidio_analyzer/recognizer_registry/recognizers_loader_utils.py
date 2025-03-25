@@ -25,6 +25,10 @@ class RecognizerListLoader:
 
     @staticmethod
     def is_recognizer_enabled(recognizer_conf: Union[Dict[str, Any], str]) -> bool:
+        """Return True if the recognizer is enabled.
+
+        :param recognizer_conf: The recognizer configuration.
+        """
         return "enabled" not in recognizer_conf or recognizer_conf["enabled"]
 
     @staticmethod
@@ -106,6 +110,10 @@ class RecognizerListLoader:
 
     @staticmethod
     def get_recognizer_name(recognizer_conf: Union[Dict[str, Any], str]) -> str:
+        """Get the name of a recognizer in the configuration.
+
+        :param recognizer_conf: The recognizer configuration.
+        """
         if isinstance(recognizer_conf, str):
             return recognizer_conf
         return recognizer_conf["name"]
@@ -193,7 +201,6 @@ class RecognizerListLoader:
             f"Recognizer of name {recognizer_name} was not found in the "
             f"list of recognizers inheriting the EntityRecognizer class"
         )
-
 
     @staticmethod
     def get(

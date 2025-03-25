@@ -3,10 +3,10 @@ from __future__ import annotations
 import logging
 import warnings
 from pathlib import Path
-from typing import Dict, Optional, Union, List, Any
+from typing import Any, Dict, List, Optional, Union
 
 from presidio_analyzer import EntityRecognizer
-from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
+from presidio_analyzer.nlp_engine import NlpEngine
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
@@ -90,8 +90,10 @@ class RecognizerRegistryProvider:
     ) -> None:
         """Update the list of recognizers based on the NLP recognizer configuration.
 
-        The method adds the NLP recognizer to the list of recognizers if it is not already present,
-        or removes it if it is not enabled in the configuration. Furthermore, it checks if there are
+        The method adds the NLP recognizer to the list of recognizers
+        if it is not already present,
+        or removes it if it is not enabled in the configuration.
+        Furthermore, it checks if there are
         any inconsistencies in configuration. For example:
         - Multiple enabled NLP recognizers in the configuration for one language.
         - The NLP recognizer in the configuration does not match the Nlp Engine.
@@ -100,8 +102,10 @@ class RecognizerRegistryProvider:
         :param recognizers_conf: Configuration of the recognizers from the YAML file
         :param supported_languages: List of supported languages.
 
-        :raises ValueError: If there are multiple enabled NLP recognizers in the configuration.
-        :raises ValueError: If the NLP recognizer in the configuration does not match the Nlp Engine.
+        :raises ValueError: If there are multiple enabled NLP recognizers
+        in the configuration.
+        :raises ValueError: If the NLP recognizer
+        in the configuration does not match the Nlp Engine.
         """
         nlp_engine = self.nlp_engine
 
@@ -118,14 +122,17 @@ class RecognizerRegistryProvider:
                 language=language,
             )
 
-
+    @staticmethod
     def __update_based_on_nlp_recognizer_conf_and_lang(
-        self,
         recognizers: List[EntityRecognizer],
         nlp_engine: NlpEngine,
         language: str,
     ):
-        """Update the list of recognizers based on the NLP recognizer configuration for a specific language."""
+        """
+        Update the list of recognizers with nlp recognizers.
+
+        Update based on the NLP recognizer configuration for a specific language.
+        """
 
         nlp_recognizers = [
             rec
@@ -136,10 +143,12 @@ class RecognizerRegistryProvider:
         # Case 1: NLP recognizer is not in the list of recognizers
         if not nlp_recognizers:
             warning_text = (
-                f"NLP recognizer (e.g. SpacyRecognizer, StanzaRecognizer) is not in the list of recognizers "
+                f"NLP recognizer (e.g. SpacyRecognizer, StanzaRecognizer) "
+                f"is not in the list of recognizers "
                 f"for language {language}. "
                 f"Adding the default {SpacyRecognizer.__name__} to the list."
-                f"If you wish to remove the NLP recognizer, define it as `enabled=false`."
+                f"If you wish to remove the NLP recognizer, "
+                f"define it as `enabled=false`."
             )
             logger.warning(warning_text)
             warnings.warn(warning_text)
@@ -157,7 +166,8 @@ class RecognizerRegistryProvider:
         # Case 2: There are multiple NLP recognizers for this language, throw error
         if len(nlp_recognizers) > 1:
             raise ValueError(
-                f"Multiple NLP recognizers for language {language} found in the configuration. "
+                f"Multiple NLP recognizers for language {language} "
+                f"found in the configuration. "
                 f"Please remove the duplicates."
             )
 
@@ -166,32 +176,56 @@ class RecognizerRegistryProvider:
         expected_nlp_recognizer = RecognizerRegistry.get_nlp_recognizer(nlp_engine)
         if not isinstance(nlp_recognizer, expected_nlp_recognizer):
             raise ValueError(
-                f"There is a mismatch between the NLP Engine defined ({nlp_engine.__class__.__name__}),"
-                f"and the configured NLP recognizer ({nlp_recognizer.__class__.__name__})."
-                f"Make sure the NLP recognizer is aligned with the NLP engine and that all others are removed/disabled."
+                f"There is a mismatch between the NLP Engine defined "
+                f"({nlp_engine.__class__.__name__}),"
+                f"and the configured NLP recognizer "
+                f"({nlp_recognizer.__class__.__name__})."
+                f"Make sure the NLP recognizer is aligned with the "
+                f"NLP engine and that all others are removed/disabled."
             )
 
     @staticmethod
-    def __remove_disabled_nlp_recognizers(recognizers:List[EntityRecognizer],
-                                          recognizers_conf: Dict[str, Any],
-                                          language: str):
-        """Goes through the recognizer conf provided by the user,
+    def __remove_disabled_nlp_recognizers(
+        recognizers: List[EntityRecognizer],
+        recognizers_conf: Dict[str, Any],
+        language: str,
+    ):
+        """
+        Remove recognizers that are disabled in the configuration.
+
+        Goes through the recognizer conf provided by the user,
         and checks if a recognizer for a given language is disabled.
-        If yes, it removes it from the recognizers list (as some are not removed in the previous step)."""
+        If yes, it removes it from the recognizers list
+        (as some are not removed in the previous step).
+        """
 
-        disabled = [rec_conf for rec_conf in recognizers_conf
-                    if RecognizerListLoader.is_recognizer_enabled(rec_conf) is False]
+        disabled = [
+            rec_conf
+            for rec_conf in recognizers_conf
+            if RecognizerListLoader.is_recognizer_enabled(rec_conf) is False
+        ]
 
-        disabled_rec_names = [RecognizerListLoader.get_recognizer_name(rec) for rec in disabled]
+        disabled_rec_names = [
+            RecognizerListLoader.get_recognizer_name(rec) for rec in disabled
+        ]
 
         if not disabled:
             return
 
-        disabled_rec_classes = [cls for cls in RecognizerListLoader.get_all_existing_recognizers() if cls.__name__ in disabled_rec_names]
+        disabled_rec_classes = [
+            cls
+            for cls in RecognizerListLoader.get_all_existing_recognizers()
+            if cls.__name__ in disabled_rec_names
+        ]
 
-        lang_recognizers = [rec for rec in recognizers if rec.supported_language == language]
+        lang_recognizers = [
+            rec for rec in recognizers if rec.supported_language == language
+        ]
 
         for recognizer in lang_recognizers:
             if type(recognizer) in disabled_rec_classes:
                 recognizers.remove(recognizer)
-                logger.info(f"Disabled {recognizer.__class__.__name__} recognizer for language {language}.")
+                logger.info(
+                    f"Disabled {recognizer.__class__.__name__} "
+                    f"recognizer for language {language}."
+                )
