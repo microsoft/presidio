@@ -59,7 +59,10 @@ class NlpEngineProvider:
         else:  
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
-            self.nlp_configuration = self._read_nlp_conf(conf_file)
+            nlp_configuration = {
+                "nlp_engine_name": "spacy",
+                "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
+            }
 
     def create_engine(self) -> NlpEngine:
         """Create an NLP engine instance."""
