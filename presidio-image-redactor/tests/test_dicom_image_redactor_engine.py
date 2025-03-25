@@ -162,7 +162,7 @@ def test_check_if_greyscale_happy_path(mock_engine: DicomImageRedactorEngine, dc
 
 
 # ------------------------------------------------------
-# DicomImageRedactorEngine._save_pixel_array_as_png()
+# testing the conversation of np.array to PIL image
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "dcm_file, is_greyscale, rescaled_image_numpy_path",
