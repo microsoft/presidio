@@ -52,14 +52,11 @@ class NlpEngineProvider:
             raise ValueError(
                 "Either conf_file or nlp_configuration should be provided, not both."
             )
-
-        if nlp_configuration:
+        elif nlp_configuration:
             self.nlp_configuration = nlp_configuration
-
-        if conf_file:
+        elif conf_file:
             self.nlp_configuration = self._read_nlp_conf(conf_file)
-
-        if conf_file is None and nlp_configuration is None:
+        else:  
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
             self.nlp_configuration = self._read_nlp_conf(conf_file)
@@ -111,23 +108,13 @@ class NlpEngineProvider:
         """Read the nlp configuration from a provided yaml file."""
 
         if not Path(conf_file).exists():
-            nlp_configuration = {
-                "nlp_engine_name": "spacy",
-                "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-            }
-            logger.warning(
-                f"configuration file {conf_file} not found.  "
-                f"Using default config: {nlp_configuration}."
-            )
+            raise FileNotFoundError(f"Configuration file {conf_file} not found.")
 
-        else:
-            with open(conf_file) as file:
-                nlp_configuration = yaml.safe_load(file)
+        with open(conf_file) as file:
+            nlp_configuration = yaml.safe_load(file)
 
         if "ner_model_configuration" not in nlp_configuration:
-            logger.warning(
-                "configuration file is missing 'ner_model_configuration'. Using default"
-            )
+            raise ValueError("Configuration file is missing 'ner_model_configuration'.")
 
         return nlp_configuration
 
