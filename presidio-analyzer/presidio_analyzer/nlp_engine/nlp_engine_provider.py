@@ -12,8 +12,13 @@ from presidio_analyzer.nlp_engine import (
     TransformersNlpEngine,
 )
 
-logger = logging.getLogger("presidio-analyzer")
+DEFAULT_BUILTIN_CONFIG = {
+    "nlp_engine_name": "spacy",
+    "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
+    "ner_model_configuration": {},
+}
 
+logger = logging.getLogger("presidio-analyzer")
 
 class NlpEngineProvider:
     """Create different NLP engines from configuration.
@@ -59,10 +64,14 @@ class NlpEngineProvider:
         else:  
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
-            nlp_configuration = {
-                "nlp_engine_name": "spacy",
-                "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-            }
+            try:
+                self.nlp_configuration = self._read_nlp_conf(conf_file)
+            except FileNotFoundError:
+                logger.warning(
+                    f"Default config file '{conf_file}' not found. "
+                    f"Falling back to built-in default: {DEFAULT_BUILTIN_CONFIG}"
+                )
+                self.nlp_configuration = DEFAULT_BUILTIN_CONFIG
 
     def create_engine(self) -> NlpEngine:
         """Create an NLP engine instance."""
