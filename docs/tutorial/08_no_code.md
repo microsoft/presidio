@@ -8,7 +8,7 @@ No-code configuration can be helpful in three scenarios:
 
 In this example, we'll show how to create a no-code configuration in Presidio.
 We start by creating YAML configuration files that are based on the default ones.
-Te default configuration files for Presidio can be found here:
+The default configuration files for Presidio can be found here:
 
 - [Analyzer configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml)
 - [Recognizer registry configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml)
