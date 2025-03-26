@@ -216,13 +216,13 @@ def test_convert_nparray_to_pil_image(
         # model L for grayscale, and has 8 bit-pixel to store the pixel value
         image_pil = Image.fromarray(test_image_np, mode="L")
         (np_height, np_width) = np.shape(test_image_np)
-        width, height = image_pil.size
 
     else:
         # model RGB, has 3x8 bit pixel available to store the value
         image_pil = Image.fromarray(test_image_np, mode="RGB")
         (np_height, np_width, np_channel) = np.shape(test_image_np)
-        height, width  = image_pil.size
+
+    width, height = image_pil.size
 
     assert height == np_height
     assert width == np_width
