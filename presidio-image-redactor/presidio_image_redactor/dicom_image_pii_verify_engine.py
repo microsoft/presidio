@@ -1,4 +1,3 @@
-import tempfile
 from copy import deepcopy
 from typing import List, Optional, Tuple
 
@@ -81,16 +80,15 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         except AttributeError:
             raise AttributeError("Provided DICOM instance lacks pixel data.")
 
-        # Load image for processing
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            # Convert DICOM to PNG and add padding for OCR (during analysis)
-            is_greyscale = self._check_if_greyscale(instance_copy)
-            image = self._rescale_dcm_pixel_array(instance_copy, is_greyscale)
-            self._save_pixel_array_as_png(image, is_greyscale, "tmp_dcm", tmpdirname)
-
-            png_filepath = f"{tmpdirname}/tmp_dcm.png"
-            loaded_image = Image.open(png_filepath)
-            image = self._add_padding(loaded_image, is_greyscale, padding_width)
+        is_greyscale = self._check_if_greyscale(instance_copy)
+        image = self._rescale_dcm_pixel_array(instance, is_greyscale)
+        if is_greyscale:
+            # model L for grayscale, and has 8 bit-pixel to store the pixel value
+            image_pil = Image.fromarray(image, mode="L")
+        else:
+            # model RGB, has 3x8 bit pixel available to store the value
+            image_pil = Image.fromarray(image, mode="RGB")
+        image = self._add_padding(image_pil, is_greyscale, padding_width)
 
         # Get OCR results
         perform_ocr_kwargs, ocr_threshold = (

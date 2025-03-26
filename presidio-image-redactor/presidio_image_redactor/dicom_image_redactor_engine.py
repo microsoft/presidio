@@ -1,14 +1,11 @@
 import json
 import os
 import shutil
-import tempfile
-import uuid
 from copy import deepcopy
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
-import png
 import pydicom
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
 from PIL import Image, ImageOps
@@ -70,21 +67,20 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         instance = deepcopy(image)
 
-        # Load image for processing
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            # Convert DICOM to PNG and add padding for OCR (during analysis)
-            is_greyscale = self._check_if_greyscale(instance)
-            image = self._rescale_dcm_pixel_array(instance, is_greyscale)
-            image_name = str(uuid.uuid4())
-            self._save_pixel_array_as_png(image, is_greyscale, image_name, tmpdirname)
+        is_greyscale = self._check_if_greyscale(instance)
+        image_np = self._rescale_dcm_pixel_array(instance, is_greyscale)
+        if is_greyscale:
+            # model L for grayscale, and has 8 bit-pixel to store the pixel value
+            image_pil = Image.fromarray(image_np, mode="L")
+        else:
+            # model RGB, has 3x8 bit pixel available to store the value
+            image_pil = Image.fromarray(image_np, mode="RGB")
+        padded_image_pil = self._add_padding(image_pil, is_greyscale, padding_width)
 
-            png_filepath = f"{tmpdirname}/{image_name}.png"
-            loaded_image = Image.open(png_filepath)
-            image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
         # Detect PII
         analyzer_results = self._get_analyzer_results(
-            image,
+            padded_image_pil,
             instance,
             use_metadata,
             ocr_kwargs,
@@ -351,60 +347,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         image_2d_scaled = np.uint8(image_2d_scaled)
 
         return image_2d_scaled
-
-    @staticmethod
-    def _save_pixel_array_as_png(
-        pixel_array: np.array,
-        is_greyscale: bool,
-        output_file_name: str = "example",
-        output_dir: str = "temp_dir",
-    ) -> None:
-        """Save the pixel data from a loaded DICOM instance as PNG.
-
-        :param pixel_array: Pixel data from the instance.
-        :param is_greyscale: True if image is greyscale.
-        :param output_file_name: Name of output file (no file extension).
-        :param output_dir: String path to output directory.
-        """
-        shape = pixel_array.shape
-
-        # Write the PNG file
-        os.makedirs(output_dir, exist_ok=True)
-        if is_greyscale:
-            with open(f"{output_dir}/{output_file_name}.png", "wb") as png_file:
-                w = png.Writer(shape[1], shape[0], greyscale=True)
-                w.write(png_file, pixel_array)
-        else:
-            with open(f"{output_dir}/{output_file_name}.png", "wb") as png_file:
-                w = png.Writer(shape[1], shape[0], greyscale=False)
-                # Semi-flatten the pixel array to RGB representation in 2D
-                pixel_array = np.reshape(pixel_array, (shape[0], shape[1] * 3))
-                w.write(png_file, pixel_array)
-
-        return None
-
-    @classmethod
-    def _convert_dcm_to_png(cls, filepath: Path, output_dir: str = "temp_dir") -> tuple:
-        """Convert DICOM image to PNG file.
-
-        :param filepath: pathlib Path to a single dcm file.
-        :param output_dir: String path to output directory.
-
-        :return: Shape of pixel array and if image mode is greyscale.
-        """
-        ds = pydicom.dcmread(filepath)
-
-        # Check if image is grayscale using the Photometric Interpretation element
-        is_greyscale = cls._check_if_greyscale(ds)
-
-        # Rescale pixel array
-        image = cls._rescale_dcm_pixel_array(ds, is_greyscale)
-        shape = image.shape
-
-        # Write to PNG file
-        cls._save_pixel_array_as_png(image, is_greyscale, filepath.stem, output_dir)
-
-        return shape, is_greyscale
 
     @staticmethod
     def _get_bg_color(
@@ -791,15 +733,14 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         else:
             raise ValueError("fill must be 'contrast' or 'background'")
 
-        # Temporarily save as PNG to get color
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            dst_path = Path(f"{tmpdirname}/temp.dcm")
-            instance.save_as(dst_path)
-            _, is_greyscale = cls._convert_dcm_to_png(dst_path, output_dir=tmpdirname)
-
-            png_filepath = f"{tmpdirname}/{dst_path.stem}.png"
-            loaded_image = Image.open(png_filepath)
-            box_color = cls._get_bg_color(loaded_image, is_greyscale, invert_flag)
+        is_greyscale = cls._check_if_greyscale(instance)
+        if is_greyscale:
+            # model L for grayscale, and has 8 bit-pixel to store the pixel value
+            image_pil = Image.fromarray(instance.pixel_array, mode="L")
+        else:
+            # model RGB, has 3x8 bit pixel available to store the value
+            image_pil = Image.fromarray(instance.pixel_array, mode="RGB")
+        box_color = cls._get_bg_color(image_pil, is_greyscale, invert_flag)
 
         return box_color
 
@@ -1052,13 +993,14 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         except AttributeError:
             raise AttributeError("Provided DICOM file lacks pixel data.")
 
-        # Load image for processing
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            # Convert DICOM to PNG and add padding for OCR (during analysis)
-            _, is_greyscale = self._convert_dcm_to_png(dst_path, output_dir=tmpdirname)
-            png_filepath = f"{tmpdirname}/{dst_path.stem}.png"
-            loaded_image = Image.open(png_filepath)
-            image = self._add_padding(loaded_image, is_greyscale, padding_width)
+        is_greyscale = self._check_if_greyscale(instance)
+        image = self._rescale_dcm_pixel_array(instance, is_greyscale)
+        if is_greyscale:
+            # model L for grayscale, and has 8 bit-pixel to store the pixel value
+            loaded_image = Image.fromarray(image, mode="L")
+        else:
+            loaded_image = Image.fromarray(image, mode="RGB")
+        image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
         # Detect PII
         analyzer_results = self._get_analyzer_results(

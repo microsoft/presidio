@@ -70,11 +70,8 @@ def test_verify_dicom_instance_happy_path(
 
     mock_greyscale = mocker.patch.object(DicomImagePiiVerifyEngine, "_check_if_greyscale", return_value=None)
     mock_rescale_array = mocker.patch.object(DicomImagePiiVerifyEngine, "_rescale_dcm_pixel_array", return_value=None)
-    mock_save_pixel_array = mocker.patch.object(
-        DicomImagePiiVerifyEngine, "_save_pixel_array_as_png", return_value=None
-    )
     mock_image_open = mocker.patch(
-        "presidio_image_redactor.dicom_image_pii_verify_engine.Image.open",
+        "presidio_image_redactor.dicom_image_pii_verify_engine.Image.fromarray",
         return_value=None,
     )
     mock_add_padding = mocker.patch.object(DicomImagePiiVerifyEngine, "_add_padding", return_value=None)
@@ -94,7 +91,6 @@ def test_verify_dicom_instance_happy_path(
     # Assert
     assert mock_greyscale.call_count == 1
     assert mock_rescale_array.call_count == 1
-    assert mock_save_pixel_array.call_count == 1
     assert mock_image_open.call_count == 1
     assert mock_add_padding.call_count == 1
     assert mock_parse_ocr_kwargs.call_count == 1
