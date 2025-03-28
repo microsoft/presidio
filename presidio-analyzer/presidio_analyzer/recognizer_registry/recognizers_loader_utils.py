@@ -24,7 +24,11 @@ class RecognizerListLoader:
         return recognizer_conf.items()
 
     @staticmethod
-    def _is_recognizer_enabled(recognizer_conf: Union[Dict[str, Any], str]) -> bool:
+    def is_recognizer_enabled(recognizer_conf: Union[Dict[str, Any], str]) -> bool:
+        """Return True if the recognizer is enabled.
+
+        :param recognizer_conf: The recognizer configuration.
+        """
         return "enabled" not in recognizer_conf or recognizer_conf["enabled"]
 
     @staticmethod
@@ -105,7 +109,11 @@ class RecognizerListLoader:
         ]
 
     @staticmethod
-    def _get_recognizer_name(recognizer_conf: Union[Dict[str, Any], str]) -> str:
+    def get_recognizer_name(recognizer_conf: Union[Dict[str, Any], str]) -> str:
+        """Get the name of a recognizer in the configuration.
+
+        :param recognizer_conf: The recognizer configuration.
+        """
         if isinstance(recognizer_conf, str):
             return recognizer_conf
         return recognizer_conf["name"]
@@ -153,7 +161,7 @@ class RecognizerListLoader:
         return recognizers
 
     @staticmethod
-    def _get_all_existing_recognizers(
+    def get_all_existing_recognizers(
         cls: Optional[Type[EntityRecognizer]] = None,
     ) -> Set[Type[EntityRecognizer]]:
         """
@@ -169,7 +177,7 @@ class RecognizerListLoader:
             [
                 s
                 for c in cls.__subclasses__()
-                for s in RecognizerListLoader._get_all_existing_recognizers(c)
+                for s in RecognizerListLoader.get_all_existing_recognizers(c)
             ]
         )
 
@@ -184,7 +192,7 @@ class RecognizerListLoader:
 
         :param recognizer_name: The name of the recognizer.
         """
-        all_existing_recognizers = RecognizerListLoader._get_all_existing_recognizers()
+        all_existing_recognizers = RecognizerListLoader.get_all_existing_recognizers()
         for recognizer in all_existing_recognizers:
             if recognizer_name == recognizer.__name__:
                 return recognizer
@@ -211,7 +219,7 @@ class RecognizerListLoader:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
                 recognizer_conf=recognizer_conf, supported_languages=supported_languages
             ):
-                if RecognizerListLoader._is_recognizer_enabled(recognizer_conf):
+                if RecognizerListLoader.is_recognizer_enabled(recognizer_conf):
                     copied_recognizer_conf = {
                         k: v
                         for k, v in RecognizerListLoader._get_recognizer_items(
@@ -220,7 +228,7 @@ class RecognizerListLoader:
                         if k not in ["enabled", "type", "supported_languages", "name"]
                     }
                     kwargs = {**copied_recognizer_conf, **language_conf}
-                    recognizer_name = RecognizerListLoader._get_recognizer_name(
+                    recognizer_name = RecognizerListLoader.get_recognizer_name(
                         recognizer_conf=recognizer_conf
                     )
                     recognizer_cls = RecognizerListLoader._get_existing_recognizer_cls(
@@ -229,7 +237,7 @@ class RecognizerListLoader:
                     recognizer_instances.append(recognizer_cls(**kwargs))
 
         for recognizer_conf in custom:
-            if RecognizerListLoader._is_recognizer_enabled(recognizer_conf):
+            if RecognizerListLoader.is_recognizer_enabled(recognizer_conf):
                 recognizer_instances.extend(
                     RecognizerListLoader._create_custom_recognizers(
                         recognizer_conf=recognizer_conf,

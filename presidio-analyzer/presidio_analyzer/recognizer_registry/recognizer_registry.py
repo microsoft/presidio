@@ -58,7 +58,7 @@ class RecognizerRegistry:
         nlp_engine: Optional[NlpEngine] = None,
         supported_language: Optional[str] = None
     ) -> SpacyRecognizer:
-        nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
+        nlp_recognizer = self.get_nlp_recognizer(nlp_engine)
 
         if nlp_engine:
             return nlp_recognizer(
@@ -114,7 +114,7 @@ class RecognizerRegistry:
         self.add_nlp_recognizer(nlp_engine=nlp_engine)
 
     @staticmethod
-    def _get_nlp_recognizer(
+    def get_nlp_recognizer(
         nlp_engine: NlpEngine,
     ) -> Type[SpacyRecognizer]:
         """Return the recognizer leveraging the selected NLP Engine."""

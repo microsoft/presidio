@@ -1,0 +1,23 @@
+recognizer_registry:
+  global_regex_flags: 26
+  recognizers:
+    - name: TransformersRecognizer
+      type: predefined
+      enabled: true
+    - name: SpacyRecognizer
+      type: predefined
+      enabled: true
+    - name: StanzaRecognizer
+      type: predefined
+      enabled: false
+
+supported_languages:
+  - en
+default_score_threshold: 0.7
+
+nlp_configuration:
+  nlp_engine_name: spacy
+  models:
+    -
+      lang_code: en
+      model_name: en_core_web_lg
