@@ -61,7 +61,7 @@ class NlpEngineProvider:
             self.nlp_configuration = nlp_configuration
         elif conf_file:
             self.nlp_configuration = self._read_nlp_conf(conf_file)
-        else:  
+        else:
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
             try:
@@ -143,4 +143,3 @@ class NlpEngineProvider:
         for field in required_fields:
             if field not in nlp_configuration:
                 raise ValueError(f"Configuration file is missing '{field}'.")
-            
