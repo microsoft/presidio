@@ -3,3 +3,4 @@ models:
   -
     lang_code: en
     model_name: en
+ner_model_configuration:
