@@ -117,7 +117,7 @@ class NlpEngineProvider:
 
     @staticmethod
     def _read_nlp_conf(conf_file: Union[Path, str]) -> dict:
-        """Read the nlp configuration from a provided yaml file."""
+        """Read and validate the NLP configuration from a provided YAML file."""
 
         if not Path(conf_file).exists():
             raise FileNotFoundError(f"Configuration file {conf_file} not found.")
@@ -125,8 +125,7 @@ class NlpEngineProvider:
         with open(conf_file) as file:
             nlp_configuration = yaml.safe_load(file)
 
-        if "ner_model_configuration" not in nlp_configuration:
-            raise ValueError("Configuration file is missing 'ner_model_configuration'.")
+        NlpEngineProvider.validate_yaml_config_format(nlp_configuration)
 
         return nlp_configuration
 
@@ -136,3 +135,12 @@ class NlpEngineProvider:
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent.parent, "conf", default_conf_file)
+
+    @staticmethod
+    def validate_yaml_config_format(nlp_configuration: Dict) -> None:
+        """Validate the YAML configuration file format."""
+        required_fields = ["nlp_engine_name", "ner_model_configuration", "models"]
+        for field in required_fields:
+            if field not in nlp_configuration:
+                raise ValueError(f"Configuration file is missing '{field}'.")
+            
