@@ -249,3 +249,15 @@ def test_analyzer_engine_provider_multiple_nlp_recognizers_raises_exception():
                 f"Please remove the duplicates."):
         provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
         analyzer_engine = provider.create_engine()
+
+def test_analyzer_engine_provider_no_nlp_engine_or_provider_results_in_default_nlp_recognizer():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_no_nlp_engine.yaml",
+    )
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+
+    analyzer_engine = provider.create_engine()
+
+    assert len(analyzer_engine.get_recognizers()) == 2 # SpacyRecognizer, CreditCardRecognizer
+    nlp_recognizer = [rec for rec in analyzer_engine.get_recognizers() if isinstance(rec, SpacyRecognizer)]
+    assert len(nlp_recognizer) == 1

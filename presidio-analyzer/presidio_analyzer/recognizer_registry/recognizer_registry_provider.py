@@ -202,7 +202,7 @@ class RecognizerRegistryProvider:
         disabled = [
             rec_conf
             for rec_conf in recognizers_conf
-            if RecognizerListLoader.is_recognizer_enabled(rec_conf) is False
+            if not RecognizerListLoader.is_recognizer_enabled(rec_conf)
         ]
 
         disabled_rec_names = [
