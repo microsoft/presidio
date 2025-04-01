@@ -142,3 +142,35 @@ The default configuration of `AnalyzerEngine` is defined in the following files:
   -  [Analyzer Engine](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml)
   -  [NLP Engine](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default.yaml)
   -  [Recognizer Registry](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml)
+
+## Enabling and disabling recognizers
+In general, recognizers that are not added to the configuration would not be created, with one exception.
+
+### Enabling/Disabling the NLP recognizer
+One exception to this is the recognizer which extracts the `NlpEngine` entities (e.g. `SpacyRecognizer` when the `NlpEngine` is `SpacyNlpEngine`; `TransformersRecognizer` when the engine is `TransformersNlpEngine` and `StanzaRecognizer` when the engine is `StanzaNlpEngine`). 
+
+Recognizers (including the NLP recognizer) could be disabled by defining `enabled=false` in the YAML configuration. For example:
+```yaml
+recognizer_registry:
+  global_regex_flags: 26
+  recognizers:
+    - name: SpacyRecognizer
+      type: predefined
+      enabled: false
+    - name: CreditCardRecognizer
+      type: predefined
+      enabled: true
+
+supported_languages:
+  - en
+default_score_threshold: 0.7
+
+nlp_configuration:
+  nlp_engine_name: spacy
+  models:
+    -
+      lang_code: en
+      model_name: en_core_web_lg
+```
+
+In this example, the `SpacyRecognizer` is disabled, and the `CreditCardRecognizer` is enabled, resulting in only the `CREDIT_CARD` PII entity to be returned if detected.

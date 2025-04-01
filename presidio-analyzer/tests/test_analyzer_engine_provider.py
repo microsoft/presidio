@@ -2,10 +2,12 @@ import re
 from pathlib import Path
 from typing import List
 
+import pytest
+
 from presidio_analyzer import AnalyzerEngineProvider, RecognizerResult
 from presidio_analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 
-from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer
+from presidio_analyzer.predefined_recognizers import AzureAILanguageRecognizer, CreditCardRecognizer, SpacyRecognizer
 
 import pytest
 
@@ -183,3 +185,79 @@ def test_analyzer_engine_provider_with_azure_ai_language():
     assert len(azure_ai_recognizers) == 1
 
     assert len(analyzer_engine.analyze("This is a test", language="en")) > 0
+
+
+def test_analyzer_engine_provider_no_nlp_recognizer():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_nlp_reco_disabled_conf.yaml",
+    )
+
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+
+    analyzer_engine = provider.create_engine()
+
+    assert len(analyzer_engine.get_recognizers()) == 1
+    recognizer = analyzer_engine.get_recognizers()[0]
+    assert isinstance(recognizer, CreditCardRecognizer)
+
+    assert len(analyzer_engine.analyze("My Credit card number is 4917300800000000", language="en")) > 0
+
+
+def test_analyzer_engine_provider_no_nlp_recognizer_is_added():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_no_nlp_reco_conf.yaml",
+    )
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+
+    analyzer_engine = provider.create_engine()
+
+    assert len(analyzer_engine.get_recognizers()) == 2
+    nlp_recognizer = [rec for rec in analyzer_engine.get_recognizers() if isinstance(rec, SpacyRecognizer)]
+    assert len(nlp_recognizer) == 1
+
+
+
+def test_analyzer_engine_provider_no_nlp_recognizer_is_added_per_language():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_no_nlp_reco_conf_multilingual.yaml",
+    )
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+
+    analyzer_engine = provider.create_engine()
+
+    assert len(analyzer_engine.get_recognizers()) == 4 # Two CreditCardRecognizers and two SpacyRecognizers
+    nlp_recognizers = [rec for rec in analyzer_engine.get_recognizers() if isinstance(rec, SpacyRecognizer)]
+    assert len(nlp_recognizers) == 2 # one per language
+    assert set([rec.supported_language for rec in nlp_recognizers]) == {"en", "es"}
+
+
+def test_analyzer_engine_provider_mismatch_between_nlp_engine_and_nlp_recognizer():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_nlp_reco_does_not_match_engine.yaml",
+    )
+
+    with pytest.raises(ValueError):
+        provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+        analyzer_engine = provider.create_engine()
+
+def test_analyzer_engine_provider_multiple_nlp_recognizers_raises_exception():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_multiple_nlp_recognizers.yaml",
+    )
+
+    with pytest.raises(ValueError, match = f"Multiple NLP recognizers for language en found in the configuration. "
+                f"Please remove the duplicates."):
+        provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+        analyzer_engine = provider.create_engine()
+
+def test_analyzer_engine_provider_no_nlp_engine_or_provider_results_in_default_nlp_recognizer():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_no_nlp_engine.yaml",
+    )
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+
+    analyzer_engine = provider.create_engine()
+
+    assert len(analyzer_engine.get_recognizers()) == 2 # SpacyRecognizer, CreditCardRecognizer
+    nlp_recognizer = [rec for rec in analyzer_engine.get_recognizers() if isinstance(rec, SpacyRecognizer)]
+    assert len(nlp_recognizer) == 1
