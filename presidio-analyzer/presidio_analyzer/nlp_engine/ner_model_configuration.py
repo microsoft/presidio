@@ -27,21 +27,6 @@ MODEL_TO_PRESIDIO_ENTITY_MAPPING = dict(
 )
 
 LOW_SCORE_ENTITY_NAMES = set()
-LABELS_TO_IGNORE = {
-    "O",
-    "ORG",
-    "ORGANIZATION",
-    "CARDINAL",
-    "EVENT",
-    "LANGUAGE",
-    "LAW",
-    "MONEY",
-    "ORDINAL",
-    "PERCENT",
-    "PRODUCT",
-    "QUANTITY",
-    "WORK_OF_ART",
-}
 
 
 @dataclass
@@ -89,7 +74,7 @@ class NerModelConfiguration:
             logger.warning(
                 "labels_to_ignore is missing from configuration, " "using default"
             )
-            self.labels_to_ignore = LABELS_TO_IGNORE
+            self.labels_to_ignore = {}
 
     @classmethod
     def _validate_input(cls, ner_model_configuration_dict: Dict) -> None:
