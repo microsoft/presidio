@@ -5,17 +5,37 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Analyzer
-
+  
 ### Anonymizer
-
+  
 ### Image Redactor
 
 ### Presidio Structured
 
 ### General
 
+## [2.2.358] - 2025-03-18
 
-## [2.3.357] - 2025-01-13
+### Analyzer
+- Fixed: Updated URL regex pattern to correctly exclude trailing single (') and double (") quotes from matched URLs.
+- Drop dependency of spacy_stanza package, and add supporting code to stanza_nlp_engine, to support recent stanza versions
+- Add parameters to allow users to define the number of processes and batch size when running BatchAnalyzerEngine.
+- Fix InPassportRecognizer regex recognizer
+  
+### Anonymizer
+- Changed: Deprecate `MD5` hash type option, defaulting into `sha256`.
+- Replace crypto package dependency from pycryptodom to cryptography 
+- Remove azure-core dependency from anonymizer
+  
+### Image Redactor
+- Changed: Updated the return type annotation of `ocr_bboxes` in `verify_dicom_instance()` from `dict` to `list`.  
+
+### Presidio Structured
+
+### General
+- Updated the `Evaluating DICOM Redaction` documentation to reflect changes in verify_dicom_instance() within the DicomImagePiiVerifyEngine class.
+
+## [2.2.357] - 2025-01-13
 
 ### Analyzer
 - Example GLiNER integration (#1504)
@@ -24,7 +44,7 @@ All notable changes to this project will be documented in this file.
 - Docs revamp and docstring bug fixes (#1500)
 - Minor updates to the mkdocstrings config (#1503)
 
-## [2.3.356] - 2024-12-15
+## [2.2.356] - 2024-12-15
 
 ### Analyzer
 - Added logic to handle phone numbers with country code (#1426) (Thanks @kauabh)
@@ -508,8 +528,11 @@ Upgrade Analyzer spacy version to 3.0.5
 2. Response entity anonymizer_text renamed to text.
 
 #### Deanonymize:
-New endpoint for deanonymizing encrypted entities by the anonymizer.
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.357...HEAD
+New endpoint for deanonymizing encrypted entities by the anonymizer.  
+
+
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.358...HEAD
+[2.2.358]: https://github.com/microsoft/presidio/compare/2.2.357...2.2.358
 [2.2.357]: https://github.com/microsoft/presidio/compare/2.2.356...2.2.357
 [2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...2.2.356
 [2.2.355]: https://github.com/microsoft/presidio/compare/2.2.354...2.2.355

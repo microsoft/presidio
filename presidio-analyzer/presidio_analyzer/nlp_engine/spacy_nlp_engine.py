@@ -6,7 +6,11 @@ import spacy
 from spacy.language import Language
 from spacy.tokens import Doc, Span
 
-from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts, NlpEngine
+from presidio_analyzer.nlp_engine import (
+    NerModelConfiguration,
+    NlpArtifacts,
+    NlpEngine,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -111,13 +115,16 @@ class SpacyNlpEngine(NlpEngine):
         self,
         texts: Union[List[str], List[Tuple[str, object]]],
         language: str,
-        batch_size: Optional[int] = None,
+        batch_size: int = 1,
+        n_process: int = 1,
         as_tuples: bool = False,
     ) -> Iterator[Optional[NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts using spacy pipe.
 
         :param texts: A list of texts to process.
         :param language: The language of the texts.
+        :param batch_size: Default batch size for pipe and evaluate.
+        :param n_process: Number of processors to process texts.
         :param as_tuples: If set to True, inputs should be a sequence of
             (text, context) tuples. Output will then be a sequence of
             (doc, context) tuples. Defaults to False.
@@ -128,7 +135,7 @@ class SpacyNlpEngine(NlpEngine):
 
         texts = (str(text) for text in texts)
         docs = self.nlp[language].pipe(
-            texts, as_tuples=as_tuples, batch_size=batch_size
+            texts, as_tuples=as_tuples, batch_size=batch_size, n_process=n_process
         )
         for doc in docs:
             yield doc.text, self._doc_to_nlp_artifact(doc, language)
