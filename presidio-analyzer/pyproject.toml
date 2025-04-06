@@ -37,6 +37,7 @@ server = [
 ]
 transformers = [
     "transformers",
+    "accelerate",
     "huggingface_hub",
     "spacy_huggingface_pipelines"]
 stanza = [
