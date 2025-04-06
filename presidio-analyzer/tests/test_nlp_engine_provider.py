@@ -171,6 +171,12 @@ def test_when_both_conf_and_config_then_fail(mocker):
         NlpEngineProvider(conf_file=conf_file, nlp_configuration=nlp_configuration)
 
 
+def test_when_labels_to_ignore_not_define_in_conf_file_default_into_empty_set(mocker):
+    conf_file = "conf/spacy_multilingual.yaml"
+
+    engine = NlpEngineProvider(conf_file=conf_file).create_engine()
+    assert len(engine.ner_model_configuration.labels_to_ignore) == 0
+
 @pytest.mark.skip_engine("transformers_en")
 def test_when_create_transformers_nlp_engine_then_succeeds(mocker):
     mocker.patch(
