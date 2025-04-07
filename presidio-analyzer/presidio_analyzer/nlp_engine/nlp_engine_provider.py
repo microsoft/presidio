@@ -12,8 +12,13 @@ from presidio_analyzer.nlp_engine import (
     TransformersNlpEngine,
 )
 
-logger = logging.getLogger("presidio-analyzer")
+DEFAULT_BUILTIN_CONFIG = {
+    "nlp_engine_name": "spacy",
+    "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
+    "ner_model_configuration": {},
+}
 
+logger = logging.getLogger("presidio-analyzer")
 
 class NlpEngineProvider:
     """Create different NLP engines from configuration.
@@ -52,17 +57,21 @@ class NlpEngineProvider:
             raise ValueError(
                 "Either conf_file or nlp_configuration should be provided, not both."
             )
-
-        if nlp_configuration:
+        elif nlp_configuration:
             self.nlp_configuration = nlp_configuration
-
-        if conf_file:
+        elif conf_file:
             self.nlp_configuration = self._read_nlp_conf(conf_file)
-
-        if conf_file is None and nlp_configuration is None:
+        else:
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
-            self.nlp_configuration = self._read_nlp_conf(conf_file)
+            try:
+                self.nlp_configuration = self._read_nlp_conf(conf_file)
+            except FileNotFoundError:
+                logger.warning(
+                    f"Default config file '{conf_file}' not found. "
+                    f"Falling back to built-in default: {DEFAULT_BUILTIN_CONFIG}"
+                )
+                self.nlp_configuration = DEFAULT_BUILTIN_CONFIG
 
     def create_engine(self) -> NlpEngine:
         """Create an NLP engine instance."""
@@ -108,26 +117,15 @@ class NlpEngineProvider:
 
     @staticmethod
     def _read_nlp_conf(conf_file: Union[Path, str]) -> dict:
-        """Read the nlp configuration from a provided yaml file."""
+        """Read and validate the NLP configuration from a provided YAML file."""
 
         if not Path(conf_file).exists():
-            nlp_configuration = {
-                "nlp_engine_name": "spacy",
-                "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-            }
-            logger.warning(
-                f"configuration file {conf_file} not found.  "
-                f"Using default config: {nlp_configuration}."
-            )
+            raise FileNotFoundError(f"Configuration file {conf_file} not found.")
 
-        else:
-            with open(conf_file) as file:
-                nlp_configuration = yaml.safe_load(file)
+        with open(conf_file) as file:
+            nlp_configuration = yaml.safe_load(file)
 
-        if "ner_model_configuration" not in nlp_configuration:
-            logger.warning(
-                "configuration file is missing 'ner_model_configuration'. Using default"
-            )
+        NlpEngineProvider.validate_yaml_config_format(nlp_configuration)
 
         return nlp_configuration
 
@@ -137,3 +135,11 @@ class NlpEngineProvider:
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent.parent, "conf", default_conf_file)
+
+    @staticmethod
+    def validate_yaml_config_format(nlp_configuration: Dict) -> None:
+        """Validate the YAML configuration file format."""
+        required_fields = ["nlp_engine_name", "ner_model_configuration", "models"]
+        for field in required_fields:
+            if field not in nlp_configuration:
+                raise ValueError(f"Configuration file is missing '{field}'.")
