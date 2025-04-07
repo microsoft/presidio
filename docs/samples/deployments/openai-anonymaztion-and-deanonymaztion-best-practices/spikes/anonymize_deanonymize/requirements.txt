@@ -1,2 +1,0 @@
-presidio-analyzer
-presidio-anonymizer

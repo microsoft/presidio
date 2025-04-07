@@ -1,4 +1,4 @@
-# Invisio - Data Protection toolkit for OpenAII
+# Invisio - Data Protection toolkit for OpenAI
 
 
 ### Sample Overview
