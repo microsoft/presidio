@@ -1,0 +1,19 @@
+{
+	"name": "Presidio Anonymization Toolkit",
+	"image": "mcr.microsoft.com/devcontainers/python:3.12-bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/azure-cli:1": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+	"postCreateCommand": "./.devcontainer/post-create.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.azure-account",
+				"ms-python.python",
+				"ms-python.flake8",
+				"ms-azuretools.azure-dev"
+			]
+		}
+	}
+}
