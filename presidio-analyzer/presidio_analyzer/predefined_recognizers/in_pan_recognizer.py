@@ -27,17 +27,17 @@ class InPanRecognizer(PatternRecognizer):
         Pattern(
             "PAN (High)",
             r"\b([A-Za-z]{3}[AaBbCcFfGgHhJjLlPpTt]{1}[A-Za-z]{1}[0-9]{4}[A-Za-z]{1})\b",
-            0.85,
+            0.5,
         ),
         Pattern(
             "PAN (Medium)",
             r"\b([A-Za-z]{5}[0-9]{4}[A-Za-z]{1})\b",
-            0.6,
+            0.1,
         ),
         Pattern(
             "PAN (Low)",
             r"\b((?=.*?[a-zA-Z])(?=.*?[0-9]{4})[\w@#$%^?~-]{10})\b",
-            0.05,
+            0.01,
         ),
     ]
 
