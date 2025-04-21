@@ -125,7 +125,7 @@ class NlpEngineProvider:
         with open(conf_file) as file:
             nlp_configuration = yaml.safe_load(file)
 
-        NlpEngineProvider.validate_yaml_config_format(nlp_configuration)
+        NlpEngineProvider._validate_yaml_config_format(nlp_configuration)
 
         return nlp_configuration
 
@@ -137,7 +137,7 @@ class NlpEngineProvider:
         return Path(Path(__file__).parent.parent, "conf", default_conf_file)
 
     @staticmethod
-    def validate_yaml_config_format(nlp_configuration: Dict) -> None:
+    def _validate_yaml_config_format(nlp_configuration: Dict) -> None:
         """Validate the YAML configuration file format."""
         required_fields = ["nlp_engine_name", "ner_model_configuration", "models"]
         for field in required_fields:
