@@ -176,4 +176,3 @@ class NlpEngineProvider:
                 "which is required when requested languages are not only English. "
                 f"Detected languages: {sorted(requested_langs)}"
             )
-        
