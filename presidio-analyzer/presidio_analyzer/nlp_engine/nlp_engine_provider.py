@@ -149,13 +149,13 @@ class NlpEngineProvider:
             return
 
         cfg_langs = {
-            str(l).lower()
-            for l in nlp_configuration.get("supported_languages", []) or []
+            str(lang).lower()
+            for lang in nlp_configuration.get("supported_languages", []) or []
         }
 
         recog_langs = {
-            str(l).lower()
-            for l in (
+            str(lang).lower()
+            for lang in (
                 nlp_configuration.get("recognizer_registry", {})
                 .get("supported_languages", [])
                 or []
@@ -166,7 +166,9 @@ class NlpEngineProvider:
         english_only = not requested_langs or requested_langs == {"en"}
 
         if english_only:
-            logger.warning("ner_model_configuration is missing, Default English configuration will be used.")
+            logger.warning(
+                "ner_model_configuration is missing, Default English configuration will be used."
+            )
         else:
             raise ValueError(
                 "Configuration file is missing 'ner_model_configuration', "
