@@ -167,7 +167,8 @@ class NlpEngineProvider:
 
         if english_only:
             logger.warning(
-                "ner_model_configuration is missing, Default English configuration will be used."
+                "ner_model_configuration is missing, "
+                "Default English configuration will be used."
             )
         else:
             raise ValueError(
