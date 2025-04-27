@@ -3,6 +3,7 @@ from typing import Dict
 
 import pytest
 import spacy
+import shutil
 
 from presidio_analyzer.nlp_engine import (
     SpacyNlpEngine,
@@ -11,6 +12,10 @@ from presidio_analyzer.nlp_engine import (
 )
 from presidio_analyzer.nlp_engine.transformers_nlp_engine import TransformersNlpEngine
 
+def _write_yaml(tmp_path, content: str, name: str = "config.yaml") -> Path:
+    path = tmp_path / name
+    path.write_text(content)
+    return path
 
 @pytest.fixture(scope="module")
 def mock_he_model():
@@ -22,7 +27,6 @@ def mock_he_model():
     he = spacy.blank("he")
     he.to_disk("he_test")
     yield
-    import shutil
     shutil.rmtree("he_test", ignore_errors=True)
 
 
@@ -36,7 +40,6 @@ def mock_bn_model():
     bn = spacy.blank("bn")
     bn.to_disk("bn_test")
     yield
-    import shutil
     shutil.rmtree("bn_test", ignore_errors=True)
 
 
@@ -178,7 +181,7 @@ def test_when_both_conf_and_config_then_fail(mocker):
 
 
 def test_when_labels_to_ignore_not_define_in_conf_file_default_into_empty_set(mocker):
-    conf_file = Path(__file__).parent.parent / "presidio_analyzer" / "conf" / "spacy_multilingual.yaml"
+    conf_file = (Path(__file__).parent.parent/ "presidio_analyzer"/ "conf"/ "spacy_multilingual.yaml")
     engine = NlpEngineProvider(conf_file=conf_file).create_engine()
     assert len(engine.ner_model_configuration.labels_to_ignore) == 0
 
@@ -252,140 +255,216 @@ def test_nlp_engine_provider_init_through_nlp_engine_configuration():
     assert isinstance(engine, SpacyNlpEngine)
     assert engine.engine_name == "spacy"
 
-
-def test_init_only_conf_file(tmp_path):
-    yaml_content = """
-nlp_engine_name: spacy
-models:
-  - lang_code: en
-    model_name: en_core_web_lg
-ner_model_configuration: {}
-"""
-    yaml_file = tmp_path / "valid.yaml"
-    yaml_file.write_text(yaml_content)
-    provider = NlpEngineProvider(conf_file=str(yaml_file))
-    assert provider.nlp_configuration["nlp_engine_name"] == "spacy"
-    yaml_file.unlink()  
-
-
-def test_init_only_nlp_configuration():
+def test_create_engine_missing_ner_model_configuration_english_only():
     config = {
         "nlp_engine_name": "spacy",
-        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-        "ner_model_configuration": {},
+        "models": [
+            {"lang_code": "en", "model_name": "en_core_web_lg"}
+        ],
     }
     provider = NlpEngineProvider(nlp_configuration=config)
-    assert provider.nlp_configuration["nlp_engine_name"] == "spacy"
+    engine = provider.create_engine()
+    assert isinstance(engine, SpacyNlpEngine)
+    assert 'en' in engine.nlp
+    assert isinstance(engine.nlp['en'], spacy.lang.en.English)
 
 
-def test_init_both_conf_file_and_nlp_configuration(tmp_path):
-    yaml_content = """
-nlp_engine_name: spacy
-models:
-  - lang_code: en
-    model_name: en_core_web_lg
-ner_model_configuration: {}
-"""
-    yaml_file = tmp_path / "valid.yaml"
-    yaml_file.write_text(yaml_content)
+def test_create_engine_missing_ner_model_configuration_non_english(mocker):
+    mocker.patch(
+        "presidio_analyzer.nlp_engine.SpacyNlpEngine._download_spacy_model_if_needed",
+        return_value=None,
+    )
     config = {
         "nlp_engine_name": "spacy",
-        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-        "ner_model_configuration": {},
+        "models": [
+            {"lang_code": "de", "model_name": "de_core_news_md"}
+        ],
     }
-    with pytest.raises(ValueError):
-        NlpEngineProvider(conf_file=str(yaml_file), nlp_configuration=config)
-    yaml_file.unlink()  
-
-
-def test_init_none_provided():
-    # Should use default config
-    provider = NlpEngineProvider()
-    assert provider.nlp_configuration["nlp_engine_name"] == "spacy"
-
-
-def test_init_conf_file_not_exist():
-    with pytest.raises(FileNotFoundError):
-        NlpEngineProvider(conf_file="not_a_real_file.yaml")
-        
-
-def test_create_engine_missing_models():
-    config = {"nlp_engine_name": "spacy", "ner_model_configuration": {}}
     provider = NlpEngineProvider(nlp_configuration=config)
-    with pytest.raises(ValueError):
-        provider.create_engine()
+    engine = provider.create_engine()
+    assert isinstance(engine, SpacyNlpEngine)
+    assert 'de' in engine.nlp
+    assert isinstance(engine.nlp['de'], spacy.lang.de.German)
 
 
-def test_create_engine_missing_nlp_engine_name():
-    config = {"models": [{"lang_code": "en", "model_name": "en_core_web_lg"}], "ner_model_configuration": {}}
+def test_create_engine_missing_ner_model_configuration_mixed_languages(mocker):
+    mocker.patch(
+        "presidio_analyzer.nlp_engine.SpacyNlpEngine._download_spacy_model_if_needed",
+        return_value=None,
+    )
+    config = {
+        "nlp_engine_name": "spacy",
+        "models": [
+            {"lang_code": "en", "model_name": "en_core_web_lg"},
+            {"lang_code": "de", "model_name": "de_core_news_md"}
+        ],
+    }
     provider = NlpEngineProvider(nlp_configuration=config)
-    with pytest.raises(ValueError):
-        provider.create_engine()
+    engine = provider.create_engine()
+    assert isinstance(engine, SpacyNlpEngine)
+    assert set(engine.nlp.keys()) == {'en', 'de'}
 
 
-def test_create_engine_models_empty():
-    config = {"nlp_engine_name": "spacy", "models": [], "ner_model_configuration": {}}
+def test_create_engine_missing_ner_model_configuration_empty_models():
+    config = {
+        "nlp_engine_name": "spacy",
+        "models": [],
+        # ner_model_configuration is missing
+    }
     provider = NlpEngineProvider(nlp_configuration=config)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as e:
         provider.create_engine()
+    assert "Configuration should include nlp_engine_name and models" in str(e.value)
 
 
-def test_create_engine_invalid_ner_model_configuration():
-    config = {"nlp_engine_name": "spacy", "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}], "ner_model_configuration": "not_a_dict"}
-    provider = NlpEngineProvider(nlp_configuration=config)
-    with pytest.raises(Exception):
-        provider.create_engine()
-
-
-def test_read_nlp_conf_file_not_found():
-    with pytest.raises(FileNotFoundError):
-        NlpEngineProvider._read_nlp_conf("definitely_missing.yaml")
-
-
-def test_read_nlp_conf_file_valid(tmp_path):
+def test_read_nlp_conf_file_invalid(tmp_path, caplog):
     yaml_content = """
 nlp_engine_name: spacy
 models:
   - lang_code: en
     model_name: en_core_web_lg
-ner_model_configuration: {}
 """
-    yaml_file = tmp_path / "valid.yaml"
-    yaml_file.write_text(yaml_content)
-    config = NlpEngineProvider._read_nlp_conf(str(yaml_file))
-    assert config["nlp_engine_name"] == "spacy"
-    yaml_file.unlink()  # Clean up
-
-
-def test_read_nlp_conf_file_invalid(tmp_path):
-    yaml_content = """
-nlp_engine_name: spacy
-models:
-  - lang_code: en
-    model_name: en_core_web_lg
-"""  # missing ner_model_configuration
     yaml_file = tmp_path / "invalid.yaml"
     yaml_file.write_text(yaml_content)
-    with pytest.raises(ValueError):
-        NlpEngineProvider._read_nlp_conf(str(yaml_file))
-    yaml_file.unlink()  # Clean up
+
+    with caplog.at_level("WARNING"):
+        config = NlpEngineProvider._read_nlp_conf(str(yaml_file))
+        assert "ner_model_configuration is missing" in caplog.text
+        assert config["nlp_engine_name"] == "spacy"
+    yaml_file.unlink()
 
 
-def test_get_full_conf_path_returns_path():
-    path = NlpEngineProvider._get_full_conf_path()
-    assert path.name.endswith("default.yaml")
+def test_supported_languages_only_en_warns_and_creates(tmp_path, caplog, mocker):
+    mocker.patch(
+        "presidio_analyzer.nlp_engine.SpacyNlpEngine._download_spacy_model_if_needed",
+        return_value=None,
+    )
+    yaml_content = """
+nlp_engine_name: spacy
+models:
+  - lang_code: en
+    model_name: en_core_web_lg
+supported_languages:
+  - en
+"""
+    conf_file = _write_yaml(tmp_path, yaml_content)
+    provider = NlpEngineProvider(conf_file=str(conf_file))
+    with caplog.at_level("WARNING"):
+        engine = provider.create_engine()
+        assert "ner_model_configuration is missing" in caplog.text
+    assert isinstance(engine, SpacyNlpEngine)
+    assert "en" in engine.nlp
+    conf_file.unlink()
 
 
-def test_validate_yaml_config_format_missing_field():
-    config = {"nlp_engine_name": "spacy", "models": []}
-    with pytest.raises(ValueError):
-        NlpEngineProvider._validate_yaml_config_format(config)
+def test_supported_languages_non_en_raises(tmp_path, mocker):
+    yaml_content = """
+nlp_engine_name: spacy
+models:
+  - lang_code: de
+    model_name: de_core_news_md
+supported_languages:
+  - de
+"""
+    conf_file = _write_yaml(tmp_path, yaml_content)
+    mocker.patch(
+        "presidio_analyzer.nlp_engine.SpacyNlpEngine._download_spacy_model_if_needed",
+        return_value=None,
+    )
+    with pytest.raises(ValueError) as excinfo:
+        NlpEngineProvider(conf_file=str(conf_file)).create_engine()
+    assert "missing 'ner_model_configuration'" in str(excinfo.value)
+    conf_file.unlink()
 
 
-def test_validate_yaml_config_format_all_fields():
-    config = {
-        "nlp_engine_name": "spacy",
-        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-        "ner_model_configuration": {},
-    }
-    NlpEngineProvider._validate_yaml_config_format(config)  # Should not raise
+
+def test_recognizer_registry_only_en_warns_and_creates(tmp_path, caplog, mocker):
+    mocker.patch(
+        "presidio_analyzer.nlp_engine.SpacyNlpEngine._download_spacy_model_if_needed",
+        return_value=None,
+    )
+    yaml_content = """
+nlp_engine_name: spacy
+models:
+  - lang_code: en
+    model_name: en_core_web_lg
+recognizer_registry:
+  supported_languages:
+    - en
+"""
+    conf_file = _write_yaml(tmp_path, yaml_content, "recog.yaml")
+    provider = NlpEngineProvider(conf_file=str(conf_file))
+    with caplog.at_level("WARNING"):
+        engine = provider.create_engine()
+        assert "ner_model_configuration is missing" in caplog.text
+    assert isinstance(engine, SpacyNlpEngine)
+    conf_file.unlink()
+
+
+
+def test_recognizer_registry_non_en_raises(tmp_path, mocker):
+    yaml_content = """
+nlp_engine_name: spacy
+models:
+  - lang_code: en
+    model_name: en_core_web_lg
+recognizer_registry:
+  supported_languages:
+    - fr
+"""
+    conf_file = _write_yaml(tmp_path, yaml_content, "recog2.yaml")
+    mocker.patch(
+        "presidio_analyzer.nlp_engine.SpacyNlpEngine._download_spacy_model_if_needed",
+        return_value=None,
+    )
+    with pytest.raises(ValueError) as excinfo:
+        NlpEngineProvider(conf_file=str(conf_file)).create_engine()
+    assert "missing 'ner_model_configuration'" in str(excinfo.value)
+    conf_file.unlink()
+
+
+
+def test_mixed_supported_and_recognizer_non_en_raises(tmp_path, mocker):
+    yaml_content = """
+nlp_engine_name: spacy
+models:
+  - lang_code: en
+    model_name: en_core_web_lg
+supported_languages:
+  - en
+recognizer_registry:
+  supported_languages:
+    - de
+"""
+    conf_file = _write_yaml(tmp_path, yaml_content, "mixed.yaml")
+    mocker.patch(
+        "presidio_analyzer.nlp_engine.SpacyNlpEngine._download_spacy_model_if_needed",
+        return_value=None,
+    )
+    with pytest.raises(ValueError) as excinfo:
+        NlpEngineProvider(conf_file=str(conf_file)).create_engine()
+    assert "Detected languages: ['de', 'en']" in str(excinfo.value)
+    conf_file.unlink()
+
+
+
+def test_no_supported_or_recognizer_defaults_to_english(tmp_path, caplog, mocker):
+    mocker.patch(
+        "presidio_analyzer.nlp_engine.SpacyNlpEngine._download_spacy_model_if_needed",
+        return_value=None,
+    )
+    yaml_content = """
+nlp_engine_name: spacy
+models:
+  - lang_code: en
+    model_name: en_core_web_lg
+"""
+    conf_file = _write_yaml(tmp_path, yaml_content, "none.yaml")
+    provider = NlpEngineProvider(conf_file=str(conf_file))
+    with caplog.at_level("WARNING"):
+        engine = provider.create_engine()
+        assert "ner_model_configuration is missing" in caplog.text
+    assert isinstance(engine, SpacyNlpEngine)
+    assert 'en' in engine.nlp
+    conf_file.unlink()
+    

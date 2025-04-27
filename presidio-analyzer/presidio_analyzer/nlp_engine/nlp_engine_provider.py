@@ -139,7 +139,37 @@ class NlpEngineProvider:
     @staticmethod
     def _validate_yaml_config_format(nlp_configuration: Dict) -> None:
         """Validate the YAML configuration file format."""
-        required_fields = ["nlp_engine_name", "ner_model_configuration", "models"]
-        for field in required_fields:
-            if field not in nlp_configuration:
-                raise ValueError(f"Configuration file is missing '{field}'.")
+        logger = logging.getLogger("presidio-analyzer")
+
+        for key in ("nlp_engine_name", "models"):
+            if key not in nlp_configuration:
+                raise ValueError(f"Configuration file is missing '{key}'.")
+
+        if nlp_configuration.get("ner_model_configuration"):
+            return
+
+        cfg_langs = {
+            str(l).lower()
+            for l in nlp_configuration.get("supported_languages", []) or []
+        }
+
+        recog_langs = {
+            str(l).lower()
+            for l in (
+                nlp_configuration.get("recognizer_registry", {})
+                .get("supported_languages", [])
+                or []
+            )
+        }
+
+        requested_langs = cfg_langs | recog_langs
+        english_only = not requested_langs or requested_langs == {"en"}
+
+        if english_only:
+            logger.warning("ner_model_configuration is missing, Default English configuration will be used.")
+        else:
+            raise ValueError(
+                "Configuration file is missing 'ner_model_configuration', "
+                "which is required when requested languages are not only English. "
+                f"Detected languages: {sorted(requested_langs)}"
+            )
