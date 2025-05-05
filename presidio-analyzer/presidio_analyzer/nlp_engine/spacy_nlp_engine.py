@@ -137,6 +137,10 @@ class SpacyNlpEngine(NlpEngine):
             raise ValueError("NLP engine is not loaded. Consider calling .load()")
 
         if as_tuples:
+            if not all(isinstance(item, tuple) and len(item) == 2 for item in texts):
+                raise ValueError(
+                    "When 'as_tuples' is True, 'texts' must be a list of tuples (text, context)."
+                )
             texts = [(str(text), context) for text, context in texts]
         else:
             texts = (str(text) for text in texts)
