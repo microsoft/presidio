@@ -120,13 +120,17 @@ class SpacyNlpEngine(NlpEngine):
     ) -> Generator[tuple[Any, NlpArtifacts, Any] | tuple[Any, NlpArtifacts], Any, None]:
         """Execute the NLP pipeline on a batch of texts using spacy pipe.
 
-        :param texts: A list of texts to process.
+        :param texts: A list of texts to process. if as_tuples is set to True,
+            texts should be a list of tuples (text, context).
         :param language: The language of the texts.
         :param batch_size: Default batch size for pipe and evaluate.
         :param n_process: Number of processors to process texts.
         :param as_tuples: If set to True, inputs should be a sequence of
             (text, context) tuples. Output will then be a sequence of
             (doc, context) tuples. Defaults to False.
+
+        :return: A generator of tuples (text, NlpArtifacts, context) or
+            (text, NlpArtifacts) depending on the value of as_tuples.
         """
 
         if not self.nlp:
