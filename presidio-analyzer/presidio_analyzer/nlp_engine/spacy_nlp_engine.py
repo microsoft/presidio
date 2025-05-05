@@ -118,9 +118,7 @@ class SpacyNlpEngine(NlpEngine):
         batch_size: int = 1,
         n_process: int = 1,
         as_tuples: bool = False,
-    ) -> Generator[
-        Union[Tuple[Any, NlpArtifacts, Any], Tuple[Any, NlpArtifacts], Any, None]
-    ]:
+    ) -> Generator[Union[Tuple[Any, NlpArtifacts, Any], Tuple[Any, NlpArtifacts]], Any, None]:
         """Execute the NLP pipeline on a batch of texts using spacy pipe.
 
         :param texts: A list of texts to process. if as_tuples is set to True,
@@ -145,7 +143,7 @@ class SpacyNlpEngine(NlpEngine):
                     "When 'as_tuples' is True, "
                     "'texts' must be a list of tuples (text, context)."
                 )
-            texts = [(str(text), context) for text, context in texts]
+            texts = ((str(text), context) for text, context in texts)
         else:
             texts = (str(text) for text in texts)
         batch_output = self.nlp[language].pipe(
