@@ -133,12 +133,16 @@ class SpacyNlpEngine(NlpEngine):
         if not self.nlp:
             raise ValueError("NLP engine is not loaded. Consider calling .load()")
 
-        texts = (str(text) for text in texts)
+        #texts = (str(text) for text in texts)
         docs = self.nlp[language].pipe(
             texts, as_tuples=as_tuples, batch_size=batch_size, n_process=n_process
         )
-        for doc in docs:
-            yield doc.text, self._doc_to_nlp_artifact(doc, language)
+        if as_tuples:
+            for doc, context in docs:
+                yield ((doc.text, self._doc_to_nlp_artifact(doc, language)), context)
+        else:
+            for doc in docs:
+                yield doc.text, self._doc_to_nlp_artifact(doc, language)
 
     def is_stopword(self, word: str, language: str) -> bool:
         """
