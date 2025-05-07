@@ -27,7 +27,7 @@ dependencies = [
     "regex",
     "tldextract",
     "pyyaml",
-    "phonenumbers (>=8.12,<9.0.0)"
+    "phonenumbers (>=8.12,<10.0.0)"
 ]
 
 [project.optional-dependencies]
