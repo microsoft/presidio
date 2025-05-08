@@ -1,4 +1,4 @@
-FROM python:3.9-windowsservercore
+FROM python:3.12-windowsservercore
 
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /app
