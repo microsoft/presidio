@@ -1,4 +1,4 @@
-FROM python:3.13-windowsservercore
+FROM python:3.12-windowsservercore
 
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
