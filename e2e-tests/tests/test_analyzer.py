@@ -398,7 +398,7 @@ def test_given_wrong_ad_hoc_json_exception_is_given():
 
     expected_response = """
     {
-        "error":"Failed to parse /analyze request for AnalyzerEngine.analyze(). __init__() got an unexpected keyword argument \'type\'"
+      "error": "Failed to parse /analyze request for AnalyzerEngine.analyze(). Pattern.__init__() got an unexpected keyword argument 'type'"
     }
     """
 
