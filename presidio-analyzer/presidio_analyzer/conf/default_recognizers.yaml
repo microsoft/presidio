@@ -180,3 +180,4 @@ recognizers:
 
   - name: InVoterRecognizer
     type: predefined
+    enabled: false
