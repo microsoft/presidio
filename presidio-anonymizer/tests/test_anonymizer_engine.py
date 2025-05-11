@@ -261,6 +261,23 @@ def test_given_analyzer_result_input_then_it_is_not_mutated():
     ):
         assert_analyzer_results_eq(original_result, copy_result)
 
+def test_given_unsorted_input_then_merged_correctly():
+    engine = AnonymizerEngine()
+    text = "Jane Doe is a person"
+    # Let's say the analyzer has detected 'Jane' and 'Doe' as separate people,
+    # and the results are not sorted by start, end.
+    original_analyzer_results = [
+        RecognizerResult(start=5, end=8, entity_type="PERSON", score=1.0),
+        RecognizerResult(start=0, end=4, entity_type="PERSON", score=1.0),
+    ]
+    # The whitespace merger should correctly merge the separate entities during the
+    # anonymization process.
+    anonymizer_result = engine.anonymize(
+        text,
+        original_analyzer_results
+    )
+    assert anonymizer_result.text == "<PERSON> is a person"
+
 
 def _operate(
     text: str,

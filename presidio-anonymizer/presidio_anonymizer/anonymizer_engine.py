@@ -88,6 +88,10 @@ class AnonymizerEngine(EngineBase):
         # modified
         analyzer_results = copy.deepcopy(analyzer_results)
 
+        # Sort because downstream processors like whitespace merging expect input to
+        # be sorted by start, end to work correctly
+        analyzer_results.sort(key=lambda x: (x.start, x.end))
+
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results, conflict_resolution
         )
