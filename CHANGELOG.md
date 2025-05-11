@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Analyzer
   
 ### Anonymizer
+- Fix mutation of input analyzer results object in Anonymizer by creating a copy first
   
 ### Image Redactor
 
