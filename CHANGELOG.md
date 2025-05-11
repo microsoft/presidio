@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
   
 ### Anonymizer
 - Fix mutation of input analyzer results object in Anonymizer by creating a copy first
+- Fix whitespace merging not occurring for unsorted (by start, end) analyzer results input by sorting it first
   
 ### Image Redactor
 
