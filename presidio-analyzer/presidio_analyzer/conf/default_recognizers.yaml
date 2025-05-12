@@ -152,7 +152,6 @@ recognizers:
     supported_languages: 
     - pl
     type: predefined
-    enabled: false
 
   - name: CryptoRecognizer
     type: predefined
