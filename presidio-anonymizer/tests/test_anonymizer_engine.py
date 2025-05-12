@@ -237,12 +237,6 @@ def test_given_sorted_analyzer_results_merge_entities_separated_by_white_space(
     assert sorted(result.items) == sorted(expected.items)
 
 def test_given_analyzer_result_input_then_it_is_not_mutated():
-    def assert_analyzer_results_eq(res1, res2):
-        assert res1.start == res2.start
-        assert res1.end == res2.end
-        assert res1.entity_type == res2.entity_type
-        assert res1.score == res2.score
-
     engine = AnonymizerEngine()
     text = "Jane Doe is a person"
     original_analyzer_results = [
@@ -259,7 +253,7 @@ def test_given_analyzer_result_input_then_it_is_not_mutated():
     for original_result, copy_result in zip(
         original_analyzer_results, copy_analyzer_results
     ):
-        assert_analyzer_results_eq(original_result, copy_result)
+        assert original_result == copy_result
 
 
 def _operate(
