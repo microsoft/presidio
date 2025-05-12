@@ -83,6 +83,14 @@ class AnonymizerEngine(EngineBase):
 
 
         """
+        # We do this to make sure the original analyzer_results object is not
+        # modified
+        analyzer_results = self._copy_recognizer_results(analyzer_results)
+
+        # Sort because downstream processors like whitespace merging expect input to
+        # be sorted by start, end to work correctly
+        analyzer_results.sort(key=lambda x: (x.start, x.end))
+
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results, conflict_resolution
         )
@@ -242,3 +250,17 @@ class AnonymizerEngine(EngineBase):
         if not operators.get("DEFAULT"):
             operators["DEFAULT"] = default_operator
         return operators
+
+    @staticmethod
+    def _copy_recognizer_results(
+        analyzer_results: List[RecognizerResult],
+    ) -> List[RecognizerResult]:
+        return [
+            RecognizerResult(
+                start=result.start,
+                end=result.end,
+                entity_type=result.entity_type,
+                score=result.score,
+            )
+            for result in analyzer_results
+        ]

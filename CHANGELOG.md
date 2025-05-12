@@ -36,6 +36,8 @@ All notable changes to this project will be documented in this file.
     analyzer.registry.add_recognizer(au_abn_recognizer)
     ```
 ### Anonymizer
+- Fix mutation of input analyzer results object in Anonymizer by creating a copy first
+- Fix whitespace merging not occurring for unsorted (by start, end) analyzer results input by sorting it first
   
 ### Image Redactor
 

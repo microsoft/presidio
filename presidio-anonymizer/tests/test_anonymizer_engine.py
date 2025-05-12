@@ -1,6 +1,7 @@
 from typing import Dict, List
 
 import pytest
+import copy
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import (
@@ -234,6 +235,42 @@ def test_given_sorted_analyzer_results_merge_entities_separated_by_white_space(
     )
     assert result.text == expected.text
     assert sorted(result.items) == sorted(expected.items)
+
+def test_given_analyzer_result_input_then_it_is_not_mutated():
+    engine = AnonymizerEngine()
+    text = "Jane Doe is a person"
+    original_analyzer_results = [
+        RecognizerResult(start=0, end=4, entity_type="PERSON", score=1.0),
+        RecognizerResult(start=5, end=8, entity_type="PERSON", score=1.0),
+    ]
+    copy_analyzer_results = copy.deepcopy(original_analyzer_results)
+    engine.anonymize(
+        text,
+        original_analyzer_results
+    )
+    # Compare length of the lists first and then values of contained objects
+    assert len(original_analyzer_results) == len(copy_analyzer_results)
+    for original_result, copy_result in zip(
+        original_analyzer_results, copy_analyzer_results
+    ):
+        assert original_result == copy_result
+
+def test_given_unsorted_input_then_merged_correctly():
+    engine = AnonymizerEngine()
+    text = "Jane Doe is a person"
+    # Let's say the analyzer has detected 'Jane' and 'Doe' as separate people,
+    # and the results are not sorted by start, end.
+    original_analyzer_results = [
+        RecognizerResult(start=5, end=8, entity_type="PERSON", score=1.0),
+        RecognizerResult(start=0, end=4, entity_type="PERSON", score=1.0),
+    ]
+    # The whitespace merger should correctly merge the separate entities during the
+    # anonymization process.
+    anonymizer_result = engine.anonymize(
+        text,
+        original_analyzer_results
+    )
+    assert anonymizer_result.text == "<PERSON> is a person"
 
 
 def _operate(
