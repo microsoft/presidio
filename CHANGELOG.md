@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Analyzer
+#### Changed
+- Most country specific recognizers that expect English were put as optional to avoid false positives, and would not work out-of-the-box (#1586). Specifically: 
+  - SgFinRecognizer
+  - AuAbnRecognizer
+  - AuAcnRecognizer
+  - AuTfnRecognizer
+  - AuMedicareRecognizer
+  - InPanRecognizer
+  - InAadhaarRecognizer
+  - InVehicleRegistrationRecognizer
+  - InPassportRecognizer
+  - EsNifRecognizer
+  - InVoterRecognizer
   
+  To re-enable them, either change the [default YAML](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) to have them as `enabled: true`, or via code, add them to the recognizer registry manually. See more here: [YAML based configuration](https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/).
 ### Anonymizer
   
 ### Image Redactor
