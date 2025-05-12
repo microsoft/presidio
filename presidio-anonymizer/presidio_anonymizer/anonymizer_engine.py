@@ -1,6 +1,5 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 
-import copy
 import logging
 import re
 from typing import Dict, List, Optional, Type
@@ -86,7 +85,7 @@ class AnonymizerEngine(EngineBase):
         """
         # We do this to make sure the original analyzer_results object is not
         # modified
-        analyzer_results = copy.deepcopy(analyzer_results)
+        analyzer_results = self._copy_recognizer_results(analyzer_results)
 
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results, conflict_resolution
@@ -247,3 +246,17 @@ class AnonymizerEngine(EngineBase):
         if not operators.get("DEFAULT"):
             operators["DEFAULT"] = default_operator
         return operators
+
+    @staticmethod
+    def _copy_recognizer_results(
+        analyzer_results: List[RecognizerResult],
+    ) -> List[RecognizerResult]:
+        return [
+            RecognizerResult(
+                start=result.start,
+                end=result.end,
+                entity_type=result.entity_type,
+                score=result.score,
+            )
+            for result in analyzer_results
+        ]
