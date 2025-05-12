@@ -19,7 +19,22 @@ All notable changes to this project will be documented in this file.
   - EsNifRecognizer
   - InVoterRecognizer
   
-  To re-enable them, either change the [default YAML](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) to have them as `enabled: true`, or via code, add them to the recognizer registry manually. See more here: [YAML based configuration](https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/).
+  To re-enable them, either change the [default YAML](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) to have them as `enabled: true`, or via code, add them to the recognizer registry manually. 
+  - Yaml based: see more here: [YAML based configuration](https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/).
+  - Code based:
+    ```py
+    from presidio_analyzer import AnalyzerEngine
+    from presidio_analyzer.predefined_recognizers import AuAbnRecognizer
+    
+    # Initialize an analyzer engine with the recognizer registry
+    analyzer = AnalyzerEngine()
+    
+    # Create an instance of the AuAbnRecognizer
+    au_abn_recognizer = AuAbnRecognizer()
+    
+    # Add the recognizer to the registry
+    analyzer.registry.add_recognizer(au_abn_recognizer)
+    ```
 ### Anonymizer
   
 ### Image Redactor
