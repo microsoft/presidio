@@ -52,8 +52,7 @@ def test_when_get_recognizers_then_all_recognizers_returned(mock_recognizer_regi
     registry = mock_recognizer_registry
     registry.load_predefined_recognizers()
     recognizers = registry.get_recognizers(language="en", all_fields=True)
-    for rec in recognizers:
-        print(rec.name)
+    
     # 1 custom recognizer in english + 27 predefined - 11 disabled
     assert len(recognizers) == 1 + 27 - 11
 
