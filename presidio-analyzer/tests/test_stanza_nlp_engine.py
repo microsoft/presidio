@@ -15,6 +15,7 @@ def tags_equal(act, exp):
 
 @pytest.fixture(scope="module")
 def stanza_pipeline():
+    pytest.importorskip("stanza")
     import stanza
     lang = "en"
     stanza.download(lang)
