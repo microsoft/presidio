@@ -133,7 +133,7 @@ from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider
 
 provider = AnalyzerEngineProvider().create_engine()
 
-results = analyzer.analyze(text="My name is Morris", language="en")
+results = provider.analyze(text="My name is Morris", language="en")
 print(results)
 ```
 
