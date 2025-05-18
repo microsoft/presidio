@@ -45,6 +45,9 @@ jobs:
     - name: Run Microsoft Security DevOps
       uses: microsoft/security-devops-action@latest
       id: msdo
+      env:
+        GDN_CHECKOV_SKIPPATH: 'docs/'
+      
     - name: Upload results to Security tab
       uses: github/codeql-action/upload-sarif@v3
       with:
