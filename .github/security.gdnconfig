@@ -7,6 +7,28 @@
       },
       "arguments": {
         "SkipPath": "docs/**",
+        "TargetDirectory": "",
+        "File": "",
+        "ExternalChecksDir": "",
+        "List": "true",
+        "Framework": "",
+        "SkipFramework": "",
+        "Check": "",
+        "SkipCheck": "",
+        "HardFailOn": "",
+        "DownloadExternalModules": "",
+        "ExternalModulesDownloadPath": "",
+        "ConfigFile": "",
+        "CreateConfig": "",
+        "ShowConfig": "true",
+        "CreateBaseLine": "",
+        "Baseline": "",
+        "NoFailOnCrash": "",
+        "EnableSecretScanAllFiles": "false",
+        "BlockListSecretScan": "",
+        "Quiet": "false",
+        "Help": "",
+        "Version": ""
       }
     }
   ]
