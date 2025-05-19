@@ -47,7 +47,7 @@ jobs:
       with:
         config: '.github/security.gdnconfig'
       env:
-        GDN_CHECKOV_SKIPPATH: 'docs/'
+        GDN_CHECKOV_SKIPPATH: 'docs/**'
       
     - name: Upload results to Security tab
       uses: github/codeql-action/upload-sarif@v3
