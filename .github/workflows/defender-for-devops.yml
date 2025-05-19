@@ -25,7 +25,6 @@ on:
     branches: [ "main" ]
   schedule:
     - cron: '26 12 * * 1'
-
 jobs:
   MSDO:
     # currently only windows latest is supported
@@ -45,6 +44,8 @@ jobs:
     - name: Run Microsoft Security DevOps
       uses: microsoft/security-devops-action@latest
       id: msdo
+      with:
+        config: '.github/security.gdnconfig'
       env:
         GDN_CHECKOV_SKIPPATH: 'docs/'
       
