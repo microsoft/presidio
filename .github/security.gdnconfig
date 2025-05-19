@@ -8,7 +8,6 @@
       "arguments": {
         "SkipPath": "docs/**",
         "TargetDirectory": "",
-        "File": "",
         "ExternalChecksDir": "",
         "List": "true",
         "Framework": "",
