@@ -1,0 +1,13 @@
+{
+  "tools": [
+    {
+      "tool": {
+        "name": "Checkov",
+        "version": "Latest"
+      },
+      "arguments": {
+        "SkipPath": "docs/**",
+      }
+    }
+  ]
+}
