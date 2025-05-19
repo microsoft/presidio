@@ -44,8 +44,6 @@ jobs:
     - name: Run Microsoft Security DevOps
       uses: microsoft/security-devops-action@latest
       id: msdo
-      with:
-        config: '.github/security.gdnconfig'
       env:
         GDN_CHECKOV_SKIPPATH: 'docs/**'
       
