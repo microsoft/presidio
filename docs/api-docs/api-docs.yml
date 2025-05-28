@@ -43,7 +43,7 @@ paths:
                 description: "A list analysis results"
                 type: array
                 items:
-                  $ref: "#/components/schemas/RecognizerResultWithAnaysisExplanation"
+                  $ref: "#/components/schemas/RecognizerResultWithAnalysisExplanation"
 
               examples:
                 Enhanced response:
@@ -503,7 +503,7 @@ components:
           type: string
           description: "Name of recognizer that made the decision"
 
-    RecognizerResultWithAnaysisExplanation:
+    RecognizerResultWithAnalysisExplanation:
       allOf:
         - $ref: '#/components/schemas/RecognizerResult'
         - type: object
