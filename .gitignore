@@ -137,3 +137,6 @@ vendor/
 #mkdocs
 mkdocs/
 /presidio_mkdocs
+
+# Visual Studio
+/.vs
