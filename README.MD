@@ -36,6 +36,9 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u).
 
+## Are you using prebuilt Docker images?
+Please review the suggested change [here](https://github.com/microsoft/presidio/discussions/1601).
+
 ---
 
 ### Goals
