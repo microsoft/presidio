@@ -26,6 +26,7 @@ from presidio_nlp_engine_config import (
     create_nlp_engine_with_transformers,
     create_nlp_engine_with_azure_ai_language,
     create_nlp_engine_with_stanza,
+    create_nlp_engine_with_ahds
 )
 
 logger = logging.getLogger("presidio-streamlit")
@@ -59,6 +60,8 @@ def nlp_engine_and_registry(
         return create_nlp_engine_with_transformers(model_path)
     elif "azure ai language" in model_family.lower():
         return create_nlp_engine_with_azure_ai_language(ta_key, ta_endpoint)
+    elif "azure health data services" in model_family.lower():
+        return create_nlp_engine_with_ahds(ta_endpoint)
     else:
         raise ValueError(f"Model family {model_family} not supported")
 

@@ -1,0 +1,16 @@
+Here are a few example sentences we currently support for medical text:
+
+Patient John Doe, a 45-year-old male from Springfield, California, presented to City Hospital's Outpatient Clinic, Building B, on May 1, 2023. 
+He arrived with his Apple iPhone 13 and drove his Toyota Camry, license plate 7ABC123. Upon registration, he provided his BioID (123456789), Account Number (ACC-987654321), Medical Record Number (MRN-11223344), and ID Number (D1234567).
+
+John is insured under the BlueCross Gold health plan. 
+His Social Security Number is 123-45-6789, and his driver's license number is CA-9876543. 
+He can be contacted at (555) 123-4567 or by fax at (555) 987-6543. 
+His email address is john.doe@example.com, and his username for the patient portal is johndoe45. 
+He also accessed the portal at https://www.cityhospital.com/patientportal from IP address 192.168.1.100.
+
+Dr. Jane Smith, a cardiologist at City Hospital, conducted the examination. 
+John’s home address is 123 Main St, ZIP code 90210, United States. 
+His profession is listed as engineer, and his organization of employment is Tech Solutions Inc.
+
+

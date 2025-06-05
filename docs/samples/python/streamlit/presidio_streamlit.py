@@ -47,7 +47,7 @@ PII De-Identification with [Microsoft Presidio](https://microsoft.github.io/pres
 model_help_text = """
     Select which Named Entity Recognition (NER) model to use for PII detection, in parallel to rule-based recognizers.
     Presidio supports multiple NER packages off-the-shelf, such as spaCy, Huggingface, Stanza and Flair,
-    as well as service such as Azure Text Analytics PII.
+    as well as service such as Azure Text Analytics PII and Azure Health Data Services De-identification.
     """
 st_ta_key = st_ta_endpoint = ""
 
@@ -58,6 +58,7 @@ model_list = [
     "HuggingFace/StanfordAIMI/stanford-deidentifier-base",
     "stanza/en",
     "Azure AI Language",
+    "Azure Health Data Services De-identification",
     "Other",
 ]
 if not allow_other_models:
@@ -96,6 +97,12 @@ if st_model == "Azure AI Language":
         help="For more info: https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/personally-identifiable-information/overview",  # noqa: E501
     )
 
+if st_model == "Azure Health Data Services De-identification":
+    st_ta_endpoint = st.sidebar.text_input(
+        f"Azure Health Data Services De-identification endpoint",
+        value=os.getenv("AHDS_ENDPOINT", ""),
+        help="For more info: https://learn.microsoft.com/en-us/azure/health-data-services/de-identification/overview"
+    )
 
 st.sidebar.warning("Note: Models might take some time to download. ")
 
@@ -268,8 +275,13 @@ analyzer_load_state = st.info("Starting Presidio analyzer...")
 
 analyzer_load_state.empty()
 
-# Read default text
-with open("demo_text.txt") as f:
+# Read default text based on model
+if st_model == "Azure Health Data Services De-identification":
+    demo_text_file = "demo_text_medical.txt"
+else:
+    demo_text_file = "demo_text.txt"
+
+with open(demo_text_file) as f:
     demo_text = f.readlines()
 
 # Create two columns for before and after
