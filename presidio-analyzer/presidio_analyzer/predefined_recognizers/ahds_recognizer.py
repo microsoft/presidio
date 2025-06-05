@@ -112,7 +112,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
                         entity_type=category,
                         start=entity.offset.code_point,
                         end=entity.offset.code_point + entity.length.code_point,
-                        score=round(entity.confidenceScore, 2),
+                        score=round(entity.confidence_score, 2),
                         analysis_explanation=analysis_explanation,
                     )
                 )
