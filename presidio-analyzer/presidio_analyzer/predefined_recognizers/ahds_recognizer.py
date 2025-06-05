@@ -123,7 +123,8 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
             recognizer=AzureHealthDeidRecognizer.__class__.__name__,
             original_score=1.0,
             textual_explanation=(
-            f"Identified as {entity_type} by Azure Health Data Services Deidentification"
+            f"Identified as {entity_type} by Azure Health Data Services "
+            "Deidentification"
             ),
         )
         return explanation

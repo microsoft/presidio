@@ -11,7 +11,8 @@ This document will demonstrate Presidio integration with the AHDS
 De-Identification Service.
 
 ## Supported entity categories in the Azure Health Data Services De-Identification API
-Azure AI Language supports multiple PII entity categories. The Azure AI Laguage service
+Azure Health Data Services De-Identification supports multiple PII entity categories.
+The Azure Health Data Services De-Identification service
 runs a predictive model to identify and categorize named entities from an input
 document. The service's latest version includes the ability to detect personal (PII)
 and health (PHI) information. A list of all supported entities can be found in the
