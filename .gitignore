@@ -140,3 +140,4 @@ mkdocs/
 
 # Visual Studio
 /.vs
+/TestResults
