@@ -36,7 +36,7 @@ class AHDSServiceWrapper(EntityRecognizer):
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
-            name="Azure Health Deidentification",
+            name="Azure Health Data Services Deidentification",
             version="1.0.0",
             **kwargs
         )
@@ -50,7 +50,7 @@ class AHDSServiceWrapper(EntityRecognizer):
 
         if not DeidentificationClient:
             raise ImportError(
-                "Azure Health Deidentification SDK is not available. "
+                "Azure Health Data Services Deidentification SDK is not available. "
                 "Please install azure-health-deidentification and azure-identity."
             )
 
@@ -61,7 +61,7 @@ class AHDSServiceWrapper(EntityRecognizer):
 
     @staticmethod
     def _get_supported_entities() -> List[str]:
-        # Update this list based on the latest Azure Health Deidentification documentation
+        # Update this list based on the latest Azure Health Data Services Deidentification documentation
         return [
         'ACCOUNT', 'AGE', 'BIOID', 'CITY', 'COUNTRY', 'DATE', 'DEVICE', 'DOCTOR',
         'EMAIL', 'HEALTHPLAN', 'HOSPITAL', 'IDNUM', 'IPADDRESS', 'LICENSE', 'LOCATION-OTHER',
@@ -76,7 +76,7 @@ class AHDSServiceWrapper(EntityRecognizer):
         self, text: str, entities: List[str] = None, nlp_artifacts: NlpArtifacts = None
     ) -> List[RecognizerResult]:
         """
-        Analyze text using Azure Health Deidentification (TAG operation).
+        Analyze text using Azure Health Data Services Deidentification (TAG operation).
 
         :param text: Text to analyze
         :param entities: List of entities to return (optional)
@@ -117,7 +117,7 @@ class AHDSServiceWrapper(EntityRecognizer):
         explanation = AnalysisExplanation(
             recognizer=AHDSServiceWrapper.__class__.__name__,
             original_score=1.0,
-            textual_explanation=f"Identified as {entity_type} by Azure Health Deidentification",
+            textual_explanation=f"Identified as {entity_type} by Azure Health Data Services Deidentification",
         )
         return explanation
 

@@ -34,7 +34,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
-            name="Azure Health Deidentification",
+            name="Azure Health Data Services Deidentification",
             version="1.0.0",
             **kwargs
         )
@@ -49,7 +49,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
 
         if not DeidentificationClient:
             raise ImportError(
-                "Azure Health Deidentification SDK is not available. "
+                "Azure Health Data Services Deidentification SDK is not available. "
                 "Please install azure-health-deidentification and azure-identity."
             )
 
@@ -81,7 +81,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         self, text: str, entities: List[str] = None, nlp_artifacts: NlpArtifacts = None
     ) -> List[RecognizerResult]:
         """
-        Analyze text using Azure Health Deidentification (TAG operation).
+        Analyze text using Azure Health Data Services Deidentification (TAG operation).
 
         :param text: Text to analyze
         :param entities: List of entities to return (optional)
@@ -123,7 +123,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
             recognizer=AzureHealthDeidRecognizer.__class__.__name__,
             original_score=1.0,
             textual_explanation=(
-            f"Identified as {entity_type} by Azure Health Deidentification"
+            f"Identified as {entity_type} by Azure Health Data Services Deidentification"
             ),
         )
         return explanation
