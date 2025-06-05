@@ -54,3 +54,25 @@ class InGstinRecognizer(PatternRecognizer):
             supported_language=supported_language,
             supported_entity=supported_entity,
         )
+
+
+    def validate_result(self, pattern_text: str) -> Optional[float]:
+        if len(pattern_text) != 15:
+            return 0.0
+        base = pattern_text[:14]
+        checksum_char = pattern_text[14]
+        calculated_checksum = self._calculate_checksum(base)
+        return 1.0 if checksum_char.upper() == calculated_checksum else 0.0
+    
+    def _calculate_checksum(self, gstin_without_checksum: str) -> str:
+        charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        factor = 2
+        total = 0
+        for char in reversed(gstin_without_checksum):
+            code_point = charset.index(char)
+            addend = factor * code_point
+            total += (addend // 36) + (addend % 36)
+            factor = 1 if factor == 2 else 2
+        remainder = total % 36
+        check_code_point = (36 - remainder) % 36
+        return charset[check_code_point]
