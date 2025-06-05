@@ -100,7 +100,6 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         recognizer_results = []
         if result.tagger_result and result.tagger_result.entities:
             for entity in result.tagger_result.entities:
-                print(f"Entity: {entity}")
                 category = entity.category.upper()
                 if category not in [e.upper() for e in entities]:
                     continue

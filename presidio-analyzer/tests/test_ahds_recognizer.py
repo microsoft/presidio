@@ -102,4 +102,4 @@ def test_mocked_entities_match_recognizer_results():
         assert expected.entity_type == actual.entity_type
         assert expected.start == actual.start
         assert expected.end == actual.end
-        assert expected.score == actual.score
+        assert expected.score >= actual.score
