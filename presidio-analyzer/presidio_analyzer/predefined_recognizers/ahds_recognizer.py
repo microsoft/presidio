@@ -14,7 +14,7 @@ from presidio_analyzer.nlp_engine import NlpArtifacts
 
 
 class AzureHealthDeidRecognizer(RemoteRecognizer):
-    """Wrapper for PHI detection using Azure Health Data Services De-identification."""
+    """Wrapper for PHI detection using Azure Health Data Services de-identification."""
 
     def __init__(
         self,
@@ -24,7 +24,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         **kwargs
     ):
         """
-        Wrap PHI detection using Azure Health Data Services De-identification.
+        Wrap PHI detection using Azure Health Data Services de-identification.
 
         :param supported_entities: List of supported entities for this recognizer.
         :param supported_language: Language code (not used, only 'en' supported).
@@ -100,6 +100,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         recognizer_results = []
         if result.tagger_result and result.tagger_result.entities:
             for entity in result.tagger_result.entities:
+                print(f"Entity: {entity}")
                 category = entity.category.upper()
                 if category not in [e.upper() for e in entities]:
                     continue
@@ -111,7 +112,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
                         entity_type=category,
                         start=entity.offset.code_point,
                         end=entity.offset.code_point + entity.length.code_point,
-                        score=1.0,
+                        score=round(entity.confidenceScore, 2),
                         analysis_explanation=analysis_explanation,
                     )
                 )

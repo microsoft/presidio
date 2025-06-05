@@ -1,8 +1,8 @@
-# Azure Health Data Services De-Identification Service Integration
+# Azure Health Data Services de-identification Integration
 
 ## Introduction
 
-The Azure Health Data Services (AHDS) De-Identification Service is a cloud-based 
+The Azure Health Data Services (AHDS) de-identification Service is a cloud-based 
 service that provides advanced natural language processing over 
 raw text. One of its main functions includes Named Entity Recognition 
 (NER), which has the ability to identify different
@@ -10,9 +10,9 @@ entities in text and categorize them into pre-defined classes or types.
 This document will demonstrate Presidio integration with the AHDS
 De-Identification Service.
 
-## Supported entity categories in the Azure Health Data Services De-Identification API
-Azure Health Data Services De-Identification supports multiple PII entity categories.
-The Azure Health Data Services De-Identification service
+## Supported entity categories in the Azure Health Data Services de-identification API
+Azure Health Data Services de-identification supports multiple PII entity categories.
+The Azure Health Data Services de-identification service
 runs a predictive model to identify and categorize named entities from an input
 document. The service's latest version includes the ability to detect personal (PII)
 and health (PHI) information. A list of all supported entities can be found in the
@@ -24,10 +24,10 @@ first be created under an Azure subscription. Follow the [official documentation
 for instructions. The endpoint, generated once the resource is created, 
 will be used when integrating with AHDS De-Identification, using a Presidio remote recognizer.
 
-## Azure Health Data Services De-Identification Recognizer
+## Azure Health Data Services de-identification Recognizer
 [The implementation of a `AzureHealthDeid` recognizer can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/ahds_recognizer.py).
 
-## How to integrate Azure Health Data Services De-Identification into Presidio
+## How to integrate Azure Health Data Services de-identification into Presidio
 
 1. Install the package with the ahds extra:
   ```sh

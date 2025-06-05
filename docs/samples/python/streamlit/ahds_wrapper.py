@@ -16,7 +16,7 @@ logger = logging.getLogger("presidio-streamlit")
 
 
 class AHDSServiceWrapper(EntityRecognizer):
-    """Wrapper for PHI detection using Azure Health Data Services De-identification."""
+    """Wrapper for PHI detection using Azure Health Data Services de-identification."""
 
     def __init__(
         self,
@@ -26,7 +26,7 @@ class AHDSServiceWrapper(EntityRecognizer):
         **kwargs
     ):
         """
-        Wrap PHI detection using Azure Health Data Services De-identification.
+        Wrap PHI detection using Azure Health Data Services de-identification.
 
         :param supported_entities: List of supported entities for this recognizer.
         :param supported_language: Language code (not used, only 'en' supported).

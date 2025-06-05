@@ -159,7 +159,7 @@ On how to integrate Presidio with Azure AI Language PII detection service,
 and a sample for a Text Analytics Remote Recognizer, refer to the
 [Azure Text Analytics Integration document](../samples/python/text_analytics/index.md).
 
-### Azure Health Data Services (AHDS) De-Identification recognizer
+### Azure Health Data Services (AHDS) de-identification recognizer
 
 On how to integrate Presidio with AHDS De-Identification Protected Health Information (PHI) detection service,
 and a sample for a Text Analytics Remote Recognizer, refer to the

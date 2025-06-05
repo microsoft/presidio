@@ -217,8 +217,8 @@ def create_nlp_engine_with_azure_ai_language(ta_key: str, ta_endpoint: str):
 
 def create_nlp_engine_with_ahds(ta_endpoint: str):
     """
-    Instantiate an NlpEngine with an Azure Health Data Services De-identification recognizer and a small spaCy model.
-    The Azure Health Data Services recognizer would return results from calling Azure Health Data Services De-identification,
+    Instantiate an NlpEngine with an Azure Health Data Services de-identification recognizer and a small spaCy model.
+    The Azure Health Data Services recognizer would return results from calling Azure Health Data Services de-identification,
     the spaCy model would return NlpArtifacts such as POS and lemmas.
     :param ta_key: Azure Health Data Services key (not used, uses DefaultAzureCredential).
     :param ta_endpoint: Azure Health Data Services endpoint.
