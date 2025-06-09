@@ -22,6 +22,8 @@ def entities():
         ("My GST number is 27ABCDE1234H1Z9 and it's active", 1, (17, 32), 0.5), 
         ("This is not a GSTIN: ABCDE1234F1Z5", 0, (), ()), 
         ("GSTIN: 99ABCDE1234L1Z1", 1, (7, 22), 0.5), 
+        ("Invalid checksum validation : 07ABCDE1234G1Z9", 0, (), ()),
+
         # fmt: on
     ],
 )
