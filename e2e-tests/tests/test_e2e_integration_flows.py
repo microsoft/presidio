@@ -38,7 +38,7 @@ def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
         "analysis_explanation": null
         },
         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, 
-        "analysis_explanation": null,
+        "analysis_explanation": null
         }
     ]
     """
