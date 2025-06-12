@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 ARG NAME
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
@@ -21,7 +21,7 @@ WORKDIR /usr/bin/${NAME}
 
 # Install essential build tools
 RUN apt-get update \
-  && apt-get install -y build-essential
+  && apt-get install -y build-essential python3-srsly
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
