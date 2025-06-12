@@ -21,7 +21,7 @@ WORKDIR /usr/bin/${NAME}
 
 # Install essential build tools
 RUN apt-get update \
-  && apt-get install -y build-essential python3-srsly
+  && apt-get install -y build-essential
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
