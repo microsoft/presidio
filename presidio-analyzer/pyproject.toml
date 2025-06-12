@@ -24,7 +24,7 @@ include = ["conf/*",]
 requires-python = ">=3.9,<4.0"
 dependencies = [
     "spacy (>=3.4.4, <4.0.0, !=3.7.0)",
-    "srsly" (>=2.5.0), 
+    "srsly (>=2.5.0)", 
     "regex",
     "tldextract",
     "pyyaml",
