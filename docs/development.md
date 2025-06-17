@@ -198,25 +198,6 @@ Running the e2e-tests locally can be done in two ways:
 !!! note "Note"
     The e2e tests require a Presidio cluster to be up, for example using the containerized cluster with docker-compose.
 
-### Build and run end-to-end tests locally
-
-Building and testing presidio locally, as explained above, can give good assurance on new changes and on regressions
-that might have introduced during development.
-As an easier method to build and automatically run end-to-end tests, is to use the `run.bat` script found in the project root:
-
-On Mac / Linux / WSL:
-
-```sh
-chmod +x run.bat
-./run.bat
-```
-
-On Windows CMD / Powershell:
-
-```shell
-run.bat
-```
-
 ### Linting
 
 Presidio services are PEP8 compliant and continuously enforced on style guide issues during the build process using `ruff`, in turn running `flake8` and other linters.
