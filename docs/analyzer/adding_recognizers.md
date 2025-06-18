@@ -162,8 +162,8 @@ and a sample for a Text Analytics Remote Recognizer, refer to the
 ### Azure Health Data Services (AHDS) de-identification recognizer
 
 On how to integrate Presidio with AHDS De-Identification Protected Health Information (PHI) detection service,
-and a sample for a Text Analytics Remote Recognizer, refer to the
-[AHDS De-Identification Integration document](../samples/python/text_analytics/index.md).
+and a sample for a ADHS Remote Recognizer, refer to the
+[AHDS de-Identification Integration document](../samples/python/ahds/index.md).
 
 ### Creating ad-hoc recognizers
 

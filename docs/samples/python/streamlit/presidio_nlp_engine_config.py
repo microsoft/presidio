@@ -220,17 +220,13 @@ def create_nlp_engine_with_ahds(ta_endpoint: str):
     Instantiate an NlpEngine with an Azure Health Data Services de-identification recognizer and a small spaCy model.
     The Azure Health Data Services recognizer would return results from calling Azure Health Data Services de-identification,
     the spaCy model would return NlpArtifacts such as POS and lemmas.
-    :param ta_key: Azure Health Data Services key (not used, uses DefaultAzureCredential).
-    :param ta_endpoint: Azure Health Data Services endpoint.
+    Requries a DefaultAzureCredential to access the Azure Health Data Services de-identification service.
+    :param ta_endpoint: Azure Health Data Services de-identification endpoint.
     """
     from ahds_wrapper import AHDSServiceWrapper
 
     if not ta_endpoint:
-        raise RuntimeError("Please fill in the Azure Health Data Services endpoint details")
-
-    # Set environment variable for endpoint so the wrapper can pick it up
-    import os
-    os.environ["AHDS_ENDPOINT"] = ta_endpoint
+        raise RuntimeError("Please fill in the Azure Health Data Services key and endpoint details")
 
     registry = RecognizerRegistry()
     registry.load_predefined_recognizers()

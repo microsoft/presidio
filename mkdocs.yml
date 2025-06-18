@@ -129,6 +129,7 @@ not_in_nav : |
   samples/python/custom_presidio.py
   samples/python/simple_anonymization_example.py
   samples/python/streamlit/azure_ai_language_wrapper.py
+  samples/python/streamlit/ahds_wrapper.py
   samples/python/streamlit/flair_recognizer.py
   samples/python/streamlit/openai_fake_data_generator.py
   samples/python/streamlit/presidio_helpers.py

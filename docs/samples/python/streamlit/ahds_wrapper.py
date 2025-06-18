@@ -11,6 +11,7 @@ from azure.health.deidentification.models import (
     DeidentificationOperationType,
 )
 from azure.identity import DefaultAzureCredential
+from azure.health.deidentification.models import PhiCategory
 
 logger = logging.getLogger("presidio-streamlit")
 
@@ -41,12 +42,18 @@ class AHDSServiceWrapper(EntityRecognizer):
             **kwargs
         )
 
-        dotenv.load_dotenv()
+        endpoint = os.getenv("AHDS_ENDPOINT", None)
 
-        endpoint = os.environ["AHDS_ENDPOINT"]
+        if endpoint is None:
+            raise ValueError(
+                "AHDS de-identification endpoint is required. "
+                "Please provide an endpoint "
+                "or set the AHDS_ENDPOINT environment variable."
+            )
+        
         credential = DefaultAzureCredential()
-        if not client:
-            client = DeidentificationClient(endpoint, credential)
+        client = DeidentificationClient(endpoint, credential)
+        
 
         if not DeidentificationClient:
             raise ImportError(
@@ -61,13 +68,17 @@ class AHDSServiceWrapper(EntityRecognizer):
 
     @staticmethod
     def _get_supported_entities() -> List[str]:
-        # Update this list based on the latest Azure Health Data Services Deidentification documentation
-        return [
-        'ACCOUNT', 'AGE', 'BIOID', 'CITY', 'COUNTRY', 'DATE', 'DEVICE', 'DOCTOR',
-        'EMAIL', 'HEALTHPLAN', 'HOSPITAL', 'IDNUM', 'IPADDRESS', 'LICENSE', 'LOCATION-OTHER',
-        'MEDICALRECORD', 'ORGANIZATION', 'PATIENT', 'PHONE', 'PROFESSION', 'SOCIALSECURITY',
-        'STATE', 'STREET', 'URL', 'USERNAME', 'VEHICLE', 'ZIP', 'FAX',
-        ]
+        # Dynamically get supported entities from PHICategory enum in the SDK
+        try:
+            return [e.name for e in PhiCategory]
+        except ImportError:
+            logger.warning("Could not import PhiCategory from azure.health.deidentification.models. Returning default list.")
+            return [
+                'ACCOUNT', 'AGE', 'CITY', 'COUNTRY', 'DATE', 'DEVICE', 'DOCTOR',
+                'EMAIL', 'HEALTHPLAN', 'HOSPITAL', 'IDNUM', 'IPADDRESS', 'LICENSE', 'LOCATION-OTHER',
+                'MEDICALRECORD', 'ORGANIZATION', 'PATIENT', 'PHONE', 'PROFESSION', 'SOCIALSECURITY',
+                'STATE', 'STREET', 'URL', 'USERNAME', 'VEHICLE', 'ZIP', 'FAX',
+            ]
 
     def get_supported_entities(self) -> List[str]:
         return self.supported_entities
@@ -101,6 +112,7 @@ class AHDSServiceWrapper(EntityRecognizer):
                 analysis_explanation = AHDSServiceWrapper._build_explanation(
                     entity_type=category
                 )
+                print(entity.confidence_score, entity.offset.code_point, entity.length.code_point)
                 recognizer_results.append(
                     RecognizerResult(
                         entity_type=category,

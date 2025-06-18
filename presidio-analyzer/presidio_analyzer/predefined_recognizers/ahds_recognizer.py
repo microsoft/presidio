@@ -1,11 +1,11 @@
 import os
 from typing import List, Optional
 
-import dotenv
 from azure.health.deidentification import DeidentificationClient
 from azure.health.deidentification.models import (
     DeidentificationContent,
     DeidentificationOperationType,
+    PhiCategory,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -40,13 +40,18 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         )
 
 
-        dotenv.load_dotenv()
+        endpoint = os.getenv("AHDS_ENDPOINT", None)
 
-        endpoint = os.environ["AHDS_ENDPOINT"]
+        if endpoint is None:
+            raise ValueError(
+                "AHDS de-identification endpoint is required. "
+                "Please provide an endpoint "
+                "or set the AHDS_ENDPOINT environment variable."
+            )
+        
         credential = DefaultAzureCredential()
         client = DeidentificationClient(endpoint, credential)
-
-
+        
         if not DeidentificationClient:
             raise ImportError(
                 "Azure Health Data Services Deidentification SDK is not available. "
@@ -60,13 +65,17 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
 
     @staticmethod
     def _get_supported_entities() -> List[str]:
-        return [
-        'ACCOUNT', 'AGE', 'BIOID', 'CITY', 'COUNTRY', 'DATE', 'DEVICE', 'DOCTOR',
-        'EMAIL', 'HEALTHPLAN', 'HOSPITAL', 'IDNUM', 'IPADDRESS',
-        'LICENSE', 'LOCATION-OTHER','MEDICALRECORD', 'ORGANIZATION',
-        'PATIENT', 'PHONE', 'PROFESSION', 'SOCIALSECURITY',
-        'STATE', 'STREET', 'URL', 'USERNAME', 'VEHICLE', 'ZIP', 'FAX',
-        ]
+        # Dynamically get supported entities from PHICategory enum in the SDK
+        try:
+            return [e.name for e in PhiCategory]
+        except ImportError:
+            logger.warning("Could not import PhiCategory from azure.health.deidentification.models. Returning default list.")
+            return [
+                'ACCOUNT', 'AGE', 'CITY', 'COUNTRY', 'DATE', 'DEVICE', 'DOCTOR',
+                'EMAIL', 'HEALTHPLAN', 'HOSPITAL', 'IDNUM', 'IPADDRESS', 'LICENSE', 'LOCATION-OTHER',
+                'MEDICALRECORD', 'ORGANIZATION', 'PATIENT', 'PHONE', 'PROFESSION', 'SOCIALSECURITY',
+                'STATE', 'STREET', 'URL', 'USERNAME', 'VEHICLE', 'ZIP', 'FAX',
+            ]
 
     def get_supported_entities(self) -> List[str]:
         """
