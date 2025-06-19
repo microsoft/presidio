@@ -136,7 +136,7 @@ def test_when_text_with_only_additional_context_lemma_based_context_enhancer_the
     in text to support context enhancement.
 
     when passing a word which doesn't appear in the text but is defined as context in
-    the recognizer which recongnized this the recognized entity and there's no other
+    the recognizer which recognized this the recognized entity and there's no other
     word in the text tp support context, the enhancer should
     return that word as supportive_context_word and raise the score.
     """
