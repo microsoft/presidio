@@ -47,6 +47,10 @@ azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
 ]
+ahds = [
+    "azure-identity (>=1.23.0,<2.0.0)",
+    "azure-health-deidentification (>=1.0.0,<2.0.0)"
+]
 gliner = [
     "transformers",
     "huggingface_hub",
