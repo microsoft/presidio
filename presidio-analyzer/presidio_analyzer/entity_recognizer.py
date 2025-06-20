@@ -22,7 +22,7 @@ class EntityRecognizer:
     :param supported_entities: the entities supported by this recognizer
     (for example, phone number, address, etc.)
     :param supported_language: the language supported by this recognizer.
-    The supported langauge code is iso6391Name
+    The supported language code is iso6391Name
     :param name: the name of this recognizer (optional)
     :param version: the recognizer current version
     :param context: a list of words which can help boost confidence score
