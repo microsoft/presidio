@@ -8,7 +8,7 @@
 
 CLI tool that analyzes text for PII Entities using Presidio Analyzer.
 
-## Prerequisities
+## Prerequisites
 
 `Python` version: 3.9, 3.10, 3.11
 
