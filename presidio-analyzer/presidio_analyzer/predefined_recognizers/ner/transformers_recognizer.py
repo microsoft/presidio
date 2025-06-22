@@ -1,6 +1,6 @@
 import logging
 
-from presidio_analyzer.predefined_recognizers.spacy_recognizer import SpacyRecognizer
+from presidio_analyzer.predefined_recognizers.ner.spacy_recognizer import SpacyRecognizer
 
 logger = logging.getLogger("presidio-analyzer")
 
