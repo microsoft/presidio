@@ -5,6 +5,7 @@ from presidio_analyzer.predefined_recognizers.transformers_recognizer import (
 )
 
 from .aba_routing_recognizer import AbaRoutingRecognizer
+from .ahds_recognizer import AzureHealthDeidRecognizer
 from .au_abn_recognizer import AuAbnRecognizer
 from .au_acn_recognizer import AuAcnRecognizer
 from .au_medicare_recognizer import AuMedicareRecognizer
@@ -108,4 +109,5 @@ __all__ = [
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
     "UkNinoRecognizer",
+    "AzureHealthDeidRecognizer",
 ]
