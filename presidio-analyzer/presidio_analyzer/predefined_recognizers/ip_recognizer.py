@@ -61,3 +61,40 @@ class IpRecognizer(PatternRecognizer):
             ipaddress.ip_address(pattern_text)
         except ValueError:
             return True
+
+    def analyze(self, text: str, entities: List[str], nlp_artifacts=None):
+        """
+        Analyze text to find IP addresses, with special handling for IPv6 addresses
+        to prefer longer valid matches over shorter ones.
+        """
+        results = super().analyze(text, entities, nlp_artifacts)
+        
+        # Check for IPv6 addresses that might have been matched partially
+        # and try to extend them to find the longest valid IPv6 match
+        improved_results = []
+        
+        for result in results:
+            matched_text = text[result.start:result.end]
+            
+            # If this looks like an IPv6 with :, try to extend it
+            if ":" in matched_text and result.end < len(text):
+                # Try to find a longer valid IPv6 starting from the same position
+                longest_end = result.end
+                
+                # Extend character by character to find the longest valid IPv6
+                for end_pos in range(result.end + 1, len(text) + 1):
+                    candidate = text[result.start:end_pos]
+                    try:
+                        ipaddress.ip_address(candidate)
+                        longest_end = end_pos
+                    except ValueError:
+                        # Stop extending when we hit an invalid IP
+                        break
+                
+                # Update the result if we found a longer valid match
+                if longest_end > result.end:
+                    result.end = longest_end
+            
+            improved_results.append(result)
+        
+        return improved_results
