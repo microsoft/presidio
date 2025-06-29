@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Analyzer
 #### Changed
+- Reorganized predefined recognizers into subfolders for better organization:
+  - Country-specific recognizers moved to `country_specific/{country_name}/` folders
+  - Generic recognizers moved to `generic/` folder  
+  - NER recognizers moved to `ner/` folder
+  - Maintains backward compatibility - all existing imports continue to work
 - Most country specific recognizers that expect English were put as optional to avoid false positives, and would not work out-of-the-box (#1586). Specifically: 
   - SgFinRecognizer
   - AuAbnRecognizer

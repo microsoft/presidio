@@ -11,7 +11,7 @@ from presidio_analyzer import (
     RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
-from presidio_analyzer.predefined_recognizers.iban_patterns import (
+from presidio_analyzer.predefined_recognizers.generic.iban_patterns import (
     BOS,
     EOS,
     regex_per_country,
