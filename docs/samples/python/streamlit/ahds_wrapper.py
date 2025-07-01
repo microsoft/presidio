@@ -127,7 +127,7 @@ class AHDSServiceWrapper(EntityRecognizer):
     @staticmethod
     def _build_explanation(entity_type: str) -> AnalysisExplanation:
         explanation = AnalysisExplanation(
-            recognizer=AHDSServiceWrapper.__class__.__name__,
+            recognizer = "AzureHealthDeidRecognizer",
             original_score=1.0,
             textual_explanation=f"Identified as {entity_type} by Azure Health Data Services Deidentification",
         )
