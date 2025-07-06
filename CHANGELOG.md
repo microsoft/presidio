@@ -45,6 +45,9 @@ All notable changes to this project will be documented in this file.
 
 ### General
 
+### Fixed
+- Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
+
 ## [2.2.358] - 2025-03-18
 
 ### Analyzer
@@ -588,7 +591,4 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 [2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
 [2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
 
-## Unreleased
 
-### Fixed
-- Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
