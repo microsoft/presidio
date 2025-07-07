@@ -14,7 +14,6 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 
 
-
 from presidio_analyzer.predefined_recognizers import AzureHealthDeidRecognizer
 
 
@@ -25,7 +24,6 @@ def requires_env_vars():
         endpoint == "",
         reason="AHDS_ENDPOINT environment variable not set"
     )
-
 
 @requires_env_vars()
 def test_get_supported_entities():
@@ -71,6 +69,7 @@ def test_analyze_with_supported_entities_filter():
     assert all(r.entity_type == "EMAIL" for r in results)
 
 
+@requires_env_vars()
 def test_mocked_entities_match_recognizer_results():
     try:
         importlib.import_module("azure.health.deidentification")
