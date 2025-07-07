@@ -267,8 +267,8 @@ analyzer_load_state = st.info("Starting Presidio analyzer...")
 
 analyzer_load_state.empty()
 
-demo_text_file = "demo_text.txt"
-with open(demo_text_file) as f:
+# Read default text
+with open("demo_text.txt") as f:
     demo_text = f.readlines()
 
 # Create two columns for before and after
