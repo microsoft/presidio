@@ -26,7 +26,6 @@ from presidio_nlp_engine_config import (
     create_nlp_engine_with_transformers,
     create_nlp_engine_with_azure_ai_language,
     create_nlp_engine_with_stanza,
-    create_nlp_engine_with_ahds
 )
 
 logger = logging.getLogger("presidio-streamlit")
