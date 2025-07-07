@@ -208,7 +208,7 @@ def test_analyzer_engine_provider_with_ahds():
     ahds_recognizers = [
         rec
         for rec in analyzer_engine.registry.recognizers
-        if rec.name == "Azure Health Data Services Deidentification"
+        if rec.name == "Azure Health Data Services de-identification"
     ]
 
     assert len(ahds_recognizers) == 1
