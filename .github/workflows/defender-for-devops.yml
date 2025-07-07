@@ -47,7 +47,8 @@ jobs:
       id: msdo
       env:
         GDN_CHECKOV_SKIPPATH: 'docs/'
-      
+        GDN_ANTIMALWARE_SIGNATUREUPDATEFAILURELOGGERLEVEL: 'Warning'
+
     - name: Upload results to Security tab
       uses: github/codeql-action/upload-sarif@v3
       with:
