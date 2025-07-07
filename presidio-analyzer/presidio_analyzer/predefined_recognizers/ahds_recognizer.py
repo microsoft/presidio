@@ -48,10 +48,10 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
                 "Please provide an endpoint "
                 "or set the AHDS_ENDPOINT environment variable."
             )
-        
+
         credential = DefaultAzureCredential()
         client = DeidentificationClient(endpoint, credential)
-        
+
         if not DeidentificationClient:
             raise ImportError(
                 "Azure Health Data Services Deidentification SDK is not available. "
@@ -69,11 +69,11 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         try:
             return [e.name for e in PhiCategory]
         except ImportError:
-            logger.warning("Could not import PhiCategory from azure.health.deidentification.models. Returning default list.")
             return [
                 'ACCOUNT', 'AGE', 'CITY', 'COUNTRY', 'DATE', 'DEVICE', 'DOCTOR',
-                'EMAIL', 'HEALTHPLAN', 'HOSPITAL', 'IDNUM', 'IPADDRESS', 'LICENSE', 'LOCATION-OTHER',
-                'MEDICALRECORD', 'ORGANIZATION', 'PATIENT', 'PHONE', 'PROFESSION', 'SOCIALSECURITY',
+                'EMAIL', 'HEALTHPLAN', 'HOSPITAL', 'IDNUM', 'IPADDRESS',
+                'LICENSE', 'LOCATION-OTHER', 'MEDICALRECORD', 'ORGANIZATION',
+                'PATIENT', 'PHONE', 'PROFESSION', 'SOCIALSECURITY',
                 'STATE', 'STREET', 'URL', 'USERNAME', 'VEHICLE', 'ZIP', 'FAX',
             ]
 
