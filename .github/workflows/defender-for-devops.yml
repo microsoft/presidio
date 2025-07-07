@@ -48,6 +48,7 @@ jobs:
       env:
         GDN_CHECKOV_SKIPPATH: 'docs/'
         GDN_ANTIMALWARE_SIGNATUREUPDATEFAILURELOGGERLEVEL: 'Warning'
+        GDN_ANTIMALWARE_SIGNATUREUPDATEUSESMMPC: true
 
     - name: Upload results to Security tab
       uses: github/codeql-action/upload-sarif@v3
