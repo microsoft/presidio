@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### Analyzer
+#### Changed
+- Implement Fix for Italian Duplicate Driver license
+    - Update Test cases to account for changed recognizer
 
 ## [2.2.359] - 2025-07-06
 ### Analyzer
