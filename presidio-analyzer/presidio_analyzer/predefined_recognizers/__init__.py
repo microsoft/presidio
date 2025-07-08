@@ -20,6 +20,7 @@ from .fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecogniz
 from .gliner_recognizer import GLiNERRecognizer
 from .iban_recognizer import IbanRecognizer
 from .in_aadhaar_recognizer import InAadhaarRecognizer
+from .in_gstin_recognizer import InGstinRecognizer
 from .in_pan_recognizer import InPanRecognizer
 from .in_passport_recognizer import InPassportRecognizer
 from .in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
@@ -96,6 +97,7 @@ __all__ = [
     "ItVatCodeRecognizer",
     "ItIdentityCardRecognizer",
     "ItPassportRecognizer",
+    "InGstinRecognizer",
     "InPanRecognizer",
     "GLiNERRecognizer",
     "PlPeselRecognizer",
