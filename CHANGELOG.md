@@ -630,3 +630,4 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 
 ### Fixed
 - Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
+- Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
