@@ -47,7 +47,7 @@ PII De-Identification with [Microsoft Presidio](https://microsoft.github.io/pres
 model_help_text = """
     Select which Named Entity Recognition (NER) model to use for PII detection, in parallel to rule-based recognizers.
     Presidio supports multiple NER packages off-the-shelf, such as spaCy, Huggingface, Stanza and Flair,
-    as well as service such as Azure Text Analytics PII.
+    as well as services such as Azure AI Language PII.
     """
 st_ta_key = st_ta_endpoint = ""
 
@@ -95,7 +95,6 @@ if st_model == "Azure AI Language":
         value=os.getenv("TA_ENDPOINT", default=""),
         help="For more info: https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/personally-identifiable-information/overview",  # noqa: E501
     )
-
 
 st.sidebar.warning("Note: Models might take some time to download. ")
 
