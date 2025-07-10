@@ -1,17 +1,23 @@
 import os
 from typing import List, Optional
 
-from azure.health.deidentification import DeidentificationClient
-from azure.health.deidentification.models import (
-    DeidentificationContent,
-    DeidentificationOperationType,
-    PhiCategory,
-)
-from azure.identity import DefaultAzureCredential
+try:
+    from azure.health.deidentification import DeidentificationClient
+    from azure.health.deidentification.models import (
+        DeidentificationContent,
+        DeidentificationOperationType,
+        PhiCategory,
+    )
+    from azure.identity import DefaultAzureCredential
+except ImportError:
+    DeidentificationClient = None
+    DeidentificationContent = None
+    DeidentificationOperationType = None
+    PhiCategory = None
+    DefaultAzureCredential = None
 
 from presidio_analyzer import AnalysisExplanation, RecognizerResult, RemoteRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
-
 
 class AzureHealthDeidRecognizer(RemoteRecognizer):
     """Wrapper for PHI detection using Azure Health Data Services de-identification."""
