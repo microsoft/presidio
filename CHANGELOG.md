@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### Analyzer
+#### Changed
+- Recognizer in_aadhaar_recognizer updated to include patterns for common contextual delimiters
+
 ## [2.2.359] - 2025-07-06
 ### Analyzer
 - Allow loading of StanzaRecognizer when StanzaNlpEngine is configured, improving NLP engine flexibility (#1643) (Thanks @omri374)
