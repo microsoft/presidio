@@ -100,7 +100,7 @@ Pseudonymization is a de-identification technique in which the real data is repl
 
 ### Does Presidio work on structured/tabular data?
 
-[Presidio-structured](https://microsoft.github.io/presidio/structured/) is a new capability in Presidio for detecting PII entities in structured/semi-structured data, and is still in alpha. If you have a question, suggestion, or a contribution in this area, please reach out by opening an issue, starting a discussion or reaching us directly at <presidio@microsoft.com>
+[Presidio-structured](https://microsoft.github.io/presidio/structured/) is a capability in Presidio for detecting PII entities in structured/semi-structured data. It scans datasets for PII using Presidio Analyzer, and supports the redaction of text, cells, or columns in a tabular dataset.
 
 ## Improving detection accuracy
 
