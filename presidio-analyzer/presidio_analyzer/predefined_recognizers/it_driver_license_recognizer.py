@@ -18,7 +18,7 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
             "Driver License",
             (
                 r"\b(?i)(([A-Z]{2}\d{7}[A-Z])"
-                r"|(^[U]1[BCDEFGHLMNPRSTUWYXZ]\w{6}[A-Z]))\b"
+                r"|(^[U]1[BCDEFGHLJKMNPRSTUWYXZ0-9]{7}[A-Z]))\b"
             ),
             0.2,
         ),
@@ -31,7 +31,7 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "it",
         supported_entity: str = "IT_DRIVER_LICENSE",
-    ):
+    ) -> None:
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
         super().__init__(
