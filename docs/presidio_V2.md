@@ -1,20 +1,20 @@
 # Presidio Revamp (aka V2)
 
-As of March 2021, Presidio had undergo a revamp to a new version refereed to as **V2**.
+As of March 2021, Presidio underwent a revamp to a new version referred to as **V2**.
 
 The main changes introduced in **V2** are:
 
 1. gRPC replaced with HTTP to allow more customizable APIs and easier debugging
 2. Focus on the Analyzer and Anonymizer services.
 
-    1. Presidio Anonymizer is now Python based and pip installable.
+    1. Presidio Anonymizer is now Python-based and pip-installable.
     2. Presidio Analyzer does not use templates and external recognizer store.
     3. Image Redactor (formerly presidio-image-anonymizer) is in early beta and is Python based and pip installable.
-    4. Other services are deprecated and potentially be migrated over time to **V2** with the help of the community.
+    4. Other services are deprecated and may be migrated over time to **V2** with the help of the community.
 
-3. Improved documentation, samples and build flows.
+3. Improved documentation, sample code, and build workflows.
 
-4. Format Preserving Encryption replaced with Advanced Encryption Standard (AES) 
+4. Format-Preserving Encryption replaced with Advanced Encryption Standard (AES) 
 
 ## V1 Availability
 
@@ -28,14 +28,15 @@ Version V1 (legacy) is still available for download. To continue using the previ
 
 ## API Changes
 
-The move from gRPC to HTTP based APIs included changes to the API requests.
+The move from gRPC to HTTP-based APIs included changes to the API requests.
 
-1. Change in payload - moving from structures to jsons.
+1. Changed payload format – moving from structured objects to JSON.
 
-2. Removing templates from the API - includes flattening the json.
+2. Removed templates from the API, including flattening the JSON structure.
+   
 3. Using snake_case instead of camelCase .
 
-Below is a detailed outline of all the changes done to the Analyzer and Anonymizer.
+Below is a detailed outline of all changes made to the Analyzer and Anonymizer.
 
 ### Analyzer API Changes
 
@@ -102,7 +103,7 @@ Below is a detailed outline of all the changes done to the Analyzer and Anonymiz
             "min_score": "0.2"
           }
         ],
-        "transfomarion": {
+        "transformation": {
           "replace_value": {...},
           "redact_value": {...},
           "hash_value": {...},
@@ -187,4 +188,4 @@ Below is a detailed outline of all the changes done to the Analyzer and Anonymiz
 | FPE (now Encrypt)  | <pre>string key = 3t6w9z$C&F)J@NcR;<br>int32 tweak = D8E7920AFA330A73</pre>             | <pre>{"key": "3t6w9z$C&F)J@NcR"}</pre>                                                          |
 
 !!! note "Note"
-	The V2 API keeps changing please [follow the change log](https://github.com/microsoft/presidio/blob/main/CHANGELOG.md) for updates.
+	The V2 API is continuously evolving. please [follow the change log](https://github.com/microsoft/presidio/blob/main/CHANGELOG.md) for updates.

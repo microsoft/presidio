@@ -98,8 +98,8 @@ def test_when_text_with_aditional_context_lemma_based_context_enhancer_then_anal
     """This test checks that LemmaContextAwareEnhancer uses supportive context
     word from analyze input as if it was in the text itself.
 
-    when passing a word which doesn't apear in the text but is defined as context in
-    the recognizer which recongnized this the recognized entity, the enhancer should
+    when passing a word which doesn't appear in the text but is defined as context in
+    the recognizer which recognized this the recognized entity, the enhancer should
     return that word as supportive_context_word instead of other recognizer context word
     """
     text = "John Smith license is AC432223"
@@ -132,11 +132,11 @@ def test_when_text_with_only_additional_context_lemma_based_context_enhancer_the
     spacy_nlp_engine, lemma_context, us_license_recognizer
 ):
     """This test checks that LemmaContextAwareEnhancer uses supportive context
-    word from analyze input as if it was in the text itself but no other words apear
-    in text to support context enhancment.
+    word from analyze input as if it was in the text itself but no other words appear
+    in text to support context enhancement.
 
-    when passing a word which doesn't apear in the text but is defined as context in
-    the recognizer which recongnized this the recognized entity and there's no other
+    when passing a word which doesn't appear in the text but is defined as context in
+    the recognizer which recognized this the recognized entity and there's no other
     word in the text tp support context, the enhancer should
     return that word as supportive_context_word and raise the score.
     """
