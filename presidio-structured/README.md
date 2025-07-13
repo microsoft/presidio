@@ -1,9 +1,5 @@
 # Presidio structured
 
-## Status
-
-**Alpha**: This package is currently in alpha, meaning it is in its early stages of development. Features and functionality may change as the project evolves.
-
 ## Description
 
 The Presidio structured package is a flexible and customizable framework designed to identify and protect structured sensitive data. This tool extends the capabilities of Presidio, focusing on structured data formats such as tabular formats and semi-structured formats (JSON). It leverages the detection capabilities of Presidio-Analyzer to identify columns or keys containing personally identifiable information (PII), and establishes a mapping between these column/keys names and the detected PII entities. Following the detection, Presidio-Anonymizer is used to apply de-identification techniques to each value in columns identified as containing PII, ensuring the sensitive data is appropriately protected.
