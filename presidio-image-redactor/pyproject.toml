@@ -4,7 +4,7 @@ requires = ["poetry-core"]
 
 [project]
 name = "presidio-image-redactor"
-version = "0.0.56"
+version = "0.0.57"
 description = "Presidio image redactor package"
 authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
 license = "MIT"
@@ -19,7 +19,7 @@ classifiers = [
 keywords = ["presidio_image_redactor"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.9,<3.14"
 
 dependencies = [
     "pillow (>=9.0)",
@@ -31,8 +31,8 @@ dependencies = [
     "azure-ai-formrecognizer (>=3.3.0,<4.0.0)",
     "opencv-python (>=4.0.0,<5.0.0)",
     "python-gdcm (>=3.0.24.1)",
-    "spacy (<3.8.4) ; python_version<'3.10'" #Remove once 3.9 is EOL
-]
+    "spacy <3.8.4 ; python_version == '3.9'", #Remove once 3.9 is EOL
+    "spacy >=3.8.7,<4.0.0 ; python_version >= '3.13'"]
 
 [project.optional-dependencies]
 server = [
