@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+## [2.2.359] - 2025-07-06
 ### Analyzer
 #### Changed
 - Reorganized predefined recognizers into subfolders for better organization:
@@ -40,15 +41,81 @@ All notable changes to this project will be documented in this file.
     # Add the recognizer to the registry
     analyzer.registry.add_recognizer(au_abn_recognizer)
     ```
-### Anonymizer
-- Fix mutation of input analyzer results object in Anonymizer by creating a copy first
-- Fix whitespace merging not occurring for unsorted (by start, end) analyzer results input by sorting it first
-  
-### Image Redactor
+=======
+- Allow loading of StanzaRecognizer when StanzaNlpEngine is configured, improving NLP engine flexibility (#1643) (Thanks @omri374)
+- Excluded recognition_metadata attribute from REST Analyze Response DTO to clean up API responses (#1627) (Thanks @SharonHart)
+- Added ISO 8601 support to DateRecognizer for improved date parsing (#1621) (Thanks @StefH)
+- Prevented misidentification of 13-digit timestamps as credit cards (#1609) (Thanks @eagle-p)
+- Updated analyzer_engine_provider.md for clarity and completeness (#1590) (Thanks @AvinandanBandyopadhyay)
+- Bumped python from 3.9 to 3.12 in presidio-analyzer Dockerfile (#1583) (Thanks @dependabot)
+- Bumped phonenumbers version for improved validation and parsing (#1579) (Thanks @omri374)
+- Refactored InstanceCounterAnonymizer to simplify index retrieval logic (#1577) (Thanks @ShakutaiGit)
+- Fixed issue #1574 to support as_tuples in relevant functions (#1575) (Thanks @omri374)
+- Updated initial scores in IN_PAN for better recognition performance (#1565) (Thanks @omri374)
+- Added accelerate as a missing build dependency to fix build failures (#1564) (Thanks @SharonHart)
+- Don't set a default for LABELS_TO_IGNORE if not specified, to avoid unintended behavior (#1563) (Thanks @SharonHart)
+- Updated 08_no_code.md for documentation improvements (#1561) (Thanks @alan-insam)
+- Added the ability to disable the NLP recognizer via configuration (#1558) (Thanks @omri374)
+- Removed 'class' from API documentation for clarity (#1554) (Thanks @omri374)
+- Set country-specific default recognizers to enabled=false for safer defaults (#1586) (Thanks @omri374)
+- Most country specific recognizers that expect English were put as optional to avoid false positives, and would not work out-of-the-box (#1586). Specifically:
+    - SgFinRecognizer
+    - AuAbnRecognizer
+    - AuAcnRecognizer
+    - AuTfnRecognizer
+    - AuMedicareRecognizer
+    - InPanRecognizer
+    - InAadhaarRecognizer
+    - InVehicleRegistrationRecognizer
+    - InPassportRecognizer
+    - EsNifRecognizer
+    - InVoterRecognizer
 
-### Presidio Structured
+  To re-enable them, either change the [default YAML](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) to have them as `enabled: true`, or via code, add them to the recognizer registry manually.
+    - Yaml based: see more here: [YAML based configuration](https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/).
+    - Code based:
+      ```py
+      from presidio_analyzer import AnalyzerEngine
+      from presidio_analyzer.predefined_recognizers import AuAbnRecognizer
+      
+      # Initialize an analyzer engine with the recognizer registry
+      analyzer = AnalyzerEngine()
+      
+      # Create an instance of the AuAbnRecognizer
+      au_abn_recognizer = AuAbnRecognizer()
+      
+      # Add the recognizer to the registry
+      analyzer.registry.add_recognizer(au_abn_recognizer)
+      ```
+### Anonymizer
+- Update python base image to 3.13 (#1612) (Thanks @dependabot[bot])
+- Bumped python from 3.12-windowsservercore to 3.13-windowsservercore in presidio-anonymizer Dockerfile (#1612) (Thanks @dependabot)
+- Ensured anonymizer sorts analyzer results input by start and end for correct whitespace merging (#1588) (Thanks @mkh1991)
+- Bumped python from 3.9 to 3.12 in presidio-anonymizer Dockerfile (#1582) (Thanks @dependabot)
+
+### Image Redactor
+- Bumped python from 3.12-slim to 3.13-slim in presidio-image-redactor Dockerfile (#1611) (Thanks @dependabot)
+- Bumped python from 3.10 to 3.12 in presidio-image-redactor Dockerfile (#1581) (Thanks @dependabot)
 
 ### General
+- Fixed typographical errors in documentation files for better clarity (#1637) (Thanks @kilavvy)
+- Corrected spelling mistakes across code comments and documentation for improved readability (#1636) (Thanks @leopardracer)
+- Fixed typos in documentation and test descriptions, enhancing clarity and consistency in the codebase (#1631) (Thanks @zeevick10)
+- Corrected typos in docstrings and comments to maintain documentation quality (#1630) (Thanks @kilavvy)
+- Fixed typos in documentation and test descriptions, ensuring accurate references and descriptions (#1628) (Thanks @leopardracer)
+- Removed unnecessary run.bat script from the repository (#1626) (Thanks @SharonHart)
+- Added "/TestResults" to .gitignore file to prevent test result artifacts from being committed (#1622) (Thanks @StefH)
+- Added links to the discussion board about Docker prebuilt images to documentation (#1614) (Thanks @omri374)
+- Fixed spelling, grammar, and style issues in Presidio V2 documentation (#1610) (Thanks @Vruddhi18)
+- Updated .gitignore to include the .vs folder (#1608) (Thanks @StefH)
+- Fixed typo in api-docs.yml to improve documentation accuracy (#1602) (Thanks @StefH)
+- Reverted a previous update to codeql-analysis.yml to restore earlier configuration (#1595) (Thanks @SharonHart)
+- Updated codeql-analysis.yml for improved code scanning configuration (#1594) (Thanks @SharonHart)
+- Fixed paths-ignore in codeql-analysis.yml to refine scanning scope (#1593) (Thanks @SharonHart)
+- Ignored docs/ directory in CodeQL analysis to prevent unnecessary scanning (#1592) (Thanks @SharonHart)
+- Fixed minor typos in code and documentation (#1585) (Thanks @omahs)
+- Restored dependabot scanning for security and dependency updates (#1580) (Thanks @SharonHart)
+- Added SUPPORT.md file to provide support information to users (#1568) (Thanks @omri374)
 
 ## [2.2.358] - 2025-03-18
 
@@ -567,7 +634,8 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.  
 
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.358...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.359...HEAD
+[2.2.358]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
 [2.2.358]: https://github.com/microsoft/presidio/compare/2.2.357...2.2.358
 [2.2.357]: https://github.com/microsoft/presidio/compare/2.2.356...2.2.357
 [2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...2.2.356
@@ -597,3 +665,4 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 
 ### Fixed
 - Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
+- Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
