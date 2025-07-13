@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+data:
+  REDIS_HOSTNAME: "preshack.redis.cache.windows.net"
+  REDIS_PORT: "6380"
+  REDIS_SSL: "True"
