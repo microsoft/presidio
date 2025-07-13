@@ -146,15 +146,18 @@ class RecognizerRegistryProvider:
                 f"NLP recognizer (e.g. SpacyRecognizer, StanzaRecognizer) "
                 f"is not in the list of recognizers "
                 f"for language {language}. "
-                f"Adding the default {SpacyRecognizer.__name__} to the list."
+                f"Adding the default recognizer to the list."
                 f"If you wish to remove the NLP recognizer, "
                 f"define it as `enabled=false`."
             )
             logger.warning(warning_text)
             warnings.warn(warning_text)
             if nlp_engine:
+                nlp_recognizer_cls = RecognizerRegistry.get_nlp_recognizer(
+                    nlp_engine=nlp_engine
+                )
                 recognizers.append(
-                    SpacyRecognizer(
+                    nlp_recognizer_cls(
                         supported_language=language,
                         supported_entities=nlp_engine.get_supported_entities(),
                     )
