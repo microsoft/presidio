@@ -6,42 +6,6 @@ All notable changes to this project will be documented in this file.
 
 ## [2.2.359] - 2025-07-06
 ### Analyzer
-#### Changed
-- Reorganized predefined recognizers into subfolders for better organization:
-  - Country-specific recognizers moved to `country_specific/{country_name}/` folders
-  - Generic recognizers moved to `generic/` folder  
-  - NER recognizers moved to `ner/` folder
-  - Maintains backward compatibility - all existing imports continue to work
-- Most country specific recognizers that expect English were put as optional to avoid false positives, and would not work out-of-the-box (#1586). Specifically: 
-  - SgFinRecognizer
-  - AuAbnRecognizer
-  - AuAcnRecognizer
-  - AuTfnRecognizer
-  - AuMedicareRecognizer
-  - InPanRecognizer
-  - InAadhaarRecognizer
-  - InVehicleRegistrationRecognizer
-  - InPassportRecognizer
-  - EsNifRecognizer
-  - InVoterRecognizer
-  
-  To re-enable them, either change the [default YAML](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) to have them as `enabled: true`, or via code, add them to the recognizer registry manually. 
-  - Yaml based: see more here: [YAML based configuration](https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/).
-  - Code based:
-    ```py
-    from presidio_analyzer import AnalyzerEngine
-    from presidio_analyzer.predefined_recognizers import AuAbnRecognizer
-    
-    # Initialize an analyzer engine with the recognizer registry
-    analyzer = AnalyzerEngine()
-    
-    # Create an instance of the AuAbnRecognizer
-    au_abn_recognizer = AuAbnRecognizer()
-    
-    # Add the recognizer to the registry
-    analyzer.registry.add_recognizer(au_abn_recognizer)
-    ```
-=======
 - Allow loading of StanzaRecognizer when StanzaNlpEngine is configured, improving NLP engine flexibility (#1643) (Thanks @omri374)
 - Excluded recognition_metadata attribute from REST Analyze Response DTO to clean up API responses (#1627) (Thanks @SharonHart)
 - Added ISO 8601 support to DateRecognizer for improved date parsing (#1621) (Thanks @StefH)
@@ -87,6 +51,7 @@ All notable changes to this project will be documented in this file.
       # Add the recognizer to the registry
       analyzer.registry.add_recognizer(au_abn_recognizer)
       ```
+
 ### Anonymizer
 - Update python base image to 3.13 (#1612) (Thanks @dependabot[bot])
 - Bumped python from 3.12-windowsservercore to 3.13-windowsservercore in presidio-anonymizer Dockerfile (#1612) (Thanks @dependabot)
