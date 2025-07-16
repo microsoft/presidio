@@ -21,7 +21,7 @@ urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 include = ["conf/*",]
 
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.9,<3.14"
 dependencies = [
     "spacy ==3.8.7",
     "thinc ==8.2.3",
@@ -40,7 +40,7 @@ transformers = [
     "transformers",
     "accelerate",
     "huggingface_hub",
-"spacy_huggingface_pipelines"]
+    "spacy_huggingface_pipelines"]
 
 stanza = [
     "stanza (>=1.10.1,<2.0.0)",
