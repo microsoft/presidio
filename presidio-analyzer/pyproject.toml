@@ -39,7 +39,8 @@ transformers = [
     "transformers",
     "accelerate",
     "huggingface_hub",
-    "spacy_huggingface_pipelines"]
+    "spacy_huggingface_pipelines ; python_version < '3.13'"
+]
 stanza = [
     "stanza (>=1.10.1,<2.0.0)",
 ]
