@@ -5,6 +5,7 @@ from typing import List
 from presidio_analyzer import AnalyzerEngineProvider, RecognizerResult
 from presidio_analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 
+
 from presidio_analyzer.predefined_recognizers import (
     AzureAILanguageRecognizer,
     CreditCardRecognizer,
@@ -192,6 +193,36 @@ def test_analyzer_engine_provider_with_azure_ai_language():
     assert len(azure_ai_recognizers) == 1
 
     assert len(analyzer_engine.analyze("This is a test", language="en")) > 0
+
+@pytest.mark.skipif(pytest.importorskip("azure"), reason="Optional dependency not installed") # noqa: E501
+def test_analyzer_engine_provider_with_ahds():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/test_ahds_reco.yaml",
+    )
+
+    class MockAHDSDeidRecognizer(AzureHealthDeidRecognizer):
+        def analyze(
+            self,
+            text: str,
+            entities: List[str] = None,
+            nlp_artifacts: NlpArtifacts = None,
+        ) -> List[RecognizerResult]:
+            return [RecognizerResult(entity_type="PATIENT", start=0, end=4, score=0.9)]
+
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+
+    analyzer_engine = provider.create_engine()
+
+    ahds_recognizers = [
+        rec
+        for rec in analyzer_engine.registry.recognizers
+        if rec.name == "Azure Health Data Services de-identification"
+    ]
+
+    assert len(ahds_recognizers) == 1
+
+    assert len(analyzer_engine.analyze("This is a test", language="en")) > 0
+    
 
 
 def test_analyzer_engine_provider_no_nlp_recognizer():

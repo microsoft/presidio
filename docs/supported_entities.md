@@ -108,6 +108,16 @@ A list of supported entities by Azure AI Language PII [can be found here](https:
 
 To add Azure AI language into Presidio, [see this sample](samples/python/text_analytics/index.md#how-to-integrate-azure-ai-language-into-presidio).
 
+
+## Complementing Presidio with Azure Health Data Services PHI
+
+Azure Health Data Services PHI is a cloud-based service that provides Natural Language Processing (NLP) features for detecting PHI in text.
+
+A list of supported entities by Azure Health Data Services PHI [can be found here](https://learn.microsoft.com/en-us/azure/healthcare-apis/deidentification/overview).
+
+To add Azure AI language into Presidio, [see this sample](samples/python/ahds/index.md#how-to-integrate-azure-health-data-services-dei-dentification-into-presidio).
+
+
 ### Connecting to 3rd party PII detectors
 
 See [this documentation](analyzer/adding_recognizers.md#creating-a-remote-recognizer) for instructions on how to implement an external PII detector for a new or existing type of PII entity.
