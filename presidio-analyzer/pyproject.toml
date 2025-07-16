@@ -23,7 +23,7 @@ include = ["conf/*",]
 
 requires-python = ">=3.9,<3.14"
 dependencies = [
-    "spacy (>=3.4.4, ==3.8.7, !=3.7.0)",
+    "spacy (>=3.4.4, !=3.7.0)",
     "regex",
     "tldextract",
     "pyyaml",
