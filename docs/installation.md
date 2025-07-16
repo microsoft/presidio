@@ -83,6 +83,10 @@ More information on installation can be found [here](image-redactor/index.md#ins
 Presidio can expose REST endpoints for each service using Flask and Docker.
 To download the Presidio Docker containers, run the following command:
 
+!!! note "Note for prebuilt Docker images"
+
+    Are you using prebuilt Docker images? Please review the suggested change [here](https://github.com/microsoft/presidio/discussions/1601).
+
 !!! note "Note"
 
     This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).

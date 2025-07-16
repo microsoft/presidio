@@ -22,7 +22,7 @@ def test_given_a_correct_analyze_input_then_return_full_response():
     """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -46,7 +46,7 @@ def test_given_analyze_threshold_input_then_return_result_above_threshold():
     """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -172,7 +172,7 @@ def test_given_return_decision_process_false_for_analyze_input_then_return_respo
     """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -206,7 +206,7 @@ def test_given_decision_process_enabled_for_analyze_input_then_return_response_w
     """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -259,7 +259,7 @@ def test_given_decision_process_enabled_for_analyze_input_with_aditional_context
     """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -281,7 +281,7 @@ def test_given_analyze_entities_input_then_return_results_only_with_those_entiti
     """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -369,7 +369,7 @@ def test_given_ad_hoc_pattern_recognizer_the_right_entities_are_returned():
      """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -398,7 +398,7 @@ def test_given_wrong_ad_hoc_json_exception_is_given():
 
     expected_response = """
     {
-        "error":"Failed to parse /analyze request for AnalyzerEngine.analyze(). __init__() got an unexpected keyword argument \'type\'"
+      "error": "Failed to parse /analyze request for AnalyzerEngine.analyze(). Pattern.__init__() got an unexpected keyword argument 'type'"
     }
     """
 
@@ -440,7 +440,7 @@ def test_given_ad_hoc_pattern_recognizer_context_raises_confidence():
      """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -478,7 +478,7 @@ def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
      """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -544,7 +544,7 @@ def test_given_allow_list_without_setting_allow_list_match_then_normal_entity_is
     """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )
 
 
@@ -570,5 +570,5 @@ def test_given_regex_flags_and_normal_entities_are_returned():
     """
     assert response_status == 200
     assert equal_json_strings(
-        expected_response, response_content, ignore_keys=["recognition_metadata"]
+        expected_response, response_content
     )

@@ -81,3 +81,25 @@ def test_get_supported_entities_doesnt_include_ignored():
     assert "A" not in entities
     assert "B" not in entities
     assert "C" in entities
+
+
+@pytest.mark.parametrize("texts, as_tuples", [
+    (["simple text", "simple text"], False),
+    ([("simple text", {"key": "value"})], True),
+])
+def test_batch_processing_with_as_tuples_returns_context(spacy_nlp_engine, texts, as_tuples):
+    nlp_artifacts_batch = spacy_nlp_engine.process_batch(
+        texts, language="en", as_tuples=as_tuples
+    )
+    assert isinstance(nlp_artifacts_batch, Iterator)
+    nlp_artifacts_batch = list(nlp_artifacts_batch)
+
+    if as_tuples:
+        for text, nlp_artifacts, context in nlp_artifacts_batch:
+            assert text == "simple text"
+            assert len(nlp_artifacts.tokens) == 2
+            assert context == {"key": "value"}
+    else:
+        for text, nlp_artifacts in nlp_artifacts_batch:
+            assert text == "simple text"
+            assert len(nlp_artifacts.tokens) == 2

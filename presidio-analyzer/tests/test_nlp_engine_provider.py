@@ -185,6 +185,7 @@ def test_when_labels_to_ignore_not_define_in_conf_file_default_into_empty_set(mo
     engine = NlpEngineProvider(conf_file=conf_file).create_engine()
     assert len(engine.ner_model_configuration.labels_to_ignore) == 0
 
+
 @pytest.mark.skip_engine("transformers_en")
 def test_when_create_transformers_nlp_engine_then_succeeds(mocker):
     mocker.patch(
@@ -255,6 +256,7 @@ def test_nlp_engine_provider_init_through_nlp_engine_configuration():
     assert isinstance(engine, SpacyNlpEngine)
     assert engine.engine_name == "spacy"
 
+    
 def test_create_engine_missing_ner_model_configuration_english_only():
     config = {
         "nlp_engine_name": "spacy",
@@ -468,3 +470,106 @@ models:
     assert 'en' in engine.nlp
     conf_file.unlink()
     
+
+
+def test_when_valid_nlp_engines_then_return_default_configuration():
+    nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
+    provider = NlpEngineProvider(nlp_engines=nlp_engines)
+    engine = provider.create_engine()
+    assert isinstance(engine, SpacyNlpEngine)
+    assert engine.nlp is not None
+
+
+def test_when_nlp_engines_type_is_not_tuple_then_fail():
+    nlp_engines = [SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine]
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(nlp_engines)
+     
+        
+def test_when_invalid_nlp_engine_types_then_fail():
+    nlp_engines = (1, 2, 3)
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(nlp_engines)
+
+
+def test_when_valid_nlp_configuration_then_return_default_configuration():
+    nlp_configuration = {
+        "nlp_engine_name": "spacy",
+        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}]
+    }
+    provider = NlpEngineProvider(nlp_configuration=nlp_configuration)
+    engine = provider.create_engine()
+    assert isinstance(engine, SpacyNlpEngine)
+    assert engine.nlp is not None
+
+        
+def test_when_nlp_configuration_is_passed_instead_of_nlp_engines_then_fail():
+    nlp_configuration = {
+        "nlp_engine_name": "stanza",
+        "models": [{"lang_code": "en", "model_name": "en"}]
+    }
+ 
+    with pytest.raises(ValueError):
+        NlpEngineProvider(nlp_configuration)
+        
+
+def test_when_nlp_configuration_is_not_dict_then_fail():
+    nlp_configuration = "not a dict"
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(nlp_configuration=nlp_configuration)
+        
+
+def test_when_nlp_configuration_is_missing_nlp_engine_name_key_then_fail():
+    nlp_configuration = {
+        "models": [{"lang_code": "en", "model_name": "en"}]
+    }
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(nlp_configuration=nlp_configuration)
+        
+def test_when_nlp_configuration_is_missing_models_key_then_fail():
+    nlp_configuration = {
+        "nlp_engine_name": "stanza"
+    }
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(nlp_configuration=nlp_configuration)
+
+
+def test_when_valid_conf_file_then_return_default_configuration():
+    file_name = "default.yaml"
+    conf_file = Path(Path(__file__).parent, "conf", file_name)
+    provider = NlpEngineProvider(conf_file=conf_file)
+    engine = provider.create_engine()
+    assert isinstance(engine, SpacyNlpEngine)
+    assert engine.nlp is not None
+
+def test_when_conf_file_is_empty_string_then_fail():
+    conf_file = ''
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(conf_file=conf_file)
+
+
+def test_when_conf_file_is_not_string_or_path_then_fail():
+    conf_file = 1
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(conf_file=conf_file)
+
+
+def test_when_conf_file_is_directory_then_fail():
+    conf_file = '/'
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(conf_file=conf_file)
+
+
+def test_when_conf_file_does_not_exist_then_fail():
+    conf_file = 'test.yml'
+    
+    with pytest.raises(ValueError):
+        NlpEngineProvider(conf_file=conf_file)

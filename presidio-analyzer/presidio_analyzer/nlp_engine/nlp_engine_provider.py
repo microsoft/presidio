@@ -43,7 +43,9 @@ class NlpEngineProvider:
         conf_file: Optional[Union[Path, str]] = None,
         nlp_configuration: Optional[Dict] = None,
     ):
-        if not nlp_engines:
+        if nlp_engines:
+            self._validate_nlp_engines(nlp_engines)
+        else:
             nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
 
         self.nlp_engines = {
@@ -57,9 +59,13 @@ class NlpEngineProvider:
             raise ValueError(
                 "Either conf_file or nlp_configuration should be provided, not both."
             )
-        elif nlp_configuration:
+
+        if nlp_configuration:
+            self._validate_nlp_configuration(nlp_configuration)
             self.nlp_configuration = nlp_configuration
-        elif conf_file:
+
+        if conf_file or conf_file == '':
+            self._validate_conf_file_path(conf_file)
             self.nlp_configuration = self._read_nlp_conf(conf_file)
         else:
             conf_file = self._get_full_conf_path()
@@ -72,6 +78,93 @@ class NlpEngineProvider:
                     f"Falling back to built-in default: {DEFAULT_BUILTIN_CONFIG}"
                 )
                 self.nlp_configuration = DEFAULT_BUILTIN_CONFIG
+
+    @staticmethod
+    def _validate_nlp_engines(nlp_engines: Tuple) -> None:
+        """
+        Validate that all NLP engine classes have the required attributes.
+
+        :param nlp_engines: Tuple of NLP engine classes to validate.
+        """
+
+        if not isinstance(nlp_engines, tuple):
+            raise ValueError(f"nlp_engines must be a tuple, got {type(nlp_engines)}")
+
+        required_attributes = ['engine_name', 'is_available']
+
+        for engine_class in nlp_engines:
+            missing_attributes = []
+
+            for attr in required_attributes:
+                if not hasattr(engine_class, attr):
+                    missing_attributes.append(attr)
+
+            if missing_attributes:
+                raise ValueError(
+                    f"NLP engine class {engine_class} is missing required "
+                    f"class attributes: {missing_attributes}. "
+                    "All NLP engine classes must have 'engine_name' and 'is_available' "
+                    "as class attributes."
+                )
+
+            if not isinstance(engine_class.engine_name, str):
+                raise ValueError(
+                    f"NLP engine class {engine_class} has invalid "
+                    f"'engine_name' attribute. Expected string, "
+                    f"got {type(engine_class.engine_name)}."
+                )
+
+            if not isinstance(engine_class.is_available, bool):
+                raise ValueError(
+                    f"NLP engine class {engine_class} has invalid "
+                    f"'is_available' attribute. Expected boolean, "
+                    f"got {type(engine_class.is_available)}."
+                )
+
+    @staticmethod
+    def _validate_nlp_configuration(nlp_configuration: Dict) -> None:
+        """
+        Validate the NLP configuration structure and content.
+
+        :param nlp_configuration: The configuration dictionary to validate
+        """
+        if not isinstance(nlp_configuration, Dict):
+            raise ValueError(f"nlp_configuration must be a dictionary, "
+                             f"got {type(nlp_configuration)}")
+
+        required_fields = ['nlp_engine_name', 'models']
+        missing_fields = []
+
+        for field in required_fields:
+            if field not in nlp_configuration.keys():
+                missing_fields.append(field)
+
+        if missing_fields:
+            raise ValueError(
+                f"nlp_configuration is missing required fields: {missing_fields}. "
+                f"Required fields are: {required_fields}"
+            )
+
+    @staticmethod
+    def _validate_conf_file_path(conf_file: Union[Path, str]) -> None:
+        """
+        Validate the conf file path.
+
+        :param conf_file: The conf file path to validate
+        """
+
+        if conf_file == '':
+            raise ValueError("conf_file is empty")
+
+        if not isinstance(conf_file, (Path, str)):
+            raise ValueError(f"conf_file must be a string or Path, "
+                             f"got {type(conf_file)}")
+
+        if not Path(conf_file).exists():
+            raise ValueError(f"conf_file {conf_file} does not exist")
+
+        if Path(conf_file).is_dir():
+            raise ValueError(f"conf_file {conf_file} is a directory, not a file")
 
     def create_engine(self) -> NlpEngine:
         """Create an NLP engine instance."""
@@ -117,10 +210,11 @@ class NlpEngineProvider:
 
     @staticmethod
     def _read_nlp_conf(conf_file: Union[Path, str]) -> dict:
-        """Read and validate the NLP configuration from a provided YAML file."""
+        """
+        Read the nlp configuration from a provided yaml file.
 
-        if not Path(conf_file).exists():
-            raise FileNotFoundError(f"Configuration file {conf_file} not found.")
+        :param conf_file: The conf file path to read
+        """
 
         with open(conf_file) as file:
             nlp_configuration = yaml.safe_load(file)

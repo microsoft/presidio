@@ -4,7 +4,7 @@ requires = ["poetry-core"]
 
 [project]
 name = "presidio_analyzer"
-version = "2.2.358"
+version = "2.2.359"
 description = "Presidio Analyzer package"
 authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
 license = "MIT"
@@ -21,13 +21,13 @@ urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 include = ["conf/*",]
 
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.9,<3.14"
 dependencies = [
-    "spacy (>=3.4.4, <4.0.0, !=3.7.0)",
+    "spacy (>=3.4.4, !=3.7.0)",
     "regex",
     "tldextract",
     "pyyaml",
-    "phonenumbers (>=8.12,<9.0.0)"
+    "phonenumbers (>=8.12,<10.0.0)"
 ]
 
 [project.optional-dependencies]
@@ -40,6 +40,7 @@ transformers = [
     "accelerate",
     "huggingface_hub",
     "spacy_huggingface_pipelines"]
+
 stanza = [
     "stanza (>=1.10.1,<2.0.0)",
 ]
