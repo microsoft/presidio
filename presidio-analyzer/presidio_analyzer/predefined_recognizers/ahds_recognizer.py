@@ -19,6 +19,7 @@ except ImportError:
 from presidio_analyzer import AnalysisExplanation, RecognizerResult, RemoteRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
+
 class AzureHealthDeidRecognizer(RemoteRecognizer):
     """Wrapper for PHI detection using Azure Health Data Services de-identification."""
 
