@@ -38,9 +38,6 @@ Link to demo: <https://aka.ms/presidio-demo>
 
 Are you using Presidio? We'd love to know how! Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u).
 
-## Are you using prebuilt Docker images?
-Please review the suggested change [here](https://github.com/microsoft/presidio/discussions/1601).
-
 ## Presidio's modules
 
 1. [Presidio analyzer](analyzer/index.md): PII identification in text
