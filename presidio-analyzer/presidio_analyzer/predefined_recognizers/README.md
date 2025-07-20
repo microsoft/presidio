@@ -4,28 +4,11 @@ This directory contains all the predefined recognizers for Presidio Analyzer, or
 
 ## Directory Structure
 
-### `country_specific/`
-Contains recognizers specific to particular countries or regions:
-
-- **`us/`** - United States recognizers (SSN, Driver License, Bank, ITIN, Passport, ABA Routing)
-- **`uk/`** - United Kingdom recognizers (NHS, NINO)
-- **`india/`** - India recognizers (Aadhaar, PAN, Passport, Vehicle Registration, Voter ID)
-- **`italy/`** - Italy recognizers (Driver License, Fiscal Code, Identity Card, Passport, VAT Code)
-- **`australia/`** - Australia recognizers (ABN, ACN, Medicare, TFN)
-- **`spain/`** - Spain recognizers (NIE, NIF)
-- **`finland/`** - Finland recognizers (Personal Identity Code)
-- **`poland/`** - Poland recognizers (PESEL)
-- **`singapore/`** - Singapore recognizers (FIN, UEN)
-
-### `generic/`
-Contains recognizers for globally applicable patterns:
-
-- Credit Card, Crypto, Date, Email, IBAN, IP Address, Medical License, Phone, URL
-
-### `ner/`
-Contains Named Entity Recognition based recognizers:
-
-- SpaCy, Stanza, Transformers, GLiNER, Azure AI Language
+- `country_specific/`: Contains recognizers specific to particular countries or regions:
+- `generic/`: Contains recognizers for globally applicable patterns:
+- `nlp_engine_recognizers/`: Containers recognizers that map to NLP engines
+- `ner/`: Contains standalone Named Entity Recognition recognizers:
+- `third_party/`: Contains recognizers that integrate with third-party services
 
 ## Adding New Recognizers
 
@@ -35,11 +18,15 @@ When contributing a new recognizer:
 
 2. **Generic recognizer**: Add to the `generic/` folder if it applies globally.
 
-3. **NER-based recognizer**: Add to the `ner/` folder if it's based on machine learning models.
+3. **NLP Engine-based recognizer**: Add to the `nlp_engine_recognizers/` folder if it's based on machine learning models that work with NLP engines.
 
-4. **Update imports**: Add the new recognizer import to the main `__init__.py` file to maintain backward compatibility.
+4. **Standalone NER recognizer**: Add to the `ner/` folder if it's a standalone NER model.
 
-5. **Update exports**: Add the class name to the `__all__` list in `__init__.py`.
+5. **Third-party service recognizer**: Add to the `third_party/` folder if it integrates with external services.
+
+6. **Update imports**: Add the new recognizer import to the main `__init__.py` file to maintain backward compatibility.
+
+7. **Update exports**: Add the class name to the `__all__` list in `__init__.py`.
 
 ## Backward Compatibility
 
@@ -53,4 +40,4 @@ from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
 
 ## Testing
 
-When adding new recognizers, ensure all existing tests pass and add appropriate tests for new functionality. 
+When adding new recognizers, ensure all existing tests pass and add appropriate tests for new functionality.

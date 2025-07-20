@@ -1,16 +1,21 @@
 """Predefined recognizers package. Holds all the default recognizers."""
 
-# NER recognizers
-from presidio_analyzer.predefined_recognizers.ner.transformers_recognizer import (
+# NLP Engine recognizers
+from .nlp_engine_recognizers.spacy_recognizer import SpacyRecognizer
+from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (
     TransformersRecognizer,
 )
-from .ner.azure_ai_language import AzureAILanguageRecognizer
+from .nlp_engine_recognizers.stanza_recognizer import StanzaRecognizer
+
+# NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
-from .ner.spacy_recognizer import SpacyRecognizer
-from .ner.stanza_recognizer import StanzaRecognizer
+
+# Third-party recognizers
+from .third_party.azure_ai_language import AzureAILanguageRecognizer
 
 # US recognizers
 from .country_specific.us.aba_routing_recognizer import AbaRoutingRecognizer
+from .country_specific.us.medical_license_recognizer import MedicalLicenseRecognizer
 from .country_specific.us.us_bank_recognizer import UsBankRecognizer
 from .country_specific.us.us_driver_license_recognizer import UsLicenseRecognizer
 from .country_specific.us.us_itin_recognizer import UsItinRecognizer
@@ -25,11 +30,15 @@ from .country_specific.uk.uk_nino_recognizer import UkNinoRecognizer
 from .country_specific.india.in_aadhaar_recognizer import InAadhaarRecognizer
 from .country_specific.india.in_pan_recognizer import InPanRecognizer
 from .country_specific.india.in_passport_recognizer import InPassportRecognizer
-from .country_specific.india.in_vehicle_registration_recognizer import InVehicleRegistrationRecognizer
+from .country_specific.india.in_vehicle_registration_recognizer import (
+    InVehicleRegistrationRecognizer,
+)
 from .country_specific.india.in_voter_recognizer import InVoterRecognizer
 
 # Italy recognizers
-from .country_specific.italy.it_driver_license_recognizer import ItDriverLicenseRecognizer
+from .country_specific.italy.it_driver_license_recognizer import (
+    ItDriverLicenseRecognizer,
+)
 from .country_specific.italy.it_fiscal_code_recognizer import ItFiscalCodeRecognizer
 from .country_specific.italy.it_identity_card_recognizer import ItIdentityCardRecognizer
 from .country_specific.italy.it_passport_recognizer import ItPassportRecognizer
@@ -46,7 +55,9 @@ from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
 
 # Finland recognizers
-from .country_specific.finland.fi_personal_identity_code_recognizer import FiPersonalIdentityCodeRecognizer
+from .country_specific.finland.fi_personal_identity_code_recognizer import (
+    FiPersonalIdentityCodeRecognizer,
+)
 
 # Poland recognizers
 from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
@@ -62,7 +73,6 @@ from .generic.date_recognizer import DateRecognizer
 from .generic.email_recognizer import EmailRecognizer
 from .generic.iban_recognizer import IbanRecognizer
 from .generic.ip_recognizer import IpRecognizer
-from .generic.medical_license_recognizer import MedicalLicenseRecognizer
 from .generic.phone_recognizer import PhoneRecognizer
 from .generic.url_recognizer import UrlRecognizer
 
