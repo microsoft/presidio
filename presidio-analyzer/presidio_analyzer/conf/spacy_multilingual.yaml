@@ -4,11 +4,14 @@ models:
     lang_code: en
     model_name: en_core_web_lg
   -
+    lang_code: es
+    model_name: es_core_news_md
+  -
     lang_code: de
     model_name: de_core_news_md
   -
-    lang_code: es
-    model_name: es_core_news_md
+    lang_code: fr
+    model_name: fr_core_news_md
 
 ner_model_configuration:
   model_to_presidio_entity_mapping:
