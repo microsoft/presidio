@@ -1,9 +1,13 @@
 FROM python:3.13-slim
+#FROM python:3.12.3-slim
 
 ARG NAME
-ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
-ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
-ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
+#ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
+#ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
+#ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
+ARG NLP_CONF_FILE=presidio_analyzer/conf/spacy_multilingual.yaml
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/spacy_analyzer.yaml
+ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/spacy_recognizers.yaml
 ENV PIP_NO_CACHE_DIR=1
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
