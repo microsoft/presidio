@@ -12,6 +12,8 @@ from .ner.gliner_recognizer import GLiNERRecognizer
 
 # Third-party recognizers
 from .third_party.azure_ai_language import AzureAILanguageRecognizer
+from .third_party.ahds_recognizer import AzureHealthDeidRecognizer
+
 
 # US recognizers
 from .country_specific.us.aba_routing_recognizer import AbaRoutingRecognizer
@@ -138,4 +140,5 @@ __all__ = [
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
     "UkNinoRecognizer",
+    "AzureHealthDeidRecognizer",
 ]

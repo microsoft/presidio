@@ -9,7 +9,7 @@ A live version can be found here: https://huggingface.co/spaces/presidio/presidi
 2. Install dependencies (preferably in a virtual environment)
 
 ```sh
-pip install -r requirements
+pip install -r requirements.txt
 ```
 > Note: This would install additional packages such as `transformers` and `flair` which are not mandatory for using Presidio.
 
