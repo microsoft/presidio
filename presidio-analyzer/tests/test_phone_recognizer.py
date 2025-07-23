@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_analyzer.predefined_recognizers.phone_recognizer import PhoneRecognizer
+from presidio_analyzer.predefined_recognizers.generic.phone_recognizer import PhoneRecognizer
 from tests import assert_result, assert_result_with_textual_explanation
 
 
