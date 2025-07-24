@@ -1,6 +1,8 @@
 import logging
 
-from presidio_analyzer.predefined_recognizers import SpacyRecognizer
+from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.spacy_recognizer import (  #noqa E501
+    SpacyRecognizer,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 

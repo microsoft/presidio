@@ -1,11 +1,11 @@
 """Predefined recognizers package. Holds all the default recognizers."""
 
-# NLP Engine recognizers
-from presidio_analyzer.predefined_recognizers.transformers_recognizer import (
+
+# Australia recognizers
+from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  #noqa: E501
     TransformersRecognizer,
 )
 
-# Australia recognizers
 from .country_specific.australia.au_abn_recognizer import AuAbnRecognizer
 from .country_specific.australia.au_acn_recognizer import AuAcnRecognizer
 from .country_specific.australia.au_medicare_recognizer import AuMedicareRecognizer
@@ -15,14 +15,14 @@ from .country_specific.australia.au_tfn_recognizer import AuTfnRecognizer
 from .country_specific.finland.fi_personal_identity_code_recognizer import (
     FiPersonalIdentityCodeRecognizer,
 )
+from .country_specific.india import (
+    InVehicleRegistrationRecognizer,
+)
 
 # India recognizers
 from .country_specific.india.in_aadhaar_recognizer import InAadhaarRecognizer
 from .country_specific.india.in_pan_recognizer import InPanRecognizer
 from .country_specific.india.in_passport_recognizer import InPassportRecognizer
-from .country_specific.india.in_vehicle_registration_recognizer import (
-    InVehicleRegistrationRecognizer,
-)
 from .country_specific.india.in_voter_recognizer import InVoterRecognizer
 
 # Italy recognizers
@@ -70,6 +70,8 @@ from .generic.url_recognizer import UrlRecognizer
 
 # NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
+
+# NLP Engine recognizers
 from .nlp_engine_recognizers.spacy_recognizer import SpacyRecognizer
 from .nlp_engine_recognizers.stanza_recognizer import StanzaRecognizer
 from .third_party.ahds_recognizer import AzureHealthDeidRecognizer
