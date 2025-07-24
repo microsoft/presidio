@@ -5,17 +5,24 @@ from unittest.mock import MagicMock
 import pytest
 import dotenv
 
-from azure.health.deidentification import DeidentificationClient
-from azure.health.deidentification.models import (
-    DeidentificationContent,
-    DeidentificationOperationType,
-    DeidentificationResult,
-)
-from azure.identity import DefaultAzureCredential
-
 
 from presidio_analyzer.predefined_recognizers import AzureHealthDeidRecognizer
 
+
+@pytest.fixture(scope="module")
+def import_modules():
+    pytest.importorskip("azure-identity")
+    pytest.importskip("azure-health-deidentification")
+    from azure.health.deidentification import DeidentificationClient
+    from azure.health.deidentification.models import (
+        DeidentificationContent,
+        DeidentificationOperationType,
+        DeidentificationResult,
+    )
+    from azure.identity import DefaultAzureCredential
+
+
+    
 
 def requires_env_vars():
     dotenv.load_dotenv()
@@ -26,7 +33,7 @@ def requires_env_vars():
     )
 
 @requires_env_vars()
-def test_get_supported_entities():
+def test_get_supported_entities(import_modules):
     recognizer = AzureHealthDeidRecognizer()
     supported_entities = recognizer.get_supported_entities()
     assert isinstance(supported_entities, list)
@@ -34,7 +41,7 @@ def test_get_supported_entities():
 
 
 @requires_env_vars()
-def test_analyze_name():
+def test_analyze_name(import_modules):
     recognizer = AzureHealthDeidRecognizer()
     text = "Patient name is John Doe."
     results = recognizer.analyze(text)
@@ -42,7 +49,7 @@ def test_analyze_name():
 
 
 @requires_env_vars()
-def test_analyze_email():
+def test_analyze_email(import_modules):
     recognizer = AzureHealthDeidRecognizer()
     text = "Contact: john.doe@example.com"
     results = recognizer.analyze(text)
@@ -50,7 +57,7 @@ def test_analyze_email():
 
 
 @requires_env_vars()
-def test_analyze_multiple_entities():
+def test_analyze_multiple_entities(import_modules):
     """Test that multiple entities are recognized in a single text."""
     recognizer = AzureHealthDeidRecognizer()
     text = "Dr. Smith met Jane Doe on 2023-01-01. Email: jane@example.com"
@@ -62,7 +69,7 @@ def test_analyze_multiple_entities():
 
 
 @requires_env_vars()
-def test_analyze_with_supported_entities_filter():
+def test_analyze_with_supported_entities_filter(import_modules):
     recognizer = AzureHealthDeidRecognizer(supported_entities=["EMAIL"])
     text = "Contact: john.doe@example.com"
     results = recognizer.analyze(text)

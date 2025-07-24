@@ -1,4 +1,4 @@
-from presidio_analyzer.predefined_recognizers import SpacyRecognizer
+from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.spacy_recognizer import SpacyRecognizer #noqa E501
 
 
 class StanzaRecognizer(SpacyRecognizer):

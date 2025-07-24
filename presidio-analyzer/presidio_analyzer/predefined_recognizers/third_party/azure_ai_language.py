@@ -25,7 +25,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         ta_client: Optional["TextAnalyticsClient"] = None,
         azure_ai_key: Optional[str] = None,
         azure_ai_endpoint: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Wrap the PII detection in Azure AI Language.
@@ -47,7 +47,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
             supported_language=supported_language,
             name="Azure AI Language PII",
             version="5.2.0",
-            **kwargs
+            **kwargs,
         )
 
         is_available = bool(TextAnalyticsClient)

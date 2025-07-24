@@ -79,8 +79,7 @@ class GLiNERRecognizer(LocalRecognizer):
                     entity: entity for entity in supported_entities
                 }
 
-        logger.info("Using entity mapping %s",
-                    json.dumps(entity_mapping, indent=2))
+        logger.info("Using entity mapping %s", json.dumps(entity_mapping, indent=2))
         supported_entities = list(set(self.model_to_presidio_entity_mapping.values()))
         self.model_name = model_name
         self.map_location = map_location
@@ -156,7 +155,7 @@ class GLiNERRecognizer(LocalRecognizer):
         return recognizer_results
 
     def __create_input_labels(self, entities):
-        """Append the entities requested by the user to the list of labels if it's not there.""" # noqa: E501
+        """Append the entities requested by the user to the list of labels if it's not there."""  # noqa: E501
         labels = self.gliner_labels
         for entity in entities:
             if (
