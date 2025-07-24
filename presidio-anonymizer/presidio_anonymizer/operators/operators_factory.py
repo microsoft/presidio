@@ -16,10 +16,20 @@ from presidio_anonymizer.operators import (
     Replace,
 )
 
+try:
+    from presidio_anonymizer.operators import AHDSSurrogate
+    AHDS_AVAILABLE = True
+except ImportError:
+    AHDSSurrogate = None
+    AHDS_AVAILABLE = False
+
 logger = logging.getLogger("presidio-anonymizer")
 
 # Predefined operators
 ANONYMIZERS = [Custom, Encrypt, Hash, Keep, Mask, Redact, Replace]
+if AHDS_AVAILABLE:
+    ANONYMIZERS.append(AHDSSurrogate)
+
 DEANONYMIZERS = [Decrypt, DeanonymizeKeep]
 
 
