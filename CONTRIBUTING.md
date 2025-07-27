@@ -72,10 +72,8 @@ To contribute a new predefined recognizer to Presidio Analyzer:
    - Add or update tests for your new recognizer.
 
 6. **Documentation:**
-   - If your recognizer supports a new entity, consider updating the [supported entities list](docs/analyzer/supported_entities.md).
+   - If your recognizer supports a new entity, consider updating the [supported entities list](docs/supported_entities.md).
    - Follow the [best practices for recognizer development](docs/analyzer/developing_recognizers.md) and [adding recognizers](docs/analyzer/adding_recognizers.md).
-
-For more details, see the [predefined recognizers README](presidio-analyzer/presidio_analyzer/predefined_recognizers/README.md).
 
 ### Fixing Bugs and improving the code
 
