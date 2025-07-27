@@ -68,11 +68,11 @@ class PhoneRecognizer(LocalRecognizer):
                 text, region, leniency=self.leniency
             ):
                 try:
-                    parsed_number = phonenumbers.parse(text[match.start:match.end])
+                    parsed_number = phonenumbers.parse(text[match.start : match.end])
                     region = phonenumbers.region_code_for_number(parsed_number)
                     results += [
-                    self._get_recognizer_result(match, text, region, nlp_artifacts)
-                ]
+                        self._get_recognizer_result(match, text, region, nlp_artifacts)
+                    ]
                 except NumberParseException:
                     results += [
                         self._get_recognizer_result(match, text, region, nlp_artifacts)

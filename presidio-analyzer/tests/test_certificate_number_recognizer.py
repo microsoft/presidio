@@ -1,7 +1,7 @@
 import pytest
 
 from tests import assert_result
-from presidio_analyzer.predefined_recognizers.medical_license_recognizer import MedicalLicenseRecognizer
+from presidio_analyzer.predefined_recognizers.country_specific.us import MedicalLicenseRecognizer
 
 
 @pytest.fixture(scope="module")
