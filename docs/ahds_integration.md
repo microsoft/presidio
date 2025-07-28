@@ -7,9 +7,9 @@ Presidio supports integration with Azure Health Data Services (AHDS) for both en
 The AHDS integration provides two main capabilities:
 
 1. **AHDS Recognizer** (in presidio-analyzer): Detects PHI entities using Azure Health Data Services
-2. **AHDS Surrogate Operator** (in presidio-anonymizer): Generates realistic surrogates for detected entities
+2. **AHDS Surrogate Operator** (in presidio-anonymizer): Generates realistic surrogates using the SurrogateOnly operation
 
-## Benefits of AHDS Surrogate Generation
+## Benefits of AHDS Surrogation
 
 - **Maintains Data Utility**: Preserves structure and format for downstream analytics
 - **Realistic Healthcare Context**: Generates medically plausible names, dates, and identifiers
@@ -78,6 +78,8 @@ print(f"Original: {text}")
 print(f"Anonymized: {result.text}")
 # Output: "Patient Michael Johnson was seen by Dr. Brown on 1987-06-23 for diabetes treatment."
 ```
+
+**Note:** This example uses the Azure Health Data Services SurrogateOnly operation, which provides superior data utility by generating realistic, medically-appropriate surrogates while maintaining document structure and relationships.
 
 ## Configuration Options
 

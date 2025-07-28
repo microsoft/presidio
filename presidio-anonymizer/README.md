@@ -47,12 +47,14 @@ Presidio anonymizer comes by default with the following anonymizers:
 -   **Custom**: Replace the PII with the result of the function executed on the PII string.
     - Parameters: `lambda`: Lambda function to execute on the PII string.
     The lambda return type must be a string.
--   **Surrogate**: Use Azure Health Data Services to generate realistic, appropriate surrogates for detected PHI entities. This operator maintains data utility while ensuring HIPAA compliance by preserving format and context.
+-   **Surrogate**: Use Azure Health Data Services SurrogateOnly operation to generate realistic, medically-appropriate surrogates for detected PHI entities. This operator maintains data utility while ensuring HIPAA compliance by preserving format and context.
     - Parameters:
         - `endpoint`: AHDS endpoint (optional, can use AHDS_ENDPOINT env var)
         - `entities`: List of entities detected by analyzer  
         - `input_locale`: Input locale (default: "en-US")
         - `surrogate_locale`: Surrogate locale (default: "en-US")
+    - Requires: `pip install presidio-anonymizer[ahds]`
+    - Usage: `OperatorConfig("surrogate", {...})`
 
 
 The **Anonymizer** default setting is to use the Advanced Encryption Standard (AES) as the encryption algorithm, also known as Rijndael. 
