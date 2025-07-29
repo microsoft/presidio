@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
@@ -68,7 +68,7 @@ class KrRrnRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str) -> bool | None:
+    def validate_result(self, pattern_text: str) -> Union[bool, None]:
         """
         Validate the pattern logic e.g., by running checksum on a detected pattern.
 
