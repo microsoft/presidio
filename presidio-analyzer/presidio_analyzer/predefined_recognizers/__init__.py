@@ -34,6 +34,9 @@ from .country_specific.italy.it_identity_card_recognizer import ItIdentityCardRe
 from .country_specific.italy.it_passport_recognizer import ItPassportRecognizer
 from .country_specific.italy.it_vat_code import ItVatCodeRecognizer
 
+# Korea recognizers
+from .country_specific.korea.kr_rrn_recognizer import KrRrnRecognizer
+
 # Poland recognizers
 from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
 
@@ -142,4 +145,5 @@ __all__ = [
     "EsNieRecognizer",
     "UkNinoRecognizer",
     "AzureHealthDeidRecognizer",
+    "KrRrnRecognizer",
 ]
