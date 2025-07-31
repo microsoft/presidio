@@ -53,6 +53,7 @@ nav:
           - Presidio Anonymizer:
               - Home: anonymizer/index.md
               - Developing PII anonymization operators: anonymizer/adding_operators.md
+      - Azure Health Data Services Integration: ahds_integration.md
       - Image de-identification:
           - Home: image-redactor/index.md
           - Evaluating DICOM redaction: image-redactor/evaluating_dicom_redaction.md
