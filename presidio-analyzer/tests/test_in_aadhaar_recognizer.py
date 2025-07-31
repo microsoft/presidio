@@ -5,12 +5,12 @@ from presidio_analyzer.predefined_recognizers import InAadhaarRecognizer
 
 
 @pytest.fixture(scope="module")
-def recognizer():
+def recognizer() -> InAadhaarRecognizer:
     return InAadhaarRecognizer()
 
 
 @pytest.fixture(scope="module")
-def entities():
+def entities() -> list[str]:
     return ["IN_AADHAAR"]
 
 
@@ -21,6 +21,15 @@ def entities():
         ("123456789012", 0, (0,12), 0),
         ("312345678909", 1, (0, 12), 1),
         ("399876543211", 1, (0, 12), 1),
+        ("1234 5678 9012", 0, (0,14), 0),
+        ("3123 4567 8909", 1, (0, 14), 1),
+        ("3998 7654 3211", 1, (0, 14), 1),
+        ("1234-5678-9012", 0, (0,14), 0),
+        ("3123-4567-8909", 1, (0, 14), 1),
+        ("3998-7654-3211", 1, (0, 14), 1),
+        ("1234:5678:9012", 0, (0,14), 0),
+        ("3123:4567:8909", 1, (0, 14), 1),
+        ("3998:7654:3211", 1, (0, 14), 1),
         ("My Aadhaar number is 400123456787 with a lot of text beyond it", 1, (21,33), 1),
         # fmt: on
     ],
@@ -32,7 +41,7 @@ def test_when_aadhaar_in_text_then_all_aadhaars_found(
     expected_score,
     recognizer,
     entities,
-):
+) -> None:
     results = recognizer.analyze(text, entities)
     print(results)
 
@@ -80,7 +89,7 @@ verhoeff_test_set = [
 ]
 
 @pytest.mark.parametrize("input_number, is_verhoeff", verhoeff_test_set)
-def test_is_verhoeff(input_number, is_verhoeff):
+def test_is_verhoeff(input_number, is_verhoeff) -> None:
     """
     Test to assert verhoeff number validation based on checksum from base class.
 

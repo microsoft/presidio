@@ -24,6 +24,7 @@ class InAadhaarRecognizer(PatternRecognizer):
             r"\b[0-9]{12}\b",
             0.01,
         ),
+        Pattern("AADHAR (Very Weak)", r"\b[0-9]{4}[- :][0-9]{4}[- :][0-9]{4}\b", 0.01),
     ]
 
     CONTEXT = [
@@ -40,7 +41,7 @@ class InAadhaarRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "IN_AADHAAR",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
-    ):
+    ) -> None:
         self.replacement_pairs = (
             replacement_pairs
             if replacement_pairs
@@ -75,7 +76,7 @@ class InAadhaarRecognizer(PatternRecognizer):
         return is_valid_aadhaar
 
     @staticmethod
-    def _is_palindrome(text: str, case_insensitive: bool = False):
+    def _is_palindrome(text: str, case_insensitive: bool = False) -> bool:
         """
         Validate if input text is a true palindrome.
 
@@ -89,7 +90,7 @@ class InAadhaarRecognizer(PatternRecognizer):
         return palindrome_text == palindrome_text[::-1]
 
     @staticmethod
-    def _is_verhoeff_number(input_number: int):
+    def _is_verhoeff_number(input_number: int) -> bool:
         """
         Check if the input number is a true verhoeff number.
 
