@@ -7,6 +7,6 @@ pandas
 python-dotenv
 st-annotated-text
 torch
-flair
+flair>=0.15.0
 openai
 azure-ai-textanalytics
