@@ -52,8 +52,10 @@ RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 # Copy full app source
 COPY --chown=presidio:presidio . .
 
-# Expose port
 EXPOSE ${PORT}
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD sh -c 'curl --fail http://localhost:$PORT/health || exit 1'
 
 # Run the server
 CMD ["poetry", "run", "gunicorn", "-w", "${WORKERS}", "-b", "0.0.0.0:${PORT}", "app:create_app()"]
