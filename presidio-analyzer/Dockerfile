@@ -1,37 +1,59 @@
-FROM python:3.13-slim
+FROM python:3.12-slim
 
+# Arguments
 ARG NAME
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
-ENV PIP_NO_CACHE_DIR=1
 
+# Environment Variables
+ENV PIP_NO_CACHE_DIR=1
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
 ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
 ENV NLP_CONF_FILE=${NLP_CONF_FILE}
-
 ENV PORT=3000
 ENV WORKERS=1
 
-COPY ${ANALYZER_CONF_FILE} /usr/bin/${NAME}/${ANALYZER_CONF_FILE}
-COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /usr/bin/${NAME}/${RECOGNIZER_REGISTRY_CONF_FILE}
-COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
-
-WORKDIR /usr/bin/${NAME}
-
-# Install essential build tools
+# System deps & security upgrades
 RUN apt-get update \
-  && apt-get install -y build-essential
+  && apt-get dist-upgrade -y \
+  && apt-get install -y --no-install-recommends build-essential \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-COPY ./pyproject.toml /usr/bin/${NAME}/
-COPY ./README.md /usr/bin/${NAME}/
+# Create a non-root user
+RUN useradd --create-home --shell /bin/bash presidio
 
-RUN pip install poetry && poetry install --no-root --only=main -E server
-# install nlp models specified in NLP_CONF_FILE
-COPY ./install_nlp_models.py /usr/bin/${NAME}/
+# Set working directory
+WORKDIR /home/presidio/app
 
+# Set ownership early so COPYed files inherit correct permissions
+RUN mkdir -p /home/presidio/app && chown -R presidio:presidio /home/presidio
+
+# Switch to non-root user
+USER presidio
+
+# Copy config files
+COPY --chown=presidio:presidio ${ANALYZER_CONF_FILE} ./${ANALYZER_CONF_FILE}
+COPY --chown=presidio:presidio ${RECOGNIZER_REGISTRY_CONF_FILE} ./${RECOGNIZER_REGISTRY_CONF_FILE}
+COPY --chown=presidio:presidio ${NLP_CONF_FILE} ./${NLP_CONF_FILE}
+
+# Copy poetry config files
+COPY --chown=presidio:presidio pyproject.toml README.md ./
+
+# Install Poetry and dependencies
+RUN pip install --no-cache-dir poetry \
+  && poetry install --no-root --only=main -E server
+
+# Install NLP models
+COPY --chown=presidio:presidio install_nlp_models.py ./
 RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
-COPY . /usr/bin/${NAME}/
+# Copy full app source
+COPY --chown=presidio:presidio . .
+
+# Expose port
 EXPOSE ${PORT}
-CMD poetry run gunicorn -w $WORKERS -b 0.0.0.0:$PORT 'app:create_app()'
+
+# Run the server
+CMD ["poetry", "run", "gunicorn", "-w", "${WORKERS}", "-b", "0.0.0.0:${PORT}", "app:create_app()"]
