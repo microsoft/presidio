@@ -42,7 +42,9 @@ COPY --chown=presidio:presidio ${NLP_CONF_FILE} ./${NLP_CONF_FILE}
 COPY --chown=presidio:presidio pyproject.toml README.md ./
 
 # Install Poetry and dependencies
-RUN pip install --no-cache-dir poetry \
+ENV PATH="/home/presidio/.local/bin:$PATH"
+
+RUN pip install --no-cache-dir --user poetry \
   && poetry install --no-root --only=main -E server
 
 # Install NLP models
