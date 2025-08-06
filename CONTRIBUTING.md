@@ -41,6 +41,40 @@ Adding a new recognizer is a great way to improve Presidio. A new capability to 
 
 Best practices for developing recognizers [are described here](docs/analyzer/developing_recognizers.md). Please follow these guidelines when proposing new recognizers.
 
+#### Contributing a New Predefined Recognizer
+
+To contribute a new predefined recognizer to Presidio Analyzer:
+
+1. **Choose the correct folder:**
+   - If your recognizer is specific to a country or region, add it under `presidio-analyzer/presidio_analyzer/predefined_recognizers/country_specific/<country>/`.
+   - For globally applicable recognizers, use `generic/`.
+   - For recognizers based on NLP engines, use `nlp_engine_recognizers/`.
+   - For standalone NER models, use `ner/`.
+   - For third-party integrations, use `third_party/`.
+
+
+2. **Add your recognizer class** in the appropriate folder.
+
+   - **If your recognizer uses regex patterns:**
+     - Make regex patterns as specific as possible to minimize false positives.
+     - Document the source or reference for any new regex logic (e.g., link to a standard, documentation, or example dataset) in the code as a comment.
+
+3. **Add your recognizer to the configuration:**
+   - Add your recognizer to `presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml`.
+   - For country-specific recognizers, set `enabled: false` by default in the YAML configuration.
+
+3. **Update imports:** Add your recognizer to `presidio-analyzer/presidio_analyzer/predefined_recognizers/__init__.py` so it is available for import and backward compatibility.
+
+4. **Update `__all__`:** Add your recognizer class name to the `__all__` list in the same `__init__.py` file.
+
+5. **Testing:**
+   - Ensure all existing tests pass.
+   - Add or update tests for your new recognizer.
+
+6. **Documentation:**
+   - If your recognizer supports a new entity, consider updating the [supported entities list](docs/supported_entities.md).
+   - Follow the [best practices for recognizer development](docs/analyzer/developing_recognizers.md) and [adding recognizers](docs/analyzer/adding_recognizers.md).
+
 ### Fixing Bugs and improving the code
 
 Please review the open [issues on Github](https://github.com/microsoft/presidio/issues) for known bugs and feature requests. We sometimes add 'good first issue' labels on those we believe are simpler, and 'advanced' labels on those which require more work or multiple changes across the solution.

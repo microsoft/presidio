@@ -44,7 +44,7 @@ The [`PatternRecognizer`](https://github.com/microsoft/presidio/blob/main/presid
 See some examples here:
 
 !!! example "Examples"
-    Examples of pattern based recognizers are the [`CreditCardRecognizer`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/credit_card_recognizer.py) and [`EmailRecognizer`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/email_recognizer.py).
+    Examples of pattern based recognizers are the [`CreditCardRecognizer`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/generic/credit_card_recognizer.py) and [`EmailRecognizer`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/generic/email_recognizer.py).
 
 ### Machine Learning (ML) Based or Rule-Based
 
