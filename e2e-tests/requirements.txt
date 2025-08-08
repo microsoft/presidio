@@ -1,4 +1,4 @@
-requests
+requests>=2.32.4
 pytest
 file:../presidio-analyzer
 file:../presidio-anonymizer

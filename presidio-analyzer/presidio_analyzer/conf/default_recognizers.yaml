@@ -153,6 +153,12 @@ recognizers:
     - pl
     type: predefined
 
+  - name: KrRrnRecognizer
+    supported_languages: 
+    - kr
+    type: predefined
+    enabled: false
+
   - name: CryptoRecognizer
     type: predefined
 
