@@ -3,7 +3,7 @@ presidio-analyzer[stanza]
 presidio-anonymizer
 streamlit>=1.37.0
 streamlit-tags
-pandas
+pandas>=1.0.4
 python-dotenv
 st-annotated-text
 torch>=2.7.0
