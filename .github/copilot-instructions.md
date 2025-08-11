@@ -108,6 +108,38 @@ Always test the complete analyze -> anonymize pipeline:
 2. Use anonymizer API with detected entities to anonymize text
 3. Verify anonymization quality and entity coverage
 
+### 4. E2E Tests (Comprehensive Integration Testing)
+**CRITICAL: Run comprehensive e2e tests for significant changes. Takes ~2 minutes. NEVER CANCEL.**
+
+E2E tests validate REST API functionality and cross-service integration:
+
+```bash
+# First, ensure all services are running via docker-compose
+docker-compose up --build -d  # Takes 10-15 minutes. NEVER CANCEL.
+docker-compose ps  # Verify all services are up
+
+# Set up e2e test environment (Takes ~30 seconds)
+cd e2e-tests
+python -m venv presidio-e2e  # Create virtualenv
+source presidio-e2e/bin/activate  # On Windows: presidio-e2e\Scripts\activate
+pip install -r requirements.txt  # Install test dependencies
+
+# Run all e2e tests (Takes ~2 minutes. NEVER CANCEL. Set timeout to 5+ minutes.)
+pytest -v
+
+# Run specific test categories
+pytest -m api -v          # API-only tests
+pytest -m integration -v  # Cross-service integration tests
+
+# Cleanup
+deactivate
+```
+
+**E2E Test Categories:**
+- `@pytest.mark.api` - Single service API tests
+- `@pytest.mark.integration` - Multi-service integration flows
+- Tests include: analyzer API, anonymizer API, image redactor API, end-to-end analyze→anonymize flows
+
 ## Common Issues and Solutions
 
 ### Network/SSL Issues
@@ -143,6 +175,19 @@ Always test the complete analyze -> anonymize pipeline:
 - `pyproject.toml` - Root configuration for ruff linting
 - `docker-compose.yml` - Multi-service container orchestration
 
+### Samples and Examples
+- `docs/samples/` - **Reference examples only, not official production code**
+  - Python notebooks for various use cases (basic usage, customization, batch processing)
+  - Deployment samples (Kubernetes, Spark, Azure services)
+  - Integration examples (external services, transformers, custom recognizers)
+  - **Use these for inspiration but validate approaches for production use**
+
+### External Resources
+- **presidio-research repository** - Additional samples, research datasets, and experimental features
+  - Contains advanced examples and research-oriented implementations
+  - May include experimental features not yet in main Presidio
+  - Use as reference for advanced scenarios and research contexts
+
 ## Expected Build Times and Timeouts
 
 **CRITICAL: Always set appropriate timeouts and include "NEVER CANCEL" warnings**
@@ -155,6 +200,77 @@ Always test the complete analyze -> anonymize pipeline:
 | Docker Image Pulls | 3 minutes | 10 minutes | `docker pull mcr.microsoft.com/presidio-*` |
 | Docker Builds | 15 minutes | 30 minutes | `docker compose up --build` |
 | Service Startup | 20 seconds | 60 seconds | Container readiness |
+| E2E Test Suite | 2 minutes | 5 minutes | `pytest -v` from e2e-tests/ |
+
+## Development Guidelines and Contribution Process
+
+**CRITICAL: Follow these guidelines when contributing to Presidio. All changes require proper testing and documentation.**
+
+### Before Making Changes
+1. **Open a GitHub issue** suggesting the change before creating a PR
+2. **Read CONTRIBUTING.md** for detailed contribution guidelines
+3. **Follow the development process** documented in docs/development.md
+
+### Code Quality Requirements  
+- **All code must be tested** - Unit tests, integration tests, and e2e tests as appropriate
+- **All code must be linted** - Use `ruff check .` from repository root
+- **All code must be documented** - Include docstrings and update documentation
+- **Use test naming convention** - `test_when_[condition]_then_[expected_behavior]`
+
+### Pull Request Requirements
+- **PR must be small** - Solve one issue at a time
+- **Tests must pass** - CI pipeline (unit tests, e2e tests, linting) must succeed  
+- **Two maintainer approvals** required for merge
+- **Update CHANGELOG.md** under "Unreleased" section
+- **Clear commit messages** explaining the changes made
+
+### Adding New Recognizers (PII Detectors)
+Follow best practices in docs/analyzer/developing_recognizers.md:
+
+1. **Choose correct folder** in `presidio-analyzer/presidio_analyzer/predefined_recognizers/`:
+   - `country_specific/<country>/` for region-specific recognizers
+   - `generic/` for globally applicable recognizers  
+   - `nlp_engine_recognizers/` for NLP-based recognizers
+   - `ner/` for standalone NER models
+   - `third_party/` for external service integrations
+
+2. **Make regex patterns specific** to minimize false positives
+3. **Document pattern sources** with comments linking to standards/references
+4. **Add to configuration** in `conf/default_recognizers.yaml` (set `enabled: false` for country-specific)
+5. **Update imports** in `predefined_recognizers/__init__.py`
+6. **Add comprehensive tests** including edge cases
+7. **Update supported entities documentation** if adding new entity types
+
+### Local Development Setup
+```bash
+# Install Poetry and dependencies  
+pip install poetry
+pip install ruff
+
+# Set up pre-commit hooks (recommended)
+pip install pre-commit
+pre-commit install  # Enables automatic formatting on commit
+
+# Choose a component to work on
+cd presidio-analyzer  # or presidio-anonymizer, presidio-cli
+poetry install --all-extras  # NEVER CANCEL. Set timeout to 10+ minutes.
+poetry run python -m spacy download en_core_web_lg  # For analyzer/CLI
+```
+
+### Testing Strategy
+1. **Unit tests** - Test individual functions/classes with mocks
+2. **Integration tests** - Test component integration, external packages
+3. **E2E tests** - Test REST APIs and cross-service flows
+4. **Manual validation** - Always test actual functionality beyond automated tests
+
+### Linting and Formatting
+```bash
+# Check code style (required before PR)
+ruff check .  # From repository root
+
+# Auto-format code (if using pre-commit hooks)
+git commit  # Will automatically format and re-commit if needed
+```
 
 ## CI/CD Integration Notes
 - Repository uses Azure Pipelines for CI/CD
@@ -182,6 +298,22 @@ docker pull mcr.microsoft.com/presidio-analyzer:latest && docker pull mcr.micros
 docker run -d -p 5002:3000 mcr.microsoft.com/presidio-analyzer:latest
 docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
 sleep 20 && curl http://localhost:5002/health && curl http://localhost:5001/health
+
+# E2E testing workflow
+docker-compose up --build -d  # Start all services
+cd e2e-tests && python -m venv presidio-e2e && source presidio-e2e/bin/activate
+pip install -r requirements.txt && pytest -v  # Run all e2e tests
 ```
+
+## Reference Documentation Links
+
+**Always consult these official documents for detailed guidance:**
+
+- **CONTRIBUTING.md** - Complete contribution guidelines, PR process, CLA requirements
+- **docs/development.md** - Comprehensive development setup, testing conventions, local build process
+- **docs/analyzer/developing_recognizers.md** - Best practices for creating new PII recognizers
+- **docs/analyzer/adding_recognizers.md** - Step-by-step guide for adding recognizers to Presidio
+- **docs/supported_entities.md** - Current list of supported PII entity types
+- **docs/samples/index.md** - Index of all available examples and use cases
 
 Always run these validation steps after making changes to ensure functionality is preserved.
