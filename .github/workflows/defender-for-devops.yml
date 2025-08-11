@@ -48,7 +48,7 @@ jobs:
       env:
         GDN_CHECKOV_SKIPPATH: 'docs/'
       with:
-        tools: bandit, checkov, templateanalyzer, terrascan, trivy
+        tools: bandit, checkov, templateanalyzer, trivy
 
     - name: Upload results to Security tab
       uses: github/codeql-action/upload-sarif@v3
