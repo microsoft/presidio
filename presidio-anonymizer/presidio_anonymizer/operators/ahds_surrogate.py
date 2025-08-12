@@ -8,6 +8,8 @@ try:
     from azure.health.deidentification import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationContent,
+        DeidentificationCustomizationOptions,
+        DeidentificationResult,
         SimplePhiEntity,
         TaggedPhiEntities,
         PhiCategory,
@@ -18,6 +20,8 @@ try:
 except ImportError:
     DeidentificationClient = None
     DeidentificationContent = None
+    DeidentificationCustomizationOptions = None
+    DeidentificationResult = None
     DefaultAzureCredential = None
     SimplePhiEntity = None
     TaggedPhiEntities = None
@@ -38,6 +42,157 @@ class AHDSSurrogate(Operator):
     ENTITIES = "entities"
     INPUT_LOCALE = "input_locale"
     SURROGATE_LOCALE = "surrogate_locale"
+    
+    # Comprehensive mapping of Presidio entity types to AHDS PhiCategory names
+    # Based on actual AHDS PhiCategory values: ACCOUNT, AGE, BIO_ID, CITY, COUNTRY_OR_REGION,
+    # DATE, DEVICE, DOCTOR, EMAIL, FAX, HEALTH_PLAN, HOSPITAL, ID_NUM, IP_ADDRESS, LICENSE,
+    # LOCATION_OTHER, MEDICAL_RECORD, ORGANIZATION, PATIENT, PHONE, PROFESSION, SOCIAL_SECURITY,
+    # STATE, STREET, UNKNOWN, URL, USERNAME, VEHICLE, ZIP
+    ENTITY_TYPE_MAPPING = {
+        # === GLOBAL PRESIDIO ENTITIES ===
+        
+        # Person-related entities
+        'PERSON': 'PATIENT',  # Global Presidio entity
+        'PATIENT': 'PATIENT',
+        'DOCTOR': 'DOCTOR',
+        'PHYSICIAN': 'DOCTOR',
+        'NURSE': 'DOCTOR',  # Medical professional
+        'PRACTITIONER': 'DOCTOR',
+        'NRP': 'PATIENT',  # Nationality, religious or political group
+        
+        # Contact information  
+        'PHONE_NUMBER': 'PHONE',  # Global Presidio entity
+        'PHONE': 'PHONE',
+        'FAX_NUMBER': 'FAX',
+        'FAX': 'FAX',
+        'EMAIL_ADDRESS': 'EMAIL',  # Global Presidio entity
+        'EMAIL': 'EMAIL',
+        
+        # Temporal information
+        'DATE_TIME': 'DATE',  # Global Presidio entity
+        'DATE': 'DATE',
+        'TIME': 'DATE',
+        'AGE': 'AGE',
+        
+        # Location information
+        'LOCATION': 'LOCATION_OTHER',  # Global Presidio entity
+        'ADDRESS': 'STREET',
+        'STREET_ADDRESS': 'STREET',
+        'CITY': 'CITY',
+        'STATE': 'STATE',
+        'COUNTRY': 'COUNTRY_OR_REGION',
+        'ZIP_CODE': 'ZIP',
+        'POSTAL_CODE': 'ZIP',
+        
+        # Financial/Account information
+        'CREDIT_CARD': 'ACCOUNT',  # Global Presidio entity
+        'ACCOUNT_NUMBER': 'ACCOUNT',
+        'BANK_ACCOUNT': 'ACCOUNT',
+        'ROUTING_NUMBER': 'ACCOUNT',
+        'IBAN_CODE': 'ACCOUNT',  # Global Presidio entity
+        'CRYPTO': 'ACCOUNT',  # Global Presidio entity - cryptocurrency
+        
+        # Medical/Health related
+        'MEDICAL_LICENSE': 'LICENSE',  # Global Presidio entity
+        'LICENSE': 'LICENSE',
+        'NPI': 'LICENSE',  # National Provider Identifier
+        'DEA_NUMBER': 'LICENSE',  # Drug Enforcement Administration number
+        'CONDITION': 'PATIENT',  # Medical condition (patient-related)
+        'MEDICATION': 'PATIENT',  # Patient-related medical info
+        'PROCEDURE': 'PATIENT',  # Medical procedure
+        'TREATMENT': 'PATIENT',  # Medical treatment
+        'HEALTH_PLAN': 'HEALTH_PLAN',
+        'INSURANCE': 'HEALTH_PLAN',
+        'HOSPITAL': 'HOSPITAL',
+        'CLINIC': 'HOSPITAL',  # Medical institution
+        'MEDICAL_RECORD_NUMBER': 'MEDICAL_RECORD',
+        'MRN': 'MEDICAL_RECORD',
+        
+        # Technology/Digital
+        'IP_ADDRESS': 'IP_ADDRESS',  # Global Presidio entity
+        'URL': 'URL',  # Global Presidio entity
+        'USERNAME': 'USERNAME',
+        'PASSWORD': 'USERNAME',  # No specific password category, use username
+        'DEVICE': 'DEVICE',
+        'DEVICE_ID': 'DEVICE',
+        
+        # Organization/Institution/Profession
+        'ORGANIZATION': 'ORGANIZATION',
+        'ORG': 'ORGANIZATION',
+        'COMPANY': 'ORGANIZATION',
+        'PROFESSION': 'PROFESSION',
+        'JOB_TITLE': 'PROFESSION',
+        'OCCUPATION': 'PROFESSION',
+        
+        # Vehicle information
+        'VEHICLE': 'VEHICLE',
+        'LICENSE_PLATE': 'VEHICLE',
+        'VIN': 'VEHICLE',
+        'CAR': 'VEHICLE',
+        
+        # === US-SPECIFIC PRESIDIO ENTITIES ===
+        'US_SSN': 'SOCIAL_SECURITY',  # US Social Security Number
+        'US_DRIVER_LICENSE': 'ID_NUM',  # US Driver's license
+        'US_PASSPORT': 'ID_NUM',  # US Passport
+        'US_ITIN': 'ID_NUM',  # US Individual Taxpayer Identification Number
+        'US_BANK_NUMBER': 'ACCOUNT',  # US Bank account number
+        
+        # === UK-SPECIFIC PRESIDIO ENTITIES ===
+        'UK_NHS': 'ID_NUM',  # UK NHS number
+        'UK_NINO': 'ID_NUM',  # UK National Insurance Number
+        
+        # === SPAIN-SPECIFIC PRESIDIO ENTITIES ===
+        'ES_NIF': 'ID_NUM',  # Spanish NIF number
+        'ES_NIE': 'ID_NUM',  # Spanish NIE number
+        
+        # === ITALY-SPECIFIC PRESIDIO ENTITIES ===
+        'IT_FISCAL_CODE': 'ID_NUM',  # Italian fiscal code
+        'IT_DRIVER_LICENSE': 'ID_NUM',  # Italian driver license
+        'IT_VAT_CODE': 'ID_NUM',  # Italian VAT code
+        'IT_PASSPORT': 'ID_NUM',  # Italian passport
+        'IT_IDENTITY_CARD': 'ID_NUM',  # Italian identity card
+        
+        # === POLAND-SPECIFIC PRESIDIO ENTITIES ===
+        'PL_PESEL': 'ID_NUM',  # Polish PESEL number
+        
+        # === SINGAPORE-SPECIFIC PRESIDIO ENTITIES ===
+        'SG_NRIC_FIN': 'ID_NUM',  # Singapore NRIC/FIN
+        'SG_UEN': 'ID_NUM',  # Singapore Unique Entity Number
+        
+        # === AUSTRALIA-SPECIFIC PRESIDIO ENTITIES ===
+        'AU_ABN': 'ID_NUM',  # Australian Business Number
+        'AU_ACN': 'ID_NUM',  # Australian Company Number
+        'AU_TFN': 'ID_NUM',  # Australian Tax File Number
+        'AU_MEDICARE': 'ID_NUM',  # Australian Medicare number
+        
+        # === INDIA-SPECIFIC PRESIDIO ENTITIES ===
+        'IN_PAN': 'ID_NUM',  # Indian Permanent Account Number
+        'IN_AADHAAR': 'ID_NUM',  # Indian Aadhaar number
+        'IN_VEHICLE_REGISTRATION': 'VEHICLE',  # Indian vehicle registration
+        'IN_VOTER': 'ID_NUM',  # Indian voter ID
+        'IN_PASSPORT': 'ID_NUM',  # Indian passport
+        
+        # === FINLAND-SPECIFIC PRESIDIO ENTITIES ===
+        'FI_PERSONAL_IDENTITY_CODE': 'ID_NUM',  # Finnish personal identity code
+        
+        # === KOREA-SPECIFIC PRESIDIO ENTITIES ===
+        'KR_RRN': 'ID_NUM',  # Korean Resident Registration Number
+        
+        # === GENERIC CATEGORIES ===
+        'ID_NUMBER': 'ID_NUM',
+        'PASSPORT': 'ID_NUM',
+        'DRIVER_LICENSE': 'ID_NUM',
+        'SSN': 'SOCIAL_SECURITY',
+        'SOCIAL_SECURITY_NUMBER': 'SOCIAL_SECURITY',
+        'BIO_ID': 'BIO_ID',
+        'BIOMETRIC_ID': 'BIO_ID',
+        
+        # === FALLBACK/UNKNOWN CATEGORIES ===
+        'GENERIC_PII': 'UNKNOWN',
+        'PII': 'UNKNOWN',
+        'OTHER': 'UNKNOWN',
+        'UNKNOWN': 'UNKNOWN',
+    }
     
     def __init__(self):
         if not DeidentificationClient:
@@ -79,9 +234,8 @@ class AHDSSurrogate(Operator):
         # Convert analyzer results to AHDS tagged entities
         tagged_entities = self._convert_to_tagged_entities(entities)
         
-        # Create AHDS client with the API version that works with this endpoint
         credential = DefaultAzureCredential()
-        client = DeidentificationClient(endpoint, credential, api_version="2024-11-15")
+        client = DeidentificationClient(endpoint, credential, api_version="2025-07-15-preview")
         
         # Create tagged entity collection
         tagged_entity_collection = TaggedPhiEntities(
@@ -89,11 +243,15 @@ class AHDSSurrogate(Operator):
             entities=tagged_entities
         )
         
-        # Create deidentification content with tagged entities for surrogate generation
+        customizations = DeidentificationCustomizationOptions(
+            input_locale=input_locale
+        ) if input_locale else None
+        
         content = DeidentificationContent(
             input_text=text,
             operation_type=DeidentificationOperationType.SURROGATE_ONLY,
-            tagged_entities=tagged_entity_collection
+            tagged_entities=tagged_entity_collection,
+            customizations=customizations
         )
         
         try:
@@ -105,44 +263,14 @@ class AHDSSurrogate(Operator):
             # Handle specific error types
             if "500" in error_message or "InternalServerError" in error_message:
                 logger.error(f"AHDS service returned 500 error - service may be temporarily unavailable: {error_message}")
-                
-                # For 500 errors, we might want to return the original text rather than failing
                 logger.warning("Returning original text due to service error")
                 return text
-            
-            # If it's an API version error, try to extract supported versions
-            elif "ApiVersionUnsupported" in error_message or "api-version" in error_message.lower():
-                logger.error(f"API Version not supported. Error: {error_message}")
-                
-                # Try to extract supported versions from the error response
-                supported_versions = None
-                if hasattr(e, 'response') and e.response and hasattr(e.response, 'headers'):
-                    headers = e.response.headers
-                    if 'api-supported-versions' in headers:
-                        supported_versions = headers['api-supported-versions']
-                        logger.info(f"Supported API versions from response: {supported_versions}")
-                        
-                        # Try the first supported version
-                        if supported_versions and ',' in supported_versions:
-                            versions_list = [v.strip() for v in supported_versions.split(',')]
-                            if versions_list:
-                                first_version = versions_list[0]
-                                logger.info(f"Attempting to use supported API version: {first_version}")
-                                try:
-                                    version_client = DeidentificationClient(endpoint, credential, api_version=first_version)
-                                    result = version_client.deidentify_text(content)
-                                    return result.output_text if result.output_text else text
-                                except Exception as version_error:
-                                    logger.error(f"Failed with supported version {first_version}: {version_error}")
-                
-                # Generic fallback - try without explicit version
-                logger.info("Attempting to use default API version...")
-                try:
-                    fallback_client = DeidentificationClient(endpoint, credential)
-                    result = fallback_client.deidentify_text(content)
-                    return result.output_text if result.output_text else text
-                except Exception as fallback_error:
-                    logger.error(f"Fallback with default API version also failed: {fallback_error}")
+            elif "Forbidden" in error_message:
+                logger.error(f"AHDS service returned Forbidden error - check credentials and permissions: {error_message}")
+                raise InvalidParamError(f"AHDS access forbidden - check Azure credentials and AHDS service permissions: {e}")
+            elif "authentication" in error_message.lower() or "credential" in error_message.lower():
+                logger.error(f"AHDS authentication failed: {error_message}")
+                raise InvalidParamError(f"AHDS authentication failed - check Azure credentials: {e}")
             
             logger.error(f"AHDS SurrogateOnly operation failed: {e}")
             raise InvalidParamError(f"AHDS SurrogateOnly operation failed: {e}")
@@ -179,10 +307,35 @@ class AHDSSurrogate(Operator):
         return tagged_entities
     
     def _map_to_phi_category(self, entity_type: str):
-        """Map Presidio entity types to AHDS PhiCategory."""
-        # For now, map everything to PATIENT category which we know exists
-        # This ensures compatibility while we determine which other categories are available
-        return PhiCategory.PATIENT
+        """Map Presidio entity types to AHDS PhiCategory.
+        
+        Maps common Presidio PII entity types to their most appropriate AHDS PhiCategory
+        counterparts for surrogate generation. Uses a comprehensive mapping table that
+        covers all documented Presidio entity types. Falls back to UNKNOWN category for 
+        unmapped entities to ensure compatibility.
+        
+        :param entity_type: The Presidio entity type (e.g., 'PERSON', 'PHONE_NUMBER')
+        :return: Corresponding PhiCategory enum value
+        """
+        # Convert to uppercase for case-insensitive matching
+        entity_upper = entity_type.upper()
+        
+        # Try exact match first
+        if entity_upper in self.ENTITY_TYPE_MAPPING:
+            category_name = self.ENTITY_TYPE_MAPPING[entity_upper]
+            return self._get_safe_phi_category(category_name)
+        
+        logger.warning(f"No mapping found for entity type '{entity_type}', using UNKNOWN category")
+        return PhiCategory.UNKNOWN
+    
+    def _get_safe_phi_category(self, category_name: str):
+        """Safely get PhiCategory enum value, with fallback to UNKNOWN."""
+        try:
+            # Try to get the category by name
+            return getattr(PhiCategory, category_name)
+        except AttributeError:
+            logger.warning(f"PhiCategory '{category_name}' not found, using UNKNOWN")
+            return PhiCategory.UNKNOWN
     
     def validate(self, params: Dict = None) -> None:
         """Validate operator parameters."""

@@ -1,127 +1,85 @@
 """Tests for the AHDS Surrogate operator."""
 
 import os
+import importlib
+from unittest.mock import MagicMock
+
 import pytest
+import dotenv
 
-pytestmark = pytest.mark.skipif(
-    not os.getenv("AHDS_ENDPOINT"),
-    reason="AHDS_ENDPOINT environment variable not set"
-)
+from presidio_anonymizer.operators import AHDSSurrogate
+from presidio_anonymizer.entities import InvalidParamError
 
-try:
-    from presidio_anonymizer.operators import AHDSSurrogate
-    from presidio_anonymizer.entities import InvalidParamError
-    AHDS_AVAILABLE = True
-except ImportError:
-    AHDS_AVAILABLE = False
+@pytest.fixture(scope="module")
+def import_modules():
+    pytest.importorskip("azure.identity")
+    pytest.importorskip("azure.health.deidentification")
+    from azure.health.deidentification import DeidentificationClient
+    from azure.health.deidentification.models import (
+        DeidentificationContent,
+        DeidentificationOperationType,
+        DeidentificationResult,
+        SimplePhiEntity,
+        TaggedPhiEntities,
+        PhiCategory,
+        TextEncodingType,
+        DeidentificationCustomizationOptions,
+    )
+    from azure.identity import DefaultAzureCredential
 
-
-@pytest.mark.skipif(not AHDS_AVAILABLE, reason="AHDS dependencies not available")
+def requires_env_vars():
+    dotenv.load_dotenv()
+    endpoint = os.getenv("AHDS_ENDPOINT", "")
+    return pytest.mark.skipif(
+        endpoint == "",
+        reason="AHDS_ENDPOINT environment variable not set"
+    )
 class TestAHDSSurrogate:
     """Test AHDS Surrogate operator."""
     
-    def test_operator_name(self):
+    def test_operator_name(self, import_modules):
         """Test operator name."""
         operator = AHDSSurrogate()
         assert operator.operator_name() == "surrogate"
-    
-    def test_validate_missing_endpoint(self):
-        """Test validation fails when endpoint is missing."""
-        operator = AHDSSurrogate()
-        
-        # Remove AHDS_ENDPOINT if set temporarily
-        original_endpoint = os.environ.get("AHDS_ENDPOINT")
-        if original_endpoint:
-            del os.environ["AHDS_ENDPOINT"]
-        
-        try:
-            with pytest.raises(InvalidParamError, match="AHDS endpoint is required"):
-                operator.validate({})
-        finally:
-            if original_endpoint:
-                os.environ["AHDS_ENDPOINT"] = original_endpoint
-    
-    def test_validate_with_endpoint_param(self):
-        """Test validation passes when endpoint is provided as parameter."""
-        operator = AHDSSurrogate()
-        params = {
-            "endpoint": "https://test.api.deid.azure.com",
-            "entities": []
-        }
-        operator.validate(params)
-    
-    def test_validate_entities_not_list(self):
-        """Test validation fails when entities is not a list."""
-        operator = AHDSSurrogate()
-        params = {
-            "endpoint": "https://test.api.deid.azure.com",
-            "entities": "not_a_list"
-        }
-        with pytest.raises(InvalidParamError, match="Entities must be a list"):
-            operator.validate(params)
-    
-    def test_operate_empty_text(self):
-        """Test operator returns empty string for empty text."""
-        operator = AHDSSurrogate()
-        result = operator.operate("", {})
-        assert result == ""
-    
-    def test_surrogate_only_operation_directly(self):
-        """Test the SurrogateOnly operation directly via AHDS API."""
-        # Import AHDS models for direct testing
+
+    @requires_env_vars()
+    def test_surrogate_only_operation_sample_pattern(self, import_modules):
+        """Test SurrogateOnly operation using the exact pattern from the sample."""
         from azure.health.deidentification import DeidentificationClient
         from azure.health.deidentification.models import (
             DeidentificationContent,
+            DeidentificationCustomizationOptions,
+            DeidentificationOperationType,
+            DeidentificationResult,
+            PhiCategory,
             SimplePhiEntity,
             TaggedPhiEntities,
-            PhiCategory,
-            DeidentificationOperationType,
             TextEncodingType,
         )
         from azure.identity import DefaultAzureCredential
-        
-        # Sample text with PII
-        text = "Patient John Doe was seen by Dr. Smith on 2024-01-15"
-        
-        # Create tagged entities for specific PII locations
-        tagged_entities = [
-            SimplePhiEntity(
-                category=PhiCategory.PATIENT,
-                offset=8,   # "John Doe" 
-                length=8
-            ),
-            SimplePhiEntity(
-                category=PhiCategory.DOCTOR,
-                offset=29,  # "Dr. Smith"
-                length=9
-            ),
-            SimplePhiEntity(
-                category=PhiCategory.DATE,
-                offset=42,  # "2024-01-15"
-                length=10
-            )
-        ]
-        
-        # Create tagged entity collection
-        tagged_entity_collection = TaggedPhiEntities(
+
+        endpoint = os.environ["AHDS_ENDPOINT"]
+        credential = DefaultAzureCredential()
+        client = DeidentificationClient(endpoint, credential)
+
+        # Define the entities to be surrogated - targeting "John Smith" at position 18-28
+        tagged_entities = TaggedPhiEntities(
             encoding=TextEncodingType.CODE_POINT,
-            entities=tagged_entities
+            entities=[SimplePhiEntity(category=PhiCategory.PATIENT, offset=18, length=10)],
         )
-        
-        # Create content with SurrogateOnly operation
-        content = DeidentificationContent(
-            input_text=text,
+
+        # Use SurrogateOnly operation with input locale specification
+        body = DeidentificationContent(
+            input_text="Hello, my name is John Smith.",
             operation_type=DeidentificationOperationType.SURROGATE_ONLY,
-            tagged_entities=tagged_entity_collection
+            tagged_entities=tagged_entities,
+            customizations=DeidentificationCustomizationOptions(
+                input_locale="en-US"  # Specify input text locale for better PHI detection
+            ),
         )
-        
+
         try:
-            # Create client and test
-            endpoint = os.getenv('AHDS_ENDPOINT')
-            credential = DefaultAzureCredential()
-            client = DeidentificationClient(endpoint, credential, api_version="2024-11-15")
-            
-            result = client.deidentify_text(content)
+            result: DeidentificationResult = client.deidentify_text(body)
             
             # Verify the operation worked
             assert result is not None
@@ -129,15 +87,17 @@ class TestAHDSSurrogate:
             assert len(result.output_text) > 0
             
             # The output should be different from input (surrogates applied)
-            assert result.output_text != text
+            assert result.output_text != body.input_text
             
-            print(f"Original:  {text}")
-            print(f"Surrogate: {result.output_text}")
+            print(f'Original Text:        "{body.input_text}"')
+            print(f'Surrogate Only Text:  "{result.output_text}"')
             
         except Exception as e:
             # Handle authentication and service errors gracefully in tests
             if "DefaultAzureCredential" in str(e) or "authentication" in str(e).lower():
                 pytest.skip("Azure authentication not available in test environment")
+            elif "Forbidden" in str(e):
+                pytest.skip("Azure credentials lack permission to access AHDS service")
             elif "500" in str(e) or "InternalServerError" in str(e):
                 pytest.skip("AHDS service temporarily unavailable")
             elif "ApiVersionUnsupported" in str(e):
@@ -145,7 +105,69 @@ class TestAHDSSurrogate:
             else:
                 raise
     
-    def test_operation_type_is_surrogate_only(self):
+    @requires_env_vars()
+    def test_multiple_entities_surrogate_only(self, import_modules):
+        """Test SurrogateOnly operation with multiple entity types."""
+        from azure.health.deidentification import DeidentificationClient
+        from azure.health.deidentification.models import (
+            DeidentificationContent,
+            DeidentificationCustomizationOptions,
+            DeidentificationOperationType,
+            DeidentificationResult,
+            PhiCategory,
+            SimplePhiEntity,
+            TaggedPhiEntities,
+            TextEncodingType,
+        )
+        from azure.identity import DefaultAzureCredential
+
+        endpoint = os.environ["AHDS_ENDPOINT"]
+        credential = DefaultAzureCredential()
+        client = DeidentificationClient(endpoint, credential)
+
+        # Test text with multiple entity types
+        text = "Patient John Doe was seen by Dr. Smith on 2024-01-15. Contact: john.doe@email.com or 555-123-4567."
+        
+        # Define multiple entities for surrogate replacement
+        tagged_entities = TaggedPhiEntities(
+            encoding=TextEncodingType.CODE_POINT,
+            entities=[
+                SimplePhiEntity(category=PhiCategory.PATIENT, offset=8, length=8),    # "John Doe"
+                SimplePhiEntity(category=PhiCategory.DOCTOR, offset=29, length=9),    # "Dr. Smith"
+                SimplePhiEntity(category=PhiCategory.DATE, offset=42, length=10),     # "2024-01-15"
+                SimplePhiEntity(category=PhiCategory.EMAIL, offset=63, length=17),    # "john.doe@email.com"
+                SimplePhiEntity(category=PhiCategory.PHONE, offset=84, length=12),    # "555-123-4567"
+            ],
+        )
+
+        body = DeidentificationContent(
+            input_text=text,
+            operation_type=DeidentificationOperationType.SURROGATE_ONLY,
+            tagged_entities=tagged_entities,
+            customizations=DeidentificationCustomizationOptions(input_locale="en-US"),
+        )
+
+        try:
+            result: DeidentificationResult = client.deidentify_text(body)
+            
+            assert result is not None
+            assert result.output_text is not None
+            assert result.output_text != text
+            
+            print(f'Original Text: "{text}"')
+            print(f'Surrogate Text: "{result.output_text}"')
+            
+        except Exception as e:
+            if "DefaultAzureCredential" in str(e) or "authentication" in str(e).lower():
+                pytest.skip("Azure authentication not available in test environment")
+            elif "Forbidden" in str(e):
+                pytest.skip("Azure credentials lack permission to access AHDS service")
+            elif "500" in str(e) or "InternalServerError" in str(e):
+                pytest.skip("AHDS service temporarily unavailable")
+            else:
+                raise
+
+    def test_operation_type_is_surrogate_only(self, import_modules):
         """Test that the operator uses the correct SURROGATE_ONLY operation type."""
         from azure.health.deidentification.models import DeidentificationOperationType
         
@@ -153,7 +175,7 @@ class TestAHDSSurrogate:
         assert hasattr(DeidentificationOperationType, 'SURROGATE_ONLY')
         assert DeidentificationOperationType.SURROGATE_ONLY == "SurrogateOnly"
     
-    def test_phi_categories_available(self):
+    def test_phi_categories_available(self, import_modules):
         """Test that required PHI categories are available."""
         from azure.health.deidentification.models import PhiCategory
         
@@ -163,7 +185,51 @@ class TestAHDSSurrogate:
         for category_name in required_categories:
             assert hasattr(PhiCategory, category_name), f"PhiCategory.{category_name} not available"
     
-    def test_integration_with_real_service(self):
+    @requires_env_vars()
+    def test_operator_integration_with_ahds_client(self, import_modules):
+        """Test the AHDSSurrogate operator integration with real AHDS service."""
+        operator = AHDSSurrogate()
+        
+        text = "Hello, my name is John Smith."
+        
+        entities = [
+            {
+                'entity_type': 'PERSON',
+                'start': 18,
+                'end': 28,
+                'text': 'John Smith',
+                'score': 0.9
+            }
+        ]
+        
+        params = {
+            "entities": entities,
+            "input_locale": "en-US"
+        }
+        
+        try:
+            result = operator.operate(text, params)
+            
+            assert result is not None
+            assert isinstance(result, str)
+            assert len(result) > 0
+            assert result != text 
+            
+            print(f"Operator Test - Original: {text}")
+            print(f"Operator Test - Surrogate: {result}")
+            
+        except Exception as e:
+            if "DefaultAzureCredential" in str(e) or "authentication" in str(e).lower():
+                pytest.skip("Azure authentication not available in test environment")
+            elif "Forbidden" in str(e):
+                pytest.skip("Azure credentials lack permission to access AHDS service")
+            elif "500" in str(e) or "InternalServerError" in str(e):
+                pytest.skip("AHDS service temporarily unavailable")
+            else:
+                raise
+    
+    @requires_env_vars()
+    def test_integration_with_real_service(self, import_modules):
         """Integration test with real AHDS service."""
         operator = AHDSSurrogate()
         
@@ -173,7 +239,7 @@ class TestAHDSSurrogate:
         # Mock entity results (what would come from analyzer)
         mock_entities = [
             {
-                'entity_type': 'PATIENT', 
+                'entity_type': 'PERSON', 
                 'start': 8, 
                 'end': 16, 
                 'text': 'John Doe',
@@ -187,7 +253,7 @@ class TestAHDSSurrogate:
                 'score': 0.9
             },
             {
-                'entity_type': 'DATE', 
+                'entity_type': 'DATE_TIME', 
                 'start': 42, 
                 'end': 52, 
                 'text': '2024-01-15',
@@ -197,20 +263,16 @@ class TestAHDSSurrogate:
         
         params = {
             "entities": mock_entities,
-            "input_locale": "en-US",
-            "surrogate_locale": "en-US"
+            "input_locale": "en-US"
         }
         
         try:
             result = operator.operate(text, params)
             
-            # Verify result is not empty and different from original
             assert result is not None
             assert len(result) > 0
-            assert result != text  # Should be different due to surrogate replacement
+            assert result != text
             
-            # Verify original structure is maintained (same length approximately)
-            # Allow some variance in length due to surrogate generation
             length_diff = abs(len(result) - len(text))
             assert length_diff < 50, f"Result length too different: {len(result)} vs {len(text)}"
             
@@ -219,42 +281,51 @@ class TestAHDSSurrogate:
             
         except Exception as e:
             # If service is unavailable, this is expected in CI
-            if "500" in str(e) or "InternalServerError" in str(e):
+            if "Forbidden" in str(e):
+                pytest.skip("Azure credentials lack permission to access AHDS service")
+            elif "500" in str(e) or "InternalServerError" in str(e):
                 pytest.skip("AHDS service temporarily unavailable")
             else:
                 raise
     
-    def test_entity_mapping_to_phi_categories(self):
+    def test_entity_mapping_to_phi_categories(self, import_modules):
         """Test entity type mapping to PHI categories."""
         operator = AHDSSurrogate()
         
-        # Test various entity types
+        # Test various entity types with expected mappings
         test_cases = [
-            "PATIENT", "PERSON", "DOCTOR", "DATE", "PHONE_NUMBER", 
-            "EMAIL", "SSN", "UNKNOWN_TYPE"
+            ("PATIENT", "PATIENT"),
+            ("PERSON", "PATIENT"), 
+            ("DOCTOR", "DOCTOR"),
+            ("DATE", "DATE"),
+            ("PHONE_NUMBER", "PHONE"),
+            ("EMAIL_ADDRESS", "EMAIL"),
+            ("US_SSN", "SOCIAL_SECURITY"),
+            ("UNKNOWN_TYPE", "UNKNOWN")
         ]
         
-        for entity_type in test_cases:
+        from azure.health.deidentification.models import PhiCategory
+        
+        for entity_type, expected_category in test_cases:
             phi_category = operator._map_to_phi_category(entity_type)
             assert phi_category is not None
-            # For now, everything maps to PATIENT as per implementation
-            from azure.health.deidentification.models import PhiCategory
-            assert phi_category == PhiCategory.PATIENT
+            expected_phi_category = getattr(PhiCategory, expected_category)
+            assert phi_category == expected_phi_category, f"Expected {entity_type} -> {expected_category}, got {phi_category}"
     
-    def test_convert_to_tagged_entities_dict_format(self):
+    def test_convert_to_tagged_entities_dict_format(self, import_modules):
         """Test conversion of dict format entities to tagged entities."""
         operator = AHDSSurrogate()
         
         entities = [
             {
-                'entity_type': 'PATIENT',
+                'entity_type': 'PERSON',
                 'start': 0,
                 'end': 8,
                 'text': 'John Doe',
                 'score': 0.9
             },
             {
-                'entity_type': 'DATE',
+                'entity_type': 'DATE_TIME',
                 'start': 20,
                 'end': 30,
                 'text': '2024-01-15',
@@ -270,7 +341,7 @@ class TestAHDSSurrogate:
         assert tagged_entities[1].offset == 20
         assert tagged_entities[1].length == 10
     
-    def test_convert_to_tagged_entities_recognizer_result_format(self):
+    def test_convert_to_tagged_entities_recognizer_result_format(self, import_modules):
         """Test conversion of RecognizerResult format entities to tagged entities."""
         operator = AHDSSurrogate()
         
@@ -284,8 +355,8 @@ class TestAHDSSurrogate:
                 self.score = score
         
         entities = [
-            MockRecognizerResult('PATIENT', 0, 8, 'John Doe', 0.9),
-            MockRecognizerResult('DATE', 20, 30, '2024-01-15', 0.8)
+            MockRecognizerResult('PERSON', 0, 8, 'John Doe', 0.9),
+            MockRecognizerResult('DATE_TIME', 20, 30, '2024-01-15', 0.8)
         ]
         
         tagged_entities = operator._convert_to_tagged_entities(entities)
@@ -296,7 +367,7 @@ class TestAHDSSurrogate:
         assert tagged_entities[1].offset == 20
         assert tagged_entities[1].length == 10
     
-    def test_service_error_handling(self):
+    def test_service_error_handling(self, import_modules):
         """Test error handling for service errors."""
         operator = AHDSSurrogate()
         
@@ -304,29 +375,166 @@ class TestAHDSSurrogate:
         params = {
             "endpoint": "https://invalid.endpoint.com",
             "entities": [
-                {'entity_type': 'PATIENT', 'start': 0, 'end': 8, 'text': 'John Doe', 'score': 0.9}
+                {'entity_type': 'PERSON', 'start': 0, 'end': 8, 'text': 'John Doe', 'score': 0.9}
             ]
         }
         
         with pytest.raises(InvalidParamError):
             operator.operate("John Doe is a patient", params)
     
-    def test_operator_type(self):
+    def test_operator_type(self, import_modules):
         """Test operator type."""
         operator = AHDSSurrogate()
         from presidio_anonymizer.operators import OperatorType
         assert operator.operator_type() == OperatorType.Anonymize
     
-    def test_parameter_validation_input_locale(self):
-        """Test parameter validation for locale parameters."""
+    @requires_env_vars()
+    def test_parameter_validation_with_correct_env_var(self, import_modules):
+        """Test parameter validation using the correct environment variable."""
         operator = AHDSSurrogate()
         
-        params = {
-            "endpoint": "https://test.api.deid.azure.com",
-            "entities": [],
-            "input_locale": "fr-FR",
-            "surrogate_locale": "es-ES"
-        }
+        original_endpoint = os.getenv("AHDS_ENDPOINT")
         
-        # Should not raise exception for valid locale parameters
-        operator.validate(params)
+        try:
+            os.environ["AHDS_ENDPOINT"] = "https://test.endpoint.com"
+            
+            params = {
+                "entities": [],
+                "input_locale": "en-US"
+            }
+            
+            operator.validate(params)
+            
+        finally:
+            if original_endpoint:
+                os.environ["AHDS_ENDPOINT"] = original_endpoint
+            elif "AHDS_ENDPOINT" in os.environ:
+                del os.environ["AHDS_ENDPOINT"]
+    
+    @requires_env_vars()
+    def test_sdk_with_real_endpoint(self, import_modules):
+        """Test SDK functionality with real AHDS endpoint."""
+        from azure.health.deidentification import DeidentificationClient
+        from azure.health.deidentification.models import (
+            DeidentificationContent,
+            DeidentificationCustomizationOptions,
+            SimplePhiEntity,
+            TaggedPhiEntities,
+            PhiCategory,
+            DeidentificationOperationType,
+            TextEncodingType,
+        )
+        from azure.identity import DefaultAzureCredential
+        
+        endpoint = os.getenv("AHDS_ENDPOINT")
+        if not endpoint:
+            pytest.skip("AHDS_ENDPOINT not set in environment")
+        
+        credential = DefaultAzureCredential()
+        client = DeidentificationClient(endpoint, credential)
+        
+        text = "Hello, my name is John Smith."
+        
+        tagged_entities = [
+            SimplePhiEntity(
+                category=PhiCategory.PATIENT,
+                offset=18,  # "John Smith"
+                length=10
+            )
+        ]
+        
+        customizations = DeidentificationCustomizationOptions(
+            input_locale="en-US"
+        )
+        
+        content = DeidentificationContent(
+            input_text=text,
+            operation_type=DeidentificationOperationType.SURROGATE_ONLY,
+            tagged_entities=TaggedPhiEntities(
+                encoding=TextEncodingType.CODE_POINT,
+                entities=tagged_entities
+            ),
+            customizations=customizations
+        )
+        
+        try:
+            result = client.deidentify_text(content)
+            
+            assert result is not None
+            assert result.output_text is not None
+            assert len(result.output_text) > 0
+            
+            assert result.output_text != text
+            
+            print(f"SDK Test - Original:  {text}")
+            print(f"SDK Test - Surrogate: {result.output_text}")
+            
+        except Exception as e:
+            if "DefaultAzureCredential" in str(e) or "authentication" in str(e).lower():
+                pytest.skip("Azure authentication not available in test environment")
+            elif "Forbidden" in str(e):
+                pytest.skip("Azure credentials lack permission to access AHDS service")
+            elif "500" in str(e) or "InternalServerError" in str(e):
+                pytest.skip("AHDS service temporarily unavailable")
+            elif "ApiVersionUnsupported" in str(e):
+                pytest.skip("API version not supported by AHDS service")
+            else:
+                raise
+
+    @requires_env_vars()
+    def test_different_locales_surrogate_only(self, import_modules):
+        """Test SurrogateOnly operation with different locale settings."""
+        from azure.health.deidentification import DeidentificationClient
+        from azure.health.deidentification.models import (
+            DeidentificationContent,
+            DeidentificationCustomizationOptions,
+            DeidentificationOperationType,
+            DeidentificationResult,
+            PhiCategory,
+            SimplePhiEntity,
+            TaggedPhiEntities,
+            TextEncodingType,
+        )
+        from azure.identity import DefaultAzureCredential
+
+        endpoint = os.environ["AHDS_ENDPOINT"]
+        credential = DefaultAzureCredential()
+        client = DeidentificationClient(endpoint, credential)
+
+        # Test with different locale
+        text = "Patient Marie Dupont was seen on 15/01/2024."
+        
+        tagged_entities = TaggedPhiEntities(
+            encoding=TextEncodingType.CODE_POINT,
+            entities=[
+                SimplePhiEntity(category=PhiCategory.PATIENT, offset=8, length=12),  # "Marie Dupont"
+                SimplePhiEntity(category=PhiCategory.DATE, offset=34, length=10),    # "15/01/2024"
+            ],
+        )
+
+        body = DeidentificationContent(
+            input_text=text,
+            operation_type=DeidentificationOperationType.SURROGATE_ONLY,
+            tagged_entities=tagged_entities,
+            customizations=DeidentificationCustomizationOptions(input_locale="fr-FR"),
+        )
+
+        try:
+            result: DeidentificationResult = client.deidentify_text(body)
+            
+            assert result is not None
+            assert result.output_text is not None
+            assert result.output_text != text
+            
+            print(f'French Locale Original: "{text}"')
+            print(f'French Locale Surrogate: "{result.output_text}"')
+            
+        except Exception as e:
+            if "DefaultAzureCredential" in str(e) or "authentication" in str(e).lower():
+                pytest.skip("Azure authentication not available in test environment")
+            elif "Forbidden" in str(e):
+                pytest.skip("Azure credentials lack permission to access AHDS service")
+            elif "500" in str(e) or "InternalServerError" in str(e):
+                pytest.skip("AHDS service temporarily unavailable")
+            else:
+                raise

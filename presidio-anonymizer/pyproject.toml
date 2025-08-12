@@ -32,7 +32,7 @@ server = [
 ]
 ahds = [
     "azure-identity (>=1.23.0,<2.0.0)",
-    "azure-health-deidentification (>=1.0.0,<2.0.0)"
+    "azure-health-deidentification (>=1.1.0b1,<2.0.0)"
 ]
 
 [tool.poetry.group.dev.dependencies]
