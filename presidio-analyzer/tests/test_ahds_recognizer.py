@@ -5,14 +5,13 @@ from unittest.mock import MagicMock
 import pytest
 import dotenv
 
-
 from presidio_analyzer.predefined_recognizers import AzureHealthDeidRecognizer
 
 
 @pytest.fixture(scope="module")
 def import_modules():
-    pytest.importorskip("azure-identity")
-    pytest.importskip("azure-health-deidentification")
+    pytest.importorskip("azure.identity")
+    pytest.importorskip("azure.health.deidentification")
     from azure.health.deidentification import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationContent,
