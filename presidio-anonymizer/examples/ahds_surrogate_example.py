@@ -35,7 +35,7 @@ def main():
             analyzer_results=analyzer_results,
             operators={
                 "DEFAULT": OperatorConfig(
-                    "surrogate",
+                    "surrogate_ahds",
                     {
                         "entities": analyzer_results,
                         "input_locale": "en-US",

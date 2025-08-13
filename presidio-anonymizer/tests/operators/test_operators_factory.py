@@ -1,13 +1,14 @@
 import pytest
 
 from presidio_anonymizer.entities import InvalidParamError
-from presidio_anonymizer.operators import OperatorsFactory, OperatorType
+from presidio_anonymizer.operators import OperatorsFactory, OperatorType, AHDS_AVAILABLE
 
 
 def test_given_anonymizers_list_then_all_classes_are_there():
     anonymizers = OperatorsFactory().get_anonymizers()
-    assert len(anonymizers) == 8
-    for class_name in [
+    expected_length = 8 if AHDS_AVAILABLE else 7
+    assert len(anonymizers) == expected_length
+    expected_classes = [
         "hash",
         "mask",
         "redact",
@@ -15,8 +16,11 @@ def test_given_anonymizers_list_then_all_classes_are_there():
         "encrypt",
         "custom",
         "keep",
-        "surrogate",
-    ]:
+    ]
+    if AHDS_AVAILABLE:
+        expected_classes.append("surrogate_ahds")
+    
+    for class_name in expected_classes:
         assert anonymizers.get(class_name)
 
 
@@ -28,7 +32,7 @@ def test_given_decryptors_list_then_all_classes_are_there():
 
 
 def test_given_anonymize_operators_class_then_we_get_the_correct_class():
-    for operator_name in ["hash", "mask", "redact", "replace", "encrypt", "custom", "surrogate"]:
+    for operator_name in ["hash", "mask", "redact", "replace", "encrypt", "custom", "surrogate_ahds"]:
         operator = OperatorsFactory().create_operator_class(
             operator_name, OperatorType.Anonymize
         )

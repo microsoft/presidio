@@ -36,6 +36,7 @@ __all__ = [
     "Decrypt",
     "AESCipher",
     "OperatorsFactory",
+    "AHDS_AVAILABLE",
 ]
 
 if AHDS_AVAILABLE:
