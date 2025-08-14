@@ -222,7 +222,7 @@ class AHDSSurrogate(Operator):
         endpoint = params.get(self.ENDPOINT) or os.getenv("AHDS_ENDPOINT")
         if not endpoint:
             raise InvalidParamError(
-                "AHDS endpoint is required. Provide via 'endpoint' parameter "
+                "AHDS de-identification service endpoint is required. Provide via 'endpoint' parameter "
                 "or set AHDS_ENDPOINT environment variable."
             )
 
