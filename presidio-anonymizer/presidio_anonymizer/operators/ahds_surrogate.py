@@ -36,7 +36,7 @@ logger = logging.getLogger("presidio-anonymizer")
 
 
 class AHDSSurrogate(Operator):
-    """AHDS Surrogate operator using Azure Health Data Services SurrogateOnly."""
+    """AHDS Surrogate operator using Azure Health Data Services de-identification service surrogation."""
 
     ENDPOINT = "endpoint"
     ENTITIES = "entities"
@@ -196,7 +196,7 @@ class AHDSSurrogate(Operator):
 
     def operate(self, text: str = None, params: Dict = None) -> str:
         """
-        Replace PII entities with realistic surrogates using Azure Health Data Services.
+        Replace PII entities with realistic surrogates using Azure Health Data Services de-identification service.
 
         This operator uses AHDS de-identification service surrogation to generate contextually
         appropriate replacements for detected PII entities, maintaining text readability

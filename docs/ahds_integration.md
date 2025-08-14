@@ -36,9 +36,9 @@ pip install presidio-anonymizer[ahds]
 ## Prerequisites
 
 - [Azure Health Data Services de-identification service endpoint](https://learn.microsoft.com/azure/healthcare-apis/deidentification/quickstart)
-- Azure authentication configured (DefaultAzureCredential)
+- [Azure role-based access control configured](https://learn.microsoft.com/azure/healthcare-apis/deidentification/manage-access-rbac)
 - Environment variables:
-  - `AHDS_ENDPOINT`: Your AHDS service endpoint
+  - `AHDS_ENDPOINT`: Your AHDS de-identification service endpoint
 
 ## Complete Workflow Example
 
@@ -83,20 +83,20 @@ print(f"Anonymized: {result.text}")
 # Output: "Patient Michael Johnson was seen by Dr. Brown on 1987-06-23 for diabetes treatment."
 ```
 
-**Note:** This example uses the Azure Health Data Services SurrogateOnly operation, which provides superior data utility by generating realistic, medically-appropriate surrogates while maintaining document structure and relationships.
+**Note:** This example uses the Azure Health Data Services de-identification service surrogation, which provides superior data utility by generating realistic, medically-appropriate surrogates while maintaining document structure and relationships.
 
 ## Configuration Options
 
 ### AHDS Surrogate Operator Parameters
 
-- `endpoint`: AHDS endpoint (optional, uses `AHDS_ENDPOINT` env var)
+- `endpoint`: AHDS de-identification service endpoint (optional, uses `AHDS_ENDPOINT` env var)
 - `entities`: List of entities detected by analyzer
 - `input_locale`: Input locale (default: "en-US")
 - `surrogate_locale`: Surrogate locale (default: "en-US")
 
 ## Authentication
 
-The AHDS integration uses Azure's `DefaultAzureCredential`, which supports multiple authentication methods:
+The AHDS de-identification service integration uses Azure's `DefaultAzureCredential`, which supports multiple authentication methods:
 
 1. Environment variables (Service Principal)
 2. Managed Identity (when running on Azure)
@@ -130,4 +130,4 @@ The AHDS operators gracefully handle missing dependencies and will be skipped if
 
 - [Presidio Analyzer](../analyzer/index.md)
 - [Presidio Anonymizer](../anonymizer/index.md)
-- [Azure Health Data Services Documentation](https://docs.microsoft.com/en-us/azure/healthcare-apis/)
+- [Azure Health Data Services de-identification service documentation](https://learn.microsoft.com/azure/healthcare-apis/deidentification/)
