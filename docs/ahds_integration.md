@@ -35,7 +35,7 @@ pip install presidio-anonymizer[ahds]
 
 ## Prerequisites
 
-- Azure Health Data Services endpoint
+- [Azure Health Data Services de-identification service endpoint](https://learn.microsoft.com/azure/healthcare-apis/deidentification/quickstart)
 - Azure authentication configured (DefaultAzureCredential)
 - Environment variables:
   - `AHDS_ENDPOINT`: Your AHDS service endpoint
