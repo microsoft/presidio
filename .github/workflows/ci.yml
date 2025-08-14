@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   REGISTRY_NAME: ${{ secrets.ACR_NAME }}.azurecr.io
   TAG: gha${{ github.run_number }}
