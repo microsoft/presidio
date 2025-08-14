@@ -198,7 +198,7 @@ class AHDSSurrogate(Operator):
         """
         Replace PII entities with realistic surrogates using Azure Health Data Services.
 
-        This operator uses the AHDS SurrogateOnly operation to generate contextually
+        This operator uses AHDS de-identification service surrogation to generate contextually
         appropriate replacements for detected PII entities, maintaining text readability
         while protecting sensitive information.
 
