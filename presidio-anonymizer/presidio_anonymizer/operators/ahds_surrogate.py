@@ -212,7 +212,7 @@ class AHDSSurrogate(Operator):
         """
         if not DeidentificationClient:
             raise ImportError(
-                "Azure Health Data Services SDK is not available. "
+                "Azure Health Data Services de-identification service SDK is not available. "
                 "Please install azure-health-deidentification and azure-identity."
             )
 
