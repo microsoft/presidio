@@ -4,7 +4,7 @@ Presidio supports integration with Azure Health Data Services (AHDS) de-identifi
 
 ## Resources
 
-- [Azure Health Data Services Documentation](https://learn.microsoft.com/en-us/azure/healthcare-apis/deidentification/)
+- [Azure Health Data Services Documentation](https://learn.microsoft.com/azure/healthcare-apis/deidentification/)
 - [Azure Health Deidentification Python SDK](https://pypi.org/project/azure-health-deidentification/)
 
 ## Overview
