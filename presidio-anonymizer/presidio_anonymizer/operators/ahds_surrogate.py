@@ -1,4 +1,4 @@
-"""AHDS Surrogate operator that uses Azure Health Data Services."""
+"""AHDS Surrogate operator that uses Azure Health Data Services de-identification service."""
 
 import logging
 import os
