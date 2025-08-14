@@ -14,7 +14,7 @@ The AHDS de-identification service integration provides two main capabilities:
 1. **AHDS Recognizer** (in presidio-analyzer): Detects PHI entities using the Azure Health Data Services de-identification service
 2. **AHDS Surrogate Operator** (in presidio-anonymizer): Replaces PHI entities with realistic surrogates using the de-identification service
 
-## Benefits of AHDS Surrogation
+## Benefits of Surrogation
 
 - **Maintains Data Utility**: Preserves structure and format for downstream analytics
 - **Realistic Healthcare Context**: Generates medically plausible names, dates, and identifiers
