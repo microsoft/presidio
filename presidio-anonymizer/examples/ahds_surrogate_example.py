@@ -1,4 +1,4 @@
-"""Example usage of AHDS Surrogate operator using SurrogateOnly operation."""
+"""Example usage of AHDS Surrogate operator using surrogate_ahds operation."""
 
 import os
 
@@ -7,7 +7,7 @@ from presidio_anonymizer.entities import OperatorConfig, RecognizerResult
 
 
 def main():
-    """Use AHDS Surrogate operator with SurrogateOnly operation."""
+    """Use AHDS Surrogate operator with surrogate_ahds operation."""
 
     # Check if AHDS endpoint is available
     if not os.getenv("AHDS_ENDPOINT"):
@@ -48,7 +48,8 @@ def main():
         print(f"Original text: {text}")
         print(f"Anonymized text: {result.text}")
         print(
-            "Note: Uses Azure Health Data Services SurrogateOnly operation "
+            "Note: Uses Azure Health Data Services "
+            "De-identification service surrogate_ahds operation "
             "for realistic surrogate generation"
         )
 

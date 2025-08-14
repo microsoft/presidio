@@ -1,4 +1,4 @@
-"""Tests for the AHDS Surrogate operator."""
+"""Tests for the AHDS De-identification service Surrogate operator."""
 
 import os
 import importlib
