@@ -204,7 +204,7 @@ class AHDSSurrogate(Operator):
 
         :param text: The full text being processed
         :param params: Parameters including:
-            - endpoint: AHDS endpoint (optional, can use AHDS_ENDPOINT env var)
+            - endpoint: AHDS de-identification service endpoint (optional, can use AHDS_ENDPOINT env var)
             - entities: List of entities detected by analyzer
             - input_locale: Input locale (default: "en-US")
             - surrogate_locale: Surrogate locale (default: "en-US")
