@@ -1,4 +1,4 @@
-# Azure Health Data Services (AHDS) Integration
+# Azure Health Data Services De-identification Service Integration
 
 Presidio supports integration with Azure Health Data Services (AHDS) for both entity recognition and anonymization with realistic surrogate generation.
 
