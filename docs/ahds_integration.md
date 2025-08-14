@@ -11,7 +11,7 @@ Presidio supports integration with Azure Health Data Services (AHDS) de-identifi
 
 The AHDS de-identification service integration provides two main capabilities:
 
-1. **AHDS Recognizer** (in presidio-analyzer): Detects PHI entities using Azure Health Data Services
+1. **AHDS Recognizer** (in presidio-analyzer): Detects PHI entities using the Azure Health Data Services de-identification service
 2. **AHDS Surrogate Operator** (in presidio-anonymizer): Generates realistic surrogates using the SurrogateOnly operation
 
 ## Benefits of AHDS Surrogation
