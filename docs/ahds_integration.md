@@ -20,7 +20,6 @@ The AHDS de-identification service integration provides two main capabilities:
 - **Realistic Healthcare Context**: Generates medically plausible names, dates, and identifiers
 - **Consistent Cross-References**: Same entity gets same surrogate throughout document
 - **Format Preservation**: Maintains original formatting and linguistic patterns
-- **Regulatory Compliance**: Meets HIPAA Safe Harbor requirements while maximizing utility
 
 ## Installation
 
