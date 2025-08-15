@@ -265,8 +265,12 @@ class AHDSSurrogate(Operator):
         )
 
         try:
-            result = client.deidentify_text(content)
-            return result.output_text if result.output_text else text
+                result = client.deidentify_text(content)
+                if not result.output_text:
+                    raise InvalidParamError("Operation returned empty output text.")
+                if result.output_text == text:
+                    raise InvalidParamError("Operation returned input text.")
+                return result.output_text
         except Exception as e:
             raise InvalidParamError(f"AHDS Surrogate operation failed: {e}")
 

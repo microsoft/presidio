@@ -49,3 +49,7 @@ will be used when integrating with AHDS De-Identification, using a Presidio remo
   
   analyzer.analyze(text="My email is email@email.com", language="en")
   ```
+
+---
+**See also:**
+For a full surrogate integration example, see [example_ahds_surrogate.py](example_ahds_surrogate.py)
