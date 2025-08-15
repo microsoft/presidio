@@ -49,21 +49,22 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
 
         endpoint = os.getenv("AHDS_ENDPOINT", None)
 
-        if endpoint is None:
-            raise ValueError(
-                "AHDS de-identification endpoint is required. "
-                "Please provide an endpoint "
-                "or set the AHDS_ENDPOINT environment variable."
-            )
+        if client is None:
+            if endpoint is None:
+                raise ValueError(
+                    "AHDS de-identification endpoint is required. "
+                    "Please provide an endpoint "
+                    "or set the AHDS_ENDPOINT environment variable."
+                )
 
-        credential = DefaultAzureCredential()
-        client = DeidentificationClient(endpoint, credential)
+            if not DeidentificationClient:
+                raise ImportError(
+                    "Azure Health Data Services Deidentification SDK is not available. "
+                    "Please install azure-health-deidentification and azure-identity."
+                )
 
-        if not DeidentificationClient:
-            raise ImportError(
-                "Azure Health Data Services Deidentification SDK is not available. "
-                "Please install azure-health-deidentification and azure-identity."
-            )
+            credential = DefaultAzureCredential()
+            client = DeidentificationClient(endpoint, credential)
 
         self.deid_client = client
 
@@ -72,17 +73,12 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
 
     @staticmethod
     def _get_supported_entities() -> List[str]:
-        # Dynamically get supported entities from PHICategory enum in the SDK
-        try:
-            return [e.name for e in PhiCategory]
-        except ImportError:
-            return [
-                'ACCOUNT', 'AGE', 'CITY', 'COUNTRY', 'DATE', 'DEVICE', 'DOCTOR',
-                'EMAIL', 'HEALTHPLAN', 'HOSPITAL', 'IDNUM', 'IPADDRESS',
-                'LICENSE', 'LOCATION-OTHER', 'MEDICALRECORD', 'ORGANIZATION',
-                'PATIENT', 'PHONE', 'PROFESSION', 'SOCIALSECURITY',
-                'STATE', 'STREET', 'URL', 'USERNAME', 'VEHICLE', 'ZIP', 'FAX',
-            ]
+        if PhiCategory:
+            try:
+                # PhiCategory is an enum, try to get the actual enum names
+                return [category.name for category in PhiCategory]
+            except Exception:
+                return ImportError
 
     def get_supported_entities(self) -> List[str]:
         """

@@ -3,6 +3,8 @@ from typing import Dict, Type
 
 from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import (
+    AHDS_AVAILABLE,
+    AHDSSurrogate,
     Custom,
     DeanonymizeKeep,
     Decrypt,
@@ -20,6 +22,9 @@ logger = logging.getLogger("presidio-anonymizer")
 
 # Predefined operators
 ANONYMIZERS = [Custom, Encrypt, Hash, Keep, Mask, Redact, Replace]
+if AHDS_AVAILABLE and AHDSSurrogate:
+    ANONYMIZERS.append(AHDSSurrogate)
+
 DEANONYMIZERS = [Decrypt, DeanonymizeKeep]
 
 
