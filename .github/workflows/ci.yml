@@ -118,7 +118,7 @@ jobs:
   build-platform-images:
     name: Build ${{ matrix.image }} (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
-    needs: [lint, test]
+    needs: [lint]
     permissions:
       id-token: write
       contents: read
