@@ -4,7 +4,7 @@ Describe your changes
 
 ## Issue reference
 
-This PR fixes issue #XX
+Fixes #XX
 
 ## Checklist
 
