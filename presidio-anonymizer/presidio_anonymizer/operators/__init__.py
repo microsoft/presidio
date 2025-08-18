@@ -13,6 +13,13 @@ from .mask import Mask
 from .redact import Redact
 from .replace import Replace
 
+try:
+    from .ahds_surrogate import AHDSSurrogate
+    AHDS_AVAILABLE = True
+except ImportError:
+    AHDSSurrogate = None
+    AHDS_AVAILABLE = False
+
 from .operators_factory import OperatorsFactory  # isort:skip
 
 __all__ = [
@@ -29,4 +36,8 @@ __all__ = [
     "Decrypt",
     "AESCipher",
     "OperatorsFactory",
+    "AHDS_AVAILABLE",
 ]
+
+if AHDS_AVAILABLE:
+    __all__.append("AHDSSurrogate")
