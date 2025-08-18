@@ -68,7 +68,14 @@ jobs:
           tag_name: ${{ needs.get-version.outputs.version }}
           release_name: Release ${{ needs.get-version.outputs.version }}
           draft: false
-          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ needs.get-version.outputs.version }}" \
+            --title "Release ${{ needs.get-version.outputs.version }}" \
+            --notes "" \
+            --verify-tag \
+            --latest
 
   publish-to-pypi:
     name: Publish ${{ matrix.package }} to PyPI
