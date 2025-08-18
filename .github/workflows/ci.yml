@@ -107,8 +107,7 @@ jobs:
       - name: Run unit tests
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pip install pytest pytest-azurepipelines
-          poetry run pytest -vv
+          poetry run pytest -vv --tb=short
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
@@ -281,7 +280,6 @@ jobs:
           source env/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest-azurepipelines
           python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready
@@ -291,7 +289,7 @@ jobs:
         working-directory: e2e-tests
         run: |
           source env/bin/activate
-          pytest -v
+          pytest -vv --tb=short
 
       - name: Capture Docker logs on failure (${{ matrix.platform }})
         if: failure()
