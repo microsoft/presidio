@@ -2,22 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      create_release:
-        description: 'Create GitHub release'
-        required: true
-        default: true
-        type: boolean
-      publish_pypi:
-        description: 'Publish to PyPI'
-        required: true
-        default: true
-        type: boolean
-      publish_containers:
-        description: 'Publish containers to ACR'
-        required: true
-        default: true
-        type: boolean
 
 permissions: read-all
 
@@ -56,7 +40,6 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     needs: get-version
-    if: ${{ inputs.create_release }}
     permissions:
       contents: write
     continue-on-error: true
@@ -64,28 +47,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.get-version.outputs.version }}
-          release_name: Release ${{ needs.get-version.outputs.version }}
-          draft: false
+      - name: Create GitHub Release       
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ needs.get-version.outputs.version }}" \
             --title "Release ${{ needs.get-version.outputs.version }}" \
             --notes "" \
-            --verify-tag \
+            --draft \
             --latest
 
   publish-to-pypi:
     name: Publish ${{ matrix.package }} to PyPI
     runs-on: ubuntu-latest
     needs: get-version
-    if: ${{ inputs.publish_pypi }}
     strategy:
       matrix:
         package:
@@ -128,7 +103,6 @@ jobs:
     name: Build and Push Containers
     runs-on: ubuntu-latest
     needs: get-version
-    if: ${{ inputs.publish_containers }}
     permissions:
       id-token: write
       contents: read
