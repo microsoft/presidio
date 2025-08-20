@@ -141,7 +141,14 @@ jobs:
         run: |
           repo="${{ env.REGISTRY_NAME }}/${{ env.IMAGE_PREFIX }}${{ matrix.image }}"
           version_tag="${{ matrix.image == 'presidio-image-redactor' && needs.get-version.outputs.image-version || needs.get-version.outputs.version }}"
-          docker buildx build --platform linux/amd64,linux/arm64 --tag ${repo}:latest --tag ${repo}:${version_tag} --push ./${{ matrix.image }}
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/${{ matrix.image }}:latest \
+            --cache-to type=inline \
+            --tag ${repo}:latest \
+            --tag ${repo}:${version_tag} \
+            --push \
+            ./${{ matrix.image }}
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           IMAGE_PREFIX: ${{ env.IMAGE_PREFIX }}

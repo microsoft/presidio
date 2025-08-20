@@ -169,10 +169,12 @@ jobs:
           # Create platform-specific tag
           PLATFORM_TAG=$(echo "${{ matrix.platform }}" | sed 's/\//-/g')
           docker buildx build \
-            --platform ${{ matrix.platform }} \
-            --push \
+            --platform ${{ matrix.platform }} \            
             --tag ${{ env.REGISTRY_NAME }}/${{ matrix.image }}:${{ env.TAG }}-${PLATFORM_TAG} \
-            --build-arg NAME=${{ matrix.image }} \
+            --build-arg NAME=${{ matrix.image }} \            
+            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/${{ matrix.image }}:latest \
+            --cache-to type=inline \
+            --push \
             ./${{ matrix.image }}
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
