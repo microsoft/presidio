@@ -101,7 +101,7 @@ jobs:
           python -m build --wheel
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@81e9d935c883d0b210363ab89cf7d3fd140f5dd0  # release/v1
         with:
           packages-dir: ${{ matrix.package.path }}/dist/
           skip-existing: true
