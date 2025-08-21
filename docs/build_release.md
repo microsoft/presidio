@@ -19,12 +19,17 @@ The following pipelines are provided and maintained as part of presidio developm
     -   Unit tests
     -   E2E tests
     -   deploys the artifacts to an internal dev environment.
--   [Release](https://github.com/microsoft/presidio/blob/main/azure-pipelines.yml) - manually triggered.
+-   [Release](https://github.com/microsoft/presidio/blob/main/azure-pipelines.yml) - manually triggered Azure DevOps pipeline.
     -   releases presidio official artifacts
-        -   pypi
+        -   pypi (using traditional authentication)
         -   Microsoft container registry (and docker hub)
         -   GitHub
     -   updates the official demo environment.
+-   [GitHub Actions Release](https://github.com/microsoft/presidio/blob/main/.github/workflows/release.yml) - manually triggered GitHub workflow.
+    -   releases presidio official artifacts
+        -   pypi (using OIDC trusted publishing)
+        -   Microsoft container registry
+        -   GitHub releases
 
 ### Variables used by the pipelines
 
@@ -57,3 +62,19 @@ The following pipelines are provided and maintained as part of presidio developm
 -   Point Azure Pipelines to the relevant yaml definition you'd like to import.
     Set the pipeline's name, the required triggers and variables and Select Save and run.
 -   A new run is started. Wait for the run to finish.
+
+### PyPI Publishing with OIDC
+
+The GitHub Actions release workflow uses OIDC (OpenID Connect) trusted publishing to PyPI, which provides enhanced security by eliminating the need to manage PyPI API tokens. This requires:
+
+1. **PyPI Configuration**: Each package (presidio_analyzer, presidio_anonymizer, etc.) must be configured on PyPI to trust the GitHub repository and workflow.
+2. **GitHub Workflow**: The workflow uses `pypa/gh-action-pypi-publish@release/v1` with `id-token: write` permissions.
+3. **No Secrets Required**: No PyPI API tokens need to be stored as GitHub secrets.
+
+Benefits of OIDC:
+- Enhanced security through short-lived tokens
+- No manual token management
+- Automatic token rotation
+- Audit trail of publishing activities
+
+Note: The Azure DevOps pipeline continues to use traditional PyPI authentication with service connections.
