@@ -3,9 +3,6 @@ services:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer${TAG}
     build:
       context: ./presidio-anonymizer
-      platforms:
-        - linux/amd64
-        - linux/arm64
       args:
         - NAME=presidio-anonymizer
     environment:
@@ -16,9 +13,6 @@ services:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-analyzer${TAG}
     build:
       context: ./presidio-analyzer
-      platforms:
-        - linux/amd64
-        - linux/arm64
       args:
         - NAME=presidio-analyzer
     environment:
@@ -29,9 +23,6 @@ services:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
       context: ./presidio-image-redactor
-      platforms:
-        - linux/amd64
-        - linux/arm64
       args:
         - NAME=presidio-image-redactor
     environment:
