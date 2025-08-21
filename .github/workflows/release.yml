@@ -62,8 +62,8 @@ jobs:
             --latest
 
   publish-to-pypi:
-    name: Publish ${{ matrix.package }} to PyPI
-    runs-on: ubuntu-latest
+    name: Publish ${{ matrix.package.name }} to PyPI
+    runs-on: ubuntu-latest 
     needs: get-version
     permissions:
       id-token: write  # Required for trusted publishing to PyPI
