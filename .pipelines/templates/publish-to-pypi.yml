@@ -1,8 +1,5 @@
 parameters:
   WORKING_FOLDER: ''
-# Note: This Azure DevOps template uses traditional PyPI authentication.
-# Azure DevOps does not have native OIDC support for PyPI like GitHub Actions.
-# The GitHub Actions workflow in .github/workflows/release.yml uses OIDC.
 steps:
   - task: UsePythonVersion@0
     inputs:

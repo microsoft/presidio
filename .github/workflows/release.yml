@@ -79,8 +79,6 @@ jobs:
             path: "presidio-image-redactor"
           - name: "Structured"
             path: "presidio-structured"
-          - name: "CLI"
-            path: "presidio-cli"
     steps:
       - name: Checkout code
         uses: actions/checkout@v5

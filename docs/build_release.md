@@ -19,17 +19,12 @@ The following pipelines are provided and maintained as part of presidio developm
     -   Unit tests
     -   E2E tests
     -   deploys the artifacts to an internal dev environment.
--   [Release](https://github.com/microsoft/presidio/blob/main/azure-pipelines.yml) - manually triggered Azure DevOps pipeline.
+-   [Release](https://github.com/microsoft/presidio/blob/main/azure-pipelines.yml) - manually triggered.
     -   releases presidio official artifacts
-        -   pypi (using traditional authentication)
+        -   pypi
         -   Microsoft container registry (and docker hub)
         -   GitHub
     -   updates the official demo environment.
--   [GitHub Actions Release](https://github.com/microsoft/presidio/blob/main/.github/workflows/release.yml) - manually triggered GitHub workflow.
-    -   releases presidio official artifacts
-        -   pypi (using OIDC trusted publishing)
-        -   Microsoft container registry
-        -   GitHub releases
 
 ### Variables used by the pipelines
 
