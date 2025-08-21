@@ -65,6 +65,8 @@ jobs:
     name: Publish ${{ matrix.package }} to PyPI
     runs-on: ubuntu-latest
     needs: get-version
+    permissions:
+      id-token: write  # Required for trusted publishing to PyPI
     strategy:
       fail-fast: false
       matrix:
@@ -100,9 +102,6 @@ jobs:
 
       - name: Publish to PyPI
         working-directory: ${{ matrix.package.path }}
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           twine upload --verbose --skip-existing dist/*
 
