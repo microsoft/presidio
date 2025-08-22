@@ -6,10 +6,10 @@ ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 ENV PIP_NO_CACHE_DIR=1
 
-ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
-ENV NLP_CONF_FILE=${NLP_CONF_FILE}
 ARG NLP_CONF_FILE_DEFAULT=presidio_analyzer/conf/default.yaml
 ARG NLP_CONF_FILE_TRANSFORMERS=presidio_analyzer/conf/transformers.yaml
+ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
+ENV NLP_CONF_FILE=${NLP_CONF_FILE}
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
 ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
@@ -59,9 +59,4 @@ COPY . /usr/bin/${NAME}/
 
 EXPOSE ${PORT}
 
-# Set command based on NLP engine
-CMD if [ "${NLP_ENGINE}" = "transformers" ]; then \
-        poetry run python app.py --host 0.0.0.0; \
-    else \
-        poetry run gunicorn -w ${WORKERS} -b 0.0.0.0:${PORT} 'app:create_app()'; \
-    fi
+CMD ["/bin/sh", "./start.sh"]
