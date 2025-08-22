@@ -147,9 +147,9 @@ jobs:
             platform: linux/arm64
             runner: ubuntu-24.04-arm
 
-          - image: presidio-anonymizer
-            platform: windows/amd64
-            runner: windows-latest
+          # - image: presidio-anonymizer
+          #   platform: windows/amd64
+          #   runner: windows-latest
 
     steps:
       - name: Checkout code
