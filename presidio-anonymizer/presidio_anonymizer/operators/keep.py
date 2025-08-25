@@ -18,7 +18,7 @@ class BaseKeep(Operator, ABC):
         return text
 
     def validate(self, params: Dict = None) -> None:
-        """Keep does not require any paramters so no validation is needed."""
+        """Keep does not require any parameters so no validation is needed."""
         pass
 
 

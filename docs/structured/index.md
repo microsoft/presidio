@@ -1,10 +1,5 @@
 # Presidio structured
 
-## Status
-
-!!! warning "Warning"
-    **Alpha**: This package is currently in alpha, meaning it is in its early stages of development. Features and functionality may change as the project evolves.
-
 ## Description
 
 The Presidio structured package is a flexible and customizable framework designed to identify and protect structured sensitive data.
@@ -147,5 +142,7 @@ Contributions are welcome! Please refer to the [Contributing Guide](https://gith
 
 #### More information
 
+- [API documentation](../api/structured_python.md)
+- [Sample code](../samples/python/example_structured.ipynb)
 - [Join the discussion](https://github.com/microsoft/presidio/discussions?discussions_q=structured)
 - [Relevant issues on Github](https://github.com/microsoft/presidio/issues?q=is%3Aissue+label%3Astructured-data)

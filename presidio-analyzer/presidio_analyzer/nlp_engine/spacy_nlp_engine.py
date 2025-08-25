@@ -1,12 +1,16 @@
 import logging
 from pathlib import Path
-from typing import Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
 import spacy
 from spacy.language import Language
 from spacy.tokens import Doc, Span
 
-from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts, NlpEngine
+from presidio_analyzer.nlp_engine import (
+    NerModelConfiguration,
+    NlpArtifacts,
+    NlpEngine,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -79,9 +83,15 @@ class SpacyNlpEngine(NlpEngine):
             raise ValueError(
                 "model_to_presidio_entity_mapping is missing from model configuration"
             )
-        return list(
+        entities_from_mapping = list(
             set(self.ner_model_configuration.model_to_presidio_entity_mapping.values())
         )
+        entities = [
+            ent
+            for ent in entities_from_mapping
+            if ent not in self.ner_model_configuration.labels_to_ignore
+        ]
+        return entities
 
     def get_supported_languages(self) -> List[str]:
         """Return the supported languages for this NLP engine."""
@@ -105,24 +115,49 @@ class SpacyNlpEngine(NlpEngine):
         self,
         texts: Union[List[str], List[Tuple[str, object]]],
         language: str,
+        batch_size: int = 1,
+        n_process: int = 1,
         as_tuples: bool = False,
-    ) -> Iterator[Optional[NlpArtifacts]]:
+    ) -> Generator[
+        Union[Tuple[Any, NlpArtifacts, Any], Tuple[Any, NlpArtifacts]], Any, None
+    ]:
         """Execute the NLP pipeline on a batch of texts using spacy pipe.
 
-        :param texts: A list of texts to process.
+        :param texts: A list of texts to process. if as_tuples is set to True,
+            texts should be a list of tuples (text, context).
         :param language: The language of the texts.
+        :param batch_size: Default batch size for pipe and evaluate.
+        :param n_process: Number of processors to process texts.
         :param as_tuples: If set to True, inputs should be a sequence of
             (text, context) tuples. Output will then be a sequence of
             (doc, context) tuples. Defaults to False.
+
+        :return: A generator of tuples (text, NlpArtifacts, context) or
+            (text, NlpArtifacts) depending on the value of as_tuples.
         """
 
         if not self.nlp:
             raise ValueError("NLP engine is not loaded. Consider calling .load()")
 
-        texts = (str(text) for text in texts)
-        docs = self.nlp[language].pipe(texts, as_tuples=as_tuples)
-        for doc in docs:
-            yield doc.text, self._doc_to_nlp_artifact(doc, language)
+        if as_tuples:
+            if not all(isinstance(item, tuple) and len(item) == 2 for item in texts):
+                raise ValueError(
+                    "When 'as_tuples' is True, "
+                    "'texts' must be a list of tuples (text, context)."
+                )
+            texts = ((str(text), context) for text, context in texts)
+        else:
+            texts = (str(text) for text in texts)
+        batch_output = self.nlp[language].pipe(
+            texts, as_tuples=as_tuples, batch_size=batch_size, n_process=n_process
+        )
+        for output in batch_output:
+            if as_tuples:
+                doc, context = output
+                yield doc.text, self._doc_to_nlp_artifact(doc, language), context
+            else:
+                doc = output
+                yield doc.text, self._doc_to_nlp_artifact(doc, language)
 
     def is_stopword(self, word: str, language: str) -> bool:
         """

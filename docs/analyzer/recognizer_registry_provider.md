@@ -89,7 +89,7 @@ The recognizer list comprises of both the predefined and custom recognizers, for
     deny_list_score: 1
 ```
 
-The recognizer parameters:
+### The recognizer parameters
 
   - `supported_languages`: A list of supported languages that the analyzer will support. In case this field is missing, a recognizer will be created for each supported language provided to the `AnalyzerEngine`. 
   In addition to the language code, this field also contains a list of context words, which increases confidence in the detection in case it is found in the surroundings of a detected entity (as seen in the credit card example above).

@@ -1,6 +1,5 @@
 import pytest           
 from presidio_analyzer.predefined_recognizers import InPassportRecognizer
-# from tests import assert_result
 from tests.assertions import assert_result
 
 @pytest.fixture(scope="module")
@@ -13,23 +12,22 @@ def entities():
 
 @pytest.mark.parametrize(
     "text, expected_len, expected_position, expected_score",
-    [ 
+    [
         # fmt: off
         #Valid Passport Numbers
-        ("A3456781", 1, (0,8), 0.7),
-        ("B3097651", 1, (0,8), 0.7),
-        ("C3590543", 1, (0,8), 0.7),
-        ("my passport number is T3569075", 1, (22,30), 0.7),
-        ("passport number: J6932157", 1, (17,25), 0.7),
+        ("A3456781", 1, (0,8), 0.1),
+        ("B3097651", 1, (0,8), 0.1),
+        ("C3590543", 1, (0,8), 0.1),
+        ("my passport number is T3569075", 1, (22,30), 0.1),
+        ("passport number: J6932157", 1, (17,25), 0.1),
 
         #Invalid Passport Numbers
-        ("A3456781", 0, (0,8), 0),
         ("b0097650", 0, (), 0),
-        ("my passport number is t3569075", 0, (), 0),
+        ("my passport number is T356907", 0, (), 0),
         # fmt: on
     ],
 )
-def test_when_all_passport_numers_then_succeed(
+def test_when_all_passport_numbers_then_succeed(
         text,
         expected_len,
         expected_position,
@@ -38,6 +36,7 @@ def test_when_all_passport_numers_then_succeed(
         entities,
 ):
     results = recognizer.analyze(text, entities)
+    assert len(results) == expected_len
     if results:
         assert_result(
             results[0],

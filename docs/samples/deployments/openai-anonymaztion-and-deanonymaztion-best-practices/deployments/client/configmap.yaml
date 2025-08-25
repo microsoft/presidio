@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-config
+data:
+  OPENAI_ENDPOINT: https://oai-presidio-anon-toolkit.openai.azure.com/
+  OPENAI_API_VERSION: 2023-03-15-preview
+  OPENAI_DEPLOYMENT_NAME: gpt-4o
+  API_URL: http://api-service:80
+  TEXTUAL_HOST: "0.0.0.0"
+  TEXTUAL_PORT: "8081"
+  TEXTUAL_PUBLIC_URL: http://4.154.250.110

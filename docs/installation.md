@@ -17,11 +17,10 @@ Presidio suite using `pip` (as Python packages) or using `Docker` (As containeri
 
 Presidio is supported for the following python versions:
 
-* 3.7
-* 3.8
 * 3.9
 * 3.10
 * 3.11
+* 3.12
 
 ### PII anonymization on text
 
@@ -76,7 +75,7 @@ For PII redaction in images
     python -m spacy download en_core_web_lg
     ```
 
-2. Install an OCR engine. The default version uses the [Tesseract OCR Engine](https://github.com/tesseract-ocr/tesseract). 
+2. Install an OCR engine. The default version uses the [Tesseract OCR Engine](https://github.com/tesseract-ocr/tesseract).
 More information on installation can be found [here](image-redactor/index.md#installation).
 
 ## Using Docker
@@ -138,18 +137,12 @@ git clone git@github.com:microsoft/presidio.git
 Then, build the containers locally.
 
 !!! note "Note"
- Presidio uses [docker-compose](https://docs.docker.com/compose/) to manage the different Presidio containers.
+    Presidio uses [docker-compose](https://docs.docker.com/compose/) to manage the different Presidio containers.
 
 From the root folder of the repo:
 
 ```sh
-docker-compose --build
-```
-
-To run all Presidio services:
-
-```sh
-docker-compose up -d
+docker-compose up --build
 ```
 
 Alternatively, you can build and run individual services.

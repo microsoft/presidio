@@ -40,7 +40,8 @@ class AnalyzerEngineProvider:
 
         if not conf_file:
             default_conf_file = self._get_full_conf_path()
-            configuration = yaml.safe_load(open(default_conf_file))
+            with open(default_conf_file) as file:
+                configuration = yaml.safe_load(file)
             logger.info(
                 f"Analyzer Engine configuration file "
                 f"not provided. Using {default_conf_file}."
@@ -48,16 +49,19 @@ class AnalyzerEngineProvider:
         else:
             try:
                 logger.info(f"Reading analyzer configuration from {conf_file}")
-                configuration = yaml.safe_load(open(conf_file))
+                with open(conf_file) as file:
+                    configuration = yaml.safe_load(file)
             except OSError:
                 logger.warning(
                     f"configuration file {conf_file} not found.  "
                     f"Using default config."
                 )
-                configuration = yaml.safe_load(open(self._get_full_conf_path()))
+                with open(self._get_full_conf_path()) as file:
+                    configuration = yaml.safe_load(file)
             except Exception:
                 print(f"Failed to parse file {conf_file}, resorting to default")
-                configuration = yaml.safe_load(open(self._get_full_conf_path()))
+                with open(self._get_full_conf_path()) as file:
+                    configuration = yaml.safe_load(file)
 
         return configuration
 
@@ -96,7 +100,7 @@ class AnalyzerEngineProvider:
                 f"configuration from {self.recognizer_registry_conf_file}"
             )
             provider = RecognizerRegistryProvider(
-                conf_file=self.recognizer_registry_conf_file
+                conf_file=self.recognizer_registry_conf_file, nlp_engine=nlp_engine
             )
         elif "recognizer_registry" in self.configuration:
             registry_configuration = self.configuration["recognizer_registry"]
@@ -104,7 +108,8 @@ class AnalyzerEngineProvider:
                 registry_configuration={
                     **registry_configuration,
                     "supported_languages": supported_languages,
-                }
+                },
+                nlp_engine=nlp_engine,
             )
         else:
             logger.warning(
@@ -116,11 +121,11 @@ class AnalyzerEngineProvider:
                 registry_configuration={
                     **registry_configuration,
                     "supported_languages": supported_languages,
-                }
+                },
+                nlp_engine=nlp_engine,
             )
         registry = provider.create_recognizer_registry()
-        if nlp_engine:
-            registry.add_nlp_recognizer(nlp_engine)
+
         return registry
 
     def _load_nlp_engine(self) -> NlpEngine:

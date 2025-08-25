@@ -213,3 +213,4 @@ def create_nlp_engine_with_azure_ai_language(ta_key: str, ta_endpoint: str):
     registry.remove_recognizer("SpacyRecognizer")
 
     return nlp_engine, registry
+

@@ -1,6 +1,6 @@
 import logging
 from abc import abstractmethod
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from presidio_analyzer import RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -22,7 +22,7 @@ class EntityRecognizer:
     :param supported_entities: the entities supported by this recognizer
     (for example, phone number, address, etc.)
     :param supported_language: the language supported by this recognizer.
-    The supported langauge code is iso6391Name
+    The supported language code is iso6391Name
     :param name: the name of this recognizer (optional)
     :param version: the recognizer current version
     :param context: a list of words which can help boost confidence score
@@ -196,3 +196,16 @@ class EntityRecognizer:
                 filtered_results.append(result)
 
         return filtered_results
+
+    @staticmethod
+    def sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
+        """
+        Cleanse the input string of the replacement pairs specified as argument.
+
+        :param text: input string
+        :param replacement_pairs: pairs of what has to be replaced with which value
+        :return: cleansed string
+        """
+        for search_string, replacement_string in replacement_pairs:
+            text = text.replace(search_string, replacement_string)
+        return text

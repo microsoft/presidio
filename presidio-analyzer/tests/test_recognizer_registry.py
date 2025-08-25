@@ -13,11 +13,6 @@ from presidio_analyzer import (
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 
 
-@pytest.fixture(scope="module")
-def request_id():
-    return "UT"
-
-
 def create_mock_pattern_recognizer(lang, entity, name):
     return PatternRecognizer(
         supported_entity=entity,
@@ -57,8 +52,9 @@ def test_when_get_recognizers_then_all_recognizers_returned(mock_recognizer_regi
     registry = mock_recognizer_registry
     registry.load_predefined_recognizers()
     recognizers = registry.get_recognizers(language="en", all_fields=True)
-    # 1 custom recognizer in english + 26 predefined
-    assert len(recognizers) == 1 + 26
+    
+    # 1 custom recognizer in english + 27 predefined - 11 disabled
+    assert len(recognizers) == 1 + 27 - 11
 
 
 def test_when_get_recognizers_then_return_all_fields(mock_recognizer_registry):

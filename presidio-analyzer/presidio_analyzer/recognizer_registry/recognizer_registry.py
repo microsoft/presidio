@@ -32,8 +32,9 @@ class RecognizerRegistry:
 
     :param recognizers: An optional list of recognizers,
     that will be available instead of the predefined recognizers
-    :param global_regex_flags : regex flags to be used in regex matching,
+    :param global_regex_flags: regex flags to be used in regex matching,
     including deny-lists
+    :param supported_languages: List of languages supported by this registry.
 
     """
 
@@ -53,9 +54,11 @@ class RecognizerRegistry:
         )
 
     def _create_nlp_recognizer(
-        self, nlp_engine: NlpEngine = None, supported_language: str = None
+        self,
+        nlp_engine: Optional[NlpEngine] = None,
+        supported_language: Optional[str] = None
     ) -> SpacyRecognizer:
-        nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
+        nlp_recognizer = self.get_nlp_recognizer(nlp_engine)
 
         if nlp_engine:
             return nlp_recognizer(
@@ -111,7 +114,7 @@ class RecognizerRegistry:
         self.add_nlp_recognizer(nlp_engine=nlp_engine)
 
     @staticmethod
-    def _get_nlp_recognizer(
+    def get_nlp_recognizer(
         nlp_engine: NlpEngine,
     ) -> Type[SpacyRecognizer]:
         """Return the recognizer leveraging the selected NLP Engine."""

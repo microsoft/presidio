@@ -2,49 +2,61 @@
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core"]
 
-[tool.poetry]
+[project]
 name = "presidio_analyzer"
-version = "2.2.355"
+version = "2.2.359"
 description = "Presidio Analyzer package"
-authors = ["Presidio <presidio@microsoft.com>"]
+authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
 license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 keywords = ["presidio_analyzer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 include = ["conf/*",]
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-spacy= ">=3.4.4, <4.0.0"
-regex = "*"
-tldextract = "*"
-pyyaml = "*"
-phonenumbers = ">=8.12,<9.0.0"
-flask = { version = ">=1.1", optional = true }
-spacy_huggingface_pipelines = { version = "*", optional = true }
-stanza = { version = "*", optional = true }
-spacy_stanza = { version = "*", optional = true }
-azure-ai-textanalytics = { version = "*", optional = true }
-azure-core = { version = "*", optional = true }
+requires-python = ">=3.9,<3.14"
+dependencies = [
+    "spacy (>=3.4.4, !=3.7.0)",
+    "regex",
+    "tldextract",
+    "pyyaml",
+    "phonenumbers (>=8.12,<10.0.0)"
+]
 
-[tool.poetry.extras]
-server = ["flask"]
-transformers = ["spacy_huggingface_pipelines"]
+[project.optional-dependencies]
+server = [
+    "flask (>=1.1)",
+    "gunicorn"
+]
+transformers = [
+    "transformers",
+    "accelerate",
+    "huggingface_hub",
+    "spacy_huggingface_pipelines"]
+
 stanza = [
-    "stanza",
-    "spacy_stanza",
+    "stanza (>=1.10.1,<2.0.0)",
 ]
 azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
+]
+ahds = [
+    "azure-identity (>=1.23.0,<2.0.0)",
+    "azure-health-deidentification (>=1.1.0b1,<2.0.0)"
+]
+gliner = [
+    "transformers",
+    "huggingface_hub",
+    "gliner (>=0.2.13,<1.0.0) ; python_version >= '3.10'",
+    "onnxruntime (>=1.19) ; python_version >= '3.10'"
 ]
 
 [tool.poetry.group.dev.dependencies]

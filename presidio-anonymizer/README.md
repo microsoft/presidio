@@ -30,10 +30,10 @@ Presidio anonymizer comes by default with the following anonymizers:
 
 -   **Redact**: Removes the PII completely from text.
     -   Parameters: None
--   **Hash**: Hashes the PII using either sha256, sha512 or md5. 
+-   **Hash**: Hashes the PII using either sha256 or sha512. 
     -   Parameters:
         - `hash_type`: Sets the type of hashing. 
-          Can be either `sha256`, `sha512` or `md5`.
+          Can be either `sha256` or `sha512` (`md5` is deprecated as of version 2.2.358).
           The default hash type is `sha256`.
 -   **Mask**: Replaces the PII with a sequence of a given character.
     -   Parameters:
@@ -47,6 +47,14 @@ Presidio anonymizer comes by default with the following anonymizers:
 -   **Custom**: Replace the PII with the result of the function executed on the PII string.
     - Parameters: `lambda`: Lambda function to execute on the PII string.
     The lambda return type must be a string.
+-   **AHDS Surrogate**: Use Azure Health Data Services de-identification service surrogation to generate realistic, medically-appropriate surrogates for detected PHI entities. This operator maintains data utility by preserving data relationships and format.
+    - Parameters:
+        - `endpoint`: AHDS endpoint (optional, can use AHDS_ENDPOINT env var)
+        - `entities`: List of entities detected by analyzer  
+        - `input_locale`: Input locale (default: "en-US")
+        - `surrogate_locale`: Surrogate locale (default: "en-US")
+    - Requires: `pip install presidio-anonymizer[ahds]`
+    - Usage: `OperatorConfig("surrogate", {...})`
 
 
 The **Anonymizer** default setting is to use the Advanced Encryption Standard (AES) as the encryption algorithm, also known as Rijndael. 

@@ -74,7 +74,11 @@ class Server:
                     return_decision_process=req_data.return_decision_process,
                     ad_hoc_recognizers=req_data.ad_hoc_recognizers,
                     context=req_data.context,
+                    allow_list=req_data.allow_list,
+                    allow_list_match=req_data.allow_list_match,
+                    regex_flags=req_data.regex_flags,
                 )
+                _exclude_attributes_from_dto(recognizer_result_list)
 
                 return Response(
                     json.dumps(
@@ -133,7 +137,22 @@ class Server:
             return jsonify(error=e.description), e.code
 
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", DEFAULT_PORT))
+def _exclude_attributes_from_dto(recognizer_result_list):
+    excluded_attributes = [
+        "recognition_metadata",
+    ]
+    for result in recognizer_result_list:
+        for attr in excluded_attributes:
+            if hasattr(result, attr):
+                delattr(result, attr)
+
+
+def create_app():  # noqa
     server = Server()
-    server.app.run(host="0.0.0.0", port=port)
+    return server.app
+
+
+if __name__ == "__main__":
+    app = create_app()
+    port = int(os.environ.get("PORT", DEFAULT_PORT))
+    app.run(host="0.0.0.0", port=port)

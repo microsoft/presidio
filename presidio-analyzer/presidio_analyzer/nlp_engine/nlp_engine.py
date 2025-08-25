@@ -29,6 +29,8 @@ class NlpEngine(ABC):
         self,
         texts: Iterable[str],
         language: str,
+        batch_size: int = 1,
+        n_process: int = 1,
         **kwargs,  # noqa ANN003
     ) -> Iterator[Tuple[str, NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts.

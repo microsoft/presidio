@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 ARG NAME
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
@@ -9,6 +9,9 @@ ENV PIP_NO_CACHE_DIR=1
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
 ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
 ENV NLP_CONF_FILE=${NLP_CONF_FILE}
+
+ENV PORT=3000
+ENV WORKERS=1
 
 COPY ${ANALYZER_CONF_FILE} /usr/bin/${NAME}/${ANALYZER_CONF_FILE}
 COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /usr/bin/${NAME}/${RECOGNIZER_REGISTRY_CONF_FILE}
@@ -31,4 +34,4 @@ RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD poetry run python app.py --host 0.0.0.0
+CMD poetry run gunicorn -w $WORKERS -b 0.0.0.0:$PORT 'app:create_app()'

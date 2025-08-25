@@ -1,4 +1,4 @@
-FROM python:3.9-windowsservercore
+FROM python:3.12-windowsservercore
 
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
@@ -19,8 +19,11 @@ RUN ./vc_redist.x64.exe /quiet /install
 
 COPY ./pyproject.toml /app/pyproject.toml
 COPY ./README.md /usr/bin/${NAME}/
-RUN pip install --upgrade pip
-RUN pip install poetry; poetry install --no-root --only=main -E server -E transformers
+WORKDIR /Python
+RUN python.exe -m pip install --upgrade pip
+RUN pip install poetry; 
+WORKDIR /app
+RUN poetry install --no-root --only=main -E server -E transformers
 
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py .

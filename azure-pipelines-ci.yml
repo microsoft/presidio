@@ -43,10 +43,12 @@ stages:
             displayName: Pull Presidio Images from ACR
             inputs:
               action: Run a Docker Compose command
+              projectName: 'microsoft_presidio'
               dockerComposeCommand: pull
               dockerComposeFile: docker-compose.yml
-              containerregistrytype: 'Container Registry'
-              dockerRegistryEndpoint: 'presidio-acr'
+              containerregistrytype: Azure Container Registry
+              azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
+              azureContainerRegistry: '$(ACR_REGISTRY_NAME).azurecr.io'
               dockerComposeFileArgs: |
                 REGISTRY_NAME=$(REGISTRY_NAME)
                 TAG=$(TAG)

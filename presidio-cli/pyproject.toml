@@ -2,32 +2,33 @@
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core"]
 
-[tool.poetry]
+[project]
 name = "presidio-cli"
-version = "0.0.8"
+version = "0.0.9"
 description = "CLI tool that analyzes text for PII Entities using Presidio Analyzer."
-authors = ["Presidio <presidio@microsoft.com>"]
+authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
 license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 keywords = ["pii", "checker", "presidio_cli"]
 urls = {Homepage = "https://github.com/microsoft/presidio"}
 readme = "README.md"
 include = ["conf/*", ".presidiocli"]
+requires-python = ">=3.9,<4.0"
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-presidio-analyzer = ">= 2.2"
-pyyaml = "*"
-pathspec = "*"
+dependencies = [
+    "presidio-analyzer (>= 2.2)",
+    "pyyaml",
+    "pathspec"
+]
 
-[tool.poetry.scripts]
+[project.scripts]
 presidio = "presidio_cli.cli:run"
 
 [tool.poetry.group.dev.dependencies]

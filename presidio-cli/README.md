@@ -8,9 +8,9 @@
 
 CLI tool that analyzes text for PII Entities using Presidio Analyzer.
 
-## Prerequisities
+## Prerequisites
 
-`Python` version: 3.8, 3.9, 3.10
+`Python` version: 3.9, 3.10, 3.11
 
 `poetry` tool installed:
 
@@ -126,7 +126,7 @@ presidio -d "ignore: |
   *.cfg" tests/
 
 # limit list of entities to CREDIT_CARD
-presidio-d "entities:
+presidio -d "entities:
   - CREDIT_CARD" tests/
 
 # equivalent to use -c parameter

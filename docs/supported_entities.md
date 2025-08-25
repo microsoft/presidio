@@ -40,6 +40,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |Entity Type|Description|Detection Method|
 |--- |--- |--- |
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
+|UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
 
 ### Spain
 
@@ -94,6 +95,11 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | FI_PERSONAL_IDENTITY_CODE     | The Finnish Personal Identity Code (Henkilötunnus) is a unique 11 character individual identity number. | Pattern match, context and custom logic. |
 
+### Korea
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
+
 ## Adding a custom PII entity
 
 See [this documentation](analyzer/adding_recognizers.md) for instructions on how to add a new Recognizer for a new type of PII entity.
@@ -106,6 +112,16 @@ See [this documentation](analyzer/adding_recognizers.md) for instructions on how
 A list of supported entities by Azure AI Language PII [can be found here](https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/concepts/entity-categories).
 
 To add Azure AI language into Presidio, [see this sample](samples/python/text_analytics/index.md#how-to-integrate-azure-ai-language-into-presidio).
+
+
+## Complementing Presidio with Azure Health Data Services PHI
+
+Azure Health Data Services PHI is a cloud-based service that provides Natural Language Processing (NLP) features for detecting PHI in text.
+
+A list of supported entities by Azure Health Data Services PHI [can be found here](https://learn.microsoft.com/en-us/azure/healthcare-apis/deidentification/overview).
+
+To add Azure AI language into Presidio, [see this sample](samples/python/ahds/index.md#how-to-integrate-azure-health-data-services-dei-dentification-into-presidio).
+
 
 ### Connecting to 3rd party PII detectors
 

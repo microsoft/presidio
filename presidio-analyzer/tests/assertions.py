@@ -32,3 +32,12 @@ def assert_result_within_score_range(
     min_score = max(0, expected_score_min - error)
     max_score = min(1, expected_score_max + error)
     assert result.score >= min_score and result.score <= max_score
+
+
+def assert_result_with_textual_explanation(
+    result, expected_entity_type, expected_start, expected_end, expected_score, expected_textual_explanation
+):
+    assert_result(
+        result, expected_entity_type, expected_start, expected_end, expected_score
+    )
+    assert result.analysis_explanation.textual_explanation == expected_textual_explanation
