@@ -64,6 +64,11 @@ jobs:
             extras: ''
             spacy-models: ''
     steps:
+      - name: Debug Azure Secrets
+        run: |
+          echo "CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}"
+          echo "TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}"
+          echo "SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
       - name: Checkout code
         uses: actions/checkout@v5
         with:
