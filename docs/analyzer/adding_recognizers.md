@@ -269,3 +269,22 @@ Further reading:
 1. [Customizing the NLP model](customizing_nlp_models.md).
 1. [Best practices for developing PII recognizers](developing_recognizers.md).
 1. [Code samples for customizing Presidio Analyzer with new recognizers](../samples/python/customizing_presidio_analyzer.ipynb).
+
+### Adding context words in YAML recognizers
+
+Recognizers defined in YAML can also include a `context` field.
+When used with `AnalyzerEngine` and a context enhancer, these words boost the score if they appear near the detected entity.
+
+Example:
+
+```yaml
+recognizers:
+  - name: "Date of Birth Recognizer"
+    supported_entity: "DATE_TIME"
+    supported_language: "en"
+    patterns:
+      - name: "DOB without slashes"
+        regex: "((19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))"
+        score: 0.8
+    context:
+      - DOB

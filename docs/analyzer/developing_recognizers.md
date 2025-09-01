@@ -72,3 +72,61 @@ When integrating such logic into Presidio, a class inheriting from the [`EntityR
     - Ease of integration.
     - Runtime considerations (For example if the new model requires a GPU).
     - 3rd party dependencies of the new model vs. the existing `presidio-analyzer` package.
+### Reading pattern recognizers from YAML
+
+#### 1. YAML Example
+
+```yaml
+recognizers:
+  - name: "Date of Birth Recognizer"
+    supported_entity: "DATE_TIME"
+    supported_language: "en"
+    patterns:
+      - name: "DOB without slashes"
+        regex: "((19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))"
+        score: 0.8
+    context:
+      - DOB
+python <<EOF
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer.nlp_engine import NlpEngineProvider
+from presidio_analyzer.context_aware_enhancers.lemma_context_aware_enhancer import LemmaContextAwareEnhancer
+
+# Configure NLP engine
+configuration = {
+    "nlp_engine_name": "spacy",
+    "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+}
+provider = NlpEngineProvider(nlp_configuration=configuration)
+nlp_engine = provider.create_engine()
+
+# Load recognizer from YAML
+registry = RecognizerRegistry()
+registry.add_recognizers_from_yaml("dob_recognizer.yml")
+
+# Analyzer with custom registry
+analyzer = AnalyzerEngine(
+    registry=registry,
+    nlp_engine=nlp_engine,
+    supported_languages=["en"]
+)
+
+text = "DOB: 19571012"
+
+# Run base analysis
+results = analyzer.analyze(text=text, language="en")
+print("Base results:", results)
+
+# Apply context enhancer
+enhancer = LemmaContextAwareEnhancer()
+nlp_artifacts = analyzer.nlp_engine.process_text(text, language="en")
+
+boosted = enhancer.enhance_using_context(
+    text=text,
+    raw_results=results,
+    nlp_artifacts=nlp_artifacts,
+    recognizers=registry.recognizers,
+    context=["DOB"]
+)
+print("Boosted results:", boosted)
+EOF
