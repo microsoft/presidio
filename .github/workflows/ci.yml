@@ -14,7 +14,6 @@ permissions: read-all
 env:
   REGISTRY_NAME: ${{ secrets.ACR_NAME }}.azurecr.io
   TAG: gha${{ github.run_number }}
-  HAS_SECRETS: ${{ secrets.ACR_NAME != '' && secrets.AZURE_CLIENT_ID != '' && secrets.AZURE_TENANT_ID != '' && secrets.AZURE_SUBSCRIPTION_ID != '' }}
 
 jobs:
   lint:
@@ -122,7 +121,7 @@ jobs:
     name: Build ${{ matrix.image }} (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
     needs: [lint]
-    if: vars.HAS_SECRETS == 'true' || secrets.ACR_NAME != ''
+    if: secrets.ACR_NAME != ''
     permissions:
       id-token: write
       contents: read
@@ -186,7 +185,7 @@ jobs:
     name: Create Multi-Platform Manifests
     runs-on: ubuntu-latest
     needs: build-platform-images
-    if: vars.HAS_SECRETS == 'true' || secrets.ACR_NAME != ''
+    if: secrets.ACR_NAME != ''
     permissions:
       id-token: write
       contents: read
@@ -223,7 +222,7 @@ jobs:
     name: E2E Tests (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
     needs: create-manifests
-    if: vars.HAS_SECRETS == 'true' || secrets.ACR_NAME != ''
+    if: secrets.ACR_NAME != ''
     permissions:
       id-token: write
       contents: read
@@ -315,7 +314,7 @@ jobs:
     name: Local Build and E2E Tests
     runs-on: ubuntu-latest
     needs: [lint, test]
-    if: vars.HAS_SECRETS != 'true' && secrets.ACR_NAME == ''
+    if: secrets.ACR_NAME == ''
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
