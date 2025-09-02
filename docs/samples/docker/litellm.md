@@ -2,7 +2,7 @@
 
 Run Presidio PII Masking across Anthropic/Gemini/Bedrock/etc. calls with [LiteLLM](https://github.com/BerriAI/litellm)
 
-[👉 **Refer to LiteLLM Docs for detailed guide**](https://docs.litellm.ai/docs/proxy/pii_masking)
+[👉 **Refer to LiteLLM Docs for detailed guide**](https://docs.litellm.ai/docs/proxy/guardrails/pii_masking_v2)
 
 **Flow:** App <-> `LiteLLM Proxy + Presidio PII Masking` <-> LLM Provider
 
