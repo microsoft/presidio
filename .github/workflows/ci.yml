@@ -315,7 +315,7 @@ jobs:
   local-build-and-test:
     name: Local Build and E2E Tests
     runs-on: ubuntu-latest
-    needs: [lint, test]
+    needs: [lint]
     if: secrets.ACR_NAME == ''
     steps:
       - name: Checkout code
