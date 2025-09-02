@@ -311,7 +311,7 @@ jobs:
         run: |
           docker compose -f docker-compose.yml down
 
-  # Local build and test jobs for external contributors (no secrets required)
+  # Local build and test jobs for external contributors (no secrets required) 
   local-build-and-test:
     name: Local Build and E2E Tests
     runs-on: ubuntu-latest
