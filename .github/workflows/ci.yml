@@ -123,7 +123,7 @@ jobs:
     name: Build ${{ matrix.image }} (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
     needs: [lint]
-    if: secrets.ACR_NAME != ''
+    if: github.repository == 'microsoft/presidio'
     permissions:
       id-token: write
       contents: read
@@ -187,7 +187,7 @@ jobs:
     name: Create Multi-Platform Manifests
     runs-on: ubuntu-latest
     needs: build-platform-images
-    if: secrets.ACR_NAME != ''
+    if: github.repository == 'microsoft/presidio'
     permissions:
       id-token: write
       contents: read
@@ -224,7 +224,7 @@ jobs:
     name: E2E Tests (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
     needs: create-manifests
-    if: secrets.ACR_NAME != ''
+    if: github.repository == 'microsoft/presidio'
     permissions:
       id-token: write
       contents: read
@@ -316,7 +316,7 @@ jobs:
     name: Local Build and E2E Tests
     runs-on: ubuntu-latest
     needs: [lint]
-    if: secrets.ACR_NAME == ''
+    if: github.repository != 'microsoft/presidio'
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
