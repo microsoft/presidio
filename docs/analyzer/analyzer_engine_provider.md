@@ -212,6 +212,21 @@ recognizers:
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_analyzer.context_aware_enhancers.lemma_context_aware_enhancer import LemmaContextAwareEnhancer
+# Save the DOB recognizer YAML to disk
+dob_yaml = """
+recognizers:
+  - name: "Date of Birth Recognizer"
+    supported_entity: "DATE_TIME"
+    supported_language: "en"
+    patterns:
+      - name: "DOB without slashes"
+        regex: "((19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))"
+        score: 0.8
+    context:
+      - DOB
+"""
+with open("dob_recognizer.yml", "w") as f:
+    f.write(dob_yaml)
 
 # Configure NLP engine
 configuration = {
