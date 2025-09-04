@@ -197,7 +197,7 @@ recognizers:
 ### Reading pattern recognizers from YAML
 
 #### 1. YAML Example
-
+```yaml
 recognizers:
   - name: "Date of Birth Recognizer"
     supported_entity: "DATE_TIME"
@@ -208,8 +208,7 @@ recognizers:
         score: 0.8
     context:
       - DOB
-
-python <<EOF
+```python
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_analyzer.context_aware_enhancers.lemma_context_aware_enhancer import LemmaContextAwareEnhancer
@@ -249,6 +248,5 @@ boosted = enhancer.enhance_using_context(
     nlp_artifacts=nlp_artifacts,
     recognizers=registry.recognizers,
     context=["DOB"]
-)git checkout upstream/main -- docs/analyzer/adding_recognizers.md
+)
 print("Boosted results:", boosted)
-EOF
