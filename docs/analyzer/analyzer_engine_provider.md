@@ -177,7 +177,7 @@ In this example, the `SpacyRecognizer` is disabled, and the `CreditCardRecognize
 
 ### Adding context words in YAML recognizers
 
-Recognizers defined in YAML can also include a `context` field.
+Recognizers defined in YAML can also include a `context` field.  
 When used with `AnalyzerEngine` and a context enhancer, these words boost the score if they appear near the detected entity.
 
 Example:
@@ -193,25 +193,12 @@ recognizers:
         score: 0.8
     context:
       - DOB
-
-### Reading pattern recognizers from YAML
-
-#### 1. YAML Example
-```yaml
-recognizers:
-  - name: "Date of Birth Recognizer"
-    supported_entity: "DATE_TIME"
-    supported_language: "en"
-    patterns:
-      - name: "DOB without slashes"
-        regex: "((19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))"
-        score: 0.8
-    context:
-      - DOB
+```
 ```python
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_analyzer.context_aware_enhancers.lemma_context_aware_enhancer import LemmaContextAwareEnhancer
+
 # Save the DOB recognizer YAML to disk
 dob_yaml = """
 recognizers:
@@ -265,3 +252,4 @@ boosted = enhancer.enhance_using_context(
     context=["DOB"]
 )
 print("Boosted results:", boosted)
+```
