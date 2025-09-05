@@ -100,6 +100,11 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
 
+### Thai
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| TH_TNIN    | The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents. | Pattern match, context and custom logic. |
+
 ## Adding a custom PII entity
 
 See [this documentation](analyzer/adding_recognizers.md) for instructions on how to add a new Recognizer for a new type of PII entity.
