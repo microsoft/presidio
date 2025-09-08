@@ -137,7 +137,6 @@ def test_context_words(recognizer):
         "TNIN",
         "เลขประจำตัวประชาชน",
         "เลขบัตรประชาชน",
-        "รหัสบัตรประชาชน",
         "รหัสปชช",
     ]
     assert recognizer.context == expected_context

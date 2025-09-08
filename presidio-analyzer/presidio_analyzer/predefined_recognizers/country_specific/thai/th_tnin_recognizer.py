@@ -19,6 +19,8 @@ class ThTninRecognizer(PatternRecognizer):
     - First digit (N1) cannot be 0
     - Second digit (N2) cannot be 0
     - Second and third digits (N2N3) cannot be: 28, 29, 59, 68, 69, 78, 79, 87, 88, 89, 97, 98, 99
+      These second and third digits in Thai ID number correspond to Thai provinces, so we exclude non-existent
+      or unassigned combinations in Thailand's administrative division system. See ISO 3166-2:TH for reference.
     - The 13th digit is a checksum computed modulo 11 from the first 12 digits
 
     Checksum algorithm:
@@ -29,7 +31,8 @@ class ThTninRecognizer(PatternRecognizer):
     - Equivalently: if x ≤ 1 then N13 = 1 − x; otherwise N13 = 11 − x
 
     Reference: https://th.wikipedia.org/wiki/เลขประจำตัวประชาชนไทย
-               https://th.wikipedia.org/wiki/ISO_3166-2:TH 
+               https://th.wikipedia.org/wiki/ISO_3166-2:TH
+
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -42,8 +45,8 @@ class ThTninRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "TNIN (Medium)",
-            r"\b\d{13}\b",
-            0.5,
+            r"\b[1-9](?:[134][0-9]|[25][0134567]|[67][01234567]|[89][0123456])\d{10}\b",
+            0.4,
         )
     ]
 
@@ -53,14 +56,9 @@ class ThTninRecognizer(PatternRecognizer):
         "TNIN",
         "เลขประจำตัวประชาชน",
         "เลขบัตรประชาชน",
-        "รหัสบัตรประชาชน",
         "รหัสปชช",
     ]
 
-    # Forbidden combinations for second and third digits
-    FORBIDDEN_SECOND_THIRD_COMBINATIONS = {
-        "28", "29", "59", "68", "69", "78", "79", "87", "88", "89", "97", "98", "99"
-    }
 
     def __init__(
         self,
@@ -102,33 +100,9 @@ class ThTninRecognizer(PatternRecognizer):
         if not sanitized_value.isdigit():
             return False
 
-        # Validate TNIN format and checksum
-        if self._validate_tnin_format(sanitized_value) and self._validate_checksum(sanitized_value):
-            return True
+        # Validate TNIN checksum (format validation is handled by regex)
+        return self._validate_checksum(sanitized_value)
 
-        return False
-
-    def _validate_tnin_format(self, tnin: str) -> bool:
-        """
-        Validate the TNIN format rules.
-
-        :param tnin: The TNIN to validate
-        :return: True if format is valid, False otherwise
-        """
-        # First digit cannot be 0
-        if tnin[0] == '0':
-            return False
-
-        # Second digit cannot be 0
-        if tnin[1] == '0':
-            return False
-
-        # Second and third digits cannot be forbidden combinations
-        second_third = tnin[1:3]
-        if second_third in self.FORBIDDEN_SECOND_THIRD_COMBINATIONS:
-            return False
-
-        return True
 
     def _validate_checksum(self, tnin: str) -> bool:
         """
