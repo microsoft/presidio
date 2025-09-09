@@ -64,4 +64,7 @@ jobs:
                   issue_number: pr.number,
                   labels: ['external']
                 });
+              } else {
+                console.log(`Error checking user permission: ${err.message}`);
               }
+            }
