@@ -15,4 +15,4 @@ RUN pip install poetry && poetry install --no-root --only=main -E server
 COPY . /usr/bin/${NAME}/
 
 EXPOSE ${PORT}
-CMD poetry run gunicorn -w $WORKERS -b 0.0.0.0:$PORT 'app:create_app()'
+CMD ["poetry", "run", "gunicorn", "-w", "$WORKERS", "-b", "0.0.0.0:$PORT", "app:create_app()"]
