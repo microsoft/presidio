@@ -34,4 +34,4 @@ RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD ["poetry", "run", "gunicorn", "-w", "$WORKERS", "-b", "0.0.0.0:$PORT", "app:create_app()"]
+CMD ["./entrypoint.sh"]
