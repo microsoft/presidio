@@ -51,7 +51,6 @@ from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
-
 # UK recognizers
 from .country_specific.uk.uk_nhs_recognizer import NhsRecognizer
 from .country_specific.uk.uk_nino_recognizer import UkNinoRecognizer
