@@ -18,9 +18,11 @@ class ThTninRecognizer(PatternRecognizer):
     - Must be exactly 13 digits
     - First digit (N1) cannot be 0
     - Second digit (N2) cannot be 0
-    - Second and third digits (N2N3) cannot be: 28, 29, 59, 68, 69, 78, 79, 87, 88, 89, 97, 98, 99
-      These second and third digits in Thai ID number correspond to Thai provinces, so we exclude non-existent
-      or unassigned combinations in Thailand's administrative division system. See ISO 3166-2:TH for reference.
+    - Second and third digits (N2N3) cannot be: 28, 29, 59, 68, 69, 78, 79,
+      87, 88, 89, 97, 98, 99
+      These second and third digits in Thai ID number correspond to Thai provinces,
+      so we exclude non-existent or unassigned combinations in Thailand's
+      administrative division system. See ISO 3166-2:TH for reference.
     - The 13th digit is a checksum computed modulo 11 from the first 12 digits
 
     Checksum algorithm:
