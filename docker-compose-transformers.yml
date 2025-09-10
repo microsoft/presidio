@@ -3,8 +3,6 @@ services:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer${TAG}
     build:
       context: ./presidio-anonymizer
-      args:
-        - NAME=presidio-anonymizer
     environment:
       - PORT=5001
     ports:
@@ -14,7 +12,6 @@ services:
     build:
       context: ./presidio-analyzer
       args:
-        - NAME=presidio-analyzer
         - NLP_CONF_FILE=presidio_analyzer/conf/transformers.yaml
       dockerfile: Dockerfile.transformers
     environment:

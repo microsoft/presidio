@@ -1,18 +1,16 @@
 FROM python:3.13-slim
 
-ARG NAME
 ENV PIP_NO_CACHE_DIR=1
 
 ENV PORT=3000
 ENV WORKERS=1
 
-WORKDIR /usr/bin/${NAME}
+WORKDIR /app
 
-COPY ./pyproject.toml /usr/bin/${NAME}/
-COPY ./README.md /usr/bin/${NAME}/
+COPY ./pyproject.toml /app/
 RUN pip install poetry && poetry install --no-root --only=main -E server
 
-COPY . /usr/bin/${NAME}/
+COPY . /app/
 
 EXPOSE ${PORT}
 CMD ["./entrypoint.sh"]

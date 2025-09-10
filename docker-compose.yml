@@ -3,8 +3,6 @@ services:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer${TAG}
     build:
       context: ./presidio-anonymizer
-      args:
-        - NAME=presidio-anonymizer
       cache_from:
         - type=registry,ref=${REGISTRY_NAME}/public/presidio-anonymizer:latest
     environment:
@@ -15,8 +13,6 @@ services:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-analyzer${TAG}
     build:
       context: ./presidio-analyzer
-      args:
-        - NAME=presidio-analyzer
       cache_from:
         - type=registry,ref=${REGISTRY_NAME}/public/presidio-analyzer:latest
     environment:
@@ -27,8 +23,6 @@ services:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
       context: ./presidio-image-redactor
-      args:
-        - NAME=presidio-image-redactor
       cache_from:
         - type=registry,ref=${REGISTRY_NAME}/public/presidio-image-redactor:latest
     environment:
