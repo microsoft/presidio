@@ -176,7 +176,7 @@ jobs:
             --push \
             --tag ${{ env.REGISTRY_NAME }}/${{ matrix.image }}:${{ env.TAG }}-${PLATFORM_TAG} \
             --build-arg NAME=${{ matrix.image }} \
-            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/${{ matrix.image }}:latest \
+            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/public/${{ matrix.image }}:latest \
             --cache-to type=inline \
             ./${{ matrix.image }}
         env:
