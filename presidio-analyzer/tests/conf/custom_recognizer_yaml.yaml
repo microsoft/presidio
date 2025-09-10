@@ -1,0 +1,19 @@
+recognizer_registry:
+  global_regex_flags: 26
+  recognizers:
+    - name: "Zip code Recognizer"
+      supported_language: "en"
+      patterns:
+        - name: "zip code (weak)"
+          regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+          score: 0.01
+      context:
+        - zip
+        - code
+      supported_entity: "ZIP"
+    - name: "SpacyRecognizer"
+      enabled: false
+
+supported_languages:
+  - en
+default_score_threshold: 0.0
