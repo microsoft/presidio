@@ -1,16 +1,20 @@
+"""Tests for Thai National ID (TNIN) recognizer."""
+
 import pytest
+from presidio_analyzer.predefined_recognizers import ThTninRecognizer
 
 from tests import assert_result_within_score_range
-from presidio_analyzer.predefined_recognizers import ThTninRecognizer
 
 
 @pytest.fixture(scope="module")
 def recognizer():
+    """Create a Thai TNIN recognizer instance for testing."""
     return ThTninRecognizer()
 
 
 @pytest.fixture(scope="module")
 def entities():
+    """Return the Thai TNIN entity type for testing."""
     return ["TH_TNIN"]
 
 
@@ -18,7 +22,8 @@ def entities():
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # Valid TNINs - should get high scores due to format validation and checksum
-        # Note: These are example TNINs created for testing purposes with valid checksums
+        # Note: These are example TNINs created for testing purposes
+        # with valid checksums
         ("1234567890121", 1, ((0, 13),), ((0.5, 1.0),),),
         ("2345678901234", 1, ((0, 13),), ((0.5, 1.0),),),
         ("3456789012347", 1, ((0, 13),), ((0.5, 1.0),),),
@@ -85,6 +90,11 @@ def test_when_tnin_in_text_then_all_tnins_found(
     entities,
     max_score,
 ):
+    """Test that Thai TNIN recognizer correctly identifies TNINs.
+
+    Test various text contexts including valid TNINs, invalid formats,
+    and different languages to ensure proper recognition.
+    """
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
 
