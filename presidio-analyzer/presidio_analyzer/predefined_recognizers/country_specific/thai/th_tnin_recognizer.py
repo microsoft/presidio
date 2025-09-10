@@ -46,7 +46,7 @@ class ThTninRecognizer(PatternRecognizer):
         Pattern(
             "TNIN (Medium)",
             r"\b[1-9](?:[134][0-9]|[25][0134567]|[67][01234567]|[89][0123456])\d{10}\b",
-            0.4,
+            0.5,
         )
     ]
 
