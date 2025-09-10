@@ -21,10 +21,10 @@ WORKDIR /usr/bin/${NAME}
 
 # Install essential build tools
 RUN apt-get update \
-  && apt-get install -y build-essential
+  && apt-get install build-essential --no-install-recommends -y \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
-COPY ./README.md /usr/bin/${NAME}/
 
 RUN pip install poetry && poetry install --no-root --only=main -E server
 # install nlp models specified in NLP_CONF_FILE
@@ -34,4 +34,4 @@ RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD poetry run gunicorn -w $WORKERS -b 0.0.0.0:$PORT 'app:create_app()'
+CMD ["poetry", "run", "gunicorn", "-w", "$WORKERS", "-b", "0.0.0.0:$PORT", "app:create_app()"]

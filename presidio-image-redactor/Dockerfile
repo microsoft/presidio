@@ -19,18 +19,10 @@ COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
 
 WORKDIR /usr/bin/${NAME}
 
-# Install essential build tools
 RUN apt-get update \
-  && apt-get install -y build-essential
-
-# install tesseract and other image related dependencies
-RUN apt-get update \
-  && apt-get install tesseract-ocr -y \
+  && apt-get install build-essential tesseract-ocr ffmpeg libsm6 libxext6 --no-install-recommends -y \
   && rm -rf /var/lib/apt/lists/* \
   && tesseract -v
-
-RUN apt-get update  \
-  && apt-get install ffmpeg libsm6 libxext6  -y
 
 COPY ./pyproject.toml /usr/bin/${NAME}/
 COPY ./README.md /usr/bin/${NAME}/
@@ -38,4 +30,4 @@ RUN pip install poetry && poetry install --no-root --only=main -E server
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD poetry run gunicorn -w $WORKERS -b 0.0.0.0:$PORT 'app:create_app()'
+CMD ["poetry", "run", "gunicorn", "-w", "$WORKERS", "-b", "0.0.0.0:$PORT", "app:create_app()"]
