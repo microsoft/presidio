@@ -337,17 +337,17 @@ jobs:
           # Build all images locally without pushing
           docker compose -f docker-compose.yml build
         env:
-          REGISTRY_NAME: ''
+          REGISTRY_NAME: 'mcr.microsoft.com'
           IMAGE_PREFIX: ''
-          TAG: ''
+          TAG: gha${{ github.run_number }}
 
       - name: Start Presidio cluster locally
         run: |
           docker compose -f docker-compose.yml up -d
         env:
-          REGISTRY_NAME: ''
+          REGISTRY_NAME: 'mcr.microsoft.com'
           IMAGE_PREFIX: ''
-          TAG: ''
+          TAG: gha${{ github.run_number }}
 
       - name: Set up Python
         uses: actions/setup-python@v6

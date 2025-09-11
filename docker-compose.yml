@@ -4,7 +4,7 @@ services:
     build:
       context: ./presidio-anonymizer
       cache_from:
-        - type=registry,ref=${REGISTRY_NAME}/public/presidio-anonymizer:latest
+        - type=registry,ref=${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer:latest
     environment:
       - PORT=5001
     ports:
@@ -14,7 +14,7 @@ services:
     build:
       context: ./presidio-analyzer
       cache_from:
-        - type=registry,ref=${REGISTRY_NAME}/public/presidio-analyzer:latest
+        - type=registry,ref=${REGISTRY_NAME}${IMAGE_PREFIX}presidio-analyzer:latest
     environment:
       - PORT=5001
     ports:
@@ -24,7 +24,7 @@ services:
     build:
       context: ./presidio-image-redactor
       cache_from:
-        - type=registry,ref=${REGISTRY_NAME}/public/presidio-image-redactor:latest
+        - type=registry,ref=${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor:latest
     environment:
       - PORT=5001
     ports:
