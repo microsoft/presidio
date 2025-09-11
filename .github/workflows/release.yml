@@ -143,7 +143,7 @@ jobs:
           version_tag="${{ matrix.image == 'presidio-image-redactor' && needs.get-version.outputs.image-version || needs.get-version.outputs.version }}"
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/${{ matrix.image }}:latest \
+            --cache-from type=registry,ref=${repo}:latest \
             --cache-to type=inline \
             --tag ${repo}:latest \
             --tag ${repo}:${version_tag} \
