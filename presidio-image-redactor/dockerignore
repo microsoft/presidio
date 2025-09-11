@@ -24,8 +24,6 @@ coverage.xml
 
 # Package Management (keep pyproject.toml, exclude lock files)
 Pipfile
-Pipfile.lock
-poetry.lock
 pip-log.txt
 pip-delete-this-directory.txt
 
