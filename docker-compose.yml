@@ -1,30 +1,30 @@
 services:
   presidio-anonymizer:
-    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer${TAG}
+    image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-anonymizer${TAG}
     build:
       context: ./presidio-anonymizer
       cache_from:
-        - type=registry,ref=${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer:latest
+        - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-anonymizer:latest
     environment:
       - PORT=5001
     ports:
       - "5001:5001"
   presidio-analyzer:
-    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-analyzer${TAG}
+    image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-analyzer${TAG}
     build:
       context: ./presidio-analyzer
       cache_from:
-        - type=registry,ref=${REGISTRY_NAME}${IMAGE_PREFIX}presidio-analyzer:latest
+        - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-analyzer:latest
     environment:
       - PORT=5001
     ports:
       - "5002:5001"
   presidio-image-redactor:
-    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor${TAG}
+    image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
       context: ./presidio-image-redactor
       cache_from:
-        - type=registry,ref=${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor:latest
+        - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-image-redactor:latest
     environment:
       - PORT=5001
     ports:
