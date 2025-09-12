@@ -681,8 +681,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         is_name: List[bool],
         is_patient: List[bool],
     ) -> list:
-        """
-        Build a stable list of PHI strings to seed the ad-hoc recognizer without
+        """Build a stable list of PHI strings to seed the ad-hoc recognizer without
         mutating inputs while iterating. Combines names and patient-related names,
         adds generic PHI, flattens nested collections, stringifies, trims empties,
         and de-duplicates while preserving order of first appearance.
