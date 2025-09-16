@@ -681,10 +681,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         is_name: List[bool],
         is_patient: List[bool],
     ) -> list:
-        """Build a stable list of PHI strings to seed the ad-hoc recognizer without
-        mutating inputs while iterating. Combines names and patient-related names,
-        adds generic PHI, flattens nested collections, stringifies, trims empties,
-        and de-duplicates while preserving order of first appearance.
+        """Build a list of PHI strings for the ad-hoc recognizer.
+
+        Combines names and patient-related fields, adds generic PHI, flattens nested
+        collections, stringifies, trims empties, and de-duplicates while preserving
+        order of first appearance.
 
         :param original_metadata: List of all the instance's element values
         (excluding pixel data).
