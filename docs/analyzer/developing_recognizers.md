@@ -54,7 +54,7 @@ In these cases, we would wish to utilize a Machine Learning model capable of ide
 #### ML: Utilize SpaCy, Stanza or Transformers
 
 Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER), and [stanza](https://stanfordnlp.github.io/stanza/) and [huggingface transformers](https://huggingface.co/docs/transformers/index) as an alternative. To avoid introducing new tools, it is recommended to first try to use `spaCy`, `stanza` or `transformers` over other tools if possible.
-`spaCy` provides descent results compared to state-of-the-art NER models, but with much better computational performance.
+`spaCy` provides decent results compared to state-of-the-art NER models, but with much better computational performance.
 `spaCy`, `stanza` and `transformers` models could be trained from scratch, used in combination with pre-trained embeddings, or be fine-tuned.
 
 In addition to those, it is also possible to use other ML models. In that case, a new `EntityRecognizer` should be created.
