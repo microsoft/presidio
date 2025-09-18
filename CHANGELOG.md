@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### Image Redactor
+#### Changed
+- DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.
 
 ## [2.2.360] - 2025-09-09
 ### Analyzer
