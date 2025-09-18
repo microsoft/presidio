@@ -836,7 +836,8 @@ def test_make_phi_list_happy_path(
     test_phi_str_list = mock_engine._make_phi_list(original_metadata, [], [])
 
     # Assert
-    assert mock_process_names.call_count == 1
+    # _make_phi_list calls _process_names twice: once for is_name and once for is_patient
+    assert mock_process_names.call_count == 2
     assert mock_add_known_generic_phi.call_count == 1
     assert set(test_phi_str_list) == set(expected_return_list)
 
