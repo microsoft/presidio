@@ -3,8 +3,6 @@ services:
     image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
       context: ./presidio-image-redactor
-      args:
-        - NAME=presidio-image-redactor
     environment:
       - PORT=5001
     ports:
