@@ -11,15 +11,20 @@ ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
 ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
 ENV NLP_CONF_FILE=${NLP_CONF_FILE}
 
-ADD https://aka.ms/vs/16/release/vc_redist.x64.exe .
-RUN ./vc_redist.x64.exe /quiet /install
+RUN powershell -Command \
+    "Write-Host 'Downloading VC++ Redistributable...'; \
+    Invoke-WebRequest -Uri 'https://aka.ms/vs/16/release/vc_redist.x64.exe' -OutFile 'vc_redist.x64.exe' -UseBasicParsing; \
+    Write-Host 'Installing VC++ Redistributable...'; \
+    Start-Process -FilePath 'vc_redist.x64.exe' -ArgumentList '/quiet', '/install' -Wait; \
+    Write-Host 'VC++ Redistributable installed successfully'; \
+    Remove-Item 'vc_redist.x64.exe'"
 
 COPY ${ANALYZER_CONF_FILE} /app/${ANALYZER_CONF_FILE}
 COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /app/${RECOGNIZER_REGISTRY_CONF_FILE}
 COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
 COPY ./pyproject.toml /app/
-RUN pip install poetry; poetry install --no-root --only=main -E server -E transformers
+RUN python.exe -m pip install --upgrade pip; pip install poetry; poetry install --no-root --only=main -E server -E transformers
 
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py .
