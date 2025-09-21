@@ -3,13 +3,11 @@ FROM python:3.13-windowsservercore
 ENV PIP_NO_CACHE_DIR=1
 WORKDIR /app
 
-COPY ./pyproject.toml /usr/bin/${NAME}/
-COPY ./README.md /usr/bin/${NAME}/
-COPY ./pyproject.toml /app/pyproject.toml
+COPY ./pyproject.toml /app/
 RUN pip install --upgrade pip
 RUN pip install poetry; poetry install --no-root --only=main -E server
 
 COPY . .
 
 EXPOSE ${PORT}
-CMD poetry run python app.py
+CMD ["poetry", "run", "python", "app.py"]
