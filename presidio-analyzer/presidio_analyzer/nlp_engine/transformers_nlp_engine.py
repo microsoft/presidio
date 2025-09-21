@@ -90,7 +90,7 @@ class TransformersNlpEngine(SpacyNlpEngine):
                     "annotate": "spans",
                     "stride": self.ner_model_configuration.stride,
                     "alignment_mode": self.ner_model_configuration.alignment_mode,
-                    "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa E501
+                    "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa: E501
                     "annotate_spans_key": self.entity_key,
                 },
             )

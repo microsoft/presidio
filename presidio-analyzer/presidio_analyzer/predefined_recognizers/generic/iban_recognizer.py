@@ -77,7 +77,7 @@ class IbanRecognizer(PatternRecognizer):
             global_regex_flags=regex_flags,
         )
 
-    def validate_result(self, pattern_text: str):  # noqa D102
+    def validate_result(self, pattern_text: str):  # noqa: D102
         try:
             pattern_text = EntityRecognizer.sanitize_value(
                 pattern_text, self.replacement_pairs

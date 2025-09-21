@@ -43,14 +43,14 @@ class SpacyRecognizer(LocalRecognizer):
         check_label_groups: Optional[List[Tuple[Set, Set]]] = None,
         context: Optional[List[str]] = None,
     ):
-        """
+        """Initialize the SpaCy recognizer.
 
         :param supported_language: Language this recognizer supports
         :param supported_entities: The entities this recognizer can detect
         :param ner_strength: Default confidence for NER prediction
         :param check_label_groups: (DEPRECATED) Tuple containing Presidio entity names
         :param default_explanation: Default explanation for the results when using return_decision_process=True
-        """  # noqa E501
+        """  # noqa: E501
 
         self.ner_strength = ner_strength
         if check_label_groups:
@@ -71,7 +71,7 @@ class SpacyRecognizer(LocalRecognizer):
             context=context,
         )
 
-    def load(self) -> None:  # noqa D102
+    def load(self) -> None:  # noqa: D102
         # no need to load anything as the analyze method already receives
         # preprocessed nlp artifacts
         pass
@@ -93,7 +93,7 @@ class SpacyRecognizer(LocalRecognizer):
         )
         return explanation
 
-    def analyze(self, text: str, entities, nlp_artifacts=None):  # noqa D102
+    def analyze(self, text: str, entities, nlp_artifacts=None):  # noqa: D102
         results = []
         if not nlp_artifacts:
             logger.warning("Skipping SpaCy, nlp artifacts not provided...")
