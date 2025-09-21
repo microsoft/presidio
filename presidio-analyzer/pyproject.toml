@@ -33,7 +33,8 @@ dependencies = [
 [project.optional-dependencies]
 server = [
     "flask (>=1.1)",
-    "gunicorn"
+    "gunicorn; platform_system != 'Windows'",
+    "waitress; platform_system == 'Windows'"
 ]
 transformers = [
     "transformers",

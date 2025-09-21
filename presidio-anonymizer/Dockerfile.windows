@@ -1,13 +1,14 @@
 FROM python:3.13-windowsservercore
 
 ENV PIP_NO_CACHE_DIR=1
+ENV PORT=3000
+
 WORKDIR /app
 
 COPY ./pyproject.toml /app/
-RUN pip install --upgrade pip
 RUN pip install poetry; poetry install --no-root --only=main -E server
 
-COPY . .
+COPY . /app/
 
 EXPOSE ${PORT}
-CMD ["poetry", "run", "python", "app.py"]
+CMD ["powershell", "-Command", "poetry run waitress-serve --port=$env:PORT app:create_app"]
