@@ -6,7 +6,7 @@ ENV PORT=3000
 WORKDIR /app
 
 COPY ./pyproject.toml /app/
-RUN pip install poetry; poetry install --no-root --only=main -E server
+RUN python.exe -m pip install --upgrade pip; pip install poetry; poetry install --no-root --only=main -E server
 
 COPY . /app/
 
