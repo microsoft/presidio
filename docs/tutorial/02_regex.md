@@ -8,7 +8,7 @@ Let's assume we want to be extremely conservative and treat any token which cont
 from presidio_analyzer import Pattern, PatternRecognizer
 
 # Define the regex pattern in a Presidio `Pattern` object:
-numbers_pattern = Pattern(name="numbers_pattern", regex="\d+", score=0.5)
+numbers_pattern = Pattern(name="numbers_pattern", regex=r"\d+", score=0.5)
 
 # Define the recognizer with one or more patterns
 number_recognizer = PatternRecognizer(
