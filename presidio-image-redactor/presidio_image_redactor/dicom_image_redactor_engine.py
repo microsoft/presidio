@@ -331,6 +331,22 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         else:
             image_2d = instance.pixel_array
 
+        # Handle multi-frame DICOM images
+        if len(image_2d.shape) == 3:
+            # Check if this is a multi-frame grayscale image (frames, height, width)
+            # or a single-frame RGB image (height, width, channels)
+            if is_greyscale:
+                # Multi-frame grayscale: use the middle frame for OCR/PII detection
+                middle_frame_idx = image_2d.shape[0] // 2
+                image_2d = image_2d[middle_frame_idx]
+            # For RGB images, keep the 3D structure as-is
+        elif len(image_2d.shape) == 4:
+            # Multi-frame RGB images: (frames, height, width, channels)
+            middle_frame_idx = image_2d.shape[0] // 2
+            image_2d = image_2d[middle_frame_idx]
+        elif len(image_2d.shape) > 4:
+            raise ValueError(f"Unsupported pixel array dimensions: {image_2d.shape}")
+
         # Convert to float to avoid overflow or underflow losses.
         image_2d_float = image_2d.astype(float)
 
@@ -399,9 +415,26 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         if crop_ratio >= 1.0 or crop_ratio <= 0:
             raise ValueError("crop_ratio must be between 0 and 1")
 
+        # Handle multi-frame images by using middle frame
+        if len(pixel_array.shape) == 3:
+            # For RGB images (H, W, C), use as-is for corner detection on first 2 dims
+            # For multi-frame grayscale (F, H, W), use middle frame
+            if pixel_array.shape[2] <= 4:  # Likely RGB/RGBA image
+                # Use first channel for corner detection
+                pixel_array_2d = pixel_array[:, :, 0]
+            else:  # Multi-frame grayscale
+                middle_frame_idx = pixel_array.shape[0] // 2
+                pixel_array_2d = pixel_array[middle_frame_idx]
+        elif len(pixel_array.shape) == 4:
+            # Multi-frame RGB: (F, H, W, C) -> use middle frame, first channel
+            middle_frame_idx = pixel_array.shape[0] // 2
+            pixel_array_2d = pixel_array[middle_frame_idx, :, :, 0]
+        else:
+            pixel_array_2d = pixel_array
+
         # Set dimensions
-        width = pixel_array.shape[0]
-        height = pixel_array.shape[1]
+        width = pixel_array_2d.shape[0]
+        height = pixel_array_2d.shape[1]
         crop_width = int(np.floor(width * crop_ratio / 2))
         crop_height = int(np.floor(height * crop_ratio / 2))
 
@@ -415,7 +448,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # Only keep box pixels
         cropped_pixel_arrays = [
-            pixel_array[box[0] : box[2], box[1] : box[3]] for box in boxes
+            pixel_array_2d[box[0] : box[2], box[1] : box[3]] for box in boxes
         ]
 
         # Combine the cropped pixel arrays
@@ -750,12 +783,30 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             raise ValueError("fill must be 'contrast' or 'background'")
 
         is_greyscale = cls._check_if_greyscale(instance)
+
+        # Handle multi-frame images by using middle frame for color selection
+        pixel_array = instance.pixel_array
+        if len(pixel_array.shape) == 3:
+            if is_greyscale:
+                # Multi-frame grayscale: use middle frame
+                middle_frame_idx = pixel_array.shape[0] // 2
+                pixel_array_2d = pixel_array[middle_frame_idx]
+            else:
+                # RGB image: keep as-is
+                pixel_array_2d = pixel_array
+        elif len(pixel_array.shape) == 4:
+            # Multi-frame RGB: use middle frame
+            middle_frame_idx = pixel_array.shape[0] // 2
+            pixel_array_2d = pixel_array[middle_frame_idx]
+        else:
+            pixel_array_2d = pixel_array
+
         if is_greyscale:
             # model L for grayscale, and has 8 bit-pixel to store the pixel value
-            image_pil = Image.fromarray(instance.pixel_array, mode="L")
+            image_pil = Image.fromarray(pixel_array_2d, mode="L")
         else:
             # model RGB, has 3x8 bit pixel available to store the value
-            image_pil = Image.fromarray(instance.pixel_array, mode="RGB")
+            image_pil = Image.fromarray(pixel_array_2d, mode="RGB")
         box_color = cls._get_bg_color(image_pil, is_greyscale, invert_flag)
 
         return box_color
@@ -869,9 +920,32 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             left = bbox["left"]
             width = bbox["width"]
             height = bbox["height"]
-            redacted_instance.pixel_array[top : top + height, left : left + width] = (
-                box_color
-            )
+
+            # Handle different image array structures
+            pixel_shape = redacted_instance.pixel_array.shape
+            if len(pixel_shape) == 3:
+                if is_greyscale:
+                    # Multi-frame grayscale: apply redaction to all frames
+                    for frame_idx in range(pixel_shape[0]):
+                        redacted_instance.pixel_array[
+                            frame_idx, top : top + height, left : left + width
+                        ] = box_color
+                else:
+                    # RGB image: apply redaction to all channels
+                    redacted_instance.pixel_array[
+                        top : top + height, left : left + width, :
+                    ] = box_color
+            elif len(pixel_shape) == 4:
+                # Multi-frame RGB: apply redaction to all frames and channels
+                for frame_idx in range(pixel_shape[0]):
+                    redacted_instance.pixel_array[
+                        frame_idx, top : top + height, left : left + width, :
+                    ] = box_color
+            else:
+                # Standard 2D image redaction
+                redacted_instance.pixel_array[
+                    top : top + height, left : left + width
+                ] = box_color
 
         redacted_instance.PixelData = redacted_instance.pixel_array.tobytes()
 

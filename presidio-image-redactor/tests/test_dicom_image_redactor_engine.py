@@ -104,6 +104,7 @@ def test_get_all_dcm_files_happy_path(mock_engine: DicomImageRedactorEngine, dcm
     [
         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), True),
         (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"), False),
+        (Path(TEST_DICOM_PARENT_DIR, "MULTIFRAME_ORIGINAL.dcm"), True),
     ],
 )
 def test_check_if_greyscale_happy_path(mock_engine: DicomImageRedactorEngine, dcm_file: Path, expected_result: bool):
@@ -134,6 +135,7 @@ def test_check_if_greyscale_happy_path(mock_engine: DicomImageRedactorEngine, dc
         (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), True),
         (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), True),
         (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), True),
+        (Path(TEST_DICOM_PARENT_DIR, "MULTIFRAME_ORIGINAL.dcm"), True),
     ],
 )
 def test_check_if_greyscale_happy_path(mock_engine: DicomImageRedactorEngine, dcm_file: Path, is_greyscale: bool):
@@ -151,7 +153,15 @@ def test_check_if_greyscale_happy_path(mock_engine: DicomImageRedactorEngine, dc
     test_scaled_image = mock_engine._rescale_dcm_pixel_array(test_instance, is_greyscale)
 
     # Assert
-    assert np.shape(test_original_image) == np.shape(test_scaled_image)
+    # For multi-frame images, shape will change from 3D to 2D; otherwise should remain same
+    if len(test_original_image.shape) == 3 and is_greyscale:
+        # Multi-frame grayscale: 3D -> 2D (extract single frame)
+        assert len(np.shape(test_scaled_image)) == 2
+        assert test_scaled_image.shape == test_original_image.shape[1:]
+    else:
+        # Standard case: shape should remain the same
+        assert np.shape(test_original_image) == np.shape(test_scaled_image)
+
     assert np.min(test_scaled_image) >= 0
     assert np.max(test_scaled_image) <= 255
     if is_greyscale is True:
@@ -159,6 +169,105 @@ def test_check_if_greyscale_happy_path(mock_engine: DicomImageRedactorEngine, dc
         assert len(np.shape(test_scaled_image)) == 2
     else:
         assert len(np.shape(test_scaled_image)) == 3
+
+
+# ------------------------------------------------------
+# DicomImageRedactorEngine._rescale_dcm_pixel_array() - Multi-frame DICOM support
+# ------------------------------------------------------
+def test_rescale_dcm_pixel_array_multiframe_happy_path(mock_engine: DicomImageRedactorEngine):
+    """Test multi-frame DICOM support in DicomImageRedactorEngine._rescale_dcm_pixel_array
+
+    This test ensures that multi-frame DICOM images (3D arrays) are properly
+    handled by extracting a representative 2D frame for PII detection, preventing
+    the "ValueError: Too many dimensions: 3 > 2" error when creating PIL images.
+    """
+    # Arrange
+    test_dcm_file = Path(TEST_DICOM_PARENT_DIR, "MULTIFRAME_ORIGINAL.dcm")
+    test_instance = pydicom.dcmread(test_dcm_file)
+    test_original_image = test_instance.pixel_array
+    is_greyscale = mock_engine._check_if_greyscale(test_instance)
+
+    # Verify this is indeed a multi-frame image
+    assert len(test_original_image.shape) == 3, "Test file should be multi-frame (3D array)"
+    assert is_greyscale is True, "Test file should be grayscale"
+
+    # Act
+    test_scaled_image = mock_engine._rescale_dcm_pixel_array(test_instance, is_greyscale)
+
+    # Assert
+    # For multi-frame grayscale images, we expect dimension reduction from 3D to 2D
+    assert len(test_original_image.shape) == 3, "Original should be 3D (frames, height, width)"
+    assert len(test_scaled_image.shape) == 2, "Scaled should be 2D (height, width)"
+    assert test_scaled_image.shape == test_original_image.shape[1:], "Should extract single frame dimensions"
+
+    # Standard rescaling assertions
+    assert np.min(test_scaled_image) >= 0
+    assert np.max(test_scaled_image) <= 255
+    assert np.max(test_original_image) != np.max(test_scaled_image)  # Rescaling should change values
+
+    # Verify the scaled image can be used to create a PIL image without error
+    from PIL import Image
+    image_pil = Image.fromarray(test_scaled_image, mode="L")
+    assert image_pil is not None
+    assert image_pil.size == (test_scaled_image.shape[1], test_scaled_image.shape[0])
+
+
+def test_multiframe_dicom_full_workflow_happy_path(mock_engine: DicomImageRedactorEngine):
+    """Test complete workflow with multi-frame DICOM including redaction
+
+    This test ensures that the entire redaction workflow works with multi-frame
+    DICOM files, from analysis to redaction, while preserving the multi-frame
+    structure in the output.
+    """
+    # Arrange
+    test_dcm_file = Path(TEST_DICOM_PARENT_DIR, "MULTIFRAME_ORIGINAL.dcm")
+    test_instance = pydicom.dcmread(test_dcm_file)
+
+    # Act & Assert - this should not raise any "Too many dimensions" errors
+    try:
+        redacted_instance, bboxes = mock_engine.redact_and_return_bbox(
+            image=test_instance,
+            fill="contrast",
+            padding_width=25,
+            crop_ratio=0.75,
+            use_metadata=True
+        )
+
+        # Verify multi-frame structure is preserved in redacted output
+        assert redacted_instance.pixel_array.shape == test_instance.pixel_array.shape
+        assert isinstance(bboxes, list)  # Should return list of bounding boxes
+
+        # Verify redacted instance is still a valid DICOM
+        assert hasattr(redacted_instance, 'PixelData')
+        assert redacted_instance.PhotometricInterpretation == test_instance.PhotometricInterpretation
+
+    except ValueError as e:
+        if "Too many dimensions" in str(e):
+            pytest.fail(f"Multi-frame DICOM processing failed with dimension error: {e}")
+        else:
+            raise  # Re-raise if it's a different ValueError
+
+
+def test_multiframe_array_corners_happy_path(mock_engine: DicomImageRedactorEngine):
+    """Test _get_array_corners method with multi-frame DICOM arrays"""
+    # Arrange
+    test_dcm_file = Path(TEST_DICOM_PARENT_DIR, "MULTIFRAME_ORIGINAL.dcm")
+    test_instance = pydicom.dcmread(test_dcm_file)
+    test_pixel_array = test_instance.pixel_array
+    crop_ratio = 0.75
+
+    # Verify this is a 3D array
+    assert len(test_pixel_array.shape) == 3
+
+    # Act
+    corners = mock_engine._get_array_corners(test_pixel_array, crop_ratio)
+
+    # Assert
+    assert corners is not None
+    assert len(corners.shape) == 2, "Corners should be 2D array"
+    # Should return cropped corner data from the middle frame
+    expected_frame_shape = test_pixel_array.shape[1:]  # (height, width) of single frame
+    assert corners.shape[1] <= expected_frame_shape[1], "Corner width should be <= frame width"
 
 
 # ------------------------------------------------------
