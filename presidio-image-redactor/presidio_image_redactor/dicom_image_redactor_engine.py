@@ -70,16 +70,44 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         is_greyscale = self._check_if_greyscale(instance)
 
         if self._check_if_multiframe(instance):
-            print("multi")
+            # Extract raw frames with contrast normalization applied
+            raw_frames = self._extract_multiframe_pixel_data(instance, is_greyscale)
+
+            # Process each frame: scale, convert to PIL, and add padding
+            processed_frames = []
+            for frame_data in raw_frames:
+                # Scale the frame data
+                scaled_frame = DicomImageRedactorEngine._scale_image_data(
+                    frame_data, is_greyscale
+                )
+
+                # Convert to PIL image
+                pil_image = DicomImageRedactorEngine._create_pil_image(
+                    scaled_frame, is_greyscale
+                )
+
+                # Add padding
+                padded_image = self._add_padding(pil_image, is_greyscale, padding_width)
+                processed_frames.append(padded_image)
+
+            # TODO: Process each processed frame for PII detection and redaction
+            # For now, just return the first frame's processing result
+            if processed_frames:
+                padded_image_pil = processed_frames[0]  # Process first frame as example
+            else:
+                raise ValueError("No frames found in multiframe DICOM")
 
         else:
-            image_np = self._rescale_dcm_pixel_array(instance, is_greyscale)
-            if is_greyscale:
-                # model L for grayscale, and has 8 bit-pixel to store the pixel value
-                image_pil = Image.fromarray(image_np, mode="L")
-            else:
-                # model RGB, has 3x8 bit pixel available to store the value
-                image_pil = Image.fromarray(image_np, mode="RGB")
+            image_2d = DicomImageRedactorEngine._normalize_dicom_contrast(
+                instance, is_greyscale
+            )
+            image_np = DicomImageRedactorEngine._scale_image_data(
+                image_2d, is_greyscale
+            )
+
+            image_pil = DicomImageRedactorEngine._create_pil_image(
+                image_np, is_greyscale
+            )
             padded_image_pil = self._add_padding(image_pil, is_greyscale, padding_width)
 
 
@@ -97,10 +125,60 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
                 analyzer_results
             )
-            bboxes = self.bbox_processor.remove_bbox_padding(analyzer_bboxes, padding_width)
+            bboxes = self.bbox_processor.remove_bbox_padding(
+                analyzer_bboxes, padding_width
+            )
             redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
             return redacted_image, bboxes
+
+
+    @staticmethod
+    def _extract_multiframe_pixel_data(
+        instance: pydicom.dataset.FileDataset, is_greyscale: bool
+    ) -> List[np.ndarray]:
+        """Extract individual frame pixel arrays from multiframe DICOM.
+
+        Handles different multiframe storage formats and applies appropriate
+        contrast normalization to each frame.
+
+        :param instance: Multiframe DICOM instance
+        :return: List of 2D numpy arrays, one per frame
+        """
+        pixel_array = instance.pixel_array
+
+        # Get number of frames
+        try:
+            num_frames = instance.NumberOfFrames
+        except AttributeError:
+            # Fallback: infer from pixel array shape
+            num_frames = pixel_array.shape[0] if len(pixel_array.shape) > 2 else 1
+
+        frames = []
+
+        if len(pixel_array.shape) == 3:
+            # Format: (frames, height, width) - grayscale multiframe
+            for frame_idx in range(num_frames):
+                frame_data = pixel_array[frame_idx]
+                # Apply contrast normalization per frame if needed
+                if "WindowWidth" in instance:
+                    if is_greyscale:
+                        # Apply VOI LUT to individual frame
+                        frame_data = apply_voi_lut(frame_data, instance)
+                frames.append(frame_data)
+
+        elif len(pixel_array.shape) == 4:
+            # Format: (frames, height, width, channels) - color multiframe
+            for frame_idx in range(num_frames):
+                frame_data = pixel_array[frame_idx]
+                # Color frames typically don't need VOI LUT
+                frames.append(frame_data)
+        else:
+            raise ValueError(
+                f"Unsupported multiframe pixel array shape: {pixel_array.shape}"
+            )
+
+        return frames
 
     def redact(
         self,
@@ -397,6 +475,24 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # Convert to uint8
         return np.uint8(image_2d_scaled)
+
+    @staticmethod
+    def _create_pil_image(
+        image_np: np.ndarray, is_greyscale: bool
+    ) -> Image.Image:
+        """Create a PIL Image from a numpy array based on color type.
+
+        :param image_np: Scaled image data as numpy array (uint8).
+        :param is_greyscale: Whether the image is in greyscale.
+
+        :return: PIL Image object.
+        """
+        if is_greyscale:
+            # model L for grayscale, and has 8 bit-pixel to store the pixel value
+            return Image.fromarray(image_np, mode="L")
+        else:
+            # model RGB, has 3x8 bit pixel available to store the value
+            return Image.fromarray(image_np, mode="RGB")
 
     @staticmethod
     def _get_bg_color(
