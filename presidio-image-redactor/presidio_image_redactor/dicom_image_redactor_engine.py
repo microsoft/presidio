@@ -68,34 +68,39 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         instance = deepcopy(image)
 
         is_greyscale = self._check_if_greyscale(instance)
-        image_np = self._rescale_dcm_pixel_array(instance, is_greyscale)
-        if is_greyscale:
-            # model L for grayscale, and has 8 bit-pixel to store the pixel value
-            image_pil = Image.fromarray(image_np, mode="L")
+
+        if self._check_if_multiframe(instance):
+            print("multi")
+
         else:
-            # model RGB, has 3x8 bit pixel available to store the value
-            image_pil = Image.fromarray(image_np, mode="RGB")
-        padded_image_pil = self._add_padding(image_pil, is_greyscale, padding_width)
+            image_np = self._rescale_dcm_pixel_array(instance, is_greyscale)
+            if is_greyscale:
+                # model L for grayscale, and has 8 bit-pixel to store the pixel value
+                image_pil = Image.fromarray(image_np, mode="L")
+            else:
+                # model RGB, has 3x8 bit pixel available to store the value
+                image_pil = Image.fromarray(image_np, mode="RGB")
+            padded_image_pil = self._add_padding(image_pil, is_greyscale, padding_width)
 
 
-        # Detect PII
-        analyzer_results = self._get_analyzer_results(
-            padded_image_pil,
-            instance,
-            use_metadata,
-            ocr_kwargs,
-            ad_hoc_recognizers,
-            **text_analyzer_kwargs,
-        )
+            # Detect PII
+            analyzer_results = self._get_analyzer_results(
+                padded_image_pil,
+                instance,
+                use_metadata,
+                ocr_kwargs,
+                ad_hoc_recognizers,
+                **text_analyzer_kwargs,
+            )
 
-        # Redact all bounding boxes from DICOM file
-        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
-            analyzer_results
-        )
-        bboxes = self.bbox_processor.remove_bbox_padding(analyzer_bboxes, padding_width)
-        redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
+            # Redact all bounding boxes from DICOM file
+            analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+                analyzer_results
+            )
+            bboxes = self.bbox_processor.remove_bbox_padding(analyzer_bboxes, padding_width)
+            redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
-        return redacted_image, bboxes
+            return redacted_image, bboxes
 
     def redact(
         self,
@@ -312,6 +317,17 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return is_greyscale
 
     @staticmethod
+    def _check_if_multiframe(instance: pydicom.dataset.FileDataset) -> bool:
+        """Check if a DICOM image instance consists of multiple frames.
+
+        :param instance: A single DICOM instance.
+
+        :return: TRUE if the instance contains multiple frames within it
+        """
+        # Check if image consists of multple frames based on pixel data shape
+        return len(instance.pixel_array.shape) in [3, 4]
+
+    @staticmethod
     def _rescale_dcm_pixel_array(
         instance: pydicom.dataset.FileDataset, is_greyscale: bool
     ) -> np.ndarray:
@@ -322,16 +338,52 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :return: Rescaled DICOM pixel_array.
         """
-        # Normalize contrast
+        # Normalize contrast and extract pixel data
+        image_2d = DicomImageRedactorEngine._normalize_dicom_contrast(
+            instance, is_greyscale
+        )
+
+        # Scale the image data based on color type and convert to uint8
+        return DicomImageRedactorEngine._scale_image_data(image_2d, is_greyscale)
+
+    @staticmethod
+    def _normalize_dicom_contrast(
+        instance: pydicom.dataset.FileDataset, is_greyscale: bool
+    ) -> np.ndarray:
+        """Normalize DICOM contrast using VOI LUT if available.
+
+        Applies Value of Interest Look-Up Table for greyscale images when
+        WindowWidth is present in the DICOM metadata, otherwise returns
+        raw pixel data.
+
+        :param instance: A single DICOM instance.
+        :param is_greyscale: Whether the image is in greyscale.
+
+        :return: Contrast-normalized pixel array.
+        """
         if "WindowWidth" in instance:
             if is_greyscale:
-                image_2d = apply_voi_lut(instance.pixel_array, instance)
+                return apply_voi_lut(instance.pixel_array, instance)
             else:
-                image_2d = instance.pixel_array
+                return instance.pixel_array
         else:
-            image_2d = instance.pixel_array
+            return instance.pixel_array
 
-        # Convert to float to avoid overflow or underflow losses.
+    @staticmethod
+    def _scale_image_data(
+        image_2d: np.ndarray, is_greyscale: bool
+    ) -> np.ndarray:
+        """Scale image data based on color type and convert to uint8.
+
+        Converts input to float to avoid overflow, then for greyscale images
+        rescales between 0-255, and finally converts to uint8.
+
+        :param image_2d: Image data array (any numeric type).
+        :param is_greyscale: Whether the image is in greyscale.
+
+        :return: Scaled image data as uint8.
+        """
+        # Convert to float to avoid overflow or underflow losses
         image_2d_float = image_2d.astype(float)
 
         if not is_greyscale:
@@ -343,10 +395,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 / (image_2d_float.max() - image_2d_float.min())
             ) * 255.0
 
-        # Convert to uint
-        image_2d_scaled = np.uint8(image_2d_scaled)
-
-        return image_2d_scaled
+        # Convert to uint8
+        return np.uint8(image_2d_scaled)
 
     @staticmethod
     def _get_bg_color(
