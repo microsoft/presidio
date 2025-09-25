@@ -72,7 +72,7 @@ class PatternRecognizer(LocalRecognizer):
         else:
             self.deny_list = []
 
-    def load(self):  # noqa D102
+    def load(self):  # noqa: D102
         pass
 
     def analyze(

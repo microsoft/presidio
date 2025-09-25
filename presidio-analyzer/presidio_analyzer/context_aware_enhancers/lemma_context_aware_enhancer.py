@@ -64,7 +64,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                               accuracy of the context enhancement process
         :param recognizers: the list of recognizers
         :param context: list of context words
-        """  # noqa D205 D400
+        """  # noqa: D205,D400
 
         # create a deep copy of the results object, so we can manipulate it
         results = copy.deepcopy(raw_results)
@@ -245,7 +245,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         word: str,
         start: int,
         tokens,
-        tokens_indices: List[int],  # noqa ANN001
+        tokens_indices: List[int],  # noqa: ANN001
     ) -> int:
         found = False
         # we use the known start index of the original word to find the actual

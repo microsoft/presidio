@@ -44,10 +44,10 @@ class PhoneRecognizer(LocalRecognizer):
             context=context,
         )
 
-    def load(self) -> None:  # noqa D102
+    def load(self) -> None:  # noqa: D102
         pass
 
-    def get_supported_entities(self):  # noqa D102
+    def get_supported_entities(self):  # noqa: D102
         return ["PHONE_NUMBER"]
 
     def analyze(
