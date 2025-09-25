@@ -41,7 +41,7 @@ class PlPeselRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str) -> bool:  # noqa D102
+    def validate_result(self, pattern_text: str) -> bool:  # noqa: D102
         digits = [int(digit) for digit in pattern_text]
         weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
 

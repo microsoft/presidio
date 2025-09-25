@@ -16,7 +16,7 @@ class TransformersRecognizer(SpacyRecognizer):
     See:
      - https://huggingface.co/docs/transformers/main/en/index for transformer models
      - https://github.com/explosion/spacy-huggingface-pipelines on the spaCy wrapper to transformers
-    """  # noqa E501
+    """  # noqa: E501
 
     ENTITIES = [
         "PERSON",
@@ -29,7 +29,7 @@ class TransformersRecognizer(SpacyRecognizer):
         "PHONE_NUMBER",
     ]
 
-    def __init__(self, **kwargs):  # noqa ANN003
+    def __init__(self, **kwargs):  # noqa: ANN003
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace(
             "Spacy", "Transformers"
         )

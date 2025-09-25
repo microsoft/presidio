@@ -10,6 +10,6 @@ class StanzaRecognizer(SpacyRecognizer):
     Stanza's interface with spaCy's
     """
 
-    def __init__(self, **kwargs):  # noqa ANN003
+    def __init__(self, **kwargs):  # noqa: ANN003
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace("Spacy", "Stanza")
         super().__init__(**kwargs)
