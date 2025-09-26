@@ -69,13 +69,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         is_greyscale = self._check_if_greyscale(instance)
         image_np = self._rescale_dcm_pixel_array(instance, is_greyscale)
-        if is_greyscale:
-            # model L for grayscale, and has 8 bit-pixel to store the pixel value
-            image_pil = Image.fromarray(image_np, mode="L")
-        else:
-            # model RGB, has 3x8 bit pixel available to store the value
-            image_pil = Image.fromarray(image_np, mode="RGB")
+        image_pil = self._dicom_np_to_pil(image_np, is_greyscale)
         padded_image_pil = self._add_padding(image_pil, is_greyscale, padding_width)
+
 
 
         # Detect PII
@@ -441,8 +437,14 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :return: Most or least common pixel value (depending on fill).
         """
+       # Ensure 2D array for grayscale (first frame if multi-frame)
+        pa = instance.pixel_array
+        if pa.ndim == 3:  # multi-frame grayscale
+           pa = pa[0]
+
         # Crop down to just only look at image corners
-        cropped_array = cls._get_array_corners(instance.pixel_array, crop_ratio)
+        cropped_array = cls._get_array_corners(pa, crop_ratio)
+
 
         # Get flattened pixel array
         flat_pixel_array = np.array(cropped_array).flatten()
@@ -750,15 +752,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             raise ValueError("fill must be 'contrast' or 'background'")
 
         is_greyscale = cls._check_if_greyscale(instance)
-        if is_greyscale:
-            # model L for grayscale, and has 8 bit-pixel to store the pixel value
-            image_pil = Image.fromarray(instance.pixel_array, mode="L")
-        else:
-            # model RGB, has 3x8 bit pixel available to store the value
-            image_pil = Image.fromarray(instance.pixel_array, mode="RGB")
+        # Use robust converter that handles multi-frame (XA) and both grayscale/RGB
+        pa = instance.pixel_array
+        image_pil = cls._dicom_np_to_pil(pa, is_greyscale)
+
+        # Select background/contrast color for bounding box
         box_color = cls._get_bg_color(image_pil, is_greyscale, invert_flag)
 
         return box_color
+
 
     @staticmethod
     def _check_if_compressed(instance: pydicom.dataset.FileDataset) -> bool:
@@ -1011,12 +1013,16 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         is_greyscale = self._check_if_greyscale(instance)
         image = self._rescale_dcm_pixel_array(instance, is_greyscale)
-        if is_greyscale:
-            # model L for grayscale, and has 8 bit-pixel to store the pixel value
-            loaded_image = Image.fromarray(image, mode="L")
-        else:
-            loaded_image = Image.fromarray(image, mode="RGB")
+
+        # Use robust converter that supports:
+        # - Grayscale 2D
+        # - Multi-frame XA/ultrasound (takes first frame)
+        # - RGB / RGBA color images
+        loaded_image = self._dicom_np_to_pil(image, is_greyscale)
+
+        # Add padding to the converted PIL image
         image = self._add_padding(loaded_image, is_greyscale, padding_width)
+
 
         # Detect PII
         analyzer_results = self._get_analyzer_results(
