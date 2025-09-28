@@ -22,7 +22,7 @@ class Line(object):
         :returns: The encrypted text.
         """
 
-        return self.buffer[self.start : self.end]  # noqa
+        return self.buffer[self.start : self.end]
 
 
 def line_generator(buffer: str) -> Generator[Line, None, None]:

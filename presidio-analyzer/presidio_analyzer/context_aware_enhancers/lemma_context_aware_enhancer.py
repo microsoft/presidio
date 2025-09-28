@@ -245,7 +245,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         word: str,
         start: int,
         tokens,
-        tokens_indices: List[int],  # noqa: ANN001
+        tokens_indices: List[int],
     ) -> int:
         found = False
         # we use the known start index of the original word to find the actual

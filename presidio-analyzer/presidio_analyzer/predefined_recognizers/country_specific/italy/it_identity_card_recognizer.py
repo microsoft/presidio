@@ -28,17 +28,17 @@ class ItIdentityCardRecognizer(PatternRecognizer):
         Pattern(
             "Paper-based Identity Card (very weak)",
             # The number is composed of 2 letters, space (optional), 7 digits
-            r"(?i)\b[A-Z]{2}\s?\d{7}\b",  # noqa: E501
+            r"(?i)\b[A-Z]{2}\s?\d{7}\b",
             0.01,
         ),
         Pattern(
             "Electronic Identity Card (CIE) 2.0 (very weak)",
-            r"(?i)\b\d{7}[A-Z]{2}\b",  # noqa: E501
+            r"(?i)\b\d{7}[A-Z]{2}\b",
             0.01,
         ),
         Pattern(
             "Electronic Identity Card (CIE) 3.0 (very weak)",
-            r"(?i)\b[A-Z]{2}\d{5}[A-Z]{2}\b",  # noqa: E501
+            r"(?i)\b[A-Z]{2}\d{5}[A-Z]{2}\b",
             0.01,
         ),
     ]

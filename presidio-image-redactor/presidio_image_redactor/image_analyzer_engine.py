@@ -345,11 +345,11 @@ class ImageAnalyzerEngine:
                 has_same_position = (
                     ocr_bbox["left"] == analyzer_bbox["left"]
                     and ocr_bbox["top"] == analyzer_bbox["top"]
-                )  # noqa: E501
+                )
                 has_same_dimension = (
                     ocr_bbox["width"] == analyzer_bbox["width"]
                     and ocr_bbox["height"] == analyzer_bbox["height"]
-                )  # noqa: E501
+                )
                 is_same = has_same_position is True and has_same_dimension is True
 
                 if is_same is True:
