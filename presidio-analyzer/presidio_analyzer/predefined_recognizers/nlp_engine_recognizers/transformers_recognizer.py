@@ -29,7 +29,7 @@ class TransformersRecognizer(SpacyRecognizer):
         "PHONE_NUMBER",
     ]
 
-    def __init__(self, **kwargs):  # noqa: ANN003
+    def __init__(self, **kwargs):
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace(
             "Spacy", "Transformers"
         )

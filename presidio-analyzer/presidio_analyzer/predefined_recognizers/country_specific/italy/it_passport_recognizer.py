@@ -16,7 +16,7 @@ class ItPassportRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "Passport (very weak)",
-            r"(?i)\b[A-Z]{2}\d{7}\b",  # noqa: E501
+            r"(?i)\b[A-Z]{2}\d{7}\b",
             0.01,
         ),
     ]
