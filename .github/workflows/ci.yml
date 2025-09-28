@@ -392,21 +392,3 @@ jobs:
         if: always()
         run: |
           docker compose -f docker-compose.yml down
-
-  build-windows:
-    name: Windows Docker Build
-    runs-on: windows-latest
-    needs: [lint]
-    if: github.ref != 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-
-      - name: Build presidio-analyzer
-        run: docker build -f presidio-analyzer/Dockerfile.windows ./presidio-analyzer
-
-      - name: Build presidio-anonymizer
-        run: docker build -f presidio-anonymizer/Dockerfile.windows ./presidio-anonymizer
-
