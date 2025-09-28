@@ -2,7 +2,7 @@
 
 
 # Australia recognizers
-from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  #noqa: E501
+from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  # noqa: E501
     TransformersRecognizer,
 )
 
