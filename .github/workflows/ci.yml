@@ -255,7 +255,7 @@ jobs:
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
           docker compose -f docker-compose.yml pull
         env:
-          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}/
+          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           TAG: :${{ env.TAG }}
 
       - name: Start Presidio cluster
@@ -263,7 +263,7 @@ jobs:
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
           docker compose -f docker-compose.yml up -d
         env:
-          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}/
+          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           TAG: :${{ env.TAG }}
 
       - name: Set up Python
