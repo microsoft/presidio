@@ -46,7 +46,7 @@ class NerModelConfiguration:
     Set of entity names that are likely to have low detection accuracy that should be adjusted.
     :param low_confidence_score_multiplier: A multiplier for the score given for low_score_entity_names.
     Multiplier to the score given for low_score_entity_names.
-    """  # noqa E501
+    """  # noqa: E501
 
     labels_to_ignore: Optional[Collection[str]] = None
     aggregation_strategy: Optional[str] = "max"
@@ -113,8 +113,8 @@ class NerModelConfiguration:
         """Return the configuration as a dict."""
         return self.__dict__
 
-    def __str__(self) -> str:  # noqa D105
+    def __str__(self) -> str:  # noqa: D105
         return str(self.to_dict())
 
-    def __repr__(self) -> str:  # noqa D105
+    def __repr__(self) -> str:  # noqa: D105
         return str(self)

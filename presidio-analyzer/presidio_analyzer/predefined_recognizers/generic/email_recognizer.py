@@ -41,6 +41,6 @@ class EmailRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str):  # noqa D102
+    def validate_result(self, pattern_text: str):  # noqa: D102
         result = tldextract.extract(pattern_text)
         return result.fqdn != ""
