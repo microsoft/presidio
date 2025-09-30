@@ -46,7 +46,7 @@ class EsNifRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str) -> bool:  # noqa D102
+    def validate_result(self, pattern_text: str) -> bool:  # noqa: D102
         pattern_text = EntityRecognizer.sanitize_value(
             pattern_text, self.replacement_pairs
         )

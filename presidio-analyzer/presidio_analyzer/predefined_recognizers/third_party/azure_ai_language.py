@@ -40,7 +40,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         :param kwargs: Additional arguments required by the parent class
 
         For more info, see https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/overview
-        """  # noqa E501
+        """
 
         super().__init__(
             supported_entities=supported_entities,
@@ -77,7 +77,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
     @staticmethod
     def __get_azure_ai_supported_entities() -> List[str]:
         """Return the list of all supported entities for Azure AI Language."""
-        from azure.ai.textanalytics._models import PiiEntityCategory  # noqa
+        from azure.ai.textanalytics._models import PiiEntityCategory
 
         return [r.value.upper() for r in PiiEntityCategory]
 

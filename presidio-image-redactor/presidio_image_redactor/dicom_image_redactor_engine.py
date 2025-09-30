@@ -488,7 +488,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             raise ValueError("Enter a positive value for padding")
         elif padding_width >= 100:
             raise ValueError(
-                "Excessive padding width entered. Please use a width under 100 pixels."  # noqa: E501
+                "Excessive padding width entered. Please use a width under 100 pixels."
             )
 
         # Select most common color as border color
