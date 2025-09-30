@@ -343,6 +343,37 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         image_2d_scaled = np.uint8(image_2d_scaled)
 
         return image_2d_scaled
+    # ------------------------------
+    # NEW HELPERS
+    # ------------------------------
+    @staticmethod
+    def _normalize_to_uint8(a: np.ndarray) -> np.ndarray:
+        a = a.astype(np.float32)
+        a -= a.min() if a.size else 0
+        mx = a.max() if a.size else 0
+        if mx > 0:
+            a = (a / mx) * 255.0
+        return a.astype(np.uint8)
+
+    @classmethod
+    def _dicom_np_to_pil(cls, image_np: np.ndarray, is_greyscale: bool) -> Image.Image:
+        arr = image_np
+        # Multi-frame handling
+        if arr.ndim == 4 and arr.shape[-1] in (3, 4):      # (F, H, W, 3/4)
+            arr = arr[0]
+        elif arr.ndim == 3 and (is_greyscale or arr.shape[-1] not in (3, 4)):  # (F, H, W)
+            arr = arr[0]
+
+        # Color
+        if arr.ndim == 3 and arr.shape[-1] in (3, 4):
+            arr = cls._normalize_to_uint8(arr)
+            mode = "RGB" if arr.shape[-1] == 3 else "RGBA"
+            return Image.fromarray(arr, mode=mode)
+
+        # Grayscale
+        arr = np.squeeze(arr)
+        arr = cls._normalize_to_uint8(arr)
+        return Image.fromarray(arr, mode="L")
 
     @staticmethod
     def _get_bg_color(
