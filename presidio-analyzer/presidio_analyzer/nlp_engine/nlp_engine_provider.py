@@ -59,7 +59,7 @@ class NlpEngineProvider:
             self._validate_nlp_configuration(nlp_configuration)
             self.nlp_configuration = nlp_configuration
 
-        if conf_file or conf_file == '':
+        if conf_file or conf_file == "":
             self._validate_conf_file_path(conf_file)
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
@@ -79,7 +79,7 @@ class NlpEngineProvider:
         if not isinstance(nlp_engines, tuple):
             raise ValueError(f"nlp_engines must be a tuple, got {type(nlp_engines)}")
 
-        required_attributes = ['engine_name', 'is_available']
+        required_attributes = ["engine_name", "is_available"]
 
         for engine_class in nlp_engines:
             missing_attributes = []
@@ -118,10 +118,12 @@ class NlpEngineProvider:
         :param nlp_configuration: The configuration dictionary to validate
         """
         if not isinstance(nlp_configuration, Dict):
-            raise ValueError(f"nlp_configuration must be a dictionary, "
-                             f"got {type(nlp_configuration)}")
+            raise ValueError(
+                f"nlp_configuration must be a dictionary, "
+                f"got {type(nlp_configuration)}"
+            )
 
-        required_fields = ['nlp_engine_name', 'models']
+        required_fields = ["nlp_engine_name", "models"]
         missing_fields = []
 
         for field in required_fields:
@@ -142,12 +144,13 @@ class NlpEngineProvider:
         :param conf_file: The conf file path to validate
         """
 
-        if conf_file == '':
+        if conf_file == "":
             raise ValueError("conf_file is empty")
 
         if not isinstance(conf_file, (Path, str)):
-            raise ValueError(f"conf_file must be a string or Path, "
-                             f"got {type(conf_file)}")
+            raise ValueError(
+                f"conf_file must be a string or Path, " f"got {type(conf_file)}"
+            )
 
         if not Path(conf_file).exists():
             raise ValueError(f"conf_file {conf_file} does not exist")

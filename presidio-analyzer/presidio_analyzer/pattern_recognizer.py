@@ -198,7 +198,7 @@ class PatternRecognizer(LocalRecognizer):
             logger.debug(
                 "--- match_time[%s]: %.6f seconds",
                 pattern.name,
-                match_time.total_seconds()
+                match_time.total_seconds(),
             )
 
             for match in matches:
