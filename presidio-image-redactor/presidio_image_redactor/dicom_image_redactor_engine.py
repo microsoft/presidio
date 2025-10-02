@@ -72,8 +72,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         image_pil = self._dicom_np_to_pil(image_np, is_greyscale)
         padded_image_pil = self._add_padding(image_pil, is_greyscale, padding_width)
 
-
-
         # Detect PII
         analyzer_results = self._get_analyzer_results(
             padded_image_pil,
@@ -343,6 +341,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         image_2d_scaled = np.uint8(image_2d_scaled)
 
         return image_2d_scaled
+
     # ------------------------------
     # NEW HELPERS
     # ------------------------------
@@ -359,9 +358,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _dicom_np_to_pil(cls, image_np: np.ndarray, is_greyscale: bool) -> Image.Image:
         arr = image_np
         # Multi-frame handling
-        if arr.ndim == 4 and arr.shape[-1] in (3, 4):      # (F, H, W, 3/4)
+        if arr.ndim == 4 and arr.shape[-1] in (3, 4):  # (F, H, W, 3/4)
             arr = arr[0]
-        elif arr.ndim == 3 and (is_greyscale or arr.shape[-1] not in (3, 4)):  # (F, H, W)
+        elif arr.ndim == 3 and (
+            is_greyscale or arr.shape[-1] not in (3, 4)
+        ):  # (F, H, W)
             arr = arr[0]
 
         # Color
@@ -468,14 +469,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :return: Most or least common pixel value (depending on fill).
         """
-       # Ensure 2D array for grayscale (first frame if multi-frame)
+        # Ensure 2D array for grayscale (first frame if multi-frame)
         pa = instance.pixel_array
         if pa.ndim == 3:  # multi-frame grayscale
-           pa = pa[0]
+            pa = pa[0]
 
         # Crop down to just only look at image corners
         cropped_array = cls._get_array_corners(pa, crop_ratio)
-
 
         # Get flattened pixel array
         flat_pixel_array = np.array(cropped_array).flatten()
@@ -736,6 +736,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # 2) Flatten safely (MultiValue/list/tuple) and stringify
         from pydicom.multival import MultiValue
+
         flattened: list = []
         for val in phi:
             if isinstance(val, (MultiValue, list, tuple)):
@@ -791,7 +792,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         box_color = cls._get_bg_color(image_pil, is_greyscale, invert_flag)
 
         return box_color
-
 
     @staticmethod
     def _check_if_compressed(instance: pydicom.dataset.FileDataset) -> bool:
@@ -1053,7 +1053,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # Add padding to the converted PIL image
         image = self._add_padding(loaded_image, is_greyscale, padding_width)
-
 
         # Detect PII
         analyzer_results = self._get_analyzer_results(
