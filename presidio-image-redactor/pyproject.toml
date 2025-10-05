@@ -11,15 +11,15 @@ license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
 ]
 keywords = ["presidio_image_redactor"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
-requires-python = ">=3.9,<3.14"
+requires-python = ">=3.10,<3.15"
 
 dependencies = [
     "pillow (>=9.0)",
@@ -31,7 +31,6 @@ dependencies = [
     "azure-ai-formrecognizer (>=3.3.0,<4.0.0)",
     "opencv-python (>=4.0.0,<5.0.0)",
     "python-gdcm (>=3.0.24.1)",
-    "spacy <3.8.4 ; python_version == '3.9'", #Remove once 3.9 is EOL
     "spacy >=3.8.7,<4.0.0 ; python_version >= '3.13'"]
 
 [project.optional-dependencies]
