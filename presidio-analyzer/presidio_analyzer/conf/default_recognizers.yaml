@@ -155,7 +155,7 @@ recognizers:
 
   - name: KrRrnRecognizer
     supported_languages: 
-    - kr
+    - ko
     type: predefined
     enabled: false
 
