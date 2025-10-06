@@ -22,14 +22,14 @@ While Presidio's documentation covers the fundamentals, recipes bridge the gap b
 
 ## Recipe Structure
 
-Each recipe follows a consistent structure:
+Each recipe typically includes:
 
-- **Scenario Description**: The domain, data type, and privacy requirements
-- **Data Generation**: Scripts or methods to create synthetic test data
-- **Configuration Levels**: Multiple implementation approaches (e.g., out-of-the-box, custom recognizers, fine-tuned models)
-- **Evaluation Results**: Performance metrics for each configuration
-- **Jupyter Notebook**: Interactive, reproducible implementation with detailed explanations
-- **Recommendations**: Guidance on when to use each approach based on accuracy/latency trade-offs
+- **Scenario Description**: The domain and data type
+- **Data Synthesis**: Methods for generating test data (following [presidio-research](https://github.com/microsoft/presidio-research) patterns)
+- **Configuration**: Presidio setup with any custom recognizers or models
+- **Evaluation**: Performance metrics (precision, recall, F₂ score, latency)
+- **Implementation**: Jupyter notebook or Python scripts showing the end-to-end flow
+- **Key Findings**: When to use this approach and trade-offs to consider
 
 ## Available Recipes
 
@@ -70,14 +70,12 @@ Each cell will contain:
 
 ## Contributing a Recipe
 
-We welcome community contributions! If you've developed a Presidio configuration for a specific domain and want to share it, please see our [contribution guidelines](CONTRIBUTING.md).
+We welcome community contributions! See our [contribution guidelines](CONTRIBUTING.md) for details.
 
-Good recipes to contribute:
-- Focus on a specific, well-defined domain or scenario
-- Include methods for generating or obtaining representative test data
-- Provide evaluation metrics across multiple configuration levels
-- Are well-documented with clear explanations
-- Include a working Jupyter notebook
+The easiest way to contribute is with a Jupyter notebook following the [presidio-research](https://github.com/microsoft/presidio-research) pattern:
+- **Data Synthesis** → **Configuration** → **Evaluation**
+
+Focus on getting working code first - we'll help refine documentation during review.
 
 ## Related Resources
 
