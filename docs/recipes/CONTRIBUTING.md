@@ -19,9 +19,17 @@ A good recipe should:
 
 ## Recipe Format
 
-### Option 1: Jupyter Notebook (Recommended)
+### Follow Presidio Research Examples
 
-The easiest way to contribute is with a Jupyter notebook that follows the presidio-research pattern:
+Your recipe should follow the end-to-end evaluation approach from [presidio-research](https://github.com/microsoft/presidio-research).
+
+**Key reference notebooks:**
+- [Evaluate Presidio Analyzer](https://github.com/microsoft/presidio-research/blob/master/notebooks/4_Evaluate_Presidio_Analyzer.ipynb) - Complete evaluation workflow example
+- [Generate Synthetic Data](https://github.com/microsoft/presidio-research/blob/master/notebooks/1_Generate_data.ipynb) - Using Presidio Evaluator data generator
+
+### Option 1: Single Jupyter Notebook (Recommended for Simple Cases)
+
+For straightforward examples, use one notebook:
 
 ```
 your-recipe-name/
@@ -29,23 +37,35 @@ your-recipe-name/
 └── README.md             # Brief overview (optional)
 ```
 
-Your notebook should include:
-- **Data Synthesis**: Generate synthetic data for your scenario
-- **Presidio Configuration**: Show your setup (default, custom recognizers, or custom models)
-- **Evaluation**: Measure and report precision, recall, F₂ score, latency
-- **Key Findings**: Brief summary of results and when to use this approach
+### Option 2: Multiple Files (Recommended for Complex Flows)
 
-### Option 2: Python Scripts
-
-If you prefer scripts over notebooks:
+For complex scenarios, break into separate files:
 
 ```
 your-recipe-name/
-├── synthesize_data.py    # Generate test data
-├── configure.py          # Presidio setup
-├── evaluate.py           # Run evaluation
+├── 1_generate_data.ipynb # Data synthesis (use Presidio Evaluator or custom)
+├── 2_configure.ipynb     # Presidio setup with custom recognizers
+├── 3_evaluate.ipynb      # Run evaluation and analysis
 └── README.md             # Overview and instructions
 ```
+
+Or as Python scripts:
+
+```
+your-recipe-name/
+├── generate_data.py      # Generate test data
+├── configure.py          # Presidio setup
+├── evaluate.py           # Run evaluation
+└── README.md             # Overview
+```
+
+### Required Components
+
+Your recipe should include:
+- **Data Synthesis**: Generate synthetic data using [Presidio Evaluator](https://github.com/microsoft/presidio-research/blob/master/notebooks/1_Generate_data.ipynb) or your own method
+- **Presidio Configuration**: Show your setup (default, custom recognizers, or custom models)
+- **Evaluation**: Measure and report precision, recall, F₂ score, latency
+- **Key Findings**: Brief summary of results and when to use this approach
 
 ## Quick Contribution Steps
 
@@ -69,8 +89,13 @@ Include at minimum:
 
 ## Examples to Learn From
 
-- [Presidio Research](https://github.com/microsoft/presidio-research): Reference repository with evaluation tools
-- [Presidio Samples](../samples/index.md): Additional examples and patterns
+**Presidio Research Notebooks** (recommended starting point):
+- [Evaluate Presidio Analyzer](https://github.com/microsoft/presidio-research/blob/master/notebooks/4_Evaluate_Presidio_Analyzer.ipynb) - Complete end-to-end evaluation example
+- [Generate Synthetic Data](https://github.com/microsoft/presidio-research/blob/master/notebooks/1_Generate_data.ipynb) - Presidio Evaluator data generator
+- [Other presidio-research notebooks](https://github.com/microsoft/presidio-research/tree/master/notebooks) - Additional examples and tools
+
+**Additional Resources:**
+- [Presidio Samples](../samples/index.md): Integration patterns and usage examples
 
 ## Questions?
 

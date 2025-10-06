@@ -53,18 +53,34 @@ Describe your approach in a few sentences. What recognizers, models, or techniqu
 - [Main insight 2]
 - [Main insight 3]
 
-## Jupyter Notebook (Recommended)
+## End-to-End Example
 
-For the complete end-to-end example including data synthesis, configuration, and evaluation, provide a Jupyter notebook (e.g., `recipe.ipynb`).
+### Recommended Approach: Follow Presidio Research Patterns
 
-The notebook should follow the pattern from [presidio-research](https://github.com/microsoft/presidio-research) and include:
+Provide an end-to-end example following the patterns from [presidio-research](https://github.com/microsoft/presidio-research):
 
-1. **Data Synthesis**: Generate synthetic data for your scenario
+**Reference notebooks:**
+- [Evaluate Presidio Analyzer](https://github.com/microsoft/presidio-research/blob/master/notebooks/4_Evaluate_Presidio_Analyzer.ipynb) - Complete evaluation workflow
+- [Generate Synthetic Data](https://github.com/microsoft/presidio-research/blob/master/notebooks/1_Generate_data.ipynb) - Using Presidio Evaluator data generator
+
+**Structure your example:**
+
+1. **Data Synthesis**: Generate synthetic data using [Presidio Evaluator](https://github.com/microsoft/presidio-research/blob/master/notebooks/1_Generate_data.ipynb) or your own method
 2. **Configuration**: Set up Presidio with your custom recognizers or models
 3. **Evaluation**: Measure precision, recall, and F₂ score
 4. **Analysis**: Discuss results and trade-offs
 
-Alternatively, you can provide Python scripts if you prefer.
+### Format Options
+
+- **Single Jupyter Notebook**: Best for simple, focused examples (recommended for most recipes)
+- **Multiple Files**: For complex flows, break into separate notebooks or Python scripts:
+  ```
+  your-recipe-name/
+  ├── 1_generate_data.ipynb    # Data synthesis
+  ├── 2_configure.ipynb         # Presidio setup
+  ├── 3_evaluate.ipynb          # Evaluation
+  └── README.md                 # Overview
+  ```
 
 ## Tips for Others
 

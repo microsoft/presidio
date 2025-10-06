@@ -25,11 +25,13 @@ While Presidio's documentation covers the fundamentals, recipes bridge the gap b
 Each recipe typically includes:
 
 - **Scenario Description**: The domain and data type
-- **Data Synthesis**: Methods for generating test data (following [presidio-research](https://github.com/microsoft/presidio-research) patterns)
+- **Data Synthesis**: Methods for generating test data using [Presidio Evaluator](https://github.com/microsoft/presidio-research/blob/master/notebooks/1_Generate_data.ipynb) or custom methods
 - **Configuration**: Presidio setup with any custom recognizers or models
 - **Evaluation**: Performance metrics (precision, recall, F₂ score, latency)
-- **Implementation**: Jupyter notebook or Python scripts showing the end-to-end flow
+- **Implementation**: Jupyter notebook or Python scripts showing the end-to-end flow (see [example](https://github.com/microsoft/presidio-research/blob/master/notebooks/4_Evaluate_Presidio_Analyzer.ipynb))
 - **Key Findings**: When to use this approach and trade-offs to consider
+
+For complex flows, consider breaking into multiple notebooks or scripts for better organization.
 
 ## Available Recipes
 
@@ -72,10 +74,13 @@ Each cell will contain:
 
 We welcome community contributions! See our [contribution guidelines](CONTRIBUTING.md) for details.
 
-The easiest way to contribute is with a Jupyter notebook following the [presidio-research](https://github.com/microsoft/presidio-research) pattern:
-- **Data Synthesis** → **Configuration** → **Evaluation**
+**Reference Examples:**
+- [Evaluate Presidio Analyzer](https://github.com/microsoft/presidio-research/blob/master/notebooks/4_Evaluate_Presidio_Analyzer.ipynb) - Complete end-to-end evaluation workflow
+- [Generate Synthetic Data](https://github.com/microsoft/presidio-research/blob/master/notebooks/1_Generate_data.ipynb) - Presidio Evaluator data generator
 
-Focus on getting working code first - we'll help refine documentation during review.
+Follow the pattern: **Data Synthesis** → **Configuration** → **Evaluation**
+
+For complex flows, break into multiple notebooks or scripts. Focus on getting working code first - we'll help refine documentation during review.
 
 ## Related Resources
 
