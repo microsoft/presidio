@@ -55,7 +55,7 @@ Describe your approach in a few sentences. What recognizers, models, or techniqu
 
 ## Jupyter Notebook (Recommended)
 
-For the complete end-to-end example including data synthesis, configuration, and evaluation, see [recipe.ipynb](recipe.ipynb).
+For the complete end-to-end example including data synthesis, configuration, and evaluation, provide a Jupyter notebook (e.g., `recipe.ipynb`).
 
 The notebook should follow the pattern from [presidio-research](https://github.com/microsoft/presidio-research) and include:
 
