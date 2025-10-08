@@ -74,6 +74,10 @@ nav:
           - Presidio Image Redactor Python API: api/image_redactor_python.md
           - Presidio Structured Python API: api/structured_python.md
       - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
+  - Recipes:
+    - Home: recipes/index.md
+    - Contributing: recipes/CONTRIBUTING.md
+    - Template: recipes/template.md
   - Samples:
 
     - Home: samples/index.md
