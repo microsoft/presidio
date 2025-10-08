@@ -10,7 +10,7 @@ CLI tool that analyzes text for PII Entities using Presidio Analyzer.
 
 ## Prerequisites
 
-`Python` version: 3.9, 3.10, 3.11
+`Python` version: 3.10, 3.11, 3.12, 3.13
 
 `poetry` tool installed:
 

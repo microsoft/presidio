@@ -27,7 +27,7 @@ pip install 'presidio-analyzer[gliner]'
 ```
 
 !!! note
-    GLiNER only supports python 3.10 and above, while Presidio supports version 3.9 and above.
+    GLiNER only supports python 3.10 and above, which aligns with Presidio's supported versions (3.10 and above).
 
 ### Example
 
