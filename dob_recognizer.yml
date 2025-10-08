@@ -1,0 +1,10 @@
+recognizers:
+  - name: "Date of Birth Recognizer"
+    supported_entity: "DATE_TIME"
+    supported_language: "en"
+    patterns:
+      - name: "DOB without slashes"
+        regex: "((19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))"
+        score: 0.8
+    context:
+      - DOB
