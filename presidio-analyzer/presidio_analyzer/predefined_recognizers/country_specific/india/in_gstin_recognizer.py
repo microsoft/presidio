@@ -34,12 +34,12 @@ class InGstinRecognizer(PatternRecognizer):
         ),
         Pattern(
             "GSTIN (Medium)",
-            r"\b((?:0[1-9]|[1-3][0-7])[A-Za-z0-9]{10}Z[A-Za-z0-9]{1})\b",
+            r"\b((?:0[1-9]|[1-3][0-7])[A-Za-z0-9]{11}Z[A-Za-z0-9]{1})\b",
             0.4,
         ),
         Pattern(
             "GSTIN (Low)",
-            r"\b([0-9]{2}[A-Za-z0-9]{12}Z[A-Za-z0-9]{1})\b",
+            r"\b([0-9]{2}[A-Za-z0-9]{11}Z[A-Za-z0-9]{1})\b",
             0.1,
         ),
     ]

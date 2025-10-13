@@ -146,6 +146,7 @@ def test_validate_pan_format(pan, expected, recognizer):
         ("27ABCDE1234F1Z5", "27ABCDE1234F1Z5"),
         ("27-ABCDE-1234-F1-Z5", "27ABCDE1234F1Z5"),
         ("27 ABCDE 1234 F1 Z5", "27ABCDE1234F1Z5"),
+        ("The company GSTIN is 27ABCDE1234F1Z5 for tax purposes", "27ABCDE1234F1Z5"),
     ],
 )
 def test_sanitize_value(text, expected, recognizer):
