@@ -76,7 +76,7 @@ class InGstinRecognizer(PatternRecognizer):
     def validate_result(self, pattern_text: str) -> bool:
         """
         Validate the GSTIN format and structure.
-        
+
         :param pattern_text: The text pattern to validate
         :return: True if the GSTIN is valid, False otherwise
         """
@@ -93,7 +93,7 @@ class InGstinRecognizer(PatternRecognizer):
     def _validate_gstin(self, gstin: str) -> bool:
         """
         Validate GSTIN structure and format.
-        
+
         :param gstin: The GSTIN string to validate
         :return: True if valid, False otherwise
         """
@@ -129,8 +129,9 @@ class InGstinRecognizer(PatternRecognizer):
     def _validate_pan_format(self, pan: str) -> bool:
         """
         Validate PAN format within GSTIN.
+
         PAN format: 5 letters + 4 digits + 1 letter
-        
+
         :param pan: The PAN part of GSTIN (10 characters)
         :return: True if valid PAN format, False otherwise
         """
