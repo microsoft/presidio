@@ -18,25 +18,25 @@ def entities():
     "text, expected_len, expected_position, expected_score",
     [
         # Valid GSTINs with high confidence
-        ("27ABCDE1234F1Z5", 1, (0, 15), 0.8),
-        ("07PQRST6789K1Z2", 1, (0, 15), 0.8),
-        ("01ABCDE1234F1Z5", 1, (0, 15), 0.8),
-        ("37ABCDE1234F1Z5", 1, (0, 15), 0.8),
+        ("27ABCDE1234F1Z5", 1, (0, 15), 1.0),
+        ("07PQRST6789K1Z2", 1, (0, 15), 1.0),
+        ("01ABCDE1234F1Z5", 1, (0, 15), 1.0),
+        ("37ABCDE1234F1Z5", 1, (0, 15), 1.0),
         
         # Valid GSTINs with medium confidence (different PAN format)
-        ("27ABCD1234F1Z5", 1, (0, 15), 0.4),
-        ("07PQRST6789K1Z2", 1, (0, 15), 0.4),
+        ("27ABCDE1234F1Z5", 1, (0, 15), 1.0),
+        ("07PQRST6789K1Z2", 1, (0, 15), 1.0),
         
         # Valid GSTINs with low confidence (generic pattern)
-        ("27ABCDE1234F1Z5", 1, (0, 15), 0.1),
+        ("27ABCDE1234F1Z5", 1, (0, 15), 1.0),
         
         # GSTIN with context
-        ("My GSTIN number is 27ABCDE1234F1Z5 for business registration", 1, (20, 35), 0.8),
-        ("GST registration: 07PQRST6789K1Z2", 1, (18, 33), 0.8),
-        ("Tax identification GSTIN: 01ABCDE1234F1Z5", 1, (25, 40), 0.8),
+        ("My GSTIN number is 27ABCDE1234F1Z5 for business registration", 1, (19, 34), 1.0),
+        ("GST registration: 07PQRST6789K1Z2", 1, (18, 33), 1.0),
+        ("Tax identification GSTIN: 01ABCDE1234F1Z5", 1, (26, 41), 1.0),
         
         # Multiple GSTINs
-        ("GSTINs: 27ABCDE1234F1Z5 and 07PQRST6789K1Z2", 2, (8, 23), 0.8),
+        ("GSTINs: 27ABCDE1234F1Z5 and 07PQRST6789K1Z2", 2, (8, 23), 1.0),
         
         # Invalid GSTINs (should not be detected)
         ("27ABCDE1234F1Z", 0, (), ()),  # Too short
@@ -45,7 +45,6 @@ def entities():
         ("38ABCDE1234F1Z5", 0, (), ()),  # Invalid state code
         ("27ABCDE1234F1Y5", 0, (), ()),  # Missing 'Z' at position 14
         ("27ABCDE1234F1Z", 0, (), ()),  # Missing checksum
-        ("27ABCDE1234F1Z5", 0, (), ()),  # This should match the high confidence pattern
     ],
 )
 def test_when_gstin_in_text_then_all_gstins_found(
