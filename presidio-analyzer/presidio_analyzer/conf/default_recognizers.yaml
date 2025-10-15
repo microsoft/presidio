@@ -193,3 +193,9 @@ recognizers:
   - name: InVoterRecognizer
     type: predefined
     enabled: false
+
+  - name: InGstinRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+    enabled: false
