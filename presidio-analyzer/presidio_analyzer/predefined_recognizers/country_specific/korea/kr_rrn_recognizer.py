@@ -53,7 +53,7 @@ class KrRrnRecognizer(PatternRecognizer):
         self,
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
-        supported_language: str = "kr",
+        supported_language: str = "ko",
         supported_entity: str = "KR_RRN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
