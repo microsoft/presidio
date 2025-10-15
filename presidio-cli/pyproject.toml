@@ -25,8 +25,7 @@ requires-python = ">=3.10,<3.14"
 dependencies = [
     "presidio-analyzer (>= 2.2)",
     "pyyaml",
-    "pathspec",
-    "spacy (>=3.8.7,<4.0.0)"
+    "pathspec"
 ]
 
 [project.scripts]
