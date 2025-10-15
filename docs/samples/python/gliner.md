@@ -26,9 +26,6 @@ To use GLiNER with Presidio, you need to install the `presidio-analyzer` with th
 pip install 'presidio-analyzer[gliner]'
 ```
 
-!!! note
-    GLiNER only supports python 3.10 and above, which aligns with Presidio's supported versions (3.10 and above).
-
 ### Example
 
 ```python
