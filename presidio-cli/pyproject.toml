@@ -32,9 +32,6 @@ dependencies = [
 [project.scripts]
 presidio = "presidio_cli.cli:run"
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.14"
-spacy = "^3.8.7"
 
 [tool.poetry.group.dev.dependencies]
 pip = "*"
