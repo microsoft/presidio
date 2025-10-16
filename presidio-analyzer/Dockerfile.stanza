@@ -22,7 +22,7 @@ WORKDIR /app
 RUN apt-get update \
   && apt-get install -y build-essential
 
-COPY ./pyproject.toml /app/
+COPY ./pyproject.toml ./poetry.lock /app/
 
 RUN pip install poetry && poetry install --no-root --only=main -E server -E stanza
 # install nlp models specified in NLP_CONF_FILE
