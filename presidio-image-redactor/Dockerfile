@@ -23,7 +23,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && tesseract -v
 
-COPY ./pyproject.toml /app/
+COPY ./pyproject.toml ./poetry.lock /app/
 RUN pip install poetry && poetry install --no-root --only=main -E server
 
 COPY . /app/
