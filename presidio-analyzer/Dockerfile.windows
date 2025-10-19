@@ -23,7 +23,7 @@ COPY ${ANALYZER_CONF_FILE} /app/${ANALYZER_CONF_FILE}
 COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /app/${RECOGNIZER_REGISTRY_CONF_FILE}
 COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
-COPY ./pyproject.toml /app/
+COPY ./pyproject.toml ./poetry.lock /app/
 RUN python.exe -m pip install --upgrade pip; pip install poetry; poetry install --no-root --only=main -E server -E transformers
 
 # install nlp models specified in NLP_CONF_FILE

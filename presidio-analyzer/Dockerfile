@@ -23,7 +23,7 @@ RUN apt-get update \
   && apt-get install build-essential --no-install-recommends -y \
   && rm -rf /var/lib/apt/lists/*
 
-COPY ./pyproject.toml /app/
+COPY ./pyproject.toml ./poetry.lock /app/
 
 RUN pip install poetry && poetry install --no-root --only=main -E server
 # install nlp models specified in NLP_CONF_FILE

@@ -7,7 +7,7 @@ ENV WORKERS=1
 
 WORKDIR /app
 
-COPY ./pyproject.toml /app/
+COPY ./pyproject.toml ./poetry.lock /app/
 RUN pip install poetry && poetry install --no-root --only=main -E server
 
 COPY . /app/
