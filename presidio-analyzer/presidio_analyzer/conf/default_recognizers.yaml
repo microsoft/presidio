@@ -155,6 +155,7 @@ recognizers:
 
   - name: KrRrnRecognizer
     supported_languages: 
+    - ko
     - kr
     type: predefined
     enabled: false
@@ -190,5 +191,11 @@ recognizers:
     type: predefined
 
   - name: InVoterRecognizer
+    type: predefined
+    enabled: false
+
+  - name: InGstinRecognizer
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
