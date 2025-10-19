@@ -4,6 +4,7 @@ from typing import Dict, Optional, Tuple, Union
 
 import yaml
 
+from presidio_analyzer.input_validation import ConfigurationValidator
 from presidio_analyzer.nlp_engine import (
     NerModelConfiguration,
     NlpEngine,
@@ -59,7 +60,7 @@ class NlpEngineProvider:
             self._validate_nlp_configuration(nlp_configuration)
             self.nlp_configuration = nlp_configuration
 
-        if conf_file or conf_file == '':
+        if conf_file or conf_file == "":
             self._validate_conf_file_path(conf_file)
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
@@ -79,7 +80,7 @@ class NlpEngineProvider:
         if not isinstance(nlp_engines, tuple):
             raise ValueError(f"nlp_engines must be a tuple, got {type(nlp_engines)}")
 
-        required_attributes = ['engine_name', 'is_available']
+        required_attributes = ["engine_name", "is_available"]
 
         for engine_class in nlp_engines:
             missing_attributes = []
@@ -117,43 +118,25 @@ class NlpEngineProvider:
 
         :param nlp_configuration: The configuration dictionary to validate
         """
-        if not isinstance(nlp_configuration, Dict):
-            raise ValueError(f"nlp_configuration must be a dictionary, "
-                             f"got {type(nlp_configuration)}")
-
-        required_fields = ['nlp_engine_name', 'models']
-        missing_fields = []
-
-        for field in required_fields:
-            if field not in nlp_configuration.keys():
-                missing_fields.append(field)
-
-        if missing_fields:
-            raise ValueError(
-                f"nlp_configuration is missing required fields: {missing_fields}. "
-                f"Required fields are: {required_fields}"
-            )
+        try:
+            ConfigurationValidator.validate_nlp_configuration(nlp_configuration)
+        except ValueError as e:
+            raise ValueError(f"Invalid NLP configuration: {e}")
 
     @staticmethod
     def _validate_conf_file_path(conf_file: Union[Path, str]) -> None:
         """
-        Validate the conf file path.
+        Validate the conf file path using enhanced validation.
 
         :param conf_file: The conf file path to validate
         """
-
-        if conf_file == '':
+        if conf_file == "":
             raise ValueError("conf_file is empty")
 
-        if not isinstance(conf_file, (Path, str)):
-            raise ValueError(f"conf_file must be a string or Path, "
-                             f"got {type(conf_file)}")
-
-        if not Path(conf_file).exists():
-            raise ValueError(f"conf_file {conf_file} does not exist")
-
-        if Path(conf_file).is_dir():
-            raise ValueError(f"conf_file {conf_file} is a directory, not a file")
+        try:
+            ConfigurationValidator.validate_file_path(conf_file)
+        except ValueError as e:
+            raise ValueError(str(e))
 
     def create_engine(self) -> NlpEngine:
         """Create an NLP engine instance."""

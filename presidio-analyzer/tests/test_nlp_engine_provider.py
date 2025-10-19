@@ -327,7 +327,7 @@ def test_when_conf_file_is_empty_string_then_fail():
 def test_when_conf_file_is_not_string_or_path_then_fail():
     conf_file = 1
     
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         NlpEngineProvider(conf_file=conf_file)
 
 

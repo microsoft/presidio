@@ -37,8 +37,8 @@ def test_recognizer_registry_provider_configuration_file():
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ItFiscalCodeRecognizer"] == ["en", "es"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "CreditCardRecognizer"] == ["en"]
     assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer"] == ["en", "es"]
-    snpanish_recognizer = [recognizer for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer" and recognizer.supported_language == "es"][0]
-    assert snpanish_recognizer.context == ["tarjeta", "credito"]
+    spanish_recognizer = [recognizer for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer" and recognizer.supported_language == "es"][0]
+    assert spanish_recognizer.context == ["tarjeta", "credito"]
 
 
 def test_recognizer_registry_provider_configuration_file_load_predefined(mandatory_recognizers):

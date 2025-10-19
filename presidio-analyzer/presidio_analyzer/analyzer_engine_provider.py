@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 import yaml
 
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer.input_validation import ConfigurationValidator
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 
@@ -36,7 +37,7 @@ class AnalyzerEngineProvider:
     def get_configuration(
         self, conf_file: Optional[Union[Path, str]]
     ) -> Union[Dict[str, Any]]:
-        """Retrieve the analyzer engine configuration from the provided file."""
+        """Retrieve analyzer engine configuration from the provided file."""
 
         if not conf_file:
             default_conf_file = self._get_full_conf_path()
@@ -62,6 +63,14 @@ class AnalyzerEngineProvider:
                 print(f"Failed to parse file {conf_file}, resorting to default")
                 with open(self._get_full_conf_path()) as file:
                     configuration = yaml.safe_load(file)
+
+        # Validate validation using enhanced validation
+        try:
+            ConfigurationValidator.validate_analyzer_configuration(configuration)
+            logger.debug("Analyzer validation validation passed")
+        except ValueError as e:
+            logger.error(f"Invalid analyzer validation: {e}")
+            raise ValueError(f"Configuration validation failed: {e}")
 
         return configuration
 

@@ -56,7 +56,8 @@ class RecognizerListLoader:
         predefined = [
             recognizer_conf
             for recognizer_conf in recognizers_conf
-            if ("type" in recognizer_conf and recognizer_conf["type"] == "predefined")
+            if isinstance(recognizer_conf, dict)
+            and ("type" in recognizer_conf and recognizer_conf["type"] == "predefined")
         ]
         custom = [
             recognizer_conf
@@ -182,7 +183,7 @@ class RecognizerListLoader:
         )
 
     @staticmethod
-    def _get_existing_recognizer_cls(recognizer_name: str) -> Type[EntityRecognizer]:
+    def get_existing_recognizer_cls(recognizer_name: str) -> Type[EntityRecognizer]:
         """
         Get the recognizer class by name.
 
@@ -215,32 +216,37 @@ class RecognizerListLoader:
         """
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
+        predefined_to_exclude = {"enabled", "type", "supported_languages", "name"}
+        # For custom recognizers we keep 'supported_languages'
+        # so we can create per-language
+        # instances with their specific context values.
+        custom_to_exclude = {"enabled", "type"}
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
                 recognizer_conf=recognizer_conf, supported_languages=supported_languages
             ):
                 if RecognizerListLoader.is_recognizer_enabled(recognizer_conf):
-                    copied_recognizer_conf = {
-                        k: v
-                        for k, v in RecognizerListLoader._get_recognizer_items(
-                            recognizer_conf=recognizer_conf
-                        )
-                        if k not in ["enabled", "type", "supported_languages", "name"]
-                    }
-                    kwargs = {**copied_recognizer_conf, **language_conf}
+                    new_conf = RecognizerListLoader._filter_recognizer_fields(
+                        recognizer_conf, to_exclude=predefined_to_exclude
+                    )
+
+                    kwargs = {**new_conf, **language_conf}
                     recognizer_name = RecognizerListLoader.get_recognizer_name(
                         recognizer_conf=recognizer_conf
                     )
-                    recognizer_cls = RecognizerListLoader._get_existing_recognizer_cls(
+                    recognizer_cls = RecognizerListLoader.get_existing_recognizer_cls(
                         recognizer_name=recognizer_name
                     )
                     recognizer_instances.append(recognizer_cls(**kwargs))
 
         for recognizer_conf in custom:
             if RecognizerListLoader.is_recognizer_enabled(recognizer_conf):
+                new_conf = RecognizerListLoader._filter_recognizer_fields(
+                    recognizer_conf, to_exclude=custom_to_exclude
+                )
                 recognizer_instances.extend(
                     RecognizerListLoader._create_custom_recognizers(
-                        recognizer_conf=recognizer_conf,
+                        recognizer_conf=new_conf,
                         supported_languages=supported_languages,
                     )
                 )
@@ -258,6 +264,19 @@ class RecognizerListLoader:
         ]
 
         return recognizer_instances
+
+    @staticmethod
+    def _filter_recognizer_fields(
+        recognizer_conf: Dict[str, Any], to_exclude: Set[str]
+    ) -> Dict[str, Any]:
+        copied_recognizer_conf = {
+            k: v
+            for k, v in RecognizerListLoader._get_recognizer_items(
+                recognizer_conf=recognizer_conf
+            )
+            if k not in to_exclude
+        }
+        return copied_recognizer_conf
 
 
 class RecognizerConfigurationLoader:
