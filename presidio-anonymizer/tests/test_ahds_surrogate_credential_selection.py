@@ -31,6 +31,7 @@ def mock_azure_modules():
         # Mock other required classes
         mock_tagged_entities = MagicMock()
         mock_deidentification_content = MagicMock()
+        mock_customization_options = MagicMock()
         
         with patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationClient', mock_deid_client), \
              patch('presidio_anonymizer.operators.ahds_surrogate.DefaultAzureCredential', mock_default_cred), \
@@ -38,7 +39,8 @@ def mock_azure_modules():
              patch('presidio_anonymizer.operators.ahds_surrogate.TextEncodingType', mock_text_encoding_type), \
              patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationOperationType', mock_operation_type), \
              patch('presidio_anonymizer.operators.ahds_surrogate.TaggedPhiEntities', mock_tagged_entities), \
-             patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationContent', mock_deidentification_content):
+             patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationContent', mock_deidentification_content), \
+             patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationCustomizationOptions', mock_customization_options):
             yield {
                 'DeidentificationClient': mock_deid_client,
                 'DefaultAzureCredential': mock_default_cred,
@@ -47,6 +49,7 @@ def mock_azure_modules():
                 'DeidentificationOperationType': mock_operation_type,
                 'TaggedPhiEntities': mock_tagged_entities,
                 'DeidentificationContent': mock_deidentification_content,
+                'DeidentificationCustomizationOptions': mock_customization_options,
             }
 
 
