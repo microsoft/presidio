@@ -57,7 +57,7 @@ gliner = [
     "transformers",
     "huggingface_hub",
     "gliner (>=0.2.13,<1.0.0)",
-    "torch (>=2.5.0.dev0)"
+    "torch>=2.5.0.dev0; source=='pytorch-nightly'"
 ]
 
 [[tool.poetry.source]]
