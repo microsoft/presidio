@@ -65,10 +65,10 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
                 )
 
             credential = None
-            if os.getenv('PRESIDIO_ENV') == 'development':
-                credential = DefaultAzureCredential()
-            else:
+            if os.getenv('ENV') == 'production':
                 credential = ManagedIdentityCredential()
+            else:
+                credential = DefaultAzureCredential()
             client = DeidentificationClient(endpoint, credential)
 
         self.deid_client = client
