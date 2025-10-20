@@ -8,13 +8,14 @@ try:
         DeidentificationOperationType,
         PhiCategory,
     )
-    from azure.identity import DefaultAzureCredential
+    from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 except ImportError:
     DeidentificationClient = None
     DeidentificationContent = None
     DeidentificationOperationType = None
     PhiCategory = None
     DefaultAzureCredential = None
+    ManagedIdentityCredential = None
 
 from presidio_analyzer import AnalysisExplanation, RecognizerResult, RemoteRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -63,7 +64,11 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
                     "Please install azure-health-deidentification and azure-identity."
                 )
 
-            credential = DefaultAzureCredential()
+            credential = None
+            if os.getenv('PRESIDIO_ENV') == 'development':
+                credential = DefaultAzureCredential()
+            else:
+                credential = ManagedIdentityCredential()
             client = DeidentificationClient(endpoint, credential)
 
         self.deid_client = client
