@@ -3,6 +3,9 @@ name: Release Documentation
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   github-pages-release:
     name: Push to github pages
