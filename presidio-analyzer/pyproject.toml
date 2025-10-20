@@ -56,7 +56,7 @@ ahds = [
 gliner = [
     "transformers",
     "huggingface_hub",
-    "gliner (>=0.2.13,<1.0.0)"
+    "gliner (>=0.2.22,<1.0.0)"
 ]
 
 [tool.poetry.group.dev.dependencies]
