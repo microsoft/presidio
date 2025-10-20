@@ -30,8 +30,8 @@ def mock_azure_modules():
         
         # Mock other required classes
         mock_tagged_entities = MagicMock()
-        mock_deidentification_content = MagicMock()
         mock_customization_options = MagicMock()
+        mock_deidentification_content = MagicMock()
         
         with patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationClient', mock_deid_client), \
              patch('presidio_anonymizer.operators.ahds_surrogate.DefaultAzureCredential', mock_default_cred), \
