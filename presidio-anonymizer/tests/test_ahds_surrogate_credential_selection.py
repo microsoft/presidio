@@ -15,18 +15,38 @@ def mock_azure_modules():
         'azure.health.deidentification': MagicMock(),
         'azure.identity': MagicMock(),
     }):
-        # Mock the classes we need
+        # Mock the classes and enums we need
         mock_deid_client = MagicMock()
         mock_default_cred = MagicMock()
         mock_managed_cred = MagicMock()
         
+        # Mock TextEncodingType enum
+        mock_text_encoding_type = MagicMock()
+        mock_text_encoding_type.CODE_POINT = "CODE_POINT"
+        
+        # Mock DeidentificationOperationType enum
+        mock_operation_type = MagicMock()
+        mock_operation_type.SURROGATE_ONLY = "SURROGATE_ONLY"
+        
+        # Mock other required classes
+        mock_tagged_entities = MagicMock()
+        mock_deidentification_content = MagicMock()
+        
         with patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationClient', mock_deid_client), \
              patch('presidio_anonymizer.operators.ahds_surrogate.DefaultAzureCredential', mock_default_cred), \
-             patch('presidio_anonymizer.operators.ahds_surrogate.ManagedIdentityCredential', mock_managed_cred):
+             patch('presidio_anonymizer.operators.ahds_surrogate.ManagedIdentityCredential', mock_managed_cred), \
+             patch('presidio_anonymizer.operators.ahds_surrogate.TextEncodingType', mock_text_encoding_type), \
+             patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationOperationType', mock_operation_type), \
+             patch('presidio_anonymizer.operators.ahds_surrogate.TaggedPhiEntities', mock_tagged_entities), \
+             patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationContent', mock_deidentification_content):
             yield {
                 'DeidentificationClient': mock_deid_client,
                 'DefaultAzureCredential': mock_default_cred,
                 'ManagedIdentityCredential': mock_managed_cred,
+                'TextEncodingType': mock_text_encoding_type,
+                'DeidentificationOperationType': mock_operation_type,
+                'TaggedPhiEntities': mock_tagged_entities,
+                'DeidentificationContent': mock_deidentification_content,
             }
 
 

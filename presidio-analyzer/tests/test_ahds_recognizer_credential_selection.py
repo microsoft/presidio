@@ -14,18 +14,24 @@ def mock_azure_modules():
         'azure.health.deidentification': MagicMock(),
         'azure.identity': MagicMock(),
     }):
-        # Mock the classes we need
+        # Mock the classes and enums we need
         mock_deid_client = MagicMock()
         mock_default_cred = MagicMock()
         mock_managed_cred = MagicMock()
         
+        # Mock PhiCategory enum for _get_supported_entities
+        mock_phi_category = MagicMock()
+        mock_phi_category.__iter__ = lambda self: iter(['PATIENT', 'DOCTOR', 'DATE'])
+        
         with patch('presidio_analyzer.predefined_recognizers.third_party.ahds_recognizer.DeidentificationClient', mock_deid_client), \
              patch('presidio_analyzer.predefined_recognizers.third_party.ahds_recognizer.DefaultAzureCredential', mock_default_cred), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.ahds_recognizer.ManagedIdentityCredential', mock_managed_cred):
+             patch('presidio_analyzer.predefined_recognizers.third_party.ahds_recognizer.ManagedIdentityCredential', mock_managed_cred), \
+             patch('presidio_analyzer.predefined_recognizers.third_party.ahds_recognizer.PhiCategory', mock_phi_category):
             yield {
                 'DeidentificationClient': mock_deid_client,
                 'DefaultAzureCredential': mock_default_cred,
                 'ManagedIdentityCredential': mock_managed_cred,
+                'PhiCategory': mock_phi_category,
             }
 
 
