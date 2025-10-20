@@ -57,8 +57,11 @@ gliner = [
     "transformers",
     "huggingface_hub",
     "gliner (>=0.2.13,<1.0.0)",
-    "torch; source=='pytorch-nightly'"
+    "torch"
 ]
+
+[tool.poetry.dependencies]
+torch = { source = "pytorch-nightly" }
 
 [[tool.poetry.source]]
 name = "pytorch-nightly"
