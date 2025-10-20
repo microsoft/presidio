@@ -43,7 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13']
+        python-version: ['3.10', '3.11', '3.12']
+        # python-version: ['3.10', '3.11', '3.12', '3.13'] # Temporarily dropped 3.13 until resolution of https://github.com/pytorch/pytorch/issues/165448 
         component: 
           - name: 'Analyzer'
             path: 'presidio-analyzer'
