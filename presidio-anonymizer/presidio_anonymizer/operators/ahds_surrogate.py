@@ -241,10 +241,10 @@ class AHDSSurrogate(Operator):
         tagged_entities = self._convert_to_tagged_entities(entities)
 
         credential = None
-        if os.getenv('PRESIDIO_ENV') == 'development':
-            credential = DefaultAzureCredential()
-        else:
+        if os.getenv('ENV') == 'production':
             credential = ManagedIdentityCredential()
+        else:
+            credential = DefaultAzureCredential()
         client = DeidentificationClient(endpoint, credential,
                                         api_version="2025-07-15-preview")
 
