@@ -56,8 +56,7 @@ ahds = [
 gliner = [
     "transformers",
     "huggingface_hub",
-    "gliner (>=0.2.13,<1.0.0) ; python_version >= '3.10'",
-    "onnxruntime (>=1.19) ; python_version >= '3.10'"
+    "gliner (>=0.2.13,<1.0.0)"
 ]
 
 [tool.poetry.group.dev.dependencies]
