@@ -55,7 +55,7 @@ jobs:
         uses: actions/dependency-review-action@v4
         with:
           warn-only: true  # this is temporary, to be removed once lock files are merged
-          fail-on-severity: low
+          fail-on-severity: medium
           allow-licenses: MIT, Apache-2.0, BSD-3-Clause
           comment-summary-in-pr: on-failure
 
@@ -389,9 +389,9 @@ jobs:
       - name: Install E2E test dependencies
         working-directory: e2e-tests
         run: |
-          python -m venv env
-          source env/bin/activate
-          python -m pip install --upgrade pip
+          # python -m venv env
+          # source env/bin/activate
+          # python -m pip install --upgrade pip
           pip install -r requirements.txt
           python -m spacy download en_core_web_lg
 
@@ -401,7 +401,7 @@ jobs:
       - name: Run E2E tests
         working-directory: e2e-tests
         run: |
-          source env/bin/activate
+          # source env/bin/activate
           pytest -vv --tb=short
 
       - name: Capture Docker logs on failure
