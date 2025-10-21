@@ -4,7 +4,7 @@
 
 ---
 
-[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI%20V2?branchName=main)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=212&branchName=main)
+[![Build Status](https://github.com/microsoft/presidio/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/microsoft/presidio/actions/workflows/ci.yml)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/6076/badge)](https://www.bestpractices.dev/projects/6076)
