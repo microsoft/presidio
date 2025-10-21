@@ -364,3 +364,4 @@ class AHDSSurrogate(Operator):
     def operator_type(self) -> OperatorType:
         """Return operator type."""
         return OperatorType.Anonymize
+
