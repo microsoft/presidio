@@ -1,84 +1,66 @@
-"""Deliberately vulnerable SQL injection example for CodeQL testing.
+# codeql_oscmd_injection.py
+import os
 
-DO NOT USE THIS CODE IN PRODUCTION - IT IS INTENTIONALLY INSECURE.
-"""
+def vuln_cmd():
+    arg = input("file> ")
+    # vulnerable: direct user input into shell command
+    os.system("ls " + arg)
 
+
+# codeql_subprocess_shell.py
+import subprocess
+
+def vuln_shell():
+    user = input("user> ")
+    # vulnerable: subprocess with shell=True and untrusted input
+    subprocess.run(f"echo {user} | sed 's/^/hello /'", shell=True)
+
+
+# codeql_pickle_deser.py
+import pickle
+import base64
+
+def vuln_pickle(b64):
+    data = base64.b64decode(b64)   # assume attacker-controlled payload
+    # vulnerable: untrusted deserialization
+    obj = pickle.loads(data)
+    return obj
+
+
+# codeql_path_traversal.py
+def vuln_path():
+    p = input("path> ")
+    # vulnerable: direct open of user-supplied path
+    with open(p, "r") as f:
+        return f.read()
+
+
+# codeql_crypto_weak.py
+import random, hashlib
+
+def vuln_crypto(secret):
+    # vulnerable: using md5 for security and random for tokens
+    token = str(random.random())
+    h = hashlib.md5((secret + token).encode()).hexdigest()
+    return h
+
+
+# codeql_flask_sql.py
+from flask import Flask, request
 import sqlite3
+app = Flask(__name__)
+
+@app.route("/search")
+def search():
+    q = request.args.get("q")   # taint source
+    conn = sqlite3.connect(":memory:")
+    c = conn.cursor()
+    c.execute("SELECT * FROM items WHERE name = '%s'" % q)  # vulnerable sink
+    return str(c.fetchall())
 
 
-def vulnerable_query(user_input):
-    """
-    Vulnerable function that demonstrates SQL injection vulnerability.
+vuln_cmd()
 
-    This function is intentionally insecure and should trigger CodeQL alerts.
-    It constructs SQL queries using string formatting with user input,
-    making it vulnerable to SQL injection attacks.
+vuln_shell()
 
-    Args:
-        user_input: Unsanitized user input that will be directly interpolated into SQL
-
-    Returns
-        Query results from the database
-    """
-    conn = sqlite3.connect('example.db')
-    cursor = conn.cursor()
-
-    # VULNERABILITY: SQL injection via string formatting
-    # This will be detected by CodeQL as CWE-89: SQL Injection
-    cursor.execute(f"SELECT * FROM users WHERE name = '{user_input}'")
-
-    results = cursor.fetchall()
-    conn.close()
-    return results
-
-
-def another_vulnerable_query(table_name, user_id):
-    """
-    Another vulnerable function with SQL injection via concatenation.
-
-    Args:
-        table_name: User-provided table name
-        user_id: User-provided ID value
-
-    Returns
-        Query results
-    """
-    conn = sqlite3.connect('example.db')
-    cursor = conn.cursor()
-
-    # VULNERABILITY: SQL injection via string concatenation
-    query = "SELECT * FROM " + table_name + " WHERE id = " + str(user_id)
-    cursor.execute(query)
-
-    results = cursor.fetchall()
-    conn.close()
-    return results
-
-
-def vulnerable_update(user_id, new_email):
-    """
-    Vulnerable UPDATE query demonstrating SQL injection in modification operations.
-
-    Args:
-        user_id: User ID from untrusted source
-        new_email: New email address from untrusted source
-
-    Returns
-        Number of rows affected
-    """
-    conn = sqlite3.connect('example.db')
-    cursor = conn.cursor()
-
-    # VULNERABILITY: SQL injection in UPDATE statement
-    cursor.execute(f"UPDATE users SET email = '{new_email}' WHERE id = {user_id}")
-
-    conn.commit()
-    affected = cursor.rowcount
-    conn.close()
-    return affected
-
-
-if __name__ == "__main__":
-    # Example usage (DO NOT RUN IN PRODUCTION)
-    print("This file contains deliberately vulnerable code for testing purposes.")
-    print("It should trigger CodeQL security alerts for SQL injection (CWE-89).")
+vuln_path()
