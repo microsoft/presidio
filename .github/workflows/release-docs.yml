@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     
     permissions:
-      contents: write  # Required for pushing to gh-pages branch
+      contents: write  # Required for pushing to gh-pages branch 
     
     steps:
       - name: Checkout repository
