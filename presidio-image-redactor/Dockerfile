@@ -27,6 +27,9 @@ RUN apt-get update \
 COPY ./pyproject.toml /app/
 RUN pip install poetry && poetry install --no-root --only=main -E server
 
+# Install spaCy model during build (as root) so it's available to non-root user at runtime
+RUN python -m spacy download en_core_web_lg
+
 COPY . /app/
 
 # Create a non-root user and set ownership
