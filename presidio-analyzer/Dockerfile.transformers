@@ -4,6 +4,7 @@ ARG NLP_CONF_FILE=presidio_analyzer/conf/transformers.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 ENV PIP_NO_CACHE_DIR=1
+ENV POETRY_VIRTUALENVS_CREATE=false
 WORKDIR /app
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
