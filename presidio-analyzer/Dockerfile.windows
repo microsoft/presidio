@@ -34,4 +34,6 @@ RUN poetry run python install_nlp_models.py --conf_file $Env:NLP_CONF_FILE
 COPY . .
 EXPOSE ${PORT}
 
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD powershell -Command "try { Invoke-WebRequest -Uri http://localhost:$env:PORT/health -UseBasicParsing | Out-Null; exit 0 } catch { exit 1 }"
 CMD ["powershell", "-Command", "poetry run waitress-serve --port=$env:PORT app:create_app"]

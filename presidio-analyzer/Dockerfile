@@ -18,9 +18,9 @@ COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
 WORKDIR /app
 
-# Install essential build tools
+# Install essential build tools and curl for health checks
 RUN apt-get update \
-  && apt-get install build-essential --no-install-recommends -y \
+  && apt-get install build-essential curl --no-install-recommends -y \
   && rm -rf /var/lib/apt/lists/*
 
 COPY ./pyproject.toml ./poetry.lock /app/
@@ -33,4 +33,6 @@ RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /app/
 EXPOSE ${PORT}
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
 CMD ["./entrypoint.sh"]

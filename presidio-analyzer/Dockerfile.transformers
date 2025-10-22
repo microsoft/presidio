@@ -14,6 +14,9 @@ COPY ${ANALYZER_CONF_FILE} /app/${ANALYZER_CONF_FILE}
 COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /app/${RECOGNIZER_REGISTRY_CONF_FILE}
 COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
+# Install curl for health checks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 COPY ./pyproject.toml ./poetry.lock /app/
 RUN pip install poetry && poetry install -E server -E transformers
 
@@ -26,4 +29,6 @@ RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /app/
 EXPOSE ${PORT}
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
 CMD ["./entrypoint.sh"]

@@ -19,7 +19,7 @@ COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 WORKDIR /app
 
 RUN apt-get update \
-  && apt-get install build-essential tesseract-ocr ffmpeg libsm6 libxext6 --no-install-recommends -y \
+  && apt-get install build-essential tesseract-ocr ffmpeg libsm6 libxext6 curl --no-install-recommends -y \
   && rm -rf /var/lib/apt/lists/* \
   && tesseract -v
 
@@ -28,4 +28,6 @@ RUN pip install poetry && poetry install --no-root --only=main -E server
 
 COPY . /app/
 EXPOSE ${PORT}
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
 CMD ["./entrypoint.sh"]
