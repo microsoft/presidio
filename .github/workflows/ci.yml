@@ -374,7 +374,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.10'
+          python-version: '3.x'
 
       - name: Cache E2E dependencies
         uses: actions/cache@v4
@@ -389,9 +389,6 @@ jobs:
       - name: Install E2E test dependencies
         working-directory: e2e-tests
         run: |
-          # python -m venv env
-          # source env/bin/activate
-          # python -m pip install --upgrade pip
           pip install -r requirements.txt
           python -m spacy download en_core_web_lg
 
@@ -401,7 +398,6 @@ jobs:
       - name: Run E2E tests
         working-directory: e2e-tests
         run: |
-          # source env/bin/activate
           pytest -vv --tb=short
 
       - name: Capture Docker logs on failure
