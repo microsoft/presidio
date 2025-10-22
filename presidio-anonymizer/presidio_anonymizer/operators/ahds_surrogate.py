@@ -16,13 +16,14 @@ try:
         TaggedPhiEntities,
         TextEncodingType,
     )
-    from azure.identity import DefaultAzureCredential
+    from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 except ImportError:
     DeidentificationClient = None
     DeidentificationContent = None
     DeidentificationCustomizationOptions = None
     DeidentificationResult = None
     DefaultAzureCredential = None
+    ManagedIdentityCredential = None
     SimplePhiEntity = None
     TaggedPhiEntities = None
     PhiCategory = None
@@ -239,7 +240,11 @@ class AHDSSurrogate(Operator):
         # Convert analyzer results to AHDS tagged entities
         tagged_entities = self._convert_to_tagged_entities(entities)
 
-        credential = DefaultAzureCredential()
+        credential = None
+        if os.getenv('ENV') == 'production':
+            credential = ManagedIdentityCredential()
+        else:
+            credential = DefaultAzureCredential()
         client = DeidentificationClient(endpoint, credential,
                                         api_version="2025-07-15-preview")
 
@@ -359,3 +364,4 @@ class AHDSSurrogate(Operator):
     def operator_type(self) -> OperatorType:
         """Return operator type."""
         return OperatorType.Anonymize
+
