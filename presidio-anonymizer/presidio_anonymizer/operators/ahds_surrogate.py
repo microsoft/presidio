@@ -244,7 +244,7 @@ class AHDSSurrogate(Operator):
         if os.getenv('ENV') == 'production':
             credential = ManagedIdentityCredential()
         else:
-            credential = DefaultAzureCredential()
+            credential = DefaultAzureCredential()  # CodeQL [SM05139] Okay use of DefaultAzureCredential as it is only used in development
         client = DeidentificationClient(endpoint, credential,
                                         api_version="2025-07-15-preview")
 
