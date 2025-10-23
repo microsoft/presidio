@@ -68,9 +68,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
             if os.getenv('ENV') == 'production':
                 credential = ManagedIdentityCredential()
             else:
-                # CodeQL [SM05139] Okay use of DefaultAzureCredential
-                # as it is only used in development
-                credential = DefaultAzureCredential()
+                credential = DefaultAzureCredential()  # CodeQL [SM05139] OK for dev
             client = DeidentificationClient(endpoint, credential)
 
         self.deid_client = client
