@@ -4,6 +4,7 @@ ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 ENV PIP_NO_CACHE_DIR=1
+ENV POETRY_VIRTUALENVS_CREATE=false
 ENV PORT=3000
 WORKDIR /app
 
@@ -32,6 +33,11 @@ COPY ${NLP_CONF_FILE} ${NLP_CONF_FILE}
 RUN poetry run python install_nlp_models.py --conf_file $Env:NLP_CONF_FILE
 
 COPY . .
+
+# Create a non-root user for Windows container
+RUN net user presidio /add
+USER presidio
+
 EXPOSE ${PORT}
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \

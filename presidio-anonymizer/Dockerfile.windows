@@ -1,6 +1,7 @@
 FROM python:3.13-windowsservercore
 
 ENV PIP_NO_CACHE_DIR=1
+ENV POETRY_VIRTUALENVS_CREATE=false
 ENV PORT=3000
 
 WORKDIR /app
@@ -9,6 +10,10 @@ COPY ./pyproject.toml /app/
 RUN python.exe -m pip install --upgrade pip; pip install poetry; poetry install --no-root --only=main -E server
 
 COPY . /app/
+
+# Create a non-root user for Windows container
+RUN net user presidio /add
+USER presidio
 
 EXPOSE ${PORT}
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \

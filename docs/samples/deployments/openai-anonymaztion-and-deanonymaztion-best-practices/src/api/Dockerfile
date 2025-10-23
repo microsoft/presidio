@@ -12,4 +12,9 @@ RUN python -m spacy download nl_core_news_sm
 
 COPY . .
 
+# Create a non-root user and set ownership
+RUN useradd -m -u 1001 presidio && chown -R presidio:presidio /app
+
+USER 1001
+
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
