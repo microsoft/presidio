@@ -18,7 +18,7 @@ COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 # Install curl for health checks
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-COPY ./pyproject.toml /app/
+COPY ./pyproject.toml ./poetry.lock /app/
 RUN pip install poetry && poetry install -E server -E transformers
 
 RUN poetry add torch transformers huggingface_hub --no-lock

@@ -11,7 +11,7 @@ WORKDIR /app
 # Install curl for health checks
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-COPY ./pyproject.toml /app/
+COPY ./pyproject.toml ./poetry.lock /app/
 RUN pip install poetry && poetry install --no-root --only=main -E server
 
 COPY . /app/
