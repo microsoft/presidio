@@ -20,7 +20,7 @@ name: "Microsoft Defender For Devops"
 
 on:
   push:
-    branches: [ "main" ]
+    # branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
   schedule:
