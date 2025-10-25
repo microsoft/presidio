@@ -49,7 +49,7 @@ jobs:
       uses: microsoft/security-devops-action@latest
       id: msdo
       env:
-        GDN_CHECKOV_SKIPPATH: 'docs/**'
+        GDN_CHECKOV_SKIPPATH: 'docs'
       with:
         tools: bandit, checkov, templateanalyzer, trivy
 
