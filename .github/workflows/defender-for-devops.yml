@@ -49,6 +49,7 @@ jobs:
       id: msdo
       env:
         GDN_CHECKOV_SKIPPATH: 'docs'
+        GDN_TEMPLATEANALYZER_VERBOSE: true
       with:
         tools: bandit, checkov, templateanalyzer, trivy
 
