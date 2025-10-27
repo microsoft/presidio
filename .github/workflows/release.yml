@@ -147,6 +147,8 @@ jobs:
             --cache-to type=inline \
             --tag ${repo}:latest \
             --tag ${repo}:${version_tag} \
+            --attest type=sbom \
+            --attest type=provenance,mode=max \
             --push \
             ./${{ matrix.image }}
         env:
