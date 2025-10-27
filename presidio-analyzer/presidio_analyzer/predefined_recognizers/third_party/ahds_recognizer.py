@@ -8,14 +8,23 @@ try:
         DeidentificationOperationType,
         PhiCategory,
     )
-    from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
+    from azure.identity import (
+        ChainedTokenCredential,
+        DefaultAzureCredential,
+        EnvironmentCredential,
+        ManagedIdentityCredential,
+        WorkloadIdentityCredential,
+    )
 except ImportError:
     DeidentificationClient = None
     DeidentificationContent = None
     DeidentificationOperationType = None
     PhiCategory = None
+    ChainedTokenCredential = None
     DefaultAzureCredential = None
+    EnvironmentCredential = None
     ManagedIdentityCredential = None
+    WorkloadIdentityCredential = None
 
 from presidio_analyzer import AnalysisExplanation, RecognizerResult, RemoteRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -64,11 +73,16 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
                     "Please install azure-health-deidentification and azure-identity."
                 )
 
-            credential = None
-            if os.getenv('ENV') == 'production':
-                credential = ManagedIdentityCredential()
-            else:
+            # Use ChainedTokenCredential for production (secure by default)
+            # Only use DefaultAzureCredential in development mode
+            if os.getenv('ENV') == 'development':
                 credential = DefaultAzureCredential()  # CodeQL [SM05139] OK for dev
+            else:
+                credential = ChainedTokenCredential(
+                    EnvironmentCredential(),
+                    WorkloadIdentityCredential(),
+                    ManagedIdentityCredential()
+                )
             client = DeidentificationClient(endpoint, credential)
 
         self.deid_client = client
