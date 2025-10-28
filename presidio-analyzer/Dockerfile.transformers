@@ -5,6 +5,9 @@ ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 ENV PIP_NO_CACHE_DIR=1
 ENV POETRY_VIRTUALENVS_CREATE=false
+ENV PORT=3000
+ENV WORKERS=1
+
 WORKDIR /app
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
@@ -19,9 +22,7 @@ COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 COPY ./pyproject.toml /app/
-RUN pip install poetry && poetry install -E server -E transformers
-
-RUN poetry add torch transformers huggingface_hub --no-lock
+RUN pip install poetry && poetry install --no-root --only=main -E server -E transformers
 
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /app/
