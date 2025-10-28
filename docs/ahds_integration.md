@@ -96,15 +96,72 @@ print(f"Anonymized: {result.text}")
 
 ## Authentication
 
-The AHDS de-identification service integration uses Azure's `DefaultAzureCredential`, which supports multiple authentication methods:
+The AHDS de-identification service integration uses Azure authentication with a secure-by-default approach:
+
+### Production Mode (Default)
+
+By default, the integration uses a restricted credential chain that only includes:
+
+1. **EnvironmentCredential**: Service Principal via environment variables
+2. **WorkloadIdentityCredential**: Workload Identity (Kubernetes)
+3. **ManagedIdentityCredential**: Managed Identity (Azure services)
+
+This credential chain is more secure as it excludes interactive browser logins and developer credentials, making it suitable for production deployments.
+
+### Development Mode
+
+For local development, you can enable `DefaultAzureCredential` by setting the environment variable:
+
+```bash
+export ENV=development
+```
+
+In development mode, the integration uses `DefaultAzureCredential`, which supports additional authentication methods:
 
 1. Environment variables (Service Principal)
-2. Managed Identity (when running on Azure)
-3. Azure CLI (`az login`)
-4. Visual Studio/VS Code credentials
-5. Interactive browser login
+2. Workload Identity
+3. Managed Identity
+4. Azure CLI (`az login`)
+5. Azure PowerShell
+6. Visual Studio/VS Code credentials
+7. Interactive browser login
 
-For production deployments, we recommend using Service Principal or Managed Identity.
+### Local Development Setup
+
+For local development with Azure CLI authentication:
+
+```bash
+# Set development mode
+export ENV=development
+
+# Login with Azure CLI
+az login
+
+# Set your AHDS endpoint
+export AHDS_ENDPOINT="https://your-ahds-endpoint.api.eus001.deid.azure.com"
+
+# Now you can run Presidio with AHDS integration
+python your_script.py
+```
+
+### Production Deployment Recommendations
+
+For production deployments, we recommend:
+
+1. **Do not set ENV=development** (use default production mode)
+2. **Use Managed Identity** when running on Azure services (AKS, App Service, Functions, etc.)
+3. **Use Workload Identity** for Kubernetes deployments
+4. **Use Service Principal** with environment variables for other scenarios:
+   ```bash
+   export AZURE_CLIENT_ID="<client-id>"
+   export AZURE_CLIENT_SECRET="<client-secret>"
+   export AZURE_TENANT_ID="<tenant-id>"
+   ```
+
+### Environment Variables Summary
+
+- `AHDS_ENDPOINT`: Your AHDS de-identification service endpoint (required)
+- `ENV`: Set to `development` for local dev, omit for production (optional, default: production mode)
 
 ## Troubleshooting
 

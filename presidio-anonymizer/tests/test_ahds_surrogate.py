@@ -2,7 +2,7 @@
 
 import os
 import importlib
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 import dotenv
@@ -310,8 +310,14 @@ def test_service_error_handling(import_modules):
             {'entity_type': 'PERSON', 'start': 0, 'end': 8, 'text': 'John Doe', 'score': 0.9}
         ]
     }
-    with pytest.raises(InvalidParamError):
-        operator.operate("John Doe is a patient", params)
+    # Mock Azure env vars so credentials can initialize
+    with patch.dict(os.environ, {
+        'AZURE_TENANT_ID': 'test-tenant-id',
+        'AZURE_CLIENT_ID': 'test-client-id',
+        'AZURE_FEDERATED_TOKEN_FILE': '/tmp/test-token-file'
+    }):
+        with pytest.raises(InvalidParamError):
+            operator.operate("John Doe is a patient", params)
 
 def test_operator_type(import_modules):
     operator = AHDSSurrogate()
