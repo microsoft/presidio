@@ -131,4 +131,4 @@ class TransformersNlpEngine(SpacyNlpEngine):
         :param doc: SpaCy doc
         """
 
-        return doc.spans[self.entity_key].attrs["scores"]
+        return [float(score) for score in doc.spans[self.entity_key].attrs["scores"]]
