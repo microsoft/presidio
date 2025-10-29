@@ -3,10 +3,49 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
-### Analyzer
+### Image Redactor
 #### Changed
-- Implement Fix for Italian Duplicate Driver license
-    - Update Test cases to account for changed recognizer
+- DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.
+
+## [2.2.360] - 2025-09-09
+### Analyzer
+#### Added
+- Korean Resident Registration Number (RRN) recognizer with checksum validation for numbers issued prior to October 2020 (#1675) (Thanks @siwoo-jung)
+- Azure Health Data Services (AHDS) de-identification service integration as a remote recognizer with Entra ID authentication (#1624) (Thanks @rishasurana)
+- Comprehensive input validation methods for NlpEngineProvider to ensure valid arguments for engines, configuration, and file paths (#1653) (Thanks @siwoo-jung)
+
+#### Changed
+- Updated Indian Aadhaar recognizer to support contextual delimiters (-, :, space) for improved detection accuracy (#1677) (Thanks @K3y5tr0ke)
+- Fixed Italian Driver License recognizer regex to include missing characters per government requirements, excluding only A, O, Q, I (#1651) (Thanks @K3y5tr0ke)
+- Refactored recognizers folder structure for better organization and maintainability (#1670) (Thanks @omri374)
+
+### Anonymizer
+#### Added
+- Azure Health Data Services (AHDS) Surrogate anonymization operator with medical domain expertise for realistic PHI surrogate generation (#1672) (Thanks @rishasurana)
+
+#### Changed
+- Fixed code indentation issues in encrypt.py for better code quality (#1660) (Thanks @aliyss)
+
+### General
+#### Added
+- Comprehensive GitHub Copilot instructions with development guidelines, build processes, and e2e testing procedures (#1693) (Thanks @Copilot)
+- New GitHub Actions CI & release workflows with multi-platform Docker image support for AMD64 and ARM64 architectures (#1697) (Thanks @tamirkamara)
+- Dual-path CI workflow to fix GitHub Actions failures for external contributors by auto-detecting fork vs. main repository PRs (#1708) (Thanks @Copilot)
+- OIDC trusted publishing for PyPI releases eliminating manual API token management and enhancing security (#1702) (Thanks @Copilot)
+- Comprehensive YAML and Python examples for context-aware recognizers documentation (#1710) (Thanks @MRADULTRIPATHI)
+
+#### Changed
+- Updated actions/checkout from v4 to v5 to support Node.js 24 runtime (#1699) (Thanks @dependabot)
+- Fixed PR template to use proper GitHub issue linking syntax for automatic issue association and closing (#1701) (Thanks @Copilot)
+- Updated LiteLLM documentation with detailed guide links for better integration guidance (#1698) (Thanks @BhargavDT)
+- Fixed broken links in CONTRIBUTING.md and developing recognizers documentation after recognizers refactoring (#1674) (Thanks @siwoo-jung)
+- Fixed OpenSSF badge embedding in README.MD for proper display (#1673) (Thanks @SharonHart)
+- Removed Terrascan from Microsoft Defender for DevOps workflow to eliminate false positives on non-IAC repository (#1691) (Thanks @Copilot)
+
+#### Security
+- Updated Streamlit and PyTorch dependency versions to fix CVE vulnerabilities (#1685) (Thanks @SharonHart)
+- Updated requests library to mitigate security vulnerability GHSA-9hjg-9r4m-mvj7 (#1683) (Thanks @SharonHart)
+- Locked pandas dependency in Streamlit to prevent version conflicts (#1689) (Thanks @SharonHart)
 
 ## [2.2.359] - 2025-07-06
 ### Analyzer
@@ -603,8 +642,9 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.  
 
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.359...HEAD
-[2.2.358]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.360...HEAD
+[2.2.360]: https://github.com/microsoft/presidio/compare/2.2.359...2.2.360
+[2.2.359]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
 [2.2.358]: https://github.com/microsoft/presidio/compare/2.2.357...2.2.358
 [2.2.357]: https://github.com/microsoft/presidio/compare/2.2.356...2.2.357
 [2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...2.2.356
@@ -635,3 +675,5 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 ### Fixed
 - Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
+- Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
+- Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).

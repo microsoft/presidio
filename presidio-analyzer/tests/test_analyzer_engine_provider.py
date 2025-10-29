@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 from typing import List
 
-from presidio_analyzer import AnalyzerEngineProvider, RecognizerResult
+from presidio_analyzer import AnalyzerEngineProvider, RecognizerResult, PatternRecognizer
 from presidio_analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 
 
@@ -199,6 +199,7 @@ def test_analyzer_engine_provider_with_ahds():
     analyzer_yaml, _, _ = get_full_paths(
         "conf/test_ahds_reco.yaml",
     )
+    from presidio_analyzer.predefined_recognizers import AzureHealthDeidRecognizer
 
     class MockAHDSDeidRecognizer(AzureHealthDeidRecognizer):
         def analyze(
@@ -339,3 +340,14 @@ def test_analyzer_engine_stanza_without_recognizer_creates_recognizer():
         nlp_recognizers[1].supported_language,
     }
     assert supported_languages == {"en", "es"}
+
+def test_analyzer_engine_provider_one_custom_recognizer():
+    analyzer_yaml, _, _ = get_full_paths(
+        "conf/custom_recognizer_yaml.yaml",
+    )
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+
+    analyzer_engine = provider.create_engine()
+    assert len(analyzer_engine.get_recognizers()) == 1
+    assert analyzer_engine.analyze("My zip code is 12345", language="en")[0].score == pytest.approx(0.4)
+

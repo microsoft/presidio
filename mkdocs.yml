@@ -53,6 +53,7 @@ nav:
           - Presidio Anonymizer:
               - Home: anonymizer/index.md
               - Developing PII anonymization operators: anonymizer/adding_operators.md
+      - Azure Health Data Services de-identification service integration: ahds_integration.md
       - Image de-identification:
           - Home: image-redactor/index.md
           - Evaluating DICOM redaction: image-redactor/evaluating_dicom_redaction.md
@@ -73,6 +74,10 @@ nav:
           - Presidio Image Redactor Python API: api/image_redactor_python.md
           - Presidio Structured Python API: api/structured_python.md
       - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
+  - Recipes:
+    - Home: recipes/index.md
+    - Contributing: recipes/CONTRIBUTING.md
+    - Template: recipes/template.md
   - Samples:
 
     - Home: samples/index.md

@@ -105,7 +105,7 @@ def get_dummy_nlp_engine():
             self,
             texts: Iterable[str],
             language: str,
-            **kwargs,  # noqa ANN003
+            **kwargs,  # noqa: ANN003
         ) -> Iterator[Tuple[str, NlpArtifacts]]:
             return None
 

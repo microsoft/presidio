@@ -1,0 +1,70 @@
+name: Label external pull requests
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+# Minimal permissions required to read repo metadata and add labels
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  label-external:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label PRs from contributors without write access
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              console.log('No pull_request payload found - nothing to do.');
+              return;
+            }
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const username = pr.user && pr.user.login;
+            if (!username) {
+              console.log('PR author not found - exiting.');
+              return;
+            }
+
+            const privileged = ['admin', 'maintain', 'write'];
+
+            try {
+              const resp = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner,
+                repo,
+                username
+              });
+              const permission = resp.data && resp.data.permission;
+              console.log(`User ${username} permission: ${permission}`);
+
+              if (!privileged.includes(permission)) {
+                console.log(`Adding 'external' label to PR #${pr.number}`);
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: pr.number,
+                  labels: ['external']
+                });
+              } else {
+                console.log(`User ${username} has write or higher permission (${permission}) - skipping label.`);
+              }
+            } catch (err) {
+              // 404 typically means the user is not a collaborator
+              if (err.status === 404) {
+                console.log(`User ${username} is not a collaborator - adding 'external' label`);
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: pr.number,
+                  labels: ['external']
+                });
+              } else {
+                console.log(`Error checking user permission: ${err.message}`);
+              }
+            }

@@ -1,0 +1,17 @@
+from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.spacy_recognizer import (  # noqa: E501
+    SpacyRecognizer,
+)
+
+
+class StanzaRecognizer(SpacyRecognizer):
+    """
+    Recognize entities using the Stanza NLP package.
+
+    See https://stanfordnlp.github.io/stanza/.
+    Uses the spaCy-Stanza package (https://github.com/explosion/spacy-stanza) to align
+    Stanza's interface with spaCy's
+    """
+
+    def __init__(self, **kwargs):
+        self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace("Spacy", "Stanza")
+        super().__init__(**kwargs)

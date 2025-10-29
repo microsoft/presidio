@@ -153,6 +153,19 @@ recognizers:
     - pl
     type: predefined
 
+  - name: KrRrnRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
+  - name: ThTninRecognizer
+    supported_languages:
+    - th
+    type: predefined
+    enabled: false
+
   - name: CryptoRecognizer
     type: predefined
 
@@ -178,5 +191,11 @@ recognizers:
     type: predefined
 
   - name: InVoterRecognizer
+    type: predefined
+    enabled: false
+
+  - name: InGstinRecognizer
+    supported_languages: 
+    - en
     type: predefined
     enabled: false

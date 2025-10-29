@@ -1,0 +1,35 @@
+name: Release Documentation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  github-pages-release:
+    name: Push to github pages
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write  # Required for pushing to gh-pages branch
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Fetch all history for proper gh-pages deployment
+          persist-credentials: true  # So that the token is available for pushing
+      
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install -r docs/requirements-docs.txt
+      
+      - name: Deploy docs
+        run: |
+          mkdocs gh-deploy

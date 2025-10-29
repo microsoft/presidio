@@ -1,29 +1,31 @@
-FROM python:3.13-windowsservercore
+FROM python:3.12-windowsservercore
 
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 ENV PIP_NO_CACHE_DIR=1
+ENV POETRY_VIRTUALENVS_CREATE=false
+ENV PORT=3000
 WORKDIR /app
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
 ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
 ENV NLP_CONF_FILE=${NLP_CONF_FILE}
 
-COPY ${ANALYZER_CONF_FILE} /usr/bin/${NAME}/${ANALYZER_CONF_FILE}
-COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /usr/bin/${NAME}/${RECOGNIZER_REGISTRY_CONF_FILE}
-COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
+RUN powershell -Command \
+    "Write-Host 'Downloading VC++ Redistributable...'; \
+    Invoke-WebRequest -Uri 'https://aka.ms/vs/16/release/vc_redist.x64.exe' -OutFile 'vc_redist.x64.exe' -UseBasicParsing; \
+    Write-Host 'Installing VC++ Redistributable...'; \
+    Start-Process -FilePath 'vc_redist.x64.exe' -ArgumentList '/quiet', '/install' -Wait; \
+    Write-Host 'VC++ Redistributable installed successfully'; \
+    Remove-Item 'vc_redist.x64.exe'"
 
-ADD https://aka.ms/vs/16/release/vc_redist.x64.exe .
-RUN ./vc_redist.x64.exe /quiet /install
+COPY ${ANALYZER_CONF_FILE} /app/${ANALYZER_CONF_FILE}
+COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /app/${RECOGNIZER_REGISTRY_CONF_FILE}
+COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
-COPY ./pyproject.toml /app/pyproject.toml
-COPY ./README.md /usr/bin/${NAME}/
-WORKDIR /Python
-RUN python.exe -m pip install --upgrade pip
-RUN pip install poetry; 
-WORKDIR /app
-RUN poetry install --no-root --only=main -E server -E transformers
+COPY ./pyproject.toml /app/
+RUN python.exe -m pip install --upgrade pip; pip install poetry; poetry install --no-root --only=main -E server -E transformers
 
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py .
@@ -31,5 +33,13 @@ COPY ${NLP_CONF_FILE} ${NLP_CONF_FILE}
 RUN poetry run python install_nlp_models.py --conf_file $Env:NLP_CONF_FILE
 
 COPY . .
+
+# Create a non-root user for Windows container
+RUN net user presidio /add
+USER presidio
+
 EXPOSE ${PORT}
-CMD poetry run python app.py --host 0.0.0.0
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD powershell -Command "try { Invoke-WebRequest -Uri http://localhost:$env:PORT/health -UseBasicParsing | Out-Null; exit 0 } catch { exit 1 }"
+CMD ["powershell", "-Command", "poetry run waitress-serve --port=$env:PORT app:create_app"]

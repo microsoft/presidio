@@ -4,12 +4,11 @@
 
 ---
 
-[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI%20V2?branchName=main)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=212&branchName=main)
+[![Build Status](https://github.com/microsoft/presidio/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/microsoft/presidio/actions/workflows/ci.yml)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6076/badge)](https://bestpractices.coreinfrastructure.org/projects/6076)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/6076/badge)](https://www.bestpractices.dev/projects/6076)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
-
 - Presidio Analyzer [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
 - Presidio Anonymizer [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)
 - Presidio Image-Redactor [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-image-redactor.svg)](https://img.shields.io/pypi/dm/presidio-image-redactor.svg)
@@ -35,9 +34,6 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 ## Are you using Presidio? We'd love to know how
 
 Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u).
-
-## Are you using prebuilt Docker images?
-Please review the suggested change [here](https://github.com/microsoft/presidio/discussions/1601).
 
 ---
 

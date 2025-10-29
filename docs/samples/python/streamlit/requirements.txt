@@ -1,12 +1,12 @@
 presidio-analyzer[transformers]
 presidio-analyzer[stanza]
 presidio-anonymizer
-streamlit
+streamlit>=1.37.0
 streamlit-tags
-pandas
+pandas>=1.0.4
 python-dotenv
 st-annotated-text
-torch
-flair
+torch>=2.7.0
+flair>=0.15.0
 openai
 azure-ai-textanalytics

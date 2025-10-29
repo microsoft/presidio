@@ -12,12 +12,14 @@ from presidio_anonymizer.entities import (
     OperatorResult,
     EngineResult,
 )
-from presidio_anonymizer.operators import OperatorType
+from presidio_anonymizer.operators import OperatorType, AHDS_AVAILABLE
 
 
 def test_given_request_anonymizers_return_list():
     engine = AnonymizerEngine()
     expected_list = {"hash", "mask", "redact", "replace", "custom", "keep", "encrypt"}
+    if AHDS_AVAILABLE:
+        expected_list.add("surrogate_ahds")
     anon_list = set(engine.get_anonymizers())
 
     assert anon_list == expected_list

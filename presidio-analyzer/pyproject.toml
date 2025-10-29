@@ -4,24 +4,24 @@ requires = ["poetry-core"]
 
 [project]
 name = "presidio_analyzer"
-version = "2.2.359"
+version = "2.2.360"
 description = "Presidio Analyzer package"
 authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
 license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 keywords = ["presidio_analyzer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 include = ["conf/*",]
 
-requires-python = ">=3.9,<3.14"
+requires-python = ">=3.10,<3.14"
 dependencies = [
     "spacy (>=3.4.4, !=3.7.0)",
     "regex",
@@ -33,7 +33,8 @@ dependencies = [
 [project.optional-dependencies]
 server = [
     "flask (>=1.1)",
-    "gunicorn"
+    "gunicorn; platform_system != 'Windows'",
+    "waitress; platform_system == 'Windows'"
 ]
 transformers = [
     "transformers",
@@ -50,7 +51,7 @@ azure-ai-language = [
 ]
 ahds = [
     "azure-identity (>=1.23.0,<2.0.0)",
-    "azure-health-deidentification (>=1.0.0,<2.0.0)"
+    "azure-health-deidentification (>=1.1.0b1,<2.0.0)"
 ]
 gliner = [
     "transformers",
