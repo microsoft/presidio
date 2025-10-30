@@ -19,7 +19,14 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 class LangExtractRecognizer(RemoteRecognizer):
-    """Wrapper for PII detection using LangExtract LLM-based extraction."""
+    """
+    PII detection using LangExtract with local LLM models via Ollama.
+    
+    Currently supports local models only for privacy-focused PII detection.
+    Full LangExtract support (cloud providers) will be available in future releases.
+    
+    Requires Ollama to be installed and running (https://ollama.com).
+    """
 
     DEFAULT_CONFIG_PATH = Path(__file__).parent.parent.parent / "conf" / "langextract_config.yaml"
 
@@ -31,7 +38,7 @@ class LangExtractRecognizer(RemoteRecognizer):
         **kwargs
     ):
         """
-        Wrap PII detection using LangExtract.
+        Initialize LangExtract recognizer for local LLM-based PII detection.
 
         :param supported_entities: List of supported entities for this recognizer.
         :param supported_language: Language code (currently only 'en' supported).

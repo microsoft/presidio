@@ -1,28 +1,23 @@
 # LangExtract LLM-based PII Recognition
 # https://github.com/google/langextract
 #
+# Current Support: Ollama (local models only)
+# Future Support: Full LangExtract (Gemini, OpenAI, and other cloud providers)
+#
 # Installation:
-#   pip install presidio-analyzer[langextract]
-#   OR: pip install langextract more-itertools
-#
-# Supported Models:
-#   - Gemini (Google): Set model_id="gemini-2.5-flash" or similar
-#   - Ollama (Local): Set model_id="llama3.2:3b", model_url="http://localhost:11434"
-#   - OpenAI (Standard): Set model_id="gpt-4", api_key="sk-..."
-#
-# Note: For Azure OpenAI, use the separate AzureOpenAIRecognizer instead.
+#   1. Install Ollama: curl -fsSL https://ollama.com/install.sh | sh
+#   2. Pull a model: ollama pull llama3.2:3b
+#   3. Start server: ollama serve
+#   4. Install dependencies: pip install presidio-analyzer[langextract]
 
 langextract:
   enabled: false
-  model_id: "gemini-2.5-flash"
-  api_key: null
-  model_url: null
-  base_url: null
-  temperature: null
   
-  # OpenAI-specific parameters (for standard OpenAI only, not Azure)
-  fence_output: null
-  use_schema_constraints: null
+  # Ollama configuration (local models)
+  model_id: "llama3.2:3b"
+  model_url: "http://localhost:11434"
+  api_key: null
+  temperature: null
   
   prompt_file: "langextract_prompts/default_pii_prompt.txt"
   examples_file: "langextract_prompts/default_pii_examples.yaml"
