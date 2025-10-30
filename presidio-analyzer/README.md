@@ -12,6 +12,17 @@ but can easily be extended with other types of custom recognizers.
 Predefined and custom recognizers leverage regex,
 Named Entity Recognition and other types of logic to detect PII in unstructured text.
 
+### LLM-based PII Detection
+
+Presidio analyzer supports LLM-based PII detection through LangExtract:
+
+```bash
+pip install presidio-analyzer[langextract]
+```
+
+LangExtract supports Google Gemini, Ollama (local models), and standard OpenAI.
+See the [documentation](https://microsoft.github.io/presidio/analyzer/) for configuration details.
+
 ## Deploy Presidio analyzer to Azure
 
 Use the following button to deploy presidio analyzer to your Azure subscription.

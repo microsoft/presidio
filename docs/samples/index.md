@@ -19,6 +19,7 @@
 | Usage | Text      | Python file                            | [Azure AI Language as a Remote Recognizer](python/text_analytics/index.md)  |
 | Usage | Text      | Python file                            | [Azure Health Data Services de-identification Service as a Remote Recognizer](python/ahds/index.md)  |
 | Usage | Text      | Python file                            | [AHDS Surrogate Example](python/ahds/example_ahds_surrogate.py)  |
+| Usage | Text      | Python file                            | [LangExtract LLM-based PII Detection](python/langextract/index.md)  |
 | Usage | CSV       | Python file                            | [Analyze and Anonymize CSV file](https://github.com/microsoft/presidio/blob/main/docs/samples/python/process_csv_file.py) |
 | Usage | Text      | Python                                 | [Using Flair as an external PII model](https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py)|
 | Usage | Text      | Python file                            | [Using Span Marker as an external PII model](https://github.com/microsoft/presidio/blob/main/docs/samples/python/span_marker_recognizer.py)|

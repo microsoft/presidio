@@ -1,0 +1,24 @@
+Extract personally identifiable information (PII) in order of appearance.
+Use exact text for extractions. Do not paraphrase or overlap entities.
+Provide meaningful attributes for each entity to add context.
+
+Focus on extracting:
+- Person names (full names, first names, last names, titles)
+- Phone numbers (mobile, landline, international formats)
+- Email addresses
+- Physical addresses (street addresses, cities, states, countries)
+- Social security numbers
+- Credit card numbers
+- Dates of birth and other temporal information
+- Medical record numbers
+- IP addresses
+- URLs and websites
+- Bank account information (IBAN, account numbers)
+- Organization names
+
+Important guidelines:
+1. Extract entities in the order they appear in the text
+2. Use the exact text from the input - do not modify or paraphrase
+3. Do not create overlapping entity spans
+4. Provide descriptive attributes to add context to each extraction
+5. If uncertain about an entity type, err on the side of caution and mark it

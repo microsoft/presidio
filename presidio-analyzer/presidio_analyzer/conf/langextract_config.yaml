@@ -1,0 +1,61 @@
+# LangExtract LLM-based PII Recognition
+# https://github.com/google/langextract
+#
+# Installation:
+#   pip install presidio-analyzer[langextract]
+#   OR: pip install langextract more-itertools
+#
+# Supported Models:
+#   - Gemini (Google): Set model_id="gemini-2.5-flash" or similar
+#   - Ollama (Local): Set model_id="llama3.2:3b", model_url="http://localhost:11434"
+#   - OpenAI (Standard): Set model_id="gpt-4", api_key="sk-..."
+#
+# Note: For Azure OpenAI, use the separate AzureOpenAIRecognizer instead.
+
+langextract:
+  enabled: false
+  model_id: "gemini-2.5-flash"
+  api_key: null
+  model_url: null
+  base_url: null
+  temperature: null
+  
+  # OpenAI-specific parameters (for standard OpenAI only, not Azure)
+  fence_output: null
+  use_schema_constraints: null
+  
+  prompt_file: "langextract_prompts/default_pii_prompt.txt"
+  examples_file: "langextract_prompts/default_pii_examples.yaml"
+  
+  entity_mappings:
+    person: PERSON
+    full_name: PERSON
+    location: LOCATION
+    address: LOCATION
+    organization: ORGANIZATION
+    phone: PHONE_NUMBER
+    email: EMAIL_ADDRESS
+    date: DATE_TIME
+    ssn: US_SSN
+    credit_card: CREDIT_CARD
+    medical_record: MEDICAL_LICENSE
+    ip_address: IP_ADDRESS
+    url: URL
+    iban: IBAN_CODE
+  
+  supported_entities:
+    - PERSON
+    - LOCATION
+    - ORGANIZATION
+    - PHONE_NUMBER
+    - EMAIL_ADDRESS
+    - DATE_TIME
+    - US_SSN
+    - CREDIT_CARD
+    - MEDICAL_LICENSE
+    - IP_ADDRESS
+    - URL
+    - IBAN_CODE
+  
+  min_score: 0.5
+  debug: false
