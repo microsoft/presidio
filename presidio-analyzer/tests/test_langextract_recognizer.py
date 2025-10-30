@@ -181,29 +181,7 @@ class TestLangExtractRecognizerInitialization:
             
             assert recognizer.enabled is False
     
-    def test_api_key_from_environment(self, mock_langextract, monkeypatch):
-        """Test API key retrieval from environment variable."""
-        monkeypatch.setenv("LANGEXTRACT_API_KEY", "test-api-key-123")
-        
-        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
-             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
-             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples:
-            
-            mock_load_config.return_value = {
-                "enabled": True,
-                "model_id": "gemini-2.5-flash",
-                "api_key_env_var": "LANGEXTRACT_API_KEY",
-                "supported_entities": [],
-                "entity_mappings": {},
-                "prompt_file": "test.txt",
-                "examples_file": "test.yaml",
-            }
-            mock_load_prompt.return_value = "Test prompt"
-            mock_load_examples.return_value = []
-            
-            recognizer = LangExtractRecognizer()
-            
-            assert recognizer.api_key == "test-api-key-123"
+    # Removed: API key tests - LangExtract now uses Ollama only, no API keys
 
 
 class TestLangExtractRecognizerAnalyze:
@@ -517,3 +495,55 @@ class TestLangExtractRecognizerEntityMapping:
             
             # Should be skipped
             assert len(results) == 0
+
+
+# Integration tests with real Ollama (skip if not available)
+@pytest.mark.skip_engine("langextract")
+@pytest.fixture(scope="module")
+def langextract_recognizer(langextract_recognizer_class):
+    """Create LangExtractRecognizer instance for testing."""
+    if not langextract_recognizer_class:
+        return None
+    
+    recognizer = langextract_recognizer_class()
+    recognizer.enabled = True  # Enable for testing
+    return recognizer
+
+
+@pytest.mark.skip_engine("langextract")
+@pytest.mark.parametrize(
+    "text, expected_entity_types",
+    [
+        # Test PERSON entity
+        ("My name is John Doe", ["PERSON"]),
+        ("Contact Jane Smith for details", ["PERSON"]),
+        # Test EMAIL_ADDRESS entity
+        ("Email me at john.doe@example.com", ["EMAIL_ADDRESS"]),
+        # Test PHONE_NUMBER entity
+        ("Call me at 555-123-4567", ["PHONE_NUMBER"]),
+        # Test multiple entities
+        ("John Doe's email is john@example.com and phone is 555-1234", 
+         ["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER"]),
+    ],
+)
+def test_langextract_with_real_ollama(
+    text,
+    expected_entity_types,
+    langextract_recognizer,
+):
+    """Test LangExtract recognizer with real Ollama model."""
+    results = langextract_recognizer.analyze(text, entities=expected_entity_types)
+    
+    # Should detect at least some entities
+    assert len(results) > 0
+    
+    # Check that detected entities match expected types
+    detected_types = {r.entity_type for r in results}
+    assert detected_types.intersection(set(expected_entity_types))
+    
+    # Check score range
+    for result in results:
+        assert 0.0 <= result.score <= 1.0
+        assert result.start >= 0
+        assert result.end <= len(text)
+        assert result.start < result.end
