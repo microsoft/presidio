@@ -19,14 +19,7 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 class LangExtractRecognizer(RemoteRecognizer):
-    """
-    PII detection using LangExtract with local LLM models via Ollama.
-    
-    Currently supports local models only for privacy-focused PII detection.
-    Full LangExtract support (cloud providers) will be available in future releases.
-    
-    Requires Ollama to be installed and running (https://ollama.com).
-    """
+    """PII detection using LangExtract with Ollama local models."""
 
     DEFAULT_CONFIG_PATH = Path(__file__).parent.parent.parent / "conf" / "langextract_config.yaml"
 
@@ -38,12 +31,12 @@ class LangExtractRecognizer(RemoteRecognizer):
         **kwargs
     ):
         """
-        Initialize LangExtract recognizer for local LLM-based PII detection.
+        Initialize LangExtract recognizer with Ollama.
 
-        :param supported_entities: List of supported entities for this recognizer.
-        :param supported_language: Language code (currently only 'en' supported).
-        :param config_path: Path to configuration file (YAML).
-        :param kwargs: Additional arguments for RemoteRecognizer.
+        :param supported_entities: List of PII entities to detect.
+        :param supported_language: Language code (only 'en' supported).
+        :param config_path: Path to YAML configuration file.
+        :param kwargs: Additional arguments for parent class.
         """
         if not LANGEXTRACT_AVAILABLE:
             raise ImportError(
@@ -77,29 +70,11 @@ class LangExtractRecognizer(RemoteRecognizer):
             v: k for k, v in self.entity_mappings.items()
         }
 
-        self.model_id = self.config.get("model_id", "gemini-2.5-flash")
-        self.api_key = self.config.get("api_key") or os.getenv("LANGEXTRACT_API_KEY", None)
-        self.max_char_buffer = self.config.get("max_char_buffer", 1000)
-        self.batch_length = self.config.get("batch_length", 10)
-        self.extraction_passes = self.config.get("extraction_passes", 1)
-        self.max_workers = self.config.get("max_workers", 10)
-        self.show_progress = self.config.get("show_progress", True)
-        self.min_score = self.config.get("min_score", 0.5)
-
-        self.model_url = self.config.get("model_url")
-        self.base_url = self.config.get("base_url")  # Azure OpenAI support
+        # Ollama configuration (local models only)
+        self.model_id = self.config.get("model_id", "llama3.2:3b")
+        self.model_url = self.config.get("model_url", "http://localhost:11434")
         self.temperature = self.config.get("temperature")
-        self.use_schema_constraints = self.config.get("use_schema_constraints", True)
-        self.fence_output = self.config.get("fence_output")
-        self.format_type = self.config.get("format_type")
-        self.additional_context = self.config.get("additional_context")
-        self.fetch_urls = self.config.get("fetch_urls", True)
-        self.debug = self.config.get("debug", False)
-
-        self.resolver_params = self.config.get("resolver_params", {})
-        self.language_model_params = self.config.get("language_model_params", {})
-        self.prompt_validation_level = self.config.get("prompt_validation_level", "WARNING")
-        self.prompt_validation_strict = self.config.get("prompt_validation_strict", False)
+        self.min_score = self.config.get("min_score", 0.5)
 
         logger.info("Loaded recognizer: %s", self.name)
 
@@ -159,26 +134,24 @@ class LangExtractRecognizer(RemoteRecognizer):
         return self._convert_to_langextract_examples(examples_data)
 
     def _convert_to_langextract_examples(self, examples_data: List[Dict]) -> List:
+        """Convert YAML examples to LangExtract objects."""
         langextract_examples = []
-
         for example in examples_data:
-            text = example.get("text")
-            extractions_data = example.get("extractions", [])
-
-            extractions = []
-            for ext_data in extractions_data:
-                extraction = lx.data.Extraction(
-                    extraction_class=ext_data.get("extraction_class"),
-                    extraction_text=ext_data.get("extraction_text"),
-                    attributes=ext_data.get("attributes", {})
+            extractions = [
+                lx.data.Extraction(
+                    extraction_class=ext["extraction_class"],
+                    extraction_text=ext["extraction_text"],
+                    attributes=ext.get("attributes", {})
                 )
-                extractions.append(extraction)
-
-            example_data = lx.data.ExampleData(
-                text=text,
-                extractions=extractions
+                for ext in example.get("extractions", [])
+            ]
+            
+            langextract_examples.append(
+                lx.data.ExampleData(
+                    text=example["text"],
+                    extractions=extractions
+                )
             )
-            langextract_examples.append(example_data)
 
         return langextract_examples
 
@@ -189,12 +162,12 @@ class LangExtractRecognizer(RemoteRecognizer):
         nlp_artifacts: Optional[NlpArtifacts] = None
     ) -> List[RecognizerResult]:
         """
-        Analyze text using LangExtract.
+        Analyze text for PII using LangExtract.
 
-        :param text: Text to analyze for PII entities.
-        :param entities: List of Presidio entity types to detect (optional).
-        :param nlp_artifacts: Not used by this recognizer.
-        :return: List of RecognizerResult for each detected entity.
+        :param text: Text to analyze.
+        :param entities: Entity types to detect (optional).
+        :param nlp_artifacts: Not used.
+        :return: List of detected PII entities.
         """
         if not self.enabled:
             return []
@@ -214,23 +187,10 @@ class LangExtractRecognizer(RemoteRecognizer):
                 "model_id": self.model_id,
             }
 
-            if self.api_key:
-                extract_params["api_key"] = self.api_key
-            if self.model_url:
-                extract_params["model_url"] = self.model_url
-            if self.base_url:
-                extract_params["base_url"] = self.base_url
+            # Ollama-specific parameters
+            extract_params["model_url"] = self.model_url
             if self.temperature is not None:
                 extract_params["temperature"] = self.temperature
-
-            # OpenAI-specific parameters
-            fence_output = self.config.get("fence_output")
-            if fence_output is not None:
-                extract_params["fence_output"] = fence_output
-
-            use_schema_constraints = self.config.get("use_schema_constraints")
-            if use_schema_constraints is not None:
-                extract_params["use_schema_constraints"] = use_schema_constraints
 
             result = lx.extract(**extract_params)
 
@@ -329,9 +289,5 @@ class LangExtractRecognizer(RemoteRecognizer):
         return explanation
 
     def get_supported_entities(self) -> List[str]:
-        """
-        Return the list of entities supported by this recognizer.
-
-        :return: List of supported entity type names.
-        """
+        """Return list of supported PII entity types."""
         return self.supported_entities

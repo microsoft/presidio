@@ -1,23 +1,21 @@
-# LangExtract LLM-based PII Recognition
+# LangExtract LLM-based PII Recognition (Ollama local models only)
 # https://github.com/google/langextract
 #
-# Current Support: Ollama (local models only)
-# Future Support: Full LangExtract (Gemini, OpenAI, and other cloud providers)
-#
 # Installation:
-#   1. Install Ollama: curl -fsSL https://ollama.com/install.sh | sh
-#   2. Pull a model: ollama pull llama3.2:3b
+#   1. Install: curl -fsSL https://ollama.com/install.sh | sh
+#   2. Pull model: ollama pull llama3.2:3b
 #   3. Start server: ollama serve
-#   4. Install dependencies: pip install presidio-analyzer[langextract]
+#   4. Install deps: pip install presidio-analyzer[langextract]
+#
+# Note: Cloud provider support (Gemini, OpenAI) coming in future releases.
 
 langextract:
   enabled: false
   
-  # Ollama configuration (local models)
+  # Ollama local model configuration
   model_id: "llama3.2:3b"
   model_url: "http://localhost:11434"
-  api_key: null
-  temperature: null
+  temperature: null  # Optional: Set to 0.0-1.0 for deterministic/creative output
   
   prompt_file: "langextract_prompts/default_pii_prompt.txt"
   examples_file: "langextract_prompts/default_pii_examples.yaml"
@@ -53,4 +51,3 @@ langextract:
     - IBAN_CODE
   
   min_score: 0.5
-  debug: false
