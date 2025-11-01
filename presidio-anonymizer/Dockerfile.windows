@@ -1,4 +1,4 @@
-FROM python:3.13-windowsservercore
+FROM python:3.14-windowsservercore
 
 ENV PIP_NO_CACHE_DIR=1
 ENV POETRY_VIRTUALENVS_CREATE=false
