@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 ARG NLP_CONF_FILE
 ARG ANALYZER_CONF_FILE
