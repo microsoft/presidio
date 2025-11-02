@@ -135,7 +135,8 @@ def ollama_available() -> bool:
             print("✓ Ollama already running and ready")
             return True
     except Exception:
-        pass
+        # Ollama not available, will attempt setup
+        print("Ollama not responding, will attempt setup")
     
     # Not available - try to set up
     print("\n" + "="*60)
