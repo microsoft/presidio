@@ -2,16 +2,17 @@ services:
   ollama:
     image: ollama/ollama:0.5.4
     ports:
-      - "127.0.0.1:11435:11434"
+      - "127.0.0.1:11434:11434"   # or "127.0.0.1:11435:11434"
     volumes:
       - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:11434/api/tags"]
+      test: ["CMD", "ollama", "list"]
       interval: 10s
       timeout: 10s
-      retries: 12
-      start_period: 30s
-
+      retries: 30        # ~5 minutes total
+      start_period: 60s  
   presidio-anonymizer:
     image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-anonymizer${TAG}
     build:
@@ -22,6 +23,7 @@ services:
       - PORT=5001
     ports:
       - "5001:5001"
+
   presidio-analyzer:
     image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-analyzer${TAG}
     build:
