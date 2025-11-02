@@ -14,7 +14,7 @@ OLLAMA_URL = "http://localhost:11434"
 def install_ollama():
     """Install Ollama based on operating system."""
     system = platform.system()
-    
+
     if system == "Linux":
         print("Installing Ollama on Linux...")
         print("This may take a few minutes. Please wait...")
@@ -70,7 +70,7 @@ def check_ollama(retries=10):
 def main():
     print("Ollama Setup")
     print("="*40)
-    
+
     # Check if ollama command exists
     print("Checking for Ollama installation...")
     try:
@@ -80,7 +80,7 @@ def main():
         if not install_ollama():
             print("✗ Installation failed")
             sys.exit(1)
-    
+
     # Check if running
     if not check_ollama(retries=1):
         start_ollama()
@@ -89,7 +89,7 @@ def main():
             sys.exit(1)
     else:
         print("✓ Ollama already running")
-    
+
     print("\n" + "="*40)
     print("✓ Ollama ready")
     print("="*40)

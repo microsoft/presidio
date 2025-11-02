@@ -1,10 +1,8 @@
 import logging
-import os
-import subprocess
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Dict, List, Optional
-import urllib.request
-import urllib.error
 
 import yaml
 
@@ -131,7 +129,7 @@ class LangExtractRecognizer(RemoteRecognizer):
                 import json
                 data = json.loads(response.read().decode('utf-8'))
                 models = data.get('models', [])
-                
+
                 # Check if our model is in the list
                 for model in models:
                     model_name = model.get('name', '')
@@ -148,15 +146,15 @@ class LangExtractRecognizer(RemoteRecognizer):
         try:
             import subprocess
             import time
-            
+
             logger.info(f"Downloading model '{self.model_id}' (this may take several minutes)...")
             print(f"Downloading model '{self.model_id}'...")
-            
+
             result = subprocess.run(
                 ["ollama", "pull", self.model_id],
                 timeout=600  # 10 minute timeout
             )
-            
+
             if result.returncode == 0:
                 # Wait a moment for model to be fully registered
                 time.sleep(2)
@@ -166,7 +164,7 @@ class LangExtractRecognizer(RemoteRecognizer):
                     print(f"✓ Model '{self.model_id}' ready")
                     return True
                 else:
-                    logger.error(f"Model download succeeded but model not found")
+                    logger.error("Model download succeeded but model not found")
                     return False
             else:
                 logger.error(f"Model download failed with exit code {result.returncode}")
@@ -245,7 +243,7 @@ class LangExtractRecognizer(RemoteRecognizer):
                 )
                 for ext in example.get("extractions", [])
             ]
-            
+
             langextract_examples.append(
                 lx.data.ExampleData(
                     text=example["text"],
