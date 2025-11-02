@@ -242,9 +242,6 @@ class LangExtractRecognizer(RemoteRecognizer):
                 return []
 
         try:
-            logger.info("Analyzing text with LangExtract: '%s'", text[:100])
-            logger.info("Requested entities: %s", entities)
-            
             extract_params = {
                 "text_or_documents": text,
                 "prompt_description": self.prompt_description,
@@ -259,23 +256,10 @@ class LangExtractRecognizer(RemoteRecognizer):
 
             result = lx.extract(**extract_params)
 
-            # DEBUG: Log raw LangExtract result
-            logger.info("LangExtract raw result type: %s", type(result))
-            if result:
-                logger.info("Has extractions: %s", hasattr(result, 'extractions'))
-                if hasattr(result, 'extractions'):
-                    logger.info("Number of extractions: %s", len(result.extractions) if result.extractions else 0)
-                    if result.extractions:
-                        for i, ext in enumerate(result.extractions):
-                            logger.info(
-                                "Extraction %d: class='%s', text='%s', has_char_interval=%s",
-                                i, ext.extraction_class, ext.extraction_text,
-                                hasattr(ext, 'char_interval') and ext.char_interval is not None
-                            )
-
             converted_results = self._convert_to_recognizer_results(result, entities)
-            logger.info("Converted to %d RecognizerResults", len(converted_results))
-            
+            if converted_results:
+                logger.info("LangExtract found %d PII entities", len(converted_results))
+
             return converted_results
 
         except Exception as e:
@@ -290,51 +274,32 @@ class LangExtractRecognizer(RemoteRecognizer):
         recognizer_results = []
 
         if not langextract_result or not langextract_result.extractions:
-            logger.info("No extractions in LangExtract result")
             return recognizer_results
-
-        logger.info("Processing %d extractions from LangExtract", len(langextract_result.extractions))
-        logger.info("Requested entities filter: %s", requested_entities)
-        logger.info("Entity mappings: %s", self.entity_mappings)
 
         for i, extraction in enumerate(langextract_result.extractions):
             extraction_class = extraction.extraction_class.lower()
-            logger.info("Processing extraction %d: class='%s' (lowercase)", i, extraction_class)
-            
             entity_type = self.entity_mappings.get(extraction_class)
 
             if not entity_type:
                 logger.warning(
-                    "Extraction %d SKIPPED: class='%s' not found in entity_mappings. "
-                    "Available mappings: %s",
-                    i, extraction_class, list(self.entity_mappings.keys())
+                    "Unknown extraction class '%s' not found in entity mappings",
+                    extraction_class
                 )
                 continue
 
-            logger.info("Extraction %d mapped to entity_type: %s", i, entity_type)
-
             if requested_entities and entity_type not in requested_entities:
-                logger.info(
-                    "Extraction %d FILTERED: entity_type '%s' not in requested_entities %s",
-                    i, entity_type, requested_entities
-                )
                 continue
 
             if not extraction.char_interval:
-                logger.warning("Extraction %d SKIPPED: missing char_interval", i)
+                logger.warning("Extraction missing char_interval, skipping")
+                continue
+
+            score = self._calculate_score(extraction)
+            if score < self.min_score:
                 continue
 
             start = extraction.char_interval.start_pos
             end = extraction.char_interval.end_pos
-            logger.info("Extraction %d position: start=%d, end=%d", i, start, end)
-
-            score = self._calculate_score(extraction)
-            logger.info("Extraction %d score: %.2f (min_score=%.2f)", i, score, self.min_score)
-
-            if score < self.min_score:
-                logger.info("Extraction %d FILTERED: score %.2f < min_score %.2f", i, score, self.min_score)
-                continue
-
             explanation = self._build_explanation(extraction, entity_type)
 
             recognizer_result = RecognizerResult(
@@ -345,10 +310,8 @@ class LangExtractRecognizer(RemoteRecognizer):
                 analysis_explanation=explanation,
             )
 
-            logger.info("Extraction %d ACCEPTED: Added as %s result", i, entity_type)
             recognizer_results.append(recognizer_result)
 
-        logger.info("Final result: %d RecognizerResults created", len(recognizer_results))
         return recognizer_results
 
     def _calculate_score(self, extraction) -> float:
