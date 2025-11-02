@@ -6,8 +6,6 @@
 # Note: Cloud provider support (Gemini, OpenAI) coming in future releases.
 
 langextract:
-  enabled: false
-  
   # Ollama local model configuration
   model_id: "gemma2:2b"
   model_url: "http://localhost:11434"

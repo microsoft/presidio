@@ -3,8 +3,6 @@
 # https://github.com/google/langextract
 
 langextract:
-  enabled: true
-  
   # Ollama local model configuration
   model_id: "gemma2:2b"
   model_url: "http://ollama:11434"  # Docker service name

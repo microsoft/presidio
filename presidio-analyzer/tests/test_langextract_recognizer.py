@@ -41,25 +41,23 @@ class TestLangExtractRecognizerInitialization:
 
         recognizer = langextract_recognizer_class()
 
-        assert recognizer.enabled is True
         assert recognizer.model_id is not None
         assert recognizer.model_url is not None
         assert len(recognizer.supported_entities) > 0
 
-    def test_disabled_recognizer_still_initializes(
+    def test_recognizer_initialization_with_custom_config(
         self, langextract_recognizer_class, tmp_path
     ):
-        """Test that disabled recognizer initializes without validation."""
+        """Test that recognizer initializes with custom config."""
         if not langextract_recognizer_class:
             pytest.skip("LangExtract not available")
 
 
         import yaml
 
-        # Create config with enabled=False
+        # Create config
         config = {
             "langextract": {
-                "enabled": False,
                 "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
@@ -77,7 +75,8 @@ class TestLangExtractRecognizerInitialization:
 
         recognizer = langextract_recognizer_class(config_path=str(config_file))
 
-        assert recognizer.enabled is False
+        assert recognizer.model_id == "gemma2:2b"
+        assert recognizer.model_url == "http://localhost:11434"
 
     def test_missing_required_config_raises_error(
         self, langextract_recognizer_class, tmp_path
@@ -91,7 +90,6 @@ class TestLangExtractRecognizerInitialization:
         # Missing 'model_url' - required field
         config = {
             "langextract": {
-                "enabled": False,
                 "model_id": "gemma2:2b",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -147,7 +145,6 @@ class TestLangExtractRecognizerAnalyze:
 
         config = {
             "langextract": {
-                "enabled": False,
                 "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
@@ -318,7 +315,6 @@ class TestLangExtractRecognizerErrorHandling:
         # Point to non-existent Ollama server
         config = {
             "langextract": {
-                "enabled": True,
                 "model_id": "gemma2:2b",
                 "model_url": "http://localhost:99999",  # Invalid port
                 "temperature": 0.0,

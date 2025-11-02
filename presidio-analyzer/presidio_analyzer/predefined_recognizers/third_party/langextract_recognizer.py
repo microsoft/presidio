@@ -52,12 +52,6 @@ class LangExtractRecognizer(RemoteRecognizer):
 
         self.config = self._load_config(config_path)
 
-        if not self.config.get("enabled", False):
-            logger.info("LangExtract recognizer disabled")
-            self.enabled = False
-        else:
-            self.enabled = True
-
         if supported_entities is None:
             supported_entities = self._get_required_config("supported_entities")
 
@@ -82,8 +76,7 @@ class LangExtractRecognizer(RemoteRecognizer):
         self.min_score = self._get_required_config("min_score")
 
         # Validate Ollama setup on initialization
-        if self.enabled:
-            self._validate_ollama_setup()
+        self._validate_ollama_setup()
 
         logger.info("Loaded recognizer: %s", self.name)
 
@@ -236,10 +229,6 @@ class LangExtractRecognizer(RemoteRecognizer):
         :param nlp_artifacts: Not used.
         :return: List of detected PII entities.
         """
-        if not self.enabled:
-            logger.debug("LangExtract recognizer is disabled")
-            return []
-
         if not text or not text.strip():
             logger.debug("Empty text provided, returning empty results")
             return []

@@ -117,7 +117,6 @@ def nlp_recognizers() -> Dict[str, EntityRecognizer]:
 def langextract_recognizer_class(ollama_available, tmp_path_factory):
     """
     Provide LangExtractRecognizer class configured for testing.
-    Creates a test config with enabled=true.
     Returns None if Ollama not available or langextract not installed.
     """
     if not ollama_available:
@@ -127,11 +126,11 @@ def langextract_recognizer_class(ollama_available, tmp_path_factory):
         from presidio_analyzer.predefined_recognizers import LangExtractRecognizer
         import yaml
         
-        # Create a test-specific config with enabled=true
+        # Create a test-specific config
         config_dir = tmp_path_factory.mktemp("langextract_config")
         test_config_path = config_dir / "langextract_config.yaml"
         
-        # Load default config and enable it for tests
+        # Load default config
         default_config_path = (
             Path(__file__).parent.parent / 
             "presidio_analyzer" / "conf" / "langextract_config.yaml"
@@ -139,9 +138,6 @@ def langextract_recognizer_class(ollama_available, tmp_path_factory):
         
         with open(default_config_path) as f:
             config = yaml.safe_load(f)
-        
-        # Enable for tests
-        config["langextract"]["enabled"] = True
         
         # Write test config
         with open(test_config_path, 'w') as f:
