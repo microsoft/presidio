@@ -160,9 +160,10 @@ def nlp_recognizers() -> Dict[str, EntityRecognizer]:
 
 
 @pytest.fixture(scope="session")
-def langextract_recognizer_class(ollama_available):
+def langextract_recognizer_class(ollama_available, tmp_path_factory):
     """
-    Provide LangExtractRecognizer class if Ollama is available.
+    Provide LangExtractRecognizer class configured for testing.
+    Creates a test config with enabled=true.
     Returns None if Ollama not available or langextract not installed.
     """
     if not ollama_available:
@@ -170,7 +171,41 @@ def langextract_recognizer_class(ollama_available):
     
     try:
         from presidio_analyzer.predefined_recognizers import LangExtractRecognizer
-        return LangExtractRecognizer
+        import yaml
+        
+        # Create a test-specific config with enabled=true
+        config_dir = tmp_path_factory.mktemp("langextract_config")
+        test_config_path = config_dir / "langextract_config.yaml"
+        
+        # Load default config and enable it for tests
+        default_config_path = (
+            Path(__file__).parent.parent / 
+            "presidio_analyzer" / "conf" / "langextract_config.yaml"
+        )
+        
+        with open(default_config_path) as f:
+            config = yaml.safe_load(f)
+        
+        # Enable for tests
+        config["langextract"]["enabled"] = True
+        
+        # Write test config
+        with open(test_config_path, 'w') as f:
+            yaml.dump(config, f)
+        
+        # Return a factory function that creates recognizers with the test config
+        def create_recognizer(**kwargs):
+            # Use test config if no config_path provided
+            if 'config_path' not in kwargs:
+                kwargs['config_path'] = str(test_config_path)
+            return LangExtractRecognizer(**kwargs)
+        
+        # Store the class and config path for direct access
+        create_recognizer.recognizer_class = LangExtractRecognizer
+        create_recognizer.test_config_path = str(test_config_path)
+        
+        return create_recognizer
+        
     except ImportError:
         return None
 

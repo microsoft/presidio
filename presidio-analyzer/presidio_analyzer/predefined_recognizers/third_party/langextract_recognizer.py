@@ -25,7 +25,9 @@ OLLAMA_INSTALL_DOCS = "https://github.com/google/langextract#using-local-llms-wi
 class LangExtractRecognizer(RemoteRecognizer):
     """PII detection using LangExtract with Ollama local models."""
 
-    DEFAULT_CONFIG_PATH = Path(__file__).parent.parent.parent / "conf" / "langextract_config.yaml"
+    DEFAULT_CONFIG_PATH = (
+        Path(__file__).parent.parent.parent / "conf" / "langextract_config.yaml"
+    )
 
     def __init__(
         self,
@@ -86,7 +88,10 @@ class LangExtractRecognizer(RemoteRecognizer):
         logger.info("Loaded recognizer: %s", self.name)
 
     def _validate_ollama_setup(self) -> None:
-        """Validate Ollama server and model availability. Auto-downloads missing models."""
+        """Validate Ollama server and model availability.
+
+        Auto-downloads missing models.
+        """
         if not self._check_ollama_server():
             error_msg = (
                 f"Ollama server not reachable at {self.model_url}. "
@@ -147,7 +152,10 @@ class LangExtractRecognizer(RemoteRecognizer):
             import subprocess
             import time
 
-            logger.info(f"Downloading model '{self.model_id}' (this may take several minutes)...")
+            logger.info(
+                f"Downloading model '{self.model_id}' "
+                "(this may take several minutes)..."
+            )
             print(f"Downloading model '{self.model_id}'...")
 
             result = subprocess.run(
@@ -167,7 +175,9 @@ class LangExtractRecognizer(RemoteRecognizer):
                     logger.error("Model download succeeded but model not found")
                     return False
             else:
-                logger.error(f"Model download failed with exit code {result.returncode}")
+                logger.error(
+                    f"Model download failed with exit code {result.returncode}"
+                )
                 return False
         except Exception as e:
             logger.error(f"Model download failed: {e}")
@@ -346,7 +356,9 @@ class LangExtractRecognizer(RemoteRecognizer):
     def _calculate_score(self, extraction) -> float:
         default_score = 0.85
 
-        if not hasattr(extraction, 'alignment_status') or not extraction.alignment_status:
+        if not hasattr(extraction, 'alignment_status') or not (
+            extraction.alignment_status
+        ):
             return default_score
 
         alignment_scores = {

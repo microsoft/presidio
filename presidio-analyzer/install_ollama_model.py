@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""
-Install and setup Ollama with required model for LangExtract.
+"""Install and setup Ollama with required model for LangExtract.
+
 Cross-platform script for Linux, macOS, and Windows.
 """
 import platform
@@ -58,16 +58,19 @@ def check_ollama(retries=10):
     print("Checking Ollama connectivity...")
     for i in range(retries):
         try:
-            with urllib.request.urlopen(f"{OLLAMA_URL}/api/tags", timeout=2) as response:
+            with urllib.request.urlopen(
+                f"{OLLAMA_URL}/api/tags", timeout=2
+            ) as response:
                 if response.status == 200:
                     return True
-        except:
+        except Exception:
             if i < retries - 1:
                 print(f"  Retry {i+1}/{retries}...")
             time.sleep(2)
     return False
 
 def main():
+    """Set up Ollama installation and ensure it's running."""
     print("Ollama Setup")
     print("="*40)
 
