@@ -314,7 +314,11 @@ jobs:
           python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready
-        run: sleep 60
+        run: sleep 150
+
+      - name: Download Ollama model for LangExtract tests
+        run: |
+          docker exec $(docker ps -qf "name=ollama") ollama pull gemma2:2b
 
       - name: Run E2E tests
         working-directory: e2e-tests
@@ -397,7 +401,11 @@ jobs:
           python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready
-        run: sleep 60
+        run: sleep 150
+
+      - name: Download Ollama model for LangExtract tests
+        run: |
+          docker exec $(docker ps -qf "name=ollama") ollama pull gemma2:2b
 
       - name: Run E2E tests
         working-directory: e2e-tests

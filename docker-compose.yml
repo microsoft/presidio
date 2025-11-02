@@ -8,9 +8,9 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
       interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
 
   presidio-anonymizer:
     image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-anonymizer${TAG}
