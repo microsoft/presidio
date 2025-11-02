@@ -2,17 +2,24 @@
 
 ## Introduction
 
-LangExtract is a library that enables LLM-based extraction of structured information from text,
-including PII detection. It provides a flexible way to use various LLM providers (Google Gemini,
-OpenAI, Ollama for local models) for detecting personally identifiable information.
-This document demonstrates Presidio integration with LangExtract.
+[LangExtract](https://github.com/google/langextract) uses large language models (LLMs) to detect personally identifiable information (PII) in text.
+This integration with Presidio currently supports **Ollama for local LLM deployment only**.
 
 ## Supported LLM Providers
 
-LangExtract supports multiple LLM providers:
-- **Google Gemini** (default)
-- **OpenAI** (including Azure OpenAI)
-- **Ollama** (for local model deployment)
+Currently, only **Ollama** (local model deployment) is supported.
+
+### Setting up Ollama
+
+You have two options to set up Ollama:
+
+1. **Manual setup**: Follow the [official LangExtract Ollama guide](https://github.com/google/langextract?tab=readme-ov-file#using-local-llms-with-ollama).
+
+2. **Docker Compose** (recommended): Use the included configuration:
+   ```bash
+   docker compose up -d ollama
+   ```
+   The Ollama service will be available at `http://localhost:11434`.
 
 ## Prerequisites
 
@@ -22,33 +29,22 @@ To use LangExtract with Presidio, install the required dependencies:
 pip install presidio-analyzer[langextract]
 ```
 
-### Configuration
-
-LangExtract requires configuration through environment variables or the YAML configuration file:
-
-- For **Google Gemini**: Set `LANGEXTRACT_API_KEY` environment variable
-- For **OpenAI**: Configure `api_key` and optionally `base_url` in the config file
-- For **Ollama**: Configure `model_url` to point to your local Ollama instance
-
-Configuration is managed through `presidio-analyzer/presidio_analyzer/conf/langextract_config.yaml`.
+Create your own `langextract_config.yaml` file with the Ollama URL (default: `http://localhost:11434`) or use the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config.yaml).
 
 ## LangExtract Recognizer
 
 [The implementation of the `LangExtractRecognizer` can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/langextract_recognizer.py).
 
-## How to integrate LangExtract into Presidio
+## How to Use
 
-1. Install the package with the langextract extra:
+1. Install the package:
    ```sh
    pip install presidio-analyzer[langextract]
    ```
 
-2. Set up environment variables (for Gemini):
-   ```bash
-   export LANGEXTRACT_API_KEY=your_api_key
-   ```
+2. Set up Ollama (see above).
 
-3. Add the `LangExtractRecognizer` to the recognizer registry:
+3. Add the recognizer to Presidio:
    
    ```python
    from presidio_analyzer import AnalyzerEngine
@@ -64,12 +60,13 @@ Configuration is managed through `presidio-analyzer/presidio_analyzer/conf/lange
 
 ## Configuration Options
 
-The recognizer can be customized through the `langextract_config.yaml` file. Key configuration options include:
+Customize the recognizer in the `langextract_config.yaml` file:
 
 - `enabled`: Enable/disable the recognizer
-- `model_id`: The LLM model to use (e.g., "gemini-2.5-flash", "gpt-4")
-- `supported_entities`: List of PII entity types to detect
-- `entity_mappings`: Map between LangExtract and Presidio entity names
-- `min_score`: Minimum confidence score threshold
+- `model_id`: The Ollama model to use (e.g., "gemma2:2b")
+- `model_url`: Ollama server URL (default: `http://localhost:11434`)
+- `supported_entities`: PII entity types to detect
+- `entity_mappings`: Map LangExtract entities to Presidio entity names
+- `min_score`: Minimum confidence score
 
-For detailed configuration options, refer to the [configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config.yaml).
+See the [configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config.yaml) for all options.
