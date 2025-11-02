@@ -579,18 +579,12 @@ def test_given_langextract_enabled_then_detects_pii_with_llm():
     request_body = """
     {
         "text": "My name is Sarah Johnson and I live in Seattle",
-        "language": "en",
-        "ad_hoc_recognizers": [
-            {
-                "name": "LangExtract LLM PII",
-                "type": "LangExtractRecognizer",
-                "supported_language": "en",
-                "config_path": "/usr/bin/presidio-analyzer/presidio_analyzer/conf/langextract_config_e2e.yaml"
-            }
-        ]
+        "language": "en"
     }
     """
     
     response_status, response_content = analyze(request_body)
     
     assert response_status == 200
+    # Note: This test requires RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/e2e_recognizers.yaml
+    # to be set in the CI environment to enable LangExtract recognizer

@@ -351,7 +351,7 @@ jobs:
           python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready
-        run: sleep 150
+        run: sleep 60
 
       - name: Download Ollama model for LangExtract tests
         run: |
@@ -362,6 +362,8 @@ jobs:
         run: |
           source env/bin/activate
           pytest -vv --tb=short
+        env:
+          RECOGNIZER_REGISTRY_CONF_FILE: presidio_analyzer/conf/e2e_recognizers.yaml
 
       - name: Capture Docker logs on failure (${{ matrix.platform }})
         if: failure()
