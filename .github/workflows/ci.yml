@@ -440,7 +440,7 @@ jobs:
           python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready
-        run: sleep 150
+        run: sleep 60
 
       - name: Download Ollama model for LangExtract tests
         run: |
