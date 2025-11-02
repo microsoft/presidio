@@ -144,17 +144,16 @@ class LangExtractRecognizer(RemoteRecognizer):
             return False
 
     def _download_model(self) -> bool:
-        """Download model using ollama pull command."""
+        """Download model using ollama pull command with progress output."""
         try:
             import subprocess
             import time
             
             logger.info(f"Downloading model '{self.model_id}' (this may take several minutes)...")
+            print(f"Downloading model '{self.model_id}'...")
             
             result = subprocess.run(
                 ["ollama", "pull", self.model_id],
-                capture_output=True,
-                text=True,
                 timeout=600  # 10 minute timeout
             )
             
@@ -164,12 +163,13 @@ class LangExtractRecognizer(RemoteRecognizer):
                 # Verify model is now available
                 if self._check_model_available():
                     logger.info(f"Model '{self.model_id}' downloaded successfully")
+                    print(f"✓ Model '{self.model_id}' ready")
                     return True
                 else:
                     logger.error(f"Model download succeeded but model not found")
                     return False
             else:
-                logger.error(f"Model download failed: {result.stderr}")
+                logger.error(f"Model download failed with exit code {result.returncode}")
                 return False
         except Exception as e:
             logger.error(f"Model download failed: {e}")
