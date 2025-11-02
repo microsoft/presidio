@@ -2,7 +2,7 @@
 
 These tests require:
 - Ollama to be running
-- The llama3.2:1b model to be pre-installed (run: ollama pull llama3.2:1b)
+- The gemma2:2b model to be pre-installed (run: ollama pull gemma2:2b)
 Tests are skipped if Ollama is not available.
 """
 import pytest
@@ -60,7 +60,7 @@ class TestLangExtractRecognizerInitialization:
         config = {
             "langextract": {
                 "enabled": False,
-                "model_id": "llama3.2:1b",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -92,7 +92,7 @@ class TestLangExtractRecognizerInitialization:
         config = {
             "langextract": {
                 "enabled": False,
-                "model_id": "llama3.2:1b",
+                "model_id": "gemma2:2b",
                 "temperature": 0.0,
                 "min_score": 0.5,
                 "supported_entities": ["PERSON"],
@@ -148,7 +148,7 @@ class TestLangExtractRecognizerAnalyze:
         config = {
             "langextract": {
                 "enabled": False,
-                "model_id": "llama3.2:1b",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -319,7 +319,7 @@ class TestLangExtractRecognizerErrorHandling:
         config = {
             "langextract": {
                 "enabled": True,
-                "model_id": "llama3.2:1b",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:99999",  # Invalid port
                 "temperature": 0.0,
                 "min_score": 0.5,
