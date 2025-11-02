@@ -10,6 +10,7 @@ import time
 import urllib.request
 
 OLLAMA_URL = "http://localhost:11434"
+DEFAULT_MODEL = "gemma2:2b" # i dont like it but lets see if it works
 
 def install_ollama():
     """Install Ollama based on operating system."""
@@ -69,6 +70,18 @@ def check_ollama(retries=10):
             time.sleep(2)
     return False
 
+def pull_model(model_name=DEFAULT_MODEL):
+    """Pull Ollama model."""
+    print(f"\nPulling model: {model_name}")
+    print("This may take several minutes...")
+    result = subprocess.run(["ollama", "pull", model_name])
+    if result.returncode == 0:
+        print(f"✓ Model {model_name} ready")
+        return True
+    else:
+        print(f"✗ Failed to pull model {model_name}")
+        return False
+
 def main():
     """Set up Ollama installation and ensure it's running."""
     print("Ollama Setup")
@@ -93,8 +106,13 @@ def main():
     else:
         print("✓ Ollama already running")
 
+    # Pull model
+    if not pull_model():
+        print("✗ Failed to pull model")
+        sys.exit(1)
+
     print("\n" + "="*40)
-    print("✓ Ollama ready")
+    print("✓ Ollama ready with model")
     print("="*40)
 
 if __name__ == "__main__":

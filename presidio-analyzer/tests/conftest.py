@@ -1,6 +1,4 @@
 import shutil
-import subprocess
-import platform
 from pathlib import Path
 from typing import Dict, List
 
@@ -22,31 +20,6 @@ from presidio_analyzer import RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
 from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS, PREDEFINED_RECOGNIZERS
 from tests.mocks import RecognizerRegistryMock, NlpEngineMock
-
-
-def _setup_ollama_for_tests():
-    """Run install_ollama_model.py script to setup Ollama."""
-    script_path = Path(__file__).parent.parent / "install_ollama_model.py"
-    if not script_path.exists():
-        print(f"⚠ Ollama setup script not found: {script_path}")
-        return False
-    
-    try:
-        result = subprocess.run(
-            ["python", str(script_path)],
-            capture_output=True,
-            timeout=600,  # 10 minutes for installation + startup
-            text=True
-        )
-        if result.returncode == 0:
-            print("✓ Ollama setup completed via install_ollama_model.py")
-            return True
-        else:
-            print(f"✗ Ollama setup failed: {result.stderr}")
-            return False
-    except subprocess.SubprocessError as e:
-        print(f"✗ Failed to run Ollama setup script: {e}")
-        return False
 
 
 def pytest_configure(config):
@@ -122,36 +95,25 @@ def spacy_nlp_engine(nlp_engines):
 def ollama_available() -> bool:
     """
     Check if Ollama is running and ready for LangExtract tests.
-    Attempts to auto-install and setup if not found.
+    Skips tests if Ollama is not available.
     """
     if not REQUESTS_AVAILABLE:
         print("⚠ requests library not available - skipping Ollama tests")
         return False
     
-    # First check if Ollama is already ready
+    # Check if Ollama is running
     try:
         response = requests.get("http://localhost:11434/api/tags", timeout=2)
         if response.status_code == 200:
-            print("✓ Ollama already running and ready")
+            print("✓ Ollama running and ready for LangExtract tests")
             return True
     except Exception:
-        # Ollama not available, will attempt setup
-        print("Ollama not responding, will attempt setup")
-    
-    # Not available - try to set up
-    print("\n" + "="*60)
-    print("Ollama not found - attempting automatic setup for tests")
-    print("="*60)
-    
-    if not _setup_ollama_for_tests():
-        print("⚠ Skipping LangExtract tests - Ollama setup failed")
+        print("⚠ Ollama not available - skipping LangExtract tests")
+        print("  To run LangExtract tests, install Ollama:")
+        print("  poetry run python install_ollama_model.py")
         return False
     
-    print("="*60)
-    print("✓ Ollama ready for LangExtract tests!")
-    print("="*60 + "\n")
-    
-    return True
+    return False
 
 
 @pytest.fixture(scope="session")

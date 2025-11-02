@@ -129,6 +129,12 @@ jobs:
             poetry run python -m spacy download $model
           done
 
+      - name: Set up Ollama for Analyzer tests
+        if: matrix.component.name == 'Analyzer'
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          poetry run python install_ollama_model.py
+
       - name: Run unit tests
         working-directory: ${{ matrix.component.path }}
         run: |
