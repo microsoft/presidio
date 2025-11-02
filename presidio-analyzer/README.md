@@ -21,7 +21,9 @@ pip install presidio-analyzer[langextract]
 
 # Setup Ollama
 curl -fsSL https://ollama.com/install.sh | sh
-ollama pull llama3.2:3b
+```bash
+ollama pull gemma2:2b
+```
 ollama serve
 ```
 

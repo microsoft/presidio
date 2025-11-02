@@ -1,4 +1,17 @@
 services:
+  ollama:
+    image: ollama/ollama:0.5.4
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   presidio-anonymizer:
     image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-anonymizer${TAG}
     build:
@@ -17,8 +30,12 @@ services:
         - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-analyzer:latest
     environment:
       - PORT=5001
+      - OLLAMA_HOST=http://ollama:11434
     ports:
       - "5002:5001"
+    depends_on:
+      ollama:
+        condition: service_healthy
   presidio-image-redactor:
     image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
@@ -29,3 +46,6 @@ services:
       - PORT=5001
     ports:
       - "5003:5001"
+
+volumes:
+  ollama-data:

@@ -1,7 +1,10 @@
 import logging
 import os
+import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
+import urllib.request
+import urllib.error
 
 import yaml
 
@@ -16,6 +19,9 @@ from presidio_analyzer import AnalysisExplanation, RecognizerResult, RemoteRecog
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
+
+LANGEXTRACT_DOCS_URL = "https://github.com/google/langextract"
+OLLAMA_INSTALL_DOCS = "https://github.com/google/langextract#using-local-llms-with-ollama"
 
 
 class LangExtractRecognizer(RemoteRecognizer):
@@ -53,7 +59,7 @@ class LangExtractRecognizer(RemoteRecognizer):
             self.enabled = True
 
         if supported_entities is None:
-            supported_entities = self.config.get("supported_entities", [])
+            supported_entities = self._get_required_config("supported_entities")
 
         super().__init__(
             supported_entities=supported_entities,
@@ -65,18 +71,109 @@ class LangExtractRecognizer(RemoteRecognizer):
 
         self.prompt_description = self._load_prompt_file()
         self.examples = self._load_examples_file()
-        self.entity_mappings = self.config.get("entity_mappings", {})
+        self.entity_mappings = self._get_required_config("entity_mappings")
         self._presidio_to_langextract = {
             v: k for k, v in self.entity_mappings.items()
         }
 
-        # Ollama configuration (local models only)
-        self.model_id = self.config.get("model_id", "llama3.2:3b")
-        self.model_url = self.config.get("model_url", "http://localhost:11434")
+        self.model_id = self._get_required_config("model_id")
+        self.model_url = self._get_required_config("model_url")
         self.temperature = self.config.get("temperature")
-        self.min_score = self.config.get("min_score", 0.5)
+        self.min_score = self._get_required_config("min_score")
+
+        # Validate Ollama setup on initialization
+        if self.enabled:
+            self._validate_ollama_setup()
 
         logger.info("Loaded recognizer: %s", self.name)
+
+    def _validate_ollama_setup(self) -> None:
+        """Validate Ollama server and model availability. Auto-downloads missing models."""
+        if not self._check_ollama_server():
+            error_msg = (
+                f"Ollama server not reachable at {self.model_url}. "
+                f"Docs: {LANGEXTRACT_DOCS_URL}"
+            )
+            logger.error(error_msg)
+            raise ConnectionError(error_msg)
+
+        if not self._check_model_available():
+            logger.warning(f"Model '{self.model_id}' not found. Downloading...")
+            if not self._download_model():
+                error_msg = (
+                    f"Failed to download model '{self.model_id}'. "
+                    f"Manually run: ollama pull {self.model_id}. "
+                    f"Docs: {OLLAMA_INSTALL_DOCS}"
+                )
+                logger.error(error_msg)
+                raise RuntimeError(error_msg)
+            logger.info(f"Downloaded model '{self.model_id}'")
+
+        logger.info(f"Ollama ready with model '{self.model_id}'")
+
+    def _check_ollama_server(self) -> bool:
+        """Check if Ollama server is running and accessible."""
+        try:
+            url = f"{self.model_url}/api/tags"
+            request = urllib.request.Request(url, method='GET')
+            with urllib.request.urlopen(request, timeout=5) as response:
+                return response.status == 200
+        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
+            logger.warning(f"Ollama server check failed at {self.model_url}: {e}")
+            return False
+
+    def _check_model_available(self) -> bool:
+        """Check if the configured model is pulled and available."""
+        try:
+            url = f"{self.model_url}/api/tags"
+            request = urllib.request.Request(url, method='GET')
+            with urllib.request.urlopen(request, timeout=5) as response:
+                import json
+                data = json.loads(response.read().decode('utf-8'))
+                models = data.get('models', [])
+                
+                # Check if our model is in the list
+                for model in models:
+                    model_name = model.get('name', '')
+                    # Match both "gemma2:2b" and "gemma2:2b:latest"
+                    if model_name.startswith(self.model_id):
+                        return True
+                return False
+        except Exception as e:
+            logger.warning(f"Model availability check failed: {e}")
+            return False
+
+    def _download_model(self) -> bool:
+        """Download model using ollama pull command."""
+        try:
+            import subprocess
+            import time
+            
+            logger.info(f"Downloading model '{self.model_id}' (this may take several minutes)...")
+            
+            result = subprocess.run(
+                ["ollama", "pull", self.model_id],
+                capture_output=True,
+                text=True,
+                timeout=600  # 10 minute timeout
+            )
+            
+            if result.returncode == 0:
+                # Wait a moment for model to be fully registered
+                time.sleep(2)
+                # Verify model is now available
+                if self._check_model_available():
+                    logger.info(f"Model '{self.model_id}' downloaded successfully")
+                    return True
+                else:
+                    logger.error(f"Model download succeeded but model not found")
+                    return False
+            else:
+                logger.error(f"Model download failed: {result.stderr}")
+                return False
+        except Exception as e:
+            logger.error(f"Model download failed: {e}")
+            return False
 
     def _load_config(self, config_path: Optional[str] = None) -> Dict:
         if config_path is None:
@@ -101,11 +198,17 @@ class LangExtractRecognizer(RemoteRecognizer):
 
         return langextract_config
 
-    def _load_prompt_file(self) -> str:
-        prompt_file = self.config.get("prompt_file")
-        if not prompt_file:
-            raise ValueError("Configuration must specify 'prompt_file'")
+    def _get_required_config(self, key: str):
+        """Get required configuration value or raise error if missing."""
+        value = self.config.get(key)
+        if value is None:
+            raise ValueError(
+                f"Missing required configuration '{key}' in langextract_config.yaml"
+            )
+        return value
 
+    def _load_prompt_file(self) -> str:
+        prompt_file = self._get_required_config("prompt_file")
         prompt_path = Path(__file__).parent.parent.parent / "conf" / prompt_file
 
         if not prompt_path.exists():
@@ -115,10 +218,7 @@ class LangExtractRecognizer(RemoteRecognizer):
             return f.read()
 
     def _load_examples_file(self) -> List:
-        examples_file = self.config.get("examples_file")
-        if not examples_file:
-            raise ValueError("Configuration must specify 'examples_file'")
-
+        examples_file = self._get_required_config("examples_file")
         examples_path = Path(__file__).parent.parent.parent / "conf" / examples_file
 
         if not examples_path.exists():

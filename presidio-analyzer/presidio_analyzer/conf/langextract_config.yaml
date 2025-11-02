@@ -2,18 +2,14 @@
 # https://github.com/google/langextract
 #
 # Installation:
-#   1. Install: curl -fsSL https://ollama.com/install.sh | sh
-#   2. Pull model: ollama pull llama3.2:3b
-#   3. Start server: ollama serve
-#   4. Install deps: pip install presidio-analyzer[langextract]
-#
+# follow this link https://github.com/google/langextract#using-local-llms-with-ollama
 # Note: Cloud provider support (Gemini, OpenAI) coming in future releases.
 
 langextract:
   enabled: false
   
   # Ollama local model configuration
-  model_id: "llama3.2:3b"
+  model_id: "gemma2:2b"
   model_url: "http://localhost:11434"
   temperature: null  # Optional: Set to 0.0-1.0 for deterministic/creative output
   

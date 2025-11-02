@@ -24,103 +24,28 @@ from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS, PREDEFINED
 from tests.mocks import RecognizerRegistryMock, NlpEngineMock
 
 
-def _install_ollama_for_tests():
-    """Install Ollama if not already installed (for LangExtract tests)."""
-    # Check if ollama command exists
-    try:
-        subprocess.run(["ollama", "--version"], 
-                      capture_output=True, check=True, timeout=5)
-        return True  # Already installed
-    except (FileNotFoundError, subprocess.SubprocessError):
-        pass
-    
-    print("\n=== Installing Ollama for LangExtract tests ===")
-    
-    system = platform.system()
-    if system == "Linux":
-        # Linux installation
-        try:
-            result = subprocess.run(
-                ["curl", "-fsSL", "https://ollama.com/install.sh"],
-                capture_output=True, check=True, timeout=30
-            )
-            subprocess.run(
-                ["sh", "-c", result.stdout.decode()],
-                check=True, timeout=300
-            )
-            print("✓ Ollama installed successfully")
-            return True
-        except subprocess.SubprocessError as e:
-            print(f"✗ Failed to install Ollama: {e}")
-            return False
-    else:
-        print(f"⚠ Automatic Ollama installation not supported on {system}")
-        print("Please install manually from: https://ollama.com/download")
-        return False
-
-
-def _start_ollama_service():
-    """Start Ollama service in background."""
-    if not REQUESTS_AVAILABLE:
+def _setup_ollama_for_tests():
+    """Run install_ollama_model.py script to setup Ollama."""
+    script_path = Path(__file__).parent.parent / "install_ollama_model.py"
+    if not script_path.exists():
+        print(f"⚠ Ollama setup script not found: {script_path}")
         return False
     
     try:
-        # Check if already running
-        response = requests.get("http://localhost:11434/api/tags", timeout=2)
-        if response.status_code == 200:
-            return True  # Already running
-    except Exception:
-        pass
-    
-    print("Starting Ollama service...")
-    try:
-        subprocess.Popen(
-            ["ollama", "serve"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        # Wait for service to start
-        import time
-        for _ in range(10):
-            time.sleep(1)
-            try:
-                response = requests.get("http://localhost:11434/api/tags", timeout=2)
-                if response.status_code == 200:
-                    print("✓ Ollama service started")
-                    return True
-            except Exception:
-                continue
-        print("✗ Ollama service did not start in time")
-        return False
-    except Exception as e:
-        print(f"✗ Failed to start Ollama service: {e}")
-        return False
-
-
-def _pull_ollama_model(model_name="llama3.2:3b"):
-    """Pull Ollama model if not already available."""
-    if not REQUESTS_AVAILABLE:
-        return False
-    
-    try:
-        # Check if model already exists
-        response = requests.get("http://localhost:11434/api/tags", timeout=2)
-        if response.status_code == 200:
-            models = response.json().get("models", [])
-            if any(model_name in m.get("name", "") for m in models):
-                return True  # Already available
-        
-        print(f"\n=== Pulling Ollama model: {model_name} ===")
-        print("This may take a few minutes (model is ~2GB)...")
-        
         result = subprocess.run(
-            ["ollama", "pull", model_name],
-            check=True, timeout=600  # 10 minute timeout
+            ["python", str(script_path)],
+            capture_output=True,
+            timeout=600,  # 10 minutes for installation + startup
+            text=True
         )
-        print(f"✓ Model {model_name} pulled successfully")
-        return True
+        if result.returncode == 0:
+            print("✓ Ollama setup completed via install_ollama_model.py")
+            return True
+        else:
+            print(f"✗ Ollama setup failed: {result.stderr}")
+            return False
     except subprocess.SubprocessError as e:
-        print(f"✗ Failed to pull model: {e}")
+        print(f"✗ Failed to run Ollama setup script: {e}")
         return False
 
 
@@ -196,19 +121,19 @@ def spacy_nlp_engine(nlp_engines):
 @pytest.fixture(scope="session")
 def ollama_available() -> bool:
     """
-    Check if Ollama is running and llama3.2:3b model is available.
+    Check if Ollama is running and ready for LangExtract tests.
     Attempts to auto-install and setup if not found.
     """
     if not REQUESTS_AVAILABLE:
+        print("⚠ requests library not available - skipping Ollama tests")
         return False
     
-    # First check if already available
+    # First check if Ollama is already ready
     try:
         response = requests.get("http://localhost:11434/api/tags", timeout=2)
         if response.status_code == 200:
-            models = response.json().get("models", [])
-            if any("llama3.2:3b" in m.get("name", "") for m in models):
-                return True  # Already set up
+            print("✓ Ollama already running and ready")
+            return True
     except Exception:
         pass
     
@@ -217,23 +142,12 @@ def ollama_available() -> bool:
     print("Ollama not found - attempting automatic setup for tests")
     print("="*60)
     
-    # Step 1: Install Ollama
-    if not _install_ollama_for_tests():
-        print("⚠ Skipping LangExtract tests - Ollama installation failed")
-        return False
-    
-    # Step 2: Start Ollama service
-    if not _start_ollama_service():
-        print("⚠ Skipping LangExtract tests - service failed to start")
-        return False
-    
-    # Step 3: Pull model
-    if not _pull_ollama_model("llama3.2:3b"):
-        print("⚠ Skipping LangExtract tests - model pull failed")
+    if not _setup_ollama_for_tests():
+        print("⚠ Skipping LangExtract tests - Ollama setup failed")
         return False
     
     print("="*60)
-    print("✓ Ollama setup complete for LangExtract tests!")
+    print("✓ Ollama ready for LangExtract tests!")
     print("="*60 + "\n")
     
     return True

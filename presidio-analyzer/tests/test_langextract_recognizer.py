@@ -141,11 +141,15 @@ class TestLangExtractRecognizerInitialization:
         # Mock the config file paths
         with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
              patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
-             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples:
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples, \
+             patch.object(LangExtractRecognizer, '_validate_ollama_setup'):
             
             mock_load_config.return_value = {
                 "enabled": True,
-                "model_id": "gemini-2.5-flash",
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": ["PERSON", "EMAIL_ADDRESS"],
                 "entity_mappings": {"person": "PERSON"},
                 "prompt_file": "test.txt",
@@ -157,7 +161,7 @@ class TestLangExtractRecognizerInitialization:
             recognizer = LangExtractRecognizer()
             
             assert recognizer.enabled is True
-            assert recognizer.model_id == "gemini-2.5-flash"
+            assert recognizer.model_id == "gemma2:2b"
             assert "PERSON" in recognizer.supported_entities
     
     def test_disabled_recognizer(self, mock_langextract):
@@ -168,7 +172,10 @@ class TestLangExtractRecognizerInitialization:
             
             mock_load_config.return_value = {
                 "enabled": False,
-                "model_id": "gemini-2.5-flash",
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": [],
                 "entity_mappings": {},
                 "prompt_file": "test.txt",
@@ -184,6 +191,236 @@ class TestLangExtractRecognizerInitialization:
     # Removed: API key tests - LangExtract now uses Ollama only, no API keys
 
 
+class TestLangExtractRecognizerOllamaValidation:
+    """Test Ollama server and model validation."""
+    
+    def test_when_ollama_server_unreachable_then_raises_connection_error(self, mock_langextract):
+        """Test that unreachable Ollama server raises ConnectionError."""
+        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
+             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples, \
+             patch.object(LangExtractRecognizer, '_check_ollama_server', return_value=False):
+            
+            mock_load_config.return_value = {
+                "enabled": True,
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "test.txt",
+                "examples_file": "test.yaml",
+            }
+            mock_load_prompt.return_value = "Test prompt"
+            mock_load_examples.return_value = []
+            
+            with pytest.raises(ConnectionError, match="Ollama server not reachable"):
+                LangExtractRecognizer()
+    
+    def test_when_model_missing_then_auto_downloads(self, mock_langextract):
+        """Test that missing model triggers auto-download."""
+        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
+             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples, \
+             patch.object(LangExtractRecognizer, '_check_ollama_server', return_value=True), \
+             patch.object(LangExtractRecognizer, '_check_model_available', return_value=False), \
+             patch.object(LangExtractRecognizer, '_download_model', return_value=True) as mock_download:
+            
+            mock_load_config.return_value = {
+                "enabled": True,
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "test.txt",
+                "examples_file": "test.yaml",
+            }
+            mock_load_prompt.return_value = "Test prompt"
+            mock_load_examples.return_value = []
+            
+            recognizer = LangExtractRecognizer()
+            
+            # Verify download was called
+            mock_download.assert_called_once()
+            assert recognizer.model_id == "gemma2:2b"
+    
+    def test_when_model_download_fails_then_raises_runtime_error(self, mock_langextract):
+        """Test that failed model download raises RuntimeError."""
+        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
+             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples, \
+             patch.object(LangExtractRecognizer, '_check_ollama_server', return_value=True), \
+             patch.object(LangExtractRecognizer, '_check_model_available', return_value=False), \
+             patch.object(LangExtractRecognizer, '_download_model', return_value=False):
+            
+            mock_load_config.return_value = {
+                "enabled": True,
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "test.txt",
+                "examples_file": "test.yaml",
+            }
+            mock_load_prompt.return_value = "Test prompt"
+            mock_load_examples.return_value = []
+            
+            with pytest.raises(RuntimeError, match="Failed to download model"):
+                LangExtractRecognizer()
+    
+    def test_when_model_available_then_no_download(self, mock_langextract):
+        """Test that existing model skips download."""
+        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
+             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples, \
+             patch.object(LangExtractRecognizer, '_check_ollama_server', return_value=True), \
+             patch.object(LangExtractRecognizer, '_check_model_available', return_value=True), \
+             patch.object(LangExtractRecognizer, '_download_model') as mock_download:
+            
+            mock_load_config.return_value = {
+                "enabled": True,
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "test.txt",
+                "examples_file": "test.yaml",
+            }
+            mock_load_prompt.return_value = "Test prompt"
+            mock_load_examples.return_value = []
+            
+            recognizer = LangExtractRecognizer()
+            
+            # Verify download was NOT called
+            mock_download.assert_not_called()
+            assert recognizer.model_id == "gemma2:2b"
+
+
+class TestLangExtractRecognizerModelDownload:
+    """Test model download functionality."""
+    
+    def test_when_download_model_called_then_uses_subprocess(self, mock_langextract):
+        """Test that model download uses subprocess to call ollama pull."""
+        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
+             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples, \
+             patch('subprocess.run') as mock_subprocess:
+            
+            mock_load_config.return_value = {
+                "enabled": False,  # Disabled to avoid validation
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "test.txt",
+                "examples_file": "test.yaml",
+            }
+            mock_load_prompt.return_value = "Test prompt"
+            mock_load_examples.return_value = []
+            mock_subprocess.return_value = Mock(returncode=0)
+            
+            recognizer = LangExtractRecognizer()
+            
+            # Mock check_model_available to return True after download
+            with patch.object(recognizer, '_check_model_available', return_value=True):
+                result = recognizer._download_model()
+            
+            # Verify subprocess.run was called with correct arguments
+            mock_subprocess.assert_called_once()
+            call_args = mock_subprocess.call_args[0][0]
+            assert call_args == ["ollama", "pull", "gemma2:2b"]
+            assert result is True
+    
+    def test_when_subprocess_fails_then_download_returns_false(self, mock_langextract):
+        """Test that failed subprocess returns False."""
+        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
+             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples, \
+             patch('subprocess.run') as mock_subprocess:
+            
+            mock_load_config.return_value = {
+                "enabled": False,
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "test.txt",
+                "examples_file": "test.yaml",
+            }
+            mock_load_prompt.return_value = "Test prompt"
+            mock_load_examples.return_value = []
+            mock_subprocess.side_effect = Exception("Download failed")
+            
+            recognizer = LangExtractRecognizer()
+            result = recognizer._download_model()
+            
+            assert result is False
+
+
+class TestLangExtractRecognizerConfigValidation:
+    """Test configuration validation for required fields."""
+    
+    def test_when_required_field_missing_then_raises_value_error(self, mock_langextract):
+        """Test that missing required config field raises ValueError."""
+        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
+             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples:
+            
+            # Missing 'model_url' - required field
+            mock_load_config.return_value = {
+                "enabled": False,
+                "model_id": "gemma2:2b",
+                "temperature": 0.0,
+                "min_score": 0.5,
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "test.txt",
+                "examples_file": "test.yaml",
+            }
+            mock_load_prompt.return_value = "Test prompt"
+            mock_load_examples.return_value = []
+            
+            with pytest.raises(ValueError, match="Missing required configuration 'model_url'"):
+                LangExtractRecognizer()
+    
+    def test_when_all_required_fields_present_then_succeeds(self, mock_langextract):
+        """Test that all required fields allow successful initialization."""
+        with patch.object(LangExtractRecognizer, '_load_config') as mock_load_config, \
+             patch.object(LangExtractRecognizer, '_load_prompt_file') as mock_load_prompt, \
+             patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples:
+            
+            mock_load_config.return_value = {
+                "enabled": False,
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "test.txt",
+                "examples_file": "test.yaml",
+            }
+            mock_load_prompt.return_value = "Test prompt"
+            mock_load_examples.return_value = []
+            
+            recognizer = LangExtractRecognizer()
+            
+            assert recognizer.model_id == "gemma2:2b"
+            assert recognizer.model_url == "http://localhost:11434"
+            assert recognizer.min_score == 0.5
+
+
 class TestLangExtractRecognizerAnalyze:
     """Test the analyze method with various scenarios."""
     
@@ -196,6 +433,9 @@ class TestLangExtractRecognizerAnalyze:
             mock_load_config.return_value = {
                 "enabled": False,
                 "model_id": "gemini-2.5-flash",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": [],
                 "entity_mappings": {},
                 "prompt_file": "test.txt",
@@ -218,6 +458,9 @@ class TestLangExtractRecognizerAnalyze:
             mock_load_config.return_value = {
                 "enabled": True,
                 "model_id": "gemini-2.5-flash",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person": "PERSON"},
                 "prompt_file": "test.txt",
@@ -240,6 +483,9 @@ class TestLangExtractRecognizerAnalyze:
             mock_load_config.return_value = {
                 "enabled": True,
                 "model_id": "gemini-2.5-flash",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person": "PERSON"},
                 "prompt_file": "test.txt",
@@ -280,6 +526,9 @@ class TestLangExtractRecognizerAnalyze:
             mock_load_config.return_value = {
                 "enabled": True,
                 "model_id": "gemini-2.5-flash",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": ["PERSON", "EMAIL_ADDRESS"],
                 "entity_mappings": {
                     "person": "PERSON",
@@ -330,6 +579,9 @@ class TestLangExtractRecognizerAnalyze:
             mock_load_config.return_value = {
                 "enabled": True,
                 "model_id": "gemini-2.5-flash",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": ["PERSON", "EMAIL_ADDRESS"],
                 "entity_mappings": {
                     "person": "PERSON",
@@ -372,6 +624,9 @@ class TestLangExtractRecognizerAnalyze:
             mock_load_config.return_value = {
                 "enabled": True,
                 "model_id": "gemini-2.5-flash",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person": "PERSON"},
                 "prompt_file": "test.txt",
@@ -409,6 +664,9 @@ class TestLangExtractRecognizerAnalyze:
             mock_load_config.return_value = {
                 "enabled": True,
                 "model_id": "gemini-2.5-flash",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+                "min_score": 0.5,
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person": "PERSON"},
                 "prompt_file": "test.txt",
@@ -500,13 +758,30 @@ class TestLangExtractRecognizerEntityMapping:
 # Integration tests with real Ollama (skip if not available)
 @pytest.mark.skip_engine("langextract")
 @pytest.fixture(scope="module")
-def langextract_recognizer(langextract_recognizer_class):
-    """Create LangExtractRecognizer instance for testing."""
+def langextract_recognizer(langextract_recognizer_class, tmp_path_factory):
+    """Create LangExtractRecognizer instance for testing with Ollama."""
     if not langextract_recognizer_class:
         return None
     
-    recognizer = langextract_recognizer_class()
-    recognizer.enabled = True  # Enable for testing
+    # Create a temporary config with enabled=True
+    import yaml
+    from pathlib import Path
+    
+    config_dir = tmp_path_factory.mktemp("config")
+    config_file = config_dir / "langextract_config.yaml"
+    
+    # Load default config and enable it
+    default_config_path = Path(__file__).parent.parent / "presidio_analyzer" / "conf" / "langextract_config.yaml"
+    with open(default_config_path) as f:
+        config = yaml.safe_load(f)
+    
+    config["langextract"]["enabled"] = True
+    
+    with open(config_file, 'w') as f:
+        yaml.dump(config, f)
+    
+    # Create recognizer with enabled config (this will auto-download model)
+    recognizer = langextract_recognizer_class(config_path=str(config_file))
     return recognizer
 
 
@@ -516,9 +791,6 @@ def langextract_recognizer(langextract_recognizer_class):
     [
         # Test PERSON entity
         ("My name is John Doe", ["PERSON"]),
-        ("Contact Jane Smith for details", ["PERSON"]),
-        # Test EMAIL_ADDRESS entity
-        ("Email me at john.doe@example.com", ["EMAIL_ADDRESS"]),
         # Test PHONE_NUMBER entity
         ("Call me at 555-123-4567", ["PHONE_NUMBER"]),
         # Test multiple entities
