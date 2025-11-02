@@ -572,3 +572,25 @@ def test_given_regex_flags_and_normal_entities_are_returned():
     assert equal_json_strings(
         expected_response, response_content
     )
+
+
+@pytest.mark.api
+def test_given_langextract_enabled_then_detects_pii_with_llm():
+    request_body = """
+    {
+        "text": "My name is Sarah Johnson and I live in Seattle",
+        "language": "en",
+        "ad_hoc_recognizers": [
+            {
+                "name": "LangExtract LLM PII",
+                "type": "LangExtractRecognizer",
+                "supported_language": "en",
+                "config_path": "/usr/bin/presidio-analyzer/presidio_analyzer/conf/langextract_config_e2e.yaml"
+            }
+        ]
+    }
+    """
+    
+    response_status, response_content = analyze(request_body)
+    
+    assert response_status == 200
