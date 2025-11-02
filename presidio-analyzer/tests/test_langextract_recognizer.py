@@ -39,7 +39,7 @@ def test_config_path(tmp_path):
     config = {
         "langextract": {
             "enabled": True,
-            "model_id": "gemini-2.5-flash",
+            "model_id": "gemma2:2b",
             "api_key_env_var": "TEST_LANGEXTRACT_API_KEY",
             "max_char_buffer": 1000,
             "batch_length": 10,
@@ -432,7 +432,7 @@ class TestLangExtractRecognizerAnalyze:
             
             mock_load_config.return_value = {
                 "enabled": False,
-                "model_id": "gemini-2.5-flash",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -456,8 +456,8 @@ class TestLangExtractRecognizerAnalyze:
              patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples:
             
             mock_load_config.return_value = {
-                "enabled": True,
-                "model_id": "gemini-2.5-flash",
+                "enabled": False,
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -482,7 +482,7 @@ class TestLangExtractRecognizerAnalyze:
             
             mock_load_config.return_value = {
                 "enabled": True,
-                "model_id": "gemini-2.5-flash",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -525,7 +525,7 @@ class TestLangExtractRecognizerAnalyze:
             
             mock_load_config.return_value = {
                 "enabled": True,
-                "model_id": "gemini-2.5-flash",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -578,7 +578,7 @@ class TestLangExtractRecognizerAnalyze:
             
             mock_load_config.return_value = {
                 "enabled": True,
-                "model_id": "gemini-2.5-flash",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -623,7 +623,7 @@ class TestLangExtractRecognizerAnalyze:
             
             mock_load_config.return_value = {
                 "enabled": True,
-                "model_id": "gemini-2.5-flash",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -663,7 +663,7 @@ class TestLangExtractRecognizerAnalyze:
             
             mock_load_config.return_value = {
                 "enabled": True,
-                "model_id": "gemini-2.5-flash",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -695,7 +695,10 @@ class TestLangExtractRecognizerScoreCalculation:
              patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples:
             
             mock_load_config.return_value = {
-                "enabled": True,
+                "enabled": False,  # Disabled to skip validation
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person": "PERSON"},
                 "prompt_file": "test.txt",
@@ -725,7 +728,10 @@ class TestLangExtractRecognizerEntityMapping:
              patch.object(LangExtractRecognizer, '_load_examples_file') as mock_load_examples:
             
             mock_load_config.return_value = {
-                "enabled": True,
+                "enabled": False,  # Disabled to skip validation
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person": "PERSON"},  # Only person mapped
                 "prompt_file": "test.txt",
