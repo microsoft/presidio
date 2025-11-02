@@ -2,11 +2,11 @@ services:
   ollama:
     image: ollama/ollama:0.5.4
     ports:
-      - "127.0.0.1:11434:11434"
+      - "127.0.0.1:11435:11434"
     volumes:
       - ollama-data:/root/.ollama
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:11434/api/tags"]
       interval: 10s
       timeout: 10s
       retries: 12
@@ -36,6 +36,7 @@ services:
     depends_on:
       ollama:
         condition: service_healthy
+
   presidio-image-redactor:
     image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
