@@ -15,11 +15,9 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
 ### LLM-based PII Detection
 
 Presidio analyzer supports LLM-based PII detection using local models via Ollama.
-
 ```bash
 pip install presidio-analyzer[langextract]
 ```
-
 See the [LangExtract integration guide](https://microsoft.github.io/presidio/samples/python/langextract/) for setup and configuration.
 
 ## Deploy Presidio analyzer to Azure
