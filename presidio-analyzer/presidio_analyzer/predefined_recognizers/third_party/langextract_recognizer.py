@@ -88,31 +88,27 @@ class LangExtractRecognizer(RemoteRecognizer):
         logger.info("Loaded recognizer: %s", self.name)
 
     def _validate_ollama_setup(self) -> None:
-        """Validate Ollama server and model availability.
-
-        Auto-downloads missing models.
-        """
+        """Validate Ollama server and model availability."""
         if not self._check_ollama_server():
             error_msg = (
                 f"Ollama server not reachable at {self.model_url}. "
-                f"Docs: {LANGEXTRACT_DOCS_URL}"
+                f"Please ensure Ollama is running. "
+                f"Installation guide: {OLLAMA_INSTALL_DOCS}"
             )
             logger.error(error_msg)
             raise ConnectionError(error_msg)
 
         if not self._check_model_available():
-            logger.warning(f"Model '{self.model_id}' not found. Downloading...")
-            if not self._download_model():
-                error_msg = (
-                    f"Failed to download model '{self.model_id}'. "
-                    f"Manually run: ollama pull {self.model_id}. "
-                    f"Docs: {OLLAMA_INSTALL_DOCS}"
-                )
-                logger.error(error_msg)
-                raise RuntimeError(error_msg)
-            logger.info(f"Downloaded model '{self.model_id}'")
+            error_msg = (
+                f"Model '{self.model_id}' not found. "
+                f"Please install it manually by running:\n"
+                f"  ollama pull {self.model_id}\n"
+                f"Installation guide: {OLLAMA_INSTALL_DOCS}"
+            )
+            logger.error(error_msg)
+            raise RuntimeError(error_msg)
 
-        logger.info(f"Ollama ready with model '{self.model_id}'")
+        logger.info(f"LangExtract initialized with model '{self.model_id}'")
 
     def _check_ollama_server(self) -> bool:
         """Check if Ollama server is running and accessible."""
@@ -138,49 +134,12 @@ class LangExtractRecognizer(RemoteRecognizer):
                 # Check if our model is in the list
                 for model in models:
                     model_name = model.get('name', '')
-                    # Match both "gemma2:2b" and "gemma2:2b:latest"
+                    # Match both "llama3.2:1b" and "llama3.2:1b:latest"
                     if model_name.startswith(self.model_id):
                         return True
                 return False
         except Exception as e:
             logger.warning(f"Model availability check failed: {e}")
-            return False
-
-    def _download_model(self) -> bool:
-        """Download model using ollama pull command with progress output."""
-        try:
-            import subprocess
-            import time
-
-            logger.info(
-                f"Downloading model '{self.model_id}' "
-                "(this may take several minutes)..."
-            )
-            print(f"Downloading model '{self.model_id}'...")
-
-            result = subprocess.run(
-                ["ollama", "pull", self.model_id],
-                timeout=600  # 10 minute timeout
-            )
-
-            if result.returncode == 0:
-                # Wait a moment for model to be fully registered
-                time.sleep(2)
-                # Verify model is now available
-                if self._check_model_available():
-                    logger.info(f"Model '{self.model_id}' downloaded successfully")
-                    print(f"✓ Model '{self.model_id}' ready")
-                    return True
-                else:
-                    logger.error("Model download succeeded but model not found")
-                    return False
-            else:
-                logger.error(
-                    f"Model download failed with exit code {result.returncode}"
-                )
-                return False
-        except Exception as e:
-            logger.error(f"Model download failed: {e}")
             return False
 
     def _load_config(self, config_path: Optional[str] = None) -> Dict:

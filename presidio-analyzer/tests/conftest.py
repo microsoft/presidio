@@ -95,25 +95,16 @@ def spacy_nlp_engine(nlp_engines):
 def ollama_available() -> bool:
     """
     Check if Ollama is running and ready for LangExtract tests.
-    Skips tests if Ollama is not available.
+    Returns False if Ollama is not available.
     """
     if not REQUESTS_AVAILABLE:
-        print("⚠ requests library not available - skipping Ollama tests")
         return False
     
-    # Check if Ollama is running
     try:
         response = requests.get("http://localhost:11434/api/tags", timeout=2)
-        if response.status_code == 200:
-            print("✓ Ollama running and ready for LangExtract tests")
-            return True
+        return response.status_code == 200
     except Exception:
-        print("⚠ Ollama not available - skipping LangExtract tests")
-        print("  To run LangExtract tests, install Ollama:")
-        print("  poetry run python install_ollama_model.py")
         return False
-    
-    return False
 
 
 @pytest.fixture(scope="session")

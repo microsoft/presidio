@@ -10,7 +10,7 @@ import time
 import urllib.request
 
 OLLAMA_URL = "http://localhost:11434"
-DEFAULT_MODEL = "gemma2:2b" # i dont like it but lets see if it works
+DEFAULT_MODEL = "llama3.2:1b"
 
 def install_ollama():
     """Install Ollama based on operating system."""

@@ -90,7 +90,7 @@ pytest tests/test_langextract_recognizer.py -v -s
    - Starts the service
    - Takes ~5-10 minutes on first run
 3. **Model Download**: When recognizer initializes:
-   - Checks if model (e.g., `gemma2:2b`) exists
+   - Checks if model (e.g., `llama3.2:1b`) exists
    - Downloads if missing (~1-2 GB, takes 5-10 minutes)
    - This happens once, model is cached
 4. **Tests Run**: All tests now use real Ollama/LangExtract

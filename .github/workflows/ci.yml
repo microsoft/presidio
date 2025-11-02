@@ -160,8 +160,8 @@ jobs:
           done
           
           # Pull the model
-          echo "Pulling gemma2:2b model..."
-          ollama pull gemma2:2b
+          echo "Pulling llama3.2:1b model..."
+          ollama pull llama3.2:1b
           
           echo "✓ Ollama setup complete!"
           ollama list
@@ -355,7 +355,7 @@ jobs:
 
       - name: Download Ollama model for LangExtract tests
         run: |
-          docker exec $(docker ps -qf "name=ollama") ollama pull gemma2:2b
+          docker exec $(docker ps -qf "name=ollama") ollama pull llama3.2:1b
 
       - name: Run E2E tests
         working-directory: e2e-tests
@@ -442,7 +442,7 @@ jobs:
 
       - name: Download Ollama model for LangExtract tests
         run: |
-          docker exec $(docker ps -qf "name=ollama") ollama pull gemma2:2b
+          docker exec $(docker ps -qf "name=ollama") ollama pull llama3.2:1b
 
       - name: Run E2E tests
         working-directory: e2e-tests

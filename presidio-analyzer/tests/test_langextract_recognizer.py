@@ -1,7 +1,9 @@
 """Tests for LangExtract recognizer with real Ollama integration.
 
-These tests require Ollama to be running and will auto-install it if needed.
-Tests are skipped if Ollama setup fails.
+These tests require:
+- Ollama to be running
+- The llama3.2:1b model to be pre-installed (run: ollama pull llama3.2:1b)
+Tests are skipped if Ollama is not available.
 """
 import pytest
 from presidio_analyzer.predefined_recognizers import LangExtractRecognizer
@@ -58,7 +60,7 @@ class TestLangExtractRecognizerInitialization:
         config = {
             "langextract": {
                 "enabled": False,
-                "model_id": "gemma2:2b",
+                "model_id": "llama3.2:1b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -90,7 +92,7 @@ class TestLangExtractRecognizerInitialization:
         config = {
             "langextract": {
                 "enabled": False,
-                "model_id": "gemma2:2b",
+                "model_id": "llama3.2:1b",
                 "temperature": 0.0,
                 "min_score": 0.5,
                 "supported_entities": ["PERSON"],
@@ -119,7 +121,7 @@ class TestLangExtractRecognizerOllamaValidation:
         This is an integration test that verifies:
         - Ollama server is checked
         - Model availability is verified
-        - Auto-download happens if needed
+        - Raises error if model not installed
         """
         if not langextract_recognizer_class:
             pytest.skip("LangExtract not available")
@@ -146,7 +148,7 @@ class TestLangExtractRecognizerAnalyze:
         config = {
             "langextract": {
                 "enabled": False,
-                "model_id": "gemma2:2b",
+                "model_id": "llama3.2:1b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -317,7 +319,7 @@ class TestLangExtractRecognizerErrorHandling:
         config = {
             "langextract": {
                 "enabled": True,
-                "model_id": "gemma2:2b",
+                "model_id": "llama3.2:1b",
                 "model_url": "http://localhost:99999",  # Invalid port
                 "temperature": 0.0,
                 "min_score": 0.5,
