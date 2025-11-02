@@ -18,18 +18,9 @@ Presidio analyzer supports LLM-based PII detection using local models via Ollama
 
 ```bash
 pip install presidio-analyzer[langextract]
-
-# Setup Ollama
-curl -fsSL https://ollama.com/install.sh | sh
-```bash
-ollama pull gemma2:2b
-```
-ollama serve
 ```
 
-**Note:** Currently supports Ollama local models only. Cloud provider support coming in future releases.
-
-See the [documentation](https://microsoft.github.io/presidio/analyzer/) for configuration details.
+See the [LangExtract integration guide](https://microsoft.github.io/presidio/samples/python/langextract/) for setup and configuration.
 
 ## Deploy Presidio analyzer to Azure
 
