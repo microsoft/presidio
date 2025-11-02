@@ -132,6 +132,7 @@ jobs:
       - name: Set up Ollama for Analyzer tests
         if: matrix.component.name == 'Analyzer'
         working-directory: ${{ matrix.component.path }}
+        timeout-minutes: 8
         run: |
           poetry run python install_ollama_model.py
 
