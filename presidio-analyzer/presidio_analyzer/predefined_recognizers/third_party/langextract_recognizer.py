@@ -127,7 +127,7 @@ class LangExtractRecognizer(RemoteRecognizer):
                 # Check if our model is in the list
                 for model in models:
                     model_name = model.get('name', '')
-                    # Match both "gemma2:2b" and "gemma2:2b:latest"
+                    # Match both "gemma3:1b" and "gemma3:1b:latest"
                     if model_name.startswith(self.model_id):
                         return True
                 return False

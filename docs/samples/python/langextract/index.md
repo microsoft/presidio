@@ -63,7 +63,7 @@ Create your own `langextract_config.yaml` file with the Ollama URL (default: `ht
 Customize the recognizer in the `langextract_config.yaml` file:
 
 - `enabled`: Enable/disable the recognizer
-- `model_id`: The Ollama model to use (e.g., "gemma2:2b")
+- `model_id`: The Ollama model to use (e.g., "gemma3:1b")
 - `model_url`: Ollama server URL (default: `http://localhost:11434`)
 - `supported_entities`: PII entity types to detect
 - `entity_mappings`: Map LangExtract entities to Presidio entity names

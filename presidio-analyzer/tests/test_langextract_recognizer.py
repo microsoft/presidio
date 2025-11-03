@@ -2,7 +2,7 @@
 
 These tests require:
 - Ollama to be running
-- The gemma2:2b model to be pre-installed (run: ollama pull gemma2:2b)
+- The gemma3:1b model to be pre-installed (run: ollama pull gemma3:1b)
 Tests are skipped if Ollama is not available.
 """
 import pytest
@@ -58,7 +58,7 @@ class TestLangExtractRecognizerInitialization:
         # Create config
         config = {
             "langextract": {
-                "model_id": "gemma2:2b",
+                "model_id": "gemma3:1b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -75,7 +75,7 @@ class TestLangExtractRecognizerInitialization:
 
         recognizer = langextract_recognizer_class(config_path=str(config_file))
 
-        assert recognizer.model_id == "gemma2:2b"
+        assert recognizer.model_id == "gemma3:1b"
         assert recognizer.model_url == "http://localhost:11434"
 
     def test_missing_required_config_raises_error(
@@ -90,7 +90,7 @@ class TestLangExtractRecognizerInitialization:
         # Missing 'model_url' - required field
         config = {
             "langextract": {
-                "model_id": "gemma2:2b",
+                "model_id": "gemma3:1b",
                 "temperature": 0.0,
                 "min_score": 0.5,
                 "supported_entities": ["PERSON"],
@@ -145,7 +145,7 @@ class TestLangExtractRecognizerAnalyze:
 
         config = {
             "langextract": {
-                "model_id": "gemma2:2b",
+                "model_id": "gemma3:1b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
                 "min_score": 0.5,
@@ -315,7 +315,7 @@ class TestLangExtractRecognizerErrorHandling:
         # Point to non-existent Ollama server
         config = {
             "langextract": {
-                "model_id": "gemma2:2b",
+                "model_id": "gemma3:1b",
                 "model_url": "http://localhost:99999",  # Invalid port
                 "temperature": 0.0,
                 "min_score": 0.5,

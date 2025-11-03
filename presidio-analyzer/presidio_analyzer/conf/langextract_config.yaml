@@ -7,7 +7,7 @@
 
 langextract:
   # Ollama local model configuration
-  model_id: "gemma2:2b"
+  model_id: "gemma3:1b"
   model_url: "http://localhost:11434"
   temperature: null  # Optional: Set to 0.0-1.0 for deterministic/creative output
   
