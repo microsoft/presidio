@@ -1,0 +1,16 @@
+{
+  "name": "presidio-toolkit",
+  "version": "1.0.0",
+  "description": "Comprehensive toolkit for PII detection and anonymization using Microsoft Presidio. Automatically detects and helps anonymize sensitive data in text, images, and structured data.",
+  "author": "Presidio Contributors",
+  "skills": [
+    "../skills/presidio-pii-detection"
+  ],
+  "metadata": {
+    "repository": "https://github.com/microsoft/presidio",
+    "documentation": "https://microsoft.github.io/presidio",
+    "license": "MIT",
+    "tags": ["pii", "privacy", "security", "anonymization", "data-protection", "gdpr", "hipaa", "deidentification"],
+    "categories": ["data-protection", "security", "privacy"]
+  }
+}
