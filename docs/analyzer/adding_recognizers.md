@@ -165,11 +165,13 @@ On how to integrate Presidio with AHDS De-Identification Protected Health Inform
 and a sample for a ADHS Remote Recognizer, refer to the
 [AHDS de-Identification Integration document](../samples/python/ahds/index.md).
 
-### LangExtract LLM-based recognizer
+### LLM-based PII detection recognizer
 
-On how to integrate Presidio with LangExtract for LLM-based PII detection using Google Gemini, OpenAI, or Ollama,
-and a sample for a LangExtract recognizer, refer to the
-[LangExtract Integration document](../samples/python/langextract/index.md).
+Presidio supports LLM-based PII detection for flexible, zero-shot entity recognition using large language models.
+This approach leverages LangExtract under the hood to integrate with various LLM providers including Google Gemini, OpenAI, or Ollama.
+
+For details on integrating LLM-based PII detection into Presidio,
+refer to the [LLM-based PII Detection using LangExtract](../samples/python/langextract/index.md) guide.
 
 ### Creating ad-hoc recognizers
 

@@ -1,9 +1,10 @@
-# LangExtract LLM-based PII Detection Integration
+# LLM-based PII Detection using LangExtract
 
 ## Introduction
 
-[LangExtract](https://github.com/google/langextract) uses large language models (LLMs) to detect personally identifiable information (PII) in text.
-This integration with Presidio currently supports **Ollama for local LLM deployment only**.
+Presidio supports LLM-based PII detection for flexible, zero-shot entity recognition using large language models.
+This approach uses [LangExtract](https://github.com/google/langextract) under the hood to integrate with LLM providers.
+Currently, this integration supports **Ollama for local LLM deployment only**.
 
 ## Supported LLM Providers
 
@@ -31,9 +32,10 @@ pip install presidio-analyzer[langextract]
 
 Create your own `langextract_config.yaml` file with the Ollama URL (default: `http://localhost:11434`) or use the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config.yaml).
 
-## LangExtract Recognizer
+## LLM-based Recognizer Implementation
 
-[The implementation of the `LangExtractRecognizer` can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/langextract_recognizer.py).
+The `LangExtractRecognizer` is Presidio's implementation for LLM-based PII detection, leveraging LangExtract to communicate with LLM providers.
+[The implementation can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/langextract_recognizer.py).
 
 ## How to Use
 

@@ -94,3 +94,116 @@ examples:
         attributes:
           type: "website_url"
           protocol: "https"
+
+  # Example 6: Healthcare and medical information (PHI)
+  - text: "Patient John Doe was seen by Dr. Smith on 2024-01-15 for diabetes treatment"
+    extractions:
+      - extraction_class: "person"
+        extraction_text: "John Doe"
+        attributes:
+          type: "patient_name"
+          role: "patient"
+      
+      - extraction_class: "person"
+        extraction_text: "Dr. Smith"
+        attributes:
+          type: "healthcare_provider"
+          role: "doctor"
+      
+      - extraction_class: "date"
+        extraction_text: "2024-01-15"
+        attributes:
+          type: "treatment_date"
+          format: "YYYY-MM-DD"
+      
+      - extraction_class: "condition"
+        extraction_text: "diabetes"
+        attributes:
+          type: "medical_condition"
+          context: "diagnosis"
+
+  # Example 7: Medical records and identifiers
+  - text: "MRN: 12345678, Health Insurance ID: H987654321, NPI: 1234567890"
+    extractions:
+      - extraction_class: "medical_record"
+        extraction_text: "12345678"
+        attributes:
+          type: "medical_record_number"
+          identifier: "MRN"
+      
+      - extraction_class: "health_insurance"
+        extraction_text: "H987654321"
+        attributes:
+          type: "health_insurance_id"
+          format: "alphanumeric"
+      
+      - extraction_class: "medical_license"
+        extraction_text: "1234567890"
+        attributes:
+          type: "npi_number"
+          issuer: "national_provider_identifier"
+
+  # Example 8: Medications and prescriptions
+  - text: "Patient prescribed Metformin 500mg twice daily and Lisinopril 10mg once daily"
+    extractions:
+      - extraction_class: "medication"
+        extraction_text: "Metformin 500mg"
+        attributes:
+          type: "prescription_medication"
+          dosage: "500mg"
+          frequency: "twice_daily"
+      
+      - extraction_class: "medication"
+        extraction_text: "Lisinopril 10mg"
+        attributes:
+          type: "prescription_medication"
+          dosage: "10mg"
+          frequency: "once_daily"
+
+  # Example 9: Hospital and clinic information
+  - text: "Admitted to City General Hospital on 03/15/2024, discharged from Memorial Clinic on 03/20/2024"
+    extractions:
+      - extraction_class: "organization"
+        extraction_text: "City General Hospital"
+        attributes:
+          type: "hospital"
+          role: "admission_facility"
+      
+      - extraction_class: "date"
+        extraction_text: "03/15/2024"
+        attributes:
+          type: "admission_date"
+          format: "MM/DD/YYYY"
+      
+      - extraction_class: "organization"
+        extraction_text: "Memorial Clinic"
+        attributes:
+          type: "clinic"
+          role: "discharge_facility"
+      
+      - extraction_class: "date"
+        extraction_text: "03/20/2024"
+        attributes:
+          type: "discharge_date"
+          format: "MM/DD/YYYY"
+
+  # Example 10: Medical procedures and blood type
+  - text: "Blood type O+, scheduled for MRI scan and knee arthroscopy procedure"
+    extractions:
+      - extraction_class: "blood_type"
+        extraction_text: "O+"
+        attributes:
+          type: "blood_type"
+          classification: "ABO_Rh"
+      
+      - extraction_class: "procedure"
+        extraction_text: "MRI scan"
+        attributes:
+          type: "diagnostic_procedure"
+          category: "imaging"
+      
+      - extraction_class: "procedure"
+        extraction_text: "knee arthroscopy"
+        attributes:
+          type: "surgical_procedure"
+          body_part: "knee"
