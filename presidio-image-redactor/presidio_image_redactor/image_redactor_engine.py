@@ -27,12 +27,12 @@ class ImageRedactorEngine:
 
     def redact_and_return_bbox(
         self,
-        image: Image,
+        image: Image.Image,
         fill: Union[int, Tuple[int, int, int]] = (0, 0, 0),
         ocr_kwargs: Optional[dict] = None,
         ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
-    ) -> Tuple[Image, List[ImageRecognizerResult]]:
+    ) -> Tuple[Image.Image, List[ImageRecognizerResult]]:
         """Redact method to redact the given image and return the bboxes.
 
         Please notice, this method duplicates the image, creates a new instance and
@@ -82,12 +82,12 @@ class ImageRedactorEngine:
 
     def redact(
         self,
-        image: Image,
+        image: Image.Image,
         fill: Union[int, Tuple[int, int, int]] = (0, 0, 0),
         ocr_kwargs: Optional[dict] = None,
         ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
-    ) -> Image:
+    ) -> Image.Image:
         """Redact method to redact the given image.
 
         Please notice, this method duplicates the image, creates a new instance and
