@@ -6,6 +6,8 @@ from presidio_image_redactor import ImageRedactorEngine, ImageAnalyzerEngine, Do
 
 from tests.integration.methods import get_resource_image, compare_images, image_sim
 
+from presidio_image_redactor.entities import ImageRecognizerResult
+
 red_fill = (255, 0, 0)
 
 
@@ -90,3 +92,95 @@ def test_given_analzyer_kwargs_then_different_entities_are_redacted(engine_build
     assert not compare_images(redacted_image_no_args, redacted_image_entities_args)
     assert not compare_images(redacted_image_no_args, redacted_image_score_args)
     assert not compare_images(redacted_image_entities_args, redacted_image_score_args)
+
+
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_and_return_bbox_returns_same_image_as_redact(engine_builder: Callable):
+    """Test that redact_and_return_bbox returns the same redacted image as redact."""
+    
+    image = get_resource_image("ocr_test.png")
+    result_image = get_resource_image("ocr_test_redacted.png")
+    
+    engine = engine_builder()
+    redacted_image_from_bbox, _ = engine.redact_and_return_bbox(image, 1)
+    redacted_image_from_redact = engine.redact(image, 1)
+    
+    assert compare_images(redacted_image_from_bbox, result_image)
+    assert compare_images(redacted_image_from_bbox, redacted_image_from_redact)
+
+
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_and_return_bbox_returns_bboxes_for_image_with_text(engine_builder: Callable):
+    """Test that redact_and_return_bbox returns non-empty bboxes for image with PII."""
+    
+    image = get_resource_image("ocr_test.png")
+    
+    engine = engine_builder()
+    redacted_image, bboxes = engine.redact_and_return_bbox(image, 1)
+    
+    assert isinstance(bboxes, list)
+    assert len(bboxes) > 0
+    
+    for bbox in bboxes:
+        assert isinstance(bbox, ImageRecognizerResult)
+        assert hasattr(bbox, 'left')
+        assert hasattr(bbox, 'top')
+        assert hasattr(bbox, 'width')
+        assert hasattr(bbox, 'height')
+        assert hasattr(bbox, 'entity_type')
+        assert hasattr(bbox, 'score')
+        assert isinstance(bbox.left, int)
+        assert isinstance(bbox.top, int)
+        assert isinstance(bbox.width, int)
+        assert isinstance(bbox.height, int)
+        assert bbox.width > 0
+        assert bbox.height > 0
+
+
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_and_return_bbox_returns_empty_bboxes_for_image_without_text(engine_builder: Callable):
+    """Test that redact_and_return_bbox returns empty bboxes for image without PII."""
+    
+    image = get_resource_image("no_ocr.jpg")
+    
+    engine = engine_builder()
+    redacted_image, bboxes = engine.redact_and_return_bbox(image, red_fill)
+    
+    assert isinstance(bboxes, list)
+    assert len(bboxes) == 0
+
+
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_and_return_bbox_with_matrix_fill(engine_builder: Callable):
+    """Test redact_and_return_bbox with matrix fill color."""
+    
+    image = get_resource_image("ocr_test.png")
+    expected_result_image = get_resource_image("ocr_test_redacted_matrix.png")
+    
+    engine = engine_builder()
+    redacted_image, bboxes = engine.redact_and_return_bbox(image, red_fill)
+    
+    assert image_sim(redacted_image, expected_result_image) > image_sim(redacted_image, image)
+    assert len(bboxes) > 0
+
+
+@pytest.mark.parametrize("engine_builder", all_engines_required())
+def test_redact_and_return_bbox_with_analyzer_kwargs(engine_builder: Callable):
+    """Test that redact_and_return_bbox works with analyzer kwargs like entities and score_threshold."""
+    
+    image = get_resource_image("kwargs_test.jpg")
+    
+    engine = engine_builder()
+    redacted_image_no_args, bboxes_no_args = engine.redact_and_return_bbox(image)
+    redacted_image_entities, bboxes_entities = engine.redact_and_return_bbox(
+        image, entities=["PERSON", "LOCATION"]
+    )
+    redacted_image_score, bboxes_score = engine.redact_and_return_bbox(
+        image, score_threshold=1
+    )
+    
+    assert not compare_images(redacted_image_no_args, redacted_image_entities)
+    assert not compare_images(redacted_image_no_args, redacted_image_score)
+    assert not compare_images(redacted_image_entities, redacted_image_score)
+    
+    assert len(bboxes_no_args) != len(bboxes_entities) or len(bboxes_no_args) != len(bboxes_score)
