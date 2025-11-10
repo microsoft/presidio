@@ -12,13 +12,16 @@ but can easily be extended with other types of custom recognizers.
 Predefined and custom recognizers leverage regex,
 Named Entity Recognition and other types of logic to detect PII in unstructured text.
 
-### LLM-based PII Detection
+### Language Model-based PII/PHI Detection
 
-Presidio analyzer supports LLM-based PII detection using local models via Ollama.
+Presidio analyzer supports Language Model-based PII/PHI detection using local models via Ollama.
+
+**Detects both PII and PHI** (Personally Identifiable Information & Protected Health Information).
+
 ```bash
 pip install presidio-analyzer[langextract]
 ```
-See the [LLM-based PII Detection using LangExtract](https://microsoft.github.io/presidio/samples/python/langextract/) guide for setup and configuration.
+See the [Language Model-based PII/PHI Detection using LangExtract](https://microsoft.github.io/presidio/samples/python/langextract/) guide for setup and configuration.
 
 ## Deploy Presidio analyzer to Azure
 

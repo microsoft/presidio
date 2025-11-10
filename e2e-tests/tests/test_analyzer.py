@@ -575,16 +575,38 @@ def test_given_regex_flags_and_normal_entities_are_returned():
 
 
 @pytest.mark.api
-def test_given_langextract_enabled_then_detects_pii_with_llm():
+def test_given_ollama_recognizer_enabled_then_detects_pii_with_llm():
+    """Test that OllamaLangExtractRecognizer detects PII using Ollama LLM.
+    
+    Note: This test requires RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/e2e_recognizers.yaml
+    to be set in the environment to enable the OllamaLangExtractRecognizer.
+    """
     request_body = """
     {
-        "text": "My name is Sarah Johnson and I live in Seattle",
-        "language": "en"
+        "text": "My name is Sarah Johnson and my email is sarah.j@example.com",
+        "language": "en",
+        "return_decision_process": true
     }
     """
     
     response_status, response_content = analyze(request_body)
     
     assert response_status == 200
-    # Note: This test requires RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/e2e_recognizers.yaml
-    # to be set in the CI environment to enable LangExtract recognizer
+    
+    # Verify that OllamaLangExtractRecognizer was used by checking analysis_explanation
+    import json
+    results = json.loads(response_content)
+    
+    assert len(results) > 0, "Expected at least one entity to be detected"
+    
+    # Check that at least one result came from OllamaLangExtractRecognizer
+    recognizers_used = [
+        result.get("analysis_explanation", {}).get("recognizer", "")
+        for result in results
+        if result.get("analysis_explanation")
+    ]
+    
+    assert "OllamaLangExtractRecognizer" in recognizers_used, (
+        f"Expected OllamaLangExtractRecognizer to be used, but found: {recognizers_used}. "
+        "Make sure RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/e2e_recognizers.yaml is set."
+    )

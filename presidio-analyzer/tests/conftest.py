@@ -4,12 +4,6 @@ from typing import Dict, List
 
 import pytest
 
-try:
-    import requests
-    REQUESTS_AVAILABLE = True
-except ImportError:
-    REQUESTS_AVAILABLE = False
-
 from presidio_analyzer import (
     EntityRecognizer,
     Pattern,
@@ -66,18 +60,13 @@ def nlp_engines(request, nlp_engine_provider) -> Dict[str, NlpEngine]:
 
 
 @pytest.fixture(autouse=True)
-def skip_by_engine(request, nlp_engines, ollama_available):
+def skip_by_engine(request, nlp_engines):
     marker = request.node.get_closest_marker("skip_engine")
     if marker:
         marker_arg = marker.args[0]
         # Check if it's an NLP engine
         if marker_arg in nlp_engines:
             return  # Engine is available
-        # Special case for langextract (third-party recognizer, not NLP engine)
-        if marker_arg == "langextract":
-            if ollama_available:
-                return  # Ollama is available
-            pytest.skip(f"skipped - Ollama not available for langextract")
         else:
             pytest.skip(f"skipped on this engine: {marker_arg}")
 
@@ -92,72 +81,9 @@ def spacy_nlp_engine(nlp_engines):
 
 
 @pytest.fixture(scope="session")
-def ollama_available() -> bool:
-    """
-    Check if Ollama is running and ready for LangExtract tests.
-    Returns False if Ollama is not available.
-    """
-    if not REQUESTS_AVAILABLE:
-        return False
-    
-    try:
-        response = requests.get("http://localhost:11434/api/tags", timeout=2)
-        return response.status_code == 200
-    except Exception:
-        return False
-
-
-@pytest.fixture(scope="session")
 def nlp_recognizers() -> Dict[str, EntityRecognizer]:
     """Create NLP recognizer instances."""
     return {name: rec_cls() for name, rec_cls in NLP_RECOGNIZERS.items()}
-
-
-@pytest.fixture(scope="session")
-def langextract_recognizer_class(ollama_available, tmp_path_factory):
-    """
-    Provide LangExtractRecognizer class configured for testing.
-    Returns None if Ollama not available or langextract not installed.
-    """
-    if not ollama_available:
-        return None
-    
-    try:
-        from presidio_analyzer.predefined_recognizers import LangExtractRecognizer
-        import yaml
-        
-        # Create a test-specific config
-        config_dir = tmp_path_factory.mktemp("langextract_config")
-        test_config_path = config_dir / "langextract_config.yaml"
-        
-        # Load default config
-        default_config_path = (
-            Path(__file__).parent.parent / 
-            "presidio_analyzer" / "conf" / "langextract_config.yaml"
-        )
-        
-        with open(default_config_path) as f:
-            config = yaml.safe_load(f)
-        
-        # Write test config
-        with open(test_config_path, 'w') as f:
-            yaml.dump(config, f)
-        
-        # Return a factory function that creates recognizers with the test config
-        def create_recognizer(**kwargs):
-            # Use test config if no config_path provided
-            if 'config_path' not in kwargs:
-                kwargs['config_path'] = str(test_config_path)
-            return LangExtractRecognizer(**kwargs)
-        
-        # Store the class and config path for direct access
-        create_recognizer.recognizer_class = LangExtractRecognizer
-        create_recognizer.test_config_path = str(test_config_path)
-        
-        return create_recognizer
-        
-    except ImportError:
-        return None
 
 
 @pytest.fixture(scope="session")

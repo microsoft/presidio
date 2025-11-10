@@ -1,6 +1,5 @@
 import logging
-import urllib.error
-import urllib.request
+from abc import abstractmethod
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -13,35 +12,53 @@ except ImportError:
     LANGEXTRACT_AVAILABLE = False
     lx = None
 
-from presidio_analyzer import AnalysisExplanation, RecognizerResult, RemoteRecognizer
+from presidio_analyzer import AnalysisExplanation, RecognizerResult
+from presidio_analyzer.lm_recognizer import LMRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
 LANGEXTRACT_DOCS_URL = "https://github.com/google/langextract"
-OLLAMA_INSTALL_DOCS = "https://github.com/google/langextract#using-local-llms-with-ollama"
 
+class LangExtractRecognizer(LMRecognizer):
+    """
+    Abstract base class for PII detection using LangExtract library.
+    
+    Handles LangExtract-specific functionality including:
+    - Configuration loading and validation
+    - Examples and prompt management
+    - Entity mapping between LangExtract and Presidio
+    - Result conversion from LangExtract format to RecognizerResult
+    
+    Note: This is an abstract class. Concrete implementations (like OllamaLangExtractRecognizer)
+    must define their own DEFAULT_CONFIG_PATH.
+    """
 
-class LangExtractRecognizer(RemoteRecognizer):
-    """PII detection using LangExtract with Ollama local models."""
-
-    DEFAULT_CONFIG_PATH = (
-        Path(__file__).parent.parent.parent / "conf" / "langextract_config.yaml"
-    )
+    # No DEFAULT_CONFIG_PATH here - subclasses must define their own
 
     def __init__(
         self,
         supported_entities: Optional[List[str]] = None,
         supported_language: str = "en",
         config_path: Optional[str] = None,
+        name: str = "LangExtract LLM PII",
+        version: str = "1.0.0",
+        model_id: Optional[str] = None,
+        temperature: Optional[float] = None,
+        min_score: Optional[float] = None,
         **kwargs
     ):
         """
-        Initialize LangExtract recognizer with Ollama.
+        Initialize LangExtract recognizer base class.
 
         :param supported_entities: List of PII entities to detect.
         :param supported_language: Language code (only 'en' supported).
         :param config_path: Path to YAML configuration file.
+        :param name: Recognizer name.
+        :param version: Recognizer version.
+        :param model_id: Language model identifier (from subclass).
+        :param temperature: Model temperature (from subclass).
+        :param min_score: Minimum confidence score (from subclass).
         :param kwargs: Additional arguments for parent class.
         """
         if not LANGEXTRACT_AVAILABLE:
@@ -50,19 +67,27 @@ class LangExtractRecognizer(RemoteRecognizer):
                 "Install it with: pip install presidio-analyzer[langextract]"
             )
 
-        self.config = self._load_config(config_path)
+        # Load shared LangExtract configuration
+        self.config = self._load_langextract_config(config_path)
 
         if supported_entities is None:
             supported_entities = self._get_required_config("supported_entities")
 
+        if min_score is None:
+            min_score = self._get_required_config("min_score")
+
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
-            name="LangExtract LLM PII",
-            version="1.0.0",
+            name=name,
+            version=version,
+            model_id=model_id,
+            temperature=temperature,
+            min_score=min_score,
             **kwargs
         )
 
+        # LangExtract-specific initialization
         self.prompt_description = self._load_prompt_file()
         self.examples = self._load_examples_file()
         self.entity_mappings = self._get_required_config("entity_mappings")
@@ -70,72 +95,14 @@ class LangExtractRecognizer(RemoteRecognizer):
             v: k for k, v in self.entity_mappings.items()
         }
 
-        self.model_id = self._get_required_config("model_id")
-        self.model_url = self._get_required_config("model_url")
-        self.temperature = self.config.get("temperature")
-        self.min_score = self._get_required_config("min_score")
-
-        # Validate Ollama setup on initialization
-        self._validate_ollama_setup()
-
         logger.info("Loaded recognizer: %s", self.name)
 
-    def _validate_ollama_setup(self) -> None:
-        """Validate Ollama server and model availability."""
-        if not self._check_ollama_server():
-            error_msg = (
-                f"Ollama server not reachable at {self.model_url}. "
-                f"Please ensure Ollama is running. "
-                f"Installation guide: {OLLAMA_INSTALL_DOCS}"
-            )
-            logger.error(error_msg)
-            raise ConnectionError(error_msg)
-
-        if not self._check_model_available():
-            error_msg = (
-                f"Model '{self.model_id}' not found. "
-                f"Please install it manually by running:\n"
-                f"  ollama pull {self.model_id}\n"
-                f"Installation guide: {OLLAMA_INSTALL_DOCS}"
-            )
-            logger.error(error_msg)
-            raise RuntimeError(error_msg)
-
-        logger.info(f"LangExtract initialized with model '{self.model_id}'")
-
-    def _check_ollama_server(self) -> bool:
-        """Check if Ollama server is running and accessible."""
-        try:
-            url = f"{self.model_url}/api/tags"
-            request = urllib.request.Request(url, method='GET')
-            with urllib.request.urlopen(request, timeout=5) as response:
-                return response.status == 200
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
-            logger.warning(f"Ollama server check failed at {self.model_url}: {e}")
-            return False
-
-    def _check_model_available(self) -> bool:
-        """Check if the configured model is pulled and available."""
-        try:
-            url = f"{self.model_url}/api/tags"
-            request = urllib.request.Request(url, method='GET')
-            with urllib.request.urlopen(request, timeout=5) as response:
-                import json
-                data = json.loads(response.read().decode('utf-8'))
-                models = data.get('models', [])
-
-                # Check if our model is in the list
-                for model in models:
-                    model_name = model.get('name', '')
-                    # Match both "gemma3:1b" and "gemma3:1b:latest"
-                    if model_name.startswith(self.model_id):
-                        return True
-                return False
-        except Exception as e:
-            logger.warning(f"Model availability check failed: {e}")
-            return False
-
-    def _load_config(self, config_path: Optional[str] = None) -> Dict:
+    def _load_langextract_config(self, config_path: Optional[str] = None) -> Dict:
+        """Load shared LangExtract configuration.
+        
+        :param config_path: Path to configuration file.
+        :return: LangExtract configuration dictionary.
+        """
         if config_path is None:
             config_path = self.DEFAULT_CONFIG_PATH
 
@@ -153,21 +120,51 @@ class LangExtractRecognizer(RemoteRecognizer):
 
         if not langextract_config:
             raise ValueError(
-                "Configuration file must contain 'langextract' section"
+                "Configuration file must contain 'langextract' section with shared config"
             )
 
         return langextract_config
+
+    def _load_config(self, config_path: Optional[str] = None, config_section: str = "langextract") -> Dict:
+        """Load and validate LangExtract configuration.
+        
+        :param config_path: Path to configuration file.
+        :param config_section: Name of the config section (e.g., "ollama", "langextract").
+        :return: Configuration dictionary.
+        """
+        if config_path is None:
+            config_path = self.DEFAULT_CONFIG_PATH
+
+        config_path = Path(config_path)
+
+        if not config_path.exists():
+            raise FileNotFoundError(
+                f"LangExtract configuration file not found: {config_path}"
+            )
+
+        with open(config_path, 'r') as f:
+            full_config = yaml.safe_load(f)
+
+        section_config = full_config.get(config_section, {})
+
+        if not section_config:
+            raise ValueError(
+                f"Configuration file must contain '{config_section}' section"
+            )
+
+        return section_config
 
     def _get_required_config(self, key: str):
         """Get required configuration value or raise error if missing."""
         value = self.config.get(key)
         if value is None:
             raise ValueError(
-                f"Missing required configuration '{key}' in langextract_config.yaml"
+                f"Missing required configuration '{key}' in configuration file"
             )
         return value
 
     def _load_prompt_file(self) -> str:
+        """Load the prompt template from configuration."""
         prompt_file = self._get_required_config("prompt_file")
         prompt_path = Path(__file__).parent.parent.parent / "conf" / prompt_file
 
@@ -178,6 +175,7 @@ class LangExtractRecognizer(RemoteRecognizer):
             return f.read()
 
     def _load_examples_file(self) -> List:
+        """Load and convert examples from YAML to LangExtract format."""
         examples_file = self._get_required_config("examples_file")
         examples_path = Path(__file__).parent.parent.parent / "conf" / examples_file
 
@@ -215,6 +213,22 @@ class LangExtractRecognizer(RemoteRecognizer):
 
         return langextract_examples
 
+    def _parse_llm_response(
+        self,
+        response,
+        original_text: str
+    ) -> List:
+        """
+        Parse LangExtract response into structured format.
+        
+        :param response: LangExtract result object.
+        :param original_text: Original text that was analyzed.
+        :return: List of extractions from LangExtract.
+        """
+        if not response or not response.extractions:
+            return []
+        return response.extractions
+
     def analyze(
         self,
         text: str,
@@ -242,19 +256,12 @@ class LangExtractRecognizer(RemoteRecognizer):
                 return []
 
         try:
-            extract_params = {
-                "text_or_documents": text,
-                "prompt_description": self.prompt_description,
-                "examples": self.examples,
-                "model_id": self.model_id,
-            }
-
-            # Ollama-specific parameters
-            extract_params["model_url"] = self.model_url
-            if self.temperature is not None:
-                extract_params["temperature"] = self.temperature
-
-            result = lx.extract(**extract_params)
+            # Call the LLM through the abstract method
+            result = self._call_llm(
+                text=text,
+                prompt=self.prompt_description,
+                examples=self.examples
+            )
 
             converted_results = self._convert_to_recognizer_results(result, entities)
             if converted_results:
@@ -271,12 +278,14 @@ class LangExtractRecognizer(RemoteRecognizer):
         langextract_result,
         requested_entities: Optional[List[str]] = None
     ) -> List[RecognizerResult]:
+        """Convert LangExtract results to Presidio RecognizerResult format."""
         recognizer_results = []
 
-        if not langextract_result or not langextract_result.extractions:
+        extractions = self._parse_llm_response(langextract_result, "")
+        if not extractions:
             return recognizer_results
 
-        for i, extraction in enumerate(langextract_result.extractions):
+        for extraction in extractions:
             extraction_class = extraction.extraction_class.lower()
             entity_type = self.entity_mappings.get(extraction_class)
 
@@ -314,7 +323,14 @@ class LangExtractRecognizer(RemoteRecognizer):
 
         return recognizer_results
 
-    def _calculate_score(self, extraction) -> float:
+    def _calculate_confidence_score(self, extraction_info: Dict) -> float:
+        """
+        Calculate confidence score for a LangExtract extraction.
+        
+        :param extraction_info: LangExtract extraction object.
+        :return: Confidence score between 0 and 1.
+        """
+        extraction = extraction_info
         default_score = 0.85
 
         if not hasattr(extraction, 'alignment_status') or not (
@@ -336,11 +352,16 @@ class LangExtractRecognizer(RemoteRecognizer):
 
         return default_score
 
+    def _calculate_score(self, extraction) -> float:
+        """Legacy method - delegates to _calculate_confidence_score."""
+        return self._calculate_confidence_score(extraction)
+
     def _build_explanation(
         self,
         extraction,
         entity_type: str
     ) -> AnalysisExplanation:
+        """Build explanation for a LangExtract extraction result."""
         attributes_text = ""
         if hasattr(extraction, 'attributes') and extraction.attributes:
             attr_parts = [f"{k}={v}" for k, v in extraction.attributes.items()]
@@ -358,6 +379,25 @@ class LangExtractRecognizer(RemoteRecognizer):
         )
 
         return explanation
+
+    @abstractmethod
+    def _call_llm(
+        self,
+        text: str,
+        prompt: str,
+        examples: List,
+        **kwargs
+    ):
+        """
+        Call the specific LLM implementation with LangExtract.
+        
+        :param text: Text to analyze.
+        :param prompt: Prompt description for LangExtract.
+        :param examples: LangExtract examples.
+        :param kwargs: Additional LLM-specific parameters.
+        :return: LangExtract result object.
+        """
+        ...
 
     def get_supported_entities(self) -> List[str]:
         """Return list of supported PII entity types."""

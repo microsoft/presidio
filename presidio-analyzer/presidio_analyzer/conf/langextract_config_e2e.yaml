@@ -1,16 +1,14 @@
-# LangExtract LLM-based PII Recognition - E2E Test Configuration
-# This config enables LangExtract for end-to-end integration tests
+# Ollama LangExtract PII/PHI Recognition - E2E Test Configuration
+# This config enables Ollama LangExtract recognizer for end-to-end integration tests
 # https://github.com/google/langextract
 
+# LangExtract shared configuration (used by all LangExtract-based recognizers)
 langextract:
-  # Ollama local model configuration
-  model_id: "gemma3:1b"
-  model_url: "http://ollama:11434"  # Docker service name
-  temperature: null  # Optional: Set to 0.0-1.0 for deterministic/creative output
-  
+  # Prompt and examples (shared across all LangExtract recognizers)
   prompt_file: "langextract_prompts/default_pii_prompt.txt"
   examples_file: "langextract_prompts/default_pii_examples.yaml"
   
+  # Entity mappings: LangExtract entity -> Presidio entity type (shared)
   entity_mappings:
     person: PERSON
     full_name: PERSON
@@ -22,11 +20,12 @@ langextract:
     date: DATE_TIME
     ssn: US_SSN
     credit_card: CREDIT_CARD
-    medical_record: MEDICAL_LICENSE
+    medical_record: MEDICAL_LICENSE  # PHI
     ip_address: IP_ADDRESS
     url: URL
     iban: IBAN_CODE
   
+  # Supported PII/PHI entity types (shared)
   supported_entities:
     - PERSON
     - LOCATION
@@ -36,9 +35,16 @@ langextract:
     - DATE_TIME
     - US_SSN
     - CREDIT_CARD
-    - MEDICAL_LICENSE
+    - MEDICAL_LICENSE  # PHI
     - IP_ADDRESS
     - URL
     - IBAN_CODE
   
   min_score: 0.5
+
+# Ollama-specific configuration (only for OllamaLangExtractRecognizer)
+ollama:
+  # Ollama server and model settings (Docker service)
+  model_id: "gemma3:1b"
+  model_url: "http://ollama:11434"  # Docker service name
+  temperature: null  # Optional: Set to 0.0-1.0 for deterministic/creative output

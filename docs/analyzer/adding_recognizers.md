@@ -165,13 +165,18 @@ On how to integrate Presidio with AHDS De-Identification Protected Health Inform
 and a sample for a ADHS Remote Recognizer, refer to the
 [AHDS de-Identification Integration document](../samples/python/ahds/index.md).
 
-### LLM-based PII detection recognizer
+### Language Model-based PII/PHI detection recognizer
 
-Presidio supports LLM-based PII detection for flexible, zero-shot entity recognition using large language models.
-This approach leverages LangExtract under the hood to integrate with various LLM providers including Google Gemini, OpenAI, or Ollama.
+Presidio supports Language Model-based PII/PHI detection for flexible, zero-shot entity recognition using language models (LLMs, SLMs, etc.).
 
-For details on integrating LLM-based PII detection into Presidio,
-refer to the [LLM-based PII Detection using LangExtract](../samples/python/langextract/index.md) guide.
+**Detects both:**
+- **PII (Personally Identifiable Information)**: Names, emails, phone numbers, SSN, credit cards, etc.
+- **PHI (Protected Health Information)**: Medical records, health identifiers, etc.
+
+This approach leverages LangExtract under the hood to integrate with various language model providers. Currently, only Ollama (local models) is supported.
+
+For details on integrating Language Model-based PII/PHI detection into Presidio,
+refer to the [Language Model-based PII/PHI Detection using LangExtract](../samples/python/langextract/index.md) guide.
 
 ### Creating ad-hoc recognizers
 

@@ -1,12 +1,17 @@
-# LLM-based PII Detection using LangExtract
+# Language Model-based PII/PHI Detection using LangExtract
 
 ## Introduction
 
-Presidio supports LLM-based PII detection for flexible, zero-shot entity recognition using large language models.
-This approach uses [LangExtract](https://github.com/google/langextract) under the hood to integrate with LLM providers.
-Currently, this integration supports **Ollama for local LLM deployment only**.
+Presidio supports Language Model-based PII/PHI detection for flexible, zero-shot entity recognition using various language models (LLMs, SLMs, etc.).
 
-## Supported LLM Providers
+**Detects both:**
+- **PII (Personally Identifiable Information)**: Names, emails, phone numbers, SSN, credit cards, etc.
+- **PHI (Protected Health Information)**: Medical records, health identifiers, etc.
+
+This approach uses [LangExtract](https://github.com/google/langextract) under the hood to integrate with language model providers.
+Currently, this integration supports **Ollama for local language model deployment only**.
+
+## Supported Language Model Providers
 
 Currently, only **Ollama** (local model deployment) is supported.
 
@@ -30,12 +35,18 @@ To use LangExtract with Presidio, install the required dependencies:
 pip install presidio-analyzer[langextract]
 ```
 
-Create your own `langextract_config.yaml` file with the Ollama URL (default: `http://localhost:11434`) or use the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config.yaml).
+Create your own `ollama_config.yaml` file with the Ollama URL (default: `http://localhost:11434`) or use the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/ollama_config.yaml).
 
-## LLM-based Recognizer Implementation
+## Language Model-based Recognizer Implementation
 
-The `LangExtractRecognizer` is Presidio's implementation for LLM-based PII detection, leveraging LangExtract to communicate with LLM providers.
-[The implementation can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/langextract_recognizer.py).
+Presidio provides a hierarchy of recognizers for Language Model-based PII/PHI detection:
+
+- **`LMRecognizer`**: Abstract base class for all language model recognizers (LLMs, SLMs, etc.)
+- **`LangExtractRecognizer`**: Abstract base class for LangExtract library integration (model-agnostic)
+- **`OllamaLangExtractRecognizer`**: Concrete implementation for Ollama local language models
+
+The `OllamaLangExtractRecognizer` is the recommended recognizer for using Language Model-based PII/PHI detection with local Ollama models.
+[The implementation can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/ollama_langextract_recognizer.py).
 
 ## How to Use
 
@@ -50,25 +61,24 @@ The `LangExtractRecognizer` is Presidio's implementation for LLM-based PII detec
    
    ```python
    from presidio_analyzer import AnalyzerEngine
-   from presidio_analyzer.predefined_recognizers.third_party import LangExtractRecognizer
+   from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
    
-   langextract = LangExtractRecognizer()
+   ollama = OllamaLangExtractRecognizer()
    
    analyzer = AnalyzerEngine()
-   analyzer.registry.add_recognizer(langextract)
+   analyzer.registry.add_recognizer(ollama)
    
    analyzer.analyze(text="My email is john.doe@example.com", language="en")
    ```
 
 ## Configuration Options
 
-Customize the recognizer in the `langextract_config.yaml` file:
+Customize the recognizer in the `ollama_config.yaml` file:
 
-- `enabled`: Enable/disable the recognizer
 - `model_id`: The Ollama model to use (e.g., "gemma3:1b")
 - `model_url`: Ollama server URL (default: `http://localhost:11434`)
-- `supported_entities`: PII entity types to detect
+- `supported_entities`: PII/PHI entity types to detect
 - `entity_mappings`: Map LangExtract entities to Presidio entity names
 - `min_score`: Minimum confidence score
 
-See the [configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config.yaml) for all options.
+See the [configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/ollama_config.yaml) for all options.
