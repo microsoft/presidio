@@ -199,3 +199,10 @@ recognizers:
     - en
     type: predefined
     enabled: false
+
+  - name: OllamaLangExtractRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+    enabled: false
+    config_path: presidio_analyzer/conf/ollama_config.yaml

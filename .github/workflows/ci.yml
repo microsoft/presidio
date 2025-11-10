@@ -324,8 +324,6 @@ jobs:
         run: |
           source env/bin/activate
           pytest -vv --tb=short
-        env:
-          RECOGNIZER_REGISTRY_CONF_FILE: presidio_analyzer/conf/e2e_recognizers.yaml
 
       - name: Capture Docker logs on failure (${{ matrix.platform }})
         if: failure()
