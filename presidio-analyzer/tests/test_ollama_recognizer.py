@@ -30,8 +30,8 @@ class TestOllamaLangExtractRecognizerInitialization:
             "langextract": {
                 "supported_entities": ["PERSON", "EMAIL_ADDRESS"],
                 "entity_mappings": {"person": "PERSON", "email": "EMAIL_ADDRESS"},
-                "prompt_file": "langextract_prompts/default_pii_prompt.txt",
-                "examples_file": "langextract_prompts/default_pii_examples.yaml",
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
                 "min_score": 0.5,
             },
             "ollama": {
@@ -79,8 +79,8 @@ class TestOllamaLangExtractRecognizerInitialization:
             "langextract": {
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person": "PERSON"},
-                "prompt_file": "langextract_prompts/default_pii_prompt.txt",
-                "examples_file": "langextract_prompts/default_pii_examples.yaml",
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
                 "min_score": 0.5,
             },
             "ollama": {
@@ -112,8 +112,8 @@ class TestOllamaLangExtractRecognizerInitialization:
             "langextract": {
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person": "PERSON"},
-                "prompt_file": "langextract_prompts/default_pii_prompt.txt",
-                "examples_file": "langextract_prompts/default_pii_examples.yaml",
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
                 "min_score": 0.5,
             },
             "ollama": {
@@ -157,8 +157,8 @@ class TestOllamaLangExtractRecognizerAnalyze:
                     "email": "EMAIL_ADDRESS",
                     "phone": "PHONE_NUMBER"
                 },
-                "prompt_file": "langextract_prompts/default_pii_prompt.txt",
-                "examples_file": "langextract_prompts/default_pii_examples.yaml",
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
                 "min_score": 0.5,
             },
             "ollama": {

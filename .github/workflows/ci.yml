@@ -129,43 +129,6 @@ jobs:
             poetry run python -m spacy download $model
           done
 
-      - name: Set up Ollama for Analyzer tests
-        if: matrix.component.name == 'Analyzer'
-        timeout-minutes: 15
-        run: |
-          # Install Ollama using official installer
-          echo "Installing Ollama..."
-          curl -fsSL https://ollama.com/install.sh | sh
-          
-          # Start Ollama service in background
-          echo "Starting Ollama service..."
-          nohup ollama serve > /tmp/ollama.log 2>&1 &
-          OLLAMA_PID=$!
-          echo "Ollama PID: $OLLAMA_PID"
-          
-          # Wait for Ollama to be ready
-          echo "Waiting for Ollama to start..."
-          for i in {1..60}; do
-            if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
-              echo "✓ Ollama is ready!"
-              break
-            fi
-            if [ $i -eq 60 ]; then
-              echo "✗ Ollama failed to start in time"
-              cat /tmp/ollama.log
-              exit 1
-            fi
-            echo "  Attempt $i/60: waiting..."
-            sleep 2
-          done
-          
-          # Pull the model
-          echo "Pulling gemma3:1b model..."
-          ollama pull gemma3:1b
-          
-          echo "✓ Ollama setup complete!"
-          ollama list
-
       - name: Run unit tests
         working-directory: ${{ matrix.component.path }}
         run: |
