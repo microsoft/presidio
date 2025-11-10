@@ -251,6 +251,3 @@ examples:
         attributes:
           type: "street_address"
 
-  # 20) Negative control (no PII/PHI)
-  - text: "The system processed 10 records successfully."
-    extractions: []
