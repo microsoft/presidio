@@ -64,10 +64,7 @@ def skip_by_engine(request, nlp_engines):
     marker = request.node.get_closest_marker("skip_engine")
     if marker:
         marker_arg = marker.args[0]
-        # Check if it's an NLP engine
-        if marker_arg in nlp_engines:
-            return  # Engine is available
-        else:
+        if marker_arg not in nlp_engines:
             pytest.skip(f"skipped on this engine: {marker_arg}")
 
 
@@ -82,7 +79,6 @@ def spacy_nlp_engine(nlp_engines):
 
 @pytest.fixture(scope="session")
 def nlp_recognizers() -> Dict[str, EntityRecognizer]:
-    """Create NLP recognizer instances."""
     return {name: rec_cls() for name, rec_cls in NLP_RECOGNIZERS.items()}
 
 
