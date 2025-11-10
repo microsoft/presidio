@@ -14,7 +14,7 @@
 # LangExtract shared configuration (used by all LangExtract-based recognizers)
 langextract:
   # Prompt and examples (shared across all LangExtract recognizers)
-  prompt_file: "langextract_prompts/default_pii_prompt.txt"
+  prompt_file: "langextract_prompts/default_pii_phi_prompt.txt"
   examples_file: "langextract_prompts/default_pii_examples.yaml"
   
   # Entity mappings: LangExtract entity -> Presidio entity type (shared)

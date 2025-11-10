@@ -572,5 +572,3 @@ def test_given_regex_flags_and_normal_entities_are_returned():
     assert equal_json_strings(
         expected_response, response_content
     )
-
-

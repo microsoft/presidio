@@ -6,7 +6,7 @@
 langextract:
   # Prompt and examples (shared across all LangExtract recognizers)
   prompt_file: "langextract_prompts/default_pii_prompt.txt"
-  examples_file: "langextract_prompts/default_pii_examples.yaml"
+  examples_file: "langextract_prompts/default_pii_phi_examples.yaml"
   
   # Entity mappings: LangExtract entity -> Presidio entity type (shared)
   entity_mappings:
