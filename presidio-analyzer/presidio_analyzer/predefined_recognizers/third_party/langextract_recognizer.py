@@ -23,15 +23,16 @@ LANGEXTRACT_DOCS_URL = "https://github.com/google/langextract"
 class LangExtractRecognizer(LMRecognizer):
     """
     Abstract base class for PII detection using LangExtract library.
-    
+
     Handles LangExtract-specific functionality including:
     - Configuration loading and validation
     - Examples and prompt management
     - Entity mapping between LangExtract and Presidio
     - Result conversion from LangExtract format to RecognizerResult
-    
-    Note: This is an abstract class. Concrete implementations (like OllamaLangExtractRecognizer)
-    must define their own DEFAULT_CONFIG_PATH.
+
+    Note: This is an abstract class. Concrete implementations
+    (like OllamaLangExtractRecognizer) must define their own
+    DEFAULT_CONFIG_PATH.
     """
 
     # No DEFAULT_CONFIG_PATH here - subclasses must define their own
@@ -99,7 +100,7 @@ class LangExtractRecognizer(LMRecognizer):
 
     def _load_langextract_config(self, config_path: Optional[str] = None) -> Dict:
         """Load shared LangExtract configuration.
-        
+
         :param config_path: Path to configuration file.
         :return: LangExtract configuration dictionary.
         """
@@ -120,16 +121,22 @@ class LangExtractRecognizer(LMRecognizer):
 
         if not langextract_config:
             raise ValueError(
-                "Configuration file must contain 'langextract' section with shared config"
+                "Configuration file must contain 'langextract' section "
+                "with shared config"
             )
 
         return langextract_config
 
-    def _load_config(self, config_path: Optional[str] = None, config_section: str = "langextract") -> Dict:
+    def _load_config(
+        self,
+        config_path: Optional[str] = None,
+        config_section: str = "langextract"
+    ) -> Dict:
         """Load and validate LangExtract configuration.
-        
+
         :param config_path: Path to configuration file.
-        :param config_section: Name of the config section (e.g., "ollama", "langextract").
+        :param config_section: Name of the config section
+            (e.g., "ollama", "langextract").
         :return: Configuration dictionary.
         """
         if config_path is None:
@@ -220,7 +227,7 @@ class LangExtractRecognizer(LMRecognizer):
     ) -> List:
         """
         Parse LangExtract response into structured format.
-        
+
         :param response: LangExtract result object.
         :param original_text: Original text that was analyzed.
         :return: List of extractions from LangExtract.
@@ -326,7 +333,7 @@ class LangExtractRecognizer(LMRecognizer):
     def _calculate_confidence_score(self, extraction_info: Dict) -> float:
         """
         Calculate confidence score for a LangExtract extraction.
-        
+
         :param extraction_info: LangExtract extraction object.
         :return: Confidence score between 0 and 1.
         """
@@ -390,7 +397,7 @@ class LangExtractRecognizer(LMRecognizer):
     ):
         """
         Call the specific LLM implementation with LangExtract.
-        
+
         :param text: Text to analyze.
         :param prompt: Prompt description for LangExtract.
         :param examples: LangExtract examples.

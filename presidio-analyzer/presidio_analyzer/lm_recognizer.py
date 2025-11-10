@@ -2,13 +2,12 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
 from presidio_analyzer import RemoteRecognizer
-from presidio_analyzer.nlp_engine import NlpArtifacts
 
 
 class LMRecognizer(RemoteRecognizer, ABC):
     """
     Abstract base class for PII detection using Language Models (LLMs, SLMs, etc.).
-    
+
     Provides common functionality for language model-based recognizers including:
     - Model configuration management
     - Temperature and scoring controls
@@ -45,7 +44,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
             version=version,
             **kwargs
         )
-        
+
         self.model_id = model_id
         self.temperature = temperature
         self.min_score = min_score
@@ -59,7 +58,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
     ) -> str:
         """
         Make a call to the LLM service.
-        
+
         :param text: Text to analyze.
         :param prompt: Prompt to send to the LLM.
         :param kwargs: Additional parameters specific to the LLM provider.
@@ -75,7 +74,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
     ) -> List:
         """
         Parse the LLM response into structured data.
-        
+
         :param response: Raw response from the LLM.
         :param original_text: Original text that was analyzed.
         :return: List of extracted entities in LLM-specific format.
@@ -86,7 +85,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
     def _validate_llm_availability(self) -> bool:
         """
         Check if the LLM service is available and accessible.
-        
+
         :return: True if the LLM service is available, False otherwise.
         """
         ...
@@ -95,9 +94,9 @@ class LMRecognizer(RemoteRecognizer, ABC):
     def _calculate_confidence_score(self, extraction_info: Dict) -> float:
         """
         Calculate confidence score for an extraction.
-        
+
         Must be implemented by subclasses for specific scoring logic.
-        
+
         :param extraction_info: Information about the extraction.
         :return: Confidence score between 0 and 1.
         """

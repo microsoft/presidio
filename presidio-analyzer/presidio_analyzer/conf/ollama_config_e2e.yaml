@@ -2,8 +2,8 @@
 # https://github.com/google/langextract#using-local-llms-with-ollama
 
 langextract:
-  prompt_file: "langextract_prompts/default_pii_prompt.txt"
-  examples_file: "langextract_prompts/default_pii_examples.yaml"
+  prompt_file: "langextract_prompts/default_pii_phi_prompt.txt"
+  examples_file: "langextract_prompts/default_pii_phi_examples.yaml"
   
   entity_mappings:
     person: PERSON

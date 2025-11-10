@@ -2,14 +2,16 @@
 # https://github.com/google/langextract#using-local-llms-with-ollama
 
 langextract:
-  prompt_file: "langextract_prompts/default_pii_prompt.txt"
-  examples_file: "langextract_prompts/default_pii_examples.yaml"
+  prompt_file: "langextract_prompts/default_pii_phi_prompt.txt"
+  examples_file: "langextract_prompts/default_pii_phi_examples.yaml"
   
   entity_mappings:
     person: PERSON
+    name: PERSON
     full_name: PERSON
     location: LOCATION
     address: LOCATION
+    city: LOCATION
     organization: ORGANIZATION
     phone: PHONE_NUMBER
     email: EMAIL_ADDRESS
@@ -17,9 +19,15 @@ langextract:
     ssn: US_SSN
     credit_card: CREDIT_CARD
     medical_record: MEDICAL_LICENSE
+    health_insurance: MEDICAL_LICENSE
+    medical_license: MEDICAL_LICENSE
     ip_address: IP_ADDRESS
     url: URL
     iban: IBAN_CODE
+    blood_type: NRP
+    condition: NRP
+    medication: NRP
+    procedure: NRP
   
   supported_entities:
     - PERSON
@@ -34,6 +42,7 @@ langextract:
     - IP_ADDRESS
     - URL
     - IBAN_CODE
+    - NRP
   
   min_score: 0.5
 

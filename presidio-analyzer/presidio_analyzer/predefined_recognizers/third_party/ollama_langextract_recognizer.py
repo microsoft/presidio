@@ -11,7 +11,8 @@ except ImportError:
     LANGEXTRACT_AVAILABLE = False
     lx = None
 
-from presidio_analyzer.predefined_recognizers.third_party.langextract_recognizer import LangExtractRecognizer
+from presidio_analyzer.predefined_recognizers.third_party.\
+    langextract_recognizer import LangExtractRecognizer
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -20,7 +21,7 @@ OLLAMA_INSTALL_DOCS = "https://github.com/google/langextract#using-local-llms-wi
 class OllamaLangExtractRecognizer(LangExtractRecognizer):
     """
     Concrete implementation of LangExtract recognizer using Ollama backend.
-    
+
     Provides Ollama-specific functionality including:
     - Ollama server connectivity validation
     - Model availability checks
@@ -50,21 +51,17 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         :param version: Recognizer version.
         :param kwargs: Additional arguments for parent class.
         """
-        # Load Ollama-specific configuration first
         ollama_config = self._load_ollama_config(config_path)
-        
-        # Extract Ollama-specific parameters
         model_id = ollama_config.get("model_id")
         if not model_id:
             raise ValueError("Ollama configuration must contain 'model_id'")
-            
+
         self.model_url = ollama_config.get("model_url")
         if not self.model_url:
             raise ValueError("Ollama configuration must contain 'model_url'")
-        
+
         temperature = ollama_config.get("temperature")
-        
-        # Initialize parent with Ollama-specific parameters
+
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
@@ -73,16 +70,15 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
             version=version,
             model_id=model_id,
             temperature=temperature,
-            min_score=None,  # Will be loaded from langextract config
+            min_score=None,
             **kwargs
         )
-        
-        # Validate Ollama setup during initialization
+
         self._validate_ollama_setup()
 
     def _load_ollama_config(self, config_path: Optional[str] = None) -> Dict:
         """Load Ollama-specific configuration.
-        
+
         :param config_path: Path to configuration file.
         :return: Ollama configuration dictionary.
         """
@@ -104,7 +100,8 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
 
         if not ollama_config:
             raise ValueError(
-                "Configuration file must contain 'ollama' section with Ollama-specific config"
+                "Configuration file must contain 'ollama' section "
+                "with Ollama-specific config"
             )
 
         return ollama_config
@@ -157,10 +154,8 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
                 data = json.loads(response.read().decode('utf-8'))
                 models = data.get('models', [])
 
-                # Check if our model is in the list
                 for model in models:
                     model_name = model.get('name', '')
-                    # Match both "gemma3:1b" and "gemma3:1b:latest"
                     if model_name.startswith(self.model_id):
                         return True
                 return False
@@ -177,7 +172,7 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
     ):
         """
         Call Ollama through LangExtract for PII extraction.
-        
+
         :param text: Text to analyze.
         :param prompt: Prompt description for LangExtract.
         :param examples: LangExtract examples.
@@ -191,12 +186,10 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
             "model_id": self.model_id,
         }
 
-        # Ollama-specific parameters
         extract_params["model_url"] = self.model_url
         if self.temperature is not None:
             extract_params["temperature"] = self.temperature
 
-        # Add any additional kwargs
         extract_params.update(kwargs)
 
         return lx.extract(**extract_params)
