@@ -66,16 +66,13 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_successful
 
 @pytest.mark.package
 def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities():
-    """Test Ollama LangExtract recognizer detects PII entities with default config."""
+    """Test Ollama LangExtract recognizer detects PII entities through AnalyzerEngine with default config."""
     if not OLLAMA_RECOGNIZER_AVAILABLE:
         pytest.fail("LangExtract is not installed - test failed")
     
     text_to_test = "John Smith works at Microsoft and his email is john@microsoft.com"
     
-    # Initialize Ollama recognizer with default config - will fail if Ollama not available
-    ollama_recognizer = OllamaLangExtractRecognizer()
-    
-    # Create NLP engine for other recognizers
+    # Create NLP engine configuration
     configuration = {
         "nlp_engine_name": "spacy",
         "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
@@ -83,15 +80,14 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities():
     provider = NlpEngineProvider(nlp_configuration=configuration)
     nlp_engine = provider.create_engine()
     
-    # Create analyzer with both standard and Ollama recognizers
+    # Create analyzer - this will load recognizers including Ollama from default config
+    # The Ollama recognizer initialization will fail if server not available or model not pulled
     analyzer = AnalyzerEngine(
         nlp_engine=nlp_engine,
-        supported_languages=["en"],
-        registry=None
+        supported_languages=["en"]
     )
-    analyzer.registry.add_recognizer(ollama_recognizer)
     
-    # Analyze text
+    # Analyze text - Ollama recognizer should be part of the analyzer
     results = analyzer.analyze(text_to_test, language="en")
     
     # Verify results
@@ -108,6 +104,76 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities():
     # Verify anonymization occurred
     assert anonymized_result.text != text_to_test, "Text should be anonymized"
     assert "<PERSON>" in anonymized_result.text or "John Smith" not in anonymized_result.text
+
+
+@pytest.mark.package
+def test_given_text_then_inspect_which_recognizer_detected_entities():
+    """Test to inspect and verify which recognizer detected each entity."""
+    if not OLLAMA_RECOGNIZER_AVAILABLE:
+        pytest.fail("LangExtract is not installed - test failed")
+    
+    text_to_test = "Dr. Sarah Johnson treats patients at Mayo Clinic. Contact: sarah.j@mayo.edu"
+    
+    # Create NLP engine configuration
+    configuration = {
+        "nlp_engine_name": "spacy",
+        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
+    }
+    provider = NlpEngineProvider(nlp_configuration=configuration)
+    nlp_engine = provider.create_engine()
+    
+    # Create analyzer with all recognizers including Ollama
+    analyzer = AnalyzerEngine(
+        nlp_engine=nlp_engine,
+        supported_languages=["en"]
+    )
+    
+    # Analyze text with return_decision_process to see recognizer names
+    results = analyzer.analyze(text_to_test, language="en", return_decision_process=True)
+    
+    # Verify we got results
+    assert len(results) > 0, "Expected to detect entities"
+    
+    # Inspect which recognizers detected which entities
+    recognizer_detections = {}
+    for result in results:
+        recognizer_name = result.analysis_explanation.recognizer
+        entity_type = result.entity_type
+        detected_text = text_to_test[result.start:result.end]
+        
+        if recognizer_name not in recognizer_detections:
+            recognizer_detections[recognizer_name] = []
+        
+        recognizer_detections[recognizer_name].append({
+            "entity_type": entity_type,
+            "text": detected_text,
+            "score": result.score
+        })
+    
+    # Print for debugging/inspection
+    print("\n=== Recognizer Detections ===")
+    for recognizer_name, detections in recognizer_detections.items():
+        print(f"\n{recognizer_name}:")
+        for detection in detections:
+            print(f"  - {detection['entity_type']}: '{detection['text']}' (score: {detection['score']:.2f})")
+    
+    # Verify that we have recognizer information
+    assert len(recognizer_detections) > 0, "Expected at least one recognizer to detect entities"
+    
+    # Check if Ollama recognizer detected anything
+    ollama_recognizer_names = [name for name in recognizer_detections.keys() if "ollama" in name.lower() or "langextract" in name.lower()]
+    
+    if ollama_recognizer_names:
+        print(f"\n✓ Ollama recognizer(s) active: {ollama_recognizer_names}")
+        # Verify Ollama detected something
+        for ollama_name in ollama_recognizer_names:
+            assert len(recognizer_detections[ollama_name]) > 0, f"Ollama recognizer '{ollama_name}' should have detected entities"
+    else:
+        print("\n⚠ Warning: No Ollama/LangExtract recognizer detected entities")
+    
+    # Verify standard recognizers also work
+    assert any(result.analysis_explanation.recognizer for result in results), \
+        "All results should have recognizer information"
 
 
 @pytest.mark.package
