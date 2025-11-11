@@ -45,6 +45,6 @@ langextract:
 # Ollama-specific configuration (only for OllamaLangExtractRecognizer)
 ollama:
   # Ollama server and model settings (Docker service)
-  model_id: "gemma3:1b"
+  model_id: "gemma2:2b"
   model_url: "http://ollama:11434"  # Docker service name
   temperature: null  # Optional: Set to 0.0-1.0 for deterministic/creative output

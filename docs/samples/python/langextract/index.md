@@ -75,7 +75,7 @@ The `OllamaLangExtractRecognizer` is the recommended recognizer for using Langua
 
 Customize the recognizer in the `ollama_config.yaml` file:
 
-- `model_id`: The Ollama model to use (e.g., "gemma3:1b")
+- `model_id`: The Ollama model to use (e.g., "gemma2:2b")
 - `model_url`: Ollama server URL (default: `http://localhost:11434`)
 - `supported_entities`: PII/PHI entity types to detect
 - `entity_mappings`: Map LangExtract entities to Presidio entity names

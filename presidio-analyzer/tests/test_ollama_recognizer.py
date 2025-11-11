@@ -35,7 +35,7 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "min_score": 0.5,
             },
             "ollama": {
-                "model_id": "gemma3:1b",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
             }
@@ -58,7 +58,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
             
             # Verify initialization
-            assert recognizer.model_id == "gemma3:1b"
+            assert recognizer.model_id == "gemma2:2b"
             assert recognizer.model_url == "http://localhost:11434"
             assert len(recognizer.supported_entities) == 2
             assert "PERSON" in recognizer.supported_entities
@@ -84,7 +84,7 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "min_score": 0.5,
             },
             "ollama": {
-                "model_id": "gemma3:1b",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
             }
@@ -117,7 +117,7 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "min_score": 0.5,
             },
             "ollama": {
-                "model_id": "gemma3:1b",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
             }
@@ -162,7 +162,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
                 "min_score": 0.5,
             },
             "ollama": {
-                "model_id": "gemma3:1b",
+                "model_id": "gemma2:2b",
                 "model_url": "http://localhost:11434",
                 "temperature": 0.0,
             }
