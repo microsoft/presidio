@@ -115,7 +115,7 @@ class ConfigurationValidator:
     def validate_analyzer_configuration(config: Dict[str, Any]) -> Dict[str, Any]:
         """Validate analyzer engine validation."""
         if not isinstance(config, dict):
-            raise ValueError("Analyzer validation must be a dictionary")
+            raise ValueError("Analyzer configuration must be a dictionary")
 
         # Validate supported languages if present
         if "supported_languages" in config:
