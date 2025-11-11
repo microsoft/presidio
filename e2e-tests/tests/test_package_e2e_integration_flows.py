@@ -67,8 +67,7 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_successful
 @pytest.mark.package
 def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities():
     """Test Ollama LangExtract recognizer detects PII entities through AnalyzerEngine with default config."""
-    if not OLLAMA_RECOGNIZER_AVAILABLE:
-        pytest.fail("LangExtract is not installed - test failed")
+    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
     
     text_to_test = "John Smith works at Microsoft and his email is john@microsoft.com"
     
@@ -109,8 +108,7 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities():
 @pytest.mark.package
 def test_given_text_then_inspect_which_recognizer_detected_entities():
     """Test to inspect and verify which recognizer detected each entity."""
-    if not OLLAMA_RECOGNIZER_AVAILABLE:
-        pytest.fail("LangExtract is not installed - test failed")
+    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
     
     text_to_test = "Dr. Sarah Johnson treats patients at Mayo Clinic. Contact: sarah.j@mayo.edu"
     
@@ -179,8 +177,7 @@ def test_given_text_then_inspect_which_recognizer_detected_entities():
 @pytest.mark.package
 def test_given_unavailable_ollama_model_then_raises_exception(tmp_path):
     """Test that initializing Ollama recognizer with non-existent model raises exception."""
-    if not OLLAMA_RECOGNIZER_AVAILABLE:
-        pytest.fail("LangExtract is not installed - test failed")
+    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
     
     import yaml
     
@@ -212,8 +209,7 @@ def test_given_unavailable_ollama_model_then_raises_exception(tmp_path):
 @pytest.mark.package
 def test_given_text_with_ollama_recognizer_and_score_threshold_then_filters_results():
     """Test Ollama recognizer with score threshold filtering."""
-    if not OLLAMA_RECOGNIZER_AVAILABLE:
-        pytest.fail("LangExtract is not installed - test failed")
+    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
     
     text_to_test = "Contact Alice at alice@example.com or call 555-1234"
     
