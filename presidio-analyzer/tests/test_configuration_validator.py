@@ -1,4 +1,4 @@
-"""Tests for the Pydantic-based validation validation system using existing adapted classes."""
+"""Tests for the Pydantic-based validation system using existing adapted classes."""
 import pytest
 
 from presidio_analyzer.input_validation import ConfigurationValidator
