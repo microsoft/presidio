@@ -379,7 +379,7 @@ class RecognizerRegistryConfig(BaseModel):
         return parsed_recognizers
 
     @classmethod
-    def __check_if_predefined(cls, recognizer_name: Any | None):
+    def __check_if_predefined(cls, recognizer_name: Optional[Any]):
         try:
             from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
                 RecognizerListLoader,
