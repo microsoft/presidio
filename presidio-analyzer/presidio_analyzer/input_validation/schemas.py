@@ -88,7 +88,7 @@ class ConfigurationValidator:
             # Use model_dump() without exclude_unset to include default values
             return validated_config.model_dump(exclude_unset=False)
         except ValidationError as e:
-            raise ValueError(f"Invalid recognizer registry validation: {e}")
+            raise ValueError(f"Invalid recognizer registry configuration: {e}")
         except ImportError:
             # Fallback to basic validation if models not available
             return ConfigurationValidator._validate_recognizer_registry_basic(config)
