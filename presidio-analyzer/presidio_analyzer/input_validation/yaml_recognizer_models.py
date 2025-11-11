@@ -1,9 +1,12 @@
 """Pydantic models for YAML recognizer configurations."""
 
+import logging
 from typing import Any, Dict, List, Optional, Union
 
 import regex as re
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+logger = logging.getLogger("presidio-analyzer")
 
 
 class LanguageContextConfig(BaseModel):
@@ -88,10 +91,6 @@ class BaseRecognizerConfig(BaseModel):
                 "Cannot specify both 'supported_language' and 'supported_languages'"
             )
 
-        if self.supported_language:
-            self.supported_languages = [self.supported_language]
-            self.supported_language = None
-
         # If neither is specified, this is allowed for
         # predefined recognizers (defaults will be used)
         return self
@@ -99,17 +98,17 @@ class BaseRecognizerConfig(BaseModel):
     @model_validator(mode="after")
     def validate_entity_configuration(self):
         """Ensure proper entity validation."""
-        if self.supported_entity and self.supported_entities:
+        # Check if user provided both (before we modify them)
+        user_provided_both = (
+            self.supported_entity is not None
+            and self.supported_entities is not None
+        )
+
+        if user_provided_both:
             raise ValueError(
-                "Cannot specify both 'supported_entity' and 'supported_entities'"
+                f"Recognizer {self.name} has both ""'supported_entity' and 'supported_entities' specified."
             )
 
-        if self.supported_entity:
-            self.supported_entities = [self.supported_entity]
-            self.supported_entity = None
-
-        # If neither is specified, this is allowed for
-        # predefined recognizers (defaults will be used)
         return self
 
     @model_validator(mode="after")
@@ -212,9 +211,9 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
                 raise ValueError(f"Pattern should contain a regex field: {pattern}")
             if "score" not in pattern:
                 raise ValueError(f"Pattern should contain a score field: {pattern}")
-            if not isinstance(pattern["score"], float):
+            if not isinstance(pattern["score"], (int, float)):
                 raise ValueError(f"Pattern score should be a float: {pattern}")
-            if pattern["score"] < 0 or pattern["score"] > 1:
+            if not (0.0 <= pattern["score"] <= 1.0):
                 raise ValueError(f"Pattern score should be between 0 and 1: {pattern}")
         return patterns
 
@@ -265,30 +264,64 @@ class RecognizerRegistryConfig(BaseModel):
     supported_languages: Optional[List[str]] = Field(
         default=None, description="List of supported languages"
     )
-    global_regex_flags: int = Field(default=26, description="Global regex flags")
+    global_regex_flags: int = Field(
+        default=26, description="Global regex flags"
+    )
     recognizers: List[
         Union[PredefinedRecognizerConfig, CustomRecognizerConfig, str]
     ] = Field(default_factory=list, description="List of recognizer configurations")
 
     @field_validator("supported_languages")
     @classmethod
-    def validate_language_codes(cls, v: List[str]) -> List[str]:
+    def validate_language_codes(cls, v: Optional[List[str]]) -> Optional[List[str]]:
         """Validate language codes format."""
 
-        if v is None or len(v) == 0:
-            # Allow empty languages, which will be filled later
-            # by the languages of the recognizers.
-            return v
+        # Allow None or empty list for cases where languages will be inferred
+        if v is None:
+            return None
+
+        if len(v) == 0:
+            return []
 
         for lang in v:
             if not re.match(r"^[a-z]{2}(-[A-Z]{2})?$", lang):
                 raise ValueError(f"Invalid language code format: {lang}")
         return v
 
+    @model_validator(mode="after")
+    def validate_languages_for_custom_recognizers(self):
+        """Validate that custom recognizers have language configuration."""
+        # If we have custom recognizers, we need language configuration somewhere
+        for recognizer in self.recognizers:
+            if isinstance(recognizer, CustomRecognizerConfig):
+                # Check if this custom recognizer has its own language config
+                if not recognizer.supported_language and not recognizer.supported_languages:
+                    # If no language config on recognizer, we need global languages
+                    if not self.supported_languages:
+                        raise ValueError(
+                            f"Language configuration missing for custom recognizer '{recognizer.name}': "
+                            "Either specify 'supported_languages' on the recognizer or provide "
+                            "global 'supported_languages' in the registry configuration."
+                        )
+
+        return self
+
+    @field_validator("global_regex_flags")
+    @classmethod
+    def validate_global_regex_flags(cls, v: int) -> int:
+        """Validate global_regex_flags and warn if using default."""
+        return v
+
     @field_validator("recognizers", mode="before")
     @classmethod
     def parse_recognizers(cls, v):
         """Parse recognizers from various input formats without duplication."""
+        if v is None:
+            raise ValueError(
+                "Configuration error: 'recognizers' is required. "
+                "Please provide a list of recognizers in the configuration."
+            )
+
         if not isinstance(v, list):
             raise ValueError("Recognizers must be a list")
 
@@ -392,99 +425,3 @@ class RecognizerRegistryConfig(BaseModel):
                     "or specify languages for each custom recognizer."
                 )
         return self
-
-
-class YamlRecognizerProcessor:
-    """Utility class to process YAML recognizer configurations."""
-
-    @staticmethod
-    def expand_recognizer_configs(
-        recognizer_config: Union[
-            PredefinedRecognizerConfig, CustomRecognizerConfig, str
-        ],
-        registry_supported_languages: List[str],
-    ) -> List[Dict[str, Any]]:
-        """
-        Expand a recognizer validation into multiple recognizer instances.
-
-        This handles the logic where one YAML recognizer
-        can create multiple actual recognizers
-        based on language configurations.
-        """
-        if isinstance(recognizer_config, str):
-            # Simple string name - create for all registry languages
-            return [
-                {
-                    "name": recognizer_config,
-                    "supported_language": lang,
-                    "type": "predefined",
-                }
-                for lang in registry_supported_languages
-            ]
-
-        expanded_configs = []
-
-        # Handle language expansion
-        if recognizer_config.supported_language:
-            # Single language (legacy format)
-            config_dict = recognizer_config.model_dump()
-            config_dict["supported_language"] = recognizer_config.supported_language
-            if "supported_languages" in config_dict:
-                del config_dict["supported_languages"]
-            expanded_configs.append(config_dict)
-
-        elif recognizer_config.supported_languages:
-            # Multiple languages
-            for lang_config in recognizer_config.supported_languages:
-                config_dict = recognizer_config.model_dump()
-
-                config_dict["supported_language"] = lang_config
-                config_dict["context"] = recognizer_config.context  # Use global context
-
-                if "supported_languages" in config_dict:
-                    del config_dict["supported_languages"]
-                expanded_configs.append(config_dict)
-        else:
-            # No language specified - use the default recognizer language
-            # (for predefined only)
-            # For custom, raise an exception.
-            if isinstance(recognizer_config, CustomRecognizerConfig):
-                # Custom recognizers must specify languages
-                raise ValueError(
-                    f"Custom recognizer '{recognizer_config.name}' "
-                    f"must specify supported languages"
-                )
-            else:
-                config_dict = recognizer_config.model_dump(exclude_unset=True)
-                config_dict["type"] = recognizer_config.type
-                expanded_configs.append(config_dict)
-
-        return expanded_configs
-
-    @staticmethod
-    def create_pattern_recognizers_from_config(
-        custom_config: CustomRecognizerConfig, registry_supported_languages: List[str]
-    ) -> List[Dict[str, Any]]:
-        """Create PatternRecognizer configurations from CustomRecognizerConfig."""
-        expanded_configs = YamlRecognizerProcessor.expand_recognizer_configs(
-            custom_config, registry_supported_languages
-        )
-
-        pattern_recognizer_configs = []
-        for config in expanded_configs:
-            # Convert patterns to the format expected by PatternRecognizer.from_dict()
-            if "patterns" in config:
-                config["patterns"] = [
-                    pattern.model_dump() if hasattr(pattern, "model_dump") else pattern
-                    for pattern in config["patterns"]
-                ]
-
-            # Ensure supported_entities is a list with the single entity
-            if "supported_entity" in config:
-                if config["supported_entity"] is not None:
-                    config["supported_entities"] = [config["supported_entity"]]
-                del config["supported_entity"]
-
-            pattern_recognizer_configs.append(config)
-
-        return pattern_recognizer_configs

@@ -7,7 +7,6 @@ from .yaml_recognizer_models import (
     LanguageContextConfig,
     PredefinedRecognizerConfig,
     RecognizerRegistryConfig,
-    YamlRecognizerProcessor,
 )
 
 __all__ = [
@@ -17,5 +16,4 @@ __all__ = [
     "LanguageContextConfig",
     "PredefinedRecognizerConfig",
     "RecognizerRegistryConfig",
-    "YamlRecognizerProcessor",
 ]

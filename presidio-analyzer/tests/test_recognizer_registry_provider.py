@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 from typing import List
 from inspect import signature
+import pydantic
 
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
@@ -73,10 +74,12 @@ def test_recognizer_registry_provider_corrupt_conf_file_fail(mandatory_recognize
 
 
 def test_recognizer_registry_provider_conf_file_valid_missing_keys_fail():
+    """Test that a config file with invalid keys (no mandatory keys) raises an error."""
     this_path = Path(__file__).parent.absolute()
     test_yaml = Path(this_path, "conf/recognizer_configuration_missing_keys.yaml")
 
-    with pytest.raises(ValueError):
+    # Config file with no mandatory keys should raise ValueError
+    with pytest.raises(ValueError, match="does not contain any of the mandatory keys"):
         RecognizerRegistryProvider(conf_file=test_yaml)
 
 
@@ -150,3 +153,129 @@ def test_default_attributes_equal_recognizer_registry_signature():
     provider_fields = set(RecognizerConfigurationLoader.mandatory_keys)
 
     assert registry_fields == provider_fields
+
+
+def test_recognizer_registry_provider_missing_language_config_raises():
+    """
+    Test that a recognizer configuration without language info gets the default languages.
+    """
+    from presidio_analyzer.recognizer_registry.recognizer_registry_provider import RecognizerRegistryProvider
+    # Configuration with no supported_languages and no recognizer language
+    registry_configuration = {
+        "recognizers": [
+            {
+                "name": "CustomRecognizer",
+                "type": "custom",
+                "supported_entity": "CUSTOM_ENTITY",
+                "patterns": [
+                    {"name": "custom", "regex": "test", "score": 0.5}
+                ],
+                # No supported_language or supported_languages
+            }
+        ]
+    }
+    # When registry_configuration is passed, it gets merged with defaults
+    # so supported_languages gets filled in and recognizers get created for default languages
+    provider = RecognizerRegistryProvider(registry_configuration=registry_configuration)
+    # Verify that defaults were applied
+    assert provider.configuration.get("supported_languages") is not None
+    registry = provider.create_recognizer_registry()
+    # Verify registry was created successfully with default language
+    assert len(registry.recognizers) > 0
+
+
+# Tests for missing required and optional fields in YAML configuration
+
+def test_missing_recognizers_raises_exception():
+    """Test that missing recognizers raises an exception."""
+    this_path = Path(__file__).parent.absolute()
+    conf_file = Path(this_path, "conf/missing_recognizers.yaml")
+
+    with pytest.raises(ValueError) as exc_info:
+        RecognizerRegistryProvider(conf_file=conf_file)
+
+    assert "recognizers" in str(exc_info.value)
+    assert "mandatory" in str(exc_info.value).lower()
+
+
+def test_missing_global_regex_flags_uses_default():
+    """Test that missing global_regex_flags uses default value without error."""
+    this_path = Path(__file__).parent.absolute()
+    conf_file = Path(this_path, "conf/missing_global_regex_flags.yaml")
+
+    # Should not raise an exception
+    provider = RecognizerRegistryProvider(conf_file=conf_file)
+    registry = provider.create_recognizer_registry()
+
+    # Check that default value was used (26 = re.DOTALL | re.MULTILINE | re.IGNORECASE)
+    assert registry.global_regex_flags == 26
+    assert registry.supported_languages == ["en"]
+
+
+def test_valid_configuration_passes():
+    """Test that a valid configuration passes validation."""
+    from presidio_analyzer.input_validation import ConfigurationValidator
+
+    config = {
+        "supported_languages": ["en", "es"],
+        "recognizers": ["CreditCardRecognizer", "EmailRecognizer"],
+        "global_regex_flags": 26,
+    }
+
+    validated = ConfigurationValidator.validate_recognizer_registry_configuration(config)
+
+    assert validated is not None
+    assert validated["supported_languages"] == ["en", "es"]
+    assert validated["global_regex_flags"] == 26
+
+
+def test_valid_configuration_without_global_regex_flags():
+    """Test that configuration without global_regex_flags uses default without error."""
+    from presidio_analyzer.input_validation import ConfigurationValidator
+
+    config = {
+        "supported_languages": ["en"],
+        "recognizers": ["CreditCardRecognizer"],
+    }
+
+    # Should not raise an exception
+    validated = ConfigurationValidator.validate_recognizer_registry_configuration(config)
+
+    # Check default value was set
+    assert validated["global_regex_flags"] == 26
+    assert validated["supported_languages"] == ["en"]
+
+
+def test_recognizers_none_raises_exception():
+    """Test that recognizers explicitly set to None raises an exception."""
+    from presidio_analyzer.input_validation import ConfigurationValidator
+
+    config = {
+        "supported_languages": ["en"],
+        "recognizers": None,
+        "global_regex_flags": 26,
+    }
+
+    with pytest.raises(ValueError) as exc_info:
+        ConfigurationValidator.validate_recognizer_registry_configuration(config)
+
+    assert "recognizers" in str(exc_info.value)
+    assert "required" in str(exc_info.value).lower()
+
+
+
+def test_direct_validation_with_missing_global_regex_flags():
+    """Test direct validation without global_regex_flags succeeds with default."""
+    from presidio_analyzer.input_validation import ConfigurationValidator
+
+    config = {
+        "supported_languages": ["en"],
+        "recognizers": ["CreditCardRecognizer"],
+    }
+
+    # Should not raise an exception
+    validated = ConfigurationValidator.validate_recognizer_registry_configuration(config)
+
+    # Verify default value and successful creation
+    assert validated["global_regex_flags"] == 26
+    assert validated["supported_languages"] == ["en"]

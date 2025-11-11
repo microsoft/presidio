@@ -9,7 +9,6 @@ from presidio_analyzer.input_validation.yaml_recognizer_models import (
     LanguageContextConfig,
     PredefinedRecognizerConfig,
     RecognizerRegistryConfig,
-    YamlRecognizerProcessor,
 )
 
 
@@ -77,31 +76,31 @@ def test_base_recognizer_config_full():
     assert config.name == "test_recognizer"
     assert config.enabled is False
     assert config.type == "custom"
-    assert config.supported_languages == ["en"]
-    assert config.supported_language is None  # Should be normalized
+    assert config.supported_language == "en"  # Preserved as-is
+    assert config.supported_languages is None
     assert config.context == ["test", "context"]
-    assert config.supported_entities == ["TEST_ENTITY"]
-    assert config.supported_entity is None  # Should be normalized
+    assert config.supported_entity == "TEST_ENTITY"  # Preserved as-is
+    assert config.supported_entities is None
 
 
-def test_language_normalization_single_to_multiple():
-    """Test that supported_language gets normalized to supported_languages."""
+def test_language_fields_preserved():
+    """Test that supported_language is preserved as-is (not normalized)."""
     config = BaseRecognizerConfig(
         name="test",
         supported_language="en"
     )
-    assert config.supported_languages == ["en"]
-    assert config.supported_language is None
+    assert config.supported_language == "en"
+    assert config.supported_languages is None
 
 
-def test_entity_normalization_single_to_multiple():
-    """Test that supported_entity gets normalized to supported_entities."""
+def test_entity_fields_preserved():
+    """Test that supported_entity is preserved as-is (not normalized)."""
     config = BaseRecognizerConfig(
         name="test",
         supported_entity="PERSON"
     )
-    assert config.supported_entities == ["PERSON"]
-    assert config.supported_entity is None
+    assert config.supported_entity == "PERSON"
+    assert config.supported_entities is None
 
 
 def test_cannot_specify_both_language_formats():
@@ -123,7 +122,7 @@ def test_cannot_specify_both_entity_formats():
             supported_entity="PERSON",
             supported_entities=["LOCATION", "ORG"]
         )
-    assert "Cannot specify both 'supported_entity' and 'supported_entities'" in str(exc_info.value)
+    assert "has both 'supported_entity' and 'supported_entities' specified" in str(exc_info.value)
 
 
 def test_invalid_single_language_format():
@@ -170,7 +169,8 @@ def test_predefined_recognizer_config_with_language():
         name="CreditCardRecognizer",
         supported_language="en"
     )
-    assert config.supported_languages == ["en"]
+    assert config.supported_language == "en"
+    assert config.supported_languages is None
 
 
 def test_custom_recognizer_config_with_patterns():
@@ -189,7 +189,8 @@ def test_custom_recognizer_config_with_patterns():
     )
     assert config.name == "custom_test"
     assert config.type == "custom"
-    assert config.supported_entities == ["CUSTOM_ENTITY"]
+    assert config.supported_entity == "CUSTOM_ENTITY"
+    assert config.supported_entities is None
     assert config.patterns == patterns
 
 
@@ -411,156 +412,6 @@ def test_recognizer_registry_config_auto_detect_type():
     assert config.recognizers[2].type == "predefined"
 
 
-def test_expand_predefined_recognizer_single_language():
-    """Test expanding predefined recognizer with single language."""
-    config = PredefinedRecognizerConfig(
-        name="EmailRecognizer",
-        supported_language="en"
-    )
-
-    result = YamlRecognizerProcessor.expand_recognizer_configs(
-        config, ["en", "es"]
-    )
-
-    assert len(result) == 1
-    assert result[0]["name"] == "EmailRecognizer"
-    assert result[0]["supported_language"] == "en"
-
-
-def test_expand_predefined_recognizer_multiple_languages():
-    """Test expanding predefined recognizer with multiple languages."""
-    config = PredefinedRecognizerConfig(
-        name="PhoneRecognizer",
-        supported_languages=["en", "es"]
-    )
-
-    result = YamlRecognizerProcessor.expand_recognizer_configs(
-        config, ["en", "es", "fr"]
-    )
-
-    assert len(result) == 2
-    assert result[0]["supported_language"] == "en"
-    assert result[1]["supported_language"] == "es"
-
-
-def test_expand_predefined_recognizer_no_language():
-    """Test that predefined recognizer with no language creates single config."""
-    config = PredefinedRecognizerConfig(
-        name="ItFiscalCodeRecognizer"
-    )
-
-    result = YamlRecognizerProcessor.expand_recognizer_configs(
-        config, ["en", "es", "it"]
-    )
-
-    # Should create only one config, not one per registry language
-    assert len(result) == 1
-    # Should not have supported_language set (let recognizer use its default)
-    assert "supported_language" not in result[0]
-    assert "supported_languages" not in result[0]
-    assert result[0]["name"] == "ItFiscalCodeRecognizer"
-    assert result[0]["type"] == "predefined"
-
-
-def test_expand_custom_recognizer_no_language_error():
-    """Test that custom recognizer without language raises error."""
-    config = CustomRecognizerConfig(
-        name="custom_test",
-        supported_entity="TEST",
-        patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}]
-    )
-
-    with pytest.raises(ValueError) as exc_info:
-        YamlRecognizerProcessor.expand_recognizer_configs(
-            config, ["en", "es"]
-        )
-    assert "Custom recognizer 'custom_test' must specify supported languages" in str(exc_info.value)
-
-
-def test_expand_custom_recognizer_with_language():
-    """Test expanding custom recognizer with specified language."""
-    config = CustomRecognizerConfig(
-        name="custom_test",
-        supported_entity="TEST",
-        supported_language="en",
-        patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}]
-    )
-
-    result = YamlRecognizerProcessor.expand_recognizer_configs(
-        config, ["en", "es"]
-    )
-
-    assert len(result) == 1
-    assert result[0]["name"] == "custom_test"
-    assert result[0]["supported_language"] == "en"
-
-
-def test_expand_recognizer_with_global_context():
-    """Test that global context is preserved during expansion."""
-    config = PredefinedRecognizerConfig(
-        name="EmailRecognizer",
-        supported_languages=["en"],
-        context=["global", "context"]
-    )
-
-    result = YamlRecognizerProcessor.expand_recognizer_configs(
-        config, ["en", "es"]
-    )
-
-    assert len(result) == 1
-    assert result[0]["context"] == ["global", "context"]
-
-
-def test_create_pattern_recognizers_from_config():
-    """Test creating PatternRecognizer configs from CustomRecognizerConfig."""
-    patterns = [
-        {"name": "test", "regex": r"\d+", "score": 0.5}
-    ]
-    config = CustomRecognizerConfig(
-        name="custom_test",
-        supported_entity="TEST",
-        supported_language="en",
-        patterns=patterns,
-        deny_list=["exclude"],
-        deny_list_score=0.1
-    )
-
-    result = YamlRecognizerProcessor.create_pattern_recognizers_from_config(
-        config, ["en"]
-    )
-
-    assert len(result) == 1
-    pattern_config = result[0]
-    assert pattern_config["name"] == "custom_test"
-    assert pattern_config["supported_entities"] == ["TEST"]
-    assert "supported_entity" not in pattern_config
-    assert pattern_config["patterns"] == patterns
-    assert pattern_config["deny_list"] == ["exclude"]
-    assert pattern_config["deny_list_score"] == 0.1
-
-
-def test_expand_language_context_config():
-    """Test expanding recognizer with LanguageContextConfig."""
-    lang_config = LanguageContextConfig(
-        language="es",
-        context=["tarjeta", "credito"]
-    )
-    config = CustomRecognizerConfig(
-        name="credit_card_es",
-        supported_entity="CREDIT_CARD",
-        supported_languages=[lang_config],
-        patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}]
-    )
-
-    result = YamlRecognizerProcessor.expand_recognizer_configs(
-        config, ["en", "es"]
-    )
-
-    assert len(result) == 1
-    assert result[0]["supported_language"] == lang_config
-    # Global context should be preserved even with language-specific config
-    assert result[0]["context"] is None  # No global context in this case
-
 
 def test_complete_registry_scenario():
     """Test a complete registry configuration scenario."""
@@ -596,27 +447,6 @@ def test_complete_registry_scenario():
     assert isinstance(config.recognizers[2], CustomRecognizerConfig)
 
 
-def test_language_context_integration():
-    """Test integration with LanguageContextConfig."""
-    lang_configs = [
-        LanguageContextConfig(language="en", context=["credit", "card"]),
-        LanguageContextConfig(language="es", context=["tarjeta", "credito"])
-    ]
-
-    config = PredefinedRecognizerConfig(
-        name="CreditCardRecognizer",
-        supported_languages=lang_configs
-    )
-
-    # Test expansion
-    result = YamlRecognizerProcessor.expand_recognizer_configs(
-        config, ["en", "es", "fr"]
-    )
-
-    assert len(result) == 2
-    assert result[0]["supported_language"] == lang_configs[0]
-    assert result[1]["supported_language"] == lang_configs[1]
-
 
 def test_error_handling_cascade():
     """Test that validation errors are properly cascaded."""
@@ -628,6 +458,7 @@ def test_error_handling_cascade():
                     "name": "invalid_custom",
                     "type": "custom",
                     "supported_entity": "TEST",
+                    "supported_language": "en",  # Add language to avoid that error
                     "patterns": [
                         {
                             "name": "test",
@@ -741,4 +572,5 @@ def test_custom_recognizer_with_language_no_global_languages():
     config = RecognizerRegistryConfig(**registry_config)
     assert len(config.recognizers) == 1
     assert isinstance(config.recognizers[0], CustomRecognizerConfig)
-    assert config.recognizers[0].supported_languages == ["en"]
+    assert config.recognizers[0].supported_language == "en"
+    assert config.recognizers[0].supported_languages is None

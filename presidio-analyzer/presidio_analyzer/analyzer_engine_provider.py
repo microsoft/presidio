@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional, Union
 import yaml
 
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
-from presidio_analyzer.input_validation import ConfigurationValidator
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 
@@ -60,17 +59,14 @@ class AnalyzerEngineProvider:
                 with open(self._get_full_conf_path()) as file:
                     configuration = yaml.safe_load(file)
             except Exception:
-                print(f"Failed to parse file {conf_file}, resorting to default")
+                logger.warning(f"Failed to parse file {conf_file}, resorting to default")
                 with open(self._get_full_conf_path()) as file:
                     configuration = yaml.safe_load(file)
 
-        # Validate validation using enhanced validation
-        try:
-            ConfigurationValidator.validate_analyzer_configuration(configuration)
-            logger.debug("Analyzer validation validation passed")
-        except ValueError as e:
-            logger.error(f"Invalid analyzer validation: {e}")
-            raise ValueError(f"Configuration validation failed: {e}")
+        # Validate configuration using Pydantic-based ConfigurationValidator
+        from presidio_analyzer.input_validation import ConfigurationValidator
+        ConfigurationValidator.validate_analyzer_configuration(configuration)
+        logger.debug("Analyzer configuration validation passed")
 
         return configuration
 

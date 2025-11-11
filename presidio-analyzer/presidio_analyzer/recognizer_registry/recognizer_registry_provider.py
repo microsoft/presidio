@@ -13,6 +13,7 @@ from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
     RecognizerConfigurationLoader,
     RecognizerListLoader,
 )
+from presidio_analyzer.input_validation import ConfigurationValidator
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -55,6 +56,9 @@ class RecognizerRegistryProvider:
         self.configuration = RecognizerConfigurationLoader.get(
             conf_file=conf_file, registry_configuration=registry_configuration
         )
+        # Validate configuration using Pydantic
+
+        self.configuration = ConfigurationValidator.validate_recognizer_registry_configuration(self.configuration)
         self.nlp_engine = nlp_engine
 
     def create_recognizer_registry(self) -> RecognizerRegistry:
@@ -232,3 +236,4 @@ class RecognizerRegistryProvider:
                     f"Disabled {recognizer.__class__.__name__} "
                     f"recognizer for language {language}."
                 )
+
