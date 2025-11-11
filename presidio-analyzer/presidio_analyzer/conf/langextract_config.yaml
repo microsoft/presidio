@@ -21,18 +21,24 @@ langextract:
   entity_mappings:
     person: PERSON
     full_name: PERSON
+    name_first: PERSON  # First name component
+    name_last: PERSON   # Last name component
+    name_middle: PERSON # Middle name component
     location: LOCATION
     address: LOCATION
     organization: ORGANIZATION
     phone: PHONE_NUMBER
+    phone_number: PHONE_NUMBER  # Alternative phone number extraction class
     email: EMAIL_ADDRESS
     date: DATE_TIME
     ssn: US_SSN
+    identification_number: US_SSN  # Generic identification number
     credit_card: CREDIT_CARD
     medical_record: MEDICAL_LICENSE  # PHI
     ip_address: IP_ADDRESS
     url: URL
     iban: IBAN_CODE
+    payment_status: IGNORE  # Not a PII/PHI entity - will be filtered out
   
   # Supported PII/PHI entity types (shared)
   supported_entities:
