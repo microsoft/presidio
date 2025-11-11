@@ -51,7 +51,7 @@ class ConfigurationValidator:
 
     @staticmethod
     def validate_nlp_configuration(config: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate NLP validation structure.
+        """Validate NLP configuration structure.
 
         :param config: NLP Configuration to validate.
         """
