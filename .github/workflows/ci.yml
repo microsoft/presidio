@@ -38,12 +38,32 @@ jobs:
       - name: Run ruff check
         run: ruff check
 
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: low
+          allow-licenses: MIT, Apache-2.0, BSD-3-Clause
+          comment-summary-in-pr: on-failure
+
   test:
     name: Test ${{ matrix.component.name }} (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12', '3.13']
         component: 
           - name: 'Analyzer'
             path: 'presidio-analyzer'
@@ -177,6 +197,8 @@ jobs:
             --tag ${{ env.REGISTRY_NAME }}/${{ matrix.image }}:${{ env.TAG }}-${PLATFORM_TAG} \
             --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/public/${{ matrix.image }}:latest \
             --cache-to type=inline \
+            --attest type=sbom \
+            --attest type=provenance,mode=max \
             ./${{ matrix.image }}
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
@@ -255,7 +277,7 @@ jobs:
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
           docker compose -f docker-compose.yml pull
         env:
-          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}/
+          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           TAG: :${{ env.TAG }}
 
       - name: Start Presidio cluster
@@ -263,7 +285,7 @@ jobs:
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
           docker compose -f docker-compose.yml up -d
         env:
-          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}/
+          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           TAG: :${{ env.TAG }}
 
       - name: Set up Python

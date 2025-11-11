@@ -5,3 +5,8 @@ RUN apt-get update \
   && apt-get install -y build-essential
 
 RUN pip install poetry
+
+# Create a non-root user for development
+RUN useradd -m -u 1001 presidio
+
+USER 1001

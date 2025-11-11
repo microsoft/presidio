@@ -16,13 +16,23 @@ try:
         TaggedPhiEntities,
         TextEncodingType,
     )
-    from azure.identity import DefaultAzureCredential
+    from azure.identity import (
+        ChainedTokenCredential,
+        DefaultAzureCredential,
+        EnvironmentCredential,
+        ManagedIdentityCredential,
+        WorkloadIdentityCredential,
+    )
 except ImportError:
     DeidentificationClient = None
     DeidentificationContent = None
     DeidentificationCustomizationOptions = None
     DeidentificationResult = None
+    ChainedTokenCredential = None
     DefaultAzureCredential = None
+    EnvironmentCredential = None
+    ManagedIdentityCredential = None
+    WorkloadIdentityCredential = None
     SimplePhiEntity = None
     TaggedPhiEntities = None
     PhiCategory = None
@@ -239,7 +249,16 @@ class AHDSSurrogate(Operator):
         # Convert analyzer results to AHDS tagged entities
         tagged_entities = self._convert_to_tagged_entities(entities)
 
-        credential = DefaultAzureCredential()
+        # Use ChainedTokenCredential for production
+        # Only use DefaultAzureCredential in development mode
+        if os.getenv('ENV') == 'development':
+            credential = DefaultAzureCredential()  # CodeQL [SM05139] OK for dev
+        else:
+            credential = ChainedTokenCredential(
+                EnvironmentCredential(),
+                WorkloadIdentityCredential(),
+                ManagedIdentityCredential()
+            )
         client = DeidentificationClient(endpoint, credential,
                                         api_version="2025-07-15-preview")
 
@@ -359,3 +378,4 @@ class AHDSSurrogate(Operator):
     def operator_type(self) -> OperatorType:
         """Return operator type."""
         return OperatorType.Anonymize
+

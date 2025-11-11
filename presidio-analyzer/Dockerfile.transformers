@@ -4,6 +4,10 @@ ARG NLP_CONF_FILE=presidio_analyzer/conf/transformers.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 ENV PIP_NO_CACHE_DIR=1
+ENV POETRY_VIRTUALENVS_CREATE=false
+ENV PORT=3000
+ENV WORKERS=1
+
 WORKDIR /app
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
@@ -14,10 +18,11 @@ COPY ${ANALYZER_CONF_FILE} /app/${ANALYZER_CONF_FILE}
 COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /app/${RECOGNIZER_REGISTRY_CONF_FILE}
 COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
-COPY ./pyproject.toml /app/
-RUN pip install poetry && poetry install -E server -E transformers
+# Install curl for health checks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-RUN poetry add torch transformers huggingface_hub --no-lock
+COPY ./pyproject.toml /app/
+RUN pip install poetry && poetry install --no-root --only=main -E server -E transformers
 
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /app/
@@ -25,5 +30,13 @@ COPY ./install_nlp_models.py /app/
 RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /app/
+
+# Create a non-root user and set ownership
+RUN useradd -m -u 1001 presidio && chown -R presidio:presidio /app
+
+USER 1001
+
 EXPOSE ${PORT}
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
 CMD ["./entrypoint.sh"]

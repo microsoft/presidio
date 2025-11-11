@@ -11,17 +11,17 @@ license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 keywords = ["presidio_analyzer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 include = ["conf/*",]
 
-requires-python = ">=3.9,<3.14"
+requires-python = ">=3.10,<3.14"
 dependencies = [
     "spacy (>=3.4.4, !=3.7.0)",
     "regex",
@@ -34,7 +34,8 @@ dependencies = [
 [project.optional-dependencies]
 server = [
     "flask (>=1.1)",
-    "gunicorn"
+    "gunicorn; platform_system != 'Windows'",
+    "waitress; platform_system == 'Windows'"
 ]
 transformers = [
     "transformers",

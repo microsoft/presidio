@@ -46,7 +46,7 @@ class NerModelConfiguration(BaseModel):
     Set of entity names that are likely to have low detection accuracy that should be adjusted.
     :param low_confidence_score_multiplier: A multiplier for the score given for low_score_entity_names.
     Multiplier to the score given for low_score_entity_names.
-    """  # noqa E501
+    """  # noqa: E501
 
     labels_to_ignore: Optional[Collection[str]] = Field(
         default_factory=list, description="List of labels to ignore"
