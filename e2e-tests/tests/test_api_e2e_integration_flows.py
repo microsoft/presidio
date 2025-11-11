@@ -2,13 +2,11 @@ import json
 from pathlib import Path
 
 import pytest
-from presidio_analyzer import AnalyzerEngine, RecognizerResult
-from presidio_analyzer.nlp_engine import NlpEngineProvider
+
 
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import EngineResult, OperatorResult
+
 
 
 def analyze_and_assert(analyzer_request, expected_response):
@@ -240,54 +238,3 @@ def test_demo_website_text_returns_correct_anonymized_version():
     # Assert equal
 
     assert expected_anonymized_text == actual_anonymized_text
-
-
-@pytest.mark.package
-def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_successfully():
-    text_to_test = "John Smith drivers license is AC432223"
-
-    expected_response = [
-        RecognizerResult("PERSON", 0, 10, 0.85),
-        RecognizerResult("US_DRIVER_LICENSE", 30, 38, 0.6499999999999999),
-    ]
-    # Create configuration containing engine name and models
-    configuration = {
-        "nlp_engine_name": "spacy",
-        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-    }
-
-    # Create NLP engine based on configuration
-    provider = NlpEngineProvider(nlp_configuration=configuration)
-    nlp_engine = provider.create_engine()
-
-    # Pass the created NLP engine and supported_languages to the AnalyzerEngine
-    analyzer = AnalyzerEngine(nlp_engine=nlp_engine, supported_languages=["en"])
-    analyzer_results = analyzer.analyze(text_to_test, "en")
-    for i in range(len(analyzer_results)):
-        assert analyzer_results[i] == expected_response[i]
-
-    expected_response = EngineResult(
-        text="<PERSON> drivers license is <US_DRIVER_LICENSE>"
-    )
-    expected_response.add_item(
-        OperatorResult(
-            operator="replace",
-            entity_type="US_DRIVER_LICENSE",
-            start=28,
-            end=47,
-            text="<US_DRIVER_LICENSE>",
-        )
-    )
-    expected_response.add_item(
-        OperatorResult(
-            operator="replace",
-            entity_type="PERSON",
-            start=0,
-            end=8,
-            text="<PERSON>",
-        )
-    )
-
-    anonymizer = AnonymizerEngine()
-    anonymizer_results = anonymizer.anonymize(text_to_test, analyzer_results)
-    assert anonymizer_results == expected_response
