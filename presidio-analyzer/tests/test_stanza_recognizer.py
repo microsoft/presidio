@@ -8,7 +8,6 @@ def entities():
     return ["PERSON", "DATE_TIME"]
 
 
-@pytest.mark.skip_engine("stanza_en")
 @pytest.fixture(scope="module")
 def stanza_nlp_engine(nlp_engines):
     nlp_engine = nlp_engines.get("stanza_en", None)
@@ -17,7 +16,6 @@ def stanza_nlp_engine(nlp_engines):
     return nlp_engine
 
 
-@pytest.mark.skip_engine("stanza_en")
 @pytest.fixture(scope="module")
 def nlp_recognizer(nlp_recognizers):
     return nlp_recognizers.get("stanza", None)
