@@ -56,13 +56,13 @@ class ConfigurationValidator:
         :param config: NLP Configuration to validate.
         """
         if not isinstance(config, dict):
-            raise ValueError("NLP validation must be a dictionary")
+            raise ValueError("NLP configuration must be a dictionary")
 
         required_fields = ["nlp_engine_name", "models"]
         missing_fields = [field for field in required_fields if field not in config]
         if missing_fields:
             raise ValueError(
-                f"NLP validation missing required fields: {missing_fields}"
+                f"NLP configuration missing required fields: {missing_fields}"
             )
 
         # Validate models structure
