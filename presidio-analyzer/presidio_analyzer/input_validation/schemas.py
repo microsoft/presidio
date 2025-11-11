@@ -3,7 +3,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Union
 
 from pydantic import ValidationError
+
 from .yaml_recognizer_models import RecognizerRegistryConfig
+
 
 class ConfigurationValidator:
     """Class for validating configurations using Pydantic-enabled classes."""
@@ -81,7 +83,6 @@ class ConfigurationValidator:
     ) -> Dict[str, Any]:
         """Validate recognizer registry validation using Pydantic models."""
         try:
-
             # Use Pydantic model for validation
             validated_config = RecognizerRegistryConfig(**config)
             # Use model_dump() without exclude_unset to include default values

@@ -198,7 +198,7 @@ class PatternRecognizer(LocalRecognizer):
             logger.debug(
                 "--- match_time[%s]: %.6f seconds",
                 pattern.name,
-                match_time.total_seconds()
+                match_time.total_seconds(),
             )
 
             for match in matches:
@@ -276,9 +276,13 @@ class PatternRecognizer(LocalRecognizer):
 
         # Transform supported_entities (plural) to supported_entity (singular)
         # PatternRecognizer only accepts supported_entity (singular)
-        if "supported_entity" in entity_recognizer_dict and "supported_entities" in entity_recognizer_dict:
+        if (
+            "supported_entity" in entity_recognizer_dict
+            and "supported_entities" in entity_recognizer_dict
+        ):
             raise ValueError(
-                "Both 'supported_entity' and 'supported_entities' are present in the input dictionary. "
+                "Both 'supported_entity' and 'supported_entities' "
+                "are present in the input dictionary. "
                 "Only one should be provided."
             )
         if "supported_entities" in entity_recognizer_dict:

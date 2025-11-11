@@ -145,15 +145,19 @@ class RecognizerListLoader:
         """Create a custom recognizer for each language, based on the provided conf."""
         # legacy recognizer (has supported_language set to a value, not None)
         if recognizer_conf.get("supported_language"):
-            # Remove supported_languages field (plural) if present, as we're using supported_language (singular)
-            conf_copy = {k: v for k, v in recognizer_conf.items() if k != "supported_languages"}
-            
-            # Transform supported_entities -> supported_entity (PatternRecognizer expects singular)
+            # Remove supported_languages field (plural) if present,
+            # as we're using supported_language (singular)
+            conf_copy = {
+                k: v for k, v in recognizer_conf.items() if k != "supported_languages"
+            }
+
+            # Transform supported_entities -> supported_entity
+            # (PatternRecognizer expects singular)
             if "supported_entities" in conf_copy:
                 supported_entities = conf_copy.pop("supported_entities")
                 if "supported_entity" not in conf_copy and supported_entities:
                     conf_copy["supported_entity"] = supported_entities[0]
-            
+
             return [PatternRecognizer.from_dict(conf_copy)]
 
         recognizers = []
@@ -167,7 +171,8 @@ class RecognizerListLoader:
                 if k not in ["enabled", "type", "supported_languages"]
             }
 
-            # Transform supported_entities -> supported_entity (PatternRecognizer expects singular)
+            # Transform supported_entities -> supported_entity
+            # (PatternRecognizer expects singular)
             if "supported_entities" in copied_recognizer:
                 supported_entities = copied_recognizer.pop("supported_entities")
                 if "supported_entity" not in copied_recognizer and supported_entities:
@@ -242,7 +247,8 @@ class RecognizerListLoader:
         """
         Prepare kwargs for recognizer instantiation.
 
-        Converts supported_entities to supported_entity for PatternRecognizer subclasses.
+        Converts supported_entities to supported_entity
+        for PatternRecognizer subclasses.
         Removes both fields if they are None to allow recognizer defaults to be used.
 
         :param recognizer_conf: The recognizer configuration.
@@ -254,14 +260,21 @@ class RecognizerListLoader:
 
         # If this is a PatternRecognizer, handle supported_entities/supported_entity
         if RecognizerListLoader._is_pattern_recognizer(recognizer_cls):
-            # Convert supported_entities (plural) to supported_entity (singular) if present
+            # Convert supported_entities (plural) to supported_entity
+            # (singular) if present
             if "supported_entities" in kwargs:
                 supported_entities = kwargs.pop("supported_entities")
-                # Only set supported_entity if we have valid entities and it's not already set
-                if supported_entities and len(supported_entities) > 0 and "supported_entity" not in kwargs:
+                # Only set supported_entity if we have valid entities
+                # and it's not already set
+                if (
+                    supported_entities
+                    and len(supported_entities) > 0
+                    and "supported_entity" not in kwargs
+                ):
                     kwargs["supported_entity"] = supported_entities[0]
 
-            # Remove supported_entity if it's None to allow the recognizer's default to be used
+            # Remove supported_entity if it's None
+            # to allow the recognizer's default to be used
             if kwargs.get("supported_entity") is None:
                 kwargs.pop("supported_entity", None)
         else:
@@ -285,11 +298,14 @@ class RecognizerListLoader:
         """
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
-        # Exclude Pydantic-normalized fields that should not be passed to recognizer constructors
-        # Note: We exclude both supported_entity and supported_entities here because we'll handle
+        # Exclude Pydantic-normalized fields that should not
+        # be passed to recognizer constructors
+        # Note: We exclude both supported_entity
+        # and supported_entities here because we'll handle
         # the conversion in _prepare_recognizer_kwargs
         predefined_to_exclude = {"enabled", "type", "supported_languages", "name"}
-        # For custom recognizers, we keep 'supported_languages' and don't exclude 'supported_entity'
+        # For custom recognizers, we keep 'supported_languages'
+        # and don't exclude 'supported_entity'
         # because PatternRecognizer needs it
         custom_to_exclude = {"enabled", "type"}
         for recognizer_conf in predefined:
@@ -308,7 +324,8 @@ class RecognizerListLoader:
                         recognizer_name=recognizer_name
                     )
 
-                    # Prepare kwargs, converting supported_entities to supported_entity if needed
+                    # Prepare kwargs, converting supported_entities
+                    # to supported_entity if needed
                     kwargs = RecognizerListLoader._prepare_recognizer_kwargs(
                         new_conf, language_conf, recognizer_cls
                     )
@@ -411,7 +428,8 @@ class RecognizerConfigurationLoader:
         if registry_configuration:
             configuration = registry_configuration.copy()
             # Check if registry_configuration has all mandatory keys
-            # Note: supported_languages is now optional, so we only check for recognizers
+            # Note: supported_languages is now optional,
+            # so we only check for recognizers
             mandatory_keys_set = {"recognizers", "global_regex_flags"}
             config_keys = set(configuration.keys())
             if mandatory_keys_set.issubset(config_keys):
@@ -437,7 +455,8 @@ class RecognizerConfigurationLoader:
                     f"Failed to parse file {conf_file}." f"Error: {str(e)}"
                 )
 
-        # Load defaults if needed (no config provided, or registry_configuration is incomplete)
+        # Load defaults if needed (no config provided,
+        # or registry_configuration is incomplete)
         if use_defaults:
             with open(RecognizerConfigurationLoader._get_full_conf_path()) as file:
                 config_from_file = yaml.safe_load(file)
@@ -454,8 +473,10 @@ class RecognizerConfigurationLoader:
                 f"got {type(registry_configuration)}"
             )
 
-        # Check if config_from_file has any invalid keys (keys that aren't mandatory or valid optional keys)
-        # If it has keys but none of them are mandatory keys, it's likely an invalid config
+        # Check if config_from_file has any invalid keys
+        # (keys that aren't mandatory or valid optional keys)
+        # If it has keys but none of them are mandatory keys,
+        # it's likely an invalid config
         if config_from_file and conf_file:
             config_keys = set(config_from_file.keys())
             mandatory_keys_set = {"recognizers"}  # Only recognizers is truly mandatory

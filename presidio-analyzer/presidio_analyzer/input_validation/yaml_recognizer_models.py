@@ -100,13 +100,13 @@ class BaseRecognizerConfig(BaseModel):
         """Ensure proper entity validation."""
         # Check if user provided both (before we modify them)
         user_provided_both = (
-            self.supported_entity is not None
-            and self.supported_entities is not None
+            self.supported_entity is not None and self.supported_entities is not None
         )
 
         if user_provided_both:
             raise ValueError(
-                f"Recognizer {self.name} has both ""'supported_entity' and 'supported_entities' specified."
+                f"Recognizer {self.name} has both "
+                "'supported_entity' and 'supported_entities' specified."
             )
 
         return self
@@ -264,9 +264,7 @@ class RecognizerRegistryConfig(BaseModel):
     supported_languages: Optional[List[str]] = Field(
         default=None, description="List of supported languages"
     )
-    global_regex_flags: int = Field(
-        default=26, description="Global regex flags"
-    )
+    global_regex_flags: int = Field(default=26, description="Global regex flags")
     recognizers: List[
         Union[PredefinedRecognizerConfig, CustomRecognizerConfig, str]
     ] = Field(default_factory=list, description="List of recognizer configurations")
@@ -295,13 +293,19 @@ class RecognizerRegistryConfig(BaseModel):
         for recognizer in self.recognizers:
             if isinstance(recognizer, CustomRecognizerConfig):
                 # Check if this custom recognizer has its own language config
-                if not recognizer.supported_language and not recognizer.supported_languages:
+                if (
+                    not recognizer.supported_language
+                    and not recognizer.supported_languages
+                ):
                     # If no language config on recognizer, we need global languages
                     if not self.supported_languages:
                         raise ValueError(
-                            f"Language configuration missing for custom recognizer '{recognizer.name}': "
-                            "Either specify 'supported_languages' on the recognizer or provide "
-                            "global 'supported_languages' in the registry configuration."
+                            f"Language configuration missing for custom recognizer "
+                            f"'{recognizer.name}': "
+                            "Either specify 'supported_languages' "
+                            "on the recognizer or provide "
+                            "global 'supported_languages' in the "
+                            "registry configuration."
                         )
 
         return self

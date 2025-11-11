@@ -63,7 +63,6 @@ class NlpEngineProvider:
         if conf_file or conf_file == "":
             if conf_file == "":
                 raise ValueError("conf_file is empty")
-            # Validate file path using ConfigurationValidator - let Pydantic errors propagate
             ConfigurationValidator.validate_file_path(conf_file)
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
@@ -98,9 +97,7 @@ class NlpEngineProvider:
         nlp_engine_class = self.nlp_engines[nlp_engine_name]
         nlp_models = self.nlp_configuration["models"]
 
-        ner_model_configuration = self.nlp_configuration.get(
-            "ner_model_configuration"
-        )
+        ner_model_configuration = self.nlp_configuration.get("ner_model_configuration")
         if ner_model_configuration:
             ner_model_configuration = NerModelConfiguration.from_dict(
                 ner_model_configuration
@@ -115,4 +112,3 @@ class NlpEngineProvider:
             f"Loaded models: {list(engine.nlp.keys())}"
         )
         return engine
-

@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from presidio_analyzer import EntityRecognizer
+from presidio_analyzer.input_validation import ConfigurationValidator
 from presidio_analyzer.nlp_engine import NlpEngine
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
@@ -13,7 +14,6 @@ from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
     RecognizerConfigurationLoader,
     RecognizerListLoader,
 )
-from presidio_analyzer.input_validation import ConfigurationValidator
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -58,7 +58,11 @@ class RecognizerRegistryProvider:
         )
         # Validate configuration using Pydantic
 
-        self.configuration = ConfigurationValidator.validate_recognizer_registry_configuration(self.configuration)
+        self.configuration = (
+            ConfigurationValidator.validate_recognizer_registry_configuration(
+                self.configuration
+            )
+        )
         self.nlp_engine = nlp_engine
 
     def create_recognizer_registry(self) -> RecognizerRegistry:
@@ -236,4 +240,3 @@ class RecognizerRegistryProvider:
                     f"Disabled {recognizer.__class__.__name__} "
                     f"recognizer for language {language}."
                 )
-
