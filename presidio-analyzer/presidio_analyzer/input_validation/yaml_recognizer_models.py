@@ -197,7 +197,7 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
 
     @field_validator("patterns")
     @classmethod
-    def validate_patterns(cls, patterns: Optional[List[Dict]]) -> Optional[str]:
+    def validate_patterns(cls, patterns: Optional[List[Dict]]) -> Optional[List[Dict]]:
         """Validate single language code format."""
         if patterns and not isinstance(patterns, list):
             raise ValueError(f"Patterns should be a list: {patterns}")
