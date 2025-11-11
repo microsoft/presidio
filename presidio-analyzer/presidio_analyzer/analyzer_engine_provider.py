@@ -36,7 +36,7 @@ class AnalyzerEngineProvider:
     def get_configuration(
         self, conf_file: Optional[Union[Path, str]]
     ) -> Union[Dict[str, Any]]:
-        """Retrieve the analyzer engine configuration from the provided file."""
+        """Retrieve analyzer engine configuration from the provided file."""
 
         if not conf_file:
             default_conf_file = self._get_full_conf_path()
@@ -59,9 +59,17 @@ class AnalyzerEngineProvider:
                 with open(self._get_full_conf_path()) as file:
                     configuration = yaml.safe_load(file)
             except Exception:
-                print(f"Failed to parse file {conf_file}, resorting to default")
+                logger.warning(
+                    f"Failed to parse file {conf_file}, resorting to default"
+                )
                 with open(self._get_full_conf_path()) as file:
                     configuration = yaml.safe_load(file)
+
+        # Validate configuration using Pydantic-based ConfigurationValidator
+        from presidio_analyzer.input_validation import ConfigurationValidator
+
+        ConfigurationValidator.validate_analyzer_configuration(configuration)
+        logger.debug("Analyzer configuration validation passed")
 
         return configuration
 

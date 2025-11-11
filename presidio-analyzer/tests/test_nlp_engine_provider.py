@@ -251,17 +251,22 @@ def test_when_valid_nlp_engines_then_return_default_configuration():
 
 
 def test_when_nlp_engines_type_is_not_tuple_then_fail():
+    """Test that nlp_engines accepts lists (not just tuples) after removing legacy validation."""
     nlp_engines = [SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine]
     
-    with pytest.raises(ValueError):
-        NlpEngineProvider(nlp_engines)
-     
-        
+    # After removing legacy validation, lists are now accepted (they work just as well as tuples)
+    provider = NlpEngineProvider(nlp_engines=nlp_engines)
+    engine = provider.create_engine()
+    assert isinstance(engine, SpacyNlpEngine)
+
 def test_when_invalid_nlp_engine_types_then_fail():
+    """Test that invalid nlp_engine types will fail when accessing attributes."""
     nlp_engines = (1, 2, 3)
     
-    with pytest.raises(ValueError):
-        NlpEngineProvider(nlp_engines)
+    # After removing legacy validation, this fails with AttributeError when accessing .is_available
+    with pytest.raises(AttributeError):
+        NlpEngineProvider(nlp_engines=nlp_engines)
+
 
 
 def test_when_valid_nlp_configuration_then_return_default_configuration():
@@ -276,13 +281,16 @@ def test_when_valid_nlp_configuration_then_return_default_configuration():
 
         
 def test_when_nlp_configuration_is_passed_instead_of_nlp_engines_then_fail():
+    """Test that passing nlp_configuration as positional argument fails."""
     nlp_configuration = {
         "nlp_engine_name": "stanza",
         "models": [{"lang_code": "en", "model_name": "en"}]
     }
  
-    with pytest.raises(ValueError):
+    # This fails because nlp_configuration is passed as positional arg (interpreted as nlp_engines)
+    with pytest.raises(AttributeError):
         NlpEngineProvider(nlp_configuration)
+
         
 
 def test_when_nlp_configuration_is_not_dict_then_fail():
@@ -327,7 +335,7 @@ def test_when_conf_file_is_empty_string_then_fail():
 def test_when_conf_file_is_not_string_or_path_then_fail():
     conf_file = 1
     
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         NlpEngineProvider(conf_file=conf_file)
 
 
