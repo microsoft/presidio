@@ -81,7 +81,7 @@ class ConfigurationValidator:
     def validate_recognizer_registry_configuration(
         config: Dict[str, Any],
     ) -> Dict[str, Any]:
-        """Validate recognizer registry validation using Pydantic models."""
+        """Validate recognizer registry configuration using Pydantic models."""
         try:
             # Use Pydantic model for validation
             validated_config = RecognizerRegistryConfig(**config)
