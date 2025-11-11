@@ -3,8 +3,6 @@ import re
 from pathlib import Path
 from typing import List
 from inspect import signature
-import pydantic
-
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import RecognizerConfigurationLoader
