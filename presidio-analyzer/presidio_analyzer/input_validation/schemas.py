@@ -97,7 +97,7 @@ class ConfigurationValidator:
     def _validate_recognizer_registry_basic(config: Dict[str, Any]) -> Dict[str, Any]:
         """Validate recognizer registry config."""
         if not isinstance(config, dict):
-            raise ValueError("Recognizer registry validation must be a dictionary")
+            raise ValueError("Recognizer registry configuration must be a dictionary")
 
         # Validate supported languages
         if "supported_languages" in config:
