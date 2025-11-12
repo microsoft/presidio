@@ -1,0 +1,133 @@
+# Azure OpenAI Configuration for LangExtract
+# https://learn.microsoft.com/en-us/azure/ai-services/openai/
+
+# Shared LangExtract configuration (prompt, examples, entity mappings)
+langextract:
+  # Prompt file path (relative to conf directory)
+  prompt_file: "langextract_prompts/default_pii_phi_prompt.txt"
+  
+  # Examples file path (relative to conf directory)
+  # Users can override this to use custom examples/prompts
+  examples_file: "langextract_prompts/default_pii_phi_examples.yaml"
+  
+  # Entity mapping from LangExtract classes to Presidio entity types
+  entity_mappings:
+    person: PERSON
+    name: PERSON
+    full_name: PERSON
+    location: LOCATION
+    address: LOCATION
+    city: LOCATION
+    organization: ORGANIZATION
+    phone: PHONE_NUMBER
+    email: EMAIL_ADDRESS
+    date: DATE_TIME
+    ssn: US_SSN
+    credit_card: CREDIT_CARD
+    medical_record: MEDICAL_LICENSE
+    health_insurance: MEDICAL_LICENSE
+    medical_license: MEDICAL_LICENSE
+    ip_address: IP_ADDRESS
+    url: URL
+    iban: IBAN_CODE
+    blood_type: NRP
+    condition: NRP
+    medication: NRP
+    procedure: NRP
+  
+  # Presidio entity types to detect
+  supported_entities:
+    - PERSON
+    - LOCATION
+    - ORGANIZATION
+    - PHONE_NUMBER
+    - EMAIL_ADDRESS
+    - DATE_TIME
+    - US_SSN
+    - CREDIT_CARD
+    - MEDICAL_LICENSE
+    - IP_ADDRESS
+    - URL
+    - IBAN_CODE
+    - NRP
+  
+  # Minimum confidence score for detected entities (0.0 - 1.0)
+  min_score: 0.5
+
+# Azure OpenAI specific configuration
+azure_openai:
+  # Azure OpenAI deployment name or model identifier
+  # This is the name of your deployment in Azure Portal
+  model_id: "gpt-4.1"
+  
+  # Azure OpenAI deployment name (if different from model_id)
+  # If not specified, model_id will be used as deployment name
+  azure_deployment: null
+  
+  # Azure OpenAI endpoint URL
+  # Can also be set via AZURE_OPENAI_ENDPOINT environment variable
+  # Example: "https://your-resource-name.openai.azure.com/"
+  azure_endpoint: null
+  
+  # Azure OpenAI API key
+  # Can also be set via AZURE_OPENAI_API_KEY environment variable
+  # For security, prefer using environment variables over config file
+  # 
+  # Authentication: If api_key is not provided (null or empty), 
+  # the provider will automatically use Azure Managed Identity (ChainedTokenCredential)
+  # This requires: pip install azure-identity
+  api_key: null
+  
+  # Azure OpenAI API version
+  # Can also be set via AZURE_OPENAI_API_VERSION environment variable
+  # Default: "2024-02-15-preview"
+  api_version: "2024-02-15-preview"
+  
+  # Temperature for model responses (0.0 - 2.0)
+  # Lower values make output more focused and deterministic
+  # Higher values make output more random and creative
+  # null uses the default (0.0)
+  temperature: null
+
+# Configuration Notes:
+# 
+# 1. Authentication Options:
+#    a) API Key (quick start, development):
+#       - Set AZURE_OPENAI_API_KEY environment variable, or
+#       - Configure api_key in this file (not recommended for production)
+#    
+#    b) Managed Identity (automatic, recommended for production):
+#       - Leave api_key as null (not set)
+#       - Provider automatically uses ChainedTokenCredential
+#       - Requires: pip install azure-identity
+#       - Works with: Managed Identity, Service Principal (via env vars), Workload Identity
+#       - Assign "Cognitive Services OpenAI User" role to the identity
+#       - For local development, set ENV=development to use DefaultAzureCredential
+#         (supports Azure CLI, VS Code, Azure PowerShell, etc.)
+#
+# 2. Environment Variables (Recommended for sensitive data):
+#    - AZURE_OPENAI_ENDPOINT: Your Azure OpenAI endpoint URL
+#    - AZURE_OPENAI_API_KEY: Your Azure OpenAI API key (if using API key auth)
+#    - AZURE_OPENAI_API_VERSION: API version (optional)
+#    - ENV: Set to "development" for local development with DefaultAzureCredential
+#
+# 3. Custom Prompts/Examples:
+#    To override the default prompts and examples, create your own YAML files
+#    and update the prompt_file and examples_file paths above.
+#
+# 4. Azure OpenAI Deployment:
+#    - Create a deployment in Azure Portal with your preferred model
+#    - Set model_id to your deployment name
+#    - Ensure the deployment is in the same region as your endpoint
+#
+# 5. Supported Models:
+#    - gpt-4o, gpt-4o-mini (recommended)
+#    - gpt-4, gpt-4-turbo
+#    - gpt-35-turbo
+#
+# 6. Security Best Practices:
+#    - Never commit API keys to version control
+#    - Use Azure Key Vault or Managed Identity for secrets
+#    - Implement proper access controls on your Azure OpenAI resource
+#    - Use RBAC (Cognitive Services OpenAI User role) instead of API keys when possible
+#    - For production: Leave api_key unset to automatically use managed identity
