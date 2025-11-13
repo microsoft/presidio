@@ -74,3 +74,4 @@ Important guidelines:
 5. Provide descriptive attributes to add context to each extraction
 6. If an entity type is not present in the text, do not extract it
 7. If uncertain about an entity type, err on the side of caution and mark it
+8. For sensitive information that doesn't fit the above categories, use "pii" as a catch-all extraction class
