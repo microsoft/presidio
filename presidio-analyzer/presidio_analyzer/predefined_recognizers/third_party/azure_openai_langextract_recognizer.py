@@ -21,8 +21,9 @@ except ImportError:
     LANGEXTRACT_AVAILABLE = False
     lx = None
 
-from presidio_analyzer.predefined_recognizers.third_party.\
-    langextract_recognizer import LangExtractRecognizer
+from presidio_analyzer.predefined_recognizers.third_party.langextract_recognizer import (
+    LangExtractRecognizer,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 

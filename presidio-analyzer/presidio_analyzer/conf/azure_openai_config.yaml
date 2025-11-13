@@ -19,6 +19,7 @@ langextract:
     ip_address: IP_ADDRESS
     url: URL
     iban: IBAN_CODE
+    pii: PII
   
   supported_entities:
     - PERSON
@@ -33,6 +34,7 @@ langextract:
     - IP_ADDRESS
     - URL
     - IBAN_CODE
+    - PII
   
   min_score: 0.5
 

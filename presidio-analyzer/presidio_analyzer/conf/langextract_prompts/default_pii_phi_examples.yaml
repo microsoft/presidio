@@ -251,3 +251,15 @@ examples:
         attributes:
           type: "street_address"
 
+  # 20) Catch-all PII for sensitive info that doesn't fit specific categories
+  - text: "Employee badge number A-12345 and parking spot B-22."
+    extractions:
+      - extraction_class: "pii"
+        extraction_text: "A-12345"
+        attributes:
+          type: "employee_badge"
+      - extraction_class: "pii"
+        extraction_text: "B-22"
+        attributes:
+          type: "parking_spot"
+
