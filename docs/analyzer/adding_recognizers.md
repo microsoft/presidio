@@ -169,7 +169,8 @@ and a sample for a ADHS Remote Recognizer, refer to the
 
 Presidio supports language model-based entity detection using LLMs and SLMs for flexible PII/PHI recognition.
 
-The current implementation uses LangExtract with Ollama (local models). For full setup instructions and usage examples, see the [Language Model-based PII/PHI Detection guide](../samples/python/langextract/index.md).
+The current implementation uses LangExtract with Ollama (local models). For full setup instructions and usage examples, 
+see the [Language Model-based PII/PHI Detection guide](../samples/python/langextract/index.md).
 
 ### Creating ad-hoc recognizers
 
