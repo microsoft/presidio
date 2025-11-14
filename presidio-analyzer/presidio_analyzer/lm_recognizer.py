@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Dict, List, Optional
 
 from presidio_analyzer import RemoteRecognizer
