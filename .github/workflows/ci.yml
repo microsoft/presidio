@@ -340,6 +340,7 @@ jobs:
   local-build-and-test:
     name: Local Build and E2E Tests (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
+    max-parallel: 2
     needs: [lint]
     if: github.ref != 'refs/heads/main'
     strategy:
