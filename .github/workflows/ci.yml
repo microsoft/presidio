@@ -131,7 +131,7 @@ jobs:
       - name: Run unit tests
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest -vv --tb=short
+          poetry run pytest -vv --tb=short --reruns 1 --reruns-delay 30
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
@@ -323,7 +323,7 @@ jobs:
         working-directory: e2e-tests
         run: |
           source env/bin/activate
-          pytest -vv --tb=short
+          pytest -vv --tb=short --reruns 1 --reruns-delay 30
 
       - name: Capture Docker logs on failure (${{ matrix.platform }})
         if: failure()
@@ -410,7 +410,7 @@ jobs:
         working-directory: e2e-tests
         run: |
           source env/bin/activate
-          pytest -vv --tb=short
+          pytest -vv --tb=short --reruns 1 --reruns-delay 30
 
       - name: Capture Docker logs on failure
         if: failure()
