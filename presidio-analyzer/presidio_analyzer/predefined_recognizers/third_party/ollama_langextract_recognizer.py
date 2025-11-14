@@ -183,7 +183,6 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
             "prompt_description": prompt,
             "examples": examples,
             "model_id": self.model_id,
-            "timeout": 300,  # 5 min timeout (CI environments are slow)
         }
 
         extract_params["model_url"] = self.model_url

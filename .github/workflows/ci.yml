@@ -317,7 +317,7 @@ jobs:
 
       - name: Download Ollama model for Ollama LangExtract recognizer tests
         run: |
-          docker exec $(docker ps -qf "name=ollama") ollama pull gemma2:2b
+          docker exec $(docker ps -qf "name=ollama") ollama pull gemma3:1b
 
       - name: Run E2E tests
         working-directory: e2e-tests
@@ -404,7 +404,7 @@ jobs:
 
       - name: Download Ollama model for Ollama LangExtract recognizer tests
         run: |
-          docker exec $(docker ps -qf "name=ollama") ollama pull gemma2:2b
+          docker exec $(docker ps -qf "name=ollama") ollama pull gemma3:1b
 
       - name: Run E2E tests
         working-directory: e2e-tests
