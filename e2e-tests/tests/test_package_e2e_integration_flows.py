@@ -207,7 +207,13 @@ def test_given_text_with_ollama_recognizer_and_score_threshold_then_filters_resu
 
     text_to_test = "Contact Alice at alice@example.com or call 555-1234"
 
-    ollama_recognizer = OllamaLangExtractRecognizer()
+    # Use pre-configured config file with small model (gemma3:1b)
+    import os
+    config_path = os.path.join(
+        os.path.dirname(__file__), "..", "resources", "ollama_test_config.yaml"
+    )
+
+    ollama_recognizer = OllamaLangExtractRecognizer(config_path=config_path)
 
     analyzer = AnalyzerEngine(
         supported_languages=["en"],
