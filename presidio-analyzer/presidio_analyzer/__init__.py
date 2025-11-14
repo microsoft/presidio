@@ -20,8 +20,14 @@ from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 from presidio_analyzer.analyzer_engine_provider import AnalyzerEngineProvider
 
+# Define default loggers behavior
+
+# 1. presidio_analyzer logger
 logging.getLogger("presidio-analyzer").addHandler(logging.NullHandler())
 
+# 2. decision_process logger.
+# Setting the decision_process trace here as we would want it
+# to be activated using a parameter to AnalyzeEngine and not by default.
 decision_process_logger = logging.getLogger("decision_process")
 ch = logging.StreamHandler()
 formatter = logging.Formatter("[%(asctime)s][%(name)s][%(levelname)s]%(message)s")

@@ -22,10 +22,9 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
     """
     Concrete implementation of LangExtract recognizer using Ollama backend.
 
-    Provides Ollama-specific functionality including:
-    - Ollama server connectivity validation
-    - Model availability checks
-    - Ollama API integration with LangExtract
+    OllamaLangExtractRecognizer provides Ollama-specific functionality for
+    PII/PHI detection, including server connectivity validation, model
+    availability checks, and Ollama API integration with LangExtract.
     """
 
     DEFAULT_CONFIG_PATH = (

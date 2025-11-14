@@ -167,16 +167,9 @@ and a sample for a ADHS Remote Recognizer, refer to the
 
 ### Language Model-based PII/PHI detection recognizer
 
-Presidio supports Language Model-based PII/PHI detection for flexible, zero-shot entity recognition using language models (LLMs, SLMs, etc.).
+Presidio supports language model-based entity detection using LLMs and SLMs for flexible PII/PHI recognition.
 
-**Detects both:**
-- **PII (Personally Identifiable Information)**: Names, emails, phone numbers, SSN, credit cards, etc.
-- **PHI (Protected Health Information)**: Medical records, health identifiers, etc.
-
-This approach leverages LangExtract under the hood to integrate with various language model providers. Currently, only Ollama (local models) is supported.
-
-For details on integrating Language Model-based PII/PHI detection into Presidio,
-refer to the [Language Model-based PII/PHI Detection using LangExtract](../samples/python/langextract/index.md) guide.
+The current implementation uses LangExtract with Ollama (local models). For full setup instructions and usage examples, see the [Language Model-based PII/PHI Detection guide](../samples/python/langextract/index.md).
 
 ### Creating ad-hoc recognizers
 

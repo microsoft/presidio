@@ -4,14 +4,24 @@ from typing import Dict, List, Optional
 from presidio_analyzer import RemoteRecognizer
 
 
-class LMRecognizer(RemoteRecognizer, ABC):
+class LMRecognizer(RemoteRecognizer):
     """
-    Abstract base class for PII detection using Language Models (LLMs, SLMs, etc.).
+    Abstract base class for language model-based PII/PHI entity recognizers.
 
-    Provides common functionality for language model-based recognizers including:
-    - Model configuration management
-    - Temperature and scoring controls
-    - Common prompt handling patterns
+    LMRecognizer provides common functionality for recognizers that use
+    language models to detect entities, including model configuration management,
+    temperature and scoring controls, and common prompt handling patterns.
+
+    Subclasses must implement the analyze method to define how entities
+    are detected using the specific language model.
+
+    :param supported_entities: List of entity types this recognizer can detect
+    :param model_name: Name/identifier of the language model
+    :param supported_language: Language code (ISO 639-1)
+    :param name: Human-readable name for this recognizer
+    :param temperature: Model temperature for generation (0.0-1.0)
+    :param score_threshold: Minimum confidence score (0.0-1.0)
+    :param version: Version string for this recognizer
     """
 
     def __init__(

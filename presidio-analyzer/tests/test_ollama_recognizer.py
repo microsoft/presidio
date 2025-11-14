@@ -4,8 +4,10 @@ Tests the hierarchy: LMRecognizer -> LangExtractRecognizer -> OllamaLangExtractR
 
 These tests use mocks to avoid requiring Ollama or actual LLM calls.
 """
+import json
 import pytest
-from unittest.mock import Mock, patch
+import urllib.error
+from unittest.mock import Mock, patch, MagicMock
 
 
 class TestOllamaLangExtractRecognizerInitialization:
@@ -135,6 +137,229 @@ class TestOllamaLangExtractRecognizerInitialization:
              patch('presidio_analyzer.predefined_recognizers.third_party.'
                    'ollama_langextract_recognizer.OllamaLangExtractRecognizer._check_model_available',
                    return_value=False):
+            
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(RuntimeError, match="Model .* not found"):
+                OllamaLangExtractRecognizer(config_path=str(config_file))
+
+    def test_missing_config_file_raises_error(self):
+        """Test FileNotFoundError when config file doesn't exist."""
+        with patch('presidio_analyzer.predefined_recognizers.third_party.'
+                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(FileNotFoundError, match="Configuration file not found"):
+                OllamaLangExtractRecognizer(config_path="/nonexistent/path.yaml")
+
+    def test_missing_ollama_section_raises_error(self, tmp_path):
+        """Test ValueError when config missing 'ollama' section."""
+        import yaml
+        
+        config = {
+            "langextract": {
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "min_score": 0.5,
+            }
+        }
+        
+        config_file = tmp_path / "bad_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+        
+        with patch('presidio_analyzer.predefined_recognizers.third_party.'
+                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(ValueError, match="must contain 'ollama' section"):
+                OllamaLangExtractRecognizer(config_path=str(config_file))
+
+    def test_missing_model_id_raises_error(self, tmp_path):
+        """Test ValueError when model_id is missing."""
+        import yaml
+        
+        config = {
+            "langextract": {
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "min_score": 0.5,
+            },
+            "ollama": {
+                "model_url": "http://localhost:11434"
+            }
+        }
+        
+        config_file = tmp_path / "bad_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+        
+        with patch('presidio_analyzer.predefined_recognizers.third_party.'
+                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(ValueError, match="must contain 'model_id'"):
+                OllamaLangExtractRecognizer(config_path=str(config_file))
+
+    def test_missing_model_url_raises_error(self, tmp_path):
+        """Test ValueError when model_url is missing."""
+        import yaml
+        
+        config = {
+            "langextract": {
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "min_score": 0.5,
+            },
+            "ollama": {
+                "model_id": "gemma2:2b"
+            }
+        }
+        
+        config_file = tmp_path / "bad_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+        
+        with patch('presidio_analyzer.predefined_recognizers.third_party.'
+                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(ValueError, match="must contain 'model_url'"):
+                OllamaLangExtractRecognizer(config_path=str(config_file))
+
+    def test_check_ollama_server_handles_http_error(self, tmp_path):
+        """Test _check_ollama_server handles HTTPError."""
+        import yaml
+        
+        config = {
+            "langextract": {
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "min_score": 0.5,
+            },
+            "ollama": {
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+            }
+        }
+
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.predefined_recognizers.third_party.'
+                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
+             patch('urllib.request.urlopen', 
+                   side_effect=urllib.error.HTTPError(None, 500, "Server Error", None, None)):
+            
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(ConnectionError, match="Ollama server not reachable"):
+                OllamaLangExtractRecognizer(config_path=str(config_file))
+
+    def test_check_ollama_server_handles_timeout(self, tmp_path):
+        """Test _check_ollama_server handles timeout."""
+        import yaml
+        
+        config = {
+            "langextract": {
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "min_score": 0.5,
+            },
+            "ollama": {
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+            }
+        }
+
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.predefined_recognizers.third_party.'
+                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
+             patch('urllib.request.urlopen', side_effect=TimeoutError("Connection timeout")):
+            
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(ConnectionError, match="Ollama server not reachable"):
+                OllamaLangExtractRecognizer(config_path=str(config_file))
+
+    def test_check_model_available_handles_json_parse_error(self, tmp_path):
+        """Test _check_model_available handles JSON parse errors."""
+        import yaml
+        
+        config = {
+            "langextract": {
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "min_score": 0.5,
+            },
+            "ollama": {
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+            }
+        }
+
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        mock_response = MagicMock()
+        mock_response.status = 200
+        mock_response.read.return_value.decode.return_value = "invalid json"
+        mock_response.__enter__ = Mock(return_value=mock_response)
+        mock_response.__exit__ = Mock(return_value=False)
+
+        with patch('presidio_analyzer.predefined_recognizers.third_party.'
+                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
+             patch('urllib.request.urlopen', return_value=mock_response):
+            
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(RuntimeError, match="Model .* not found"):
+                OllamaLangExtractRecognizer(config_path=str(config_file))
+
+    def test_check_model_available_empty_models_list(self, tmp_path):
+        """Test _check_model_available when no models are installed."""
+        import yaml
+        
+        config = {
+            "langextract": {
+                "supported_entities": ["PERSON"],
+                "entity_mappings": {"person": "PERSON"},
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "min_score": 0.5,
+            },
+            "ollama": {
+                "model_id": "gemma2:2b",
+                "model_url": "http://localhost:11434",
+                "temperature": 0.0,
+            }
+        }
+
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        mock_response = MagicMock()
+        mock_response.status = 200
+        mock_response.read.return_value.decode.return_value = '{"models": []}'
+        mock_response.__enter__ = Mock(return_value=mock_response)
+        mock_response.__exit__ = Mock(return_value=False)
+
+        with patch('presidio_analyzer.predefined_recognizers.third_party.'
+                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
+             patch('urllib.request.urlopen', return_value=mock_response):
             
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             with pytest.raises(RuntimeError, match="Model .* not found"):

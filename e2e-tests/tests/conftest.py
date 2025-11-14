@@ -1,5 +1,8 @@
 """Pytest configuration for e2e tests."""
 import os
+import urllib.error
+import urllib.request
+
 import pytest
 
 
@@ -24,9 +27,6 @@ def pytest_configure(config):
 @pytest.fixture(scope="session")
 def ollama_available():
     """Check if Ollama server is available."""
-    import urllib.request
-    import urllib.error
-    
     ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434")
     try:
         url = f"{ollama_url}/api/tags"
