@@ -65,7 +65,6 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_successful
 
 
 @pytest.mark.package
-@pytest.mark.timeout(360)  # 6 minutes timeout for slow CI runners
 def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_path):
     """Test Ollama LangExtract recognizer detects entities when explicitly added to analyzer."""
     assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
