@@ -138,6 +138,11 @@ vendor/
 mkdocs/
 /presidio_mkdocs
 
+# Profiler output
+profiler.out
+profiler.svg
+profiler.png
+
 # Visual Studio
 /.vs
 /TestResults
