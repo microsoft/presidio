@@ -177,7 +177,7 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         :return: LangExtract result object.
         """
         examples = kwargs.pop('examples', [])
-        
+
         extract_params = {
             "text_or_documents": text,
             "prompt_description": prompt,
