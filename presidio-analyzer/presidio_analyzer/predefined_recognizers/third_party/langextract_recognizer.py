@@ -18,7 +18,6 @@ from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
-LANGEXTRACT_DOCS_URL = "https://github.com/google/langextract"
 
 class LangExtractRecognizer(LMRecognizer):
     """
@@ -69,7 +68,7 @@ class LangExtractRecognizer(LMRecognizer):
             )
 
         # Load shared LangExtract configuration
-        self.config = self._load_langextract_config(config_path)
+        self.config = self._load_config(config_path, "langextract")
 
         if supported_entities is None:
             supported_entities = self._get_required_config("supported_entities")
@@ -97,35 +96,6 @@ class LangExtractRecognizer(LMRecognizer):
         }
 
         logger.info("Loaded recognizer: %s", self.name)
-
-    def _load_langextract_config(self, config_path: Optional[str] = None) -> Dict:
-        """Load shared LangExtract configuration.
-
-        :param config_path: Path to configuration file.
-        :return: LangExtract configuration dictionary.
-        """
-        if config_path is None:
-            config_path = self.DEFAULT_CONFIG_PATH
-
-        config_path = Path(config_path)
-
-        if not config_path.exists():
-            raise FileNotFoundError(
-                f"LangExtract configuration file not found: {config_path}"
-            )
-
-        with open(config_path, 'r') as f:
-            full_config = yaml.safe_load(f)
-
-        langextract_config = full_config.get("langextract", {})
-
-        if not langextract_config:
-            raise ValueError(
-                "Configuration file must contain 'langextract' section "
-                "with shared config"
-            )
-
-        return langextract_config
 
     def _load_config(
         self,

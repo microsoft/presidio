@@ -24,10 +24,6 @@ langextract:
     ip_address: IP_ADDRESS
     url: URL
     iban: IBAN_CODE
-    blood_type: NRP
-    condition: NRP
-    medication: NRP
-    procedure: NRP
   
   supported_entities:
     - PERSON
@@ -42,7 +38,6 @@ langextract:
     - IP_ADDRESS
     - URL
     - IBAN_CODE
-    - NRP
   
   min_score: 0.5
 

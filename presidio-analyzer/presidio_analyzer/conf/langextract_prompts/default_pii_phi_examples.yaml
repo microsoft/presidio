@@ -162,24 +162,7 @@ examples:
         attributes:
           type: "lat_long"
 
-  # 13) Medical condition + medication + procedure (PHI)
-  - text: "Diagnosed with type 2 diabetes, prescribed Metformin 500mg twice daily, scheduled for knee arthroscopy."
-    extractions:
-      - extraction_class: "condition"
-        extraction_text: "type 2 diabetes"
-        attributes:
-          type: "medical_condition"
-      - extraction_class: "medication"
-        extraction_text: "Metformin 500mg"
-        attributes:
-          type: "prescription_medication"
-          dosage: "500mg"
-      - extraction_class: "procedure"
-        extraction_text: "knee arthroscopy"
-        attributes:
-          type: "surgical_procedure"
-
-  # 14) Fax + Email (HIPAA identifiers)
+  # 13) Fax + Email (HIPAA identifiers)
   - text: "Send the referral by fax to 212-555-0199 or email referrals@clinic.example."
     extractions:
       - extraction_class: "fax"
@@ -191,7 +174,7 @@ examples:
         attributes:
           type: "email_address"
 
-  # 15) License plate + VIN (often treated as PII)
+  # 14) License plate + VIN (often treated as PII)
   - text: "Vehicle plate 7ABC123 with VIN 1HGCM82633A004352."
     extractions:
       - extraction_class: "license_plate"
@@ -203,7 +186,7 @@ examples:
         attributes:
           type: "vehicle_identification_number"
 
-  # 16) Account/certificate numbers (HIPAA list items)
+  # 15) Account/certificate numbers (HIPAA list items)
   - text: "Certificate 2024-CE-9981 and account 5566778899 were updated."
     extractions:
       - extraction_class: "certificate_number"
@@ -215,7 +198,7 @@ examples:
         attributes:
           type: "financial_account"
 
-  # 17) Email without TLD typo (still PII)
+  # 16) Email without TLD typo (still PII)
   - text: "Reach me at alex.roe@mailserver or at the office line 555.987.6543."
     extractions:
       - extraction_class: "email"
@@ -227,7 +210,7 @@ examples:
         attributes:
           type: "phone_number"
 
-  # 18) Organization + clinician name (PHI context)
+  # 17) Organization + clinician name (PHI context)
   - text: "Seen at City General Hospital by Dr. Alice Carter."
     extractions:
       - extraction_class: "organization"
@@ -239,7 +222,7 @@ examples:
         attributes:
           type: "healthcare_provider"
 
-  # 19) Age > 89 (HIPAA: identifiable unless bucketed as 90+)
+  # 18) Age > 89 (HIPAA: identifiable unless bucketed as 90+)
   - text: "Patient is 92 years old and resides at 55 King Street."
     extractions:
       - extraction_class: "age_over_89"
