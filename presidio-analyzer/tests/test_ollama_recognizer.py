@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch, MagicMock
 class TestOllamaLangExtractRecognizerInitialization:
     """Test OllamaLangExtractRecognizer initialization and configuration loading."""
 
-    def test_import_error_when_langextract_not_installed(self):
+    def test_when_langextract_not_installed_then_raises_import_error(self):
         """Test that ImportError is raised when langextract is not installed."""
         with patch(
             'presidio_analyzer.predefined_recognizers.third_party.'
@@ -23,7 +23,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(ImportError, match="LangExtract is not installed"):
                 OllamaLangExtractRecognizer()
 
-    def test_initialization_with_mocked_ollama(self, tmp_path):
+    def test_when_initialized_with_mocked_ollama_then_succeeds(self, tmp_path):
         """Test OllamaLangExtractRecognizer initialization with mocked Ollama server."""
         import yaml
         
@@ -72,8 +72,8 @@ class TestOllamaLangExtractRecognizerInitialization:
             assert isinstance(recognizer, LangExtractRecognizer)
             assert isinstance(recognizer, LMRecognizer)
 
-    def test_ollama_server_validation_failure(self, tmp_path):
-        """Test that initialization fails when Ollama server is not available."""
+    def test_when_ollama_server_unreachable_then_raises_connection_error(self, tmp_path):
+        """Test that initializing with unreachable Ollama server raises ConnectionError."""
         import yaml
         
         config = {
@@ -105,8 +105,8 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(ConnectionError, match="Ollama server not reachable"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_ollama_model_validation_failure(self, tmp_path):
-        """Test that initialization fails when Ollama model is not available."""
+    def test_when_ollama_model_unavailable_then_raises_runtime_error(self, tmp_path):
+        """Test that initializing with unavailable model raises RuntimeError."""
         import yaml
         
         config = {
@@ -141,7 +141,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(RuntimeError, match="Model .* not found"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_missing_config_file_raises_error(self):
+    def test_when_config_file_missing_then_raises_file_not_found_error(self):
         """Test FileNotFoundError when config file doesn't exist."""
         with patch('presidio_analyzer.predefined_recognizers.third_party.'
                    'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
@@ -149,7 +149,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(FileNotFoundError, match="Configuration file not found"):
                 OllamaLangExtractRecognizer(config_path="/nonexistent/path.yaml")
 
-    def test_missing_ollama_section_raises_error(self, tmp_path):
+    def test_when_ollama_section_missing_then_raises_value_error(self, tmp_path):
         """Test ValueError when config missing 'ollama' section."""
         import yaml
         
@@ -173,7 +173,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(ValueError, match="must contain 'ollama' section"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_missing_model_id_raises_error(self, tmp_path):
+    def test_when_model_id_missing_then_raises_value_error(self, tmp_path):
         """Test ValueError when model_id is missing."""
         import yaml
         
@@ -200,7 +200,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(ValueError, match="must contain 'model_id'"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_missing_model_url_raises_error(self, tmp_path):
+    def test_when_model_url_missing_then_raises_value_error(self, tmp_path):
         """Test ValueError when model_url is missing."""
         import yaml
         
@@ -227,7 +227,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(ValueError, match="must contain 'model_url'"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_check_ollama_server_handles_http_error(self, tmp_path):
+    def test_when_ollama_server_returns_http_error_then_raises_connection_error(self, tmp_path):
         """Test _check_ollama_server handles HTTPError."""
         import yaml
         
@@ -259,7 +259,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(ConnectionError, match="Ollama server not reachable"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_check_ollama_server_handles_timeout(self, tmp_path):
+    def test_when_ollama_server_times_out_then_raises_connection_error(self, tmp_path):
         """Test _check_ollama_server handles timeout."""
         import yaml
         
@@ -290,8 +290,8 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(ConnectionError, match="Ollama server not reachable"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_check_model_available_handles_json_parse_error(self, tmp_path):
-        """Test _check_model_available handles JSON parse errors."""
+    def test_when_model_list_has_invalid_json_then_raises_runtime_error(self, tmp_path):
+        """Test that _check_model_available handles JSON parsing errors."""
         import yaml
         
         config = {
@@ -327,7 +327,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             with pytest.raises(RuntimeError, match="Model .* not found"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_check_model_available_empty_models_list(self, tmp_path):
+    def test_when_models_list_empty_then_raises_runtime_error(self, tmp_path):
         """Test _check_model_available when no models are installed."""
         import yaml
         
@@ -407,7 +407,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             return OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_analyze_with_person_entity(self, mock_recognizer):
+    def test_when_text_contains_person_then_detects_entity(self, mock_recognizer):
         """Test analysis detecting a person entity with mocked LangExtract."""
         text = "My name is John Doe"
 
@@ -433,7 +433,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         assert results[0].end == 19
         assert results[0].score == 0.95  # MATCH_EXACT score
 
-    def test_analyze_with_multiple_entities(self, mock_recognizer):
+    def test_when_text_contains_multiple_entities_then_detects_all(self, mock_recognizer):
         """Test analysis detecting multiple entity types."""
         text = "Contact John Doe at john@example.com or 555-1234"
 
@@ -471,7 +471,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         assert results[2].entity_type == "PHONE_NUMBER"
         assert results[2].score == 0.80  # MATCH_FUZZY score
 
-    def test_analyze_with_empty_text(self, mock_recognizer):
+    def test_when_text_is_empty_then_returns_no_results(self, mock_recognizer):
         """Test analysis with empty text returns no results."""
         results = mock_recognizer.analyze("")
         assert len(results) == 0
@@ -479,7 +479,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         results = mock_recognizer.analyze("   ")
         assert len(results) == 0
 
-    def test_analyze_with_no_matching_entities(self, mock_recognizer):
+    def test_when_no_entities_match_then_returns_empty_list(self, mock_recognizer):
         """Test analysis when requested entities don't match supported entities."""
         text = "Some text here"
         
@@ -487,8 +487,8 @@ class TestOllamaLangExtractRecognizerAnalyze:
         results = mock_recognizer.analyze(text, entities=["CREDIT_CARD"])
         assert len(results) == 0
 
-    def test_analyze_filters_by_requested_entities(self, mock_recognizer):
-        """Test that analysis only returns requested entity types."""
+    def test_when_entities_requested_then_filters_results(self, mock_recognizer):
+        """Test that analyze filters results based on requested entities."""
         text = "Contact John Doe at john@example.com"
 
         # Create mock extractions for both PERSON and EMAIL
@@ -516,7 +516,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         assert len(results) == 1
         assert results[0].entity_type == "PERSON"
 
-    def test_analyze_respects_min_score(self, mock_recognizer):
+    def test_when_min_score_set_then_filters_low_confidence_results(self, mock_recognizer):
         """Test that results below min_score are filtered out."""
         # Set min_score to 0.5 (default in config)
         text = "Some text"
@@ -537,7 +537,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         # NOT_ALIGNED has score 0.60, which is above min_score 0.5
         assert len(results) == 1
 
-    def test_analyze_handles_langextract_exception(self, mock_recognizer):
+    def test_when_langextract_raises_exception_then_returns_empty_list(self, mock_recognizer):
         """Test that exceptions from LangExtract are handled gracefully."""
         text = "Some text"
 
@@ -547,7 +547,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         # Should return empty list on exception
         assert len(results) == 0
 
-    def test_analyze_skips_unknown_entity_mappings(self, mock_recognizer):
+    def test_when_entity_has_no_mapping_then_skips_result(self, mock_recognizer):
         """Test that extractions with unknown entity classes are skipped."""
         text = "Some text"
 
