@@ -166,7 +166,6 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         self,
         text: str,
         prompt: str,
-        examples: List,
         **kwargs
     ):
         """
@@ -174,10 +173,11 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
 
         :param text: Text to analyze.
         :param prompt: Prompt description for LangExtract.
-        :param examples: LangExtract examples.
-        :param kwargs: Additional parameters.
+        :param kwargs: Additional parameters including examples.
         :return: LangExtract result object.
         """
+        examples = kwargs.pop('examples', [])
+        
         extract_params = {
             "text_or_documents": text,
             "prompt_description": prompt,

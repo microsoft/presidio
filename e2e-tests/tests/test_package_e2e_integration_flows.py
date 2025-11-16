@@ -113,16 +113,16 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
             recognizers_used.add(recognizer_name)
             print(f"DEBUG: Recognizer name: '{recognizer_name}'")
             
-            # Check if langextract/ollama was one of the recognizers
-            if "LangExtract" in recognizer_name or "Ollama" in recognizer_name:
-                langextract_detected_at_least_one = True
+            langextract_detected_at_least_one |= (
+                recognizer_name == "Ollama LangExtract PII/PHI"
+            )
 
     print(f"DEBUG: All recognizers used: {recognizers_used}")
     print(f"DEBUG: LangExtract detected at least one: {langextract_detected_at_least_one}")
     
     # Verify that langextract participated in detection
     assert langextract_detected_at_least_one, \
-        f"Expected langextract to detect at least one entity. Recognizers used: {recognizers_used}"
+        f"Expected 'Ollama LangExtract PII/PHI' recognizer to detect at least one entity. Recognizers used: {recognizers_used}"
 
     # Anonymize the detected entities
     anonymizer = AnonymizerEngine()

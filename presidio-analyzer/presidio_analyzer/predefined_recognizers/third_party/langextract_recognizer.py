@@ -192,14 +192,12 @@ class LangExtractRecognizer(LMRecognizer):
 
     def _parse_llm_response(
         self,
-        response,
-        original_text: str
+        response
     ) -> List:
         """
         Parse LangExtract response into structured format.
 
         :param response: LangExtract result object.
-        :param original_text: Original text that was analyzed.
         :return: List of extractions from LangExtract.
         """
         if not response or not response.extractions:
@@ -258,7 +256,7 @@ class LangExtractRecognizer(LMRecognizer):
         """Convert LangExtract results to Presidio RecognizerResult format."""
         recognizer_results = []
 
-        extractions = self._parse_llm_response(langextract_result, "")
+        extractions = self._parse_llm_response(langextract_result)
         if not extractions:
             return recognizer_results
 
@@ -330,7 +328,7 @@ class LangExtractRecognizer(LMRecognizer):
         return default_score
 
     def _calculate_score(self, extraction) -> float:
-        """Legacy method - delegates to _calculate_confidence_score."""
+        """Calculate confidence score for extraction."""
         return self._calculate_confidence_score(extraction)
 
     def _build_explanation(
@@ -362,7 +360,6 @@ class LangExtractRecognizer(LMRecognizer):
         self,
         text: str,
         prompt: str,
-        examples: List,
         **kwargs
     ):
         """
@@ -370,8 +367,7 @@ class LangExtractRecognizer(LMRecognizer):
 
         :param text: Text to analyze.
         :param prompt: Prompt description for LangExtract.
-        :param examples: LangExtract examples.
-        :param kwargs: Additional LLM-specific parameters.
+        :param kwargs: Additional LLM-specific parameters (e.g., examples).
         :return: LangExtract result object.
         """
         ...
