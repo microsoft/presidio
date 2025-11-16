@@ -4,7 +4,6 @@ Tests the hierarchy: LMRecognizer -> LangExtractRecognizer -> OllamaLangExtractR
 
 These tests use mocks to avoid requiring Ollama or actual LLM calls.
 """
-import json
 import pytest
 import urllib.error
 from unittest.mock import Mock, patch, MagicMock
