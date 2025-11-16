@@ -26,7 +26,10 @@ RUN apt-get update \
 
 COPY ./pyproject.toml /app/
 
-RUN pip install poetry && poetry install --no-root --only=main -E server
+RUN pip install poetry \
+    && poetry install --no-root --only=main -E server \
+    && rm -rf $(poetry config cache-dir)
+    
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /app/
 
