@@ -25,7 +25,9 @@ RUN apt-get update \
   && tesseract -v
 
 COPY ./pyproject.toml /app/
-RUN pip install poetry && poetry install --no-root --only=main -E server
+RUN pip install poetry \
+    && poetry install --no-root --only=main -E server\
+    && rm -rf $(poetry config cache-dir)
 
 # Install spaCy model during build (as root) so it's available to non-root user at runtime
 RUN python -m spacy download en_core_web_lg
