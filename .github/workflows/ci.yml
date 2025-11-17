@@ -85,6 +85,8 @@ jobs:
             path: 'presidio-structured'
             extras: ''
             spacy-models: ''
+    env:
+      POETRY_CACHE_DIR: /mnt/poetry_cache
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -102,6 +104,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install poetry
+
+      - name: Setup Poetry Cache Directory
+        run: |
+          sudo mkdir -p $POETRY_CACHE_DIR
+          sudo chown -R runner $POETRY_CACHE_DIR    
 
       - name: Install system dependencies for Image Redactor
         if: matrix.component.name == 'Image Redactor'
