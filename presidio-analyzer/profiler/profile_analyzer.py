@@ -26,7 +26,8 @@ def run_analyzer_workload():
 
 def generate_svg(profiler_file: Path):
     """Generate SVG call graph visualization."""
-    output_dir = Path("output")
+    script_dir = Path(__file__).parent
+    output_dir = script_dir / "output"
     output_dir.mkdir(exist_ok=True)
     svg_file = output_dir / "profiler.svg"
     
@@ -34,7 +35,7 @@ def generate_svg(profiler_file: Path):
         print("\nGenerating SVG...")
         cmd = f"gprof2dot -f pstats {profiler_file} -n 0.02 -e 0.02 | dot -Tsvg -o {svg_file}"
         subprocess.run(cmd, shell=True, check=True, capture_output=True)
-        print(f"✓ Created {svg_file} (red=hottest, yellow-green=hot, blue=coolest)")
+        print(f"✓ Created profiler/output/profiler.svg (red=hottest, yellow-green=hot, blue=coolest)")
     except subprocess.CalledProcessError:
         print("⚠️  Install: poetry add --group dev gprof2dot && sudo apt install graphviz")
     except FileNotFoundError:
@@ -46,7 +47,8 @@ if __name__ == "__main__":
     print("-" * 50)
     
     # Set up output directory
-    output_dir = Path("output")
+    script_dir = Path(__file__).parent
+    output_dir = script_dir / "output"
     output_dir.mkdir(exist_ok=True)
     profiler_out = output_dir / "profiler.out"
     

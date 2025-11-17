@@ -138,9 +138,8 @@ vendor/
 mkdocs/
 /presidio_mkdocs
 
-# Profiler output (keep .svg for PR visualization, ignore binary data)
-profiler.out
-profiler.png
+# Profiler outputs (keep .svg for PR visualization, ignore binary profiler data)
+presidio-analyzer/profiler/output/profiler.out
 
 # Visual Studio
 /.vs
