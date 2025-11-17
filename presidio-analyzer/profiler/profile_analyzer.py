@@ -26,11 +26,15 @@ def run_analyzer_workload():
 
 def generate_svg(profiler_file: Path):
     """Generate SVG call graph visualization."""
+    output_dir = Path("output")
+    output_dir.mkdir(exist_ok=True)
+    svg_file = output_dir / "profiler.svg"
+    
     try:
         print("\nGenerating SVG...")
-        cmd = f"gprof2dot -f pstats {profiler_file} -n 0.02 -e 0.02 | dot -Tsvg -o profiler.svg"
+        cmd = f"gprof2dot -f pstats {profiler_file} -n 0.02 -e 0.02 | dot -Tsvg -o {svg_file}"
         subprocess.run(cmd, shell=True, check=True, capture_output=True)
-        print("✓ Created profiler.svg (red=hottest, yellow-green=hot, blue=coolest)")
+        print(f"✓ Created {svg_file} (red=hottest, yellow-green=hot, blue=coolest)")
     except subprocess.CalledProcessError:
         print("⚠️  Install: poetry add --group dev gprof2dot && sudo apt install graphviz")
     except FileNotFoundError:
@@ -41,17 +45,22 @@ if __name__ == "__main__":
     print("Presidio Analyzer Profiler")
     print("-" * 50)
     
+    # Set up output directory
+    output_dir = Path("output")
+    output_dir.mkdir(exist_ok=True)
+    profiler_out = output_dir / "profiler.out"
+    
     # Profile the workload
-    cProfile.run('run_analyzer_workload()', 'profiler.out', sort='cumtime')
+    cProfile.run('run_analyzer_workload()', str(profiler_out), sort='cumtime')
     
     # Show top 15 functions
     print(f"\n{'Top 15 Functions by Time':-^50}")
-    subprocess.run('python -m pstats profiler.out <<EOF\nsort cumtime\nstats 15\nquit\nEOF', 
+    subprocess.run(f'python -m pstats {profiler_out} <<EOF\nsort cumtime\nstats 15\nquit\nEOF', 
                    shell=True, executable='/bin/bash')
     
     # Generate SVG
-    generate_svg(Path("profiler.out"))
+    generate_svg(profiler_out)
     
     print(f"\n{'Done':-^50}")
-    print("Files: profiler.out, profiler.svg")
-    print("View stats: python -m pstats profiler.out")
+    print(f"Output: profiler/output/profiler.{{out,svg}}")
+    print(f"View stats: python -m pstats {profiler_out}")

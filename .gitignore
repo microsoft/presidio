@@ -140,6 +140,7 @@ mkdocs/
 
 # Profiler output (keep .svg for PR visualization, ignore binary data)
 profiler.out
+profiler.png
 
 # Visual Studio
 /.vs
