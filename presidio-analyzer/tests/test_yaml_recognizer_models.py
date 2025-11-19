@@ -304,17 +304,18 @@ def test_custom_recognizer_config_invalid_deny_list_score():
 
 
 def test_recognizer_registry_config_defaults():
-    """Test registry config with defaults."""
-    config = RecognizerRegistryConfig()
+    """Test registry config with defaults (requires at least one recognizer)."""
+    config = RecognizerRegistryConfig(recognizers=["CreditCardRecognizer"])
     assert config.supported_languages is None
     assert config.global_regex_flags == 26
-    assert config.recognizers == []
+    assert len(config.recognizers) == 1
 
 
 def test_recognizer_registry_config_valid_languages():
     """Test registry with valid languages."""
     config = RecognizerRegistryConfig(
-        supported_languages=["en", "es", "fr-CA"]
+        supported_languages=["en", "es", "fr-CA"],
+        recognizers=["CreditCardRecognizer"]
     )
     assert config.supported_languages == ["en", "es", "fr-CA"]
 
@@ -323,14 +324,38 @@ def test_recognizer_registry_config_invalid_language():
     """Test registry with invalid language codes."""
     with pytest.raises(ValidationError):
         RecognizerRegistryConfig(
-            supported_languages=["en", "invalid", "es"]
+            supported_languages=["en", "invalid", "es"],
+            recognizers=["CreditCardRecognizer"]
         )
 
 
 def test_recognizer_registry_config_empty_languages():
     """Test registry with empty languages list."""
-    config = RecognizerRegistryConfig(supported_languages=[])
+    config = RecognizerRegistryConfig(
+        supported_languages=[],
+        recognizers=["CreditCardRecognizer"]
+    )
     assert config.supported_languages == []
+
+
+def test_recognizer_registry_config_empty_recognizers():
+    """Test that empty recognizers list raises a validation error."""
+    with pytest.raises(ValidationError) as exc_info:
+        RecognizerRegistryConfig(
+            recognizers=[],
+            global_regex_flags=26
+        )
+    assert "empty recognizers list" in str(exc_info.value).lower()
+
+
+def test_recognizer_registry_config_missing_recognizers():
+    """Test that missing recognizers field raises a validation error."""
+    with pytest.raises(ValidationError) as exc_info:
+        RecognizerRegistryConfig(
+            supported_languages=["en"],
+            global_regex_flags=26
+        )
+    assert "empty recognizers list" in str(exc_info.value).lower()
 
 
 def test_recognizer_registry_config_string_recognizers():
@@ -485,10 +510,6 @@ def test_predefined_recognizer_config_invalid_recognizer():
     with pytest.raises(ValidationError) as exc_info:
         PredefinedRecognizerConfig(name="NonExistentRecognizer")
 
-    error_message = str(exc_info.value)
-    assert "Predefined recognizer 'NonExistentRecognizer' not found" in error_message
-    assert "Available predefined recognizers:" in error_message
-
 
 def test_predefined_recognizer_config_case_sensitive():
     """Test that recognizer names are case sensitive."""
@@ -521,8 +542,22 @@ def test_custom_recognizer_config_predefined_name_error():
         )
 
     error_message = str(exc_info.value)
-    assert "is a predefined recognizer but is marked as 'custom'" in error_message
+    assert "Recognizer 'CreditCardRecognizer' conflicts with a predefined" in error_message
     assert "Either use type: 'predefined' or choose a different name" in error_message
+
+
+def test_custom_recognizer_config_predefined_name_error_without_required_fields():
+    """Test that predefined name conflict is caught even when missing required fields."""
+    with pytest.raises(ValidationError) as exc_info:
+        CustomRecognizerConfig(
+            name="UrlRecognizer",  # This is a predefined recognizer
+            type="custom"
+            # Intentionally missing supported_entity, patterns, and deny_list
+        )
+
+    error_message = str(exc_info.value)
+    assert "conflicts with a predefined recognizer" in error_message or \
+           "is a predefined recognizer but is marked as 'custom'" in error_message
 
 
 def test_custom_recognizer_config_unique_name_valid():

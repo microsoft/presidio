@@ -156,7 +156,9 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
             ]
             raise ValueError(
                 f"Predefined recognizer '{self.name}' not found. "
-                f"Available predefined recognizers: "
+                f"If you want to add your own custom recognizer, "
+                f"mark is as type: 'custom'. "
+                f"The available predefined recognizers are: "
                 f"{', '.join(sorted(available_recognizers))}"
             ) from e
         return self
@@ -195,6 +197,40 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+    @model_validator(mode="before")
+    @classmethod
+    def check_predefined_name_conflict(cls, data: Any) -> Any:
+        """Check if custom recognizer name conflicts with predefined recognizer.
+
+        This validation runs BEFORE field validation to provide a clearer error message
+        when someone tries to use a predefined recognizer name for a custom recognizer.
+        """
+        if isinstance(data, dict):
+            name = data.get("name")
+            if name:
+                try:
+                    # Lazy import to avoid circular dependency
+                    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import ( # noqa
+                        RecognizerListLoader,
+                    )
+
+                    try:
+                        RecognizerListLoader.get_existing_recognizer_cls(name)
+                        raise ValueError(
+                            f"Recognizer '{name}' conflicts with a predefined "
+                            f"recognizer. "
+                            f"Custom recognizers cannot use the same name "
+                            f"as predefined recognizers. "
+                            f"Either use type: 'predefined' or choose a different name "
+                            f"for your custom recognizer."
+                        )
+                    except ValueError as e:
+                        if "was not found" not in str(e):
+                            raise
+                except (ImportError, ModuleNotFoundError):
+                    pass
+        return data
+
     @field_validator("patterns")
     @classmethod
     def validate_patterns(cls, patterns: Optional[List[Dict]]) -> Optional[str]:
@@ -229,6 +265,8 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
     def validate_configuration(self):
         """Ensure configuration is valid."""
         # Check if user accidentally marked a predefined recognizer as custom
+        # This check should happen BEFORE checking patterns/deny_list
+        # to give a more specific error message
         try:
             # Lazy import to avoid circular dependency
             from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
@@ -249,7 +287,7 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
         except (ImportError, ModuleNotFoundError):
             pass
 
-        # Validate patterns or deny_list
+        # Validate patterns or deny_list only after name check
         if not self.patterns and not self.deny_list:
             raise ValueError(
                 "Custom recognizer must have at least one "
@@ -268,6 +306,8 @@ class RecognizerRegistryConfig(BaseModel):
     recognizers: List[
         Union[PredefinedRecognizerConfig, CustomRecognizerConfig, str]
     ] = Field(default_factory=list, description="List of recognizer configurations")
+
+    model_config = ConfigDict(extra="forbid")
 
     @field_validator("supported_languages")
     @classmethod
@@ -316,6 +356,16 @@ class RecognizerRegistryConfig(BaseModel):
         """Validate global_regex_flags and warn if using default."""
         return v
 
+    @model_validator(mode="after")
+    def validate_recognizers_not_empty(self):
+        """Ensure recognizers list is not empty after all defaults are applied."""
+        if not self.recognizers:
+            raise ValueError(
+                "The 'recognizers' field must contain at least one recognizer. "
+                "Found an empty recognizers list."
+            )
+        return self
+
     @field_validator("recognizers", mode="before")
     @classmethod
     def parse_recognizers(cls, v):
@@ -328,6 +378,12 @@ class RecognizerRegistryConfig(BaseModel):
 
         if not isinstance(v, list):
             raise ValueError("Recognizers must be a list")
+
+        if len(v) == 0:
+            raise ValueError(
+                "The 'recognizers' field must contain at least one recognizer. "
+                "Found an empty recognizers list."
+            )
 
         parsed_recognizers = []
         for recognizer in v:

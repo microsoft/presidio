@@ -1,6 +1,5 @@
 """Predefined recognizers package. Holds all the default recognizers."""
 
-
 # Australia recognizers
 from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  # noqa: E501
     TransformersRecognizer,

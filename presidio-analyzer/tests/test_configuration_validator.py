@@ -83,3 +83,38 @@ def test_file_path_validation_nonexistent():
         ConfigurationValidator.validate_file_path("/nonexistent/file.yaml")
 
     assert "does not exist" in str(exc_info.value)
+
+def test_configuration_validator_analyzer_config_unknown_keys():
+    """Test ConfigurationValidator rejects analyzer config with unknown keys."""
+    invalid_config = {
+        "supported_languages": ["en"],
+        "default_score_threshold": 0.5,
+        "unknown_key": "some_value",
+        "another_typo": 123
+    }
+
+    with pytest.raises(ValueError) as exc_info:
+        ConfigurationValidator.validate_analyzer_configuration(invalid_config)
+
+    error_message = str(exc_info.value)
+    assert "Unknown configuration key(s)" in error_message
+    assert "unknown_key" in error_message or "another_typo" in error_message
+    assert "Valid keys are" in error_message
+
+def test_configuration_validator_recognizer_registry_unknown_keys():
+    """Test ConfigurationValidator rejects recognizer registry config with unknown keys."""
+    invalid_config = {
+        "supported_languages": ["en"],
+        "global_regex_flags": 26,
+        "recognizers": [],
+        "invalid_field": "value",
+        "typo_key": 456
+    }
+
+    with pytest.raises(ValueError) as exc_info:
+        ConfigurationValidator.validate_recognizer_registry_configuration(invalid_config)
+
+    error_message = str(exc_info.value)
+    # Pydantic will raise an error about extra fields
+    assert "extra" in error_message.lower() or "unexpected" in error_message.lower() or "invalid_field" in error_message or "typo_key" in error_message
+

@@ -83,37 +83,6 @@ def test_recognizer_registry_provider_conf_file_valid_missing_keys_fail():
         RecognizerRegistryProvider(conf_file=test_yaml)
 
 
-# def test_recognizer_registry_provider_with_registry_configuration():
-#     registry_configuration = {
-#         "supported_languages": ["de", "es", "en"],
-#         "recognizers": [
-#             {
-#                 "name": "Zip code Recognizer",
-#                 "supported_language": "en",
-#                 "patterns": [
-#                     {
-#                         "name": "zip code (weak)",
-#                         "regex": "(\\b\\d{5}(?:\\-\\d{4})?\\b)",
-#                         "score": 0.01,
-#                     }
-#                 ],
-#                 "context": ["zip", "code"],
-#                 "supported_entity": "ZIP",
-#             }
-#         ]
-#     }
-
-    # provider = RecognizerRegistryProvider(registry_configuration=registry_configuration)
-    # recognizer_registry = provider.create_recognizer_registry()
-    # assert recognizer_registry.supported_languages == ["de", "es", "en"]
-    # assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
-    # assert len(recognizer_registry.recognizers) == 1
-    # recognizer = recognizer_registry.recognizers[0]
-    # assert recognizer.name == "Zip code Recognizer"
-    # assert recognizer.supported_language == "en"
-    # assert recognizer.supported_entities == ["ZIP"]
-    # assert len(recognizer.patterns) == 1
-
 
 def test_recognizer_registry_provider_when_conf_file_and_registry_configuration_fail():
     this_path = Path(__file__).parent.absolute()
@@ -132,7 +101,7 @@ def test_recognizer_provider_with_minimal_creates_empty_registry():
     provider = RecognizerRegistryProvider(conf_file=minimal_yaml)
     registry = provider.create_recognizer_registry()
 
-    assert len(registry.recognizers) == 0
+    assert len(registry.recognizers) == 1
 
 
 def test_recognizer_provider_with_nlp_reco_only_creates_nlp_recognizer():
