@@ -99,6 +99,21 @@ class ConfigurationValidator:
         if not isinstance(config, dict):
             raise ValueError("Recognizer registry configuration must be a dictionary")
 
+        # Define valid top-level keys for recognizer registry configuration
+        valid_keys = {
+            "supported_languages",
+            "global_regex_flags",
+            "recognizers"
+        }
+
+        # Check for unknown keys
+        unknown_keys = set(config.keys()) - valid_keys
+        if unknown_keys:
+            raise ValueError(
+                f"Unknown configuration key(s) in recognizer_registry: {sorted(unknown_keys)}. "
+                f"Valid keys are: {sorted(valid_keys)}"
+            )
+
         # Validate supported languages
         if "supported_languages" in config:
             ConfigurationValidator.validate_language_codes(
@@ -116,6 +131,22 @@ class ConfigurationValidator:
         """Validate analyzer engine validation."""
         if not isinstance(config, dict):
             raise ValueError("Analyzer configuration must be a dictionary")
+
+        # Define valid top-level keys for analyzer configuration
+        valid_keys = {
+            "supported_languages",
+            "default_score_threshold",
+            "nlp_configuration",
+            "recognizer_registry"
+        }
+
+        # Check for unknown keys
+        unknown_keys = set(config.keys()) - valid_keys
+        if unknown_keys:
+            raise ValueError(
+                f"Unknown configuration key(s) in analyzer configuration: {sorted(unknown_keys)}. "
+                f"Valid keys are: {sorted(valid_keys)}"
+            )
 
         # Validate supported languages if present
         if "supported_languages" in config:
