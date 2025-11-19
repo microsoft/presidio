@@ -11,6 +11,7 @@ from presidio_analyzer.local_recognizer import LocalRecognizer
 from presidio_analyzer.pattern import Pattern
 from presidio_analyzer.pattern_recognizer import PatternRecognizer
 from presidio_analyzer.remote_recognizer import RemoteRecognizer
+from presidio_analyzer.lm_recognizer import LMRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
@@ -22,13 +23,11 @@ from presidio_analyzer.analyzer_engine_provider import AnalyzerEngineProvider
 # Define default loggers behavior
 
 # 1. presidio_analyzer logger
-
 logging.getLogger("presidio-analyzer").addHandler(logging.NullHandler())
 
 # 2. decision_process logger.
-# Setting the decision process trace here as we would want it
+# Setting the decision_process trace here as we would want it
 # to be activated using a parameter to AnalyzeEngine and not by default.
-
 decision_process_logger = logging.getLogger("decision_process")
 ch = logging.StreamHandler()
 formatter = logging.Formatter("[%(asctime)s][%(name)s][%(levelname)s]%(message)s")
@@ -44,6 +43,7 @@ __all__ = [
     "LocalRecognizer",
     "PatternRecognizer",
     "RemoteRecognizer",
+    "LMRecognizer",
     "RecognizerRegistry",
     "AnalyzerEngine",
     "AnalyzerRequest",
