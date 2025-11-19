@@ -233,7 +233,7 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
 
     @field_validator("patterns")
     @classmethod
-    def validate_patterns(cls, patterns: Optional[List[Dict]]) -> Optional[str]:
+    def validate_patterns(cls, patterns: Optional[List[Dict]]) -> Optional[List[Dict]]:
         """Validate single language code format."""
         if patterns and not isinstance(patterns, list):
             raise ValueError(f"Patterns should be a list: {patterns}")
@@ -435,7 +435,7 @@ class RecognizerRegistryConfig(BaseModel):
         return parsed_recognizers
 
     @classmethod
-    def __check_if_predefined(cls, recognizer_name: Any | None):
+    def __check_if_predefined(cls, recognizer_name: Optional[Any]):
         try:
             from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
                 RecognizerListLoader,
