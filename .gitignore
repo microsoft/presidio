@@ -138,6 +138,9 @@ vendor/
 mkdocs/
 /presidio_mkdocs
 
+# Profiler outputs (keep .svg for PR visualization, ignore binary profiler data)
+presidio-analyzer/profiler/output/profiler.out
+
 # Visual Studio
 /.vs
 /TestResults
