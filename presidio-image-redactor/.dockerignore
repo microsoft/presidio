@@ -107,3 +107,6 @@ dmypy.json
 
 # Local configuration that shouldn't be in containers
 local_settings.py
+
+deploytoazure.json
+*.png
