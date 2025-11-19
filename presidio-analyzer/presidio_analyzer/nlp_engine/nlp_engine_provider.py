@@ -73,13 +73,16 @@ class NlpEngineProvider:
 
     # _validate_nlp_engines method removed - all validation is now Pydantic-based
 
-    def _read_nlp_conf(self, conf_file: Union[Path, str]) -> Dict:
+    @staticmethod
+    def _read_nlp_conf(conf_file: Union[Path, str]) -> Dict:
         """Read NLP configuration from a YAML file."""
         with open(conf_file) as file:
             return yaml.safe_load(file)
 
+
+    @staticmethod
     def _get_full_conf_path(
-        self, default_conf_file: Union[Path, str] = "default.yaml"
+        default_conf_file: Union[Path, str] = "default.yaml"
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent, "../conf", default_conf_file)

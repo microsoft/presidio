@@ -1,7 +1,7 @@
-import re
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
+import regex as re
 from pydantic import ValidationError
 
 from .yaml_recognizer_models import RecognizerRegistryConfig
