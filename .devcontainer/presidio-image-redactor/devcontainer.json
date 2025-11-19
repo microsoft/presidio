@@ -11,10 +11,14 @@
     "install",
     "--no-interaction"
   ],
-  "postAttachCommand": "poetry shell",
   "customizations": {
-    "extensions": [
-      "ms-python.python", 
-    ],
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
+      }
+    }
   }
 }

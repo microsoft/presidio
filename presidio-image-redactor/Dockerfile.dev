@@ -14,8 +14,3 @@ RUN apt-get update  \
 && apt-get install ffmpeg libsm6 libxext6  -y
 
 RUN pip install poetry
-
-# Create a non-root user for development
-RUN useradd -m -u 1001 presidio
-
-USER 1001
