@@ -110,7 +110,8 @@ class ConfigurationValidator:
         unknown_keys = set(config.keys()) - valid_keys
         if unknown_keys:
             raise ValueError(
-                f"Unknown configuration key(s) in recognizer_registry: {sorted(unknown_keys)}. "
+                f"Unknown configuration key(s) in "
+                f"recognizer_registry: {sorted(unknown_keys)}. "
                 f"Valid keys are: {sorted(valid_keys)}"
             )
 
@@ -144,7 +145,8 @@ class ConfigurationValidator:
         unknown_keys = set(config.keys()) - valid_keys
         if unknown_keys:
             raise ValueError(
-                f"Unknown configuration key(s) in analyzer configuration: {sorted(unknown_keys)}. "
+                f"Unknown configuration key(s) in "
+                f"analyzer configuration: {sorted(unknown_keys)}. "
                 f"Valid keys are: {sorted(valid_keys)}"
             )
 
