@@ -21,7 +21,7 @@ WORKDIR /app
 
 # Install essential build tools and curl for health checks
 RUN apt-get update \
-  && apt-get install build-essential curl --no-install-recommends -y \
+  && apt-get install curl --no-install-recommends -y \
   && rm -rf /var/lib/apt/lists/*
 
 COPY ./pyproject.toml /app/
