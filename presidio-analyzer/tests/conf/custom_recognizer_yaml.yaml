@@ -13,6 +13,7 @@ recognizer_registry:
       supported_entity: "ZIP"
     - name: "SpacyRecognizer"
       enabled: false
+      type: predefined
 
 supported_languages:
   - en

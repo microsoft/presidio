@@ -1,0 +1,154 @@
+supported_languages: 
+  - en
+default_score_threshold: 0
+nlp_configuration:
+  nlp_engine_name: spacy
+  models:
+    - lang_code: en
+      model_name: en_core_web_lg
+
+  ner_model_configuration:
+    model_to_presidio_entity_mapping:
+      PER: PERSON
+      PERSON: PERSON
+      NORP: NRP
+      FAC: LOCATION
+      LOC: LOCATION
+      LOCATION: LOCATION
+      GPE: LOCATION
+      ORG: ORGANIZATION
+      ORGANIZATION: ORGANIZATION
+      DATE: DATE_TIME
+      TIME: DATE_TIME
+
+    low_confidence_score_multiplier: 0.4
+    low_score_entity_names:
+      -
+    labels_to_ignore:
+      - ORG
+      - ORGANIZATION # has many false positives
+      - CARDINAL
+      - EVENT
+      - LANGUAGE
+      - LAW
+      - MONEY
+      - ORDINAL
+      - PERCENT
+      - PRODUCT
+      - QUANTITY
+      - WORK_OF_ART
+
+
+recognizer_registry:
+  # global_regex_flags: 26
+  recognizers:
+    # Recognizers listed here can either be loaded from the recognizers defined in code (type: predefined),
+    # or created based on the provided configuration (type: custom).
+    # For predefined:
+    # - If only a recognizer name is provided, a predefined recognizer with this name and default parameters will be loaded.
+    # - If a parameter isn't provided, the default one would be loaded.
+    # For custom:
+    # - See an example configuration here: https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml
+    # - Custom pattern recognizers with this configuration can be added to this file, with type: custom
+    #  For recognizers supporting more than one language, an instance of the recognizer for each language will be created.
+    # For example, see the CreditCardRecognizer definition below:
+    - name: CreditCardRecognizer
+      supported_languages:
+      - language: en
+        context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
+      type: predefined
+
+    - name: UsBankRecognizer
+      type: predefined
+
+    - name: UsLicenseRecognizer
+      type: predefined
+
+    - name: UsItinRecognizer
+      type: predefined
+
+    - name: UsPassportRecognizer
+      type: predefined
+
+    - name: UsSsnRecognizer
+      type: predefined
+
+    - name: NhsRecognizer
+      type: predefined
+
+    - name: UkNinoRecognizer
+      type: predefined
+      enabled: false
+
+    - name: SgFinRecognizer
+      type: predefined
+      enabled: false
+
+    - name: AuAbnRecognizer
+      type: predefined
+      enabled: false
+
+    - name: AuAcnRecognizer
+      type: predefined
+      enabled: false
+
+    - name: AuTfnRecognizer
+      type: predefined
+      enabled: false
+
+    - name: AuMedicareRecognizer
+      type: predefined
+      enabled: false
+
+    - name: InPanRecognizer
+      type: predefined
+      enabled: false
+
+    - name: InAadhaarRecognizer
+      supported_languages:
+      - en
+      type: predefined
+      enabled: false
+
+    - name: InVehicleRegistrationRecognizer
+      type: predefined
+      enabled: false
+
+    - name: InPassportRecognizer
+      type: predefined
+      enabled: false
+
+    - name: CryptoRecognizer
+      type: predefined
+
+    - name: DateRecognizer
+      type: predefined
+
+    - name: EmailRecognizer
+      type: predefined
+
+    - name: IbanRecognizer
+      type: predefined
+
+    - name: IpRecognizer
+      type: predefined
+
+    - name: MedicalLicenseRecognizer
+      type: predefined
+
+    - name: PhoneRecognizer
+      type: predefined
+
+    - name: UrlRecognizer
+      type: predefined
+
+    - name: InVoterRecognizer
+      type: predefined
+      enabled: false
+
+    - name: InGstinRecognizer
+      type: predefined
+      enabled: false
+
+    - name: SpacyRecognizer
+      type: predefined

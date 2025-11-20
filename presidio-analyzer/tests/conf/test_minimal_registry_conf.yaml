@@ -1,4 +1,5 @@
 global_regex_flags: 26
-recognizers: []
+recognizers:
+  - name: "CreditCardRecognizer"
 supported_languages: 
   - en

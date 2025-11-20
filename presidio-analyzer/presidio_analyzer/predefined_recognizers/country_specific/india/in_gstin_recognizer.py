@@ -90,8 +90,8 @@ class InGstinRecognizer(PatternRecognizer):
 
         # First, try to extract GSTIN pattern from the text
         gstin_pattern = (
-            r'\b((?:0[1-9]|[1-3][0-7])[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}'
-            r'[0-9A-Za-z]{1}Z[0-9A-Za-z]{1})\b'
+            r"\b((?:0[1-9]|[1-3][0-7])[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}"
+            r"[0-9A-Za-z]{1}Z[0-9A-Za-z]{1})\b"
         )
         match = re.search(gstin_pattern, text.upper())
         if match:
@@ -129,7 +129,7 @@ class InGstinRecognizer(PatternRecognizer):
             return False
 
         # Check 14th character should be 'Z'
-        if gstin[13] != 'Z':
+        if gstin[13] != "Z":
             return False
 
         # Check 15th character (checksum)
