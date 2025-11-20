@@ -298,12 +298,9 @@ class RecognizerListLoader:
         """
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
-        # Exclude Pydantic-normalized fields that should not
-        # be passed to recognizer constructors
-        # Note: We exclude both supported_entity
-        # and supported_entities here because we'll handle
-        # the conversion in _prepare_recognizer_kwargs
+
         predefined_to_exclude = {"enabled", "type", "supported_languages", "name"}
+
         # For custom recognizers, we keep 'supported_languages'
         # and don't exclude 'supported_entity'
         # because PatternRecognizer needs it
