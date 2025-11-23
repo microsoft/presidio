@@ -22,7 +22,7 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
     """LangExtract recognizer using Ollama backend."""
 
     DEFAULT_CONFIG_PATH = (
-        Path(__file__).parent.parent.parent / "conf" / "ollama_config.yaml"
+        Path(__file__).parent.parent.parent / "conf" / "langextract_config_ollama.yaml"
     )
 
     def __init__(self, config_path: Optional[str] = None):
@@ -32,7 +32,10 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
             config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
         )
 
-        super().__init__(config_path=actual_config_path)
+        super().__init__(
+            config_path=actual_config_path,
+            name="Ollama LangExtract PII"
+        )
 
         model_config = self.config.get("model", {})
         self.model_url = model_config.get("model_url")

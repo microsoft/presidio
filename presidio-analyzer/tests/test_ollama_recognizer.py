@@ -86,6 +86,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
             
             # Verify initialization
+            assert recognizer.name == "Ollama LangExtract PII"
             assert recognizer.model_id == "gemma2:2b"
             assert recognizer.model_url == "http://localhost:11434"
             assert len(recognizer.supported_entities) == 3  # PERSON, EMAIL_ADDRESS, GENERIC_PII_ENTITY

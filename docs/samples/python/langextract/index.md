@@ -18,7 +18,7 @@ Unlike pattern-based recognizers, language model-based detection is flexible and
 The default configuration includes examples for common PII/PHI entities such as PERSON, EMAIL_ADDRESS, PHONE_NUMBER, US_SSN, CREDIT_CARD, MEDICAL_LICENSE, and more. 
 **You can customize the prompts and examples to detect any entity types relevant to your use case**.
 
-For the default entity mappings and examples, see the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/ollama_config.yaml).
+For the default entity mappings and examples, see the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml).
 
 ## Prerequisites
 
@@ -55,64 +55,36 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 
 ### Option 1: Enable in Configuration (Recommended)
 
-1. Install the package with the langextract extra:
+1. Install with langextract support and set up Ollama (see Prerequisites above):
    ```sh
    pip install presidio-analyzer[langextract]
    ```
 
-2. Set up Ollama and pull the model (see Prerequisites above)
-
-3. Enable the recognizer in `default_recognizers.yaml`:
+2. Enable the recognizer in `default_recognizers.yaml`:
    ```yaml
    - name: OllamaLangExtractRecognizer
-     supported_languages: 
-     - en
-     type: predefined
      enabled: true  # Change from false to true
-     config_path: presidio_analyzer/conf/ollama_config.yaml
-   ```
-
-4. Use the analyzer:
-   ```python
-   from presidio_analyzer import AnalyzerEngine
-   
-   # Recognizer is automatically loaded from config
-   analyzer = AnalyzerEngine()
-   
-   # Analyze text
-   results = analyzer.analyze(text="My email is john.doe@example.com", language="en")
-   for result in results:
-       print(result)
    ```
 
 ### Option 2: Add Programmatically
-
-Alternatively, add the recognizer directly in code:
 
 ```python
 from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
 
-# Create recognizer with default config
-ollama = OllamaLangExtractRecognizer()
-
-# Add to analyzer
 analyzer = AnalyzerEngine()
-analyzer.registry.add_recognizer(ollama)
+analyzer.registry.add_recognizer(OllamaLangExtractRecognizer())
 
-# Analyze text
 results = analyzer.analyze(text="My email is john.doe@example.com", language="en")
-for result in results:
-    print(result)
 ```
 
-### Using a Custom Configuration
+### Custom Configuration
 
 To use a custom configuration file:
 
 ```python
-ollama = OllamaLangExtractRecognizer(
-    config_path="/path/to/your/custom_config.yaml"
+analyzer.registry.add_recognizer(
+    OllamaLangExtractRecognizer(config_path="/path/to/custom_config.yaml")
 )
 ```
 
@@ -121,7 +93,7 @@ ollama = OllamaLangExtractRecognizer(
 
 ## Configuration Options
 
-The `ollama_config.yaml` file supports the following options:
+The `langextract_config_ollama.yaml` file supports the following options:
 
 - **`model_id`**: The Ollama model to use (default: `"gemma2:2b"`)
 - **`model_url`**: Ollama server URL (default: `"http://localhost:11434"`)
@@ -130,7 +102,7 @@ The `ollama_config.yaml` file supports the following options:
 - **`entity_mappings`**: Map LangExtract entity classes to Presidio entity names
 - **`min_score`**: Minimum confidence score (default: `0.5`)
 
-See the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/ollama_config.yaml) for complete examples.
+See the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml) for complete examples.
 
 ## Troubleshooting
 
