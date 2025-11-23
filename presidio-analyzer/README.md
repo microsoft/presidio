@@ -20,6 +20,8 @@ Presidio analyzer supports language model-based PII/PHI detection (LLMs, SLMs) f
 pip install presidio-analyzer[langextract]
 ```
 
+**Note:** The Ollama recognizer does not validate server connectivity or model availability during initialization. Connection errors or missing models will be reported when `analyze()` is first called. Ensure Ollama is running and the required model is installed before analysis.
+
 See the [Language Model-based PII/PHI Detection guide](https://microsoft.github.io/presidio/samples/python/langextract/) for setup and usage.
 
 ## Deploy Presidio analyzer to Azure

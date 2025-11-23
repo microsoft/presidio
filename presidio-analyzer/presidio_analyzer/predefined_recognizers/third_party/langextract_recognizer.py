@@ -1,9 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from pathlib import Path
 from typing import Dict, List
-
-import yaml
 
 try:
     import langextract as lx
@@ -12,14 +9,16 @@ except ImportError:
     LANGEXTRACT_AVAILABLE = False
     lx = None
 
-try:
-    from jinja2 import Template
-    JINJA2_AVAILABLE = True
-except ImportError:
-    JINJA2_AVAILABLE = False
-    Template = None
-
 from presidio_analyzer import AnalysisExplanation, RecognizerResult
+from presidio_analyzer.llm_utils import (
+    convert_to_langextract_format,
+    extract_lm_config,
+    get_model_config,
+    load_prompt_file,
+    load_yaml_config,
+    load_yaml_examples,
+    render_jinja_template,
+)
 from presidio_analyzer.lm_recognizer import LMRecognizer
 
 logger = logging.getLogger("presidio-analyzer")
@@ -44,34 +43,24 @@ class LangExtractRecognizer(LMRecognizer, ABC):
                 "Install it with: pip install presidio-analyzer[langextract]"
             )
 
-        if not JINJA2_AVAILABLE:
-            raise ImportError(
-                "Jinja2 is not installed. "
-                "Install it with: pip install jinja2"
-            )
-
-        with open(config_path) as f:
-            full_config = yaml.safe_load(f)
+        # Load configuration
+        full_config = load_yaml_config(config_path)
         self._validate_config(full_config)
 
-        lm_config = full_config.get("lm_recognizer", {})
+        lm_config = extract_lm_config(full_config)
         langextract_config = full_config.get("langextract", {})
 
         self.config = langextract_config
-        model_config = langextract_config["model"]
+        model_config = get_model_config(
+            full_config, provider_key="langextract"
+        )
         self.model_id = model_config["model_id"]
         self.temperature = model_config.get("temperature")
 
+        # Get supported entities from either lm_config or langextract_config
         supported_entities = (
             lm_config.get("supported_entities")
             or langextract_config.get("supported_entities")
-        )
-        min_score = lm_config.get(
-            "min_score", langextract_config.get("min_score", 0.5)
-        )
-        labels_to_ignore = lm_config.get("labels_to_ignore", [])
-        enable_generic_consolidation = lm_config.get(
-            "enable_generic_consolidation", True
         )
 
         super().__init__(
@@ -81,16 +70,34 @@ class LangExtractRecognizer(LMRecognizer, ABC):
             version="1.0.0",
             model_id=self.model_id,
             temperature=self.temperature,
-            min_score=min_score,
-            labels_to_ignore=labels_to_ignore,
-            enable_generic_consolidation=enable_generic_consolidation
+            min_score=lm_config.get("min_score"),
+            labels_to_ignore=lm_config.get("labels_to_ignore"),
+            enable_generic_consolidation=lm_config.get(
+                "enable_generic_consolidation"
+            ),
         )
 
-        self.examples = self._load_examples_file()
+        # Load examples and render prompt
+        examples_data = load_yaml_examples(
+            langextract_config["examples_file"]
+        )
+        self.examples = convert_to_langextract_format(examples_data)
+
+        prompt_template = load_prompt_file(
+            langextract_config["prompt_file"]
+        )
+        self.prompt_description = render_jinja_template(
+            prompt_template,
+            supported_entities=self.supported_entities,
+            enable_generic_consolidation=self.enable_generic_consolidation,
+            labels_to_ignore=self.labels_to_ignore,
+        )
+
         self.entity_mappings = langextract_config["entity_mappings"]
-        self._presidio_to_langextract = {v: k for k, v in self.entity_mappings.items()}
+        self._presidio_to_langextract = {
+            v: k for k, v in self.entity_mappings.items()
+        }
         self._supported_entities_set = set(supported_entities)
-        self.prompt_description = self._render_prompt()
 
         logger.info("Loaded recognizer: %s", self.name)
 
@@ -128,71 +135,6 @@ class LangExtractRecognizer(LMRecognizer, ABC):
             raise ValueError(
                 "Configuration 'langextract' must contain 'entity_mappings'"
             )
-
-    def _load_prompt_file(self) -> str:
-        """Load the prompt template from configuration."""
-        prompt_file = self.config.get("prompt_file")
-        if not prompt_file:
-            raise ValueError(
-                "Configuration 'langextract' must contain 'prompt_file'"
-            )
-
-        prompt_path = Path(__file__).parent.parent.parent / "conf" / prompt_file
-        if not prompt_path.exists():
-            raise FileNotFoundError(f"Prompt file not found: {prompt_path}")
-
-        with open(prompt_path, 'r') as f:
-            return f.read()
-
-    def _render_prompt(self) -> str:
-        """Render the Jinja2 prompt template with supported entities."""
-        template = Template(self._load_prompt_file())
-
-        return template.render(
-            supported_entities=self.supported_entities,
-            enable_generic_consolidation=self.enable_generic_consolidation,
-            labels_to_ignore=self.labels_to_ignore
-        )
-
-    def _load_examples_file(self) -> List:
-        """Load and convert examples from YAML to LangExtract format."""
-        examples_file = self.config.get("examples_file")
-        if not examples_file:
-            raise ValueError(
-                "Configuration 'langextract' must contain 'examples_file'"
-            )
-
-        examples_path = Path(__file__).parent.parent.parent / "conf" / examples_file
-        with open(examples_path) as f:
-            data = yaml.safe_load(f)
-
-        examples_data = data.get("examples", [])
-        if not examples_data:
-            raise ValueError("Examples file must contain 'examples' list")
-
-        return self._convert_to_langextract_examples(examples_data)
-
-    def _convert_to_langextract_examples(self, examples_data: List[Dict]) -> List:
-        """Convert YAML examples to LangExtract objects."""
-        langextract_examples = []
-        for example in examples_data:
-            extractions = [
-                lx.data.Extraction(
-                    extraction_class=ext["extraction_class"],
-                    extraction_text=ext["extraction_text"],
-                    attributes=ext.get("attributes", {})
-                )
-                for ext in example.get("extractions", [])
-            ]
-
-            langextract_examples.append(
-                lx.data.ExampleData(
-                    text=example["text"],
-                    extractions=extractions
-                )
-            )
-
-        return langextract_examples
 
     def _call_llm(self, text: str, entities: List[str], **kwargs):
         """Call LangExtract LLM and convert to RecognizerResult."""
