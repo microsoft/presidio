@@ -147,12 +147,9 @@ class LangExtractRecognizer(LMRecognizer, ABC):
     def _render_prompt(self) -> str:
         """Render the Jinja2 prompt template with supported entities."""
         template = Template(self._load_prompt_file())
-        langextract_entities = sorted(set(self.entity_mappings.keys()))
 
         return template.render(
             supported_entities=self.supported_entities,
-            langextract_entities=langextract_entities,
-            entity_mappings=self.entity_mappings,
             enable_generic_consolidation=self.enable_generic_consolidation,
             labels_to_ignore=self.labels_to_ignore
         )
