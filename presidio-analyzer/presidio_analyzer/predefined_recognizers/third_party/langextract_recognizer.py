@@ -21,7 +21,6 @@ except ImportError:
 
 from presidio_analyzer import AnalysisExplanation, RecognizerResult
 from presidio_analyzer.lm_recognizer import LMRecognizer
-from presidio_analyzer.recognizer_registry import RecognizerConfigurationLoader
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -51,7 +50,8 @@ class LangExtractRecognizer(LMRecognizer, ABC):
                 "Install it with: pip install jinja2"
             )
 
-        full_config = RecognizerConfigurationLoader.get(conf_file=config_path)
+        with open(config_path) as f:
+            full_config = yaml.safe_load(f)
         self._validate_config(full_config)
         
         lm_config = full_config.get("lm_recognizer", {})
@@ -144,7 +144,8 @@ class LangExtractRecognizer(LMRecognizer, ABC):
             raise ValueError("Configuration 'langextract' must contain 'examples_file'")
         
         examples_path = Path(__file__).parent.parent.parent / "conf" / examples_file
-        data = RecognizerConfigurationLoader.get(conf_file=examples_path)
+        with open(examples_path) as f:
+            data = yaml.safe_load(f)
 
         examples_data = data.get("examples", [])
         if not examples_data:
