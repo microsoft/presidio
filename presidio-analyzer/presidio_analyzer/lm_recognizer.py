@@ -116,7 +116,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
 
             return filtered_results
 
-        except Exception as e:
+        except Exception:
             logger.exception("LLM analysis failed for %s", self.name)
             return []
 

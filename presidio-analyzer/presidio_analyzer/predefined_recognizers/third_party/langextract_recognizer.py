@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import yaml
 
@@ -34,7 +34,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
 
     def __init__(self, config_path: str, name: str = "LangExtract LLM PII"):
         """Initialize LangExtract recognizer.
-        
+
         :param config_path: Path to configuration file.
         :param name: Name of the recognizer (provided by subclass).
         """
@@ -53,19 +53,26 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         with open(config_path) as f:
             full_config = yaml.safe_load(f)
         self._validate_config(full_config)
-        
+
         lm_config = full_config.get("lm_recognizer", {})
         langextract_config = full_config.get("langextract", {})
-        
+
         self.config = langextract_config
         model_config = langextract_config["model"]
         self.model_id = model_config["model_id"]
         self.temperature = model_config.get("temperature")
 
-        supported_entities = lm_config.get("supported_entities") or langextract_config.get("supported_entities")
-        min_score = lm_config.get("min_score", langextract_config.get("min_score", 0.5))
+        supported_entities = (
+            lm_config.get("supported_entities")
+            or langextract_config.get("supported_entities")
+        )
+        min_score = lm_config.get(
+            "min_score", langextract_config.get("min_score", 0.5)
+        )
         labels_to_ignore = lm_config.get("labels_to_ignore", [])
-        enable_generic_consolidation = lm_config.get("enable_generic_consolidation", True)
+        enable_generic_consolidation = lm_config.get(
+            "enable_generic_consolidation", True
+        )
 
         super().__init__(
             supported_entities=supported_entities,
@@ -89,7 +96,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
 
     def _validate_config(self, config: Dict) -> None:
         """Validate configuration structure and required fields.
-        
+
         :param config: Full configuration dictionary.
         """
         lm_config = config.get("lm_recognizer", {})
@@ -100,23 +107,36 @@ class LangExtractRecognizer(LMRecognizer, ABC):
 
         model_config = langextract_config.get("model", {})
         if not model_config:
-            raise ValueError("Configuration 'langextract' must contain 'model' section")
-        
-        if not model_config.get("model_id"):
-            raise ValueError("Configuration 'langextract.model' must contain 'model_id'")
+            raise ValueError(
+                "Configuration 'langextract' must contain 'model' section"
+            )
 
-        if not lm_config.get("supported_entities") and not langextract_config.get("supported_entities"):
-            raise ValueError("Configuration must contain 'supported_entities' in 'lm_recognizer' or 'langextract'")
+        if not model_config.get("model_id"):
+            raise ValueError(
+                "Configuration 'langextract.model' must contain 'model_id'"
+            )
+
+        if not lm_config.get("supported_entities") and not langextract_config.get(
+            "supported_entities"
+        ):
+            raise ValueError(
+                "Configuration must contain 'supported_entities' in "
+                "'lm_recognizer' or 'langextract'"
+            )
 
         if not langextract_config.get("entity_mappings"):
-            raise ValueError("Configuration 'langextract' must contain 'entity_mappings'")
+            raise ValueError(
+                "Configuration 'langextract' must contain 'entity_mappings'"
+            )
 
     def _load_prompt_file(self) -> str:
         """Load the prompt template from configuration."""
         prompt_file = self.config.get("prompt_file")
         if not prompt_file:
-            raise ValueError("Configuration 'langextract' must contain 'prompt_file'")
-        
+            raise ValueError(
+                "Configuration 'langextract' must contain 'prompt_file'"
+            )
+
         prompt_path = Path(__file__).parent.parent.parent / "conf" / prompt_file
         if not prompt_path.exists():
             raise FileNotFoundError(f"Prompt file not found: {prompt_path}")
@@ -141,8 +161,10 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         """Load and convert examples from YAML to LangExtract format."""
         examples_file = self.config.get("examples_file")
         if not examples_file:
-            raise ValueError("Configuration 'langextract' must contain 'examples_file'")
-        
+            raise ValueError(
+                "Configuration 'langextract' must contain 'examples_file'"
+            )
+
         examples_path = Path(__file__).parent.parent.parent / "conf" / examples_file
         with open(examples_path) as f:
             data = yaml.safe_load(f)
@@ -189,7 +211,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
 
         for extraction in langextract_result.extractions:
             extraction_class = extraction.extraction_class
-            
+
             if extraction_class in self._supported_entities_set:
                 entity_type = extraction_class
             else:
@@ -200,13 +222,15 @@ class LangExtractRecognizer(LMRecognizer, ABC):
                 if self.enable_generic_consolidation:
                     entity_type = extraction_class.upper()
                     logger.debug(
-                        "Unknown extraction class '%s' will be consolidated to GENERIC_PII_ENTITY",
-                        extraction_class
+                        "Unknown extraction class '%s' will be consolidated to "
+                        "GENERIC_PII_ENTITY",
+                        extraction_class,
                     )
                 else:
                     logger.warning(
-                        "Unknown extraction class '%s' not found in entity mappings, skipping",
-                        extraction_class
+                        "Unknown extraction class '%s' not found in entity "
+                        "mappings, skipping",
+                        extraction_class,
                     )
                     continue
 
@@ -226,8 +250,10 @@ class LangExtractRecognizer(LMRecognizer, ABC):
                 recognizer=self.__class__.__name__,
                 original_score=confidence,
                 textual_explanation=(
-                    f"LangExtract extraction with {extraction.alignment_status} alignment"
-                    if hasattr(extraction, "alignment_status") and extraction.alignment_status
+                    f"LangExtract extraction with "
+                    f"{extraction.alignment_status} alignment"
+                    if hasattr(extraction, "alignment_status")
+                    and extraction.alignment_status
                     else "LangExtract extraction"
                 ),
             )
@@ -249,7 +275,9 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         """Calculate confidence score from LangExtract extraction."""
         default_score = 0.85
 
-        if not hasattr(extraction, "alignment_status") or not extraction.alignment_status:
+        if not hasattr(extraction, "alignment_status") or not (
+            extraction.alignment_status
+        ):
             return default_score
 
         alignment_scores = {
@@ -269,7 +297,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
     @abstractmethod
     def _call_langextract(self, text: str, prompt: str, examples: List, **kwargs):
         """Call provider-specific LangExtract implementation.
-        
+
         Subclasses implement this for specific providers (Ollama, OpenAI, etc.).
         """
         ...
