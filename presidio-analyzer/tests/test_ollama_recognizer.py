@@ -161,7 +161,7 @@ class TestOllamaLangExtractRecognizerInitialization:
         with patch('presidio_analyzer.predefined_recognizers.third_party.'
                    'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(FileNotFoundError, match="Configuration file not found"):
+            with pytest.raises(FileNotFoundError, match="No such file or directory"):
                 OllamaLangExtractRecognizer(config_path="/nonexistent/path.yaml")
 
     def test_when_model_section_missing_then_raises_value_error(self, tmp_path):
@@ -190,7 +190,7 @@ class TestOllamaLangExtractRecognizerInitialization:
         with patch('presidio_analyzer.predefined_recognizers.third_party.'
                    'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(ValueError, match="must contain 'langextract.model' section"):
+            with pytest.raises(ValueError, match="Configuration 'langextract' must contain 'model' section"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
     def test_when_model_id_missing_then_raises_value_error(self, tmp_path):
@@ -484,11 +484,13 @@ class TestOllamaLangExtractRecognizerInitialization:
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
 
-            # Verify prompt_template is loaded (raw Jinja2 template)
-            assert recognizer.prompt_template is not None
-            assert len(recognizer.prompt_template) > 0
-            assert "{% for entity in supported_entities %}" in recognizer.prompt_template
-            assert "ENTITY TYPES TO EXTRACT:" in recognizer.prompt_template
+            # Verify prompt_description is rendered (Jinja2 template is loaded and rendered)
+            assert recognizer.prompt_description is not None
+            assert len(recognizer.prompt_description) > 0
+            # Check that entities were rendered into the prompt
+            assert "PERSON" in recognizer.prompt_description
+            assert "EMAIL_ADDRESS" in recognizer.prompt_description
+            assert "ENTITY TYPES TO EXTRACT:" in recognizer.prompt_description
 
     def test_when_initialized_then_examples_load_correctly(self, tmp_path):
         """Test that _load_examples_file loads and converts examples to LangExtract format."""
