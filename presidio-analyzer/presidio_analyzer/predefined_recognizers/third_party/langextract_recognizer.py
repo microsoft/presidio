@@ -1,5 +1,5 @@
 import logging
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -12,116 +12,142 @@ except ImportError:
     LANGEXTRACT_AVAILABLE = False
     lx = None
 
+try:
+    from jinja2 import Template
+    JINJA2_AVAILABLE = True
+except ImportError:
+    JINJA2_AVAILABLE = False
+    Template = None
+
 from presidio_analyzer import AnalysisExplanation, RecognizerResult
 from presidio_analyzer.lm_recognizer import LMRecognizer
-from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
 
-class LangExtractRecognizer(LMRecognizer):
+class LangExtractRecognizer(LMRecognizer, ABC):
     """
-    Abstract base class for PII detection using LangExtract library.
+    Base class for LangExtract-based PII recognizers.
 
-    Handles LangExtract-specific functionality including:
-    - Configuration loading and validation
-    - Examples and prompt management
-    - Entity mapping between LangExtract and Presidio
-    - Result conversion from LangExtract format to RecognizerResult
-
-    Note: This is an abstract class. Concrete implementations
-    (like OllamaLangExtractRecognizer) must define their own
-    DEFAULT_CONFIG_PATH.
+    Subclasses implement _call_langextract() for specific LLM providers.
     """
 
-    # No DEFAULT_CONFIG_PATH here - subclasses must define their own
-
-    def __init__(
-        self,
-        supported_entities: Optional[List[str]] = None,
-        supported_language: str = "en",
-        config_path: Optional[str] = None,
-        name: str = "LangExtract LLM PII",
-        version: str = "1.0.0",
-        model_id: Optional[str] = None,
-        temperature: Optional[float] = None,
-        min_score: Optional[float] = None,
-        **kwargs
-    ):
-        """
-        Initialize LangExtract recognizer base class.
-
-        :param supported_entities: List of PII entities to detect.
-        :param supported_language: Language code (only 'en' supported).
-        :param config_path: Path to YAML configuration file.
-        :param name: Recognizer name.
-        :param version: Recognizer version.
-        :param model_id: Language model identifier (from subclass).
-        :param temperature: Model temperature (from subclass).
-        :param min_score: Minimum confidence score (from subclass).
-        :param kwargs: Additional arguments for parent class.
-        """
+    def __init__(self, config_path: str):
+        """Initialize LangExtract recognizer."""
         if not LANGEXTRACT_AVAILABLE:
             raise ImportError(
                 "LangExtract is not installed. "
                 "Install it with: pip install presidio-analyzer[langextract]"
             )
 
-        # Load shared LangExtract configuration
-        self.config = self._load_config(config_path, "langextract")
+        if not JINJA2_AVAILABLE:
+            raise ImportError(
+                "Jinja2 is not installed. "
+                "Install it with: pip install jinja2"
+            )
 
-        if supported_entities is None:
-            supported_entities = self._get_required_config("supported_entities")
+        # Load configuration file (provided by subclass)
+        full_config = self._load_config_file(config_path)
 
-        if min_score is None:
-            min_score = self._get_required_config("min_score")
+        # Load LMRecognizer base configuration
+        lm_config = full_config.get("lm_recognizer", {})
+
+        # Load LangExtract-specific configuration
+        self.config = full_config.get("langextract", {})
+
+        if not self.config:
+            raise ValueError(
+                "Configuration file must contain 'langextract' section"
+            )
+
+        # Load model configuration from langextract.model section
+        model_config = self.config.get("model", {})
+        if not model_config:
+            raise ValueError(
+                "Configuration file must contain 'langextract.model' section"
+            )
+
+        # Extract model parameters and store as instance variables
+        self.model_id = model_config.get("model_id")
+        if not self.model_id:
+            raise ValueError("Model configuration must contain 'model_id'")
+
+        self.temperature = model_config.get("temperature")
+
+        # Load all configuration from config file
+        supported_entities = lm_config.get(
+            "supported_entities"
+        ) or self.config.get("supported_entities")
+        if not supported_entities:
+            raise ValueError(
+                "Missing 'supported_entities' in "
+                "lm_recognizer or langextract config"
+            )
+
+        min_score = lm_config.get("min_score", self.config.get("min_score", 0.5))
+
+        # Get labels to ignore from lm_recognizer config (optional)
+        labels_to_ignore = lm_config.get("labels_to_ignore", [])
+
+        # Get generic consolidation flag from lm_recognizer (default True)
+        enable_generic_consolidation = lm_config.get(
+            "enable_generic_consolidation", True
+        )
 
         super().__init__(
             supported_entities=supported_entities,
-            supported_language=supported_language,
-            name=name,
-            version=version,
-            model_id=model_id,
-            temperature=temperature,
+            supported_language="en",
+            name="LangExtract LLM PII",
+            version="1.0.0",
+            model_id=self.model_id,
+            temperature=self.temperature,
             min_score=min_score,
-            **kwargs
+            labels_to_ignore=labels_to_ignore,
+            enable_generic_consolidation=enable_generic_consolidation
         )
 
         # LangExtract-specific initialization
-        self.prompt_description = self._load_prompt_file()
+        self.prompt_template = self._load_prompt_file()
         self.examples = self._load_examples_file()
         self.entity_mappings = self._get_required_config("entity_mappings")
         self._presidio_to_langextract = {
             v: k for k, v in self.entity_mappings.items()
         }
 
+        # Render the prompt with supported entities
+        self.prompt_description = self._render_prompt()
+
         logger.info("Loaded recognizer: %s", self.name)
+
+    def _load_config_file(self, config_path: str) -> Dict:
+        """Load the entire YAML configuration file.
+
+        :param config_path: Path to configuration file.
+        :return: Full configuration dictionary.
+        """
+        config_path_obj = Path(config_path)
+
+        if not config_path_obj.exists():
+            raise FileNotFoundError(
+                f"Configuration file not found: {config_path}"
+            )
+
+        with open(config_path_obj, 'r') as f:
+            return yaml.safe_load(f)
 
     def _load_config(
         self,
         config_path: Optional[str] = None,
         config_section: str = "langextract"
     ) -> Dict:
-        """Load and validate LangExtract configuration.
+        """Load configuration section.
 
-        :param config_path: Path to configuration file.
-        :param config_section: Name of the config section
-            (e.g., "ollama", "langextract").
-        :return: Configuration dictionary.
+        Deprecated: Use _load_config_file for new code.
         """
         if config_path is None:
             config_path = self.DEFAULT_CONFIG_PATH
 
-        config_path = Path(config_path)
-
-        if not config_path.exists():
-            raise FileNotFoundError(
-                f"LangExtract configuration file not found: {config_path}"
-            )
-
-        with open(config_path, 'r') as f:
-            full_config = yaml.safe_load(f)
-
+        full_config = self._load_config_file(config_path)
         section_config = full_config.get(config_section, {})
 
         if not section_config:
@@ -150,6 +176,21 @@ class LangExtractRecognizer(LMRecognizer):
 
         with open(prompt_path, 'r') as f:
             return f.read()
+
+    def _render_prompt(self) -> str:
+        """Render the Jinja2 prompt template with supported entities."""
+        template = Template(self.prompt_template)
+
+        # Get entity names from entity_mappings (LangExtract format)
+        langextract_entities = sorted(set(self.entity_mappings.keys()))
+
+        return template.render(
+            supported_entities=self.supported_entities,
+            langextract_entities=langextract_entities,
+            entity_mappings=self.entity_mappings,
+            enable_generic_consolidation=self.enable_generic_consolidation,
+            labels_to_ignore=self.labels_to_ignore
+        )
 
     def _load_examples_file(self) -> List:
         """Load and convert examples from YAML to LangExtract format."""
@@ -190,125 +231,95 @@ class LangExtractRecognizer(LMRecognizer):
 
         return langextract_examples
 
-    def _parse_llm_response(
-        self,
-        response
-    ) -> List:
-        """
-        Parse LangExtract response into structured format.
-
-        :param response: LangExtract result object.
-        :return: List of extractions from LangExtract.
-        """
-        if not response or not response.extractions:
-            return []
-        return response.extractions
-
-    def analyze(
+    def _call_llm(
         self,
         text: str,
-        entities: Optional[List[str]] = None,
-        nlp_artifacts: Optional[NlpArtifacts] = None
-    ) -> List[RecognizerResult]:
-        """
-        Analyze text for PII using LangExtract.
+        entities: List[str],
+        **kwargs
+    ):
+        """Call LangExtract LLM and convert to RecognizerResult."""
+        # Call provider-specific LangExtract implementation
+        langextract_result = self._call_langextract(
+            text=text,
+            prompt=self.prompt_description,
+            examples=self.examples
+        )
 
-        :param text: Text to analyze.
-        :param entities: Entity types to detect (optional).
-        :param nlp_artifacts: Not used.
-        :return: List of detected PII entities.
-        """
-        if not text or not text.strip():
-            logger.debug("Empty text provided, returning empty results")
-            return []
+        # Convert LangExtract extractions to RecognizerResult format
+        results = []
 
-        if entities:
-            if not any(entity in self.supported_entities for entity in entities):
-                logger.debug(
-                    "No requested entities (%s) match supported entities (%s)",
-                    entities, self.supported_entities
-                )
-                return []
+        if not langextract_result or not langextract_result.extractions:
+            return results
 
-        try:
-            # Call the LLM through the abstract method
-            result = self._call_llm(
-                text=text,
-                prompt=self.prompt_description,
-                examples=self.examples
-            )
-
-            converted_results = self._convert_to_recognizer_results(result, entities)
-            if converted_results:
-                logger.info("LangExtract found %d PII entities", len(converted_results))
-
-            return converted_results
-
-        except Exception as e:
-            logger.error("LangExtract extraction failed: %s", str(e), exc_info=True)
-            return []
-
-    def _convert_to_recognizer_results(
-        self,
-        langextract_result,
-        requested_entities: Optional[List[str]] = None
-    ) -> List[RecognizerResult]:
-        """Convert LangExtract results to Presidio RecognizerResult format."""
-        recognizer_results = []
-
-        extractions = self._parse_llm_response(langextract_result)
-        if not extractions:
-            return recognizer_results
-
-        for extraction in extractions:
+        for extraction in langextract_result.extractions:
+            # Map LangExtract extraction_class to Presidio entity_type
             extraction_class = extraction.extraction_class.lower()
             entity_type = self.entity_mappings.get(extraction_class)
 
             if not entity_type:
-                logger.warning(
-                    "Unknown extraction class '%s' not found in entity mappings",
-                    extraction_class
-                )
-                continue
-
-            if requested_entities and entity_type not in requested_entities:
-                continue
+                if self.enable_generic_consolidation:
+                    # Pass through - consolidated by parent
+                    entity_type = extraction_class.upper()
+                    logger.debug(
+                        "Unknown extraction class '%s' will be "
+                        "consolidated to GENERIC_PII_ENTITY",
+                        extraction_class,
+                    )
+                else:
+                    # Generic consolidation disabled - skip unknown entities
+                    logger.warning(
+                        "Unknown extraction class '%s' not found in "
+                        "entity mappings, skipping",
+                        extraction_class,
+                    )
+                    continue
 
             if not extraction.char_interval:
                 logger.warning("Extraction missing char_interval, skipping")
                 continue
 
-            score = self._calculate_score(extraction)
-            if score < self.min_score:
-                continue
+            # Calculate confidence score based on alignment status
+            confidence = self._calculate_extraction_confidence(extraction)
 
-            start = extraction.char_interval.start_pos
-            end = extraction.char_interval.end_pos
-            explanation = self._build_explanation(extraction, entity_type)
+            # Build metadata from extraction attributes and alignment
+            metadata = {}
+            if hasattr(extraction, 'attributes') and extraction.attributes:
+                metadata['attributes'] = extraction.attributes
+            if hasattr(extraction, 'alignment_status') and extraction.alignment_status:
+                metadata['alignment'] = str(extraction.alignment_status)
 
-            recognizer_result = RecognizerResult(
-                entity_type=entity_type,
-                start=start,
-                end=end,
-                score=score,
-                analysis_explanation=explanation,
+            # Build analysis explanation
+            explanation = AnalysisExplanation(
+                recognizer=self.__class__.__name__,
+                original_score=confidence,
+                textual_explanation=(
+                    f"LangExtract extraction with "
+                    f"{extraction.alignment_status} alignment"
+                    if hasattr(extraction, "alignment_status")
+                    and extraction.alignment_status
+                    else "LangExtract extraction"
+                ),
             )
 
-            recognizer_results.append(recognizer_result)
+            # Create RecognizerResult
+            result = RecognizerResult(
+                entity_type=entity_type,
+                start=extraction.char_interval.start_pos,
+                end=extraction.char_interval.end_pos,
+                score=confidence,
+                analysis_explanation=explanation,
+                recognition_metadata=metadata if metadata else None
+            )
 
-        return recognizer_results
+            results.append(result)
 
-    def _calculate_confidence_score(self, extraction_info: Dict) -> float:
-        """
-        Calculate confidence score for a LangExtract extraction.
+        return results
 
-        :param extraction_info: LangExtract extraction object.
-        :return: Confidence score between 0 and 1.
-        """
-        extraction = extraction_info
+    def _calculate_extraction_confidence(self, extraction) -> float:
+        """Calculate confidence score from LangExtract extraction."""
         default_score = 0.85
 
-        if not hasattr(extraction, 'alignment_status') or not (
+        if not hasattr(extraction, "alignment_status") or not (
             extraction.alignment_status
         ):
             return default_score
@@ -327,51 +338,16 @@ class LangExtractRecognizer(LMRecognizer):
 
         return default_score
 
-    def _calculate_score(self, extraction) -> float:
-        """Calculate confidence score for extraction."""
-        return self._calculate_confidence_score(extraction)
-
-    def _build_explanation(
-        self,
-        extraction,
-        entity_type: str
-    ) -> AnalysisExplanation:
-        """Build explanation for a LangExtract extraction result."""
-        attributes_text = ""
-        if hasattr(extraction, 'attributes') and extraction.attributes:
-            attr_parts = [f"{k}={v}" for k, v in extraction.attributes.items()]
-            attributes_text = f" ({', '.join(attr_parts)})"
-
-        textual_explanation = (
-            f"Identified as {entity_type} by LangExtract LLM "
-            f"using {self.model_id}{attributes_text}"
-        )
-
-        explanation = AnalysisExplanation(
-            recognizer=self.__class__.__name__,
-            original_score=1.0,
-            textual_explanation=textual_explanation,
-        )
-
-        return explanation
-
     @abstractmethod
-    def _call_llm(
+    def _call_langextract(
         self,
         text: str,
         prompt: str,
+        examples: List,
         **kwargs
     ):
-        """
-        Call the specific LLM implementation with LangExtract.
+        """Call provider-specific LangExtract implementation.
 
-        :param text: Text to analyze.
-        :param prompt: Prompt description for LangExtract.
-        :param kwargs: Additional LLM-specific parameters (e.g., examples).
-        :return: LangExtract result object.
+        Subclasses implement this for specific providers (Ollama, OpenAI, etc.).
         """
         ...
-
-    def get_supported_entities(self) -> List[str]:
-        """Return list of supported PII entity types."""
-        return self.supported_entities

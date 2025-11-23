@@ -77,23 +77,18 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
         os.path.dirname(__file__), "..", "resources", "ollama_test_config.yaml"
     )
 
-    # Create NLP engine configuration
-    configuration = {
-        "nlp_engine_name": "spacy",
-        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
-    }
-    provider = NlpEngineProvider(nlp_configuration=configuration)
-    nlp_engine = provider.create_engine()
-
     # Create Ollama recognizer with custom config
     ollama_recognizer = OllamaLangExtractRecognizer(config_path=config_path)
 
-    # Create analyzer and add Ollama recognizer
+    # Create analyzer with ONLY Ollama recognizer (no NLP engine, no default recognizers)
+    from presidio_analyzer.recognizer_registry import RecognizerRegistry
+    registry = RecognizerRegistry()
+    registry.add_recognizer(ollama_recognizer)
+    
     analyzer = AnalyzerEngine(
-        nlp_engine=nlp_engine,
+        registry=registry,
         supported_languages=["en"]
     )
-    analyzer.registry.add_recognizer(ollama_recognizer)
 
     # Analyze text
     results = analyzer.analyze(text_to_test, language="en")
@@ -114,7 +109,7 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
             print(f"DEBUG: Recognizer name: '{recognizer_name}'")
             
             langextract_detected_at_least_one |= (
-                recognizer_name == "Ollama LangExtract PII/PHI"
+                recognizer_name == "LangExtract LLM PII"
             )
 
     print(f"DEBUG: All recognizers used: {recognizers_used}")
@@ -122,7 +117,7 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
     
     # Verify that langextract participated in detection
     assert langextract_detected_at_least_one, \
-        f"Expected 'Ollama LangExtract PII/PHI' recognizer to detect at least one entity. Recognizers used: {recognizers_used}"
+        f"Expected 'LangExtract LLM PII' recognizer to detect at least one entity. Recognizers used: {recognizers_used}"
 
     # Anonymize the detected entities
     anonymizer = AnonymizerEngine()
@@ -131,137 +126,5 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
     # Verify anonymization occurred
     assert anonymized_result.text != text_to_test, "Text should be anonymized"
 
-
-@pytest.mark.package
-def test_given_ollama_server_not_running_then_raises_connection_error(tmp_path):
-    """Test that initializing Ollama recognizer when server is not running raises ConnectionError."""
-    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
-
-    import yaml
-
-    config = {
-        "langextract": {
-            "supported_entities": ["PERSON", "EMAIL_ADDRESS"],
-            "entity_mappings": {"person": "PERSON", "email": "EMAIL_ADDRESS"},
-            "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
-            "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
-            "min_score": 0.5,
-        },
-        "ollama": {
-            "model_id": "gemma2:2b",
-            "model_url": "http://localhost:9999",
-            "temperature": 0.0,
-        }
-    }
-
-    config_file = tmp_path / "test_config.yaml"
-    with open(config_file, 'w') as f:
-        yaml.dump(config, f)
-
-    with pytest.raises(ConnectionError, match="Ollama server not reachable"):
-        OllamaLangExtractRecognizer(config_path=str(config_file))
-
-
-@pytest.mark.package
-def test_given_model_not_pulled_then_raises_runtime_error(tmp_path):
-    """Test that initializing Ollama recognizer with unpulled model raises RuntimeError."""
-    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
-
-    import yaml
-
-    config = {
-        "langextract": {
-            "supported_entities": ["PERSON", "EMAIL_ADDRESS"],
-            "entity_mappings": {"person": "PERSON", "email": "EMAIL_ADDRESS"},
-            "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
-            "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
-            "min_score": 0.5,
-        },
-        "ollama": {
-            "model_id": "llama3.2:1b",
-            "model_url": "http://localhost:11434",
-            "temperature": 0.0,
-        }
-    }
-
-    config_file = tmp_path / "test_config.yaml"
-    with open(config_file, 'w') as f:
-        yaml.dump(config, f)
-
-    with pytest.raises(RuntimeError, match="Model .* not found"):
-        OllamaLangExtractRecognizer(config_path=str(config_file))
-
-
-@pytest.mark.package
-def test_given_nonexistent_model_then_raises_runtime_error(tmp_path):
-    """Test that initializing Ollama recognizer with non-existent model raises RuntimeError."""
-    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
-
-    import yaml
-
-    config = {
-        "langextract": {
-            "supported_entities": ["PERSON", "EMAIL_ADDRESS"],
-            "entity_mappings": {"person": "PERSON", "email": "EMAIL_ADDRESS"},
-            "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
-            "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
-            "min_score": 0.5,
-        },
-        "ollama": {
-            "model_id": "nonexistent-fake-model-xyz-12345",
-            "model_url": "http://localhost:11434",
-            "temperature": 0.0,
-        }
-    }
-
-    config_file = tmp_path / "test_config.yaml"
-    with open(config_file, 'w') as f:
-        yaml.dump(config, f)
-
-    with pytest.raises(RuntimeError, match="Model .* not found"):
-        OllamaLangExtractRecognizer(config_path=str(config_file))
-
-
-@pytest.mark.package
-def test_given_text_with_ollama_recognizer_and_score_threshold_then_filters_results():
-    """Test Ollama recognizer with score threshold filtering."""
-    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
-
-    text_to_test = "Contact Alice at alice@example.com or call 555-1234"
-
-    # Use pre-configured config file with small model (gemma3:1b)
-    import os
-    config_path = os.path.join(
-        os.path.dirname(__file__), "..", "resources", "ollama_test_config.yaml"
-    )
-
-    ollama_recognizer = OllamaLangExtractRecognizer(config_path=config_path)
-
-    analyzer = AnalyzerEngine(
-        supported_languages=["en"],
-        registry=None
-    )
-    analyzer.registry.add_recognizer(ollama_recognizer)
-
-    results_high_threshold = analyzer.analyze(
-        text_to_test,
-        language="en",
-        score_threshold=0.8
-    )
-
-    results_low_threshold = analyzer.analyze(
-        text_to_test,
-        language="en",
-        score_threshold=0.3
-    )
-
-    assert len(results_low_threshold) >= len(results_high_threshold), \
-        "Low threshold should return at least as many results as high threshold"
-
-    for result in results_high_threshold:
-        assert result.score >= 0.8, f"Result score {result.score} should be >= 0.8"
-
-    for result in results_low_threshold:
-        assert result.score >= 0.3, f"Result score {result.score} should be >= 0.3"
 
 

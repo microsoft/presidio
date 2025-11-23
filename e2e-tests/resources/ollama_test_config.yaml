@@ -1,5 +1,27 @@
+# LMRecognizer base configuration
+lm_recognizer:
+  supported_entities:
+    - PERSON
+    - LOCATION
+    - ORGANIZATION
+    - PHONE_NUMBER
+    - EMAIL_ADDRESS
+    - DATE_TIME
+    - US_SSN
+    - CREDIT_CARD
+    - MEDICAL_LICENSE
+    - IP_ADDRESS
+    - URL
+    - IBAN_CODE
+  
+  labels_to_ignore:
+    - payment_status
+  
+  enable_generic_consolidation: true
+  min_score: 0.5
+
 langextract:
-  prompt_file: langextract_prompts/default_pii_phi_prompt.txt
+  prompt_file: langextract_prompts/default_pii_phi_prompt.j2
   examples_file: langextract_prompts/default_pii_phi_examples.yaml
   
   entity_mappings:
@@ -22,25 +44,8 @@ langextract:
     ip_address: IP_ADDRESS
     url: URL
     iban: IBAN_CODE
-    payment_status: IGNORE
-  
-  supported_entities:
-    - PERSON
-    - LOCATION
-    - ORGANIZATION
-    - PHONE_NUMBER
-    - EMAIL_ADDRESS
-    - DATE_TIME
-    - US_SSN
-    - CREDIT_CARD
-    - MEDICAL_LICENSE
-    - IP_ADDRESS
-    - URL
-    - IBAN_CODE
-  
-  min_score: 0.5
 
-ollama:
-  model_id: gemma3:1b
-  model_url: http://localhost:11434
-  temperature: 0.0
+  model:
+    model_id: gemma3:1b
+    model_url: http://localhost:11434
+    temperature: 0.0
