@@ -43,6 +43,7 @@ server = [
 pip = "*"
 ruff = "*"
 pytest = "*"
+pytest-cov = "*"
 pytest-mock = "*"
 python-dotenv = "*"
 pre_commit = "*"

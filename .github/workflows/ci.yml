@@ -61,6 +61,9 @@ jobs:
   test:
     name: Test ${{ matrix.component.name }} (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
     strategy:
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13']
@@ -136,9 +139,26 @@ jobs:
           done
 
       - name: Run unit tests
+        if: matrix.python-version != '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
           poetry run pytest -vv --tb=short
+
+      - name: Run tests with coverage
+        if: matrix.python-version == '3.12'
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          poetry run pytest --cov=. --cov-report=xml --cov-report=term --cov-report=html -vv --tb=short
+
+      - name: Comment PR with Coverage
+        if: github.event_name == 'pull_request' && matrix.python-version == '3.12'
+        uses: py-cov-action/python-coverage-comment-action@v3.39
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          COVERAGE_PATH: ${{ matrix.component.path }}
+          MINIMUM_GREEN: 85
+          MINIMUM_ORANGE: 70
+          SUBPROJECT_ID: ${{ matrix.component.path }}
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
