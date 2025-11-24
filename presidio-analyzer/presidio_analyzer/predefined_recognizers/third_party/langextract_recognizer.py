@@ -2,22 +2,20 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Dict, List
 
-try:
-    import langextract as lx
-    LANGEXTRACT_AVAILABLE = True
-except ImportError:
-    LANGEXTRACT_AVAILABLE = False
-    lx = None
-
 from presidio_analyzer import AnalysisExplanation, RecognizerResult
 from presidio_analyzer.llm_utils import (
+    calculate_extraction_confidence,
     convert_to_langextract_format,
+    create_reverse_entity_mapping,
     extract_lm_config,
+    get_langextract_module,
     get_model_config,
+    get_supported_entities,
     load_prompt_file,
-    load_yaml_config,
     load_yaml_examples,
+    load_yaml_file,
     render_jinja_template,
+    validate_config_fields,
 )
 from presidio_analyzer.lm_recognizer import LMRecognizer
 
@@ -37,18 +35,32 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         :param config_path: Path to configuration file.
         :param name: Name of the recognizer (provided by subclass).
         """
-        if not LANGEXTRACT_AVAILABLE:
-            raise ImportError(
-                "LangExtract is not installed. "
-                "Install it with: pip install presidio-analyzer[langextract]"
-            )
+        get_langextract_module()
 
-        # Load configuration
-        full_config = load_yaml_config(config_path)
-        self._validate_config(full_config)
-
+        full_config = load_yaml_file(config_path)
+        
         lm_config = extract_lm_config(full_config)
         langextract_config = full_config.get("langextract", {})
+        
+        supported_entities = get_supported_entities(lm_config, langextract_config)
+        
+        if not supported_entities:
+            raise ValueError(
+                "Configuration must contain 'supported_entities' in "
+                "'lm_recognizer' or 'langextract'"
+            )
+        
+        validate_config_fields(
+            full_config,
+            [
+                ("langextract",),
+                ("langextract", "model"),
+                ("langextract", "model", "model_id"),
+                ("langextract", "entity_mappings"),
+                ("langextract", "prompt_file"),
+                ("langextract", "examples_file"),
+            ]
+        )
 
         self.config = langextract_config
         model_config = get_model_config(
@@ -56,12 +68,6 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         )
         self.model_id = model_config["model_id"]
         self.temperature = model_config.get("temperature")
-
-        # Get supported entities from either lm_config or langextract_config
-        supported_entities = (
-            lm_config.get("supported_entities")
-            or langextract_config.get("supported_entities")
-        )
 
         super().__init__(
             supported_entities=supported_entities,
@@ -77,7 +83,6 @@ class LangExtractRecognizer(LMRecognizer, ABC):
             ),
         )
 
-        # Load examples and render prompt
         examples_data = load_yaml_examples(
             langextract_config["examples_file"]
         )
@@ -94,47 +99,12 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         )
 
         self.entity_mappings = langextract_config["entity_mappings"]
-        self._presidio_to_langextract = {
-            v: k for k, v in self.entity_mappings.items()
-        }
+        self._presidio_to_langextract = create_reverse_entity_mapping(
+            self.entity_mappings
+        )
         self._supported_entities_set = set(supported_entities)
 
         logger.info("Loaded recognizer: %s", self.name)
-
-    def _validate_config(self, config: Dict) -> None:
-        """Validate configuration structure and required fields.
-
-        :param config: Full configuration dictionary.
-        """
-        lm_config = config.get("lm_recognizer", {})
-        langextract_config = config.get("langextract", {})
-
-        if not langextract_config:
-            raise ValueError("Configuration must contain 'langextract' section")
-
-        model_config = langextract_config.get("model", {})
-        if not model_config:
-            raise ValueError(
-                "Configuration 'langextract' must contain 'model' section"
-            )
-
-        if not model_config.get("model_id"):
-            raise ValueError(
-                "Configuration 'langextract.model' must contain 'model_id'"
-            )
-
-        if not lm_config.get("supported_entities") and not langextract_config.get(
-            "supported_entities"
-        ):
-            raise ValueError(
-                "Configuration must contain 'supported_entities' in "
-                "'lm_recognizer' or 'langextract'"
-            )
-
-        if not langextract_config.get("entity_mappings"):
-            raise ValueError(
-                "Configuration 'langextract' must contain 'entity_mappings'"
-            )
 
     def _call_llm(self, text: str, entities: List[str], **kwargs):
         """Call LangExtract LLM and convert to RecognizerResult."""
@@ -177,7 +147,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
                 logger.warning("Extraction missing char_interval, skipping")
                 continue
 
-            confidence = self._calculate_extraction_confidence(extraction)
+            confidence = calculate_extraction_confidence(extraction)
 
             metadata = {}
             if hasattr(extraction, 'attributes') and extraction.attributes:
@@ -209,29 +179,6 @@ class LangExtractRecognizer(LMRecognizer, ABC):
             results.append(result)
 
         return results
-
-    def _calculate_extraction_confidence(self, extraction) -> float:
-        """Calculate confidence score from LangExtract extraction."""
-        default_score = 0.85
-
-        if not hasattr(extraction, "alignment_status") or not (
-            extraction.alignment_status
-        ):
-            return default_score
-
-        alignment_scores = {
-            "MATCH_EXACT": 0.95,
-            "MATCH_FUZZY": 0.80,
-            "MATCH_LESSER": 0.70,
-            "NOT_ALIGNED": 0.60,
-        }
-
-        status = str(extraction.alignment_status).upper()
-        for status_key, score in alignment_scores.items():
-            if status_key in status:
-                return score
-
-        return default_score
 
     @abstractmethod
     def _call_langextract(self, text: str, prompt: str, examples: List, **kwargs):

@@ -22,7 +22,7 @@ class TestLoadPromptFile:
 
     def test_when_prompt_file_missing_then_raises_file_not_found_error(self):
         """Test that missing prompt file raises FileNotFoundError."""
-        with pytest.raises(FileNotFoundError, match="Prompt file not found"):
+        with pytest.raises(FileNotFoundError, match="File not found"):
             load_prompt_file("nonexistent_prompt.jinja2")
 
 

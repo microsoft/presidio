@@ -1,69 +1,86 @@
 """Configuration loading utilities for LLM recognizers."""
 import logging
-from typing import Dict
+from pathlib import Path
+from typing import Dict, List, Union
 
 import yaml
 
 logger = logging.getLogger("presidio-analyzer")
 
 
-def load_yaml_config(config_path: str) -> Dict:
-    """Load YAML configuration file.
+def get_conf_path(filename: str, conf_subdir: str = "conf") -> Path:
+    """Get absolute path to file in conf directory."""
+    return Path(__file__).parent.parent / conf_subdir / filename
 
-    :param config_path: Path to YAML configuration file.
-    :return: Parsed configuration dictionary.
-    :raises FileNotFoundError: If config file doesn't exist.
+
+def load_yaml_file(filepath: Union[str, Path]) -> Dict:
+    """Load and parse a YAML file.
+
+    :param filepath: Path to YAML file (absolute or relative).
+    :return: Parsed YAML data.
+    :raises FileNotFoundError: If file doesn't exist.
     :raises ValueError: If YAML parsing fails.
     """
+    filepath = Path(filepath)
+    if not filepath.exists():
+        raise FileNotFoundError(f"File not found: {filepath}")
+
     try:
-        with open(config_path) as f:
+        with open(filepath) as f:
             return yaml.safe_load(f)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Configuration file not found: {config_path}")
     except yaml.YAMLError as e:
-        raise ValueError(f"Failed to parse YAML configuration: {e}")
-
-
-def extract_lm_config(full_config: Dict) -> Dict:
-    """Extract LM recognizer settings from configuration.
-
-    :param full_config: Full configuration dictionary.
-    :return: LM recognizer configuration dictionary.
-    """
-    lm_config = full_config.get("lm_recognizer", {})
-
-    # Build config for LMRecognizer __init__
-    return {
-        "supported_entities": lm_config.get("supported_entities"),
-        "min_score": lm_config.get("min_score", 0.5),
-        "labels_to_ignore": lm_config.get("labels_to_ignore", []),
-        "enable_generic_consolidation": lm_config.get(
-            "enable_generic_consolidation", True
-        ),
-    }
+        raise ValueError(f"Failed to parse YAML: {e}")
 
 
 def get_model_config(config: Dict, provider_key: str) -> Dict:
-    """Extract model-specific configuration.
+    """Extract model configuration for specific provider."""
+    validate_config_fields(
+        config,
+        [
+            (provider_key,),
+            (provider_key, "model"),
+            (provider_key, "model", "model_id"),
+        ]
+    )
 
-    :param config: Full configuration dictionary.
-    :param provider_key: Provider-specific key (e.g., "langextract", "openai").
-    :return: Model configuration dictionary.
-    :raises ValueError: If model configuration is missing or invalid.
+    return config[provider_key]["model"]
+
+
+def validate_config_fields(
+    config: Dict,
+    required_fields: List[Union[str, tuple]],
+    config_name: str = "Configuration"
+) -> None:
+    """Validate that required fields exist in configuration.
+
+    :param config: Configuration dictionary to validate.
+    :param required_fields: List of required field paths. Can be:
+        - str: Simple key like "model_id"
+        - tuple: Nested path like ("langextract", "model", "model_id")
+    :param config_name: Name of configuration for error messages.
+    :raises ValueError: If any required field is missing.
+
+    Example:
+        validate_config_fields(
+            config,
+            [
+                ("langextract", "model", "model_id"),
+                ("langextract", "entity_mappings"),
+                "supported_entities"
+            ]
+        )
     """
-    provider_config = config.get(provider_key, {})
-    if not provider_config:
-        raise ValueError(f"Configuration must contain '{provider_key}' section")
-
-    model_config = provider_config.get("model", {})
-    if not model_config:
-        raise ValueError(
-            f"Configuration '{provider_key}' must contain 'model' section"
-        )
-
-    if not model_config.get("model_id"):
-        raise ValueError(
-            f"Configuration '{provider_key}.model' must contain 'model_id'"
-        )
-
-    return model_config
+    for field in required_fields:
+        if isinstance(field, str):
+            if not config.get(field):
+                raise ValueError(f"{config_name} must contain '{field}'")
+        elif isinstance(field, tuple):
+            current = config
+            for i, key in enumerate(field):
+                if not isinstance(current, dict) or key not in current:
+                    path = ".".join(field[:i+1])
+                    raise ValueError(f"{config_name} must contain '{path}'")
+                current = current[key]
+                if i == len(field) - 1 and not current:
+                    path = ".".join(field)
+                    raise ValueError(f"{config_name} must contain '{path}'")

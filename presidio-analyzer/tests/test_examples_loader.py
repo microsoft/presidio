@@ -67,7 +67,7 @@ examples:
 
     def test_when_examples_file_missing_then_raises_file_not_found_error(self):
         """Test that missing examples file raises FileNotFoundError."""
-        with pytest.raises(FileNotFoundError, match="Examples file not found"):
+        with pytest.raises(FileNotFoundError, match="File not found"):
             load_yaml_examples("nonexistent_examples.yaml")
 
     def test_when_examples_missing_from_yaml_then_raises_value_error(self):
@@ -80,7 +80,7 @@ other_section:
             examples_path = Path(f.name)
 
         try:
-            with pytest.raises(ValueError, match="Examples file must contain 'examples' list"):
+            with pytest.raises(ValueError, match="Examples file must contain 'examples'"):
                 load_yaml_examples(examples_path.name, conf_subdir=str(examples_path.parent))
         finally:
             examples_path.unlink()

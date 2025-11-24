@@ -2,13 +2,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
-try:
-    import langextract as lx
-    LANGEXTRACT_AVAILABLE = True
-except ImportError:
-    LANGEXTRACT_AVAILABLE = False
-    lx = None
-
+from presidio_analyzer.llm_utils import get_langextract_module
 from presidio_analyzer.predefined_recognizers.third_party.\
     langextract_recognizer import LangExtractRecognizer
 
@@ -67,6 +61,8 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
 
         Errors are logged with full traceback for debugging.
         """
+        lx = get_langextract_module()
+        
         try:
             extract_params = {
                 "text_or_documents": text,

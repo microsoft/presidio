@@ -3,11 +3,19 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from presidio_analyzer import RecognizerResult, RemoteRecognizer
+from presidio_analyzer.llm_utils import (
+    GENERIC_PII_ENTITY,
+    consolidate_generic_entities,
+    ensure_generic_entity_support,
+    filter_results_by_entities,
+    filter_results_by_labels,
+    filter_results_by_score,
+    skip_unmapped_entities,
+    validate_result_positions,
+)
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
-
-GENERIC_PII_ENTITY = "GENERIC_PII_ENTITY"
 
 
 class LMRecognizer(RemoteRecognizer, ABC):
@@ -54,11 +62,9 @@ class LMRecognizer(RemoteRecognizer, ABC):
 
         self._generic_entities_logged = set()
 
-        if (
-            self.enable_generic_consolidation
-            and GENERIC_PII_ENTITY not in self.supported_entities
-        ):
-            self.supported_entities.append(GENERIC_PII_ENTITY)
+        self.supported_entities = ensure_generic_entity_support(
+            self.supported_entities, enable_generic_consolidation
+        )
 
     @abstractmethod
     def _call_llm(
@@ -126,72 +132,28 @@ class LMRecognizer(RemoteRecognizer, ABC):
         requested_entities: Optional[List[str]] = None
     ) -> List[RecognizerResult]:
         """Filter and process RecognizerResult objects from LLM."""
-        filtered_results = []
-
-        for result in results:
-            if not result.entity_type:
-                logger.warning("LLM returned result without entity_type, skipping")
-                continue
-
-            if result.entity_type.lower() in self.labels_to_ignore:
-                logger.debug(
-                    "Entity %s at [%d:%d] is in labels_to_ignore, skipping",
-                    result.entity_type, result.start, result.end
-                )
-                continue
-
-            original_entity_type = result.entity_type
-            if result.entity_type not in self.supported_entities:
-                if self.enable_generic_consolidation:
-                    result.entity_type = GENERIC_PII_ENTITY
-
-                    if original_entity_type not in self._generic_entities_logged:
-                        logger.warning(
-                            "Detected unmapped entity '%s', "
-                            "consolidated to GENERIC_PII_ENTITY. "
-                            "To map or exclude, update "
-                            "'entity_mappings' or 'labels_to_ignore'.",
-                            original_entity_type,
-                        )
-                        self._generic_entities_logged.add(original_entity_type)
-
-                    if result.recognition_metadata is None:
-                        result.recognition_metadata = {}
-                    result.recognition_metadata[
-                        "original_entity_type"
-                    ] = original_entity_type
-                else:
-                    logger.warning(
-                        "Detected unmapped entity '%s', skipped "
-                        "(enable_generic_consolidation=False). "
-                        "To map or exclude, update "
-                        "'entity_mappings' or 'labels_to_ignore'.",
-                        result.entity_type,
-                    )
-                    continue
-
-            if requested_entities and result.entity_type not in requested_entities:
-                logger.debug(
-                    "Entity %s at [%d:%d] not in requested entities %s, skipping",
-                    result.entity_type, result.start, result.end, requested_entities
-                )
-                continue
-
-            if result.start is None or result.end is None:
-                logger.warning(
-                    "LLM returned result without start/end positions, skipping"
-                )
-                continue
-
-            if result.score < self.min_score:
-                logger.debug(
-                    "Entity %s at [%d:%d] below min_score (%.2f < %.2f), skipping",
-                    result.entity_type, result.start, result.end,
-                    result.score, self.min_score
-                )
-                continue
-
-            filtered_results.append(result)
+        filtered_results = filter_results_by_labels(results, self.labels_to_ignore)
+        
+        if self.enable_generic_consolidation:
+            filtered_results = consolidate_generic_entities(
+                filtered_results,
+                self.supported_entities,
+                self._generic_entities_logged
+            )
+        else:
+            filtered_results = skip_unmapped_entities(
+                filtered_results,
+                self.supported_entities
+            )
+        
+        if requested_entities:
+            filtered_results = filter_results_by_entities(
+                filtered_results,
+                requested_entities
+            )
+        
+        filtered_results = validate_result_positions(filtered_results)
+        filtered_results = filter_results_by_score(filtered_results, self.min_score)
 
         return filtered_results
 

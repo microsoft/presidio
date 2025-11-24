@@ -5,20 +5,19 @@ from pathlib import Path
 logger = logging.getLogger("presidio-analyzer")
 
 
-def load_prompt_file(prompt_file: str, conf_subdir: str = "conf") -> str:
-    """Load prompt template file from configuration directory.
+def load_file_from_conf(filename: str, conf_subdir: str = "conf") -> str:
+    """Load file contents from conf directory."""
+    file_path = Path(__file__).parent.parent / conf_subdir / filename
+    if not file_path.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
 
-    :param prompt_file: Relative path to prompt file within conf directory.
-    :param conf_subdir: Subdirectory name (default: "conf").
-    :return: Contents of the prompt file.
-    :raises FileNotFoundError: If prompt file doesn't exist.
-    """
-    prompt_path = Path(__file__).parent.parent / conf_subdir / prompt_file
-    if not prompt_path.exists():
-        raise FileNotFoundError(f"Prompt file not found: {prompt_path}")
-
-    with open(prompt_path, "r") as f:
+    with open(file_path, "r") as f:
         return f.read()
+
+
+def load_prompt_file(prompt_file: str, conf_subdir: str = "conf") -> str:
+    """Load prompt template file from conf directory."""
+    return load_file_from_conf(prompt_file, conf_subdir)
 
 
 def render_jinja_template(template_str: str, **kwargs) -> str:

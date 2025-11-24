@@ -1,9 +1,9 @@
 """Examples loading utilities for LLM recognizers."""
 import logging
-from pathlib import Path
 from typing import Dict, List
 
-import yaml
+from .config_loader import get_conf_path, load_yaml_file, validate_config_fields
+from .langextract_helper import get_langextract_module
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -11,45 +11,16 @@ logger = logging.getLogger("presidio-analyzer")
 def load_yaml_examples(
     examples_file: str, conf_subdir: str = "conf"
 ) -> List[Dict]:
-    """Load examples from YAML file.
-
-    :param examples_file: Relative path to examples file within conf directory.
-    :param conf_subdir: Subdirectory name (default: "conf").
-    :return: List of example dictionaries.
-    :raises FileNotFoundError: If examples file doesn't exist.
-    :raises ValueError: If YAML parsing fails or examples format is invalid.
-    """
-    examples_path = Path(__file__).parent.parent / conf_subdir / examples_file
-    if not examples_path.exists():
-        raise FileNotFoundError(f"Examples file not found: {examples_path}")
-
-    try:
-        with open(examples_path) as f:
-            data = yaml.safe_load(f)
-    except yaml.YAMLError as e:
-        raise ValueError(f"Failed to parse examples YAML: {e}")
-
-    examples_data = data.get("examples", [])
-    if not examples_data:
-        raise ValueError("Examples file must contain 'examples' list")
-
-    return examples_data
+    """Load examples from YAML file in conf directory."""
+    filepath = get_conf_path(examples_file, conf_subdir)
+    data = load_yaml_file(filepath)
+    validate_config_fields(data, ["examples"], "Examples file")
+    return data["examples"]
 
 
 def convert_to_langextract_format(examples_data: List[Dict]) -> List:
-    """Convert YAML examples to LangExtract objects.
-
-    :param examples_data: List of example dictionaries from YAML.
-    :return: List of LangExtract ExampleData objects.
-    :raises ImportError: If langextract is not installed.
-    """
-    try:
-        import langextract as lx
-    except ImportError:
-        raise ImportError(
-            "LangExtract is not installed. "
-            "Install it with: pip install presidio-analyzer[langextract]"
-        )
+    """Convert YAML examples to LangExtract ExampleData objects."""
+    lx = get_langextract_module()
 
     langextract_examples = []
     for example in examples_data:

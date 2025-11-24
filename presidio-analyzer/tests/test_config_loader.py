@@ -3,14 +3,14 @@ import pytest
 import tempfile
 from pathlib import Path
 from presidio_analyzer.llm_utils.config_loader import (
-    load_yaml_config,
-    extract_lm_config,
+    load_yaml_file,
     get_model_config,
 )
+from presidio_analyzer.llm_utils.langextract_helper import extract_lm_config
 
 
-class TestLoadYamlConfig:
-    """Tests for load_yaml_config function."""
+class TestLoadYamlFile:
+    """Tests for load_yaml_file function."""
 
     def test_when_config_file_exists_then_loads_yaml(self):
         """Test loading a valid YAML configuration file."""
@@ -24,7 +24,7 @@ lm_recognizer:
             config_path = f.name
 
         try:
-            config = load_yaml_config(config_path)
+            config = load_yaml_file(config_path)
             assert config is not None
             assert "lm_recognizer" in config
             assert config["lm_recognizer"]["supported_entities"] == ["PERSON", "EMAIL"]
@@ -34,8 +34,8 @@ lm_recognizer:
 
     def test_when_config_file_missing_then_raises_file_not_found_error(self):
         """Test that missing config file raises FileNotFoundError."""
-        with pytest.raises(FileNotFoundError, match="Configuration file not found"):
-            load_yaml_config("/nonexistent/path/config.yaml")
+        with pytest.raises(FileNotFoundError, match="File not found"):
+            load_yaml_file("/nonexistent/path/config.yaml")
 
     def test_when_config_has_invalid_yaml_then_raises_value_error(self):
         """Test that invalid YAML raises ValueError."""
@@ -45,7 +45,7 @@ lm_recognizer:
 
         try:
             with pytest.raises(ValueError, match="Failed to parse YAML"):
-                load_yaml_config(config_path)
+                load_yaml_file(config_path)
         finally:
             Path(config_path).unlink()
 
@@ -56,7 +56,7 @@ lm_recognizer:
             config_path = f.name
 
         try:
-            config = load_yaml_config(config_path)
+            config = load_yaml_file(config_path)
             # yaml.safe_load returns None for empty file
             assert config is None
         finally:
@@ -79,7 +79,7 @@ other_section:
             config_path = f.name
 
         try:
-            config = load_yaml_config(config_path)
+            config = load_yaml_file(config_path)
             assert "lm_recognizer" in config
             assert "langextract" in config
             assert "other_section" in config
@@ -185,7 +185,7 @@ class TestGetModelConfig:
             }
         }
 
-        with pytest.raises(ValueError, match="Configuration must contain 'langextract' section"):
+        with pytest.raises(ValueError, match="Configuration must contain 'langextract'"):
             get_model_config(config, "langextract")
 
     def test_when_model_section_missing_then_raises_value_error(self):
@@ -196,7 +196,7 @@ class TestGetModelConfig:
             }
         }
 
-        with pytest.raises(ValueError, match="Configuration 'langextract' must contain 'model' section"):
+        with pytest.raises(ValueError, match="Configuration must contain 'langextract.model'"):
             get_model_config(config, "langextract")
 
     def test_when_model_id_missing_then_raises_value_error(self):
@@ -209,7 +209,7 @@ class TestGetModelConfig:
             }
         }
 
-        with pytest.raises(ValueError, match="Configuration 'langextract.model' must contain 'model_id'"):
+        with pytest.raises(ValueError, match="Configuration must contain 'langextract.model.model_id'"):
             get_model_config(config, "langextract")
 
     def test_when_model_config_has_extra_params_then_includes_all(self):
@@ -256,7 +256,7 @@ langextract:
 
         try:
             # Step 1: Load YAML
-            full_config = load_yaml_config(config_path)
+            full_config = load_yaml_file(config_path)
             
             # Step 2: Extract lm_recognizer config
             lm_config = extract_lm_config(full_config)
