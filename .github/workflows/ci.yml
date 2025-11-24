@@ -150,21 +150,81 @@ jobs:
         run: |
           poetry run pytest --cov=. --cov-report=xml --cov-report=term --cov-report=html -vv --tb=short
 
-      - name: Comment PR with Coverage
-        if: github.event_name == 'pull_request' && matrix.python-version == '3.12'
-        uses: py-cov-action/python-coverage-comment-action@v3.39
+      - name: Upload coverage data
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
         with:
-          GITHUB_TOKEN: ${{ github.token }}
-          COVERAGE_PATH: ${{ matrix.component.path }}
-          MINIMUM_GREEN: 85
-          MINIMUM_ORANGE: 70
-          SUBPROJECT_ID: ${{ matrix.component.path }}
+          name: coverage-${{ matrix.component.path }}
+          path: ${{ matrix.component.path }}/coverage.xml
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
         run: |
           pip install build
           python -m build --wheel
+
+  coverage-report:
+    name: Combined Coverage Report
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Download all coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install coverage tools
+        run: pip install coverage
+
+      - name: Generate combined coverage report
+        run: |
+          echo "# 📊 Coverage Report" > coverage-comment.md
+          echo "" >> coverage-comment.md
+          echo "| Component | Coverage | Status |" >> coverage-comment.md
+          echo "|-----------|----------|--------|" >> coverage-comment.md
+          
+          for component in presidio-analyzer presidio-anonymizer presidio-cli presidio-image-redactor presidio-structured; do
+            if [ -f "${component}/coverage.xml" ]; then
+              # Extract coverage percentage from coverage.xml
+              coverage_pct=$(python -c "import xml.etree.ElementTree as ET; tree = ET.parse('${component}/coverage.xml'); root = tree.getroot(); print(f\"{float(root.attrib['line-rate']) * 100:.2f}\")")
+              
+              # Determine status badge
+              if (( $(echo "$coverage_pct >= 85" | bc -l) )); then
+                badge="🟢"
+                status="Excellent"
+              elif (( $(echo "$coverage_pct >= 70" | bc -l) )); then
+                badge="🟡"
+                status="Good"
+              else
+                badge="🔴"
+                status="Needs Improvement"
+              fi
+              
+              echo "| ${component} | ${coverage_pct}% | ${badge} ${status} |" >> coverage-comment.md
+            fi
+          done
+          
+          echo "" >> coverage-comment.md
+          echo "**Thresholds:** 🟢 Excellent (≥85%) · 🟡 Good (≥70%) · 🔴 Needs Improvement (<70%)" >> coverage-comment.md
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          filePath: coverage-comment.md
+          comment_tag: coverage-report
 
   build-platform-images:
     name: Build ${{ matrix.image }} (${{ matrix.platform }})
