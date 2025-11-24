@@ -2,13 +2,11 @@ import logging
 from abc import ABC, abstractmethod
 from typing import List
 
-from presidio_analyzer import AnalysisExplanation, RecognizerResult
 from presidio_analyzer.llm_utils import (
-    calculate_extraction_confidence,
+    check_langextract_available,
+    convert_langextract_to_presidio_results,
     convert_to_langextract_format,
-    create_reverse_entity_mapping,
     extract_lm_config,
-    get_langextract_module,
     get_model_config,
     get_supported_entities,
     load_prompt_file,
@@ -35,7 +33,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         :param config_path: Path to configuration file.
         :param name: Name of the recognizer (provided by subclass).
         """
-        get_langextract_module()
+        check_langextract_available()
 
         full_config = load_yaml_file(config_path)
 
@@ -99,91 +97,36 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         )
 
         self.entity_mappings = langextract_config["entity_mappings"]
-        self._presidio_to_langextract = create_reverse_entity_mapping(
-            self.entity_mappings
-        )
-        self._supported_entities_set = set(supported_entities)
 
         logger.info("Loaded recognizer: %s", self.name)
 
     def _call_llm(self, text: str, entities: List[str], **kwargs):
-        """Call LangExtract LLM and convert to RecognizerResult."""
-        langextract_result = self._call_langextract(
-            text=text,
-            prompt=self.prompt_description,
-            examples=self.examples
+        """Call LangExtract LLM."""
+        # Build extract params
+        extract_params = {
+            "text": text,
+            "prompt": self.prompt_description,
+            "examples": self.examples,
+        }
+
+        # Add temperature if configured
+        if self.temperature is not None:
+            extract_params["temperature"] = self.temperature
+
+        # Add any additional kwargs
+        extract_params.update(kwargs)
+
+        langextract_result = self._call_langextract(**extract_params)
+
+        return convert_langextract_to_presidio_results(
+            langextract_result=langextract_result,
+            entity_mappings=self.entity_mappings,
+            supported_entities=self.supported_entities,
+            enable_generic_consolidation=self.enable_generic_consolidation,
+            recognizer_name=self.__class__.__name__
         )
 
-        results = []
-        if not langextract_result or not langextract_result.extractions:
-            return results
-
-        for extraction in langextract_result.extractions:
-            extraction_class = extraction.extraction_class
-
-            if extraction_class in self._supported_entities_set:
-                entity_type = extraction_class
-            else:
-                extraction_class_lower = extraction_class.lower()
-                entity_type = self.entity_mappings.get(extraction_class_lower)
-
-            if not entity_type:
-                if self.enable_generic_consolidation:
-                    entity_type = extraction_class.upper()
-                    logger.debug(
-                        "Unknown extraction class '%s' will be consolidated to "
-                        "GENERIC_PII_ENTITY",
-                        extraction_class,
-                    )
-                else:
-                    logger.warning(
-                        "Unknown extraction class '%s' not found in entity "
-                        "mappings, skipping",
-                        extraction_class,
-                    )
-                    continue
-
-            if not extraction.char_interval:
-                logger.warning("Extraction missing char_interval, skipping")
-                continue
-
-            confidence = calculate_extraction_confidence(extraction)
-
-            metadata = {}
-            if hasattr(extraction, 'attributes') and extraction.attributes:
-                metadata['attributes'] = extraction.attributes
-            if hasattr(extraction, 'alignment_status') and extraction.alignment_status:
-                metadata['alignment'] = str(extraction.alignment_status)
-
-            explanation = AnalysisExplanation(
-                recognizer=self.__class__.__name__,
-                original_score=confidence,
-                textual_explanation=(
-                    f"LangExtract extraction with "
-                    f"{extraction.alignment_status} alignment"
-                    if hasattr(extraction, "alignment_status")
-                    and extraction.alignment_status
-                    else "LangExtract extraction"
-                ),
-            )
-
-            result = RecognizerResult(
-                entity_type=entity_type,
-                start=extraction.char_interval.start_pos,
-                end=extraction.char_interval.end_pos,
-                score=confidence,
-                analysis_explanation=explanation,
-                recognition_metadata=metadata if metadata else None
-            )
-
-            results.append(result)
-
-        return results
-
     @abstractmethod
-    def _call_langextract(self, text: str, prompt: str, examples: List, **kwargs):
-        """Call provider-specific LangExtract implementation.
-
-        Subclasses implement this for specific providers (Ollama, OpenAI, etc.).
-        """
+    def _call_langextract(self, **kwargs):
+        """Call provider-specific LangExtract implementation."""
         ...

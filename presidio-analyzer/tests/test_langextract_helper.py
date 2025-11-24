@@ -2,51 +2,12 @@
 import pytest
 from unittest.mock import Mock, MagicMock, patch
 from presidio_analyzer.llm_utils.langextract_helper import (
-    get_langextract_module,
     extract_lm_config,
     get_supported_entities,
     create_reverse_entity_mapping,
     calculate_extraction_confidence,
     DEFAULT_ALIGNMENT_SCORES,
 )
-
-
-class TestGetLangextractModule:
-    """Tests for get_langextract_module function."""
-
-    def test_when_langextract_installed_then_returns_module(self):
-        """Test that module is returned when langextract is installed."""
-        # Create a mock module
-        mock_module = MagicMock()
-        mock_module.__name__ = 'langextract'
-        
-        # Mock the import statement inside the function
-        with patch.dict('sys.modules', {'langextract': mock_module}):
-            module = get_langextract_module()
-            
-            assert module is not None
-            # The function imports 'langextract as lx', so check it worked
-            assert hasattr(module, '__name__')
-
-    def test_when_langextract_not_installed_then_raises_import_error(self):
-        """Test that ImportError is raised when langextract is not installed."""
-        # Simulate langextract not being installed
-        with patch.dict('sys.modules', {'langextract': None}):
-            # Patch __import__ to raise ImportError for langextract
-            def mock_import(name, *args):
-                if name == 'langextract':
-                    raise ImportError(f"No module named '{name}'")
-                return __import__(name, *args)
-            
-            with patch('builtins.__import__', side_effect=mock_import):
-                with pytest.raises(ImportError, match="LangExtract is not installed"):
-                    get_langextract_module()
-
-    def test_when_langextract_not_installed_then_error_includes_install_command(self):
-        """Test that error message includes installation instructions."""
-        with patch('builtins.__import__', side_effect=ImportError()):
-            with pytest.raises(ImportError, match="poetry install --extras langextract"):
-                get_langextract_module()
 
 
 class TestExtractLmConfig:

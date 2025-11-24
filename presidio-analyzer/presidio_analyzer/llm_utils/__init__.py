@@ -23,10 +23,12 @@ from .examples_loader import (
 from .langextract_helper import (
     DEFAULT_ALIGNMENT_SCORES,
     calculate_extraction_confidence,
+    check_langextract_available,
+    convert_langextract_to_presidio_results,
     create_reverse_entity_mapping,
     extract_lm_config,
-    get_langextract_module,
     get_supported_entities,
+    lx,
 )
 from .prompt_loader import (
     load_file_from_conf,
@@ -43,11 +45,13 @@ __all__ = [
     "load_yaml_file",
     "load_yaml_examples",
     # LangExtract utilities
-    "get_langextract_module",
+    "check_langextract_available",
+    "lx",
     "extract_lm_config",
     "get_supported_entities",
     "create_reverse_entity_mapping",
     "calculate_extraction_confidence",
+    "convert_langextract_to_presidio_results",
     "DEFAULT_ALIGNMENT_SCORES",
     # Entity mapping and filtering
     "GENERIC_PII_ENTITY",

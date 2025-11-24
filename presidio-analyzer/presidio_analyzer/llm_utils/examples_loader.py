@@ -3,7 +3,7 @@ import logging
 from typing import Dict, List
 
 from .config_loader import get_conf_path, load_yaml_file, validate_config_fields
-from .langextract_helper import get_langextract_module
+from .langextract_helper import check_langextract_available, lx
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -11,7 +11,7 @@ logger = logging.getLogger("presidio-analyzer")
 def load_yaml_examples(
     examples_file: str, conf_subdir: str = "conf"
 ) -> List[Dict]:
-    """Load examples from YAML file in conf directory."""
+    """Load examples from YAML file."""
     filepath = get_conf_path(examples_file, conf_subdir)
     data = load_yaml_file(filepath)
     validate_config_fields(data, ["examples"], "Examples file")
@@ -19,8 +19,8 @@ def load_yaml_examples(
 
 
 def convert_to_langextract_format(examples_data: List[Dict]) -> List:
-    """Convert YAML examples to LangExtract ExampleData objects."""
-    lx = get_langextract_module()
+    """Convert examples to LangExtract format."""
+    check_langextract_available()
 
     langextract_examples = []
     for example in examples_data:

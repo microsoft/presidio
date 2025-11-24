@@ -1,8 +1,24 @@
 """LangExtract helper utilities."""
-from typing import TYPE_CHECKING, Dict, List, Optional
+import logging
+from typing import Dict, List, Optional
 
-if TYPE_CHECKING:
-    pass
+from presidio_analyzer import AnalysisExplanation, RecognizerResult
+
+logger = logging.getLogger("presidio-analyzer")
+
+try:
+    import langextract as lx
+except ImportError:
+    lx = None
+
+
+def check_langextract_available():
+    """Check if langextract is available and raise error if not."""
+    if not lx:
+        raise ImportError(
+            "LangExtract is not installed. "
+            "Install it with: poetry install --extras langextract"
+        )
 
 
 # Default alignment score mappings for LangExtract extractions
@@ -12,18 +28,6 @@ DEFAULT_ALIGNMENT_SCORES = {
     "MATCH_LESSER": 0.70,
     "NOT_ALIGNED": 0.60,
 }
-
-
-def get_langextract_module():
-    """Get langextract module or raise ImportError with install instructions."""
-    try:
-        import langextract as lx
-        return lx
-    except ImportError:
-        raise ImportError(
-            "LangExtract is not installed. "
-            "Install it with: poetry install --extras langextract"
-        )
 
 
 def extract_lm_config(config: Dict) -> Dict:
@@ -44,7 +48,7 @@ def get_supported_entities(
     lm_config: Dict,
     langextract_config: Dict
 ) -> Optional[List[str]]:
-    """Get supported entities from either config section."""
+    """Get supported entities from config."""
     return (
         lm_config.get("supported_entities")
         or langextract_config.get("supported_entities")
@@ -52,7 +56,7 @@ def get_supported_entities(
 
 
 def create_reverse_entity_mapping(entity_mappings: Dict) -> Dict:
-    """Create reverse mapping from Presidio entities to LangExtract classes."""
+    """Create reverse entity mapping."""
     return {v: k for k, v in entity_mappings.items()}
 
 
@@ -60,12 +64,7 @@ def calculate_extraction_confidence(
     extraction,
     alignment_scores: Optional[Dict[str, float]] = None
 ) -> float:
-    """Calculate confidence score from LangExtract extraction.
-
-    :param extraction: LangExtract extraction object.
-    :param alignment_scores: Custom alignment score mappings. If None, uses defaults.
-    :return: Confidence score between 0 and 1.
-    """
+    """Calculate confidence score from extraction."""
     default_score = 0.85
 
     if alignment_scores is None:
@@ -82,3 +81,90 @@ def calculate_extraction_confidence(
             return score
 
     return default_score
+
+
+def convert_langextract_to_presidio_results(
+    langextract_result,
+    entity_mappings: Dict,
+    supported_entities: List[str],
+    enable_generic_consolidation: bool,
+    recognizer_name: str,
+    alignment_scores: Optional[Dict[str, float]] = None
+) -> List[RecognizerResult]:
+    """Convert LangExtract extraction result to Presidio RecognizerResult list.
+
+    :param langextract_result: LangExtract extraction result object.
+    :param entity_mappings: Mapping from LangExtract classes to Presidio entities.
+    :param supported_entities: List of supported entity types.
+    :param enable_generic_consolidation: Whether to consolidate unknown entities.
+    :param recognizer_name: Name of the recognizer for explanation.
+    :param alignment_scores: Custom alignment score mappings.
+    :return: List of RecognizerResult objects.
+    """
+    results = []
+    if not langextract_result or not langextract_result.extractions:
+        return results
+
+    supported_entities_set = set(supported_entities)
+
+    for extraction in langextract_result.extractions:
+        extraction_class = extraction.extraction_class
+
+        if extraction_class in supported_entities_set:
+            entity_type = extraction_class
+        else:
+            extraction_class_lower = extraction_class.lower()
+            entity_type = entity_mappings.get(extraction_class_lower)
+
+        if not entity_type:
+            if enable_generic_consolidation:
+                entity_type = extraction_class.upper()
+                logger.debug(
+                    "Unknown extraction class '%s' will be consolidated to "
+                    "GENERIC_PII_ENTITY",
+                    extraction_class,
+                )
+            else:
+                logger.warning(
+                    "Unknown extraction class '%s' not found in entity "
+                    "mappings, skipping",
+                    extraction_class,
+                )
+                continue
+
+        if not extraction.char_interval:
+            logger.warning("Extraction missing char_interval, skipping")
+            continue
+
+        confidence = calculate_extraction_confidence(extraction, alignment_scores)
+
+        metadata = {}
+        if hasattr(extraction, 'attributes') and extraction.attributes:
+            metadata['attributes'] = extraction.attributes
+        if hasattr(extraction, 'alignment_status') and extraction.alignment_status:
+            metadata['alignment'] = str(extraction.alignment_status)
+
+        explanation = AnalysisExplanation(
+            recognizer=recognizer_name,
+            original_score=confidence,
+            textual_explanation=(
+                f"LangExtract extraction with "
+                f"{extraction.alignment_status} alignment"
+                if hasattr(extraction, "alignment_status")
+                and extraction.alignment_status
+                else "LangExtract extraction"
+            ),
+        )
+
+        result = RecognizerResult(
+            entity_type=entity_type,
+            start=extraction.char_interval.start_pos,
+            end=extraction.char_interval.end_pos,
+            score=confidence,
+            analysis_explanation=explanation,
+            recognition_metadata=metadata if metadata else None
+        )
+
+        results.append(result)
+
+    return results

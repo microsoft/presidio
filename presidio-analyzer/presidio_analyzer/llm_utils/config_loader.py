@@ -9,7 +9,7 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 def get_conf_path(filename: str, conf_subdir: str = "conf") -> Path:
-    """Get absolute path to file in conf directory."""
+    """Get path to file in conf directory."""
     return Path(__file__).parent.parent / conf_subdir / filename
 
 
@@ -33,7 +33,7 @@ def load_yaml_file(filepath: Union[str, Path]) -> Dict:
 
 
 def get_model_config(config: Dict, provider_key: str) -> Dict:
-    """Extract model configuration for specific provider."""
+    """Extract model configuration."""
     validate_config_fields(
         config,
         [

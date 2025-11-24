@@ -1,8 +1,8 @@
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
-from presidio_analyzer.llm_utils import get_langextract_module
+from presidio_analyzer.llm_utils import check_langextract_available, lx
 from presidio_analyzer.predefined_recognizers.third_party.\
     langextract_recognizer import LangExtractRecognizer
 
@@ -37,55 +37,31 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
             self.model_url = model_config.get("model_url")
             if not self.model_url:
                 raise ValueError("Ollama model configuration must contain 'model_url'")
-        except Exception:
-            logger.exception(
-                "Failed to initialize Ollama LangExtract recognizer. "
-                "Check that configuration file exists and is valid, and that "
-                "required dependencies (langextract, Jinja2) are installed."
-            )
+        except Exception as e:
+            logger.exception("Failed to initialize Ollama recognizer: %s", str(e))
             raise
 
-    def _call_langextract(
-        self,
-        text: str,
-        prompt: str,
-        examples: List,
-        **kwargs
-    ):
-        """Call Ollama through LangExtract.
-
-        This method will raise exceptions if:
-        - Ollama server is not running or unreachable
-        - Requested model is not installed in Ollama
-        - Network errors occur during extraction
-
-        Errors are logged with full traceback for debugging.
-        """
-        lx = get_langextract_module()
+    def _call_langextract(self, **kwargs):
+        """Call Ollama through LangExtract."""
+        check_langextract_available()
 
         try:
+            # Add Ollama-specific parameters
             extract_params = {
-                "text_or_documents": text,
-                "prompt_description": prompt,
-                "examples": examples,
+                "text_or_documents": kwargs.pop("text"),
+                "prompt_description": kwargs.pop("prompt"),
+                "examples": kwargs.pop("examples"),
                 "model_id": self.model_id,
                 "model_url": self.model_url,
             }
 
-            if self.temperature is not None:
-                extract_params["temperature"] = self.temperature
-
+            # Pass through temperature and any other kwargs
             extract_params.update(kwargs)
 
             return lx.extract(**extract_params)
-        except Exception:
+        except Exception as e:
             logger.exception(
-                "LangExtract extraction failed. Common causes: "
-                "Ollama server not running at %s, "
-                "model '%s' not installed (run 'ollama pull %s'), "
-                "or network connectivity issues.",
-                self.model_url,
-                self.model_id,
-                self.model_id
+                "LangExtract extraction failed (Ollama at %s, model '%s'): %s",
+                self.model_url, self.model_id, str(e)
             )
             raise

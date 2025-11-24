@@ -121,8 +121,8 @@ class LMRecognizer(RemoteRecognizer, ABC):
 
             return filtered_results
 
-        except Exception:
-            logger.exception("LLM analysis failed for %s", self.name)
+        except Exception as e:
+            logger.exception("LLM analysis failed: %s", str(e))
             return []
 
     def _filter_and_process_results(
@@ -130,7 +130,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
         results: List[RecognizerResult],
         requested_entities: Optional[List[str]] = None
     ) -> List[RecognizerResult]:
-        """Filter and process RecognizerResult objects from LLM."""
+        """Filter and process results."""
         filtered_results = filter_results_by_labels(results, self.labels_to_ignore)
 
         if self.enable_generic_consolidation:

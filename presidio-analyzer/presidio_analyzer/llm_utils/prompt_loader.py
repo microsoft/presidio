@@ -6,7 +6,7 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 def load_file_from_conf(filename: str, conf_subdir: str = "conf") -> str:
-    """Load file contents from conf directory."""
+    """Load file from conf directory."""
     file_path = Path(__file__).parent.parent / conf_subdir / filename
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
@@ -16,7 +16,7 @@ def load_file_from_conf(filename: str, conf_subdir: str = "conf") -> str:
 
 
 def load_prompt_file(prompt_file: str, conf_subdir: str = "conf") -> str:
-    """Load prompt template file from conf directory."""
+    """Load prompt template file."""
     return load_file_from_conf(prompt_file, conf_subdir)
 
 
