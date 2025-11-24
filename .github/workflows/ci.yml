@@ -148,7 +148,14 @@ jobs:
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
+          # Ensure coverage writes relative paths, required by python-coverage-comment-action
+          cat > .coveragerc << 'EOF'
+          [run]
+          relative_files = true
+          EOF
+
           poetry run pytest --cov=. --cov-report=xml --cov-report=term -vv --tb=short
+
           # Rename .coverage file to include component name for merging
           mv .coverage .coverage.${{ matrix.component.path }}
 
@@ -179,6 +186,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Download all coverage artifacts
         uses: actions/download-artifact@v4
