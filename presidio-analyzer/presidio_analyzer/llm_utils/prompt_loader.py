@@ -26,7 +26,8 @@ def render_jinja_template(template_str: str, **kwargs) -> str:
         from jinja2 import Template
     except ImportError:
         raise ImportError(
-            "Jinja2 is not installed. Install it with: pip install jinja2"
+            "Jinja2 is not installed. "
+            "Install it with: poetry install --extras langextract"
         )
 
     template = Template(template_str)
