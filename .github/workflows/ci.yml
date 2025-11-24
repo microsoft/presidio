@@ -150,12 +150,16 @@ jobs:
         run: |
           poetry run pytest --cov=. --cov-report=term --cov-report=json -vv --tb=short
           
-          # Extract coverage and add to job summary
+          # Extract coverage metrics
           pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.1f}\")")
-          echo "### 📊 ${{ matrix.component.name }}: ${pct}%" >> $GITHUB_STEP_SUMMARY
+          covered=$(python -c "import json; data = json.load(open('coverage.json')); print(data['totals']['covered_lines'])")
+          total=$(python -c "import json; data = json.load(open('coverage.json')); print(data['totals']['num_statements'])")
           
-          # Save for PR comment
-          echo "${pct}" > coverage-pct.txt
+          # Add to job summary
+          echo "### 📊 ${{ matrix.component.name }}: ${pct}% (${covered}/${total} lines)" >> $GITHUB_STEP_SUMMARY
+          
+          # Save metrics for PR comment
+          echo "${pct}|${covered}|${total}" > coverage-pct.txt
 
       - name: Upload coverage percentage
         if: matrix.python-version == '3.12'
@@ -190,18 +194,19 @@ jobs:
             echo "message<<EOF"
             echo "## 📊 Coverage Report"
             echo
-            echo "| Component | Coverage |"
-            echo "|-----------|----------|"
+            echo "| Component | Coverage | Lines Covered |"
+            echo "|-----------|----------|---------------|"
 
             for dir in coverage-*/; do
               comp="${dir#coverage-}"
               comp="${comp%/}"
-              pct=$(cat "$dir/coverage-pct.txt")
-              printf '| %s | %s%% |\n' "$comp" "$pct"
+              IFS='|' read -r pct covered total < "$dir/coverage-pct.txt"
+              printf '| %s | %s%% | %s/%s |\n' "$comp" "$pct" "$covered" "$total"
             done
 
             echo
-            echo "*Threshold: 70% minimum*"
+            echo "*This shows total coverage for each component.*"
+            echo "*Threshold: 70% minimum | Changes: Check test logs for modified files*"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
