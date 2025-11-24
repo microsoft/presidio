@@ -47,22 +47,26 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
 
     def __init__(
         self,
-        supported_entities: Optional[List[str]] = None,
-        supported_language: str = "en",
         config_path: Optional[str] = None,
-        name: str = "Azure OpenAI LangExtract PII/PHI",
-        version: str = "1.0.0",
-        **kwargs
+        azure_endpoint: Optional[str] = None,
+        api_key: Optional[str] = None,
+        api_version: Optional[str] = None,
     ):
         """
         Initialize Azure OpenAI LangExtract recognizer for PII/PHI detection.
 
-        :param supported_entities: List of PII/PHI entities to detect.
-        :param supported_language: Language code (only 'en' supported).
-        :param config_path: Path to YAML configuration file.
-        :param name: Recognizer name.
-        :param version: Recognizer version.
-        :param kwargs: Additional arguments for parent class.
+        Configuration priority (highest to lowest):
+        1. Direct parameters (azure_endpoint, api_key, api_version)
+        2. Environment variables (AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY, AZURE_OPENAI_API_VERSION)
+        3. Config file (azure_openai section)
+        
+        Authentication and connectivity are not validated during initialization.
+        Any issues will be reported when analyze() is first called.
+
+        :param config_path: Path to YAML configuration file. If not provided, uses default config.
+        :param azure_endpoint: Azure OpenAI endpoint URL (overrides config and env var).
+        :param api_key: Azure OpenAI API key (overrides config and env var).
+        :param api_version: Azure OpenAI API version (overrides config and env var).
         """
         if not LANGEXTRACT_AVAILABLE:
             raise ImportError(
@@ -71,61 +75,64 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
                 "or: pip install langextract"
             )
         
-        azure_config = self._load_azure_openai_config(config_path)
-        
-        # Get Azure-specific configuration
-        model_id = azure_config.get("model_id")
-        if not model_id:
-            raise ValueError("Azure OpenAI configuration must contain 'model_id'")
-
-        self.azure_endpoint = azure_config.get("azure_endpoint") or os.environ.get(
-            "AZURE_OPENAI_ENDPOINT"
+        # Determine actual config path
+        actual_config_path = (
+            config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
         )
-        if not self.azure_endpoint:
-            raise ValueError(
-                "Azure OpenAI endpoint is required. Set AZURE_OPENAI_ENDPOINT "
-                "environment variable or configure azure_endpoint in config file."
+
+        try:
+            super().__init__(
+                config_path=actual_config_path,
+                name="Azure OpenAI LangExtract PII"
             )
 
-        self.api_key = azure_config.get("api_key") or os.environ.get(
-            "AZURE_OPENAI_API_KEY"
-        )
+            # Load Azure-specific configuration from the config file
+            azure_config = self._load_azure_openai_config(actual_config_path)
+            
+            # Get Azure-specific settings with priority: parameter > env var > config file
+            self.azure_endpoint = (
+                azure_endpoint 
+                or os.environ.get("AZURE_OPENAI_ENDPOINT")
+                or azure_config.get("azure_endpoint")
+            )
+            if not self.azure_endpoint:
+                raise ValueError(
+                    "Azure OpenAI endpoint is required. Provide 'azure_endpoint' parameter, "
+                    "set AZURE_OPENAI_ENDPOINT environment variable, or configure "
+                    "'azure_endpoint' in config file."
+                )
 
-        self.api_version = azure_config.get("api_version") or os.environ.get(
-            "AZURE_OPENAI_API_VERSION", "2024-02-15-preview"
-        )
+            self.api_key = (
+                api_key
+                or os.environ.get("AZURE_OPENAI_API_KEY")
+                or azure_config.get("api_key")
+            )
 
-        temperature = azure_config.get("temperature")
+            self.api_version = (
+                api_version
+                or os.environ.get("AZURE_OPENAI_API_VERSION")
+                or azure_config.get("api_version")
+                or "2024-02-15-preview"
+            )
+            
+            # Note: self.model_id and self.temperature are already set by parent class from langextract.model config
+            
+        except Exception:
+            logger.exception(
+                "Failed to initialize Azure OpenAI LangExtract recognizer. "
+                "Check that configuration file exists and is valid, Azure endpoint is configured, "
+                "and that required dependencies (langextract, Jinja2) are installed."
+            )
+            raise
 
-        super().__init__(
-            supported_entities=supported_entities,
-            supported_language=supported_language,
-            config_path=config_path,
-            name=name,
-            version=version,
-            model_id=model_id,
-            temperature=temperature,
-            min_score=None,
-            **kwargs
-        )
-
-        logger.info(
-            f"Azure OpenAI LangExtract initialized: "
-            f"endpoint={self.azure_endpoint}, "
-            f"deployment={model_id}"
-        )
-
-    def _load_azure_openai_config(self, config_path: Optional[str] = None) -> Dict:
+    def _load_azure_openai_config(self, config_path: str) -> Dict:
         """
         Load Azure OpenAI-specific configuration.
 
         :param config_path: Path to configuration file.
         :return: Azure OpenAI configuration dictionary.
         """
-        if config_path is None:
-            config_path = self.DEFAULT_CONFIG_PATH
-        else:
-            config_path = Path(config_path)
+        config_path = Path(config_path)
 
         if not config_path.exists():
             raise FileNotFoundError(
@@ -154,7 +161,7 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
         """
         return True
 
-    def _call_llm(
+    def _call_langextract(
         self,
         text: str,
         prompt: str,
@@ -209,4 +216,5 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
 
         except Exception as e:
             logger.error(f"Error calling Azure OpenAI: {e}")
+            raise
             raise

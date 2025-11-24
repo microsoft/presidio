@@ -148,21 +148,21 @@ Azure OpenAI provides cloud-based access to OpenAI models (GPT-4o, GPT-4, GPT-3.
 
 ### Authentication Options
 
-Azure OpenAI supports two authentication methods:
+Azure OpenAI supports multiple authentication methods with flexible configuration:
 
-#### Option 1: API Key (Quick Start)
+#### Option 1: Direct Parameters (Programmatic Use)
 
-Simple authentication for development and testing:
+Pass credentials directly to the recognizer - **no environment variables or config file changes needed**:
 
 ```python
 from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILangExtractRecognizer
 
-# Initialize with API key
+# Initialize with direct parameters
 azure_openai = AzureOpenAILangExtractRecognizer(
-    model_id="gpt-4o",
-    endpoint="https://your-resource.openai.azure.com/",
-    api_key="your-api-key-here"
+    azure_endpoint="https://your-resource.openai.azure.com/",
+    api_key="your-api-key-here",
+    api_version="2024-02-15-preview"  # Optional
 )
 
 analyzer = AnalyzerEngine()
@@ -174,20 +174,49 @@ results = analyzer.analyze(
 )
 ```
 
-#### Option 2: Managed Identity (Production Recommended)
+!!! note "Config File Still Required"
+    Even when using parameters, the config file is still needed for LangExtract settings (prompts, entity mappings, etc.). The default config file is used automatically if you don't specify a custom one.
+
+#### Option 2: Environment Variables (Configuration-Based)
+
+Simple authentication for development and testing using environment variables:
+
+```python
+import os
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILangExtractRecognizer
+
+# Set environment variables for authentication
+os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-resource.openai.azure.com/"
+os.environ["AZURE_OPENAI_API_KEY"] = "your-api-key-here"
+
+# Initialize recognizer (reads from environment variables)
+azure_openai = AzureOpenAILangExtractRecognizer()
+
+analyzer = AnalyzerEngine()
+analyzer.registry.add_recognizer(azure_openai)
+
+results = analyzer.analyze(
+    text="My email is john.doe@example.com and my phone is 555-123-4567",
+    language="en"
+)
+```
+
+#### Option 3: Managed Identity (Production Recommended)
 
 **More secure** - No API keys in code, uses Azure RBAC:
 
 ```python
+import os
 from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILangExtractRecognizer
 
-# Initialize with Managed Identity (no api_key parameter)
-azure_openai = AzureOpenAILangExtractRecognizer(
-    model_id="gpt-4o",
-    endpoint="https://your-resource.openai.azure.com/"
-    # No api_key - automatically uses managed identity
-)
+# Set endpoint via environment variable (no API key = uses managed identity)
+os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-resource.openai.azure.com/"
+# AZURE_OPENAI_API_KEY not set - automatically uses managed identity
+
+# Initialize recognizer
+azure_openai = AzureOpenAILangExtractRecognizer()
 
 analyzer = AnalyzerEngine()
 analyzer.registry.add_recognizer(azure_openai)
@@ -211,13 +240,11 @@ For local development, set `ENV=development` to use `DefaultAzureCredential` ins
 ```python
 import os
 os.environ["ENV"] = "development"
+os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-resource.openai.azure.com/"
+# AZURE_OPENAI_API_KEY not set - uses DefaultAzureCredential in development mode
+# (includes Azure CLI, VS Code, etc.)
 
-# Now uses DefaultAzureCredential (includes Azure CLI, VS Code, etc.)
-# No api_key needed
-azure_openai = AzureOpenAILangExtractRecognizer(
-    model_id="gpt-4o",
-    endpoint="https://your-resource.openai.azure.com/"
-)
+azure_openai = AzureOpenAILangExtractRecognizer()
 ```
 
 **Setup Managed Identity**:
@@ -251,7 +278,7 @@ langextract:
 
 azure_openai:
   model_id: "gpt-4o"  # or gpt-4, gpt-35-turbo
-  endpoint: "https://your-resource.openai.azure.com/"
+  azure_endpoint: "https://your-resource.openai.azure.com/"
   
   # Authentication: Choose one option
   # Option 1: API Key (for development/quick start)
@@ -274,7 +301,7 @@ from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextra
 
 # Load from configuration file
 azure_openai = AzureOpenAILangExtractRecognizer(
-    config_file_path="langextract_config_azureopenai.yaml"
+    config_path="langextract_config_azureopenai.yaml"
 )
 
 analyzer = AnalyzerEngine()
@@ -289,7 +316,7 @@ analyzer.registry.add_recognizer(azure_openai)
 Customize the recognizer in the `langextract_config_azureopenai.yaml` file:
 
 - `model_id`: Azure OpenAI deployment name (e.g., "gpt-4o", "gpt-4", "gpt-35-turbo")
-- `endpoint`: Azure OpenAI resource endpoint URL
+- `azure_endpoint`: Azure OpenAI resource endpoint URL
 - `api_key`: API key for authentication (use environment variable: `${AZURE_OPENAI_API_KEY}`). If not provided (null), automatically uses managed identity.
 - `api_version`: Azure OpenAI API version (default: "2024-02-15-preview")
 - `temperature`: Model temperature for response generation (0.0 = deterministic)

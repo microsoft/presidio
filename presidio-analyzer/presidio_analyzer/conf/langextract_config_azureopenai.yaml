@@ -1,8 +1,35 @@
 # Azure OpenAI Configuration for LangExtract
 
+lm_recognizer:
+  supported_entities:
+    - PERSON
+    - LOCATION
+    - ORGANIZATION
+    - PHONE_NUMBER
+    - EMAIL_ADDRESS
+    - DATE_TIME
+    - US_SSN
+    - CREDIT_CARD
+    - MEDICAL_LICENSE
+    - IP_ADDRESS
+    - URL
+    - IBAN_CODE
+  
+  labels_to_ignore:
+    - payment_status
+    - metadata
+    - annotation
+  
+  enable_generic_consolidation: true
+  min_score: 0.5
+
 langextract:
-  prompt_file: "langextract_prompts/default_pii_phi_prompt.txt"
+  prompt_file: "langextract_prompts/default_pii_phi_prompt.j2"
   examples_file: "langextract_prompts/default_pii_phi_examples.yaml"
+  
+  model:
+    model_id: "gpt-4o"
+    temperature: null
   
   entity_mappings:
     person: PERSON
@@ -19,27 +46,9 @@ langextract:
     ip_address: IP_ADDRESS
     url: URL
     iban: IBAN_CODE
-    pii: PII
-  
-  supported_entities:
-    - PERSON
-    - LOCATION
-    - ORGANIZATION
-    - PHONE_NUMBER
-    - EMAIL_ADDRESS
-    - DATE_TIME
-    - US_SSN
-    - CREDIT_CARD
-    - MEDICAL_LICENSE
-    - IP_ADDRESS
-    - URL
-    - IBAN_CODE
-    - PII
-  
-  min_score: 0.5
 
 azure_openai:
-  model_id: "gpt-4.1"
+  model_id: "gpt-4o"
   azure_endpoint: null
   api_key: null
   api_version: "2024-02-15-preview"

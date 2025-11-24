@@ -15,7 +15,7 @@ class TestAzureOpenAILangExtractRecognizerInitialization:
         """Test that ImportError is raised when langextract is not installed."""
         with patch(
             'presidio_analyzer.predefined_recognizers.third_party.'
-            'langextract_recognizer.LANGEXTRACT_AVAILABLE',
+            'azure_openai_langextract_recognizer.LANGEXTRACT_AVAILABLE',
             False
         ), patch.dict('os.environ', {'AZURE_OPENAI_ENDPOINT': 'https://test.openai.azure.com/'}):
             from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILangExtractRecognizer
@@ -25,20 +25,26 @@ class TestAzureOpenAILangExtractRecognizerInitialization:
     def test_missing_endpoint_raises_error(self, tmp_path):
         """Test that initialization fails when Azure endpoint is missing."""
         import yaml
+        import os
         
         config = {
+            "lm_recognizer": {
+                "type": "AzureOpenAILangExtractRecognizer"
+            },
             "langextract": {
                 "supported_entities": ["PERSON"],
                 "entity_mappings": {"person_name": "PERSON"},
-                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
                 "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
                 "min_score": 0.5,
+                "model": {
+                    "model_id": "gpt-4",
+                    "temperature": 0.0,
+                }
             },
             "azure_openai": {
-                "model_id": "gpt-4",
                 "api_key": "test-key",
                 "api_version": "2024-02-01",
-                "temperature": 0.0,
             }
         }
 
@@ -46,10 +52,13 @@ class TestAzureOpenAILangExtractRecognizerInitialization:
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
 
+        # Clear any environment variables that might provide endpoint
+        env_without_azure = {k: v for k, v in os.environ.items() 
+                            if not k.startswith('AZURE_OPENAI')}
+        
         with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'azure_openai_langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+                   'azure_openai_langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
+             patch.dict('os.environ', env_without_azure, clear=True):
             
             from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILangExtractRecognizer
             
@@ -62,10 +71,8 @@ class TestAzureOpenAIProvider:
 
     def test_provider_registration(self):
         """Test that Azure OpenAI provider is properly registered."""
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
-            from presidio_analyzer.predefined_recognizers.third_party import azure_openai_provider
-            assert hasattr(azure_openai_provider, 'AzureOpenAILanguageModel')
+        from presidio_analyzer.predefined_recognizers.third_party import azure_openai_provider
+        assert hasattr(azure_openai_provider, 'AzureOpenAILanguageModel')
 
     def test_provider_import_error_when_dependencies_missing(self):
         """Test that provider handles missing dependencies gracefully."""
