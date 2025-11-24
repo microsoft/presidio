@@ -147,16 +147,16 @@ jobs:
       - name: Run tests with coverage
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
+        env:
+          COVERAGE_RCFILE: ${{ github.workspace }}/.coveragerc_relative
         run: |
-          # Ensure coverage writes relative paths, required by python-coverage-comment-action
-          cat > .coveragerc << 'EOF'
+          cat > "$COVERAGE_RCFILE" << 'EOF'
           [run]
           relative_files = true
           EOF
 
           poetry run pytest --cov=. --cov-report=xml --cov-report=term -vv --tb=short
 
-          # Rename .coverage file to include component name for merging
           mv .coverage .coverage.${{ matrix.component.path }}
 
       - name: Upload coverage
@@ -165,7 +165,7 @@ jobs:
         with:
           name: coverage-${{ matrix.component.path }}
           path: |
-            ${{ matrix.component.path }}/.coverage.${{ matrix.component.path }}
+            ${{ matrix.component.path }}/.coverage
             ${{ matrix.component.path }}/coverage.xml
           include-hidden-files: true
 
