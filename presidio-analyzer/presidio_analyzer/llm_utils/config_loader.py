@@ -14,13 +14,7 @@ def get_conf_path(filename: str, conf_subdir: str = "conf") -> Path:
 
 
 def load_yaml_file(filepath: Union[str, Path]) -> Dict:
-    """Load and parse a YAML file.
-
-    :param filepath: Path to YAML file (absolute or relative).
-    :return: Parsed YAML data.
-    :raises FileNotFoundError: If file doesn't exist.
-    :raises ValueError: If YAML parsing fails.
-    """
+    """Load and parse YAML file."""
     filepath = Path(filepath)
     if not filepath.exists():
         raise FileNotFoundError(f"File not found: {filepath}")
@@ -51,25 +45,7 @@ def validate_config_fields(
     required_fields: List[Union[str, tuple]],
     config_name: str = "Configuration"
 ) -> None:
-    """Validate that required fields exist in configuration.
-
-    :param config: Configuration dictionary to validate.
-    :param required_fields: List of required field paths. Can be:
-        - str: Simple key like "model_id"
-        - tuple: Nested path like ("langextract", "model", "model_id")
-    :param config_name: Name of configuration for error messages.
-    :raises ValueError: If any required field is missing.
-
-    Example:
-        validate_config_fields(
-            config,
-            [
-                ("langextract", "model", "model_id"),
-                ("langextract", "entity_mappings"),
-                "supported_entities"
-            ]
-        )
-    """
+    """Validate required fields exist in config."""
     for field in required_fields:
         if isinstance(field, str):
             if not config.get(field):

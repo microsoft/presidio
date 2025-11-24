@@ -91,16 +91,7 @@ def convert_langextract_to_presidio_results(
     recognizer_name: str,
     alignment_scores: Optional[Dict[str, float]] = None
 ) -> List[RecognizerResult]:
-    """Convert LangExtract extraction result to Presidio RecognizerResult list.
-
-    :param langextract_result: LangExtract extraction result object.
-    :param entity_mappings: Mapping from LangExtract classes to Presidio entities.
-    :param supported_entities: List of supported entity types.
-    :param enable_generic_consolidation: Whether to consolidate unknown entities.
-    :param recognizer_name: Name of the recognizer for explanation.
-    :param alignment_scores: Custom alignment score mappings.
-    :return: List of RecognizerResult objects.
-    """
+    """Convert LangExtract results to Presidio format."""
     results = []
     if not langextract_result or not langextract_result.extractions:
         return results

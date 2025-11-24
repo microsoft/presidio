@@ -21,13 +21,7 @@ def load_prompt_file(prompt_file: str, conf_subdir: str = "conf") -> str:
 
 
 def render_jinja_template(template_str: str, **kwargs) -> str:
-    """Render Jinja2 template with provided variables.
-
-    :param template_str: Jinja2 template string.
-    :param kwargs: Variables to render in the template.
-    :return: Rendered template string.
-    :raises ImportError: If Jinja2 is not installed.
-    """
+    """Render Jinja2 template."""
     try:
         from jinja2 import Template
     except ImportError:
