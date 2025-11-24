@@ -148,42 +148,21 @@ jobs:
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest --cov=. --cov-report=xml --cov-report=term --cov-report=json -vv --tb=short
+          poetry run pytest --cov=. --cov-report=term --cov-report=json -vv --tb=short
+          
+          # Extract coverage and add to job summary
+          pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.1f}\")")
+          echo "### 📊 ${{ matrix.component.name }}: ${pct}%" >> $GITHUB_STEP_SUMMARY
+          
+          # Save for PR comment
+          echo "${pct}" > coverage-pct.txt
 
-      - name: Generate coverage summary
-        if: matrix.python-version == '3.12'
-        working-directory: ${{ matrix.component.path }}
-        run: |
-          coverage_pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.2f}\")")
-          
-          # Determine badge
-          if (( $(echo "$coverage_pct >= 85" | bc -l) )); then
-            badge="🟢"
-            status="Excellent"
-          elif (( $(echo "$coverage_pct >= 70" | bc -l) )); then
-            badge="🟡"
-            status="Good"
-          else
-            badge="🔴"
-            status="Needs Improvement"
-          fi
-          
-          # Write to job summary
-          echo "## Coverage: ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**${coverage_pct}%** ${badge} ${status}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # Save coverage data to file for PR comment
-          mkdir -p /tmp/coverage-results
-          echo "${{ matrix.component.path }}|${coverage_pct}|${badge}|${status}" >> /tmp/coverage-results/coverage-data.txt
-
-      - name: Upload coverage summary
+      - name: Upload coverage percentage
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-summary-${{ matrix.component.path }}
-          path: /tmp/coverage-results/coverage-data.txt
+          name: coverage-${{ matrix.component.path }}
+          path: ${{ matrix.component.path }}/coverage-pct.txt
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
@@ -192,43 +171,30 @@ jobs:
           python -m build --wheel
 
   coverage-report:
-    name: Combined Coverage Report
+    name: Coverage Report
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'pull_request'
     permissions:
       pull-requests: write
     steps:
-      - name: Download all coverage summaries
+      - name: Download coverage data
         uses: actions/download-artifact@v4
         with:
-          pattern: coverage-summary-*
-          path: coverage-summaries
+          pattern: coverage-*
 
-      - name: Generate combined coverage report
-        run: |
-          echo "# 📊 Coverage Report" > coverage-comment.md
-          echo "" >> coverage-comment.md
-          echo "| Component | Coverage | Status |" >> coverage-comment.md
-          echo "|-----------|----------|--------|" >> coverage-comment.md
-          
-          # Combine all coverage data files
-          for file in coverage-summaries/*/coverage-data.txt; do
-            if [ -f "$file" ]; then
-              while IFS='|' read -r component pct badge status; do
-                echo "| ${component} | ${pct}% | ${badge} ${status} |" >> coverage-comment.md
-              done < "$file"
-            fi
-          done
-          
-          echo "" >> coverage-comment.md
-          echo "**Thresholds:** 🟢 Excellent (≥85%) · 🟡 Good (≥70%) · 🔴 Needs Improvement (<70%)" >> coverage-comment.md
-
-      - name: Comment PR
+      - name: Post coverage comment
         uses: thollander/actions-comment-pull-request@v3
         with:
-          filePath: coverage-comment.md
-          comment_tag: coverage-report
+          message: |
+            ## 📊 Coverage Report
+            
+            | Component | Coverage |
+            |-----------|----------|
+            $(for dir in coverage-*/; do comp=$(basename "$dir" | sed 's/coverage-//'); pct=$(cat "$dir/coverage-pct.txt"); printf "| %s | %.1f%% |\n" "$comp" "$pct"; done)
+            
+            *Threshold: 70% minimum*
+          comment_tag: coverage
 
   build-platform-images:
     name: Build ${{ matrix.image }} (${{ matrix.platform }})
