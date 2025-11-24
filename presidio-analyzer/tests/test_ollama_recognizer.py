@@ -48,9 +48,8 @@ class TestOllamaLangExtractRecognizerInitialization:
     def test_when_langextract_not_installed_then_raises_import_error(self):
         """Test that ImportError is raised when langextract is not installed."""
         with patch(
-            'presidio_analyzer.predefined_recognizers.third_party.'
-            'langextract_recognizer.LANGEXTRACT_AVAILABLE',
-            False
+            'presidio_analyzer.predefined_recognizers.third_party.langextract_recognizer.get_langextract_module',
+            side_effect=ImportError("LangExtract is not installed")
         ):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             with pytest.raises(ImportError, match="LangExtract is not installed"):
@@ -73,8 +72,8 @@ class TestOllamaLangExtractRecognizerInitialization:
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
 
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
@@ -97,10 +96,10 @@ class TestOllamaLangExtractRecognizerInitialization:
 
     def test_when_config_file_missing_then_raises_file_not_found_error(self):
         """Test FileNotFoundError when config file doesn't exist."""
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(FileNotFoundError, match="Configuration file not found"):
+            with pytest.raises(FileNotFoundError, match="File not found"):
                 OllamaLangExtractRecognizer(config_path="/nonexistent/path.yaml")
 
     def test_when_model_section_missing_then_raises_value_error(self, tmp_path):
@@ -126,10 +125,10 @@ class TestOllamaLangExtractRecognizerInitialization:
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
         
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(ValueError, match="Configuration 'langextract' must contain 'model' section"):
+            with pytest.raises(ValueError, match="Configuration must contain 'langextract.model'"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
     def test_when_model_id_missing_then_raises_value_error(self, tmp_path):
@@ -158,10 +157,10 @@ class TestOllamaLangExtractRecognizerInitialization:
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
         
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(ValueError, match="must contain 'model_id'"):
+            with pytest.raises(ValueError, match="Configuration must contain 'langextract.model.model_id'"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
     def test_when_model_url_missing_then_raises_value_error(self, tmp_path):
@@ -190,10 +189,10 @@ class TestOllamaLangExtractRecognizerInitialization:
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
         
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(ValueError, match="must contain 'model_url'"):
+            with pytest.raises(ValueError, match="Ollama model configuration must contain 'model_url'"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
 
@@ -222,8 +221,8 @@ class TestOllamaLangExtractRecognizerAnalyze:
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
 
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             return OllamaLangExtractRecognizer(config_path=str(config_file))
 
@@ -410,8 +409,8 @@ class TestOllamaLangExtractRecognizerAnalyze:
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
 
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
