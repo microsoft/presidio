@@ -148,7 +148,7 @@ jobs:
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest --cov=. --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
+          poetry run pytest --cov=. --cov-config=pyproject.toml --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
 
       - name: Comment PR with Coverage
         if: github.event_name == 'pull_request' && matrix.python-version == '3.12'
