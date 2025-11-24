@@ -148,14 +148,42 @@ jobs:
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest --cov=. --cov-report=xml --cov-report=term --cov-report=html -vv --tb=short
+          poetry run pytest --cov=. --cov-report=xml --cov-report=term --cov-report=json -vv --tb=short
 
-      - name: Upload coverage data
+      - name: Generate coverage summary
+        if: matrix.python-version == '3.12'
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          coverage_pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.2f}\")")
+          
+          # Determine badge
+          if (( $(echo "$coverage_pct >= 85" | bc -l) )); then
+            badge="🟢"
+            status="Excellent"
+          elif (( $(echo "$coverage_pct >= 70" | bc -l) )); then
+            badge="🟡"
+            status="Good"
+          else
+            badge="🔴"
+            status="Needs Improvement"
+          fi
+          
+          # Write to job summary
+          echo "## Coverage: ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**${coverage_pct}%** ${badge} ${status}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Save coverage data to file for PR comment
+          mkdir -p /tmp/coverage-results
+          echo "${{ matrix.component.path }}|${coverage_pct}|${badge}|${status}" >> /tmp/coverage-results/coverage-data.txt
+
+      - name: Upload coverage summary
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.component.path }}
-          path: ${{ matrix.component.path }}/coverage.xml
+          name: coverage-summary-${{ matrix.component.path }}
+          path: /tmp/coverage-results/coverage-data.txt
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
@@ -170,24 +198,12 @@ jobs:
     if: github.event_name == 'pull_request'
     permissions:
       pull-requests: write
-      contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Download all coverage artifacts
+      - name: Download all coverage summaries
         uses: actions/download-artifact@v4
         with:
-          pattern: coverage-*
-          merge-multiple: true
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-
-      - name: Install coverage tools
-        run: pip install coverage
+          pattern: coverage-summary-*
+          path: coverage-summaries
 
       - name: Generate combined coverage report
         run: |
@@ -196,24 +212,12 @@ jobs:
           echo "| Component | Coverage | Status |" >> coverage-comment.md
           echo "|-----------|----------|--------|" >> coverage-comment.md
           
-          for component in presidio-analyzer presidio-anonymizer presidio-cli presidio-image-redactor presidio-structured; do
-            if [ -f "${component}/coverage.xml" ]; then
-              # Extract coverage percentage from coverage.xml
-              coverage_pct=$(python -c "import xml.etree.ElementTree as ET; tree = ET.parse('${component}/coverage.xml'); root = tree.getroot(); print(f\"{float(root.attrib['line-rate']) * 100:.2f}\")")
-              
-              # Determine status badge
-              if (( $(echo "$coverage_pct >= 85" | bc -l) )); then
-                badge="🟢"
-                status="Excellent"
-              elif (( $(echo "$coverage_pct >= 70" | bc -l) )); then
-                badge="🟡"
-                status="Good"
-              else
-                badge="🔴"
-                status="Needs Improvement"
-              fi
-              
-              echo "| ${component} | ${coverage_pct}% | ${badge} ${status} |" >> coverage-comment.md
+          # Combine all coverage data files
+          for file in coverage-summaries/*/coverage-data.txt; do
+            if [ -f "$file" ]; then
+              while IFS='|' read -r component pct badge status; do
+                echo "| ${component} | ${pct}% | ${badge} ${status} |" >> coverage-comment.md
+              done < "$file"
             fi
           done
           
