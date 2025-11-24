@@ -147,26 +147,86 @@ jobs:
       - name: Run tests with coverage
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
-        env:
-          COVERAGE_RCFILE: ${{ github.workspace }}/${{ matrix.component.path }}/pyproject.toml
         run: |
-          poetry run pytest --cov=. --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
+          poetry run pytest --cov=. --cov-report=term --cov-report=json --cov-report=xml -vv --tb=short
+          
+          pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.1f}\")")
+          
+          diff_pct="N/A"
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }} --depth=1 || true
+            poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --json-report diff-coverage.json || true
+            if [ -f diff-coverage.json ]; then
+              diff_pct=$(python -c "import json; data = json.load(open('diff-coverage.json')); print(f\"{data.get('total_percent_covered', 'N/A')}\")" 2>/dev/null || echo "N/A")
+            fi
+          fi
+          
+          echo "### 📊 ${{ matrix.component.name }}: ${pct}% total, ${diff_pct}% diff" >> $GITHUB_STEP_SUMMARY
+          echo "${pct}|${diff_pct}" > coverage-pct.txt
 
-      - name: Comment PR with Coverage
-        if: github.event_name == 'pull_request' && matrix.python-version == '3.12'
-        uses: py-cov-action/python-coverage-comment-action@v3.39
+      - name: Upload coverage percentage
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
         with:
-          GITHUB_TOKEN: ${{ github.token }}
-          COVERAGE_PATH: ${{ matrix.component.path }}
-          MINIMUM_GREEN: 85
-          MINIMUM_ORANGE: 70
-          SUBPROJECT_ID: ${{ matrix.component.path }}
+          name: coverage-${{ matrix.component.path }}
+          path: ${{ matrix.component.path }}/coverage-pct.txt
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
         run: |
           pip install build
           python -m build --wheel
+
+  coverage-report:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Download coverage data
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+
+      - name: Build coverage message
+        id: build-message
+        run: |
+          {
+            echo "message<<EOF"
+            echo "## 📊 Coverage Report"
+            echo
+            echo "| Component | Total Coverage | PR Diff Coverage |"
+            echo "|-----------|----------------|------------------|"
+
+            for dir in coverage-*/; do
+              comp="${dir#coverage-}"
+              comp="${comp%/}"
+              IFS='|' read -r total_pct diff_pct < "$dir/coverage-pct.txt"
+              
+              if [ "$diff_pct" = "N/A" ]; then
+                diff_display="—"
+              else
+                diff_display="${diff_pct}%"
+              fi
+              
+              printf '| %s | %s%% | %s |\n' "$comp" "$total_pct" "$diff_display"
+            done
+
+            echo
+            echo "**Total Coverage**: All code in component"
+            echo "**PR Diff Coverage**: Only lines changed in this PR"
+            echo
+            echo "*Threshold: 70% minimum*"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post coverage comment
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: ${{ steps.build-message.outputs.message }}
+          comment_tag: coverage
 
   build-platform-images:
     name: Build ${{ matrix.image }} (${{ matrix.platform }})
