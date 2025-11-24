@@ -28,6 +28,8 @@ class AnalyzerEngine:
     Entry point for Presidio Analyzer.
 
     Orchestrating the detection of PII entities and all related logic.
+    
+    Test coverage trigger comment.
 
     :param registry: instance of type RecognizerRegistry
     :param nlp_engine: instance of type NlpEngine
