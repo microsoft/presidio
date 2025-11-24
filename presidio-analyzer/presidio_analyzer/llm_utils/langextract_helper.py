@@ -2,7 +2,7 @@
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 if TYPE_CHECKING:
-    import langextract as lx
+    pass
 
 
 # Default alignment score mappings for LangExtract extractions
@@ -29,7 +29,7 @@ def get_langextract_module():
 def extract_lm_config(config: Dict) -> Dict:
     """Extract LM recognizer configuration with defaults."""
     lm_config_section = config.get("lm_recognizer", {})
-    
+
     return {
         "supported_entities": lm_config_section.get("supported_entities"),
         "min_score": lm_config_section.get("min_score", 0.5),
@@ -41,7 +41,7 @@ def extract_lm_config(config: Dict) -> Dict:
 
 
 def get_supported_entities(
-    lm_config: Dict, 
+    lm_config: Dict,
     langextract_config: Dict
 ) -> Optional[List[str]]:
     """Get supported entities from either config section."""
@@ -67,7 +67,7 @@ def calculate_extraction_confidence(
     :return: Confidence score between 0 and 1.
     """
     default_score = 0.85
-    
+
     if alignment_scores is None:
         alignment_scores = DEFAULT_ALIGNMENT_SCORES
 

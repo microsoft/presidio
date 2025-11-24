@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import List
 
 from presidio_analyzer import AnalysisExplanation, RecognizerResult
 from presidio_analyzer.llm_utils import (
@@ -38,18 +38,18 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         get_langextract_module()
 
         full_config = load_yaml_file(config_path)
-        
+
         lm_config = extract_lm_config(full_config)
         langextract_config = full_config.get("langextract", {})
-        
+
         supported_entities = get_supported_entities(lm_config, langextract_config)
-        
+
         if not supported_entities:
             raise ValueError(
                 "Configuration must contain 'supported_entities' in "
                 "'lm_recognizer' or 'langextract'"
             )
-        
+
         validate_config_fields(
             full_config,
             [

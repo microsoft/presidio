@@ -62,7 +62,7 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         Errors are logged with full traceback for debugging.
         """
         lx = get_langextract_module()
-        
+
         try:
             extract_params = {
                 "text_or_documents": text,

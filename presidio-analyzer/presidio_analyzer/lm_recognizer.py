@@ -4,7 +4,6 @@ from typing import List, Optional
 
 from presidio_analyzer import RecognizerResult, RemoteRecognizer
 from presidio_analyzer.llm_utils import (
-    GENERIC_PII_ENTITY,
     consolidate_generic_entities,
     ensure_generic_entity_support,
     filter_results_by_entities,
@@ -133,7 +132,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
     ) -> List[RecognizerResult]:
         """Filter and process RecognizerResult objects from LLM."""
         filtered_results = filter_results_by_labels(results, self.labels_to_ignore)
-        
+
         if self.enable_generic_consolidation:
             filtered_results = consolidate_generic_entities(
                 filtered_results,
@@ -145,13 +144,13 @@ class LMRecognizer(RemoteRecognizer, ABC):
                 filtered_results,
                 self.supported_entities
             )
-        
+
         if requested_entities:
             filtered_results = filter_results_by_entities(
                 filtered_results,
                 requested_entities
             )
-        
+
         filtered_results = validate_result_positions(filtered_results)
         filtered_results = filter_results_by_score(filtered_results, self.min_score)
 
