@@ -148,20 +148,32 @@ jobs:
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest --cov=. --cov-report=term --cov-report=json -vv --tb=short
+          poetry run pytest --cov=. --cov-report=xml --cov-report=term --cov-report=json -vv --tb=short
           
-          # Extract coverage metrics
+          # Extract total coverage
           pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.1f}\")")
           covered=$(python -c "import json; data = json.load(open('coverage.json')); print(data['totals']['covered_lines'])")
           total=$(python -c "import json; data = json.load(open('coverage.json')); print(data['totals']['num_statements'])")
           
-          # Add to job summary
-          echo "### 📊 ${{ matrix.component.name }}: ${pct}% (${covered}/${total} lines)" >> $GITHUB_STEP_SUMMARY
+          # Calculate diff coverage for PRs
+          diff_pct="N/A"
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }} --depth=50
+            diff_output=$(poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --json-report diff-cover.json 2>&1 || true)
+            if [ -f diff-cover.json ]; then
+              diff_pct=$(python -c "import json; data = json.load(open('diff-cover.json')); print(f\"{data.get('total_percent_covered', 'N/A')}\")" 2>/dev/null || echo "N/A")
+            fi
+          fi
           
-          # Save metrics for PR comment
-          echo "${pct}|${covered}|${total}" > coverage-pct.txt
+          # Add to job summary
+          echo "### 📊 ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total**: ${pct}% (${covered}/${total} lines)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Diff**: ${diff_pct}%" >> $GITHUB_STEP_SUMMARY
+          
+          # Save for PR comment
+          echo "${pct}|${covered}|${total}|${diff_pct}" > coverage-pct.txt
 
-      - name: Upload coverage percentage
+      - name: Upload coverage data
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
         with:
@@ -194,19 +206,29 @@ jobs:
             echo "message<<EOF"
             echo "## 📊 Coverage Report"
             echo
-            echo "| Component | Coverage | Lines Covered |"
-            echo "|-----------|----------|---------------|"
+            echo "| Component | Total Coverage | Diff Coverage |"
+            echo "|-----------|----------------|---------------|"
 
             for dir in coverage-*/; do
               comp="${dir#coverage-}"
               comp="${comp%/}"
-              IFS='|' read -r pct covered total < "$dir/coverage-pct.txt"
-              printf '| %s | %s%% | %s/%s |\n' "$comp" "$pct" "$covered" "$total"
+              IFS='|' read -r pct covered total diff_pct < "$dir/coverage-pct.txt"
+              
+              # Format diff coverage
+              if [ "$diff_pct" = "N/A" ]; then
+                diff_display="—"
+              else
+                diff_display="${diff_pct}%"
+              fi
+              
+              printf '| %s | %s%% (%s/%s) | %s |\n' "$comp" "$pct" "$covered" "$total" "$diff_display"
             done
 
             echo
-            echo "*This shows total coverage for each component.*"
-            echo "*Threshold: 70% minimum | Changes: Check test logs for modified files*"
+            echo "**Total Coverage**: All code in component"
+            echo "**Diff Coverage**: Only lines changed in this PR"
+            echo
+            echo "*Threshold: 70% minimum*"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 

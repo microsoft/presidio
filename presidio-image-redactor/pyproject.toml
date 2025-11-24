@@ -47,6 +47,7 @@ pytest-cov = "*"
 pytest-mock = "*"
 python-dotenv = "*"
 pre_commit = "*"
+diff-cover = "*"
 
 [tool.coverage.run]
 relative_files = true
