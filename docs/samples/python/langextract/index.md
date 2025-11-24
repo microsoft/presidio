@@ -6,7 +6,7 @@ Presidio supports language model-based PII/PHI detection for flexible entity rec
 - **PII (Personally Identifiable Information)**: Names, emails, phone numbers, SSN, credit cards, etc.
 - **PHI (Protected Health Information)**: Medical records, health identifiers, etc.
 
-This approach uses [LangExtract](https://github.com/google/langextract) under the hood to integrate with language model providers.
+(The default approach uses [LangExtract](https://github.com/google/langextract) under the hood to integrate with language model providers.)
 
 ## Entity Detection Capabilities
 
@@ -26,7 +26,7 @@ For the default entity mappings and examples, see the [default configuration](ht
 Presidio supports the following language model providers through LangExtract:
 
 1. **Ollama** - Local language model deployment (open-source models like Gemma, Llama, etc.)
-2. **Azure OpenAI** - Cloud-based Azure OpenAI Service (GPT-4o, GPT-4, GPT-3.5-turbo)
+2. **Azure OpenAI** - Cloud-based Azure OpenAI Service (GPT-4o, GPT-4, GPT-3.5-turbo, etc.)
 
 ## Language Model-based Recognizer Implementation
 
@@ -44,9 +44,6 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 ## Using Ollama (Local Models)
 
 ### Prerequisites
-## How to integrate Language Model-based detection into Presidio
-
-### Option 1: Enable in Configuration (Recommended)
 
 1. **Install Presidio with LangExtract support**:
    ```sh
@@ -55,35 +52,30 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 
 2. **Set up Ollama** - Choose one option:
 
-  **Option 1: Docker Compose** (recommended)
+  - **Option 1: Docker Compose** (recommended)
   ```bash
-  # Start Ollama service
   docker compose up -d ollama
-
-  # Pull the language model (required - takes ~1-2 minutes)
   docker exec -it presidio-ollama-1 ollama pull gemma2:2b
   ```
 
-  **Option 2: Manual setup**
+  - **Option 2: Manual setup**
   Follow the [official LangExtract Ollama guide](https://github.com/google/langextract?tab=readme-ov-file#using-local-llms-with-ollama).
 
-  !!! note "Note"
-      The model must be pulled before using the recognizer. The default model is `gemma2:2b` (~1.6GB).
+  > The model must be pulled before using the recognizer. The default model is `gemma2:2b` (~1.6GB).
 
-3. **Configuration** (optional): Create your own `ollama_config.yaml` or use the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/ollama_config.yaml)
+3. **Configuration** (optional): Create your own `ollama_config.yaml` or use the [default configuration](https://github.com/microsoft/presidio/blob/main//presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml)
 
-1. Install with langextract support and set up Ollama (see Prerequisites above):
-   ```sh
-   pip install presidio-analyzer[langextract]
-   ```
+### Usage
 
-2. Enable the recognizer in `default_recognizers.yaml`:
-   ```yaml
-   - name: OllamaLangExtractRecognizer
-     enabled: true  # Change from false to true
-   ```
+**Option 1: Enable in configuration file**
 
-### Option 2: Add Programmatically
+Enable the recognizer in `default_recognizers.yaml`:
+```yaml
+- name: OllamaLangExtractRecognizer
+  enabled: true  # Change from false to true
+```
+
+**Option 2: Add programmatically**
 
 ```python
 from presidio_analyzer import AnalyzerEngine
@@ -95,6 +87,9 @@ analyzer.registry.add_recognizer(OllamaLangExtractRecognizer())
 results = analyzer.analyze(text="My email is john.doe@example.com", language="en")
 ```
 
+!!! note "Note"
+    The recognizer is disabled by default in `default_recognizers.yaml` to avoid requiring Ollama for basic Presidio usage. Enable it when you have Ollama set up and running.
+
 ### Custom Configuration
 
 To use a custom configuration file:
@@ -104,9 +99,6 @@ analyzer.registry.add_recognizer(
     OllamaLangExtractRecognizer(config_path="/path/to/custom_config.yaml")
 )
 ```
-
-!!! note "Note"
-    The recognizer is disabled by default in `default_recognizers.yaml` to avoid requiring Ollama for basic Presidio usage. Enable it when you have Ollama set up and running.
 
 ### Configuration Options
 
@@ -238,7 +230,7 @@ See [Azure Managed Identity documentation](https://learn.microsoft.com/en-us/azu
 
 ### Using Configuration File
 
-Create `azure_openai_config.yaml`:
+You can use the [default configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_azureopenai.yaml) as a reference or create your own custom `langextract_config_azureopenai.yaml`:
 
 ```yaml
 langextract:
@@ -274,7 +266,7 @@ azure_openai:
   max_tokens: 2000
 ```
 
-Load configuration:
+Load your custom configuration:
 
 ```python
 from presidio_analyzer import AnalyzerEngine
@@ -282,18 +274,19 @@ from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextra
 
 # Load from configuration file
 azure_openai = AzureOpenAILangExtractRecognizer(
-    config_file_path="azure_openai_config.yaml"
+    config_file_path="langextract_config_azureopenai.yaml"
 )
 
 analyzer = AnalyzerEngine()
 analyzer.registry.add_recognizer(azure_openai)
 ```
 
-See the [default configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/azure_openai_config.yaml) for all options.
+!!! note "Using the Default Configuration"
+    If you don't provide a `config_file_path`, the recognizer automatically uses the [default configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_azureopenai.yaml). You'll still need to provide authentication credentials (API key or managed identity) either through parameters or environment variables.
 
 ### Configuration Options
 
-Customize the recognizer in the `azure_openai_config.yaml` file:
+Customize the recognizer in the `langextract_config_azureopenai.yaml` file:
 
 - `model_id`: Azure OpenAI deployment name (e.g., "gpt-4o", "gpt-4", "gpt-35-turbo")
 - `endpoint`: Azure OpenAI resource endpoint URL

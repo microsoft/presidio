@@ -42,7 +42,7 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
     """
 
     DEFAULT_CONFIG_PATH = (
-        Path(__file__).parent.parent.parent / "conf" / "azure_openai_config.yaml"
+        Path(__file__).parent.parent.parent / "conf" / "langextract_config_azureopenai.yaml"
     )
 
     def __init__(

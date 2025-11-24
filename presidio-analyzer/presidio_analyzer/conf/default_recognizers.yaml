@@ -206,3 +206,10 @@ recognizers:
     type: predefined
     enabled: false
     config_path: presidio_analyzer/conf/langextract_config_ollama.yaml
+
+  - name: AzureOpenAILangExtractRecognizer
+    supported_languages:
+      - en
+    type: predefined
+    enabled: false
+    config_path: presidio_analyzer/conf/langextract_config_azureopenai.yaml
