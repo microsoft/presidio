@@ -139,6 +139,7 @@ jobs:
           done
 
       - name: Run unit tests
+        if: matrix.python-version != '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
           poetry run pytest -vv --tb=short
@@ -147,21 +148,10 @@ jobs:
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest --cov=. --cov-report=xml --cov-report=term --cov-report=html -vv --tb=short
-
-      - name: Check if component files changed
-        if: github.event_name == 'pull_request' && matrix.python-version == '3.12'
-        id: changed
-        run: |
-          git fetch origin ${{ github.base_ref }} --depth=1 || true
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "^${{ matrix.component.path }}/"; then
-            echo "files_changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "files_changed=false" >> "$GITHUB_OUTPUT"
-          fi
+          poetry run pytest --cov=. --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
 
       - name: Comment PR with Coverage
-        if: github.event_name == 'pull_request' && matrix.python-version == '3.12' && steps.changed.outputs.files_changed == 'true'
+        if: github.event_name == 'pull_request' && matrix.python-version == '3.12'
         uses: py-cov-action/python-coverage-comment-action@v3.39
         with:
           GITHUB_TOKEN: ${{ github.token }}
