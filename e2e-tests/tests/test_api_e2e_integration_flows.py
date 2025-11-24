@@ -3,10 +3,8 @@ from pathlib import Path
 
 import pytest
 
-
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
-
 
 
 def analyze_and_assert(analyzer_request, expected_response):
@@ -32,10 +30,10 @@ def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
+        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85,
         "analysis_explanation": null
         },
-        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, 
+        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999,
         "analysis_explanation": null
         }
     ]
@@ -162,10 +160,10 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
+        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85,
         "analysis_explanation": null
         },
-        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, 
+        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999,
         "analysis_explanation": null
         }
     ]
@@ -187,7 +185,6 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
 @pytest.mark.integration
 def test_demo_website_text_returns_correct_anonymized_version():
     # Analyzer request info
-
     dir_path = Path(__file__).resolve().parent.parent
     with open(Path(dir_path, "resources", "demo.txt"), encoding="utf-8") as f:
         text_into_rows = f.read().split("\n")
@@ -204,20 +201,16 @@ def test_demo_website_text_returns_correct_anonymized_version():
     }
 
     # Call analyzer
-
     analyzer_status_code, analyzer_content = analyze(json.dumps(analyzer_request))
-
     analyzer_data = json.loads(analyzer_content)
 
     # Anonymizer request info
-
     anonymizer_request = {
         "text": analyzer_request["text"],
         "analyzer_results": analyzer_data,
     }
 
     # Call anonymizer
-
     anonymizer_status_code, anonymizer_response = anonymize(
         json.dumps(anonymizer_request)
     )
@@ -226,7 +219,6 @@ def test_demo_website_text_returns_correct_anonymized_version():
     actual_anonymized_text = anonymizer_response_dict["text"]
 
     # Expected output:
-
     with open(
         Path(dir_path, "resources", "demo_anonymized.txt"), encoding="utf-8"
     ) as f_exp:
@@ -236,5 +228,4 @@ def test_demo_website_text_returns_correct_anonymized_version():
     expected_anonymized_text = " ".join(text_into_rows)
 
     # Assert equal
-
     assert expected_anonymized_text == actual_anonymized_text

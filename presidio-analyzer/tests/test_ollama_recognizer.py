@@ -1,68 +1,91 @@
-"""Tests for LangExtract recognizer hierarchy using mocks.
-
-Tests the hierarchy: LMRecognizer -> LangExtractRecognizer -> OllamaLangExtractRecognizer
-
-These tests use mocks to avoid requiring Ollama or actual LLM calls.
-"""
+"""Tests for LangExtract recognizer hierarchy using mocks."""
 import pytest
-from unittest.mock import Mock, patch
+import urllib.error
+from unittest.mock import Mock, patch, MagicMock
+
+
+def create_test_config(
+    supported_entities=None,
+    entity_mappings=None,
+    model_id="gemma2:2b",
+    model_url="http://localhost:11434",
+    temperature=0.0,
+    min_score=0.5,
+    labels_to_ignore=None,
+    enable_generic_consolidation=True
+):
+    """Create test config."""
+    if supported_entities is None:
+        supported_entities = ["PERSON", "EMAIL_ADDRESS"]
+    if entity_mappings is None:
+        entity_mappings = {"person": "PERSON", "email": "EMAIL_ADDRESS"}
+    if labels_to_ignore is None:
+        labels_to_ignore = []
+    
+    return {
+        "lm_recognizer": {
+            "supported_entities": supported_entities,
+            "labels_to_ignore": labels_to_ignore,
+            "enable_generic_consolidation": enable_generic_consolidation,
+            "min_score": min_score,
+        },
+        "langextract": {
+            "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
+            "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+            "model": {
+                "model_id": model_id,
+                "model_url": model_url,
+                "temperature": temperature,
+            },
+            "entity_mappings": entity_mappings,
+        }
+    }
 
 
 class TestOllamaLangExtractRecognizerInitialization:
     """Test OllamaLangExtractRecognizer initialization and configuration loading."""
 
-    def test_import_error_when_langextract_not_installed(self):
+    def test_when_langextract_not_installed_then_raises_import_error(self):
         """Test that ImportError is raised when langextract is not installed."""
         with patch(
-            'presidio_analyzer.predefined_recognizers.third_party.'
-            'langextract_recognizer.LANGEXTRACT_AVAILABLE',
-            False
+            'presidio_analyzer.predefined_recognizers.third_party.langextract_recognizer.get_langextract_module',
+            side_effect=ImportError("LangExtract is not installed")
         ):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             with pytest.raises(ImportError, match="LangExtract is not installed"):
                 OllamaLangExtractRecognizer()
 
-    def test_initialization_with_mocked_ollama(self, tmp_path):
-        """Test OllamaLangExtractRecognizer initialization with mocked Ollama server."""
+    def test_when_initialized_with_mocked_ollama_then_succeeds(self, tmp_path):
+        """Test OllamaLangExtractRecognizer initialization."""
         import yaml
         
-        config = {
-            "langextract": {
-                "supported_entities": ["PERSON", "EMAIL_ADDRESS"],
-                "entity_mappings": {"person": "PERSON", "email": "EMAIL_ADDRESS"},
-                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
-                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
-                "min_score": 0.5,
-            },
-            "ollama": {
-                "model_id": "gemma2:2b",
-                "model_url": "http://localhost:11434",
-                "temperature": 0.0,
-            }
-        }
+        config = create_test_config(
+            supported_entities=["PERSON", "EMAIL_ADDRESS"],
+            entity_mappings={"person": "PERSON", "email": "EMAIL_ADDRESS"},
+            model_id="gemma2:2b",
+            model_url="http://localhost:11434",
+            temperature=0.0,
+            min_score=0.5
+        )
 
         config_file = tmp_path / "test_config.yaml"
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
 
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'ollama_langextract_recognizer.OllamaLangExtractRecognizer._check_ollama_server',
-                   return_value=True), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'ollama_langextract_recognizer.OllamaLangExtractRecognizer._check_model_available',
-                   return_value=True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
             
             # Verify initialization
+            assert recognizer.name == "Ollama LangExtract PII"
             assert recognizer.model_id == "gemma2:2b"
             assert recognizer.model_url == "http://localhost:11434"
-            assert len(recognizer.supported_entities) == 2
+            assert len(recognizer.supported_entities) == 3  # PERSON, EMAIL_ADDRESS, GENERIC_PII_ENTITY
             assert "PERSON" in recognizer.supported_entities
             assert "EMAIL_ADDRESS" in recognizer.supported_entities
+            assert "GENERIC_PII_ENTITY" in recognizer.supported_entities
             
             # Verify inheritance hierarchy
             from presidio_analyzer.lm_recognizer import LMRecognizer
@@ -71,73 +94,105 @@ class TestOllamaLangExtractRecognizerInitialization:
             assert isinstance(recognizer, LangExtractRecognizer)
             assert isinstance(recognizer, LMRecognizer)
 
-    def test_ollama_server_validation_failure(self, tmp_path):
-        """Test that initialization fails when Ollama server is not available."""
+    def test_when_config_file_missing_then_raises_file_not_found_error(self):
+        """Test FileNotFoundError when config file doesn't exist."""
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(FileNotFoundError, match="File not found"):
+                OllamaLangExtractRecognizer(config_path="/nonexistent/path.yaml")
+
+    def test_when_model_section_missing_then_raises_value_error(self, tmp_path):
+        """Test ValueError when config missing 'langextract.model' section."""
         import yaml
         
         config = {
-            "langextract": {
+            "lm_recognizer": {
                 "supported_entities": ["PERSON"],
-                "entity_mappings": {"person": "PERSON"},
-                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
-                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "labels_to_ignore": [],
+                "enable_generic_consolidation": True,
                 "min_score": 0.5,
             },
-            "ollama": {
-                "model_id": "gemma2:2b",
-                "model_url": "http://localhost:11434",
-                "temperature": 0.0,
+            "langextract": {
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                # Missing 'model' section
             }
         }
-
-        config_file = tmp_path / "test_config.yaml"
+        
+        config_file = tmp_path / "bad_config.yaml"
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
-
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'ollama_langextract_recognizer.OllamaLangExtractRecognizer._check_ollama_server',
-                   return_value=False):
-            
+        
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(ConnectionError, match="Ollama server not reachable"):
+            with pytest.raises(ValueError, match="Configuration must contain 'langextract.model'"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_ollama_model_validation_failure(self, tmp_path):
-        """Test that initialization fails when Ollama model is not available."""
+    def test_when_model_id_missing_then_raises_value_error(self, tmp_path):
+        """Test ValueError when model_id is missing."""
         import yaml
         
         config = {
-            "langextract": {
+            "lm_recognizer": {
                 "supported_entities": ["PERSON"],
-                "entity_mappings": {"person": "PERSON"},
-                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
-                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "labels_to_ignore": [],
+                "enable_generic_consolidation": True,
                 "min_score": 0.5,
             },
-            "ollama": {
-                "model_id": "gemma2:2b",
-                "model_url": "http://localhost:11434",
-                "temperature": 0.0,
+            "langextract": {
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                "model": {
+                    "model_url": "http://localhost:11434"
+                    # Missing model_id
+                }
             }
         }
-
-        config_file = tmp_path / "test_config.yaml"
+        
+        config_file = tmp_path / "bad_config.yaml"
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
-
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'ollama_langextract_recognizer.OllamaLangExtractRecognizer._check_ollama_server',
-                   return_value=True), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'ollama_langextract_recognizer.OllamaLangExtractRecognizer._check_model_available',
-                   return_value=False):
-            
+        
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(RuntimeError, match="Model .* not found"):
+            with pytest.raises(ValueError, match="Configuration must contain 'langextract.model.model_id'"):
+                OllamaLangExtractRecognizer(config_path=str(config_file))
+
+    def test_when_model_url_missing_then_raises_value_error(self, tmp_path):
+        """Test ValueError when model_url is missing."""
+        import yaml
+        
+        config = {
+            "lm_recognizer": {
+                "supported_entities": ["PERSON"],
+                "labels_to_ignore": [],
+                "enable_generic_consolidation": True,
+                "min_score": 0.5,
+            },
+            "langextract": {
+                "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                "model": {
+                    "model_id": "gemma2:2b"
+                    # Missing model_url
+                }
+            }
+        }
+        
+        config_file = tmp_path / "bad_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+        
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            with pytest.raises(ValueError, match="Ollama model configuration must contain 'model_url'"):
                 OllamaLangExtractRecognizer(config_path=str(config_file))
 
 
@@ -149,41 +204,29 @@ class TestOllamaLangExtractRecognizerAnalyze:
         """Fixture to create a mocked OllamaLangExtractRecognizer."""
         import yaml
         
-        config = {
-            "langextract": {
-                "supported_entities": ["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER"],
-                "entity_mappings": {
-                    "person": "PERSON",
-                    "email": "EMAIL_ADDRESS",
-                    "phone": "PHONE_NUMBER"
-                },
-                "prompt_file": "langextract_prompts/default_pii_phi_prompt.txt",
-                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
-                "min_score": 0.5,
+        config = create_test_config(
+            supported_entities=["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER"],
+            entity_mappings={
+                "person": "PERSON",
+                "email": "EMAIL_ADDRESS",
+                "phone": "PHONE_NUMBER"
             },
-            "ollama": {
-                "model_id": "gemma2:2b",
-                "model_url": "http://localhost:11434",
-                "temperature": 0.0,
-            }
-        }
+            model_id="gemma2:2b",
+            model_url="http://localhost:11434",
+            temperature=0.0,
+            min_score=0.5
+        )
 
         config_file = tmp_path / "test_config.yaml"
         with open(config_file, 'w') as f:
             yaml.dump(config, f)
 
-        with patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'langextract_recognizer.LANGEXTRACT_AVAILABLE', True), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'ollama_langextract_recognizer.OllamaLangExtractRecognizer._check_ollama_server',
-                   return_value=True), \
-             patch('presidio_analyzer.predefined_recognizers.third_party.'
-                   'ollama_langextract_recognizer.OllamaLangExtractRecognizer._check_model_available',
-                   return_value=True):
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
             from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
             return OllamaLangExtractRecognizer(config_path=str(config_file))
 
-    def test_analyze_with_person_entity(self, mock_recognizer):
+    def test_when_text_contains_person_then_detects_entity(self, mock_recognizer):
         """Test analysis detecting a person entity with mocked LangExtract."""
         text = "My name is John Doe"
 
@@ -209,7 +252,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         assert results[0].end == 19
         assert results[0].score == 0.95  # MATCH_EXACT score
 
-    def test_analyze_with_multiple_entities(self, mock_recognizer):
+    def test_when_text_contains_multiple_entities_then_detects_all(self, mock_recognizer):
         """Test analysis detecting multiple entity types."""
         text = "Contact John Doe at john@example.com or 555-1234"
 
@@ -247,7 +290,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         assert results[2].entity_type == "PHONE_NUMBER"
         assert results[2].score == 0.80  # MATCH_FUZZY score
 
-    def test_analyze_with_empty_text(self, mock_recognizer):
+    def test_when_text_is_empty_then_returns_no_results(self, mock_recognizer):
         """Test analysis with empty text returns no results."""
         results = mock_recognizer.analyze("")
         assert len(results) == 0
@@ -255,7 +298,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         results = mock_recognizer.analyze("   ")
         assert len(results) == 0
 
-    def test_analyze_with_no_matching_entities(self, mock_recognizer):
+    def test_when_no_entities_match_then_returns_empty_list(self, mock_recognizer):
         """Test analysis when requested entities don't match supported entities."""
         text = "Some text here"
         
@@ -263,36 +306,38 @@ class TestOllamaLangExtractRecognizerAnalyze:
         results = mock_recognizer.analyze(text, entities=["CREDIT_CARD"])
         assert len(results) == 0
 
-    def test_analyze_filters_by_requested_entities(self, mock_recognizer):
-        """Test that analysis only returns requested entity types."""
+    def test_when_entities_requested_then_filters_results(self, mock_recognizer):
+        """Test that analyze filters results based on requested entities."""
+        from presidio_analyzer import RecognizerResult
+        
         text = "Contact John Doe at john@example.com"
 
-        # Create mock extractions for both PERSON and EMAIL
-        person_extraction = Mock()
-        person_extraction.extraction_class = "person"
-        person_extraction.extraction_text = "John Doe"
-        person_extraction.char_interval = Mock(start_pos=8, end_pos=16)
-        person_extraction.alignment_status = "MATCH_EXACT"
-        person_extraction.attributes = {}
+        # Create RecognizerResult objects (what _call_llm returns)
+        person_result = RecognizerResult(
+            entity_type="PERSON",
+            start=8,
+            end=16,
+            score=0.95
+        )
+        
+        email_result = RecognizerResult(
+            entity_type="EMAIL_ADDRESS",
+            start=20,
+            end=36,
+            score=0.95
+        )
 
-        email_extraction = Mock()
-        email_extraction.extraction_class = "email"
-        email_extraction.extraction_text = "john@example.com"
-        email_extraction.char_interval = Mock(start_pos=20, end_pos=36)
-        email_extraction.alignment_status = "MATCH_EXACT"
-        email_extraction.attributes = {}
-
-        mock_result = Mock()
-        mock_result.extractions = [person_extraction, email_extraction]
-
-        with patch('langextract.extract', return_value=mock_result):
-            # Request only PERSON entities
+        with patch.object(mock_recognizer, '_call_llm', return_value=[person_result, email_result]):
+            # Request only PERSON entities - EMAIL_ADDRESS should be filtered out by analyze()
             results = mock_recognizer.analyze(text, entities=["PERSON"])
 
+        # Should only return PERSON, EMAIL_ADDRESS filtered by analyze() method
         assert len(results) == 1
         assert results[0].entity_type == "PERSON"
+        assert results[0].start == 8
+        assert results[0].end == 16
 
-    def test_analyze_respects_min_score(self, mock_recognizer):
+    def test_when_min_score_set_then_filters_low_confidence_results(self, mock_recognizer):
         """Test that results below min_score are filtered out."""
         # Set min_score to 0.5 (default in config)
         text = "Some text"
@@ -313,7 +358,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         # NOT_ALIGNED has score 0.60, which is above min_score 0.5
         assert len(results) == 1
 
-    def test_analyze_handles_langextract_exception(self, mock_recognizer):
+    def test_when_langextract_raises_exception_then_returns_empty_list(self, mock_recognizer):
         """Test that exceptions from LangExtract are handled gracefully."""
         text = "Some text"
 
@@ -323,8 +368,10 @@ class TestOllamaLangExtractRecognizerAnalyze:
         # Should return empty list on exception
         assert len(results) == 0
 
-    def test_analyze_skips_unknown_entity_mappings(self, mock_recognizer):
-        """Test that extractions with unknown entity classes are skipped."""
+    def test_when_entity_has_no_mapping_and_consolidation_enabled_then_creates_generic(
+        self, mock_recognizer
+    ):
+        """Test that extractions with unknown entity classes become GENERIC_PII_ENTITY."""
         text = "Some text"
 
         mock_extraction = Mock()
@@ -340,5 +387,48 @@ class TestOllamaLangExtractRecognizerAnalyze:
         with patch('langextract.extract', return_value=mock_result):
             results = mock_recognizer.analyze(text)
 
-        # Unknown entity type should be skipped
+        # Unknown entity type should be consolidated to GENERIC_PII_ENTITY
+        assert len(results) == 1
+        assert results[0].entity_type == "GENERIC_PII_ENTITY"
+        assert results[0].recognition_metadata["original_entity_type"] == "UNKNOWN_TYPE"
+        assert results[0].start == 0
+        assert results[0].end == 9
+
+    def test_when_entity_has_no_mapping_and_consolidation_disabled_then_skips(self, tmp_path):
+        """Test that unknown entities are skipped when consolidation is disabled."""
+        import yaml
+        
+        # Create config with consolidation disabled
+        config = create_test_config(
+            supported_entities=["PERSON", "EMAIL_ADDRESS"],
+            entity_mappings={"person": "PERSON", "email": "EMAIL_ADDRESS"},
+            enable_generic_consolidation=False
+        )
+
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.get_langextract_module',
+                   return_value=Mock()):
+            
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+
+        text = "Some text"
+
+        mock_extraction = Mock()
+        mock_extraction.extraction_class = "unknown_type"  # Not in entity_mappings
+        mock_extraction.extraction_text = "Some text"
+        mock_extraction.char_interval = Mock(start_pos=0, end_pos=9)
+        mock_extraction.alignment_status = "MATCH_EXACT"
+        mock_extraction.attributes = {}
+
+        mock_result = Mock()
+        mock_result.extractions = [mock_extraction]
+
+        with patch('langextract.extract', return_value=mock_result):
+            results = recognizer.analyze(text)
+
+        # Unknown entity type should be skipped when consolidation is disabled
         assert len(results) == 0

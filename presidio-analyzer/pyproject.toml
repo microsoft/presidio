@@ -63,6 +63,7 @@ langextract = [
     "langextract (>=1.0.0)",
     "openai (>=1.50.0)",
     "more-itertools (>=10.0.0)",
+    "jinja2 (>=3.0.0)",
 ]
 
 [tool.poetry.group.dev.dependencies]
