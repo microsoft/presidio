@@ -148,14 +148,18 @@ jobs:
         if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest --cov=. --cov-report=xml:coverage.xml --cov-report=term -vv --tb=short
+          poetry run pytest --cov=. --cov-report=xml --cov-report=term -vv --tb=short
+          # Rename .coverage file to include component name for merging
+          mv .coverage .coverage.${{ matrix.component.path }}
 
       - name: Upload coverage
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ matrix.component.path }}
-          path: ${{ matrix.component.path }}/coverage.xml
+          path: |
+            ${{ matrix.component.path }}/.coverage.${{ matrix.component.path }}
+            ${{ matrix.component.path }}/coverage.xml
           include-hidden-files: true
 
       - name: Build wheel package
@@ -182,6 +186,11 @@ jobs:
           pattern: coverage-*
           merge-multiple: true
 
+      - name: List downloaded files
+        run: |
+          ls -la
+          find . -name '.coverage.*' -o -name 'coverage.xml'
+          
       - name: Comment PR with Combined Coverage
         uses: py-cov-action/python-coverage-comment-action@v3.39
         with:
