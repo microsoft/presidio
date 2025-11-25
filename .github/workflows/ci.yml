@@ -141,7 +141,7 @@ jobs:
         run: |
           set -e
 
-          poetry run pytest --cov=. --cov-report=term --cov-report=xml -vv --tb=short
+          poetry run pytest --cov=. --cov-branch --cov-report=term-missing --cov-report=xml -vv --tb=short
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "Fetching base branch: origin/${{ github.base_ref }}"
             git fetch origin "${{ github.base_ref }}":refs/remotes/origin/"${{ github.base_ref }}" || true
