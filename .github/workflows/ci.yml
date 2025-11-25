@@ -139,13 +139,9 @@ jobs:
       - name: Run tests with coverage
         working-directory: ${{ matrix.component.path }}
         run: |
-          set -e
-
-          poetry run pytest --cov=. --cov-branch --cov-report=term-missing --cov-report=xml -vv --tb=short
+          poetry run pytest --cov=. --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
+          
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "Fetching base branch: origin/${{ github.base_ref }}"
-            git fetch origin "${{ github.base_ref }}":refs/remotes/origin/"${{ github.base_ref }}" || true
-
             echo "Checking PR diff coverage (>= 80%) with diff-cover..."
             poetry run diff-cover coverage.xml \
               --compare-branch=origin/${{ github.base_ref }} \
@@ -153,16 +149,16 @@ jobs:
               --show-uncovered
           fi
 
-      - name: Append coverage to summary
-        if: always()
-        working-directory: ${{ matrix.component.path }}
-        run: |
-          total=$(poetry run coverage report | awk '/TOTAL/ {print $4}')
-          {
-            echo "### 📊 Coverage - ${{ matrix.component.name }} (Py ${{ matrix.python-version }})"
-            echo "- Total: ${total}"
-            echo "- Diff threshold: 80% (enforced with diff-cover)"
-          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Comment PR with Coverage
+        if: github.event_name == 'pull_request' && matrix.python-version == '3.11'
+        uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          MINIMUM_GREEN: 85
+          MINIMUM_ORANGE: 70
+          MINIMUM_COVERAGE: 80
+          COVERAGE_DATA_BRANCH: coverage-data-${{ matrix.component.name }}
+          SUBPROJECT_ID: ${{ matrix.component.name }}
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
