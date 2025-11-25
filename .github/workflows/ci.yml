@@ -212,7 +212,7 @@ jobs:
             echo "**Total Coverage**: All code in component"
             echo "**PR Diff Coverage**: Only lines changed in this PR"
             echo
-            echo "*Threshold: 70% minimum*"
+            echo "*Threshold: 80% minimum*"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
