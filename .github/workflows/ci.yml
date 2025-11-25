@@ -157,7 +157,7 @@ jobs:
             git fetch origin ${{ github.base_ref }} --depth=1 || true
             poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --json-report diff-coverage.json || true
             if [ -f diff-coverage.json ]; then
-              diff_pct=$(python -c "import json; data = json.load(open('diff-coverage.json')); print(f\"{data.get('total_percent_covered', 'N/A')}\")" 2>/dev/null || echo "N/A")
+              diff_pct=$(python -c "import json; data = json.load(open('diff-coverage.json')); val = data.get('total_percent_covered', 'N/A'); print(f\"{val:.1f}\" if isinstance(val, (int, float)) else val)" 2>/dev/null || echo "N/A")
             fi
           fi
           
@@ -205,13 +205,7 @@ jobs:
               comp="${comp%/}"
               IFS='|' read -r total_pct diff_pct < "$dir/coverage-pct.txt"
               
-              if [ "$diff_pct" = "N/A" ]; then
-                diff_display="—"
-              else
-                diff_display="${diff_pct}%"
-              fi
-              
-              printf '| %s | %s%% | %s |\n' "$comp" "$total_pct" "$diff_display"
+              printf '| %s | %s%% | %s%% |\n' "$comp" "$total_pct" "$diff_pct"
             done
 
             echo
