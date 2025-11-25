@@ -127,7 +127,7 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     3. The recognizer can detect PII entities
     
     Prerequisites:
-    - Ollama service running with gemma2:2b model
+    - Ollama service running with gemma3:1b model
     - LangExtract library installed
     """
     if not OLLAMA_RECOGNIZER_AVAILABLE:

@@ -27,7 +27,7 @@ langextract:
   examples_file: "langextract_prompts/default_pii_phi_examples.yaml"
   
   model:
-    model_id: "gemma2:2b"
+    model_id: "gemma3:1b"
     model_url: "http://localhost:11434"
     temperature: null
   

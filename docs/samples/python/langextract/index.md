@@ -60,7 +60,7 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
   
   ```bash
   docker compose up -d ollama
-  docker exec presidio-ollama-1 ollama pull gemma2:2b
+  docker exec presidio-ollama-1 ollama pull gemma3:1b
   docker exec presidio-ollama-1 ollama list
   ```
   
@@ -77,7 +77,7 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
   
   Follow the [official LangExtract Ollama guide](https://github.com/google/langextract?tab=readme-ov-file#using-local-llms-with-ollama).
 
-  > The model must be pulled before using the recognizer. The default model is `gemma2:2b` (~1.6GB).
+  > The model must be pulled before using the recognizer. The default model is `gemma3:1b` (~1.6GB).
 
 3. **Configuration** (optional): Create your own `ollama_config.yaml` or use the [default configuration](https://github.com/microsoft/presidio/blob/main//presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml)
 
@@ -139,7 +139,7 @@ analyzer.registry.add_recognizer(
 
 The `langextract_config_ollama.yaml` file supports the following options:
 
-- **`model_id`**: The Ollama model to use (default: `"gemma2:2b"`)
+- **`model_id`**: The Ollama model to use (default: `"gemma3:1b"`)
 - **`model_url`**: Ollama server URL (default: `"http://localhost:11434"`)
 - **`temperature`**: Model temperature for generation (default: `null` for model default)
 - **`supported_entities`**: PII/PHI entity types to detect
@@ -154,9 +154,9 @@ See the [configuration file](https://github.com/microsoft/presidio/blob/main/pre
 - Ensure Ollama is running: `docker ps` or check `http://localhost:11434`
 - Verify the `model_url` in your configuration matches your Ollama server address
 
-**RuntimeError: "Model 'gemma2:2b' not found"**
-- Pull the model: `docker exec -it presidio-ollama-1 ollama pull gemma2:2b`
-- Or for manual setup: `ollama pull gemma2:2b`
+**RuntimeError: "Model 'gemma3:1b' not found"**
+- Pull the model: `docker exec -it presidio-ollama-1 ollama pull gemma3:1b`
+- Or for manual setup: `ollama pull gemma3:1b`
 - Verify the model name matches the `model_id` in your configuration
 
 ---

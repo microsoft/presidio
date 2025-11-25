@@ -71,7 +71,7 @@ lm_recognizer:
   
 langextract:
   model:
-    model_id: "gemma2:2b"
+    model_id: "gemma3:1b"
     
 other_section:
   some_key: "some_value"
@@ -163,7 +163,7 @@ class TestGetModelConfig:
         config = {
             "langextract": {
                 "model": {
-                    "model_id": "gemma2:2b",
+                    "model_id": "gemma3:1b",
                     "temperature": 0.0,
                     "model_url": "http://localhost:11434"
                 }
@@ -174,7 +174,7 @@ class TestGetModelConfig:
 
         assert model_config is not None
         assert "model_id" in model_config
-        assert model_config["model_id"] == "gemma2:2b"
+        assert model_config["model_id"] == "gemma3:1b"
         assert model_config["temperature"] == 0.0
 
     def test_when_provider_key_missing_then_raises_value_error(self):
@@ -217,7 +217,7 @@ class TestGetModelConfig:
         config = {
             "langextract": {
                 "model": {
-                    "model_id": "gemma2:2b",
+                    "model_id": "gemma3:1b",
                     "temperature": 0.1,
                     "model_url": "http://localhost:11434",
                     "custom_param": "custom_value"
@@ -227,7 +227,7 @@ class TestGetModelConfig:
 
         model_config = get_model_config(config, "langextract")
 
-        assert model_config["model_id"] == "gemma2:2b"
+        assert model_config["model_id"] == "gemma3:1b"
         assert model_config["temperature"] == 0.1
         assert model_config["model_url"] == "http://localhost:11434"
         assert model_config["custom_param"] == "custom_value"
@@ -248,7 +248,7 @@ lm_recognizer:
   
 langextract:
   model:
-    model_id: "gemma2:2b"
+    model_id: "gemma3:1b"
     temperature: 0.0
     model_url: "http://localhost:11434"
 """)
@@ -267,7 +267,7 @@ langextract:
             
             # Step 3: Get model config
             model_config = get_model_config(full_config, "langextract")
-            assert model_config["model_id"] == "gemma2:2b"
+            assert model_config["model_id"] == "gemma3:1b"
             assert model_config["temperature"] == 0.0
             
         finally:
