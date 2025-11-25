@@ -52,13 +52,29 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 
 2. **Set up Ollama** - Choose one option:
 
-  - **Option 1: Docker Compose** (recommended)
+  **Option 1: Docker Compose** (recommended)
+  
+  This option requires Docker to be installed on your system.
+  
+  **Where to run:** From the root presidio directory (where `docker-compose.yml` is located)
+  
   ```bash
   docker compose up -d ollama
-  docker exec -it presidio-ollama-1 ollama pull gemma2:2b
+  docker exec presidio-ollama-1 ollama pull gemma2:2b
+  docker exec presidio-ollama-1 ollama list
   ```
+  
+  **Platform differences:**
+  - **Linux/Mac**: Commands above work as-is
+  - **Windows**: Use PowerShell or CMD, commands are the same
+  
+  If you don't have Docker installed:
+  - Linux: Follow [Docker installation guide](https://docs.docker.com/engine/install/)
+  - Mac: Install [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
+  - Windows: Install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
 
-  - **Option 2: Manual setup**
+  **Option 2: Manual setup**
+  
   Follow the [official LangExtract Ollama guide](https://github.com/google/langextract?tab=readme-ov-file#using-local-llms-with-ollama).
 
   > The model must be pulled before using the recognizer. The default model is `gemma2:2b` (~1.6GB).
@@ -69,10 +85,29 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 
 **Option 1: Enable in configuration file**
 
-Enable the recognizer in `default_recognizers.yaml`:
+Enable the recognizer in [`default_recognizers.yaml`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml):
 ```yaml
 - name: OllamaLangExtractRecognizer
   enabled: true  # Change from false to true
+```
+
+Then load the analyzer using this modified configuration file:
+
+```python
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
+
+# Point to your modified default_recognizers.yaml with Ollama enabled
+provider = RecognizerRegistryProvider(
+    conf_file="/path/to/your/modified/default_recognizers.yaml"
+)
+registry = provider.create_recognizer_registry()
+
+# Create analyzer with the registry that includes Ollama recognizer
+analyzer = AnalyzerEngine(registry=registry, supported_languages=["en"])
+
+# Analyze text - Ollama recognizer will participate in detection
+results = analyzer.analyze(text="My email is john.doe@example.com", language="en")
 ```
 
 **Option 2: Add programmatically**

@@ -8,12 +8,28 @@ logger = logging.getLogger("presidio-analyzer")
 
 GENERIC_PII_ENTITY = "GENERIC_PII_ENTITY"
 
+__all__ = [
+    "GENERIC_PII_ENTITY",
+    "filter_results_by_labels",
+    "filter_results_by_score",
+    "filter_results_by_entities",
+    "validate_result_positions",
+    "consolidate_generic_entities",
+    "skip_unmapped_entities",
+    "ensure_generic_entity_support",
+]
+
 
 def filter_results_by_labels(
     results: List[RecognizerResult],
     labels_to_ignore: List[str]
 ) -> List[RecognizerResult]:
-    """Filter out results with ignored entity labels."""
+    """Filter out results with ignored entity labels.
+
+    :param results: List of recognizer results to filter.
+    :param labels_to_ignore: Entity type labels to exclude (case-insensitive).
+    :return: Filtered list of results without ignored labels.
+    """
     labels_to_ignore_lower = [label.lower() for label in labels_to_ignore]
     filtered = []
 
@@ -38,7 +54,12 @@ def filter_results_by_score(
     results: List[RecognizerResult],
     min_score: float
 ) -> List[RecognizerResult]:
-    """Filter out results below minimum score threshold."""
+    """Filter out results below minimum confidence score.
+
+    :param results: List of recognizer results to filter.
+    :param min_score: Minimum confidence score threshold (0.0-1.0).
+    :return: Filtered list of results meeting minimum score.
+    """
     filtered = []
 
     for result in results:
@@ -59,7 +80,12 @@ def filter_results_by_entities(
     results: List[RecognizerResult],
     requested_entities: List[str]
 ) -> List[RecognizerResult]:
-    """Filter results to only include requested entity types."""
+    """Filter results to only include requested entity types.
+
+    :param results: List of recognizer results to filter.
+    :param requested_entities: Entity types to include (empty list = include all).
+    :return: Filtered list containing only requested entity types.
+    """
     if not requested_entities:
         return results
 
@@ -81,7 +107,11 @@ def filter_results_by_entities(
 def validate_result_positions(
     results: List[RecognizerResult]
 ) -> List[RecognizerResult]:
-    """Filter out results with invalid start/end positions."""
+    """Filter out results with invalid or missing start/end positions.
+
+    :param results: List of recognizer results to validate.
+    :return: Filtered list with only valid position ranges.
+    """
     filtered = []
 
     for result in results:
@@ -101,7 +131,15 @@ def consolidate_generic_entities(
     supported_entities: List[str],
     generic_entities_logged: Set[str]
 ) -> List[RecognizerResult]:
-    """Consolidate unmapped entities to GENERIC_PII_ENTITY."""
+    """Consolidate unmapped entity types to GENERIC_PII_ENTITY.
+
+    :param results: List of recognizer results to process.
+    :param supported_entities: List of supported entity type names.
+    :param generic_entities_logged: Set tracking logged generic entities
+        (modified in-place).
+    :return: Results with unmapped entities consolidated to
+        GENERIC_PII_ENTITY.
+    """
     processed = []
 
     for result in results:
@@ -132,7 +170,12 @@ def skip_unmapped_entities(
     results: List[RecognizerResult],
     supported_entities: List[str]
 ) -> List[RecognizerResult]:
-    """Skip unmapped entities instead of consolidating."""
+    """Skip unmapped entities instead of consolidating them.
+
+    :param results: List of recognizer results to filter.
+    :param supported_entities: List of supported entity type names.
+    :return: Filtered results excluding unmapped entity types.
+    """
     filtered = []
 
     for result in results:
@@ -155,7 +198,12 @@ def ensure_generic_entity_support(
     supported_entities: List[str],
     enable_generic_consolidation: bool
 ) -> List[str]:
-    """Ensure GENERIC_PII_ENTITY in supported entities if needed."""
+    """Ensure GENERIC_PII_ENTITY is in supported entities list if consolidation enabled.
+
+    :param supported_entities: Current list of supported entity types.
+    :param enable_generic_consolidation: Whether generic consolidation is enabled.
+    :return: Updated list including GENERIC_PII_ENTITY if needed.
+    """
     entities = supported_entities.copy()
 
     if enable_generic_consolidation and GENERIC_PII_ENTITY not in entities:

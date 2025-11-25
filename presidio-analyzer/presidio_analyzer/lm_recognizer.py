@@ -106,24 +106,19 @@ class LMRecognizer(RemoteRecognizer, ABC):
             )
             return []
 
-        try:
-            results = self._call_llm(text, requested_entities)
+        results = self._call_llm(text, requested_entities)
 
-            filtered_results = self._filter_and_process_results(
-                results, requested_entities
+        filtered_results = self._filter_and_process_results(
+            results, requested_entities
+        )
+
+        if filtered_results:
+            logger.info(
+                "LLM recognizer found %d entities",
+                len(filtered_results),
             )
 
-            if filtered_results:
-                logger.info(
-                    "LLM recognizer found %d PII entities",
-                    len(filtered_results),
-                )
-
-            return filtered_results
-
-        except Exception as e:
-            logger.exception("LLM analysis failed: %s", str(e))
-            return []
+        return filtered_results
 
     def _filter_and_process_results(
         self,

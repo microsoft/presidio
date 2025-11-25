@@ -7,11 +7,22 @@ from .langextract_helper import check_langextract_available, lx
 
 logger = logging.getLogger("presidio-analyzer")
 
+__all__ = [
+    "load_yaml_examples",
+    "convert_to_langextract_format",
+]
+
 
 def load_yaml_examples(
     examples_file: str, conf_subdir: str = "conf"
 ) -> List[Dict]:
-    """Load examples from YAML file."""
+    """Load and validate examples from YAML configuration file.
+
+    :param examples_file: Name of YAML file containing examples.
+    :param conf_subdir: Configuration subdirectory (default: "conf").
+    :return: List of example dictionaries.
+    :raises ValueError: If 'examples' field is missing.
+    """
     filepath = get_conf_path(examples_file, conf_subdir)
     data = load_yaml_file(filepath)
     validate_config_fields(data, ["examples"], "Examples file")
@@ -19,7 +30,12 @@ def load_yaml_examples(
 
 
 def convert_to_langextract_format(examples_data: List[Dict]) -> List:
-    """Convert examples to LangExtract format."""
+    """Convert example dictionaries to LangExtract Example objects.
+
+    :param examples_data: List of example dictionaries with text and extractions.
+    :return: List of LangExtract Example objects.
+    :raises ImportError: If langextract is not installed.
+    """
     check_langextract_available()
 
     langextract_examples = []

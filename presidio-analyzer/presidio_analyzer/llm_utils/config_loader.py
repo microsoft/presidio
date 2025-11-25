@@ -7,27 +7,85 @@ import yaml
 
 logger = logging.getLogger("presidio-analyzer")
 
+__all__ = [
+    "get_conf_path",
+    "load_yaml_file",
+    "resolve_config_path",
+    "get_model_config",
+    "validate_config_fields",
+]
+
 
 def get_conf_path(filename: str, conf_subdir: str = "conf") -> Path:
-    """Get path to file in conf directory."""
+    """Get absolute path to file in configuration directory.
+
+    :param filename: Name of the file to locate.
+    :param conf_subdir: Subdirectory name within package (default: "conf").
+    :return: Absolute path to the configuration file.
+    """
     return Path(__file__).parent.parent / conf_subdir / filename
 
 
+def resolve_config_path(config_path: Union[str, Path]) -> Path:
+    """Resolve configuration file path to absolute path.
+
+    Handles paths in multiple formats:
+    - Absolute paths: returned as-is
+    - Relative paths that exist: returned as-is
+    - Paths starting with 'presidio_analyzer/': resolved from package root
+    - Other relative paths: resolved from presidio_analyzer package root
+
+    :param config_path: Configuration file path (string or Path object).
+    :return: Resolved absolute path.
+    """
+    config_path_obj = Path(config_path)
+
+    # If absolute or exists as-is, use directly
+    if config_path_obj.is_absolute() or config_path_obj.exists():
+        return config_path_obj
+
+    # Strip 'presidio_analyzer/' prefix if present
+    config_str = str(config_path)
+    if config_str.startswith('presidio_analyzer/'):
+        config_str = config_str[len('presidio_analyzer/'):]
+
+    # Resolve from presidio_analyzer package root
+    # From this file: presidio_analyzer/llm_utils/config_loader.py
+    # Go up to: presidio_analyzer/
+    presidio_analyzer_root = Path(__file__).parent.parent
+    return presidio_analyzer_root / config_str
+
+
 def load_yaml_file(filepath: Union[str, Path]) -> Dict:
-    """Load and parse YAML file."""
-    filepath = Path(filepath)
-    if not filepath.exists():
-        raise FileNotFoundError(f"File not found: {filepath}")
+    """Load and parse YAML configuration file.
+
+    Automatically resolves relative paths from presidio_analyzer package root.
+
+    :param filepath: Path to YAML file (string or Path object).
+    :return: Parsed YAML content as dictionary.
+    :raises FileNotFoundError: If file doesn't exist.
+    :raises ValueError: If YAML parsing fails.
+    """
+    resolved_path = resolve_config_path(filepath)
+
+    if not resolved_path.exists():
+        raise FileNotFoundError(f"File not found: {resolved_path}")
 
     try:
-        with open(filepath) as f:
+        with open(resolved_path) as f:
             return yaml.safe_load(f)
     except yaml.YAMLError as e:
         raise ValueError(f"Failed to parse YAML: {e}")
 
 
 def get_model_config(config: Dict, provider_key: str) -> Dict:
-    """Extract model configuration."""
+    """Extract and validate model configuration from provider config.
+
+    :param config: Full configuration dictionary.
+    :param provider_key: Provider key (e.g., "openai", "ollama").
+    :return: Model configuration dictionary.
+    :raises ValueError: If required model fields are missing.
+    """
     validate_config_fields(
         config,
         [
@@ -45,7 +103,13 @@ def validate_config_fields(
     required_fields: List[Union[str, tuple]],
     config_name: str = "Configuration"
 ) -> None:
-    """Validate required fields exist in config."""
+    """Validate that required fields exist in configuration.
+
+    :param config: Configuration dictionary to validate.
+    :param required_fields: List of required field names (str) or nested paths (tuple).
+    :param config_name: Name of config for error messages (default: "Configuration").
+    :raises ValueError: If any required field is missing or empty.
+    """
     for field in required_fields:
         if isinstance(field, str):
             if not config.get(field):

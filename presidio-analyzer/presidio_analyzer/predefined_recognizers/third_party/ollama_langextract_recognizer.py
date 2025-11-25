@@ -36,49 +36,27 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         :param kwargs: Additional keyword arguments passed from YAML configuration
             (e.g., name, version, etc.).
         """
-        # Determine actual config path
-        if config_path:
-            config_path_obj = Path(config_path)
-            # If path is not absolute and doesn't exist as-is,
-            # resolve relative to package root
-            if not config_path_obj.is_absolute() and not config_path_obj.exists():
-                # Try to resolve relative to presidio-analyzer package root
-                # From this file:
-                # presidio-analyzer/presidio_analyzer/
-                #   predefined_recognizers/third_party/
-                # Go up to: presidio-analyzer/
-                package_root = Path(__file__).parent.parent.parent.parent
-                resolved_path = package_root / config_path
-                if resolved_path.exists():
-                    actual_config_path = str(resolved_path)
-                else:
-                    # If not found, try as-is (will likely fail but with clear error)
-                    actual_config_path = config_path
-            else:
-                actual_config_path = str(config_path_obj)
-        else:
-            actual_config_path = str(self.DEFAULT_CONFIG_PATH)
+        # Use provided config path or default
+        # Path resolution is handled by load_yaml_file in config_loader
+        actual_config_path = (
+            config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
+        )
 
-        try:
-            super().__init__(
-                config_path=actual_config_path,
-                name="Ollama LangExtract PII"
-            )
+        super().__init__(
+            config_path=actual_config_path,
+            name="Ollama LangExtract PII"
+        )
 
-            model_config = self.config.get("model", {})
-            self.model_url = model_config.get("model_url")
-            if not self.model_url:
-                raise ValueError("Ollama model configuration must contain 'model_url'")
-        except Exception as e:
-            logger.exception("Failed to initialize Ollama recognizer: %s", str(e))
-            raise
+        model_config = self.config.get("model", {})
+        self.model_url = model_config.get("model_url")
+        if not self.model_url:
+            raise ValueError("Ollama model configuration must contain 'model_url'")
 
     def _call_langextract(self, **kwargs):
         """Call Ollama through LangExtract."""
         check_langextract_available()
 
         try:
-            # Add Ollama-specific parameters
             extract_params = {
                 "text_or_documents": kwargs.pop("text"),
                 "prompt_description": kwargs.pop("prompt"),
@@ -87,13 +65,14 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
                 "model_url": self.model_url,
             }
 
-            # Pass through temperature and any other kwargs
             extract_params.update(kwargs)
 
             return lx.extract(**extract_params)
-        except Exception as e:
+        except Exception:
+            # Log exception with context. logger.exception automatically includes
+            # the full exception details and traceback.
             logger.exception(
-                "LangExtract extraction failed (Ollama at %s, model '%s'): %s",
-                self.model_url, self.model_id, str(e)
+                "LangExtract extraction failed (Ollama at %s, model '%s')",
+                self.model_url, self.model_id
             )
             raise
