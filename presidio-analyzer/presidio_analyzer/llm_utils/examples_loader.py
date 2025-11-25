@@ -2,7 +2,7 @@
 import logging
 from typing import Dict, List
 
-from .config_loader import get_conf_path, load_yaml_file, validate_config_fields
+from .config_loader import load_yaml_file, resolve_config_path, validate_config_fields
 from .langextract_helper import check_langextract_available, lx
 
 logger = logging.getLogger("presidio-analyzer")
@@ -18,12 +18,12 @@ def load_yaml_examples(
 ) -> List[Dict]:
     """Load and validate examples from YAML configuration file.
 
-    :param examples_file: Name of YAML file containing examples.
-    :param conf_subdir: Configuration subdirectory (default: "conf").
+    :param examples_file: Path to YAML file containing examples (can be repo-root-relative).
+    :param conf_subdir: Configuration subdirectory (deprecated, kept for compatibility).
     :return: List of example dictionaries.
     :raises ValueError: If 'examples' field is missing.
     """
-    filepath = get_conf_path(examples_file, conf_subdir)
+    filepath = resolve_config_path(examples_file)
     data = load_yaml_file(filepath)
     validate_config_fields(data, ["examples"], "Examples file")
     return data["examples"]

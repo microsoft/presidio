@@ -113,7 +113,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
         )
 
         if filtered_results:
-            logger.info(
+            logger.debug(
                 "LLM recognizer found %d entities",
                 len(filtered_results),
             )

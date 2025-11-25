@@ -35,7 +35,10 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
             (optional, currently not used by LLM recognizers).
         :param kwargs: Additional keyword arguments passed from YAML configuration
             (e.g., name, version, etc.).
+        :raises ImportError: If langextract is not installed.
         """
+        check_langextract_available()
+
         actual_config_path = (
             config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
         )
@@ -52,8 +55,6 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
 
     def _call_langextract(self, **kwargs):
         """Call Ollama through LangExtract."""
-        check_langextract_available()
-
         try:
             extract_params = {
                 "text_or_documents": kwargs.pop("text"),

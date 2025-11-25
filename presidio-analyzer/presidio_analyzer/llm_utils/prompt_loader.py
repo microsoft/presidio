@@ -1,6 +1,9 @@
 """Prompt loading and rendering utilities for LLM recognizers."""
 import logging
 from pathlib import Path
+from typing import Union
+
+from .config_loader import resolve_config_path
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -14,12 +17,12 @@ __all__ = [
 def load_file_from_conf(filename: str, conf_subdir: str = "conf") -> str:
     """Load text file from configuration directory.
 
-    :param filename: Name of file to load.
-    :param conf_subdir: Configuration subdirectory (default: "conf").
+    :param filename: Path to file to load (can be repo-root-relative).
+    :param conf_subdir: Configuration subdirectory (deprecated, kept for compatibility).
     :return: File contents as string.
     :raises FileNotFoundError: If file doesn't exist.
     """
-    file_path = Path(__file__).parent.parent / conf_subdir / filename
+    file_path = resolve_config_path(filename)
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
 
@@ -30,8 +33,8 @@ def load_file_from_conf(filename: str, conf_subdir: str = "conf") -> str:
 def load_prompt_file(prompt_file: str, conf_subdir: str = "conf") -> str:
     """Load prompt template file from configuration directory.
 
-    :param prompt_file: Name of prompt template file.
-    :param conf_subdir: Configuration subdirectory (default: "conf").
+    :param prompt_file: Path to prompt template file (can be repo-root-relative).
+    :param conf_subdir: Configuration subdirectory (deprecated, kept for compatibility).
     :return: Prompt template contents as string.
     :raises FileNotFoundError: If file doesn't exist.
     """
