@@ -23,8 +23,8 @@ lm_recognizer:
   min_score: 0.5
 
 langextract:
-  prompt_file: "langextract_prompts/default_pii_phi_prompt.j2"
-  examples_file: "langextract_prompts/default_pii_phi_examples.yaml"
+  prompt_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
+  examples_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
   
   model:
     model_id: "gemma3:1b"
