@@ -138,12 +138,29 @@ jobs:
       - name: Run tests with coverage
         working-directory: ${{ matrix.component.path }}
         run: |
+          set -e
+
           poetry run pytest --cov=. --cov-report=term --cov-report=xml -vv --tb=short
-          
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            git fetch origin ${{ github.base_ref }} --depth=50
-            poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --fail-under=80.0
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Fetching base branch: origin/${{ github.base_ref }}"
+            git fetch origin "${{ github.base_ref }}":refs/remotes/origin/"${{ github.base_ref }}" || true
+
+            echo "Checking PR diff coverage (>= 80%) with diff-cover..."
+            poetry run diff-cover coverage.xml \
+              --compare-branch=origin/${{ github.base_ref }} \
+              --fail-under=80
           fi
+
+      - name: Append coverage to summary
+        if: always()
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          total=$(poetry run coverage report | awk '/TOTAL/ {print $4}')
+          {
+            echo "### 📊 Coverage - ${{ matrix.component.name }} (Py ${{ matrix.python-version }})"
+            echo "- Total: ${total}"
+            echo "- Diff threshold: 80% (enforced with diff-cover)"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
