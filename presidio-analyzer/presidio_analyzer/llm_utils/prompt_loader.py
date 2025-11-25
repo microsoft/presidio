@@ -1,7 +1,5 @@
 """Prompt loading and rendering utilities for LLM recognizers."""
 import logging
-from pathlib import Path
-from typing import Union
 
 from .config_loader import resolve_config_path
 

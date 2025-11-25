@@ -18,7 +18,7 @@ def load_yaml_examples(
 ) -> List[Dict]:
     """Load and validate examples from YAML configuration file.
 
-    :param examples_file: Path to YAML file containing examples (can be repo-root-relative).
+    :param examples_file: Path to YAML file with examples (repo-root-relative).
     :param conf_subdir: Configuration subdirectory (deprecated, kept for compatibility).
     :return: List of example dictionaries.
     :raises ValueError: If 'examples' field is missing.
