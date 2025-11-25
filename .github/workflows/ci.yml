@@ -154,10 +154,17 @@ jobs:
           
           diff_pct="100.0"
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            git fetch origin ${{ github.base_ref }} --depth=1 || true
-            poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --json-report diff-coverage.json || true
-            if [ -f diff-coverage.json ]; then
+            echo "Fetching base branch: origin/${{ github.base_ref }}"
+            git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=50 || git fetch origin ${{ github.base_ref }} --depth=50 || true
+            
+            echo "Running diff-cover..."
+            if poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --json-report diff-coverage.json; then
+              echo "diff-cover succeeded, parsing results..."
+              cat diff-coverage.json
               diff_pct=$(python -c 'import json; data = json.load(open("diff-coverage.json")); val = data.get("total_percent_covered", 100.0); print(f"{val:.1f}" if isinstance(val, (int, float)) else "100.0")' 2>/dev/null || echo "100.0")
+              echo "Parsed diff coverage: ${diff_pct}%"
+            else
+              echo "diff-cover failed or found no changes, defaulting to 100.0%"
             fi
           fi
           
