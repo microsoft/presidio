@@ -158,7 +158,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           MINIMUM_GREEN: 85
           MINIMUM_ORANGE: 70
-          MINIMUM_COVERAGE: ${{ env.COVERAGE_THRESHOLD }}
           COVERAGE_DATA_BRANCH: coverage-data-${{ matrix.component.name }}
           SUBPROJECT_ID: ${{ matrix.component.name }}
 
