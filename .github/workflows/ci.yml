@@ -61,9 +61,6 @@ jobs:
   test:
     name: Test ${{ matrix.component.name }} (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
     strategy:
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13']
@@ -138,47 +135,14 @@ jobs:
             poetry run python -m spacy download $model
           done
 
-      - name: Run unit tests
-        if: matrix.python-version != '3.12'
-        working-directory: ${{ matrix.component.path }}
-        run: |
-          poetry run pytest -vv --tb=short
-
       - name: Run tests with coverage
-        if: matrix.python-version == '3.12'
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest --cov=. --cov-report=term --cov-report=json --cov-report=xml -vv --tb=short
-          
-          pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.1f}\")")
-          echo "Total coverage: ${pct}%"
+          poetry run pytest --cov=. --cov-report=term --cov-report=xml -vv --tb=short
           
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "Fetching base branch: origin/${{ github.base_ref }}"
-            git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=50 || git fetch origin ${{ github.base_ref }} --depth=50 || true
-            
-            echo "Running diff-cover with 80% threshold..."
-            poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --fail-under=80.0 --json-report diff-coverage.json
-            
-            diff_pct=$(python -c 'import json; data = json.load(open("diff-coverage.json")); val = data.get("total_percent_covered", 100.0); print(f"{val:.1f}")' 2>/dev/null || echo "100.0")
-            
-            echo "### 📊 Coverage Summary" >> $GITHUB_STEP_SUMMARY
-            echo "- **Component**: ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
-            echo "- **Total Coverage**: ${pct}%" >> $GITHUB_STEP_SUMMARY
-            echo "- **PR Diff Coverage**: ${diff_pct}%" >> $GITHUB_STEP_SUMMARY
-            echo "- **Threshold**: 80% minimum" >> $GITHUB_STEP_SUMMARY
-            
-            if (( $(echo "$diff_pct < 80.0" | bc -l) )); then
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "❌ **FAILED**: PR diff coverage (${diff_pct}%) is below the 80% threshold" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "✅ **PASSED**: PR diff coverage meets the 80% threshold" >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            echo "### 📊 Coverage Summary" >> $GITHUB_STEP_SUMMARY
-            echo "- **Component**: ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
-            echo "- **Total Coverage**: ${pct}%" >> $GITHUB_STEP_SUMMARY
+            git fetch origin ${{ github.base_ref }} --depth=50
+            poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --fail-under=80.0
           fi
 
       - name: Build wheel package
