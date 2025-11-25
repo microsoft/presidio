@@ -149,7 +149,8 @@ jobs:
             echo "Checking PR diff coverage (>= 80%) with diff-cover..."
             poetry run diff-cover coverage.xml \
               --compare-branch=origin/${{ github.base_ref }} \
-              --fail-under=80
+              --fail-under=80 \
+              --show-uncovered
           fi
 
       - name: Append coverage to summary
