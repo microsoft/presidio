@@ -35,6 +35,8 @@ class GLiNERRecognizer(LocalRecognizer):
         multi_label: bool = False,
         threshold: float = 0.30,
         map_location: str = "cpu",
+        chunk_size: int = 250,
+        chunk_overlap: int = 50,
     ):
         """GLiNER model based entity recognizer.
 
@@ -54,6 +56,11 @@ class GLiNERRecognizer(LocalRecognizer):
         :param threshold: The threshold for the model's output
         (see GLiNER's documentation)
         :param map_location: The device to use for the model
+        :param chunk_size: Maximum character length for text chunks.
+        Text longer than this will be split into chunks to avoid token truncation.
+        Default is 250 characters, matching gliner-spacy implementation.
+        :param chunk_overlap: Number of characters to overlap between chunks.
+        Overlap helps detect entities at chunk boundaries. Default is 50 characters.
 
 
         """
@@ -86,6 +93,8 @@ class GLiNERRecognizer(LocalRecognizer):
         self.flat_ner = flat_ner
         self.multi_label = multi_label
         self.threshold = threshold
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
 
         self.gliner = None
 
@@ -121,13 +130,40 @@ class GLiNERRecognizer(LocalRecognizer):
         # combine the input labels as this model allows for ad-hoc labels
         labels = self.__create_input_labels(entities)
 
-        predictions = self.gliner.predict_entities(
-            text=text,
-            labels=labels,
-            flat_ner=self.flat_ner,
-            threshold=self.threshold,
-            multi_label=self.multi_label,
-        )
+        # For short text, process directly
+        if len(text) <= self.chunk_size:
+            predictions = self.gliner.predict_entities(
+                text=text,
+                labels=labels,
+                flat_ner=self.flat_ner,
+                threshold=self.threshold,
+                multi_label=self.multi_label,
+            )
+        else:
+            # Chunk long text and process each chunk
+            chunks = self._chunk_text(text)
+            predictions = []
+            offset = 0
+
+            for chunk in chunks:
+                chunk_predictions = self.gliner.predict_entities(
+                    text=chunk,
+                    labels=labels,
+                    flat_ner=self.flat_ner,
+                    threshold=self.threshold,
+                    multi_label=self.multi_label,
+                )
+                # Adjust offsets to match original text position
+                for pred in chunk_predictions:
+                    pred["start"] += offset
+                    pred["end"] += offset
+
+                predictions.extend(chunk_predictions)
+                offset += len(chunk) - self.chunk_overlap
+
+            # Remove duplicate entities from overlapping chunks
+            predictions = self._deduplicate_predictions(predictions)
+
         recognizer_results = []
         for prediction in predictions:
             presidio_entity = self.model_to_presidio_entity_mapping.get(
@@ -153,6 +189,80 @@ class GLiNERRecognizer(LocalRecognizer):
             )
 
         return recognizer_results
+
+    def _chunk_text(self, text: str) -> List[str]:
+        """Split text into overlapping chunks at word boundaries.
+
+        Based on gliner-spacy chunking strategy with overlap to catch entities
+        at chunk boundaries:
+        https://github.com/theirstory/gliner-spacy/blob/main/gliner_spacy/pipeline.py#L60-L96
+
+        :param text: The full text to chunk
+        :return: List of overlapping text chunks
+        """
+        chunks = []
+        start = 0
+
+        while start < len(text):
+            # Calculate end position
+            end = (
+                start + self.chunk_size if start + self.chunk_size < len(text) else len(text)
+            )
+
+            # Ensure the chunk ends at a complete word
+            while end < len(text) and text[end] not in [" ", "\n"]:
+                end += 1
+
+            chunks.append(text[start:end])
+            
+            # Move start position with overlap (stop if we've covered all text)
+            if end >= len(text):
+                break
+            start = end - self.chunk_overlap
+
+        return chunks
+
+    def _deduplicate_predictions(self, predictions: List[Dict]) -> List[Dict]:
+        """Remove duplicate entities from overlapping chunks.
+
+        Two entities are considered duplicates if they overlap significantly.
+        Keeps the entity with the highest score.
+
+        :param predictions: List of entity predictions with start, end, label, score
+        :return: Deduplicated list of predictions
+        """
+        if not predictions:
+            return predictions
+
+        # Sort by score descending to keep highest scoring entities
+        sorted_preds = sorted(predictions, key=lambda p: p["score"], reverse=True)
+        unique = []
+
+        for pred in sorted_preds:
+            # Check if this prediction overlaps significantly with any kept prediction
+            is_duplicate = False
+            for kept in unique:
+                # Check if same entity type and overlapping positions
+                if pred["label"] == kept["label"]:
+                    overlap_start = max(pred["start"], kept["start"])
+                    overlap_end = min(pred["end"], kept["end"])
+
+                    if overlap_start < overlap_end:
+                        # Calculate overlap ratio
+                        overlap_len = overlap_end - overlap_start
+                        pred_len = pred["end"] - pred["start"]
+                        kept_len = kept["end"] - kept["start"]
+
+                        # If >50% overlap, consider duplicate
+                        if overlap_len / min(pred_len, kept_len) > 0.5:
+                            is_duplicate = True
+                            break
+
+            if not is_duplicate:
+                unique.append(pred)
+
+        # Sort by position for consistent output
+        return sorted(unique, key=lambda p: p["start"])
 
     def __create_input_labels(self, entities):
         """Append the entities requested by the user to the list of labels if it's not there."""  # noqa: E501
