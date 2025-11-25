@@ -87,6 +87,7 @@ jobs:
             spacy-models: ''
     env:
       POETRY_CACHE_DIR: /mnt/poetry_cache
+      COVERAGE_THRESHOLD: 80
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -142,10 +143,10 @@ jobs:
           poetry run pytest --cov=. --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
           
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "Checking PR diff coverage (>= 80%) with diff-cover..."
+            echo "Checking PR diff coverage (>= ${{ env.COVERAGE_THRESHOLD }}%) with diff-cover..."
             poetry run diff-cover coverage.xml \
               --compare-branch=origin/${{ github.base_ref }} \
-              --fail-under=80 \
+              --fail-under=${{ env.COVERAGE_THRESHOLD }} \
               --show-uncovered
           fi
 
@@ -156,7 +157,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           MINIMUM_GREEN: 85
           MINIMUM_ORANGE: 70
-          MINIMUM_COVERAGE: 80
+          MINIMUM_COVERAGE: ${{ env.COVERAGE_THRESHOLD }}
           COVERAGE_DATA_BRANCH: coverage-data-${{ matrix.component.name }}
           SUBPROJECT_ID: ${{ matrix.component.name }}
 
