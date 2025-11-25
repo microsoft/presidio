@@ -358,15 +358,13 @@ class TestOllamaLangExtractRecognizerAnalyze:
         # NOT_ALIGNED has score 0.60, which is above min_score 0.5
         assert len(results) == 1
 
-    def test_when_langextract_raises_exception_then_returns_empty_list(self, mock_recognizer):
-        """Test that exceptions from LangExtract are handled gracefully."""
+    def test_when_langextract_raises_exception_then_exception_propagates(self, mock_recognizer):
+        """Test that exceptions from LangExtract propagate to caller."""
         text = "Some text"
 
         with patch('langextract.extract', side_effect=Exception("LangExtract error")):
-            results = mock_recognizer.analyze(text)
-
-        # Should return empty list on exception
-        assert len(results) == 0
+            with pytest.raises(Exception, match="LangExtract error"):
+                mock_recognizer.analyze(text)
 
     def test_when_entity_has_no_mapping_and_consolidation_enabled_then_creates_generic(
         self, mock_recognizer

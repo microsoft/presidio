@@ -117,7 +117,6 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
 
 
 @pytest.mark.package
-@pytest.mark.ollama
 def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     """
     E2E test to verify Ollama recognizer can be enabled via YAML configuration.
@@ -128,10 +127,11 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     3. The recognizer can detect PII entities
     
     Prerequisites:
-    - Ollama service running with gemma3:1b model
+    - Ollama service running with gemma2:2b model
     - LangExtract library installed
     """
-    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
+    if not OLLAMA_RECOGNIZER_AVAILABLE:
+        pytest.skip("LangExtract not installed")
     
     # Check if Ollama is available
     import os

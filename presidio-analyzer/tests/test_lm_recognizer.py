@@ -102,8 +102,9 @@ class TestLMRecognizerAnalyze:
                 raise RuntimeError("LLM API error")
         
         recognizer = ErrorLMRecognizer()
-        results = recognizer.analyze("test text", entities=["PERSON"])
-        assert results == []
+        
+        with pytest.raises(RuntimeError, match="LLM API error"):
+            recognizer.analyze("test text", entities=["PERSON"])
 
     def test_when_entity_missing_required_fields_then_skips(self):
         """Test that entities with missing required fields are skipped."""
