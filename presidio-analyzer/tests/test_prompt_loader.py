@@ -12,8 +12,10 @@ class TestLoadPromptFile:
 
     def test_when_prompt_file_exists_then_loads_content(self):
         """Test loading an existing prompt template file from conf directory."""
-        # Load the actual langextract prompt file
-        result = load_prompt_file("langextract_prompts/default_pii_phi_prompt.j2")
+        # Load the actual langextract prompt file using repo-root-relative path
+        result = load_prompt_file(
+            "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
+        )
 
         assert result is not None
         assert len(result) > 0
@@ -113,8 +115,10 @@ END"""
 
     def test_when_rendering_actual_langextract_template_then_works(self):
         """Test rendering the actual LangExtract prompt template."""
-        # Load the actual template
-        template = load_prompt_file("langextract_prompts/default_pii_phi_prompt.j2")
+        # Load the actual template using repo-root-relative path
+        template = load_prompt_file(
+            "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
+        )
         
         # Render with typical parameters
         result = render_jinja_template(

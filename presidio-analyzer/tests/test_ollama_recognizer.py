@@ -30,8 +30,8 @@ def create_test_config(
             "min_score": min_score,
         },
         "langextract": {
-            "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
-            "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+            "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+            "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
             "model": {
                 "model_id": model_id,
                 "model_url": model_url,
@@ -114,8 +114,8 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "min_score": 0.5,
             },
             "langextract": {
-                "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
-                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
                 "entity_mappings": {"person": "PERSON"},
                 # Missing 'model' section
             }
@@ -143,8 +143,8 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "min_score": 0.5,
             },
             "langextract": {
-                "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
-                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
                 "entity_mappings": {"person": "PERSON"},
                 "model": {
                     "model_url": "http://localhost:11434"
@@ -175,8 +175,8 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "min_score": 0.5,
             },
             "langextract": {
-                "prompt_file": "langextract_prompts/default_pii_phi_prompt.j2",
-                "examples_file": "langextract_prompts/default_pii_phi_examples.yaml",
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
                 "entity_mappings": {"person": "PERSON"},
                 "model": {
                     "model_id": "gemma3:1b"

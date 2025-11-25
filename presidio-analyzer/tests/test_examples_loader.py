@@ -31,8 +31,8 @@ examples:
             examples_path = Path(f.name)
 
         try:
-            # Use absolute path with empty conf_subdir to load temp file
-            examples = load_yaml_examples(examples_path.name, conf_subdir=str(examples_path.parent))
+            # Use absolute path to load temp file
+            examples = load_yaml_examples(str(examples_path))
             
             assert isinstance(examples, list)
             assert len(examples) == 2
@@ -58,7 +58,7 @@ examples:
             examples_path = Path(f.name)
 
         try:
-            examples = load_yaml_examples(examples_path.name, conf_subdir=str(examples_path.parent))
+            examples = load_yaml_examples(str(examples_path))
             
             assert len(examples) == 1
             assert len(examples[0]["extractions"]) == 2
@@ -81,14 +81,16 @@ other_section:
 
         try:
             with pytest.raises(ValueError, match="Examples file must contain 'examples'"):
-                load_yaml_examples(examples_path.name, conf_subdir=str(examples_path.parent))
+                load_yaml_examples(str(examples_path))
         finally:
             examples_path.unlink()
 
     def test_when_loading_actual_langextract_examples_file_then_works(self):
         """Test loading the actual langextract examples file."""
-        # Load the real examples file from conf directory
-        examples = load_yaml_examples("langextract_prompts/default_pii_phi_examples.yaml")
+        # Load the real examples file from conf directory using repo-root-relative path
+        examples = load_yaml_examples(
+            "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
+        )
         
         assert isinstance(examples, list)
         assert len(examples) > 0
@@ -239,7 +241,7 @@ examples:
 
         try:
             # Step 1: Load YAML
-            examples_data = load_yaml_examples(examples_path.name, conf_subdir=str(examples_path.parent))
+            examples_data = load_yaml_examples(str(examples_path))
             assert len(examples_data) == 1
             assert len(examples_data[0]["extractions"]) == 3
             
@@ -259,8 +261,10 @@ examples:
 
     def test_when_using_actual_langextract_examples_then_converts_correctly(self):
         """Test loading and converting the actual langextract examples file."""
-        # Load the real examples file
-        examples_data = load_yaml_examples("langextract_prompts/default_pii_phi_examples.yaml")
+        # Load the real examples file using repo-root-relative path
+        examples_data = load_yaml_examples(
+            "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
+        )
         
         # Convert to LangExtract format
         langextract_examples = convert_to_langextract_format(examples_data)

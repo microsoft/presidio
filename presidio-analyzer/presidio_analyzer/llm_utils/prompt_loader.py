@@ -21,6 +21,7 @@ def load_file_from_conf(filename: str, conf_subdir: str = "conf") -> str:
     :raises FileNotFoundError: If file doesn't exist.
     """
     file_path = resolve_config_path(filename)
+
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
 
