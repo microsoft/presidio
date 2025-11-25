@@ -140,7 +140,8 @@ jobs:
       - name: Run tests with coverage
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest --cov=. --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
+          PACKAGE_NAME=$(echo "${{ matrix.component.path }}" | sed 's/-/_/g')
+          poetry run pytest --cov=$PACKAGE_NAME --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
           
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "Checking PR diff coverage (>= ${{ env.COVERAGE_THRESHOLD }}%) with diff-cover..."
