@@ -36,8 +36,6 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         :param kwargs: Additional keyword arguments passed from YAML configuration
             (e.g., name, version, etc.).
         """
-        # Use provided config path or default
-        # Path resolution is handled by load_yaml_file in config_loader
         actual_config_path = (
             config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
         )
@@ -69,8 +67,6 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
 
             return lx.extract(**extract_params)
         except Exception:
-            # Log exception with context. logger.exception automatically includes
-            # the full exception details and traceback.
             logger.exception(
                 "LangExtract extraction failed (Ollama at %s, model '%s')",
                 self.model_url, self.model_id

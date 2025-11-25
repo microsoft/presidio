@@ -40,18 +40,13 @@ def resolve_config_path(config_path: Union[str, Path]) -> Path:
     """
     config_path_obj = Path(config_path)
 
-    # If absolute or exists as-is, use directly
     if config_path_obj.is_absolute() or config_path_obj.exists():
         return config_path_obj
 
-    # Strip 'presidio_analyzer/' prefix if present
     config_str = str(config_path)
     if config_str.startswith('presidio_analyzer/'):
         config_str = config_str[len('presidio_analyzer/'):]
 
-    # Resolve from presidio_analyzer package root
-    # From this file: presidio_analyzer/llm_utils/config_loader.py
-    # Go up to: presidio_analyzer/
     presidio_analyzer_root = Path(__file__).parent.parent
     return presidio_analyzer_root / config_str
 
