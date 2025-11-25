@@ -148,27 +148,27 @@ class AnalyzerEngine:
     def calculate_pii_density(self, text: str, language: str = "en") -> float:
         """
         Calculate the density of PII entities in the given text.
-        
+
         This is a new experimental feature without test coverage.
         Returns the ratio of characters that are part of PII entities
         to the total text length.
-        
+
         :param text: The text to analyze
         :param language: Language of the text
         :return: PII density as a float between 0 and 1
         """
         if not text:
             return 0.0
-        
+
         results = self.analyze(text=text, language=language, entities=None)
-        
+
         if not results:
             return 0.0
-        
+
         pii_chars = 0
         for result in results:
             pii_chars += result.end - result.start
-        
+
         density = pii_chars / len(text)
         return round(density, 4)
 
