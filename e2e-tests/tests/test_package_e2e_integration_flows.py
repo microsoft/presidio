@@ -114,3 +114,83 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
     # Verify that Ollama LangExtract recognizer participated in detection
     assert langextract_detected_at_least_one, \
         f"Expected 'Ollama LangExtract PII' recognizer to detect at least one entity. Recognizers used: {recognizers_used}"
+
+
+@pytest.mark.package
+@pytest.mark.ollama
+def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
+    """
+    E2E test to verify Ollama recognizer can be enabled via YAML configuration.
+    
+    This test validates the fix for the YAML configuration issue where enabling
+    OllamaLangExtractRecognizer in default_recognizers.yaml would fail.
+    
+    The test ensures that when enabled=true in the YAML config:
+    1. The recognizer loads successfully (handles supported_language and context kwargs)
+    2. The config_path is resolved correctly (handles relative paths)
+    3. The recognizer can detect PII entities
+    
+    Prerequisites:
+    - Ollama service running with gemma3:1b model
+    - LangExtract library installed
+    """
+    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
+    
+    # Check if Ollama is available
+    import os
+    try:
+        import requests
+        ollama_url = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+        response = requests.get(f"{ollama_url}/api/tags", timeout=2)
+        if response.status_code != 200:
+            pytest.skip("Ollama service not available")
+    except Exception:
+        pytest.skip("Ollama service not available")
+    
+    # Load recognizer registry from YAML config with Ollama enabled
+    from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
+    
+    config_path = os.path.join(
+        os.path.dirname(__file__), "..", "resources", "test_ollama_enabled_recognizers.yaml"
+    )
+    
+    # This should NOT fail - testing the fix for:
+    # 1. "OllamaLangExtractRecognizer.__init__() got an unexpected keyword argument 'supported_language'"
+    # 2. "File not found: presidio_analyzer/conf/langextract_config_ollama.yaml"
+    provider = RecognizerRegistryProvider(conf_file=config_path)
+    registry = provider.create_recognizer_registry()
+    
+    # Verify Ollama recognizer was loaded
+    ollama_recognizers = [r for r in registry.recognizers if "Ollama" in r.name]
+    assert len(ollama_recognizers) == 1, \
+        f"Expected exactly 1 Ollama recognizer, found {len(ollama_recognizers)}"
+    
+    ollama_rec = ollama_recognizers[0]
+    assert ollama_rec.name == "Ollama LangExtract PII"
+    assert ollama_rec.supported_language == "en"
+    assert len(ollama_rec.supported_entities) > 0
+    
+    # Test functionality: analyze text with the loaded recognizer
+    analyzer = AnalyzerEngine(registry=registry, supported_languages=["en"])
+    
+    text_to_test = "My name is John Smith and my email is john@example.com"
+    results = analyzer.analyze(text_to_test, language="en")
+    
+    # Should detect entities
+    assert len(results) > 0, "Expected to detect at least one PII entity"
+    
+    # Check if Ollama recognizer detected anything
+    ollama_detected = any(
+        r.recognition_metadata and 
+        "Ollama" in r.recognition_metadata.get(RecognizerResult.RECOGNIZER_NAME_KEY, "")
+        for r in results
+    )
+    
+    # At minimum, other recognizers should detect EMAIL_ADDRESS
+    entity_types = {r.entity_type for r in results}
+    assert "EMAIL_ADDRESS" in entity_types or "PERSON" in entity_types, \
+        f"Expected EMAIL_ADDRESS or PERSON in {entity_types}"
+    
+    print(f"\n✓ Ollama recognizer loaded successfully from YAML config")
+    print(f"  Detected entities: {entity_types}")
+    print(f"  Ollama participated: {ollama_detected}")

@@ -15,17 +15,41 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         Path(__file__).parent.parent.parent / "conf" / "langextract_config_ollama.yaml"
     )
 
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(
+        self,
+        config_path: Optional[str] = None,
+        supported_language: str = "en",
+        context: Optional[list] = None,
+    ):
         """Initialize Ollama LangExtract recognizer.
 
         Note: Ollama server availability and model availability are not validated
         during initialization. Any connectivity or model issues will be reported
         when analyze() is first called.
+        
+        :param config_path: Path to configuration file (optional).
+        :param supported_language: Language this recognizer supports (optional, default: "en").
+        :param context: List of context words (optional, currently not used by LLM recognizers).
         """
         # Determine actual config path
-        actual_config_path = (
-            config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
-        )
+        if config_path:
+            config_path_obj = Path(config_path)
+            # If path is not absolute and doesn't exist as-is, resolve relative to package root
+            if not config_path_obj.is_absolute() and not config_path_obj.exists():
+                # Try to resolve relative to presidio-analyzer package root
+                # From this file: presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/
+                # Go up to: presidio-analyzer/
+                package_root = Path(__file__).parent.parent.parent.parent
+                resolved_path = package_root / config_path
+                if resolved_path.exists():
+                    actual_config_path = str(resolved_path)
+                else:
+                    # If not found, try as-is (will likely fail but with clear error)
+                    actual_config_path = config_path
+            else:
+                actual_config_path = str(config_path_obj)
+        else:
+            actual_config_path = str(self.DEFAULT_CONFIG_PATH)
 
         try:
             super().__init__(
