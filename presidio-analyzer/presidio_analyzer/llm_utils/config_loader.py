@@ -41,14 +41,14 @@ def resolve_config_path(config_path: Union[str, Path]) -> Path:
 
     if config_path_obj.is_absolute():
         return config_path_obj
-    
+
     if config_path_obj.exists():
         return config_path_obj
 
     presidio_analyzer_root = Path(__file__).parent.parent
     repo_root = presidio_analyzer_root.parent.parent
     repo_resolved = repo_root / config_path
-    
+
     return repo_resolved
 
 
