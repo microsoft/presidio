@@ -122,9 +122,6 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     """
     E2E test to verify Ollama recognizer can be enabled via YAML configuration.
     
-    This test validates the fix for the YAML configuration issue where enabling
-    OllamaLangExtractRecognizer in default_recognizers.yaml would fail.
-    
     The test ensures that when enabled=true in the YAML config:
     1. The recognizer loads successfully (handles supported_language and context kwargs)
     2. The config_path is resolved correctly (handles relative paths)
@@ -154,9 +151,7 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
         os.path.dirname(__file__), "..", "resources", "test_ollama_enabled_recognizers.yaml"
     )
     
-    # This should NOT fail - testing the fix for:
-    # 1. "OllamaLangExtractRecognizer.__init__() got an unexpected keyword argument 'supported_language'"
-    # 2. "File not found: presidio_analyzer/conf/langextract_config_ollama.yaml"
+    
     provider = RecognizerRegistryProvider(conf_file=config_path)
     registry = provider.create_recognizer_registry()
     
@@ -173,7 +168,7 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     # Test functionality: analyze text with the loaded recognizer
     analyzer = AnalyzerEngine(registry=registry, supported_languages=["en"])
     
-    text_to_test = "My name is John Smith and my email is john@example.com"
+    text_to_test = "Patient John Smith, SSN 123-45-6789, email john@example.com, phone 555-123-4567, lives at 123 Main St, works at Acme Corp"
     results = analyzer.analyze(text_to_test, language="en")
     
     # Should detect entities
@@ -186,10 +181,13 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
         for r in results
     )
     
-    # At minimum, other recognizers should detect EMAIL_ADDRESS
+    # At minimum, other recognizers should detect common entities
     entity_types = {r.entity_type for r in results}
-    assert "EMAIL_ADDRESS" in entity_types or "PERSON" in entity_types, \
-        f"Expected EMAIL_ADDRESS or PERSON in {entity_types}"
+    expected_entities = {"EMAIL_ADDRESS", "PERSON", "PHONE_NUMBER", "US_SSN"}
+    detected_expected = entity_types & expected_entities
+    
+    assert len(detected_expected) >= 2, \
+        f"Expected at least 2 entities from {expected_entities}, detected: {entity_types}"
     
     print(f"\n✓ Ollama recognizer loaded successfully from YAML config")
     print(f"  Detected entities: {entity_types}")
