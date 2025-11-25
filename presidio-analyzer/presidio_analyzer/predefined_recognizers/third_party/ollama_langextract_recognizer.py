@@ -26,18 +26,23 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         Note: Ollama server availability and model availability are not validated
         during initialization. Any connectivity or model issues will be reported
         when analyze() is first called.
-        
+
         :param config_path: Path to configuration file (optional).
-        :param supported_language: Language this recognizer supports (optional, default: "en").
-        :param context: List of context words (optional, currently not used by LLM recognizers).
+        :param supported_language: Language this recognizer supports
+            (optional, default: "en").
+        :param context: List of context words
+            (optional, currently not used by LLM recognizers).
         """
         # Determine actual config path
         if config_path:
             config_path_obj = Path(config_path)
-            # If path is not absolute and doesn't exist as-is, resolve relative to package root
+            # If path is not absolute and doesn't exist as-is,
+            # resolve relative to package root
             if not config_path_obj.is_absolute() and not config_path_obj.exists():
                 # Try to resolve relative to presidio-analyzer package root
-                # From this file: presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/
+                # From this file:
+                # presidio-analyzer/presidio_analyzer/
+                #   predefined_recognizers/third_party/
                 # Go up to: presidio-analyzer/
                 package_root = Path(__file__).parent.parent.parent.parent
                 resolved_path = package_root / config_path
