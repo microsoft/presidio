@@ -151,83 +151,41 @@ jobs:
           poetry run pytest --cov=. --cov-report=term --cov-report=json --cov-report=xml -vv --tb=short
           
           pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.1f}\")")
+          echo "Total coverage: ${pct}%"
           
-          diff_pct="100.0"
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "Fetching base branch: origin/${{ github.base_ref }}"
             git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }} --depth=50 || git fetch origin ${{ github.base_ref }} --depth=50 || true
             
-            echo "Running diff-cover..."
-            if poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --json-report diff-coverage.json; then
-              echo "diff-cover succeeded, parsing results..."
-              cat diff-coverage.json
-              diff_pct=$(python -c 'import json; data = json.load(open("diff-coverage.json")); val = data.get("total_percent_covered", 100.0); print(f"{val:.1f}" if isinstance(val, (int, float)) else "100.0")' 2>/dev/null || echo "100.0")
-              echo "Parsed diff coverage: ${diff_pct}%"
+            echo "Running diff-cover with 80% threshold..."
+            poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --fail-under=80.0 --json-report diff-coverage.json
+            
+            diff_pct=$(python -c 'import json; data = json.load(open("diff-coverage.json")); val = data.get("total_percent_covered", 100.0); print(f"{val:.1f}")' 2>/dev/null || echo "100.0")
+            
+            echo "### 📊 Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo "- **Component**: ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Total Coverage**: ${pct}%" >> $GITHUB_STEP_SUMMARY
+            echo "- **PR Diff Coverage**: ${diff_pct}%" >> $GITHUB_STEP_SUMMARY
+            echo "- **Threshold**: 80% minimum" >> $GITHUB_STEP_SUMMARY
+            
+            if (( $(echo "$diff_pct < 80.0" | bc -l) )); then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "❌ **FAILED**: PR diff coverage (${diff_pct}%) is below the 80% threshold" >> $GITHUB_STEP_SUMMARY
             else
-              echo "diff-cover failed or found no changes, defaulting to 100.0%"
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "✅ **PASSED**: PR diff coverage meets the 80% threshold" >> $GITHUB_STEP_SUMMARY
             fi
+          else
+            echo "### 📊 Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo "- **Component**: ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Total Coverage**: ${pct}%" >> $GITHUB_STEP_SUMMARY
           fi
-          
-          echo "### 📊 ${{ matrix.component.name }}: ${pct}% total, ${diff_pct}% diff" >> $GITHUB_STEP_SUMMARY
-          echo "${pct}|${diff_pct}" > coverage-pct.txt
-
-      - name: Upload coverage percentage
-        if: matrix.python-version == '3.12'
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-${{ matrix.component.path }}
-          path: ${{ matrix.component.path }}/coverage-pct.txt
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
         run: |
           pip install build
           python -m build --wheel
-
-  coverage-report:
-    name: Coverage Report
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.event_name == 'pull_request'
-    permissions:
-      pull-requests: write
-    steps:
-      - name: Download coverage data
-        uses: actions/download-artifact@v4
-        with:
-          pattern: coverage-*
-
-      - name: Build coverage message
-        id: build-message
-        run: |
-          {
-            echo "message<<EOF"
-            echo "## 📊 Coverage Report"
-            echo
-            echo "| Component | Total Coverage | PR Diff Coverage |"
-            echo "|-----------|----------------|------------------|"
-
-            for dir in coverage-*/; do
-              comp="${dir#coverage-}"
-              comp="${comp%/}"
-              IFS='|' read -r total_pct diff_pct < "$dir/coverage-pct.txt"
-              
-              printf '| %s | %s%% | %s%% |\n' "$comp" "$total_pct" "$diff_pct"
-            done
-
-            echo
-            echo "**Total Coverage**: All code in component"
-            echo "**PR Diff Coverage**: Only lines changed in this PR"
-            echo
-            echo "*Threshold: 80% minimum*"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Post coverage comment
-        uses: thollander/actions-comment-pull-request@v3
-        with:
-          message: ${{ steps.build-message.outputs.message }}
-          comment_tag: coverage
 
   build-platform-images:
     name: Build ${{ matrix.image }} (${{ matrix.platform }})
