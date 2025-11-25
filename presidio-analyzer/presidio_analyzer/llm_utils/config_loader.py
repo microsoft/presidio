@@ -29,26 +29,27 @@ def get_conf_path(filename: str, conf_subdir: str = "conf") -> Path:
 def resolve_config_path(config_path: Union[str, Path]) -> Path:
     """Resolve configuration file path to absolute path.
 
-    Handles paths in multiple formats:
-    - Absolute paths: returned as-is
-    - Relative paths that exist: returned as-is
-    - Paths starting with 'presidio_analyzer/': resolved from package root
-    - Other relative paths: resolved from presidio_analyzer package root
+    Handles paths in multiple formats (checked in order):
+    1. Absolute paths: returned as-is
+    2. Relative paths that exist from CWD: returned as-is
+    3. Relative paths resolved from repository root
 
     :param config_path: Configuration file path (string or Path object).
     :return: Resolved absolute path.
     """
     config_path_obj = Path(config_path)
 
-    if config_path_obj.is_absolute() or config_path_obj.exists():
+    if config_path_obj.is_absolute():
+        return config_path_obj
+    
+    if config_path_obj.exists():
         return config_path_obj
 
-    config_str = str(config_path)
-    if config_str.startswith('presidio_analyzer/'):
-        config_str = config_str[len('presidio_analyzer/'):]
-
     presidio_analyzer_root = Path(__file__).parent.parent
-    return presidio_analyzer_root / config_str
+    repo_root = presidio_analyzer_root.parent.parent
+    repo_resolved = repo_root / config_path
+    
+    return repo_resolved
 
 
 def load_yaml_file(filepath: Union[str, Path]) -> Dict:

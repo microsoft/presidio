@@ -205,4 +205,4 @@ recognizers:
       - en
     type: predefined
     enabled: false
-    config_path: conf/langextract_config_ollama.yaml
+    config_path: presidio-analyzer/conf/langextract_config_ollama.yaml
