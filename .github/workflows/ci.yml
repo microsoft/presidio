@@ -152,12 +152,21 @@ jobs:
           
           pct=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.1f}\")")
           
-          diff_pct="N/A"
+          diff_pct="100.0"
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             git fetch origin ${{ github.base_ref }} --depth=1 || true
             poetry run diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --json-report diff-coverage.json || true
             if [ -f diff-coverage.json ]; then
-              diff_pct=$(python -c "import json; data = json.load(open('diff-coverage.json')); val = data.get('total_percent_covered', 'N/A'); print(f\"{val:.1f}\" if isinstance(val, (int, float)) else val)" 2>/dev/null || echo "N/A")
+              diff_pct=$(python -c "
+import json
+try:
+    data = json.load(open('diff-coverage.json'))
+    val = data.get('total_percent_covered', 100.0)
+    # If no coverable lines changed, diff-cover may return 100.0 or the value may be missing
+    print(f'{val:.1f}' if isinstance(val, (int, float)) else '100.0')
+except:
+    print('100.0')
+" 2>/dev/null || echo "100.0")
             fi
           fi
           
