@@ -160,7 +160,7 @@ jobs:
           MINIMUM_ORANGE: 70
           COVERAGE_DATA_BRANCH: coverage-data-${{ matrix.component.name }}
           SUBPROJECT_ID: ${{ matrix.component.name }}
-          COVERAGE_PATH: ${{ matrix.component.path }}/.coverage
+          COVERAGE_PATH: ${{ matrix.component.path }}
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
