@@ -20,6 +20,7 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         config_path: Optional[str] = None,
         supported_language: str = "en",
         context: Optional[list] = None,
+        **kwargs,
     ):
         """Initialize Ollama LangExtract recognizer.
 
@@ -32,6 +33,8 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
             (optional, default: "en").
         :param context: List of context words
             (optional, currently not used by LLM recognizers).
+        :param kwargs: Additional keyword arguments passed from YAML configuration
+            (e.g., name, version, etc.).
         """
         # Determine actual config path
         if config_path:
