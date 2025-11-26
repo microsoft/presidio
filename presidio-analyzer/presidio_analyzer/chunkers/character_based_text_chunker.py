@@ -8,7 +8,7 @@ from typing import List
 from presidio_analyzer.chunkers.base_chunker import BaseTextChunker
 
 
-class LocalTextChunker(BaseTextChunker):
+class CharacterBasedTextChunker(BaseTextChunker):
     """Character-based text chunker with word boundary preservation."""
 
     def __init__(self, chunk_size: int, chunk_overlap: int = 0):

@@ -2,7 +2,7 @@
 import pytest
 
 from presidio_analyzer.chunkers import (
-    LocalTextChunker,
+    CharacterBasedTextChunker,
     process_text_in_chunks,
     deduplicate_overlapping_entities,
 )
@@ -13,7 +13,7 @@ class TestProcessTextInChunks:
 
     def test_short_text_no_chunking(self):
         """Test text shorter than chunk size is not chunked."""
-        chunker = LocalTextChunker(chunk_size=100, chunk_overlap=20)
+        chunker = CharacterBasedTextChunker(chunk_size=100, chunk_overlap=20)
         text = "Short text"
         predict_func = lambda chunk: [{"start": 0, "end": 5, "label": "PERSON", "score": 0.9}]
         
@@ -25,7 +25,7 @@ class TestProcessTextInChunks:
 
     def test_long_text_with_offset_adjustment(self):
         """Test offset adjustment for chunked text."""
-        chunker = LocalTextChunker(chunk_size=20, chunk_overlap=5)
+        chunker = CharacterBasedTextChunker(chunk_size=20, chunk_overlap=5)
         text = "John Smith lives in New York City with Jane Doe"
         
         # Mock predict function that finds entities in each chunk
@@ -47,7 +47,7 @@ class TestProcessTextInChunks:
 
     def test_empty_predictions(self):
         """Test handling of no predictions."""
-        chunker = LocalTextChunker(chunk_size=50, chunk_overlap=10)
+        chunker = CharacterBasedTextChunker(chunk_size=50, chunk_overlap=10)
         text = "Some text without entities"
         predict_func = lambda chunk: []
         

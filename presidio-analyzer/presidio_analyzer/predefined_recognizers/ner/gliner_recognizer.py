@@ -10,7 +10,7 @@ from presidio_analyzer import (
 from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts
 from presidio_analyzer.chunkers import (
     BaseTextChunker,
-    LocalTextChunker,
+    CharacterBasedTextChunker,
     predict_with_chunking,
 )
 
@@ -104,7 +104,7 @@ class GLiNERRecognizer(LocalRecognizer):
         self.text_chunker = (
             text_chunker
             if text_chunker is not None
-            else LocalTextChunker(chunk_size, chunk_overlap)
+            else CharacterBasedTextChunker(chunk_size, chunk_overlap)
         )
 
         self.gliner = None
