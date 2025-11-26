@@ -16,6 +16,8 @@ permissions: read-all
 env:
   REGISTRY_NAME: ${{ secrets.ACR_NAME }}.azurecr.io
   TAG: gha${{ github.run_number }}
+  PYTHON_VERSIONS: '["3.10", "3.11", "3.12", "3.13"]'
+  PRIMARY_PYTHON: '3.13'
 
 jobs:
   lint:
@@ -66,7 +68,7 @@ jobs:
       pull-requests: write
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13']
+        python-version: ${{ fromJSON(vars.PYTHON_VERSIONS || env.PYTHON_VERSIONS) }}
         component: 
           - name: 'Analyzer'
             path: 'presidio-analyzer'
@@ -155,7 +157,7 @@ jobs:
           fi
 
       - name: Comment PR with Coverage
-        if: github.event_name == 'pull_request' && matrix.python-version == '3.11'
+        if: github.event_name == 'pull_request' && matrix.python-version == env.PRIMARY_PYTHON
         uses: py-cov-action/python-coverage-comment-action@v3
         with:
           GITHUB_TOKEN: ${{ github.token }}
