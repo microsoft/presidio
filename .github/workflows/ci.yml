@@ -93,6 +93,7 @@ jobs:
     env:
       POETRY_CACHE_DIR: /mnt/poetry_cache
       COVERAGE_THRESHOLD: 80
+      PRIMARY_PYTHON: ${{ env.PRIMARY_PYTHON }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
