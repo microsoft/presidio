@@ -45,7 +45,8 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
 
         super().__init__(
             config_path=actual_config_path,
-            name="Ollama LangExtract PII"
+            name="Ollama LangExtract PII",
+            supported_language=supported_language
         )
 
         model_config = self.config.get("model", {})

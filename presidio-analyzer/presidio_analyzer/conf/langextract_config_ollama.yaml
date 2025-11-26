@@ -27,7 +27,7 @@ langextract:
   examples_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
   
   model:
-    model_id: "gemma3:1b"
+    model_id: "qwen2.5:1.5b"
     model_url: "http://localhost:11434"
     temperature: null
   

@@ -13,7 +13,7 @@ ENTITY TYPES TO EXTRACT:
 {%- endfor %}
 
 {% if enable_generic_consolidation %}
-UNKNOWN ENTITIES:
+GENERIC_PII_ENTITY (UNKNOWN ENTITIES):
 - Label as GENERIC_PII_ENTITY only if the data is sensitive PII/PHI but does not match any specific type above.
 - This acts as a catch-all for safety; do not overuse it for known types.
 {% endif %}

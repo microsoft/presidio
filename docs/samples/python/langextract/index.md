@@ -1,4 +1,4 @@
-# Language Model-based PII/PHI Detection
+# Language Model-based PII/PHI Detection (Experimental Feature)
 
 ## Introduction
 
@@ -54,7 +54,7 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 
 You have two options to set up Ollama:
 
-  **Option 1: Docker Compose** (recommended)
+  **Option 1: Docker Compose** (recommended for CPU)
   
   This option requires Docker to be installed on your system.
   
@@ -62,7 +62,7 @@ You have two options to set up Ollama:
   
   ```bash
   docker compose up -d ollama
-  docker exec presidio-ollama-1 ollama pull gemma3:1b
+  docker exec presidio-ollama-1 ollama pull qwen2.5:1.5b
   docker exec presidio-ollama-1 ollama list
   ```
   
@@ -75,13 +75,18 @@ You have two options to set up Ollama:
   - Mac: Install [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
   - Windows: Install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
 
-  > **Note**: The native Ollama installation (Option 2) may provide better performance with GPU acceleration (e.g., on Mac with Metal Performance Shaders).
-
-  **Option 2: Native installation**
+  **Option 2: Native installation** (recommended for GPU acceleration)
   
   Follow the [official LangExtract Ollama guide](https://github.com/google/langextract?tab=readme-ov-file#using-local-llms-with-ollama).
+  
+  After installation, pull and run the model:
+  ```bash
+  ollama pull qwen2.5:1.5b
+  ollama run qwen2.5:1.5b
+  ```
 
-  > The model must be pulled before using the recognizer. The default model is `gemma3:1b` (~1.6GB).
+  > This option provides better performance with GPU acceleration (e.g., on Mac with Metal Performance Shaders or systems with NVIDIA GPUs).
+  > The model must be pulled and run before using the recognizer. The default model is `qwen2.5:1.5b`.
 
 3. **Configuration** (optional): Create your own `ollama_config.yaml` or use the [default configuration](https://github.com/microsoft/presidio/blob/main//presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml)
 
@@ -143,7 +148,7 @@ analyzer.registry.add_recognizer(
 
 The `langextract_config_ollama.yaml` file supports the following options:
 
-- **`model_id`**: The Ollama model to use (default: `"gemma3:1b"`)
+- **`model_id`**: The Ollama model to use (default: `"qwen2.5:1.5b"`)
 - **`model_url`**: Ollama server URL (default: `"http://localhost:11434"`)
 - **`temperature`**: Model temperature for generation (default: `null` for model default)
 - **`supported_entities`**: PII/PHI entity types to detect
@@ -158,9 +163,9 @@ See the [configuration file](https://github.com/microsoft/presidio/blob/main/pre
 - Ensure Ollama is running: `docker ps` or check `http://localhost:11434`
 - Verify the `model_url` in your configuration matches your Ollama server address
 
-**RuntimeError: "Model 'gemma3:1b' not found"**
-- Pull the model: `docker exec -it presidio-ollama-1 ollama pull gemma3:1b`
-- Or for manual setup: `ollama pull gemma3:1b`
+**RuntimeError: "Model 'qwen2.5:1.5b' not found"**
+- Pull the model: `docker exec -it presidio-ollama-1 ollama pull qwen2.5:1.5b`
+- Or for manual setup: `ollama pull qwen2.5:1.5b`
 - Verify the model name matches the `model_id` in your configuration
 
 ---

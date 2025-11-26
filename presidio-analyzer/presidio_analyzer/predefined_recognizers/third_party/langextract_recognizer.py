@@ -27,11 +27,17 @@ class LangExtractRecognizer(LMRecognizer, ABC):
     Subclasses implement _call_langextract() for specific LLM providers.
     """
 
-    def __init__(self, config_path: str, name: str = "LangExtract LLM PII"):
+    def __init__(
+        self,
+        config_path: str,
+        name: str = "LangExtract LLM PII",
+        supported_language: str = "en"
+    ):
         """Initialize LangExtract recognizer.
 
         :param config_path: Path to configuration file.
         :param name: Name of the recognizer (provided by subclass).
+        :param supported_language: Language this recognizer supports (default: "en").
         """
         check_langextract_available()
 
@@ -69,7 +75,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
 
         super().__init__(
             supported_entities=supported_entities,
-            supported_language="en",
+            supported_language=supported_language,
             name=name,
             version="1.0.0",
             model_id=self.model_id,

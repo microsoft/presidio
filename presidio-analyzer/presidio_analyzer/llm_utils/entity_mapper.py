@@ -117,7 +117,7 @@ def validate_result_positions(
     for result in results:
         if result.start is None or result.end is None:
             logger.warning(
-                "LLM returned result without start/end positions, skipping"
+                "LLM returned result without start/end positions, skipping: %s", result
             )
             continue
 

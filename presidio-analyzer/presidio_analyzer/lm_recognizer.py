@@ -45,8 +45,13 @@ class LMRecognizer(RemoteRecognizer, ABC):
         :param enable_generic_consolidation: Consolidate unknown
             entities to GENERIC_PII_ENTITY.
         """
+        if not supported_entities:
+            raise ValueError(
+                "LMRecognizer requires at least one entity in 'supported_entities'"
+            )
+
         super().__init__(
-            supported_entities=supported_entities or [],
+            supported_entities=supported_entities,
             supported_language=supported_language,
             name=name,
             version=version,

@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch, MagicMock
 def create_test_config(
     supported_entities=None,
     entity_mappings=None,
-    model_id="gemma3:1b",
+    model_id="qwen2.5:1.5b",
     model_url="http://localhost:11434",
     temperature=0.0,
     min_score=0.5,
@@ -62,7 +62,7 @@ class TestOllamaLangExtractRecognizerInitialization:
         config = create_test_config(
             supported_entities=["PERSON", "EMAIL_ADDRESS"],
             entity_mappings={"person": "PERSON", "email": "EMAIL_ADDRESS"},
-            model_id="gemma3:1b",
+            model_id="qwen2.5:1.5b",
             model_url="http://localhost:11434",
             temperature=0.0,
             min_score=0.5
@@ -80,7 +80,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             
             # Verify initialization
             assert recognizer.name == "Ollama LangExtract PII"
-            assert recognizer.model_id == "gemma3:1b"
+            assert recognizer.model_id == "qwen2.5:1.5b"
             assert recognizer.model_url == "http://localhost:11434"
             assert len(recognizer.supported_entities) == 3  # PERSON, EMAIL_ADDRESS, GENERIC_PII_ENTITY
             assert "PERSON" in recognizer.supported_entities
@@ -179,7 +179,7 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
                 "entity_mappings": {"person": "PERSON"},
                 "model": {
-                    "model_id": "gemma3:1b"
+                    "model_id": "qwen2.5:1.5b"
                     # Missing model_url
                 }
             }
@@ -211,7 +211,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
                 "email": "EMAIL_ADDRESS",
                 "phone": "PHONE_NUMBER"
             },
-            model_id="gemma3:1b",
+            model_id="qwen2.5:1.5b",
             model_url="http://localhost:11434",
             temperature=0.0,
             min_score=0.5

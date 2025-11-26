@@ -71,7 +71,7 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
 
     text_to_test = "Patient John Smith, SSN 123-45-6789, email john@example.com, phone 555-123-4567, lives at 123 Main St, works at Acme Corp"
 
-    # Use pre-configured config file with small model (gemma3:1b)
+    # Use pre-configured config file with small model (qwen2.5:1.5b)
     import os
     config_path = os.path.join(
         os.path.dirname(__file__), "..", "resources", "ollama_test_config.yaml"
@@ -127,7 +127,7 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     3. The recognizer can detect PII entities
     
     Prerequisites:
-    - Ollama service running with gemma3:1b model
+    - Ollama service running with qwen2.5:1.5b model
     - LangExtract library installed
     """
     if not OLLAMA_RECOGNIZER_AVAILABLE:
