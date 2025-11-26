@@ -50,7 +50,9 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
    pip install presidio-analyzer[langextract]
    ```
 
-2. **Set up Ollama** - Choose one option:
+2. **Set up Ollama**
+
+You have two options to set up Ollama:
 
   **Option 1: Docker Compose** (recommended)
   
@@ -73,7 +75,9 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
   - Mac: Install [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
   - Windows: Install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
 
-  **Option 2: Manual setup**
+  > **Note**: The native Ollama installation (Option 2) may provide better performance with GPU acceleration (e.g., on Mac with Metal Performance Shaders).
+
+  **Option 2: Native installation**
   
   Follow the [official LangExtract Ollama guide](https://github.com/google/langextract?tab=readme-ov-file#using-local-llms-with-ollama).
 
