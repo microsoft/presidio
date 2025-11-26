@@ -64,7 +64,7 @@ class GLiNERRecognizer(LocalRecognizer):
         :param map_location: The device to use for the model
         :param chunk_size: Maximum character length for text chunks (default: 250)
         :param chunk_overlap: Characters to overlap between chunks (default: 50)
-        :param text_chunker: Custom text chunking strategy. If None, uses LocalTextChunker
+        :param text_chunker: Custom text chunking strategy. If None, uses CharacterBasedTextChunker
 
 
         """
@@ -100,7 +100,7 @@ class GLiNERRecognizer(LocalRecognizer):
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
 
-        # Use provided chunker or default to LocalTextChunker
+        # Use provided chunker or default to CharacterBasedTextChunker
         self.text_chunker = (
             text_chunker
             if text_chunker is not None

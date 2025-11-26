@@ -4,8 +4,8 @@ import pytest
 from presidio_analyzer.chunkers import CharacterBasedTextChunker
 
 
-class TestLocalTextChunker:
-    """Test LocalTextChunker implementation."""
+class TestCharacterBasedTextChunker:
+    """Test CharacterBasedTextChunker implementation."""
 
     def test_empty_text(self):
         """Test chunking empty text."""
