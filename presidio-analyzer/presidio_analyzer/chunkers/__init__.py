@@ -11,6 +11,5 @@ __all__ = [
     "BaseTextChunker",
     "CharacterBasedTextChunker",
     "predict_with_chunking",
-    "process_text_in_chunks",
     "deduplicate_overlapping_entities",
 ]
