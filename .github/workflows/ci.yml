@@ -90,7 +90,7 @@ jobs:
             spacy-models: ''
     env:
       POETRY_CACHE_DIR: /mnt/poetry_cache
-      COVERAGE_THRESHOLD: 80
+      COVERAGE_THRESHOLD: 90
       PRIMARY_PYTHON: '3.13'
     steps:
       - name: Checkout code
