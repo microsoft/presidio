@@ -163,7 +163,7 @@ jobs:
           MINIMUM_GREEN: 85
           MINIMUM_ORANGE: 70
           COVERAGE_DATA_BRANCH: coverage-data
-          SUBPROJECT_ID: ${{ matrix.component.name }}
+          SUBPROJECT_ID: ${{ matrix.component.path }}
           COVERAGE_PATH: ${{ matrix.component.path }}
 
       - name: Build wheel package
