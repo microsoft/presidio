@@ -35,8 +35,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
         temperature: Optional[float] = None,
         min_score: float = 0.5,
         labels_to_ignore: Optional[List[str]] = None,
-        enable_generic_consolidation: bool = True,
-        **kwargs
+        enable_generic_consolidation: bool = True
     ):
         """Initialize LM recognizer.
 
