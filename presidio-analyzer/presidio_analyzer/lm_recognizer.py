@@ -55,7 +55,6 @@ class LMRecognizer(RemoteRecognizer, ABC):
             supported_language=supported_language,
             name=name,
             version=version,
-            **kwargs
         )
 
         self.model_id = model_id

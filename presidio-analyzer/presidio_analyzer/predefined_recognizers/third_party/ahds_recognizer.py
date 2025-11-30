@@ -53,7 +53,6 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
             supported_language=supported_language,
             name="Azure Health Data Services Deidentification",
             version="1.0.0",
-            **kwargs
         )
 
 

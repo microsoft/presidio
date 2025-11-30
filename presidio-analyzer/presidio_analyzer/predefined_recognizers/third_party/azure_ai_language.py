@@ -47,7 +47,6 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
             supported_language=supported_language,
             name="Azure AI Language PII",
             version="5.2.0",
-            **kwargs,
         )
 
         is_available = bool(TextAnalyticsClient)
