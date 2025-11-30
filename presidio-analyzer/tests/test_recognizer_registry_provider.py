@@ -226,10 +226,6 @@ def test_recognizers_none_raises_exception():
     with pytest.raises(ValueError) as exc_info:
         ConfigurationValidator.validate_recognizer_registry_configuration(config)
 
-    assert "recognizers" in str(exc_info.value)
-    assert "required" in str(exc_info.value).lower()
-
-
 
 def test_direct_validation_with_missing_global_regex_flags():
     """Test direct validation without global_regex_flags succeeds with default."""

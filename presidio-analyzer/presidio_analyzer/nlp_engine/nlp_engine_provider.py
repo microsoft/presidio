@@ -42,7 +42,6 @@ class NlpEngineProvider:
         if nlp_engines is None:
             nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
 
-        # No legacy validation - just assign the engines
         self.nlp_engines = {
             engine.engine_name: engine for engine in nlp_engines if engine.is_available
         }
@@ -70,8 +69,7 @@ class NlpEngineProvider:
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
             self.nlp_configuration = self._read_nlp_conf(conf_file)
-
-    # _validate_nlp_engines method removed - all validation is now Pydantic-based
+            ConfigurationValidator.validate_nlp_configuration(self.nlp_configuration)
 
     @staticmethod
     def _read_nlp_conf(conf_file: Union[Path, str]) -> Dict:

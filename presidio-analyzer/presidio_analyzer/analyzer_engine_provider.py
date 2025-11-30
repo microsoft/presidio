@@ -73,9 +73,6 @@ class AnalyzerEngineProvider:
                 with open(self._get_full_conf_path()) as file:
                     configuration = yaml.safe_load(file)
 
-        # Validate configuration using Pydantic-based ConfigurationValidator
-        from presidio_analyzer.input_validation import ConfigurationValidator
-
         ConfigurationValidator.validate_analyzer_configuration(configuration)
         logger.debug("Analyzer configuration validation passed")
 

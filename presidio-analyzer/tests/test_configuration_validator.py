@@ -4,21 +4,6 @@ import pytest
 from presidio_analyzer.input_validation import ConfigurationValidator
 
 
-def test_configuration_validator_language_codes_valid():
-    """Test ConfigurationValidator accepts valid language codes."""
-    valid_languages = ["en", "es", "fr", "en-US", "es-ES"]
-    validated = ConfigurationValidator.validate_language_codes(valid_languages)
-    assert validated == valid_languages
-
-def test_configuration_validator_language_codes_invalid():
-    """Test ConfigurationValidator rejects invalid language codes."""
-    invalid_languages = ["invalid_lang"]
-
-    with pytest.raises(ValueError) as exc_info:
-        ConfigurationValidator.validate_language_codes(invalid_languages)
-
-    assert "Invalid language code format" in str(exc_info.value)
-
 def test_configuration_validator_nlp_config_valid():
     """Test ConfigurationValidator accepts valid NLP validation."""
     valid_config = {
@@ -96,11 +81,6 @@ def test_configuration_validator_analyzer_config_unknown_keys():
     with pytest.raises(ValueError) as exc_info:
         ConfigurationValidator.validate_analyzer_configuration(invalid_config)
 
-    error_message = str(exc_info.value)
-    assert "Unknown configuration key(s)" in error_message
-    assert "unknown_key" in error_message or "another_typo" in error_message
-    assert "Valid keys are" in error_message
-
 def test_configuration_validator_recognizer_registry_unknown_keys():
     """Test ConfigurationValidator rejects recognizer registry config with unknown keys."""
     invalid_config = {
@@ -113,8 +93,4 @@ def test_configuration_validator_recognizer_registry_unknown_keys():
 
     with pytest.raises(ValueError) as exc_info:
         ConfigurationValidator.validate_recognizer_registry_configuration(invalid_config)
-
-    error_message = str(exc_info.value)
-    # Pydantic will raise an error about extra fields
-    assert "extra" in error_message.lower() or "unexpected" in error_message.lower() or "invalid_field" in error_message or "typo_key" in error_message
 

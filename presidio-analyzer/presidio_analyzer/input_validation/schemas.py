@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
-import regex as re
 from pydantic import ValidationError
 
+from . import validate_language_codes
 from .yaml_recognizer_models import RecognizerRegistryConfig
 
 
@@ -16,12 +16,7 @@ class ConfigurationValidator:
 
         :param languages: List of languages to validate.
         """
-        for lang in languages:
-            if not re.match(r"^[a-z]{2}(-[A-Z]{2})?$", lang):
-                raise ValueError(
-                    f"Invalid language code format: {lang}. "
-                    f"Expected format: 'en' or 'en-US'"
-                )
+        validate_language_codes(languages)
         return languages
 
     @staticmethod
@@ -88,10 +83,7 @@ class ConfigurationValidator:
             # Use model_dump() without exclude_unset to include default values
             return validated_config.model_dump(exclude_unset=False)
         except ValidationError as e:
-            raise ValueError(f"Invalid recognizer registry configuration: {e}")
-        except ImportError:
-            # Fallback to basic validation if models not available
-            return ConfigurationValidator._validate_recognizer_registry_basic(config)
+            raise ValueError("Invalid recognizer registry configuration") from e
 
     @staticmethod
     def _validate_recognizer_registry_basic(config: Dict[str, Any]) -> Dict[str, Any]:
@@ -117,7 +109,7 @@ class ConfigurationValidator:
 
         # Validate supported languages
         if "supported_languages" in config:
-            ConfigurationValidator.validate_language_codes(
+            validate_language_codes(
                 config["supported_languages"]
             )
 
@@ -129,7 +121,7 @@ class ConfigurationValidator:
 
     @staticmethod
     def validate_analyzer_configuration(config: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate analyzer engine validation."""
+        """Validate analyzer engine configuration."""
         if not isinstance(config, dict):
             raise ValueError("Analyzer configuration must be a dictionary")
 
@@ -152,7 +144,7 @@ class ConfigurationValidator:
 
         # Validate supported languages if present
         if "supported_languages" in config:
-            ConfigurationValidator.validate_language_codes(
+            validate_language_codes(
                 config["supported_languages"]
             )
 

@@ -1,12 +1,10 @@
 """Pydantic models for YAML recognizer configurations."""
 
-import logging
 from typing import Any, Dict, List, Optional, Union
 
-import regex as re
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-logger = logging.getLogger("presidio-analyzer")
+from presidio_analyzer.input_validation import validate_language_codes
 
 
 class LanguageContextConfig(BaseModel):
@@ -25,10 +23,7 @@ class LanguageContextConfig(BaseModel):
     @classmethod
     def validate_language_code(cls, v: str) -> str:
         """Validate language code format."""
-        if not re.match(r"^[a-z]{2}(-[A-Z]{2})?$", v):
-            raise ValueError(
-                f"Invalid language code format: {v}. Expected format: 'en' or 'en-US'"
-            )
+        validate_language_codes([v])
         return v
 
 
@@ -79,8 +74,7 @@ class BaseRecognizerConfig(BaseModel):
     @classmethod
     def validate_single_language(cls, v: Optional[str]) -> Optional[str]:
         """Validate single language code format."""
-        if v and not re.match(r"^[a-z]{2}(-[A-Z]{2})?$", v):
-            raise ValueError(f"Invalid language code format: {v}")
+        validate_language_codes([v])
         return v
 
     @model_validator(mode="after")
@@ -91,8 +85,6 @@ class BaseRecognizerConfig(BaseModel):
                 "Cannot specify both 'supported_language' and 'supported_languages'"
             )
 
-        # If neither is specified, this is allowed for
-        # predefined recognizers (defaults will be used)
         return self
 
     @model_validator(mode="after")
@@ -234,7 +226,10 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
     @field_validator("patterns")
     @classmethod
     def validate_patterns(cls, patterns: Optional[List[Dict]]) -> Optional[List[Dict]]:
-        """Validate single language code format."""
+        """Validate single language code format.
+
+        :param patterns: List of patterns
+        """
         if patterns and not isinstance(patterns, list):
             raise ValueError(f"Patterns should be a list: {patterns}")
 
@@ -253,13 +248,6 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
                 raise ValueError(f"Pattern score should be between 0 and 1: {pattern}")
         return patterns
 
-    @field_validator("supported_language")
-    @classmethod
-    def validate_single_language(cls, v: Optional[str]) -> Optional[str]:
-        """Validate single language code format."""
-        if v and not re.match(r"^[a-z]{2}(-[A-Z]{2})?$", v):
-            raise ValueError(f"Invalid language code format: {v}")
-        return v
 
     @model_validator(mode="after")
     def validate_configuration(self):
@@ -321,9 +309,7 @@ class RecognizerRegistryConfig(BaseModel):
         if len(v) == 0:
             return []
 
-        for lang in v:
-            if not re.match(r"^[a-z]{2}(-[A-Z]{2})?$", lang):
-                raise ValueError(f"Invalid language code format: {lang}")
+        validate_language_codes(v)
         return v
 
     @model_validator(mode="after")
@@ -349,12 +335,6 @@ class RecognizerRegistryConfig(BaseModel):
                         )
 
         return self
-
-    @field_validator("global_regex_flags")
-    @classmethod
-    def validate_global_regex_flags(cls, v: int) -> int:
-        """Validate global_regex_flags and warn if using default."""
-        return v
 
     @model_validator(mode="after")
     def validate_recognizers_not_empty(self):

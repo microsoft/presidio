@@ -121,6 +121,13 @@ class RecognizerListLoader:
         return recognizer_conf["name"]
 
     @staticmethod
+    def _convert_supported_entities_to_entity(conf: Dict[str, Any]) -> None:
+        if "supported_entities" in conf:
+            supported_entities = conf.pop("supported_entities")
+            if "supported_entity" not in conf and supported_entities:
+                conf["supported_entity"] = supported_entities[0]
+
+    @staticmethod
     def _is_language_supported_globally(
         recognizer: EntityRecognizer,
         supported_languages: Iterable[str],
@@ -153,10 +160,7 @@ class RecognizerListLoader:
 
             # Transform supported_entities -> supported_entity
             # (PatternRecognizer expects singular)
-            if "supported_entities" in conf_copy:
-                supported_entities = conf_copy.pop("supported_entities")
-                if "supported_entity" not in conf_copy and supported_entities:
-                    conf_copy["supported_entity"] = supported_entities[0]
+            RecognizerListLoader._convert_supported_entities_to_entity(conf_copy)
 
             return [PatternRecognizer.from_dict(conf_copy)]
 
@@ -173,10 +177,7 @@ class RecognizerListLoader:
 
             # Transform supported_entities -> supported_entity
             # (PatternRecognizer expects singular)
-            if "supported_entities" in copied_recognizer:
-                supported_entities = copied_recognizer.pop("supported_entities")
-                if "supported_entity" not in copied_recognizer and supported_entities:
-                    copied_recognizer["supported_entity"] = supported_entities[0]
+            RecognizerListLoader._convert_supported_entities_to_entity(copied_recognizer)
 
             kwargs = {**copied_recognizer, **supported_language}
             recognizers.append(PatternRecognizer.from_dict(kwargs))
@@ -262,16 +263,7 @@ class RecognizerListLoader:
         if RecognizerListLoader._is_pattern_recognizer(recognizer_cls):
             # Convert supported_entities (plural) to supported_entity
             # (singular) if present
-            if "supported_entities" in kwargs:
-                supported_entities = kwargs.pop("supported_entities")
-                # Only set supported_entity if we have valid entities
-                # and it's not already set
-                if (
-                    supported_entities
-                    and len(supported_entities) > 0
-                    and "supported_entity" not in kwargs
-                ):
-                    kwargs["supported_entity"] = supported_entities[0]
+            RecognizerListLoader._convert_supported_entities_to_entity(kwargs)
 
             # Remove supported_entity if it's None
             # to allow the recognizer's default to be used
