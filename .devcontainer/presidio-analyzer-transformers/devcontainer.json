@@ -9,13 +9,17 @@
           "POETRY_EXTRAS": "-E transformers"
         }
     },
-    "workspaceMount": "source=${localWorkspaceFolder}/presidio-analyzer,target=/workspace,type=bind",
-    "workspaceFolder": "/workspace",
-    "postCreateCommand": "chmod +x ./install_dependencies.sh && ./install_dependencies.sh",
-  "postAttachCommand": "poetry shell",
+  "workspaceMount": "source=${localWorkspaceFolder}/presidio-analyzer,target=/workspace,type=bind",
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "chmod +x ./install_dependencies.sh && ./install_dependencies.sh",
   "customizations": {
-    "extensions": [
-      "ms-python.python", 
-    ],
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
+      }
+    }
   }
 }
