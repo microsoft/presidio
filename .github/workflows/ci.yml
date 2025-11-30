@@ -96,7 +96,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          persist-credentials: false
+          persist-credentials: true
           fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
