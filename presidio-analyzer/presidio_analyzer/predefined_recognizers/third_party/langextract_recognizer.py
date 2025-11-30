@@ -70,16 +70,14 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         model_config = get_model_config(
             full_config, provider_key="langextract"
         )
-        self.model_id = model_config["model_id"]
-        self.temperature = model_config.get("temperature")
 
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
             name=name,
             version="1.0.0",
-            model_id=self.model_id,
-            temperature=self.temperature,
+            model_id=model_config["model_id"],
+            temperature=model_config.get("temperature"),
             min_score=lm_config.get("min_score"),
             labels_to_ignore=lm_config.get("labels_to_ignore"),
             enable_generic_consolidation=lm_config.get(
@@ -103,8 +101,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         )
 
         self.entity_mappings = langextract_config["entity_mappings"]
-
-        logger.info("Loaded recognizer: %s", self.name)
+        self.debug = langextract_config.get("debug", False)
 
     def _call_llm(self, text: str, entities: List[str], **kwargs):
         """Call LangExtract LLM."""
@@ -113,6 +110,7 @@ class LangExtractRecognizer(LMRecognizer, ABC):
             "text": text,
             "prompt": self.prompt_description,
             "examples": self.examples,
+            "debug": self.debug,
         }
 
         # Add temperature if configured

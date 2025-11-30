@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from presidio_analyzer.llm_utils import check_langextract_available, lx
+from presidio_analyzer.llm_utils import lx
 from presidio_analyzer.predefined_recognizers.third_party.\
     langextract_recognizer import LangExtractRecognizer
 
@@ -33,12 +33,9 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
             (optional, default: "en").
         :param context: List of context words
             (optional, currently not used by LLM recognizers).
-        :param kwargs: Additional keyword arguments passed from YAML configuration
-            (e.g., name, version, etc.).
-        :raises ImportError: If langextract is not installed.
+        :param kwargs: Additional keyword arguments (unused, allows flexibility
+            when instantiated from YAML configuration).
         """
-        check_langextract_available()
-
         actual_config_path = (
             config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
         )
