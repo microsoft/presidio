@@ -3,12 +3,14 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from presidio_analyzer.llm_utils import lx, load_yaml_file
-from presidio_analyzer.predefined_recognizers.third_party.langextract_recognizer import (
-    LangExtractRecognizer,
+from presidio_analyzer.llm_utils import lx
+from presidio_analyzer.predefined_recognizers.third_party import (
+    langextract_recognizer,
 )
 
 logger = logging.getLogger("presidio-analyzer")
+
+LangExtractRecognizer = langextract_recognizer.LangExtractRecognizer
 
 AZURE_OPENAI_DOCS_URL = "https://learn.microsoft.com/en-us/azure/ai-services/openai/"
 
@@ -25,7 +27,9 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
     """
 
     DEFAULT_CONFIG_PATH = (
-        Path(__file__).parent.parent.parent / "conf" / "langextract_config_azureopenai.yaml"
+        Path(__file__).parent.parent.parent
+        / "conf"
+        / "langextract_config_azureopenai.yaml"
     )
 
     def __init__(
@@ -46,22 +50,29 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
 
         Configuration priority for authentication (highest to lowest):
         1. Direct parameters (azure_endpoint, api_key, api_version)
-        2. Environment variables (AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY, AZURE_OPENAI_API_VERSION)
-        
+        2. Environment variables (AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY,
+           AZURE_OPENAI_API_VERSION)
+
         Configuration priority for model_id (deployment name):
         1. Direct parameter (model_id)
         2. Config file (langextract.model.model_id)
 
-        :param model_id: Azure OpenAI deployment name (e.g., "gpt-4", "gpt-4o"). Overrides config file.
-        :param config_path: Path to YAML configuration file. If not provided, uses default config.
+        :param model_id: Azure OpenAI deployment name (e.g., "gpt-4",
+            "gpt-4o"). Overrides config file.
+        :param config_path: Path to YAML configuration file. If not provided,
+            uses default config.
         :param azure_endpoint: Azure OpenAI endpoint URL (overrides env var).
-        :param api_key: Azure OpenAI API key (overrides env var). If not provided, uses managed identity.
-        :param api_version: Azure OpenAI API version (optional, defaults to "2024-02-15-preview").
-        :param supported_language: Language this recognizer supports (optional, default: "en").
+        :param api_key: Azure OpenAI API key (overrides env var). If not
+            provided, uses managed identity.
+        :param api_version: Azure OpenAI API version (optional, defaults to
+            "2024-02-15-preview").
+        :param supported_language: Language this recognizer supports
+            (optional, default: "en").
         :raises ImportError: If langextract is not installed.
-        :raises ValueError: If Azure OpenAI endpoint is not provided via parameter or env var.
+        :raises ValueError: If Azure OpenAI endpoint is not provided via
+            parameter or env var.
         """
-        
+
         # Determine actual config path
         actual_config_path = (
             config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
@@ -69,7 +80,7 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
 
         # Get Azure-specific settings with priority: parameter > env var
         self.azure_endpoint = (
-            azure_endpoint 
+            azure_endpoint
             or os.environ.get("AZURE_OPENAI_ENDPOINT")
         )
         if not self.azure_endpoint:
@@ -97,7 +108,7 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
             name="Azure OpenAI LangExtract PII",
             supported_language=supported_language
         )
-        
+
         # Override model_id if provided as parameter (deployment name)
         if model_id:
             self.model_id = model_id
@@ -111,9 +122,6 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
         provider registration.
         """
         try:
-            from presidio_analyzer.predefined_recognizers.third_party import (
-                azure_openai_provider
-            )
 
             model_id_with_prefix = f"azure:{self.model_id}"
 
@@ -122,7 +130,7 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
                 "api_version": self.api_version,
                 "azure_deployment": self.model_id,
             }
-            
+
             if self.api_key:
                 language_model_params["api_key"] = self.api_key
 
@@ -135,7 +143,7 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
                 "fence_output": True,
                 "use_schema_constraints": False,
             }
-            
+
             extract_params.update(kwargs)
 
             return lx.extract(**extract_params)
