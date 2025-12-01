@@ -60,11 +60,22 @@ gliner = [
     "gliner (>=0.2.13,<1.0.0) ; python_version >= '3.10'",
     "onnxruntime (>=1.19) ; python_version >= '3.10'"
 ]
+langextract = [
+    "langextract (>=1.0.0)",
+    "more-itertools (>=10.0.0)",
+    "jinja2 (>=3.0.0)",
+]
 
 [tool.poetry.group.dev.dependencies]
 pip = "*"
 ruff = "*"
 pytest = "*"
+pytest-cov = "*"
 pytest-mock = "*"
 python-dotenv = "*"
 pre_commit = "*"
+diff-cover = "*"
+
+[tool.coverage.run]
+relative_files = true
+source = ["."]

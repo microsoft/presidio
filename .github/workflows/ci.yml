@@ -61,6 +61,9 @@ jobs:
   test:
     name: Test ${{ matrix.component.name }} (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     strategy:
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13']
@@ -87,11 +90,14 @@ jobs:
             spacy-models: ''
     env:
       POETRY_CACHE_DIR: /mnt/poetry_cache
+      COVERAGE_THRESHOLD: 90
+      PRIMARY_PYTHON: '3.13'
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          persist-credentials: false
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
@@ -135,10 +141,30 @@ jobs:
             poetry run python -m spacy download $model
           done
 
-      - name: Run unit tests
+      - name: Run tests with coverage
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest -vv --tb=short
+          PACKAGE_NAME=$(echo "${{ matrix.component.path }}" | sed 's/-/_/g')
+          poetry run pytest --cov=$PACKAGE_NAME --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
+          
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Checking PR difference coverage (>= ${{ env.COVERAGE_THRESHOLD }}%) with diff-cover..."
+            poetry run diff-cover coverage.xml \
+              --compare-branch=origin/${{ github.base_ref }} \
+              --fail-under=${{ env.COVERAGE_THRESHOLD }} \
+              --show-uncovered
+          fi
+
+      - name: Comment PR with Coverage
+        if: matrix.python-version == env.PRIMARY_PYTHON
+        uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          MINIMUM_GREEN: 85
+          MINIMUM_ORANGE: 70
+          COVERAGE_DATA_BRANCH: coverage-data
+          SUBPROJECT_ID: ${{ matrix.component.path }}
+          COVERAGE_PATH: ${{ matrix.component.path }}
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
@@ -322,6 +348,11 @@ jobs:
       - name: Wait for services to be ready
         run: sleep 60
 
+      - name: Download Ollama model for Ollama LangExtract recognizer tests
+        run: |
+          docker exec $(docker ps -qf "name=ollama") ollama pull qwen2.5:1.5b
+          docker exec $(docker ps -qf "name=ollama") ollama run qwen2.5:1.5b
+
       - name: Run E2E tests
         working-directory: e2e-tests
         run: |
@@ -404,6 +435,11 @@ jobs:
 
       - name: Wait for services to be ready
         run: sleep 60
+
+      - name: Download Ollama model for Ollama LangExtract recognizer tests
+        run: |
+          docker exec $(docker ps -qf "name=ollama") ollama pull qwen2.5:1.5b
+          docker exec $(docker ps -qf "name=ollama") ollama run qwen2.5:1.5b
 
       - name: Run E2E tests
         working-directory: e2e-tests

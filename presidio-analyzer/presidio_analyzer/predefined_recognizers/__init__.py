@@ -84,6 +84,8 @@ from .third_party.ahds_recognizer import AzureHealthDeidRecognizer
 
 # Third-party recognizers
 from .third_party.azure_ai_language import AzureAILanguageRecognizer
+from .third_party.langextract_recognizer import LangExtractRecognizer
+from .third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
 
 PREDEFINED_RECOGNIZERS = [
     "PhoneRecognizer",
@@ -151,4 +153,6 @@ __all__ = [
     "AzureHealthDeidRecognizer",
     "KrRrnRecognizer",
     "ThTninRecognizer",
+    "LangExtractRecognizer",
+    "OllamaLangExtractRecognizer",
 ]
