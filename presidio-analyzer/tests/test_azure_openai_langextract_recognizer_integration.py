@@ -33,9 +33,10 @@ class TestRealUserScenario:
         
         # Create recognizer - user just needs to specify their deployment name
         # They saw this in Azure Portal when they deployed the model
-        print("\n→ Creating recognizer with deployment name 'gpt-4.1'...")
+        deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
+        print(f"\n→ Creating recognizer with deployment name '{deployment_name}'...")
         recognizer = AzureOpenAILangExtractRecognizer(
-            model_id="gpt-4.1"  # User's actual deployment name from Azure Portal
+            model_id=deployment_name  # User's actual deployment name from Azure Portal
         )
         
         print("✓ Recognizer created successfully")
@@ -103,13 +104,14 @@ class TestRealUserScenario:
         # User passes everything explicitly (good for testing, development)
         endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
         api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
         
         print(f"\n→ Creating recognizer with explicit parameters...")
-        print(f"  - Deployment: gpt-4.1")
+        print(f"  - Deployment: {deployment_name}")
         print(f"  - Endpoint: {endpoint}")
         
         recognizer = AzureOpenAILangExtractRecognizer(
-            model_id="gpt-4.1",
+            model_id=deployment_name,
             azure_endpoint=endpoint,
             api_key=api_key
         )
@@ -153,10 +155,12 @@ class TestRealUserScenario:
         from presidio_analyzer import AnalyzerEngine
         from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
         
-        # User tries their mini model (cheaper/faster)
-        print("\n→ Creating recognizer with mini deployment...")
+        # User tries a different model deployment (if they have one)
+        # For this test, we'll use the same deployment since we may not have multiple
+        deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT_ALTERNATIVE", os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1"))
+        print(f"\n→ Creating recognizer with deployment '{deployment_name}'...")
         recognizer = AzureOpenAILangExtractRecognizer(
-            model_id="gpt-4.1-mini"  # User's smaller/cheaper deployment
+            model_id=deployment_name
         )
         
         print(f"✓ Using deployment: {recognizer.model_id}")

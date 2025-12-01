@@ -7,6 +7,10 @@ from presidio_analyzer.llm_utils import lx
 from presidio_analyzer.predefined_recognizers.third_party import (
     langextract_recognizer,
 )
+# Import to trigger provider registration
+from presidio_analyzer.predefined_recognizers.third_party import (  # noqa: F401
+    azure_openai_provider,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
