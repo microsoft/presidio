@@ -36,6 +36,12 @@ presidio = "presidio_cli.cli:run"
 pip = "*"
 ruff = "*"
 pytest = "*"
+pytest-cov = "*"
 pytest-mock = "*"
 python-dotenv = "*"
 pre_commit = "*"
+diff-cover = "*"
+
+[tool.coverage.run]
+relative_files = true
+source = ["."]
