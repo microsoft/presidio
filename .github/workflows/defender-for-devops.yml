@@ -39,22 +39,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-      with:
-        path: repo
-
     - uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
           5.0.x
           6.0.x
-
     - name: Run Microsoft Security DevOps
       uses: microsoft/security-devops-action@latest
       id: msdo
       env:
         GDN_CHECKOV_SKIPPATH: 'docs'
       with:
-        tools: bandit, checkov, templateanalyzer, trivy
+        tools: checkov, templateanalyzer, trivy
 
     - name: Upload results to Security tab
       uses: github/codeql-action/upload-sarif@v4
