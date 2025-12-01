@@ -37,8 +37,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         self,
         supported_entities: Optional[List[str]] = None,
         supported_language: str = "en",
-        client: Optional[DeidentificationClient] = None,
-        **kwargs,
+        client: Optional[DeidentificationClient] = None
     ):
         """
         Wrap PHI detection using Azure Health Data Services de-identification.
@@ -46,15 +45,14 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         :param supported_entities: List of supported entities for this recognizer.
         :param supported_language: Language code (not used, only 'en' supported).
         :param client: Optional DeidentificationClient instance.
-        :param kwargs: Additional arguments required by the parent class.
         """
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
             name="Azure Health Data Services Deidentification",
             version="1.0.0",
-            **kwargs,
         )
+
 
         endpoint = os.getenv("AHDS_ENDPOINT", None)
 
@@ -74,13 +72,13 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
 
             # Use ChainedTokenCredential for production (secure by default)
             # Only use DefaultAzureCredential in development mode
-            if os.getenv("ENV") == "development":
+            if os.getenv('ENV') == 'development':
                 credential = DefaultAzureCredential()  # CodeQL [SM05139] OK for dev
             else:
                 credential = ChainedTokenCredential(
                     EnvironmentCredential(),
                     WorkloadIdentityCredential(),
-                    ManagedIdentityCredential(),
+                    ManagedIdentityCredential()
                 )
             client = DeidentificationClient(endpoint, credential)
 
@@ -122,7 +120,8 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
             entities = self.supported_entities
 
         body = DeidentificationContent(
-            input_text=text, operation_type=DeidentificationOperationType.TAG
+            input_text=text,
+            operation_type=DeidentificationOperationType.TAG
         )
         result = self.deid_client.deidentify_text(body)
 
@@ -152,8 +151,8 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
             recognizer=AzureHealthDeidRecognizer.__class__.__name__,
             original_score=1.0,
             textual_explanation=(
-                f"Identified as {entity_type} by Azure Health Data Services "
-                "Deidentification"
+            f"Identified as {entity_type} by Azure Health Data Services "
+            "Deidentification"
             ),
         )
         return explanation
