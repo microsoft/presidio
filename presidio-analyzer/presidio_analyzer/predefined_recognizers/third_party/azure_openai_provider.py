@@ -7,7 +7,7 @@ try:
     import openai
     from langextract.providers.openai import OpenAILanguageModel
     LANGEXTRACT_OPENAI_AVAILABLE = True
-except ImportError:
+except ImportError:  # pragma: no cover
     LANGEXTRACT_OPENAI_AVAILABLE = False
     lx = None
     OpenAILanguageModel = None
@@ -23,7 +23,7 @@ try:
         get_bearer_token_provider,
     )
     AZURE_IDENTITY_AVAILABLE = True
-except ImportError:
+except ImportError:  # pragma: no cover
     AZURE_IDENTITY_AVAILABLE = False
     ChainedTokenCredential = None
     DefaultAzureCredential = None
@@ -114,7 +114,7 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
                     "environment variable or pass azure_endpoint parameter."
                 )
 
-            if not api_key or azure_ad_token_provider:
+            if not self.api_key or azure_ad_token_provider:
                 if not AZURE_IDENTITY_AVAILABLE and not azure_ad_token_provider:
                     raise ImportError(
                         "azure-identity is required for managed identity "
@@ -172,7 +172,7 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
             :return: Azure deployment name.
             """
             return self.azure_deployment
-else:
+else:  # pragma: no cover
     class AzureOpenAILanguageModel:
         """Placeholder when langextract is not installed."""
 
@@ -203,5 +203,5 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
             pass
 
         logger.debug("Azure OpenAI provider registered with LangExtract")
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         logger.warning(f"Failed to register Azure OpenAI provider: {e}")
