@@ -26,7 +26,7 @@ For the default entity mappings and examples, see the [default configuration](ht
 Presidio supports the following language model providers through LangExtract:
 
 1. **Ollama** - Local language model deployment (open-source models like Gemma, Llama, etc.)
-2. **Azure OpenAI** - _Documentation coming soon_
+2. **Azure OpenAI** - Cloud-based Azure OpenAI Service (GPT-4o, GPT-4, GPT-3.5-turbo, etc.)
 
 ## Language Model-based Recognizer Implementation
 
@@ -35,9 +35,9 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 - **`LMRecognizer`**: Abstract base class for all language model recognizers (LLMs, SLMs, etc.)
 - **`LangExtractRecognizer`**: Abstract base class for LangExtract library integration (model-agnostic)
 - **`OllamaLangExtractRecognizer`**: Concrete implementation for Ollama local language models
-- **`AzureOpenAILangExtractRecognizer`**: _Documentation coming soon_
+- **`AzureOpenAILangExtractRecognizer`**: Concrete implementation for Azure OpenAI Service
 
-[OllamaLangExtractRecognizer implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/ollama_langextract_recognizer.py)
+[OllamaLangExtractRecognizer implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/ollama_langextract_recognizer.py) | [AzureOpenAILangExtractRecognizer implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/azure_openai_langextract_recognizer.py)
 
 ---
 
@@ -172,10 +172,209 @@ See the [configuration file](https://github.com/microsoft/presidio/blob/main/pre
 
 ## Using Azure OpenAI (Cloud Models)
 
-_Documentation coming soon_
+Azure OpenAI provides cloud-based access to OpenAI models (GPT-4o, GPT-4, GPT-3.5-turbo) with enterprise security and compliance features.
+
+### Prerequisites
+
+1. **Install Presidio with LangExtract support**:
+   ```sh
+   pip install presidio-analyzer[langextract]
+   ```
+   
+   This installs `langextract` with OpenAI support, including the OpenAI Python SDK and Azure Identity libraries.
+
+2. **Azure Subscription**: Create one at [azure.microsoft.com](https://azure.microsoft.com)
+
+3. **Azure OpenAI Resource**:
+   - Create an Azure OpenAI resource in [Azure Portal](https://portal.azure.com)
+   - Request access if needed (some regions require approval)
+   - Deploy a model and note the **deployment name** you choose (e.g., "gpt-4", "my-gpt-deployment")
+
+4. **Optional: Download config file** (only if customizing entities/prompts):
+   ```sh
+   wget https://raw.githubusercontent.com/microsoft/presidio/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_azureopenai.yaml
+   ```
+
+### Authentication Options
+
+Azure OpenAI supports multiple authentication methods with flexible configuration:
+
+#### Option 1: Direct Parameters (Recommended for Most Users)
+
+Simplest approach - pass credentials and deployment name as parameters:
+
+```python
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
+
+# Initialize with deployment name and credentials
+azure_openai = AzureOpenAILangExtractRecognizer(
+    model_id="gpt-4",  # Your Azure deployment name
+    azure_endpoint="https://your-resource.openai.azure.com/",
+    api_key="your-api-key-here",
+    api_version="2024-02-15-preview"  # Optional
+)
+
+analyzer = AnalyzerEngine()
+analyzer.registry.add_recognizer(azure_openai)
+
+results = analyzer.analyze(
+    text="My email is john.doe@example.com and my phone is 555-123-4567",
+    language="en"
+)
+```
+
+#### Option 2: Environment Variables
+
+Use environment variables for credentials:
+
+```python
+import os
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
+
+# Set environment variables
+os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-resource.openai.azure.com/"
+os.environ["AZURE_OPENAI_API_KEY"] = "your-api-key-here"
+
+# Initialize with just deployment name
+azure_openai = AzureOpenAILangExtractRecognizer(
+    model_id="gpt-4"  # Your Azure deployment name
+)
+
+analyzer = AnalyzerEngine()
+analyzer.registry.add_recognizer(azure_openai)
+
+results = analyzer.analyze(
+    text="My email is john.doe@example.com and my phone is 555-123-4567",
+    language="en"
+)
+```
+
+#### Option 3: Managed Identity (Production)
+
+**More secure** - No API keys in code, uses Azure RBAC:
+
+```python
+import os
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
+
+# Set endpoint (no API key = uses managed identity)
+os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-resource.openai.azure.com/"
+
+# Initialize without API key (uses managed identity)
+azure_openai = AzureOpenAILangExtractRecognizer(
+    model_id="gpt-4"  # Your Azure deployment name
+)
+
+analyzer = AnalyzerEngine()
+analyzer.registry.add_recognizer(azure_openai)
+
+results = analyzer.analyze(
+    text="Patient John Smith has SSN 123-45-6789",
+    language="en"
+)
+```
+
+**Managed Identity Authentication Flow** (Production):
+
+When `api_key` is not provided, the provider automatically uses `ChainedTokenCredential` which tries credentials in order:
+
+1. **EnvironmentCredential** - Service principal from environment variables
+2. **WorkloadIdentityCredential** - Azure Kubernetes Service workload identity
+3. **ManagedIdentityCredential** - Azure VM/App Service managed identity
+
+For local development, set `ENV=development` to use `DefaultAzureCredential` instead:
+
+```python
+import os
+os.environ["ENV"] = "development"
+os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-resource.openai.azure.com/"
+# AZURE_OPENAI_API_KEY not set - uses DefaultAzureCredential in development mode
+# (includes Azure CLI, VS Code, etc.)
+
+azure_openai = AzureOpenAILangExtractRecognizer()
+```
+
+**Setup Managed Identity**:
+
+1. Enable managed identity on your Azure resource (VM, App Service, Container Instance, etc.)
+2. Grant the managed identity **"Cognitive Services OpenAI User"** role on your Azure OpenAI resource
+3. No API keys needed - authentication is automatic
+
+See [Azure Managed Identity documentation](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) for details.
+
+### Configuration File (Optional)
+
+The configuration file is **optional** for basic usage. You only need it to customize:
+
+- Supported entity types
+- Entity mappings (LangExtract → Presidio)
+- Prompts and examples
+- Detection parameters
+
+For basic usage, just pass `model_id` as a parameter (see examples above).
+
+**When you need a custom config:**
+
+1. **Download** the default config:
+
+   ```sh
+   wget https://raw.githubusercontent.com/microsoft/presidio/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_azureopenai.yaml
+   ```
+
+2. **Customize** entities, prompts, or other settings in the file
+
+3. **Use** the customized config:
+
+   ```python
+   recognizer = AzureOpenAILangExtractRecognizer(
+       model_id="gpt-4",  # Can override config's model_id
+       config_path="./custom_config.yaml",
+       azure_endpoint="...",
+       api_key="..."
+   )
+   ```
+
+**Configuration Reference**:
+
+The config file contains two main sections:
+
+**`lm_recognizer` section** (LLM recognizer settings):
+
+- `supported_entities`: List of PII/PHI entity types to detect
+- `labels_to_ignore`: Entity labels to skip during processing
+- `enable_generic_consolidation`: Whether to consolidate unknown entities to GENERIC_PII_ENTITY
+- `min_score`: Minimum confidence score threshold (0.0-1.0)
+
+**`langextract` section** (LangExtract-specific settings):
+
+- `model.model_id`: Azure OpenAI deployment name (e.g., "gpt-4o", "gpt-4", "gpt-35-turbo")
+- `model.temperature`: Model temperature for generation (null = use model default)
+- `prompt_file`: Path to custom prompt template file
+- `examples_file`: Path to few-shot examples file
+- `entity_mappings`: Map LangExtract entity classes to Presidio entity names
+
+See the [full config file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_azureopenai.yaml) for details.
 
 ---
 
 ## Choosing Between Ollama and Azure OpenAI
 
-_Comparison documentation coming soon_
+| Feature | Ollama | Azure OpenAI |
+|---------|--------|--------------|
+| **Deployment** | Local (on-premises) | Cloud (Azure) |
+| **Cost** | Free (hardware required) | Pay-per-use (tokens) |
+| **Models** | Open-source (Gemma, Llama, etc.) | GPT-4o, GPT-4, GPT-3.5-turbo |
+| **Privacy** | Complete data control | Microsoft Azure compliance |
+| **Setup** | Docker/local installation | Azure Portal + API key/Managed Identity |
+| **Authentication** | None (local) | API Key or Managed Identity (RBAC) |
+| **Best For** | Development, on-premises requirements | Production, enterprise compliance |
+
+**Recommendations**:
+
+- **Use Ollama** for local development, testing, or when data must stay on-premises
+- **Use Azure OpenAI** for production workloads requiring enterprise security, compliance (HIPAA, SOC 2, etc.), and managed infrastructure
+
+---

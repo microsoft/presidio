@@ -85,6 +85,9 @@ from .third_party.ahds_recognizer import AzureHealthDeidRecognizer
 
 # Third-party recognizers
 from .third_party.azure_ai_language import AzureAILanguageRecognizer
+from .third_party.azure_openai_langextract_recognizer import (
+    AzureOpenAILangExtractRecognizer,
+)
 from .third_party.langextract_recognizer import LangExtractRecognizer
 from .third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
 
@@ -155,5 +158,6 @@ __all__ = [
     "KrRrnRecognizer",
     "ThTninRecognizer",
     "LangExtractRecognizer",
+    "AzureOpenAILangExtractRecognizer",
     "OllamaLangExtractRecognizer",
 ]
