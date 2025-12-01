@@ -55,7 +55,7 @@ class TestAzureOpenAILangExtractRecognizerInitialization:
                 }
             },
             "azure_openai": {
-                "api_key": "test-key",
+                "api_key": "PLACEHOLDER_NOT_A_REAL_KEY",
                 "api_version": "2024-02-01",
             }
         }
@@ -87,12 +87,12 @@ class TestAzureOpenAILangExtractRecognizerUsage:
         recognizer = AzureOpenAILangExtractRecognizer(
             model_id="gpt-4o",  # Your Azure deployment name
             azure_endpoint="https://test-resource.openai.azure.com/",
-            api_key="test-api-key"
+            api_key="PLACEHOLDER_NOT_A_REAL_KEY"
         )
         
         assert recognizer.model_id == "gpt-4o"
         assert recognizer.azure_endpoint == "https://test-resource.openai.azure.com/"
-        assert recognizer.api_key == "test-api-key"
+        assert recognizer.api_key == "PLACEHOLDER_NOT_A_REAL_KEY"
     
     def test_environment_variables(self, mock_langextract):
         """Alternative: Use environment variables for credentials."""
@@ -100,7 +100,7 @@ class TestAzureOpenAILangExtractRecognizerUsage:
         
         env_vars = {
             "AZURE_OPENAI_ENDPOINT": "https://test-resource.openai.azure.com/",
-            "AZURE_OPENAI_API_KEY": "test-api-key"
+            "AZURE_OPENAI_API_KEY": "PLACEHOLDER_NOT_A_REAL_KEY"
         }
         
         with patch.dict(os.environ, env_vars):
@@ -110,7 +110,7 @@ class TestAzureOpenAILangExtractRecognizerUsage:
             
             assert recognizer.model_id == "gpt-4o"
             assert recognizer.azure_endpoint == "https://test-resource.openai.azure.com/"
-            assert recognizer.api_key == "test-api-key"
+            assert recognizer.api_key == "PLACEHOLDER_NOT_A_REAL_KEY"
     
     def test_managed_identity_no_api_key(self, mock_langextract):
         """Production: Use managed identity (no API key)."""
@@ -174,7 +174,7 @@ class TestAzureOpenAILangExtractRecognizerCallMethod:
         recognizer = AzureOpenAILangExtractRecognizer(
             model_id="gpt-4o",
             azure_endpoint="https://test.openai.azure.com/",
-            api_key="test-key-123"
+            api_key="PLACEHOLDER_NOT_A_REAL_KEY"
         )
         
         # Mock to capture the call
@@ -194,7 +194,7 @@ class TestAzureOpenAILangExtractRecognizerCallMethod:
             call_kwargs = mock_langextract.extract.call_args[1]
             assert call_kwargs["model_id"] == "azure:gpt-4o"
             assert "language_model_params" in call_kwargs
-            assert call_kwargs["language_model_params"]["api_key"] == "test-key-123"
+            assert call_kwargs["language_model_params"]["api_key"] == "PLACEHOLDER_NOT_A_REAL_KEY"
             assert call_kwargs["language_model_params"]["azure_endpoint"] == "https://test.openai.azure.com/"
             assert call_kwargs["fence_output"] is True
             assert call_kwargs["use_schema_constraints"] is False
@@ -293,12 +293,12 @@ class TestAzureOpenAIProvider:
         with patch('openai.AzureOpenAI') as mock_client:
             provider = AzureOpenAILanguageModel(
                 model_id="gpt-4o",
-                api_key="test-key",
+                api_key="PLACEHOLDER_NOT_A_REAL_KEY",
                 azure_endpoint="https://test.openai.azure.com/"
             )
             
             assert provider.model_id == "gpt-4o"
-            assert provider.api_key == "test-key"
+            assert provider.api_key == "PLACEHOLDER_NOT_A_REAL_KEY"
             assert provider.azure_endpoint == "https://test.openai.azure.com/"
             assert provider.azure_deployment == "gpt-4o"
             mock_client.assert_called_once()
@@ -310,7 +310,7 @@ class TestAzureOpenAIProvider:
         with patch('openai.AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="azure:gpt-4o",
-                api_key="key",
+                api_key="PLACEHOLDER_KEY",
                 azure_endpoint="https://test.openai.azure.com/"
             )
             
@@ -324,7 +324,7 @@ class TestAzureOpenAIProvider:
         with patch('openai.AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="azureopenai:gpt-4o",
-                api_key="key",
+                api_key="PLACEHOLDER_KEY",
                 azure_endpoint="https://test.openai.azure.com/"
             )
             
@@ -337,7 +337,7 @@ class TestAzureOpenAIProvider:
         with patch('openai.AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="aoai:gpt-4o",
-                api_key="key",
+                api_key="PLACEHOLDER_KEY",
                 azure_endpoint="https://test.openai.azure.com/"
             )
             
@@ -350,7 +350,7 @@ class TestAzureOpenAIProvider:
         with pytest.raises(ValueError, match="Azure OpenAI endpoint is required"):
             AzureOpenAILanguageModel(
                 model_id="gpt-4o",
-                api_key="key"
+                api_key="PLACEHOLDER_KEY"
                 # Missing azure_endpoint
             )
 
@@ -362,7 +362,7 @@ class TestAzureOpenAIProvider:
             with patch('openai.AzureOpenAI'):
                 provider = AzureOpenAILanguageModel(
                     model_id="gpt-4o",
-                    api_key="key"
+                    api_key="PLACEHOLDER_KEY"
                 )
                 
                 assert provider.azure_endpoint == "https://env.openai.azure.com/"
@@ -373,18 +373,18 @@ class TestAzureOpenAIProvider:
         
         env_vars = {
             'AZURE_OPENAI_ENDPOINT': 'https://test.openai.azure.com/',
-            'AZURE_OPENAI_API_KEY': 'env-key'
+            'AZURE_OPENAI_API_KEY': 'PLACEHOLDER_FROM_ENV'
         }
         
         with patch.dict(os.environ, env_vars):
             with patch('openai.AzureOpenAI') as mock_client:
                 provider = AzureOpenAILanguageModel(model_id="gpt-4o")
                 
-                assert provider.api_key == "env-key"
+                assert provider.api_key == "PLACEHOLDER_FROM_ENV"
                 # Verify client was created with API key
                 mock_client.assert_called_once()
                 call_kwargs = mock_client.call_args[1]
-                assert call_kwargs['api_key'] == "env-key"
+                assert call_kwargs['api_key'] == "PLACEHOLDER_FROM_ENV"
 
     def test_provider_uses_custom_api_version(self):
         """Test that provider uses custom API version."""
@@ -393,7 +393,7 @@ class TestAzureOpenAIProvider:
         with patch('openai.AzureOpenAI') as mock_client:
             provider = AzureOpenAILanguageModel(
                 model_id="gpt-4o",
-                api_key="key",
+                api_key="PLACEHOLDER_KEY",
                 azure_endpoint="https://test.openai.azure.com/",
                 api_version="2024-10-01"
             )
@@ -410,7 +410,7 @@ class TestAzureOpenAIProvider:
         with patch('openai.AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="gpt-4o",
-                api_key="key",
+                api_key="PLACEHOLDER_KEY",
                 azure_endpoint="https://test.openai.azure.com/"
             )
             
@@ -423,7 +423,7 @@ class TestAzureOpenAIProvider:
         with patch('openai.AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="gpt-4o",
-                api_key="key",
+                api_key="PLACEHOLDER_KEY",
                 azure_endpoint="https://test.openai.azure.com/",
                 azure_deployment="custom-deployment"
             )
@@ -438,7 +438,7 @@ class TestAzureOpenAIProvider:
         with patch('openai.AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="gpt-4o",
-                api_key="key",
+                api_key="PLACEHOLDER_KEY",
                 azure_endpoint="https://test.openai.azure.com/",
                 azure_deployment="my-deployment"
             )
@@ -506,7 +506,7 @@ class TestAzureOpenAIProvider:
             with pytest.raises(ImportError, match="LangExtract with OpenAI support is not installed"):
                 AzureOpenAILanguageModel(
                     model_id="gpt-4o",
-                    api_key="key",
+                    api_key="PLACEHOLDER_KEY",
                     azure_endpoint="https://test.openai.azure.com/"
                 )
 
