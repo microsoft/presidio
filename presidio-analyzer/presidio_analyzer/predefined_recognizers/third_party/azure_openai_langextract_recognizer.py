@@ -149,14 +149,16 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
                         credential,
                         "https://cognitiveservices.azure.com/.default"
                     )
-                
+
                 self._client = openai.AzureOpenAI(
                     azure_ad_token_provider=token_provider,
                     azure_endpoint=self.azure_endpoint,
                     api_version=self.api_version
                 )
 
-                logger.debug(f"Initialized Azure OpenAI provider with {credential_type}")
+                logger.debug(
+                    f"Initialized Azure OpenAI provider with {credential_type}"
+                )
             else:
                 self._client = openai.AzureOpenAI(
                     api_key=self.api_key,
@@ -164,7 +166,9 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
                     api_version=self.api_version
                 )
 
-                logger.debug("Initialized Azure OpenAI provider with API key authentication")
+                logger.debug(
+                    "Initialized Azure OpenAI provider with API key authentication"
+                )
 
         def _get_client_model_id(self) -> str:
             """
