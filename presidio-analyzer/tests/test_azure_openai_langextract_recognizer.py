@@ -2,6 +2,10 @@ import os
 import pytest
 from unittest.mock import patch, MagicMock
 
+import openai
+from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
+from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
+
 
 @pytest.fixture
 def mock_langextract():
@@ -27,7 +31,6 @@ class TestAzureOpenAILangExtractRecognizerInitialization:
             'presidio_analyzer.llm_utils.langextract_helper.lx',
             None
         ):
-            from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILangExtractRecognizer
             with pytest.raises(ImportError, match="LangExtract is not installed"):
                 AzureOpenAILangExtractRecognizer(
                     model_id="gpt-4o",
@@ -69,9 +72,6 @@ class TestAzureOpenAILangExtractRecognizerInitialization:
                             if not k.startswith('AZURE_OPENAI')}
         
         with patch.dict('os.environ', env_without_azure, clear=True):
-            
-            from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILangExtractRecognizer
-            
             with pytest.raises(ValueError, match="azure_endpoint"):
                 AzureOpenAILangExtractRecognizer(config_path=str(config_file))
 
@@ -81,8 +81,6 @@ class TestAzureOpenAILangExtractRecognizerUsage:
     
     def test_simple_usage_with_parameters(self, mock_langextract):
         """Best practice: Pass model_id and credentials as parameters."""
-        from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
-        
         # Simple usage - no config file needed!
         recognizer = AzureOpenAILangExtractRecognizer(
             model_id="gpt-4o",  # Your Azure deployment name
@@ -96,8 +94,6 @@ class TestAzureOpenAILangExtractRecognizerUsage:
     
     def test_environment_variables(self, mock_langextract):
         """Alternative: Use environment variables for credentials."""
-        from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
-        
         env_vars = {
             "AZURE_OPENAI_ENDPOINT": "https://test-resource.openai.azure.com/",
             "AZURE_OPENAI_API_KEY": "PLACEHOLDER_NOT_A_REAL_KEY"
@@ -114,8 +110,6 @@ class TestAzureOpenAILangExtractRecognizerUsage:
     
     def test_managed_identity_no_api_key(self, mock_langextract):
         """Production: Use managed identity (no API key)."""
-        from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
-        
         recognizer = AzureOpenAILangExtractRecognizer(
             model_id="gpt-4o",
             azure_endpoint="https://test-resource.openai.azure.com/"
@@ -130,8 +124,6 @@ class TestAzureOpenAILangExtractRecognizerUsage:
         # Mock file loading to avoid needing actual prompt/example files
         with patch('presidio_analyzer.llm_utils.config_loader.load_yaml_file') as mock_load:
             mock_load.return_value = {}  # Empty prompt/examples
-            
-            from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
             
             # Parameter overrides config - using default config
             recognizer = AzureOpenAILangExtractRecognizer(
@@ -148,8 +140,6 @@ class TestAzureOpenAILangExtractRecognizerUsage:
         # Mock file loading to avoid needing actual files
         with patch('presidio_analyzer.llm_utils.config_loader.load_yaml_file') as mock_load:
             mock_load.return_value = {}  # Empty prompt/examples
-            
-            from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
             
             # Use default config but override model_id
             recognizer = AzureOpenAILangExtractRecognizer(
@@ -169,8 +159,6 @@ class TestAzureOpenAILangExtractRecognizerCallMethod:
 
     def test_call_langextract_builds_correct_params_with_api_key(self, mock_langextract):
         """Test that _call_langextract builds correct parameters including API key."""
-        from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
-        
         recognizer = AzureOpenAILangExtractRecognizer(
             model_id="gpt-4o",
             azure_endpoint="https://test.openai.azure.com/",
@@ -202,8 +190,6 @@ class TestAzureOpenAILangExtractRecognizerCallMethod:
 
     def test_call_langextract_without_api_key_for_managed_identity(self, mock_langextract):
         """Test that _call_langextract omits API key when using managed identity."""
-        from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
-        
         recognizer = AzureOpenAILangExtractRecognizer(
             model_id="gpt-4o",
             azure_endpoint="https://test.openai.azure.com/"
@@ -227,8 +213,6 @@ class TestAzureOpenAILangExtractRecognizerCallMethod:
 
     def test_call_langextract_passes_through_kwargs(self, mock_langextract):
         """Test that _call_langextract passes through additional kwargs."""
-        from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
-        
         recognizer = AzureOpenAILangExtractRecognizer(
             model_id="gpt-4o",
             azure_endpoint="https://test.openai.azure.com/",
@@ -257,8 +241,6 @@ class TestAzureOpenAILangExtractRecognizerCallMethod:
 
     def test_call_langextract_handles_exceptions(self, mock_langextract):
         """Test that _call_langextract properly logs and re-raises exceptions."""
-        from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
-        
         recognizer = AzureOpenAILangExtractRecognizer(
             model_id="gpt-4o",
             azure_endpoint="https://test.openai.azure.com/",
@@ -281,9 +263,7 @@ class TestAzureOpenAIProvider:
 
     def test_provider_initialization_with_api_key(self):
         """Test provider initialization with API key."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
-        with patch('openai.AzureOpenAI') as mock_client:
+        with patch.object(openai, 'AzureOpenAI') as mock_client:
             provider = AzureOpenAILanguageModel(
                 model_id="gpt-4o",
                 api_key="PLACEHOLDER_NOT_A_REAL_KEY",
@@ -298,9 +278,7 @@ class TestAzureOpenAIProvider:
 
     def test_provider_strips_azure_prefix(self):
         """Test that azure: prefix is stripped from model_id."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
-        with patch('openai.AzureOpenAI'):
+        with patch.object(openai, 'AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="azure:gpt-4o",
                 api_key="PLACEHOLDER_KEY",
@@ -312,9 +290,7 @@ class TestAzureOpenAIProvider:
 
     def test_provider_strips_azureopenai_prefix(self):
         """Test that azureopenai: prefix is stripped."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
-        with patch('openai.AzureOpenAI'):
+        with patch.object(openai, 'AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="azureopenai:gpt-4o",
                 api_key="PLACEHOLDER_KEY",
@@ -325,9 +301,7 @@ class TestAzureOpenAIProvider:
 
     def test_provider_strips_aoai_prefix(self):
         """Test that aoai: prefix is stripped."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
-        with patch('openai.AzureOpenAI'):
+        with patch.object(openai, 'AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="aoai:gpt-4o",
                 api_key="PLACEHOLDER_KEY",
@@ -338,8 +312,6 @@ class TestAzureOpenAIProvider:
 
     def test_provider_requires_endpoint(self):
         """Test that provider raises error if endpoint is missing."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
         with pytest.raises(ValueError, match="Azure OpenAI endpoint is required"):
             AzureOpenAILanguageModel(
                 model_id="gpt-4o",
@@ -348,10 +320,8 @@ class TestAzureOpenAIProvider:
 
     def test_provider_managed_identity_development_env(self):
         """Test that provider uses DefaultAzureCredential in development."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
         with patch.dict(os.environ, {'ENV': 'development', 'AZURE_OPENAI_ENDPOINT': 'https://test.openai.azure.com/'}):
-            with patch('openai.AzureOpenAI'):
+            with patch.object(openai, 'AzureOpenAI'):
                 with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.DefaultAzureCredential') as mock_cred:
                     with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.get_bearer_token_provider'):
                         provider = AzureOpenAILanguageModel(model_id="gpt-4o")
@@ -359,14 +329,12 @@ class TestAzureOpenAIProvider:
 
     def test_provider_managed_identity_production_env(self):
         """Test that provider uses ChainedTokenCredential in production."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
         env_vars = {'AZURE_OPENAI_ENDPOINT': 'https://test.openai.azure.com/'}
         env_without_dev = {k: v for k, v in os.environ.items() if k != 'ENV'}
         env_without_dev.update(env_vars)
         
         with patch.dict(os.environ, env_without_dev, clear=True):
-            with patch('openai.AzureOpenAI'):
+            with patch.object(openai, 'AzureOpenAI'):
                 with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.EnvironmentCredential') as mock_env:
                     with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.WorkloadIdentityCredential') as mock_workload:
                         with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.ManagedIdentityCredential') as mock_managed:
@@ -380,11 +348,9 @@ class TestAzureOpenAIProvider:
 
     def test_provider_custom_token_provider(self):
         """Test that provider can use custom Azure AD token provider."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
         mock_token_provider = MagicMock()
         
-        with patch('openai.AzureOpenAI') as mock_client:
+        with patch.object(openai, 'AzureOpenAI') as mock_client:
             provider = AzureOpenAILanguageModel(
                 model_id="gpt-4o",
                 azure_endpoint="https://test.openai.azure.com/",
@@ -397,9 +363,7 @@ class TestAzureOpenAIProvider:
 
     def test_provider_get_client_model_id(self):
         """Test that _get_client_model_id returns deployment name."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
-        with patch('openai.AzureOpenAI'):
+        with patch.object(openai, 'AzureOpenAI'):
             provider = AzureOpenAILanguageModel(
                 model_id="gpt-4o",
                 api_key="PLACEHOLDER_KEY",
@@ -412,8 +376,6 @@ class TestAzureOpenAIProvider:
     def test_provider_import_error_without_langextract(self):
         """Test that provider raises ImportError when langextract is not available."""
         with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.LANGEXTRACT_OPENAI_AVAILABLE', False):
-            from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-            
             with pytest.raises(ImportError, match="LangExtract with OpenAI support is not installed"):
                 AzureOpenAILanguageModel(
                     model_id="gpt-4o",
@@ -423,12 +385,11 @@ class TestAzureOpenAIProvider:
 
     def test_provider_import_error_without_azure_identity(self):
         """Test that provider raises error when azure-identity is missing for managed identity."""
-        from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
-        
         with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.AZURE_IDENTITY_AVAILABLE', False):
-            with pytest.raises(ImportError, match="azure-identity is required"):
-                AzureOpenAILanguageModel(
-                    model_id="gpt-4o",
-                    azure_endpoint="https://test.openai.azure.com/"
-                    # No API key, so should try managed identity
-                )
+            with patch.object(openai, 'AzureOpenAI') as mock_client:
+                with pytest.raises(ImportError, match="azure-identity is required"):
+                    AzureOpenAILanguageModel(
+                        model_id="gpt-4o",
+                        azure_endpoint="https://test.openai.azure.com/"
+                        # No API key, so should try managed identity
+                    )
