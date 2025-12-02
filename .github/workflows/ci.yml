@@ -71,23 +71,18 @@ jobs:
           - name: 'Analyzer'
             path: 'presidio-analyzer'
             extras: '--all-extras'
-            spacy-models: 'en_core_web_lg en_core_web_sm'
           - name: 'Anonymizer'
             path: 'presidio-anonymizer'
             extras: ''
-            spacy-models: ''
           - name: 'Image Redactor'
             path: 'presidio-image-redactor'
             extras: ''
-            spacy-models: 'en_core_web_lg'
           - name: 'CLI'
             path: 'presidio-cli'
             extras: ''
-            spacy-models: ''
           - name: 'Structured'
             path: 'presidio-structured'
             extras: ''
-            spacy-models: ''
     env:
       POETRY_CACHE_DIR: /mnt/poetry_cache
       COVERAGE_THRESHOLD: 90
@@ -132,14 +127,6 @@ jobs:
         working-directory: ${{ matrix.component.path }}
         run: |
           poetry run pip install -e ../presidio-analyzer/.
-
-      - name: Download spaCy models
-        if: matrix.component.spacy-models != ''
-        working-directory: ${{ matrix.component.path }}
-        run: |
-          for model in ${{ matrix.component.spacy-models }}; do
-            poetry run python -m spacy download $model
-          done
 
       - name: Run tests with coverage
         working-directory: ${{ matrix.component.path }}

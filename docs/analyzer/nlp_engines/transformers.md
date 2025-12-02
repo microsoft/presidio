@@ -53,8 +53,12 @@ AutoModelForTokenClassification.from_pretrained(transformers_model)
 
 Then, also download a spaCy pipeline/model:
 
+!!! note "Note"
+    The `en_core_web_sm` and `en_core_web_lg` models are installed automatically with `presidio_analyzer`.
+    For other spaCy models, download them manually:
+
 ```sh
-python -m spacy download en_core_web_sm
+python -m spacy download <model_name>
 ```
 
 ### Configuring the NER pipeline

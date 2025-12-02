@@ -57,9 +57,6 @@ Follow these steps when starting to work on a Presidio service with poetry:
     `poetry run`. For example:
     1. `poetry run ruff check`
     2. `poetry run pip freeze`
-    3. `poetry run python -m spacy download en_core_web_lg`
-
-    Command 3 downloads the default spacy model needed for Presidio Analyzer.`
 
 #### Alternatively, activate the virtual environment and use the commands using [this method](https://python-poetry.org/docs/basic-usage/#activating-the-virtual-environment).
 

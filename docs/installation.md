@@ -32,7 +32,6 @@ with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
     ```
     pip install presidio_analyzer
     pip install presidio_anonymizer
-    python -m spacy download en_core_web_lg
     ```
 
 === "Transformers"
@@ -40,13 +39,12 @@ with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
     ```
     pip install "presidio_analyzer[transformers]"
     pip install presidio_anonymizer
-    python -m spacy download en_core_web_sm
     ```
 
     !!! note "Note"
         
-        When using a transformers NLP engine, Presidio would still use spaCy for other capabilities,
-        therefore a small spaCy model (such as en_core_web_sm) is required. 
+        When using a transformers NLP engine, Presidio would still use spaCy for other capabilities.
+        The spaCy models (`en_core_web_lg` and `en_core_web_sm`) are installed automatically.
         Transformers models would be loaded lazily. To pre-load them, see: [Downloading a pre-trained model](./analyzer/nlp_engines/transformers.md#downloading-a-pre-trained-model)
 
 === "Stanza"
@@ -69,10 +67,6 @@ For PII redaction in images
 
     ```sh
     pip install presidio_image_redactor
-    
-    # Presidio image redactor uses the presidio-analyzer
-    # which requires a spaCy language model:
-    python -m spacy download en_core_web_lg
     ```
 
 2. Install an OCR engine. The default version uses the [Tesseract OCR Engine](https://github.com/tesseract-ocr/tesseract).
