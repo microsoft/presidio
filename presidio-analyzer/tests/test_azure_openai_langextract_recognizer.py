@@ -10,7 +10,7 @@ except ImportError:
 
 import openai
 from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
-from presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer import AzureOpenAILanguageModel
+from presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider import AzureOpenAILanguageModel
 
 
 @pytest.fixture
@@ -328,8 +328,8 @@ class TestAzureOpenAIProvider:
         """Test that provider uses DefaultAzureCredential in development."""
         with patch.dict(os.environ, {'ENV': 'development', 'AZURE_OPENAI_ENDPOINT': 'https://test.openai.azure.com/'}):
             with patch.object(openai, 'AzureOpenAI'):
-                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.DefaultAzureCredential') as mock_cred:
-                    with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.get_bearer_token_provider'):
+                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.DefaultAzureCredential') as mock_cred:
+                    with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.get_bearer_token_provider'):
                         AzureOpenAILanguageModel(model_id="gpt-4o")
                         mock_cred.assert_called_once()
 
@@ -341,11 +341,11 @@ class TestAzureOpenAIProvider:
         
         with patch.dict(os.environ, env_without_dev, clear=True):
             with patch.object(openai, 'AzureOpenAI'):
-                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.EnvironmentCredential') as mock_env:
-                    with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.WorkloadIdentityCredential') as mock_workload:
-                        with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.ManagedIdentityCredential') as mock_managed:
-                            with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.ChainedTokenCredential') as mock_chain:
-                                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.get_bearer_token_provider'):
+                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.EnvironmentCredential') as mock_env:
+                    with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.WorkloadIdentityCredential') as mock_workload:
+                        with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.ManagedIdentityCredential') as mock_managed:
+                            with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.ChainedTokenCredential') as mock_chain:
+                                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.get_bearer_token_provider'):
                                     AzureOpenAILanguageModel(model_id="gpt-4o")
                                     mock_chain.assert_called_once()
                                     # Verify it was called with the 3 credential instances
@@ -379,19 +379,9 @@ class TestAzureOpenAIProvider:
             
             assert provider._get_client_model_id() == "my-deployment"
 
-    def test_provider_import_error_without_langextract(self):
-        """Test that provider raises ImportError when langextract is not available."""
-        with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.LANGEXTRACT_OPENAI_AVAILABLE', False):
-            with pytest.raises(ImportError, match="LangExtract with OpenAI support is not installed"):
-                AzureOpenAILanguageModel(
-                    model_id="gpt-4o",
-                    api_key="PLACEHOLDER_KEY",
-                    azure_endpoint="https://test.openai.azure.com/"
-                )
-
     def test_provider_import_error_without_azure_identity(self):
         """Test that provider raises error when azure-identity is missing for managed identity."""
-        with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.AZURE_IDENTITY_AVAILABLE', False):
+        with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.AZURE_IDENTITY_AVAILABLE', False):
             with patch.object(openai, 'AzureOpenAI') as mock_client:
                 with pytest.raises(ImportError, match="azure-identity is required"):
                     AzureOpenAILanguageModel(
