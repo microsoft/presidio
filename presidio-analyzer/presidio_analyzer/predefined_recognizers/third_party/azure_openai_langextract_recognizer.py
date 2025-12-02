@@ -208,7 +208,8 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
 
         logger.debug("Azure OpenAI provider registered with LangExtract")
     except Exception as e:  # pragma: no cover
-        logger.warning(f"Failed to register Azure OpenAI provider: {e}")
+        logger.error(f"Failed to register Azure OpenAI provider: {e}")
+        raise
 
 
 class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
