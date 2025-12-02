@@ -1,18 +1,18 @@
 import json
 import logging
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from presidio_analyzer import (
     AnalysisExplanation,
     LocalRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts
 from presidio_analyzer.chunkers import (
     BaseTextChunker,
     CharacterBasedTextChunker,
     predict_with_chunking,
 )
+from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts
 
 try:
     from gliner import GLiNER, GLiNERConfig
@@ -62,9 +62,12 @@ class GLiNERRecognizer(LocalRecognizer):
         :param threshold: The threshold for the model's output
         (see GLiNER's documentation)
         :param map_location: The device to use for the model
-        :param chunk_size: Maximum character length for text chunks (default: 250)
-        :param chunk_overlap: Characters to overlap between chunks (default: 50)
-        :param text_chunker: Custom text chunking strategy. If None, uses CharacterBasedTextChunker
+        :param chunk_size: Maximum character length for text chunks
+            (default: 250)
+        :param chunk_overlap: Characters to overlap between chunks
+            (default: 50)
+        :param text_chunker: Custom text chunking strategy. If None, uses
+            CharacterBasedTextChunker
 
 
         """
@@ -142,13 +145,15 @@ class GLiNERRecognizer(LocalRecognizer):
         labels = self.__create_input_labels(entities)
 
         # Process text with automatic chunking
-        predict_func = lambda text: self.gliner.predict_entities(
-            text=text,
-            labels=labels,
-            flat_ner=self.flat_ner,
-            threshold=self.threshold,
-            multi_label=self.multi_label,
-        )
+        def predict_func(text: str) -> List[Dict[str, Any]]:
+            return self.gliner.predict_entities(
+                text=text,
+                labels=labels,
+                flat_ner=self.flat_ner,
+                threshold=self.threshold,
+                multi_label=self.multi_label,
+            )
+
         predictions = predict_with_chunking(
             text=text,
             predict_func=predict_func,

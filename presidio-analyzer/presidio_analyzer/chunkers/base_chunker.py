@@ -9,7 +9,7 @@ class BaseTextChunker(ABC):
     @abstractmethod
     def chunk(self, text: str) -> List[str]:
         """Split text into chunks.
-        
+
         :param text: The input text to split
         :return: List of text chunks
         """

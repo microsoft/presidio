@@ -16,9 +16,10 @@ class CharacterBasedTextChunker(BaseTextChunker):
 
         Note: Chunks may slightly exceed chunk_size to preserve complete words.
         When this occurs, the actual overlap may vary from the specified value.
-        
+
         :param chunk_size: Target maximum characters per chunk (must be > 0)
-        :param chunk_overlap: Target characters to overlap between chunks (must be >= 0 and < chunk_size)
+        :param chunk_overlap: Target characters to overlap between chunks
+            (must be >= 0 and < chunk_size)
         """
         if chunk_size <= 0:
             raise ValueError("chunk_size must be greater than 0")
@@ -32,11 +33,12 @@ class CharacterBasedTextChunker(BaseTextChunker):
 
     def chunk(self, text: str) -> List[str]:
         """Split text into overlapping chunks at word boundaries.
-        
-        Chunks are extended to the nearest word boundary (space or newline) to avoid
-        splitting words. This means chunks may slightly exceed chunk_size. For texts
-        without spaces (e.g., CJK languages), chunks may extend to end of text.
-        
+
+        Chunks are extended to the nearest word boundary (space or newline)
+        to avoid splitting words. This means chunks may slightly exceed
+        chunk_size. For texts without spaces (e.g., CJK languages), chunks
+        may extend to end of text.
+
         :param text: The input text to chunk
         :return: List of text chunks with overlap
         """

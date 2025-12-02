@@ -10,10 +10,10 @@ def predict_with_chunking(
     chunker: BaseTextChunker,
 ) -> List[Dict[str, Any]]:
     """Process text with automatic chunking for long texts.
-    
+
     For short text (≤ chunker.chunk_size), calls predict_func directly.
     For long text, chunks it and merges predictions with deduplication.
-    
+
     :param text: Input text to process
     :param predict_func: Function that takes text and returns predictions
     :param chunker: Text chunking strategy (contains chunk_size and chunk_overlap)
@@ -21,7 +21,7 @@ def predict_with_chunking(
     """
     if len(text) <= chunker.chunk_size:
         return predict_func(text)
-    
+
     predictions = process_text_in_chunks(
         text=text,
         chunker=chunker,
@@ -37,7 +37,7 @@ def process_text_in_chunks(
     chunk_overlap: int,
 ) -> List[Dict[str, Any]]:
     """Process text in chunks and adjust entity offsets.
-    
+
     :param text: Input text to process
     :param chunker: Text chunking strategy
     :param process_func: Function that takes chunk text and returns predictions
@@ -50,7 +50,7 @@ def process_text_in_chunks(
 
     for chunk in chunks:
         chunk_predictions = process_func(chunk)
-        
+
         # Adjust offsets to match original text position
         for pred in chunk_predictions:
             pred["start"] += offset
@@ -65,9 +65,11 @@ def deduplicate_overlapping_entities(
     predictions: List[Dict[str, Any]], overlap_threshold: float = 0.5
 ) -> List[Dict[str, Any]]:
     """Remove duplicate entities from overlapping chunks.
-    
-    :param predictions: List of predictions with 'start', 'end', 'label', 'score'
-    :param overlap_threshold: Overlap ratio threshold to consider duplicates (default: 0.5)
+
+    :param predictions: List of predictions with 'start', 'end', 'label',
+        'score'
+    :param overlap_threshold: Overlap ratio threshold to consider duplicates
+        (default: 0.5)
     :return: Deduplicated list of predictions sorted by position
     """
     if not predictions:
