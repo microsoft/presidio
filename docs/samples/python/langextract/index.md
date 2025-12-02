@@ -35,9 +35,9 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 - **`LMRecognizer`**: Abstract base class for all language model recognizers (LLMs, SLMs, etc.)
 - **`LangExtractRecognizer`**: Abstract base class for LangExtract library integration (model-agnostic)
 - **`OllamaLangExtractRecognizer`**: Concrete implementation for Ollama local language models
+  - [Implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/ollama_langextract_recognizer.py)
 - **`AzureOpenAILangExtractRecognizer`**: Concrete implementation for Azure OpenAI Service
-
-[OllamaLangExtractRecognizer implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/ollama_langextract_recognizer.py) | [AzureOpenAILangExtractRecognizer implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/azure_openai_langextract_recognizer.py)
+  - [Implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/azure_openai_langextract_recognizer.py)
 
 ---
 
@@ -191,6 +191,7 @@ Azure OpenAI provides cloud-based access to OpenAI models (GPT-4o, GPT-4, GPT-3.
    - Deploy a model and note the **deployment name** you choose (e.g., "gpt-4", "my-gpt-deployment")
 
 4. **Optional: Download config file** (only if customizing entities/prompts):
+
    ```sh
    wget https://raw.githubusercontent.com/microsoft/presidio/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_azureopenai.yaml
    ```
