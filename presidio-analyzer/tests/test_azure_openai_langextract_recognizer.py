@@ -324,7 +324,7 @@ class TestAzureOpenAIProvider:
             with patch.object(openai, 'AzureOpenAI'):
                 with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.DefaultAzureCredential') as mock_cred:
                     with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.get_bearer_token_provider'):
-                        provider = AzureOpenAILanguageModel(model_id="gpt-4o")
+                        AzureOpenAILanguageModel(model_id="gpt-4o")
                         mock_cred.assert_called_once()
 
     def test_provider_managed_identity_production_env(self):
@@ -340,7 +340,7 @@ class TestAzureOpenAIProvider:
                         with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.ManagedIdentityCredential') as mock_managed:
                             with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.ChainedTokenCredential') as mock_chain:
                                 with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_langextract_recognizer.get_bearer_token_provider'):
-                                    provider = AzureOpenAILanguageModel(model_id="gpt-4o")
+                                    AzureOpenAILanguageModel(model_id="gpt-4o")
                                     mock_chain.assert_called_once()
                                     # Verify it was called with the 3 credential instances
                                     call_args = mock_chain.call_args[0]
@@ -351,7 +351,7 @@ class TestAzureOpenAIProvider:
         mock_token_provider = MagicMock()
         
         with patch.object(openai, 'AzureOpenAI') as mock_client:
-            provider = AzureOpenAILanguageModel(
+            AzureOpenAILanguageModel(
                 model_id="gpt-4o",
                 azure_endpoint="https://test.openai.azure.com/",
                 azure_ad_token_provider=mock_token_provider
