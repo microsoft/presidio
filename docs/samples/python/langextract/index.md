@@ -25,8 +25,25 @@ For the default entity mappings and examples, see the [default configuration](ht
 
 Presidio supports the following language model providers through LangExtract:
 
-1. **Ollama** - Local language model deployment (open-source models like Gemma, Llama, etc.)
-2. **Azure OpenAI** - Cloud-based Azure OpenAI Service (GPT-4o, GPT-4, GPT-3.5-turbo, etc.)
+1. **Azure OpenAI** - Cloud-based Azure OpenAI Service (GPT-4o, GPT-4, GPT-3.5-turbo, etc.)
+2. **Ollama** - Local language model deployment (open-source models like Gemma, Llama, etc.)
+
+## Choosing Between Azure OpenAI and Ollama
+
+| Feature | Azure OpenAI | Ollama |
+|---------|--------------|--------|
+| **Deployment** | Cloud (Azure) | Local (on-premises) |
+| **Cost** | Pay-per-use (tokens) | Free (hardware required) |
+| **Models** | GPT-4o, GPT-4, GPT-3.5-turbo | Open-source (Gemma, Llama, etc.) |
+| **Privacy** | Microsoft Azure compliance | Complete data control |
+| **Setup** | Azure Portal + API key/Managed Identity | Docker/local installation |
+| **Authentication** | API Key or Managed Identity (RBAC) | None (local) |
+| **Best For** | Production, enterprise compliance | Development, on-premises requirements |
+
+**Recommendations**:
+
+- **Use Azure OpenAI** for production workloads requiring enterprise security, compliance (HIPAA, SOC 2, etc.), and managed infrastructure
+- **Use Ollama** for local development, testing, or when data must stay on-premises
 
 ## Language Model-based Recognizer Implementation
 
@@ -34,14 +51,16 @@ Presidio provides a hierarchy of recognizers for language model-based PII/PHI de
 
 - **`LMRecognizer`**: Abstract base class for all language model recognizers (LLMs, SLMs, etc.)
 - **`LangExtractRecognizer`**: Abstract base class for LangExtract library integration (model-agnostic)
-- **`OllamaLangExtractRecognizer`**: Concrete implementation for Ollama local language models
-  - [Implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/ollama_langextract_recognizer.py)
 - **`AzureOpenAILangExtractRecognizer`**: Concrete implementation for Azure OpenAI Service
   - [Implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/azure_openai_langextract_recognizer.py)
+- **`OllamaLangExtractRecognizer`**: Concrete implementation for Ollama local language models
+  - [Implementation](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/third_party/ollama_langextract_recognizer.py)
 
 ---
 
-## Using Ollama (Local Models)
+## Using Azure OpenAI (Cloud Models)
+
+Azure OpenAI provides cloud-based access to OpenAI models (GPT-4o, GPT-4, GPT-3.5-turbo) with enterprise security and compliance features.
 
 ### Prerequisites
 
@@ -193,7 +212,11 @@ Azure OpenAI provides cloud-based access to OpenAI models (GPT-4o, GPT-4, GPT-3.
 4. **Optional: Download config file** (only if customizing entities/prompts):
 
    ```sh
+   # On macOS/Linux/PowerShell:
    wget https://raw.githubusercontent.com/microsoft/presidio/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_azureopenai.yaml
+   
+   # Or download manually from:
+   # https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/langextract_config_azureopenai.yaml
    ```
 
 ### Authentication Options
@@ -361,21 +384,4 @@ See the [full config file](https://github.com/microsoft/presidio/blob/main/presi
 
 ---
 
-## Choosing Between Ollama and Azure OpenAI
-
-| Feature | Ollama | Azure OpenAI |
-|---------|--------|--------------|
-| **Deployment** | Local (on-premises) | Cloud (Azure) |
-| **Cost** | Free (hardware required) | Pay-per-use (tokens) |
-| **Models** | Open-source (Gemma, Llama, etc.) | GPT-4o, GPT-4, GPT-3.5-turbo |
-| **Privacy** | Complete data control | Microsoft Azure compliance |
-| **Setup** | Docker/local installation | Azure Portal + API key/Managed Identity |
-| **Authentication** | None (local) | API Key or Managed Identity (RBAC) |
-| **Best For** | Development, on-premises requirements | Production, enterprise compliance |
-
-**Recommendations**:
-
-- **Use Ollama** for local development, testing, or when data must stay on-premises
-- **Use Azure OpenAI** for production workloads requiring enterprise security, compliance (HIPAA, SOC 2, etc.), and managed infrastructure
-
----
+## Using Ollama (Local Models)

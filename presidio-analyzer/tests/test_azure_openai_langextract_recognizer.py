@@ -1,6 +1,12 @@
 import os
 import pytest
+import importlib
 from unittest.mock import patch, MagicMock
+
+try:
+    importlib.import_module("langextract")
+except ImportError:
+    pytest.skip("Skipping test because 'langextract' is not installed", allow_module_level=True)
 
 import openai
 from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
