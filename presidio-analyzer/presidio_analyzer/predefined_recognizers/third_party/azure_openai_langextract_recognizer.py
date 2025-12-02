@@ -15,9 +15,6 @@ except ImportError:  # pragma: no cover
 from presidio_analyzer.predefined_recognizers.third_party import (
     langextract_recognizer,
 )
-from presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider import (
-    AzureOpenAILanguageModel,
-)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -94,11 +91,11 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
         # Get Azure-specific settings with priority: parameter > env var
         self.azure_endpoint = azure_endpoint or os.environ.get("AZURE_OPENAI_ENDPOINT")
         self._validate_azure_endpoint(self.azure_endpoint)
-        
+
         self.api_key = api_key or os.environ.get("AZURE_OPENAI_API_KEY")
         self.api_version = (
-            api_version 
-            or os.environ.get("AZURE_OPENAI_API_VERSION") 
+            api_version
+            or os.environ.get("AZURE_OPENAI_API_VERSION")
             or self.DEFAULT_API_VERSION
         )
 
