@@ -29,6 +29,10 @@ RUN pip install poetry \
     && poetry install --no-root --only=main -E server\
     && rm -rf $(poetry config cache-dir)
 
+# TODO: Once presidio-analyzer with bundled spaCy models is published to PyPI,
+# this line can be removed as models will be installed automatically.
+RUN python -m spacy download en_core_web_lg
+
 COPY . /app/
 
 # Create a non-root user and set ownership
