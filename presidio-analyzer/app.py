@@ -2,7 +2,6 @@
 
 import json
 import logging
-import multiprocessing
 import os
 from logging.config import fileConfig
 from pathlib import Path
@@ -19,7 +18,7 @@ from werkzeug.exceptions import HTTPException
 
 DEFAULT_PORT = "3000"
 DEFAULT_BATCH_SIZE = "500"
-DEFAULT_N_PROCESS = multiprocessing.cpu_count()
+DEFAULT_N_PROCESS = 1
 
 LOGGING_CONF_FILE = "logging.ini"
 
