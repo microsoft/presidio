@@ -26,7 +26,6 @@ def predict_with_chunking(
         text=text,
         chunker=chunker,
         process_func=predict_func,
-        chunk_overlap=chunker.chunk_overlap,
     )
     return deduplicate_overlapping_entities(predictions)
 
@@ -34,14 +33,12 @@ def process_text_in_chunks(
     text: str,
     chunker: BaseTextChunker,
     process_func: Callable[[str], List[Dict[str, Any]]],
-    chunk_overlap: int,
 ) -> List[Dict[str, Any]]:
     """Process text in chunks and adjust entity offsets.
 
     :param text: Input text to process
     :param chunker: Text chunking strategy
     :param process_func: Function that takes chunk text and returns predictions
-    :param chunk_overlap: Number of characters overlapping between chunks
     :return: List of predictions with adjusted offsets
     """
     chunks = chunker.chunk(text)
@@ -57,7 +54,7 @@ def process_text_in_chunks(
             pred["end"] += offset
 
         all_predictions.extend(chunk_predictions)
-        offset += len(chunk) - chunk_overlap
+        offset += len(chunk) - chunker.chunk_overlap
 
     return all_predictions
 

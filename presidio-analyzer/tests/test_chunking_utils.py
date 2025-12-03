@@ -17,7 +17,7 @@ class TestProcessTextInChunks:
         text = "Short text"
         predict_func = lambda chunk: [{"start": 0, "end": 5, "label": "PERSON", "score": 0.9}]
         
-        result = process_text_in_chunks(text, chunker, predict_func, chunk_overlap=20)
+        result = process_text_in_chunks(text, chunker, predict_func)
         
         assert len(result) == 1
         assert result[0]["start"] == 0
@@ -37,7 +37,7 @@ class TestProcessTextInChunks:
                 return [{"start": idx, "end": idx + 8, "label": "PERSON", "score": 0.85}]
             return []
         
-        result = process_text_in_chunks(text, chunker, predict_func, chunk_overlap=5)
+        result = process_text_in_chunks(text, chunker, predict_func)
         
         # First entity should be at original position
         assert result[0]["start"] == 0
@@ -51,7 +51,7 @@ class TestProcessTextInChunks:
         text = "Some text without entities"
         predict_func = lambda chunk: []
         
-        result = process_text_in_chunks(text, chunker, predict_func, chunk_overlap=10)
+        result = process_text_in_chunks(text, chunker, predict_func)
         
         assert result == []
 
