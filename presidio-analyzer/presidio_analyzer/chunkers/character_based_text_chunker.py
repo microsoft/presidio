@@ -3,9 +3,12 @@
 Based on gliner-spacy implementation:
 https://github.com/theirstory/gliner-spacy/blob/main/gliner_spacy/pipeline.py#L60-L96
 """
+import logging
 from typing import List
 
 from presidio_analyzer.chunkers.base_chunker import BaseTextChunker
+
+logger = logging.getLogger("presidio-analyzer")
 
 
 class CharacterBasedTextChunker(BaseTextChunker):
@@ -22,8 +25,12 @@ class CharacterBasedTextChunker(BaseTextChunker):
             (must be >= 0 and < chunk_size)
         """
         if chunk_size <= 0:
+            logger.error("Invalid chunk_size: %d. Must be greater than 0.", chunk_size)
             raise ValueError("chunk_size must be greater than 0")
         if chunk_overlap < 0 or chunk_overlap >= chunk_size:
+            logger.error(
+                "Invalid chunk_overlap. Must be non-negative and less than chunk_size"
+            )
             raise ValueError(
                 "chunk_overlap must be non-negative and less than chunk_size"
             )
@@ -43,7 +50,15 @@ class CharacterBasedTextChunker(BaseTextChunker):
         :return: List of text chunks with overlap
         """
         if not text:
+            logger.debug("Empty text provided, returning empty chunk list")
             return []
+
+        logger.debug(
+            "Chunking text: length=%d, chunk_size=%d, overlap=%d",
+            len(text),
+            self.chunk_size,
+            self.chunk_overlap,
+        )
 
         chunks = []
         start = 0
@@ -67,4 +82,5 @@ class CharacterBasedTextChunker(BaseTextChunker):
                 break
             start = end - self.chunk_overlap
 
+        logger.debug("Created %d chunks from text", len(chunks))
         return chunks
