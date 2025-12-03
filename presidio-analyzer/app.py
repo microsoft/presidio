@@ -83,7 +83,10 @@ class Server:
 
                 iterator = self.batch_engine.analyze_iterator(
                     texts=batch,
-                    batch_size=min(len(batch), int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))),
+                    batch_size=min(
+                        len(batch),
+                        int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))
+                    ),
                     language=req_data.language,
                     correlation_id=req_data.correlation_id,
                     score_threshold=req_data.score_threshold,
