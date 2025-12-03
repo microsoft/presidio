@@ -2,6 +2,7 @@
 
 import json
 import logging
+import multiprocessing
 import os
 from logging.config import fileConfig
 from pathlib import Path
@@ -18,7 +19,7 @@ from werkzeug.exceptions import HTTPException
 
 DEFAULT_PORT = "3000"
 DEFAULT_BATCH_SIZE = "500"
-DEFAULT_N_PROCESS = "1"
+DEFAULT_N_PROCESS = multiprocessing.cpu_count()
 
 LOGGING_CONF_FILE = "logging.ini"
 
@@ -48,13 +49,13 @@ class Server:
         recognizer_registry_conf_file = os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE")
 
         self.logger.info("Starting analyzer engine")
-        self.engine: AnalyzerEngine = AnalyzerEngineProvider(
+        analyzer_engine: AnalyzerEngine = AnalyzerEngineProvider(
             analyzer_engine_conf_file=analyzer_conf_file,
             nlp_engine_conf_file=nlp_engine_conf_file,
             recognizer_registry_conf_file=recognizer_registry_conf_file,
         ).create_engine()
 
-        self.batch_engine = BatchAnalyzerEngine(self.engine)
+        self.engine = BatchAnalyzerEngine(analyzer_engine)
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
@@ -80,12 +81,9 @@ class Server:
                     # Make sure the language is supported by the engine.
                     self.engine.get_supported_entities(req_data.language)
 
-                iterator = self.batch_engine.analyze_iterator(
+                iterator = self.engine.analyze_iterator(
                     texts=batch,
-                    batch_size=min(
-                        len(batch),
-                        int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))
-                    ),
+                    batch_size=min(len(batch), int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))),
                     language=req_data.language,
                     correlation_id=req_data.correlation_id,
                     score_threshold=req_data.score_threshold,

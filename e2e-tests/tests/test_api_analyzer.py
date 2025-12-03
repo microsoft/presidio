@@ -576,13 +576,16 @@ def test_given_regex_flags_and_normal_entities_are_returned():
 @pytest.mark.api
 def test_given_a_correct_analyze_input_then_return_full_response_batched():
     request_body = """
-    {
-        "text": [
-            "John Smith drivers license is AC432223",
-            "John Smith drivers license is AC432223"
-        ],
-        "language": "en"
-    }
+    [
+        {
+            "text": "John Smith drivers license is AC432223",
+            "language": "en"
+        },
+        {
+            "text": "John Smith drivers license is AC432223",
+            "language": "en"
+        }
+    ]
     """
 
     response_status, response_content = analyze(request_body)
