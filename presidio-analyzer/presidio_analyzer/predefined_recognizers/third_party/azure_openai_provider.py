@@ -38,9 +38,8 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
         authentication and endpoint configuration. It reuses all inference logic
         from the parent class and only overrides client initialization.
 
-        Supports model_id patterns like:
-        - Direct deployment name: "gpt-4o"
-        - With prefix: "azure:gpt-4o" or "azureopenai:gpt-4o"
+        Registered to handle model_id with "azure:" prefix (e.g., "azure:gpt-4o").
+        The recognizer adds this prefix automatically.
         """
 
         def __init__(
@@ -69,11 +68,11 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
             :param azure_ad_token_provider: Custom Azure AD token provider function.
             :param kwargs: Additional parameters passed to parent class.
             """
-            clean_model_id = model_id
-            for prefix in ["azure:", "azureopenai:", "aoai:"]:
-                if model_id.lower().startswith(prefix):
-                    clean_model_id = model_id[len(prefix):]
-                    break
+            # Strip 'azure:' prefix if present (added by recognizer)
+            if model_id.lower().startswith("azure:"):
+                clean_model_id = model_id[6:]  # len("azure:") = 6
+            else:
+                clean_model_id = model_id
 
             self.model_id = clean_model_id
             self.api_key = api_key or os.environ.get("AZURE_OPENAI_API_KEY")

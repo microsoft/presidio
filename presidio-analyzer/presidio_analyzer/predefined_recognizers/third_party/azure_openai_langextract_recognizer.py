@@ -16,6 +16,15 @@ from presidio_analyzer.predefined_recognizers.third_party import (
     langextract_recognizer,
 )
 
+# Import provider module to trigger registration with LangExtract
+# This must happen at module import time for the @register decorator to execute
+try:
+    from presidio_analyzer.predefined_recognizers.third_party import (
+        azure_openai_provider,  # noqa: F401 - imported for side effects (registration)
+    )
+except ImportError:  # pragma: no cover
+    pass
+
 logger = logging.getLogger("presidio-analyzer")
 
 LangExtractRecognizer = langextract_recognizer.LangExtractRecognizer

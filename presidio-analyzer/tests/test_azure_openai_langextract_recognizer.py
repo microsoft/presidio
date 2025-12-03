@@ -294,35 +294,16 @@ class TestAzureOpenAIProvider:
             assert provider.model_id == "gpt-4o"
             assert provider.azure_deployment == "gpt-4o"
 
-    def test_provider_strips_azureopenai_prefix(self):
-        """Test that azureopenai: prefix is stripped."""
-        with patch.object(openai, 'AzureOpenAI'):
-            provider = AzureOpenAILanguageModel(
-                model_id="azureopenai:gpt-4o",
-                api_key="PLACEHOLDER_KEY",
-                azure_endpoint="https://test.openai.azure.com/"
-            )
-            
-            assert provider.model_id == "gpt-4o"
-
-    def test_provider_strips_aoai_prefix(self):
-        """Test that aoai: prefix is stripped."""
-        with patch.object(openai, 'AzureOpenAI'):
-            provider = AzureOpenAILanguageModel(
-                model_id="aoai:gpt-4o",
-                api_key="PLACEHOLDER_KEY",
-                azure_endpoint="https://test.openai.azure.com/"
-            )
-            
-            assert provider.model_id == "gpt-4o"
-
     def test_provider_requires_endpoint(self):
         """Test that provider raises error if endpoint is missing."""
-        with pytest.raises(ValueError, match="Azure OpenAI endpoint is required"):
-            AzureOpenAILanguageModel(
-                model_id="gpt-4o",
-                api_key="PLACEHOLDER_KEY"
-            )
+        # Clear environment variable to ensure test fails without endpoint
+        env_without_endpoint = {k: v for k, v in os.environ.items() if k != 'AZURE_OPENAI_ENDPOINT'}
+        with patch.dict(os.environ, env_without_endpoint, clear=True):
+            with pytest.raises(ValueError, match="Azure OpenAI endpoint is required"):
+                AzureOpenAILanguageModel(
+                    model_id="gpt-4o",
+                    api_key="PLACEHOLDER_KEY"
+                )
 
     def test_provider_managed_identity_development_env(self):
         """Test that provider uses get_bearer_token_provider_for_scope in development."""
