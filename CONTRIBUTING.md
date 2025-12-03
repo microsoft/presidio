@@ -35,6 +35,10 @@ To get started, refer to the documentation for [setting up a development environ
 
 For Python, Presidio leverages `pytest` and `ruff`. See [this tutorial](docs/development.md#testing) on more information on testing presidio modules.
 
+### Code Coverage
+
+PRs require >= 90% coverage on changed lines. A bot will comment on your PR with coverage details.
+
 ### Adding new recognizers for new PII types
 
 Adding a new recognizer is a great way to improve Presidio. A new capability to detect a new type of PII entity improves Presidio's coverage and makes private data less accessible.
