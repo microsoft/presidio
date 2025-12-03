@@ -572,3 +572,37 @@ def test_given_regex_flags_and_normal_entities_are_returned():
     assert equal_json_strings(
         expected_response, response_content
     )
+
+@pytest.mark.api
+def test_given_a_correct_analyze_input_then_return_full_response_batched():
+    request_body = """
+    [
+        {
+            "text": "John Smith drivers license is AC432223",
+            "language": "en"
+        },
+        {
+            "text": "John Smith drivers license is AC432223",
+            "language": "en"
+        }
+    ]
+    """
+
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+    [
+        [
+            {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
+            {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null}
+        ],
+        [
+            {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
+            {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null}
+        ]
+    ]
+    """
+    assert response_status == 200
+    assert equal_json_strings(
+        expected_response, response_content
+    )
