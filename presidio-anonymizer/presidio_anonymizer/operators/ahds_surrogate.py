@@ -16,23 +16,18 @@ try:
         TaggedPhiEntities,
         TextEncodingType,
     )
-    from azure.identity import (
-        ChainedTokenCredential,
-        DefaultAzureCredential,
-        EnvironmentCredential,
-        ManagedIdentityCredential,
-        WorkloadIdentityCredential,
-    )
 except ImportError:
     DeidentificationClient = None
     DeidentificationContent = None
     DeidentificationCustomizationOptions = None
     DeidentificationResult = None
-    ChainedTokenCredential = None
-    DefaultAzureCredential = None
-    EnvironmentCredential = None
-    ManagedIdentityCredential = None
-    WorkloadIdentityCredential = None
+
+try:
+    from presidio_analyzer.llm_utils.azure_auth_helper import (
+        get_azure_credential,
+    )
+except ImportError:
+    get_azure_credential = None
     SimplePhiEntity = None
     TaggedPhiEntities = None
     PhiCategory = None
@@ -249,16 +244,9 @@ class AHDSSurrogate(Operator):
         # Convert analyzer results to AHDS tagged entities
         tagged_entities = self._convert_to_tagged_entities(entities)
 
-        # Use ChainedTokenCredential for production
-        # Only use DefaultAzureCredential in development mode
-        if os.getenv('ENV') == 'development':
-            credential = DefaultAzureCredential()  # CodeQL [SM05139] OK for dev
-        else:
-            credential = ChainedTokenCredential(
-                EnvironmentCredential(),
-                WorkloadIdentityCredential(),
-                ManagedIdentityCredential()
-            )
+        # Use environment-aware credential (DefaultAzureCredential for dev,
+        # ChainedTokenCredential for production)
+        credential = get_azure_credential()
         client = DeidentificationClient(endpoint, credential,
                                         api_version="2025-07-15-preview")
 

@@ -16,23 +16,15 @@ except ImportError:  # pragma: no cover
     openai = None
 
 try:
-    from azure.identity import (
-        ChainedTokenCredential,
-        DefaultAzureCredential,
-        EnvironmentCredential,
-        ManagedIdentityCredential,
-        WorkloadIdentityCredential,
-        get_bearer_token_provider,
+    from presidio_analyzer.llm_utils.azure_auth_helper import (
+        get_azure_credential,
+        get_bearer_token_provider_for_scope,
     )
     AZURE_IDENTITY_AVAILABLE = True
 except ImportError:  # pragma: no cover
     AZURE_IDENTITY_AVAILABLE = False
-    ChainedTokenCredential = None
-    DefaultAzureCredential = None
-    EnvironmentCredential = None
-    ManagedIdentityCredential = None
-    WorkloadIdentityCredential = None
-    get_bearer_token_provider = None
+    get_azure_credential = None
+    get_bearer_token_provider_for_scope = None
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -134,20 +126,13 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
                     token_provider = azure_ad_token_provider
                     credential_type = "custom token provider"
                 else:
-                    if os.getenv('ENV') == 'development':
-                        credential = DefaultAzureCredential()
-                        credential_type = "DefaultAzureCredential (development)"
-                    else:
-                        credential = ChainedTokenCredential(
-                            EnvironmentCredential(),
-                            WorkloadIdentityCredential(),
-                            ManagedIdentityCredential()
-                        )
-                        credential_type = "ChainedTokenCredential"
-
-                    token_provider = get_bearer_token_provider(
-                        credential,
+                    token_provider = get_bearer_token_provider_for_scope(
                         "https://cognitiveservices.azure.com/.default"
+                    )
+                    credential_type = (
+                        "DefaultAzureCredential (development)"
+                        if os.getenv('ENV') == 'development'
+                        else "ChainedTokenCredential"
                     )
 
                 client = openai.AzureOpenAI(
@@ -198,8 +183,6 @@ if LANGEXTRACT_OPENAI_AVAILABLE:
     try:
         @lx.providers.registry.register(
             r'^azure:',
-            r'^azureopenai:',
-            r'^aoai:',
             priority=20
         )
         class RegisteredAzureOpenAILanguageModel(AzureOpenAILanguageModel):

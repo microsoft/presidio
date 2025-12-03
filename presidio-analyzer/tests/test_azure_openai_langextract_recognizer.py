@@ -325,32 +325,32 @@ class TestAzureOpenAIProvider:
             )
 
     def test_provider_managed_identity_development_env(self):
-        """Test that provider uses DefaultAzureCredential in development."""
+        """Test that provider uses get_bearer_token_provider_for_scope in development."""
         with patch.dict(os.environ, {'ENV': 'development', 'AZURE_OPENAI_ENDPOINT': 'https://test.openai.azure.com/'}):
             with patch.object(openai, 'AzureOpenAI'):
-                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.DefaultAzureCredential') as mock_cred:
-                    with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.get_bearer_token_provider'):
-                        AzureOpenAILanguageModel(model_id="gpt-4o")
-                        mock_cred.assert_called_once()
+                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.get_bearer_token_provider_for_scope') as mock_token_provider:
+                    mock_token_provider.return_value = MagicMock()
+                    AzureOpenAILanguageModel(model_id="gpt-4o")
+                    # Verify token provider was called with correct scope
+                    mock_token_provider.assert_called_once_with(
+                        "https://cognitiveservices.azure.com/.default"
+                    )
 
     def test_provider_managed_identity_production_env(self):
-        """Test that provider uses ChainedTokenCredential in production."""
+        """Test that provider uses get_bearer_token_provider_for_scope in production."""
         env_vars = {'AZURE_OPENAI_ENDPOINT': 'https://test.openai.azure.com/'}
         env_without_dev = {k: v for k, v in os.environ.items() if k != 'ENV'}
         env_without_dev.update(env_vars)
         
         with patch.dict(os.environ, env_without_dev, clear=True):
             with patch.object(openai, 'AzureOpenAI'):
-                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.EnvironmentCredential') as mock_env:
-                    with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.WorkloadIdentityCredential') as mock_workload:
-                        with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.ManagedIdentityCredential') as mock_managed:
-                            with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.ChainedTokenCredential') as mock_chain:
-                                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.get_bearer_token_provider'):
-                                    AzureOpenAILanguageModel(model_id="gpt-4o")
-                                    mock_chain.assert_called_once()
-                                    # Verify it was called with the 3 credential instances
-                                    call_args = mock_chain.call_args[0]
-                                    assert len(call_args) == 3
+                with patch('presidio_analyzer.predefined_recognizers.third_party.azure_openai_provider.get_bearer_token_provider_for_scope') as mock_token_provider:
+                    mock_token_provider.return_value = MagicMock()
+                    AzureOpenAILanguageModel(model_id="gpt-4o")
+                    # Verify token provider was called with correct scope
+                    mock_token_provider.assert_called_once_with(
+                        "https://cognitiveservices.azure.com/.default"
+                    )
 
     def test_provider_custom_token_provider(self):
         """Test that provider can use custom Azure AD token provider."""
