@@ -44,13 +44,13 @@ class Server:
         recognizer_registry_conf_file = os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE")
 
         self.logger.info("Starting analyzer engine")
-        analyzer_engine: AnalyzerEngine = AnalyzerEngineProvider(
+        self.engine: AnalyzerEngine = AnalyzerEngineProvider(
             analyzer_engine_conf_file=analyzer_conf_file,
             nlp_engine_conf_file=nlp_engine_conf_file,
             recognizer_registry_conf_file=recognizer_registry_conf_file,
         ).create_engine()
 
-        self.engine = BatchAnalyzerEngine(analyzer_engine)
+        self.batch_engine = BatchAnalyzerEngine(self.engine)
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
@@ -73,7 +73,7 @@ class Server:
                 if not req_data.language:
                     raise Exception("No language provided")
 
-                iterator = self.engine.analyze_iterator(
+                iterator = self.batch_engine.analyze_iterator(
                     texts=batch,
                     batch_size=min(len(batch), int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))),
                     language=req_data.language,
