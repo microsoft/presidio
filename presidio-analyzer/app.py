@@ -72,6 +72,9 @@ class Server:
 
                 if not req_data.language:
                     raise Exception("No language provided")
+                else:
+                    # Make sure the language is supported by the engine.
+                    self.engine.get_supported_entities(req_data.language)
 
                 iterator = self.batch_engine.analyze_iterator(
                     texts=batch,
