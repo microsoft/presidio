@@ -9,7 +9,12 @@ from pathlib import Path
 from typing import Tuple
 
 from flask import Flask, Response, jsonify, request
-from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider, AnalyzerRequest, BatchAnalyzerEngine
+from presidio_analyzer import (
+    AnalyzerEngine,
+    AnalyzerEngineProvider,
+    AnalyzerRequest,
+    BatchAnalyzerEngine,
+)
 from werkzeug.exceptions import HTTPException
 
 DEFAULT_PORT = "3000"
@@ -78,7 +83,10 @@ class Server:
 
                 iterator = self.batch_engine.analyze_iterator(
                     texts=batch,
-                    batch_size=min(len(batch), int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))),
+                    batch_size=min(
+                        len(batch),
+                        int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))
+                    ),
                     language=req_data.language,
                     correlation_id=req_data.correlation_id,
                     score_threshold=req_data.score_threshold,
@@ -89,7 +97,10 @@ class Server:
                     allow_list=req_data.allow_list,
                     allow_list_match=req_data.allow_list_match,
                     regex_flags=req_data.regex_flags,
-                    n_process=min(len(batch), int(os.environ.get("N_PROCESS", DEFAULT_N_PROCESS)))
+                    n_process=min(
+                        len(batch),
+                        int(os.environ.get("N_PROCESS", DEFAULT_N_PROCESS))
+                    )
                 )
                 results = []
                 for recognizer_result_list in iterator:
