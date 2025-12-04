@@ -16,28 +16,23 @@ try:
         TaggedPhiEntities,
         TextEncodingType,
     )
-    from azure.identity import (
-        ChainedTokenCredential,
-        DefaultAzureCredential,
-        EnvironmentCredential,
-        ManagedIdentityCredential,
-        WorkloadIdentityCredential,
-    )
 except ImportError:
     DeidentificationClient = None
     DeidentificationContent = None
     DeidentificationCustomizationOptions = None
     DeidentificationResult = None
-    ChainedTokenCredential = None
-    DefaultAzureCredential = None
-    EnvironmentCredential = None
-    ManagedIdentityCredential = None
-    WorkloadIdentityCredential = None
+    PhiCategory = None
     SimplePhiEntity = None
     TaggedPhiEntities = None
-    PhiCategory = None
     DeidentificationOperationType = None
     TextEncodingType = None
+
+try:
+    from presidio_analyzer.llm_utils.azure_auth_helper import (
+        get_azure_credential,
+    )
+except ImportError:
+    get_azure_credential = None
 
 from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import Operator, OperatorType
@@ -249,47 +244,40 @@ class AHDSSurrogate(Operator):
         # Convert analyzer results to AHDS tagged entities
         tagged_entities = self._convert_to_tagged_entities(entities)
 
-        # Use ChainedTokenCredential for production
-        # Only use DefaultAzureCredential in development mode
-        if os.getenv('ENV') == 'development':
-            credential = DefaultAzureCredential()  # CodeQL [SM05139] OK for dev
-        else:
-            credential = ChainedTokenCredential(
-                EnvironmentCredential(),
-                WorkloadIdentityCredential(),
-                ManagedIdentityCredential()
-            )
-        client = DeidentificationClient(endpoint, credential,
-                                        api_version="2025-07-15-preview")
-
-        # Create tagged entity collection
-        tagged_entity_collection = TaggedPhiEntities(
-            encoding=TextEncodingType.CODE_POINT,
-            entities=tagged_entities
-        )
-
-        customizations = None
-        if input_locale or surrogate_locale:
-            customizations = DeidentificationCustomizationOptions()
-            if input_locale:
-                customizations.input_locale = input_locale
-            if surrogate_locale:
-                customizations.surrogate_locale = surrogate_locale
-
-        content = DeidentificationContent(
-            input_text=text,
-            operation_type=DeidentificationOperationType.SURROGATE_ONLY,
-            tagged_entities=tagged_entity_collection,
-            customizations=customizations
-        )
-
         try:
-                result = client.deidentify_text(content)
-                if not result.output_text:
-                    raise InvalidParamError("Operation returned empty output text.")
-                if result.output_text == text:
-                    raise InvalidParamError("Operation returned input text.")
-                return result.output_text
+            # Use environment-aware credential (DefaultAzureCredential for dev,
+            # ChainedTokenCredential for production)
+            credential = get_azure_credential()
+            client = DeidentificationClient(endpoint, credential,
+                                            api_version="2025-07-15-preview")
+
+            # Create tagged entity collection
+            tagged_entity_collection = TaggedPhiEntities(
+                encoding=TextEncodingType.CODE_POINT,
+                entities=tagged_entities
+            )
+
+            customizations = None
+            if input_locale or surrogate_locale:
+                customizations = DeidentificationCustomizationOptions()
+                if input_locale:
+                    customizations.input_locale = input_locale
+                if surrogate_locale:
+                    customizations.surrogate_locale = surrogate_locale
+
+            content = DeidentificationContent(
+                input_text=text,
+                operation_type=DeidentificationOperationType.SURROGATE_ONLY,
+                tagged_entities=tagged_entity_collection,
+                customizations=customizations
+            )
+
+            result = client.deidentify_text(content)
+            if not result.output_text:
+                raise InvalidParamError("Operation returned empty output text.")
+            if result.output_text == text:
+                raise InvalidParamError("Operation returned input text.")
+            return result.output_text
         except Exception as e:
             raise InvalidParamError(f"AHDS Surrogate operation failed: {e}")
 

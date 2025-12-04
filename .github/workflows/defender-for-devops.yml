@@ -50,6 +50,8 @@ jobs:
       env:
         GDN_CHECKOV_SKIPPATH: 'docs'
       with:
+        # bandit removed due to tool bug preventing CI from passing
+        # TODO: re-add bandit when fixed
         tools: checkov, templateanalyzer, trivy
 
     - name: Upload results to Security tab
