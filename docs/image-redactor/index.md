@@ -31,11 +31,11 @@ Pre-requisites:
         Consider installing the Presidio python packages on a virtual environment like venv or conda.
     
     To get started with Presidio-image-redactor,
-    download the package and the spaCy model:
+    download the package and the `en_core_web_lg` spaCy model:
     
     ```sh
     pip install presidio-image-redactor
-    pip install presidio-analyzer[spacy-en]
+    python -m spacy download en_core_web_lg
     ```
 
 === "Using Docker"
