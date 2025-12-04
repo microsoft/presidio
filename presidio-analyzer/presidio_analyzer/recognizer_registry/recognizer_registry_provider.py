@@ -56,7 +56,6 @@ class RecognizerRegistryProvider:
         self.configuration = RecognizerConfigurationLoader.get(
             conf_file=conf_file, registry_configuration=registry_configuration
         )
-        # Validate configuration using Pydantic
 
         self.configuration = (
             ConfigurationValidator.validate_recognizer_registry_configuration(
