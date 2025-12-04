@@ -330,3 +330,234 @@ def test_analyzer_engine_provider_one_custom_recognizer():
     assert len(analyzer_engine.get_recognizers()) == 1
     assert analyzer_engine.analyze("My zip code is 12345", language="en")[0].score == pytest.approx(0.4)
 
+
+def test_analyzer_engine_provider_invalid_analyzer_conf_file():
+    """Test that invalid analyzer configuration file path raises error."""
+    with pytest.raises(ValueError):
+        AnalyzerEngineProvider(analyzer_engine_conf_file="/nonexistent/path/file.yaml")
+
+
+def test_analyzer_engine_provider_invalid_nlp_conf_file():
+    """Test that invalid NLP engine configuration file path raises error."""
+    with pytest.raises(ValueError):
+        AnalyzerEngineProvider(nlp_engine_conf_file="/nonexistent/path/file.yaml")
+
+
+def test_analyzer_engine_provider_invalid_registry_conf_file():
+    """Test that invalid recognizer registry configuration file path raises error."""
+    with pytest.raises(ValueError):
+        AnalyzerEngineProvider(recognizer_registry_conf_file="/nonexistent/path/file.yaml")
+
+
+def test_analyzer_engine_provider_get_configuration_with_nonexistent_file():
+    """Test get_configuration falls back to default when file doesn't exist."""
+    provider = AnalyzerEngineProvider()
+
+    # Test with nonexistent file - should fall back to default
+    config = provider.get_configuration("/tmp/nonexistent_config_file_12345.yaml")
+
+    # Should return a valid configuration (the default one)
+    assert config is not None
+    assert isinstance(config, dict)
+
+
+def test_analyzer_engine_provider_get_configuration_with_invalid_yaml():
+    """Test get_configuration handles invalid YAML gracefully."""
+    import tempfile
+    import os
+
+    # Create a temporary file with invalid YAML
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        f.write("invalid: yaml: content: [[[")
+        temp_file = f.name
+
+    try:
+        provider = AnalyzerEngineProvider()
+        config = provider.get_configuration(temp_file)
+
+        # Should fall back to default configuration
+        assert config is not None
+        assert isinstance(config, dict)
+    finally:
+        os.unlink(temp_file)
+
+
+def test_analyzer_engine_provider_get_full_conf_path():
+    """Test _get_full_conf_path static method."""
+    from pathlib import Path
+
+    path = AnalyzerEngineProvider._get_full_conf_path()
+
+    assert isinstance(path, Path)
+    assert path.name == "default_analyzer.yaml"
+    assert path.exists()
+
+
+def test_analyzer_engine_provider_get_full_conf_path_custom_file():
+    """Test _get_full_conf_path with custom filename."""
+    from pathlib import Path
+
+    path = AnalyzerEngineProvider._get_full_conf_path("custom_file.yaml")
+
+    assert isinstance(path, Path)
+    assert path.name == "custom_file.yaml"
+
+
+def test_analyzer_engine_provider_configuration_property():
+    """Test that configuration property is set correctly."""
+    provider = AnalyzerEngineProvider()
+
+    assert provider.configuration is not None
+    assert isinstance(provider.configuration, dict)
+
+
+def test_analyzer_engine_provider_nlp_engine_conf_file_property():
+    """Test that nlp_engine_conf_file property is stored correctly."""
+    test_yaml, nlp_yaml, _ = get_full_paths(
+        "conf/simple_analyzer_engine.yaml",
+        "conf/default.yaml",
+    )
+
+    provider = AnalyzerEngineProvider(
+        analyzer_engine_conf_file=test_yaml,
+        nlp_engine_conf_file=nlp_yaml,
+    )
+
+    assert provider.nlp_engine_conf_file == nlp_yaml
+
+
+def test_analyzer_engine_provider_recognizer_registry_conf_file_property():
+    """Test that recognizer_registry_conf_file property is stored correctly."""
+    test_yaml, _, registry_yaml = get_full_paths(
+        "conf/simple_analyzer_engine.yaml",
+        None,
+        "conf/test_recognizer_registry.yaml",
+    )
+
+    provider = AnalyzerEngineProvider(
+        analyzer_engine_conf_file=test_yaml,
+        recognizer_registry_conf_file=registry_yaml,
+    )
+
+    assert provider.recognizer_registry_conf_file == registry_yaml
+
+
+def test_analyzer_engine_provider_load_nlp_engine_from_conf():
+    """Test _load_nlp_engine with nlp_configuration in analyzer config."""
+    analyzer_yaml, _, _ = get_full_paths("conf/test_analyzer_engine.yaml")
+
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+    nlp_engine = provider._load_nlp_engine()
+
+    assert nlp_engine is not None
+    assert nlp_engine.engine_name == "spacy"
+
+
+def test_analyzer_engine_provider_load_nlp_engine_default():
+    """Test _load_nlp_engine falls back to default when no config provided."""
+    provider = AnalyzerEngineProvider()
+    nlp_engine = provider._load_nlp_engine()
+
+    assert nlp_engine is not None
+    assert isinstance(nlp_engine, SpacyNlpEngine)
+
+
+def test_analyzer_engine_provider_load_recognizer_registry_from_embedded_config():
+    """Test _load_recognizer_registry with embedded recognizer_registry in config."""
+    analyzer_yaml, _, _ = get_full_paths("conf/test_analyzer_engine.yaml")
+
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+    nlp_engine = provider._load_nlp_engine()
+
+    registry = provider._load_recognizer_registry(
+        supported_languages=["en"],
+        nlp_engine=nlp_engine,
+    )
+
+    assert registry is not None
+    assert len(registry.recognizers) > 0
+
+
+def test_analyzer_engine_provider_load_recognizer_registry_default():
+    """Test _load_recognizer_registry uses default when no config provided."""
+    provider = AnalyzerEngineProvider()
+    nlp_engine = provider._load_nlp_engine()
+
+    registry = provider._load_recognizer_registry(
+        supported_languages=["en"],
+        nlp_engine=nlp_engine,
+    )
+
+    assert registry is not None
+    assert len(registry.recognizers) > 0
+
+
+def test_analyzer_engine_provider_create_engine_with_all_params():
+    """Test create_engine with all configuration parameters."""
+    analyzer_yaml, nlp_yaml, registry_yaml = get_full_paths(
+        "conf/simple_analyzer_engine.yaml",
+        "conf/default.yaml",
+        "conf/test_recognizer_registry.yaml",
+    )
+
+    provider = AnalyzerEngineProvider(
+        analyzer_engine_conf_file=analyzer_yaml,
+        nlp_engine_conf_file=nlp_yaml,
+        recognizer_registry_conf_file=registry_yaml,
+    )
+
+    engine = provider.create_engine()
+
+    assert engine is not None
+    assert engine.nlp_engine is not None
+    assert engine.registry is not None
+    assert len(engine.supported_languages) > 0
+
+
+def test_analyzer_engine_provider_multiple_languages_support():
+    """Test analyzer engine with multiple language support."""
+    analyzer_yaml, _, _ = get_full_paths("conf/test_analyzer_engine.yaml")
+
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+    engine = provider.create_engine()
+
+    assert "en" in engine.supported_languages
+    assert "de" in engine.supported_languages
+    assert "es" in engine.supported_languages
+
+
+def test_analyzer_engine_provider_default_score_threshold():
+    """Test that default_score_threshold is properly set."""
+    analyzer_yaml, _, _ = get_full_paths("conf/test_analyzer_engine.yaml")
+
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
+    engine = provider.create_engine()
+
+    assert engine.default_score_threshold == 0.7
+
+
+def test_analyzer_engine_provider_with_pathlib_path():
+    """Test AnalyzerEngineProvider works with pathlib.Path objects."""
+    from pathlib import Path
+
+    analyzer_yaml, _, _ = get_full_paths("conf/simple_analyzer_engine.yaml")
+    analyzer_path = Path(analyzer_yaml)
+
+    provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_path)
+    engine = provider.create_engine()
+
+    assert engine is not None
+
+
+def test_analyzer_engine_provider_configuration_logging(caplog):
+    """Test that configuration loading logs appropriate messages."""
+    import logging
+
+    with caplog.at_level(logging.INFO):
+        provider = AnalyzerEngineProvider()
+        _ = provider.create_engine()
+
+    # Check that some logging occurred
+    assert len(caplog.records) > 0
+
+
