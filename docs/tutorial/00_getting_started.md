@@ -6,7 +6,7 @@ First, let's install presidio using `pip`. For detailed documentation, see the [
 Install from PyPI:
 
 ```sh
-pip install presidio_analyzer
+pip install presidio_analyzer[spacy-en]
 pip install presidio_anonymizer
 ```
 

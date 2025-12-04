@@ -13,7 +13,7 @@ Using Presidio's modules as Python packages to get started:
     1. Install Presidio
         
         ```sh
-        pip install presidio-analyzer
+        pip install presidio-analyzer[spacy-en]
         pip install presidio-anonymizer
         ```
     
@@ -49,7 +49,7 @@ Using Presidio's modules as Python packages to get started:
     1. Install Presidio
         
         ```sh
-        pip install "presidio-analyzer[transformers]"
+        pip install "presidio-analyzer[transformers,spacy-en]"
         pip install presidio-anonymizer
         ```
     

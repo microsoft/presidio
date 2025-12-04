@@ -126,7 +126,7 @@ jobs:
         if: matrix.component.name == 'Image Redactor'
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pip install -e ../presidio-analyzer/.
+          poetry run pip install -e ../presidio-analyzer/[spacy-en]
 
       - name: Run tests with coverage
         working-directory: ${{ matrix.component.path }}
@@ -330,7 +330,6 @@ jobs:
           source env/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready
         run: sleep 60
@@ -418,7 +417,6 @@ jobs:
           source env/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready
         run: sleep 60
