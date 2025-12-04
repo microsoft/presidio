@@ -6,7 +6,9 @@ from tests import assert_result, assert_result_with_textual_explanation
 
 @pytest.fixture(scope="module")
 def recognizer():
-    return PhoneRecognizer()
+    return PhoneRecognizer(
+        supported_regions=PhoneRecognizer.DEFAULT_SUPPORTED_REGIONS + ("JP", "CN")
+    )
 
 
 
