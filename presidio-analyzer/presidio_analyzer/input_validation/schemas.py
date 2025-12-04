@@ -86,40 +86,6 @@ class ConfigurationValidator:
             raise ValueError("Invalid recognizer registry configuration") from e
 
     @staticmethod
-    def _validate_recognizer_registry_basic(config: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate recognizer registry config."""
-        if not isinstance(config, dict):
-            raise ValueError("Recognizer registry configuration must be a dictionary")
-
-        # Define valid top-level keys for recognizer registry configuration
-        valid_keys = {
-            "supported_languages",
-            "global_regex_flags",
-            "recognizers"
-        }
-
-        # Check for unknown keys
-        unknown_keys = set(config.keys()) - valid_keys
-        if unknown_keys:
-            raise ValueError(
-                f"Unknown configuration key(s) in "
-                f"recognizer_registry: {sorted(unknown_keys)}. "
-                f"Valid keys are: {sorted(valid_keys)}"
-            )
-
-        # Validate supported languages
-        if "supported_languages" in config:
-            validate_language_codes(
-                config["supported_languages"]
-            )
-
-        # Validate recognizers list
-        if "recognizers" in config and not isinstance(config["recognizers"], list):
-            raise ValueError("Recognizers must be a list")
-
-        return config
-
-    @staticmethod
     def validate_analyzer_configuration(config: Dict[str, Any]) -> Dict[str, Any]:
         """Validate analyzer engine configuration."""
         if not isinstance(config, dict):
@@ -130,7 +96,7 @@ class ConfigurationValidator:
             "supported_languages",
             "default_score_threshold",
             "nlp_configuration",
-            "recognizer_registry"
+            "recognizer_registry",
         }
 
         # Check for unknown keys
@@ -144,9 +110,7 @@ class ConfigurationValidator:
 
         # Validate supported languages if present
         if "supported_languages" in config:
-            validate_language_codes(
-                config["supported_languages"]
-            )
+            validate_language_codes(config["supported_languages"])
 
         # Validate score threshold if present
         if "default_score_threshold" in config:
