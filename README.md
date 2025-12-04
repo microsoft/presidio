@@ -17,6 +17,7 @@
 | presidio\_analyzer/dict\_analyzer\_result.py                                                                     |        5 |        0 |    100% |           |
 | presidio\_analyzer/entity\_recognizer.py                                                                         |       66 |        4 |     94% |88, 133, 141, 182 |
 | presidio\_analyzer/llm\_utils/\_\_init\_\_.py                                                                    |        6 |        0 |    100% |           |
+| presidio\_analyzer/llm\_utils/azure\_auth\_helper.py                                                             |       24 |        2 |     92% |    51, 88 |
 | presidio\_analyzer/llm\_utils/config\_loader.py                                                                  |       45 |        4 |     91% |26, 46, 121-122 |
 | presidio\_analyzer/llm\_utils/entity\_mapper.py                                                                  |       71 |        0 |    100% |           |
 | presidio\_analyzer/llm\_utils/examples\_loader.py                                                                |       18 |        0 |    100% |           |
@@ -34,7 +35,7 @@
 | presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       47 |        3 |     94% |     10-12 |
 | presidio\_analyzer/pattern.py                                                                                    |       19 |        2 |     89% |    42, 46 |
 | presidio\_analyzer/pattern\_recognizer.py                                                                        |       93 |        8 |     91% |210, 256-264 |
-| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       51 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       52 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/\_\_init\_\_.py                           |        5 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/au\_abn\_recognizer.py                    |       20 |        0 |    100% |           |
@@ -95,9 +96,11 @@
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/spacy\_recognizer.py                         |       40 |        2 |     95% |   57, 137 |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/stanza\_recognizer.py                        |        5 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/transformers\_recognizer.py                  |        8 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/third\_party/\_\_init\_\_.py                                          |        4 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/third\_party/ahds\_recognizer.py                                      |       61 |       28 |     54% |18-27, 61, 68, 106, 119-146, 150-158 |
+| presidio\_analyzer/predefined\_recognizers/third\_party/\_\_init\_\_.py                                          |        5 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/third\_party/ahds\_recognizer.py                                      |       56 |       23 |     59% |11-15, 58, 65, 96, 109-136, 140-148 |
 | presidio\_analyzer/predefined\_recognizers/third\_party/azure\_ai\_language.py                                   |       60 |       17 |     72% |9-11, 52, 63, 72, 88-106, 132, 134 |
+| presidio\_analyzer/predefined\_recognizers/third\_party/azure\_openai\_langextract\_recognizer.py                |       40 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/third\_party/azure\_openai\_provider.py                               |       54 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/third\_party/langextract\_recognizer.py                               |       34 |        1 |     97% |        52 |
 | presidio\_analyzer/predefined\_recognizers/third\_party/ollama\_langextract\_recognizer.py                       |       23 |        0 |    100% |           |
 | presidio\_analyzer/recognizer\_registry/\_\_init\_\_.py                                                          |        3 |        0 |    100% |           |
@@ -106,7 +109,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      124 |        7 |     94% |23, 39, 118, 200, 338-339, 353 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       15 |        2 |     87% |    50, 54 |
-|                                                                                                        **TOTAL** | **3172** |  **226** | **93%** |           |
+|                                                                                                        **TOTAL** | **3287** |  **223** | **93%** |           |
 
 
 ## Setup coverage badge
