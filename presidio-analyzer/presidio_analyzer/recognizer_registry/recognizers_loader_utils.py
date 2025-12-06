@@ -119,6 +119,22 @@ class RecognizerListLoader:
         return recognizer_conf["name"]
 
     @staticmethod
+    def _get_instance_name(
+        recognizer_conf: Union[Dict[str, Any], str], default_name: str
+    ) -> str:
+        """Get the instance name of a recognizer in the configuration.
+        
+        If instance_name is provided, use it. Otherwise, use the default name.
+        This allows multiple instances of the same recognizer class with different configurations.
+
+        :param recognizer_conf: The recognizer configuration.
+        :param default_name: The default name to use if instance_name is not provided.
+        """
+        if isinstance(recognizer_conf, str):
+            return default_name
+        return recognizer_conf.get("instance_name", default_name)
+
+    @staticmethod
     def _is_language_supported_globally(
         recognizer: EntityRecognizer,
         supported_languages: Iterable[str],
@@ -225,15 +241,28 @@ class RecognizerListLoader:
                         for k, v in RecognizerListLoader._get_recognizer_items(
                             recognizer_conf=recognizer_conf
                         )
-                        if k not in ["enabled", "type", "supported_languages", "name"]
+                        if k not in ["enabled", "type", "supported_languages", "name", "instance_name"]
                     }
                     kwargs = {**copied_recognizer_conf, **language_conf}
-                    recognizer_name = RecognizerListLoader.get_recognizer_name(
+                    
+                    # Get the class name for looking up the recognizer class
+                    recognizer_class_name = RecognizerListLoader.get_recognizer_name(
                         recognizer_conf=recognizer_conf
                     )
                     recognizer_cls = RecognizerListLoader._get_existing_recognizer_cls(
-                        recognizer_name=recognizer_name
+                        recognizer_name=recognizer_class_name
                     )
+                    
+                    # Use instance_name if provided, otherwise use the class name
+                    instance_name = RecognizerListLoader._get_instance_name(
+                        recognizer_conf=recognizer_conf, 
+                        default_name=recognizer_class_name
+                    )
+                    
+                    # Add the instance name to kwargs if the recognizer supports it
+                    if 'name' in recognizer_cls.__init__.__code__.co_varnames:
+                        kwargs['name'] = instance_name
+                    
                     recognizer_instances.append(recognizer_cls(**kwargs))
 
         for recognizer_conf in custom:
