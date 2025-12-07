@@ -520,17 +520,6 @@ def test_predefined_recognizer_config_case_sensitive():
     assert "Predefined recognizer 'creditcardrecognizer' not found" in error_message
 
 
-def test_predefined_recognizer_validation_with_import_error():
-    """Test that validation gracefully handles import errors."""
-    import sys
-    from unittest.mock import patch
-
-    with patch.dict('sys.modules', {'presidio_analyzer.recognizer_registry.recognizers_loader_utils': None}):
-        config = PredefinedRecognizerConfig(name="SomeRecognizer")
-        assert config.name == "SomeRecognizer"
-        assert config.type == "predefined"
-
-
 def test_custom_recognizer_config_predefined_name_error():
     """Test that using a predefined recognizer name for custom recognizer raises error."""
     with pytest.raises(ValidationError) as exc_info:
@@ -573,20 +562,19 @@ def test_custom_recognizer_config_unique_name_valid():
 
 
 def test_custom_recognizer_config_predefined_name_validation_with_import_error():
-    """Test that validation gracefully handles import errors for predefined name checking."""
-    from unittest.mock import patch
+    """Test that custom recognizers with unique names (not predefined) are valid.
 
-    # Mock the import to raise ImportError
-    with patch.dict('sys.modules', {'presidio_analyzer.recognizer_registry.recognizers_loader_utils': None}):
-        # This should not raise an error even if the import fails
-        config = CustomRecognizerConfig(
-            name="SomeRecognizer",
-            type="custom",
-            supported_entity="TEST",
-            patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}]
-        )
-        assert config.name == "SomeRecognizer"
-        assert config.type == "custom"
+    This test verifies that a custom recognizer can use a name that doesn't
+    conflict with any predefined recognizers.
+    """
+    config = CustomRecognizerConfig(
+        name="SomeUniqueRecognizer",
+        type="custom",
+        supported_entity="TEST",
+        patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}]
+    )
+    assert config.name == "SomeUniqueRecognizer"
+    assert config.type == "custom"
 
 
 def test_custom_recognizer_with_language_no_global_languages():

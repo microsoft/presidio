@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import regex as re
 
@@ -11,7 +11,9 @@ from presidio_analyzer import (
     Pattern,
     RecognizerResult,
 )
-from presidio_analyzer.nlp_engine import NlpArtifacts
+
+if TYPE_CHECKING:
+    from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -79,7 +81,7 @@ class PatternRecognizer(LocalRecognizer):
         self,
         text: str,
         entities: List[str],
-        nlp_artifacts: Optional[NlpArtifacts] = None,
+        nlp_artifacts: Optional["NlpArtifacts"] = None,
         regex_flags: Optional[int] = None,
     ) -> List[RecognizerResult]:
         """

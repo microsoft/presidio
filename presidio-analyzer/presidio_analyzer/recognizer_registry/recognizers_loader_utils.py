@@ -12,6 +12,11 @@ from presidio_analyzer import EntityRecognizer, PatternRecognizer
 logger = logging.getLogger("presidio-analyzer")
 
 
+class PredefinedRecognizerNotFoundError(Exception):
+    """Exception raised when a predefined recognizer is not found."""
+
+    pass
+
 class RecognizerListLoader:
     """A utility class that initializes recognizers based on configuration."""
 
@@ -221,7 +226,7 @@ class RecognizerListLoader:
             if recognizer_name == recognizer.__name__:
                 return recognizer
 
-        raise ValueError(
+        raise PredefinedRecognizerNotFoundError(
             f"Recognizer of name {recognizer_name} was not found in the "
             f"list of recognizers inheriting the EntityRecognizer class"
         )
