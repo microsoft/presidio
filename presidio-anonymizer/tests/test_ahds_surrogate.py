@@ -310,14 +310,14 @@ def test_service_error_handling(import_modules):
             {'entity_type': 'PERSON', 'start': 0, 'end': 8, 'text': 'John Doe', 'score': 0.9}
         ]
     }
-    # Mock Azure env vars so credentials can initialize
-    with patch.dict(os.environ, {
-        'AZURE_TENANT_ID': 'test-tenant-id',
-        'AZURE_CLIENT_ID': 'test-client-id',
-        'AZURE_FEDERATED_TOKEN_FILE': '/tmp/test-token-file'
-    }):
-        with pytest.raises(InvalidParamError):
-            operator.operate("John Doe is a patient", params)
+    # Mock Azure credential helper
+    with patch('presidio_anonymizer.operators.ahds_surrogate.get_azure_credential') as mock_cred:
+        mock_cred.return_value = MagicMock()
+        # Mock DeidentificationClient to raise an error
+        with patch('presidio_anonymizer.operators.ahds_surrogate.DeidentificationClient') as mock_client:
+            mock_client.side_effect = Exception("Service error")
+            with pytest.raises(InvalidParamError):
+                operator.operate("John Doe is a patient", params)
 
 def test_operator_type(import_modules):
     operator = AHDSSurrogate()
