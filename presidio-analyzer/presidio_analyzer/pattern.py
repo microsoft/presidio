@@ -24,10 +24,10 @@ class Pattern:
         self.__validate_score(self.score)
 
     @staticmethod
-    def __validate_regex(v: str) -> None:
+    def __validate_regex(pattern: str) -> None:
         """Validate that the regex pattern is valid."""
         try:
-            re.compile(v)
+            re.compile(pattern)
         except re.error as e:
             raise ValueError(f"Invalid regex pattern: {e}")
 

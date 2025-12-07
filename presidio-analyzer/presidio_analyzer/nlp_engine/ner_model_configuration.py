@@ -79,39 +79,39 @@ class NerModelConfiguration(BaseModel):
 
     @field_validator("aggregation_strategy")
     @classmethod
-    def validate_aggregation_strategy(cls, v: str) -> str:
+    def validate_aggregation_strategy(cls, agg_strategy: str) -> str:
         """Validate aggregation strategy."""
         valid_strategies = ["simple", "first", "average", "max"]
-        if v not in valid_strategies:
+        if agg_strategy not in valid_strategies:
             logger.warning(
-                f"Aggregation strategy '{v}' might not be supported. "
+                f"Aggregation strategy '{agg_strategy}' might not be supported. "
                 f"Valid options: {valid_strategies}"
             )
-        return v
+        return agg_strategy
 
     @field_validator("stride")
     @classmethod
-    def validate_stride(cls, v: Optional[int]) -> int:
+    def validate_stride(cls, stride: Optional[int]) -> int:
         """Validate stride and handle None values."""
-        if v is None:
+        if stride is None:
             # Get the default value from the field definition
             return cls.model_fields["stride"].default
-        return v
+        return stride
 
     @field_validator("alignment_mode")
     @classmethod
-    def validate_alignment_mode(cls, v: Optional[str]) -> str:
+    def validate_alignment_mode(cls, alignment: Optional[str]) -> str:
         """Validate alignment mode and handle None values."""
-        if v is None:
+        if alignment is None:
             # Get the default value from the field definition
             return cls.model_fields["alignment_mode"].default
         valid_modes = ["strict", "contract", "expand"]
-        if v not in valid_modes:
+        if alignment not in valid_modes:
             logger.warning(
-                f"Alignment mode '{v}' might not be supported. "
+                f"Alignment mode '{alignment}' might not be supported. "
                 f"Valid options: {valid_modes}"
             )
-        return v
+        return alignment
 
     @classmethod
     def from_dict(cls, ner_model_configuration_dict: Dict) -> "NerModelConfiguration":
