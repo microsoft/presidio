@@ -55,7 +55,6 @@ class NlpEngineProvider:
             )
 
         if nlp_configuration:
-            # Validate using ConfigurationValidator - let Pydantic errors propagate
             ConfigurationValidator.validate_nlp_configuration(nlp_configuration)
             self.nlp_configuration = nlp_configuration
 
