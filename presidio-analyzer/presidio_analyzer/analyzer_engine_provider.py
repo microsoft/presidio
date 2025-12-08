@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 import yaml
 
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer.input_validation import ConfigurationValidator
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 
@@ -29,6 +30,13 @@ class AnalyzerEngineProvider:
         nlp_engine_conf_file: Optional[Union[Path, str]] = None,
         recognizer_registry_conf_file: Optional[Union[Path, str]] = None,
     ):
+        if analyzer_engine_conf_file:
+            ConfigurationValidator.validate_file_path(analyzer_engine_conf_file)
+        if nlp_engine_conf_file:
+            ConfigurationValidator.validate_file_path(nlp_engine_conf_file)
+        if recognizer_registry_conf_file:
+            ConfigurationValidator.validate_file_path(recognizer_registry_conf_file)
+
         self.configuration = self.get_configuration(conf_file=analyzer_engine_conf_file)
         self.nlp_engine_conf_file = nlp_engine_conf_file
         self.recognizer_registry_conf_file = recognizer_registry_conf_file
@@ -36,7 +44,7 @@ class AnalyzerEngineProvider:
     def get_configuration(
         self, conf_file: Optional[Union[Path, str]]
     ) -> Union[Dict[str, Any]]:
-        """Retrieve the analyzer engine configuration from the provided file."""
+        """Retrieve analyzer engine configuration from the provided file."""
 
         if not conf_file:
             default_conf_file = self._get_full_conf_path()
@@ -59,9 +67,14 @@ class AnalyzerEngineProvider:
                 with open(self._get_full_conf_path()) as file:
                     configuration = yaml.safe_load(file)
             except Exception:
-                print(f"Failed to parse file {conf_file}, resorting to default")
+                logger.warning(
+                    f"Failed to parse file {conf_file}, resorting to default"
+                )
                 with open(self._get_full_conf_path()) as file:
                     configuration = yaml.safe_load(file)
+
+        ConfigurationValidator.validate_analyzer_configuration(configuration)
+        logger.debug("Analyzer configuration validation passed")
 
         return configuration
 

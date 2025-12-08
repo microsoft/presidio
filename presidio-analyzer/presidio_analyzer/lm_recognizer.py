@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from presidio_analyzer import RecognizerResult, RemoteRecognizer
 from presidio_analyzer.llm_utils import (
@@ -12,7 +12,9 @@ from presidio_analyzer.llm_utils import (
     skip_unmapped_entities,
     validate_result_positions,
 )
-from presidio_analyzer.nlp_engine import NlpArtifacts
+
+if TYPE_CHECKING:
+    from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -90,7 +92,7 @@ class LMRecognizer(RemoteRecognizer, ABC):
         self,
         text: str,
         entities: Optional[List[str]] = None,
-        nlp_artifacts: Optional[NlpArtifacts] = None
+        nlp_artifacts: Optional["NlpArtifacts"] = None
     ) -> List[RecognizerResult]:
         """Analyze text for PII/PHI using LLM."""
         if not text or not text.strip():

@@ -1,9 +1,11 @@
 import logging
 from abc import abstractmethod
-from typing import Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
 from presidio_analyzer import RecognizerResult
-from presidio_analyzer.nlp_engine import NlpArtifacts
+
+if TYPE_CHECKING:
+    from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -74,7 +76,7 @@ class EntityRecognizer:
 
     @abstractmethod
     def analyze(
-        self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts
+        self, text: str, entities: List[str], nlp_artifacts: "NlpArtifacts"
     ) -> List[RecognizerResult]:
         """
         Analyze text to identify entities.
@@ -92,7 +94,7 @@ class EntityRecognizer:
         text: str,
         raw_recognizer_results: List[RecognizerResult],
         other_raw_recognizer_results: List[RecognizerResult],
-        nlp_artifacts: NlpArtifacts,
+        nlp_artifacts: "NlpArtifacts",
         context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
         """Enhance confidence score using context of the entity.
