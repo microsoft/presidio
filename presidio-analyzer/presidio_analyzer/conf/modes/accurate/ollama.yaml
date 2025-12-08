@@ -1,0 +1,59 @@
+# Ollama LLM Configuration for Accurate Mode
+# This configuration enables LLM-based PII detection for difficult cases.
+#
+# Prerequisites:
+# - Ollama must be installed and running (https://ollama.ai)
+# - The specified model must be pulled: ollama pull qwen2.5:1.5b
+#
+# The LLM recognizer runs in addition to the transformer-based NER,
+# providing enhanced detection for complex or ambiguous cases.
+
+lm_recognizer:
+  supported_entities:
+    - PERSON
+    - EMAIL_ADDRESS
+    - PHONE_NUMBER
+    - US_SSN
+    - LOCATION
+    - ORGANIZATION
+    - DATE_TIME
+    - CREDIT_CARD
+    - IP_ADDRESS
+    - URL
+    - AGE  # HIPAA: ages 90+ are identifiable PHI
+
+  labels_to_ignore:
+    - payment_status
+    - metadata
+    - annotation
+
+  enable_generic_consolidation: false
+  min_score: 0.5
+
+langextract:
+  prompt_file: "presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
+  examples_file: "presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
+
+  model:
+    model_id: "llama3.2:3b"
+    model_url: "http://localhost:11434"
+    temperature: null
+  
+  # Ollama-specific options passed to the model
+  language_model_params:
+    num_ctx: 8192  # Increase context window (gemma3:4b supports up to 128K)
+
+  entity_mappings:
+    person: PERSON
+    name: PERSON
+    email: EMAIL_ADDRESS
+    phone: PHONE_NUMBER
+    ssn: US_SSN
+    location: LOCATION
+    address: LOCATION
+    organization: ORGANIZATION
+    date: DATE_TIME
+    credit_card: CREDIT_CARD
+    ip_address: IP_ADDRESS
+    url: URL
+    age: AGE

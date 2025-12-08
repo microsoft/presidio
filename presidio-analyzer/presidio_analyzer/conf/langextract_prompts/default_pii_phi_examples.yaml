@@ -158,3 +158,37 @@ examples:
         attributes:
           type: "discharge_date"
           format: "YYYY-MM-DD"
+
+  # 13) Age over 89 (HIPAA-style PHI - ages 90+ are considered identifiable)
+  - text: "The patient is a 92-year-old woman with a history of hypertension and diabetes."
+    extractions:
+      - extraction_class: "AGE"
+        extraction_text: "92-year-old"
+        attributes:
+          type: "age_over_89"
+          numeric_age: 92
+          hipaa_category: "age_over_89"
+
+  # 14) Age over 89 - numeric format
+  - text: "Patient age: 95. Admitted for cardiac evaluation."
+    extractions:
+      - extraction_class: "AGE"
+        extraction_text: "95"
+        attributes:
+          type: "age_over_89"
+          numeric_age: 95
+          hipaa_category: "age_over_89"
+
+  # 15) Age over 89 - centenarian
+  - text: "Mrs. Johnson, age 101, presents with mild cognitive impairment."
+    extractions:
+      - extraction_class: "PERSON"
+        extraction_text: "Mrs. Johnson"
+        attributes:
+          type: "patient_name"
+      - extraction_class: "AGE"
+        extraction_text: "101"
+        attributes:
+          type: "age_over_89"
+          numeric_age: 101
+          hipaa_category: "age_over_89"

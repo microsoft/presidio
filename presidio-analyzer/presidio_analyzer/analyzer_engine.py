@@ -1,13 +1,20 @@
 import json
 import logging
 from collections import Counter
-from typing import List, Optional
+from pathlib import Path
+from typing import List, Optional, Union
 
 import regex as re
 
 from presidio_analyzer import (
     EntityRecognizer,
     RecognizerResult,
+)
+from presidio_analyzer.analyzer_mode import (
+    AnalyzerMode,
+    get_custom_config_path,
+    get_nlp_engine_config,
+    get_recognizers_config,
 )
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.context_aware_enhancers import (
@@ -43,6 +50,11 @@ class AnalyzerEngine:
     :param context_aware_enhancer: instance of type ContextAwareEnhancer for enhancing
     confidence score based on context words, (LemmaContextAwareEnhancer will be created
     by default if None passed)
+    :param mode: Pre-configured analyzer mode (FAST, BALANCED, ACCURATE, or CUSTOM).
+    When specified, the analyzer will be configured using the corresponding
+    configuration file. Cannot be used together with nlp_engine or registry parameters.
+    :param config_path: Path to a custom configuration file. Required when mode is
+    AnalyzerMode.CUSTOM.
     """
 
     def __init__(
@@ -54,11 +66,37 @@ class AnalyzerEngine:
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
         context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
+        mode: Optional[AnalyzerMode] = None,
+        config_path: Optional[Union[Path, str]] = None,
     ):
+        # Validate mode usage
+        if mode is not None:
+            if nlp_engine is not None or registry is not None:
+                raise ValueError(
+                    "Cannot specify 'mode' together with 'nlp_engine' or "
+                    "'registry'. Use AnalyzerMode.CUSTOM with 'config_path' for "
+                    "custom configurations, or omit 'mode' when providing "
+                    "nlp_engine/registry directly."
+                )
+
+        if config_path is not None and mode != AnalyzerMode.CUSTOM:
+            raise ValueError(
+                "'config_path' can only be used with AnalyzerMode.CUSTOM mode."
+            )
+
         if not supported_languages:
             supported_languages = ["en"]
 
-        if not nlp_engine:
+        # Create NLP engine from mode configuration if mode is specified
+        if mode is not None:
+            logger.info(f"Creating analyzer with mode: {mode.value}")
+            if mode == AnalyzerMode.CUSTOM:
+                nlp_config_path = get_custom_config_path(config_path)
+            else:
+                nlp_config_path = get_nlp_engine_config(mode)
+            provider = NlpEngineProvider(conf_file=nlp_config_path)
+            nlp_engine = provider.create_engine()
+        elif not nlp_engine:
             logger.info("nlp_engine not provided, creating default.")
             provider = NlpEngineProvider()
             nlp_engine = provider.create_engine()
@@ -75,11 +113,28 @@ class AnalyzerEngine:
 
         if not registry:
             logger.info("registry not provided, creating default.")
-            provider = RecognizerRegistryProvider(
-                registry_configuration={"supported_languages": self.supported_languages}
-            )
-            registry = provider.create_recognizer_registry()
-            registry.add_nlp_recognizer(nlp_engine=self.nlp_engine)
+            
+            # Check if mode has a recognizers config file
+            recognizers_config_path = None
+            if mode is not None and mode != AnalyzerMode.CUSTOM:
+                recognizers_config_path = get_recognizers_config(mode)
+            
+            if recognizers_config_path:
+                # Load recognizers from mode-specific config
+                # Pass nlp_engine so NLP recognizers are configured correctly
+                logger.info(f"Loading recognizers from {recognizers_config_path}")
+                provider = RecognizerRegistryProvider(
+                    conf_file=str(recognizers_config_path),
+                    nlp_engine=self.nlp_engine,
+                )
+                registry = provider.create_recognizer_registry()
+            else:
+                # Use default recognizers
+                provider = RecognizerRegistryProvider(
+                    registry_configuration={"supported_languages": self.supported_languages},
+                    nlp_engine=self.nlp_engine,
+                )
+                registry = provider.create_recognizer_registry()
         else:
             if Counter(registry.supported_languages) != Counter(
                 self.supported_languages

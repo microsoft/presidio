@@ -13,6 +13,7 @@ lm_recognizer:
     - CREDIT_CARD
     - IP_ADDRESS
     - URL
+    - AGE  # HIPAA: ages 90+ are identifiable PHI
   
   labels_to_ignore:
     - payment_status
@@ -44,3 +45,5 @@ langextract:
     credit_card: CREDIT_CARD
     ip_address: IP_ADDRESS
     url: URL
+    age: AGE
+    age_over_89: AGE

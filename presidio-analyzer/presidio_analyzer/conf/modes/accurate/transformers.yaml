@@ -1,0 +1,50 @@
+# Accurate mode: Maximum accuracy, higher latency
+# Use case: When accuracy is critical
+# Expected latency: ~200-500ms per text
+#
+# This mode uses a larger Transformer NER model with spaCy's large model
+# for maximum accuracy in PII detection, combined with Ollama LLM for
+# difficult cases.
+# Trade-off: Significantly slower than other modes.
+
+nlp_engine_name: transformers
+models:
+  -
+    lang_code: en
+    model_name:
+      spacy: en_core_web_sm
+      transformers: StanfordAIMI/stanford-deidentifier-base
+
+ner_model_configuration:
+  labels_to_ignore:
+  - O
+  aggregation_strategy: max  # "simple", "first", "average", "max"
+  stride: 16                 # Overlap for long text processing
+  alignment_mode: expand     # "strict", "contract", "expand"
+  model_to_presidio_entity_mapping:
+    PER: PERSON
+    PERSON: PERSON
+    LOC: LOCATION
+    LOCATION: LOCATION
+    GPE: LOCATION
+    ORG: ORGANIZATION
+    ORGANIZATION: ORGANIZATION
+    NORP: NRP
+    AGE: AGE
+    ID: ID
+    EMAIL: EMAIL
+    PATIENT: PERSON
+    STAFF: PERSON
+    HOSP: ORGANIZATION
+    PATORG: ORGANIZATION
+    DATE: DATE_TIME
+    TIME: DATE_TIME
+    PHONE: PHONE_NUMBER
+    HCW: PERSON
+    HOSPITAL: LOCATION
+    FACILITY: LOCATION
+    VENDOR: ORGANIZATION
+
+  low_confidence_score_multiplier: 0.4
+  low_score_entity_names:
+  - ID
