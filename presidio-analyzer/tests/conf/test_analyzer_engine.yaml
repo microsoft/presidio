@@ -4,7 +4,7 @@ recognizer_registry:
     - name: CreditCardRecognizer
       supported_languages: 
       - en
-      supported_entity: IT_FISCAL_CODE
+      supported_entity: CREDIT_CARD
       type: predefined
 
     - name: ItFiscalCodeRecognizer

@@ -61,7 +61,6 @@ class ThTninRecognizer(PatternRecognizer):
         "รหัสปชช",
     ]
 
-
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
@@ -104,7 +103,6 @@ class ThTninRecognizer(PatternRecognizer):
 
         # Validate TNIN checksum (format validation is handled by regex)
         return self._validate_checksum(sanitized_value)
-
 
     def _validate_checksum(self, tnin: str) -> bool:
         """

@@ -37,5 +37,6 @@ class AnalyzerRequest:
         self.context = req_data.get("context")
         self.allow_list = req_data.get("allow_list")
         self.allow_list_match = req_data.get("allow_list_match", "exact")
-        self.regex_flags = req_data.get("regex_flags",
-                                        re.DOTALL | re.MULTILINE | re.IGNORECASE)
+        self.regex_flags = req_data.get(
+            "regex_flags", re.DOTALL | re.MULTILINE | re.IGNORECASE
+        )
