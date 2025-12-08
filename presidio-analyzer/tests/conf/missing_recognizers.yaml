@@ -1,0 +1,7 @@
+# Test configuration file with missing recognizers field
+# This should raise an exception
+
+supported_languages:
+  - en
+  - es
+global_regex_flags: 26

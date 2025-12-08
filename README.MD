@@ -9,10 +9,13 @@
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/6076/badge)](https://www.bestpractices.dev/projects/6076)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
-- Presidio Analyzer [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
-- Presidio Anonymizer [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)
-- Presidio Image-Redactor [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-image-redactor.svg)](https://img.shields.io/pypi/dm/presidio-image-redactor.svg)
-- Presidio Structured [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-structured.svg)](https://img.shields.io/pypi/dm/presidio-structured.svg)
+
+| Component | Downloads | Coverage |
+|-----------|-----------|----------|
+| Presidio Analyzer | [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/) | [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/microsoft/presidio/coverage-data-presidio-analyzer/endpoint.json)](https://github.com/microsoft/presidio/tree/coverage-data-presidio-analyzer) |
+| Presidio Anonymizer | [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-anonymizer.svg)](https://pypi.python.org/pypi/presidio-anonymizer/) | [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/microsoft/presidio/coverage-data-presidio-anonymizer/endpoint.json)](https://github.com/microsoft/presidio/tree/coverage-data-presidio-anonymizer) |
+| Presidio Image-Redactor | [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-image-redactor.svg)](https://pypi.python.org/pypi/presidio-image-redactor/) | [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/microsoft/presidio/coverage-data-presidio-image-redactor/endpoint.json)](https://github.com/microsoft/presidio/tree/coverage-data-presidio-image-redactor) |
+| Presidio Structured | [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-structured.svg)](https://pypi.python.org/pypi/presidio-structured/) | [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/microsoft/presidio/coverage-data-presidio-structured/endpoint.json)](https://github.com/microsoft/presidio/tree/coverage-data-presidio-structured) |
 ## What is Presidio
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive data is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for private entities in text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data and more.

@@ -12,6 +12,56 @@ but can easily be extended with other types of custom recognizers.
 Predefined and custom recognizers leverage regex,
 Named Entity Recognition and other types of logic to detect PII in unstructured text.
 
+### Language Model-based PII/PHI Detection
+
+Presidio analyzer supports language model-based PII/PHI detection (LLMs, SLMs) for flexible entity recognition. The current implementation uses [LangExtract](https://github.com/google/langextract) with support for multiple providers:
+
+- **Ollama** - Local model deployment for privacy-sensitive environments
+- **Azure OpenAI** - Cloud-based deployment with enterprise features
+
+```bash
+pip install presidio-analyzer[langextract]
+```
+
+#### Quick Usage
+
+**Ollama** (local models):
+
+```python
+from presidio_analyzer.predefined_recognizers import OllamaLangExtractRecognizer
+recognizer = OllamaLangExtractRecognizer()  # Uses default config
+```
+
+**Azure OpenAI** (cloud models):
+
+```python
+from presidio_analyzer.predefined_recognizers import AzureOpenAILangExtractRecognizer
+
+# Simple usage - pass everything as parameters
+recognizer = AzureOpenAILangExtractRecognizer(
+    model_id="gpt-4",  # Your Azure deployment name
+    azure_endpoint="https://your-resource.openai.azure.com/",
+    api_key="your-api-key"
+)
+
+# Or use environment variables (AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY):
+recognizer = AzureOpenAILangExtractRecognizer(
+    model_id="gpt-4"  # Your Azure deployment name
+)
+
+# Advanced: Customize entities/prompts with config file
+recognizer = AzureOpenAILangExtractRecognizer(
+    model_id="gpt-4",
+    config_path="./custom_config.yaml",  # Optional: for custom entities/prompts
+    azure_endpoint="https://your-resource.openai.azure.com/",
+    api_key="your-api-key"
+)
+```
+
+**Note:** LangExtract recognizers do not validate connectivity during initialization. Connection errors or missing models will be reported when `analyze()` is first called.
+
+See the [Language Model-based PII/PHI Detection guide](https://microsoft.github.io/presidio/samples/python/langextract/) for complete setup and usage instructions.
+
 ## Deploy Presidio analyzer to Azure
 
 Use the following button to deploy presidio analyzer to your Azure subscription.

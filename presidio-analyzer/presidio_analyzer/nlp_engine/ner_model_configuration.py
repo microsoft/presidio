@@ -1,6 +1,7 @@
 import logging
-from dataclasses import dataclass
-from typing import Collection, Dict, Optional, Type
+from typing import Collection, Dict, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -29,9 +30,8 @@ MODEL_TO_PRESIDIO_ENTITY_MAPPING = dict(
 LOW_SCORE_ENTITY_NAMES = set()
 
 
-@dataclass
-class NerModelConfiguration:
-    """NER model configuration.
+class NerModelConfiguration(BaseModel):
+    """NER model configuration using Pydantic validation.
 
     :param labels_to_ignore: List of labels to not return predictions for.
     :param aggregation_strategy:
@@ -48,73 +48,81 @@ class NerModelConfiguration:
     Multiplier to the score given for low_score_entity_names.
     """  # noqa: E501
 
-    labels_to_ignore: Optional[Collection[str]] = None
-    aggregation_strategy: Optional[str] = "max"
-    stride: Optional[int] = 14
-    alignment_mode: Optional[str] = "expand"
-    default_score: Optional[float] = 0.85
-    model_to_presidio_entity_mapping: Optional[Dict[str, str]] = None
-    low_score_entity_names: Optional[Collection] = None
-    low_confidence_score_multiplier: Optional[float] = 0.4
+    labels_to_ignore: Optional[Collection[str]] = Field(
+        default_factory=list, description="List of labels to ignore"
+    )
+    aggregation_strategy: Optional[str] = Field(
+        default="max", description="Token classification aggregation strategy"
+    )
+    stride: Optional[int] = Field(
+        default=14, description="Stride for token classification"
+    )
+    alignment_mode: Optional[str] = Field(
+        default="expand", description="Alignment mode for spaCy char spans"
+    )
+    default_score: Optional[float] = Field(
+        default=0.85, ge=0.0, le=1.0, description="Default confidence score"
+    )
+    model_to_presidio_entity_mapping: Optional[Dict[str, str]] = Field(
+        default_factory=lambda: MODEL_TO_PRESIDIO_ENTITY_MAPPING.copy(),
+        description="Mapping between model entities and Presidio entities",
+    )
+    low_score_entity_names: Optional[Collection[str]] = Field(
+        default_factory=lambda: LOW_SCORE_ENTITY_NAMES.copy(),
+        description="Entity names with likely low detection accuracy",
+    )
+    low_confidence_score_multiplier: Optional[float] = Field(
+        default=0.4, ge=0.0, description="Score multiplier for low confidence entities"
+    )
 
-    def __post_init__(self):
-        """Validate the configuration and set defaults."""
-        if self.model_to_presidio_entity_mapping is None:
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @field_validator("aggregation_strategy")
+    @classmethod
+    def validate_aggregation_strategy(cls, agg_strategy: str) -> str:
+        """Validate aggregation strategy."""
+        valid_strategies = ["simple", "first", "average", "max"]
+        if agg_strategy not in valid_strategies:
             logger.warning(
-                "model_to_presidio_entity_mapping is missing from configuration, "
-                "using default"
+                f"Aggregation strategy '{agg_strategy}' might not be supported. "
+                f"Valid options: {valid_strategies}"
             )
-            self.model_to_presidio_entity_mapping = MODEL_TO_PRESIDIO_ENTITY_MAPPING
-        if self.low_score_entity_names is None:
+        return agg_strategy
+
+    @field_validator("stride")
+    @classmethod
+    def validate_stride(cls, stride: Optional[int]) -> int:
+        """Validate stride and handle None values."""
+        if stride is None:
+            # Get the default value from the field definition
+            return cls.model_fields["stride"].default
+        return stride
+
+    @field_validator("alignment_mode")
+    @classmethod
+    def validate_alignment_mode(cls, alignment: Optional[str]) -> str:
+        """Validate alignment mode and handle None values."""
+        if alignment is None:
+            # Get the default value from the field definition
+            return cls.model_fields["alignment_mode"].default
+        valid_modes = ["strict", "contract", "expand"]
+        if alignment not in valid_modes:
             logger.warning(
-                "low_score_entity_names is missing from configuration, " "using default"
+                f"Alignment mode '{alignment}' might not be supported. "
+                f"Valid options: {valid_modes}"
             )
-            self.low_score_entity_names = LOW_SCORE_ENTITY_NAMES
-        if self.labels_to_ignore is None:
-            logger.warning(
-                "labels_to_ignore is missing from configuration, " "using default"
-            )
-            self.labels_to_ignore = {}
+        return alignment
 
     @classmethod
-    def _validate_input(cls, ner_model_configuration_dict: Dict) -> None:
-        key_to_type = {
-            "labels_to_ignore": Collection,
-            "aggregation_strategy": str,
-            "alignment_mode": str,
-            "model_to_presidio_entity_mapping": dict,
-            "low_confidence_score_multiplier": float,
-            "low_score_entity_names": Collection,
-            "stride": int,
-        }
-
-        for key, field_type in key_to_type.items():
-            cls.__validate_type(
-                config_dict=ner_model_configuration_dict, key=key, field_type=field_type
-            )
-
-    @staticmethod
-    def __validate_type(config_dict: Dict, key: str, field_type: Type) -> None:
-        if key in config_dict:
-            if not isinstance(config_dict[key], field_type):
-                raise ValueError(f"{key} must be of type {field_type}")
-
-    @classmethod
-    def from_dict(cls, nlp_engine_configuration: Dict) -> "NerModelConfiguration":
-        """Load NLP engine configuration from dict.
-
-        :param nlp_engine_configuration: Dict with the configuration to load.
+    def from_dict(cls, ner_model_configuration_dict: Dict) -> "NerModelConfiguration":
         """
-        cls._validate_input(nlp_engine_configuration)
+        Create NerModelConfiguration from a dictionary with Pydantic validation.
 
-        return cls(**nlp_engine_configuration)
+        :param ner_model_configuration_dict: Dictionary containing configuration
+        :return: NerModelConfiguration instance
+        """
+        return cls(**ner_model_configuration_dict)
 
     def to_dict(self) -> Dict:
-        """Return the configuration as a dict."""
-        return self.__dict__
-
-    def __str__(self) -> str:  # noqa: D105
-        return str(self.to_dict())
-
-    def __repr__(self) -> str:  # noqa: D105
-        return str(self)
+        """Convert to dictionary representation."""
+        return self.model_dump(exclude_none=True)
