@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_43a8e29932479198_transformers_nlp_engine_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-04 10:16 +0000
+            created at 2025-12-08 07:25 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -380,7 +380,7 @@
     <p class="mis mis2 show_mis"><span class="n"><a id="t298" href="#t298">298</a></span><span class="t">                <span class="fst">f"</span><span class="fst">expansion or because the character offsets don't map to </span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t299" href="#t299">299</a></span><span class="t">                <span class="fst">f"</span><span class="fst">valid tokens produced by the Stanza tokenizer:\n</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t300" href="#t300">300</a></span><span class="t">                <span class="fst">f"</span><span class="fst">Words: </span><span class="op">{</span><span class="nam">words</span><span class="op">}</span><span class="fst">\n</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t301" href="#t301">301</a></span><span class="t">                <span class="fst">f"</span><span class="fst">Entities: </span><span class="op">{</span><span class="op">[</span><span class="op">(</span><span class="nam">e</span><span class="op">.</span><span class="nam">text</span><span class="op">,</span> <span class="nam">e</span><span class="op">.</span><span class="nam">type</span><span class="op">,</span> <span class="nam">e</span><span class="op">.</span><span class="nam">start_char</span><span class="op">,</span> <span class="nam">e</span><span class="op">.</span><span class="nam">end_char</span><span class="op">)</span> <span class="key">for</span> <span class="nam">e</span> <span class="key">in</span> <span class="nam">snlp_doc</span><span class="op">.</span><span class="nam">entities</span><span class="op">]</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="com"># noqa</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t301" href="#t301">301</a></span><span class="t">                <span class="fst">f"</span><span class="fst">Entities: </span><span class="op">{</span><span class="op">[</span><span class="op">(</span><span class="nam">e</span><span class="op">.</span><span class="nam">text</span><span class="op">,</span> <span class="nam">e</span><span class="op">.</span><span class="nam">type</span><span class="op">,</span> <span class="nam">e</span><span class="op">.</span><span class="nam">start_char</span><span class="op">,</span> <span class="nam">e</span><span class="op">.</span><span class="nam">end_char</span><span class="op">)</span> <span class="key">for</span> <span class="nam">e</span> <span class="key">in</span> <span class="nam">snlp_doc</span><span class="op">.</span><span class="nam">entities</span><span class="op">]</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span>  <span class="com"># noqa</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t302" href="#t302">302</a></span><span class="t">                <span class="nam">stacklevel</span><span class="op">=</span><span class="num">4</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t303" href="#t303">303</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t304" href="#t304">304</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -457,7 +457,7 @@
     <p class="run"><span class="n"><a id="t375" href="#t375">375</a></span><span class="t">            <span class="nam">text_spaces</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t376" href="#t376">376</a></span><span class="t">        <span class="key">return</span> <span class="nam">text_words</span><span class="op">,</span> <span class="nam">text_spaces</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t377" href="#t377">377</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t378" href="#t378">378</a></span><span class="t">    <span class="key">def</span> <span class="nam">token_vector</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">token</span><span class="op">:</span><span class="nam">Token</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t378" href="#t378">378</a></span><span class="t">    <span class="key">def</span> <span class="nam">token_vector</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">token</span><span class="op">:</span> <span class="nam">Token</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t379" href="#t379">379</a></span><span class="t">        <span class="str">"""Get Stanza's pretrained word embedding for given token.</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t380" href="#t380">380</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t381" href="#t381">381</a></span><span class="t"><span class="str">        :param token: The token whose embedding will be returned</span>&nbsp;</span><span class="r"></span></p>
@@ -508,7 +508,7 @@
             <a class="nav" href="z_43a8e29932479198_transformers_nlp_engine_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-04 10:16 +0000
+            created at 2025-12-08 07:25 +0000
         </p>
     </div>
 </footer>
