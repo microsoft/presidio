@@ -336,7 +336,7 @@ class RecognizerListLoader:
                     except Exception as e:
                         logger.error(f"Failed to initialize recognizer {recognizer_name}")
                         logger.error(f"Error: {str(e)}")
-                        raise e
+                        raise
 
 
         for recognizer_conf in custom:
