@@ -142,16 +142,16 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
     def _get_provider_params(self):
         """Return Azure OpenAI-specific params."""
         model_id_with_prefix = f"azure:{self.model_id}"
-        
+
         language_model_params = {
             "azure_endpoint": self.azure_endpoint,
             "api_version": self.api_version,
             "azure_deployment": self.model_id,
         }
-        
+
         if self.api_key:
             language_model_params["api_key"] = self.api_key
-        
+
         return {
             "model_id": model_id_with_prefix,
             "language_model_params": language_model_params,

@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from presidio_analyzer.llm_utils import lx
 from presidio_analyzer.predefined_recognizers.third_party.\
     langextract_recognizer import LangExtractRecognizer
 

@@ -39,7 +39,8 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         :param config_path: Path to configuration file.
         :param name: Name of the recognizer (provided by subclass).
         :param supported_language: Language this recognizer supports (default: "en").
-        :param extract_params: Dict with 'extract' and/or 'language_model' keys containing param defaults.
+        :param extract_params: Dict with 'extract' and/or 'language_model'
+            keys containing param defaults.
         """
         check_langextract_available()
 
@@ -109,15 +110,21 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         # Process extract params with config override
         self._extract_params = {}
         self._language_model_params = {}
-        
+
         if extract_params:
             if "extract" in extract_params:
                 for param_name, default_value in extract_params["extract"].items():
-                    self._extract_params[param_name] = self._model_config.get(param_name, default_value)
-            
+                    self._extract_params[param_name] = self._model_config.get(
+                        param_name, default_value
+                    )
+
             if "language_model" in extract_params:
-                for param_name, default_value in extract_params["language_model"].items():
-                    self._language_model_params[param_name] = self._model_config.get(param_name, default_value)
+                for param_name, default_value in (
+                    extract_params["language_model"].items()
+                ):
+                    self._language_model_params[param_name] = (
+                        self._model_config.get(param_name, default_value)
+                    )
 
     def _call_llm(self, text: str, entities: List[str], **kwargs):
         """Call LangExtract LLM."""
@@ -150,23 +157,23 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         """Call LangExtract with configured parameters."""
         try:
             from presidio_analyzer.llm_utils import lx
-            
+
             extract_params = {
                 "text_or_documents": kwargs.pop("text"),
                 "prompt_description": kwargs.pop("prompt"),
                 "examples": kwargs.pop("examples"),
             }
-            
+
             # Add provider-specific params from subclass
             extract_params.update(self._get_provider_params())
-            
+
             # Add extract-level params
             extract_params.update(self._extract_params)
-            
+
             # Add language model params as nested dict
             if self._language_model_params:
                 extract_params["language_model_params"] = self._language_model_params
-            
+
             # Add any additional kwargs
             extract_params.update(kwargs)
 
@@ -180,5 +187,8 @@ class LangExtractRecognizer(LMRecognizer, ABC):
 
     @abstractmethod
     def _get_provider_params(self) -> Dict[str, Any]:
-        """Return provider-specific params (model_id, model_url, azure_endpoint, etc.)."""
+        """Return provider-specific params.
+
+        Examples: model_id, model_url, azure_endpoint, etc.
+        """
         ...
