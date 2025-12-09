@@ -452,7 +452,7 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
             recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
             
             # Verify defaults are set
-            assert recognizer._extract_params["max_char_buffer"] == 2000
+            assert recognizer._extract_params["max_char_buffer"] == 400
             assert recognizer._extract_params["use_schema_constraints"] is False
             assert recognizer._extract_params["fence_output"] is False
             assert recognizer._language_model_params["timeout"] == 240

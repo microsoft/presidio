@@ -35,7 +35,7 @@ langextract:
     temperature: null
     
     # Optional: Uncomment to override defaults
-    # max_char_buffer: 2000
+    # max_char_buffer: 400
     # use_schema_constraints: false
     # fence_output: false
     # timeout: 240
