@@ -1,0 +1,8 @@
+# Test configuration file with missing global_regex_flags field
+# This should raise a warning and use default value
+
+supported_languages:
+  - en
+recognizers:
+  - CreditCardRecognizer
+  - EmailRecognizer

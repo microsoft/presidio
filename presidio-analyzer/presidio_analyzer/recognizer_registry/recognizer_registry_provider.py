@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from presidio_analyzer import EntityRecognizer
+from presidio_analyzer.input_validation import ConfigurationValidator
 from presidio_analyzer.nlp_engine import NlpEngine
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
@@ -54,6 +55,12 @@ class RecognizerRegistryProvider:
     ):
         self.configuration = RecognizerConfigurationLoader.get(
             conf_file=conf_file, registry_configuration=registry_configuration
+        )
+
+        self.configuration = (
+            ConfigurationValidator.validate_recognizer_registry_configuration(
+                self.configuration
+            )
         )
         self.nlp_engine = nlp_engine
 
