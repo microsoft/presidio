@@ -430,3 +430,136 @@ class TestOllamaLangExtractRecognizerAnalyze:
 
         # Unknown entity type should be skipped when consolidation is disabled
         assert len(results) == 0
+
+
+class TestOllamaLangExtractRecognizerParameterConfiguration:
+    """Test parameter configuration with defaults and YAML overrides."""
+
+    def test_when_no_config_params_then_uses_defaults(self, tmp_path):
+        """Test that default extract params are used when not in config."""
+        import yaml
+        
+        config = create_test_config()
+        # No extract params in config - should use defaults
+        
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            
+            # Verify defaults are set
+            assert recognizer._extract_params["max_char_buffer"] == 2000
+            assert recognizer._extract_params["use_schema_constraints"] is False
+            assert recognizer._extract_params["fence_output"] is False
+            assert recognizer._language_model_params["timeout"] == 240
+            assert recognizer._language_model_params["num_ctx"] == 8192
+
+    def test_when_config_has_params_then_overrides_defaults(self, tmp_path):
+        """Test that config values override defaults."""
+        import yaml
+        
+        config = create_test_config()
+        # Add custom values to override defaults
+        config["langextract"]["model"]["max_char_buffer"] = 1000
+        config["langextract"]["model"]["use_schema_constraints"] = True
+        config["langextract"]["model"]["fence_output"] = True
+        config["langextract"]["model"]["timeout"] = 120
+        config["langextract"]["model"]["num_ctx"] = 4096
+        
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            
+            # Verify config values override defaults
+            assert recognizer._extract_params["max_char_buffer"] == 1000
+            assert recognizer._extract_params["use_schema_constraints"] is True
+            assert recognizer._extract_params["fence_output"] is True
+            assert recognizer._language_model_params["timeout"] == 120
+            assert recognizer._language_model_params["num_ctx"] == 4096
+
+    def test_when_partial_config_params_then_uses_defaults_for_missing(self, tmp_path):
+        """Test that only some params can be overridden."""
+        import yaml
+        
+        config = create_test_config()
+        # Override only some params
+        config["langextract"]["model"]["max_char_buffer"] = 500
+        config["langextract"]["model"]["timeout"] = 60
+        
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            
+            # Verify overridden values
+            assert recognizer._extract_params["max_char_buffer"] == 500
+            assert recognizer._language_model_params["timeout"] == 60
+            
+            # Verify defaults for non-overridden params
+            assert recognizer._extract_params["use_schema_constraints"] is False
+            assert recognizer._extract_params["fence_output"] is False
+            assert recognizer._language_model_params["num_ctx"] == 8192
+
+    def test_when_analyze_called_then_params_passed_to_langextract(self, tmp_path):
+        """Test that configured params are passed to langextract.extract()."""
+        import yaml
+        
+        config = create_test_config()
+        config["langextract"]["model"]["max_char_buffer"] = 1500
+        config["langextract"]["model"]["timeout"] = 180
+        
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+
+        text = "My name is John Doe"
+        
+        mock_extraction = Mock()
+        mock_extraction.extraction_class = "person"
+        mock_extraction.extraction_text = "John Doe"
+        mock_extraction.char_interval = Mock(start_pos=11, end_pos=19)
+        mock_extraction.alignment_status = "MATCH_EXACT"
+        mock_extraction.attributes = {}
+
+        mock_result = Mock()
+        mock_result.extractions = [mock_extraction]
+
+        with patch('langextract.extract', return_value=mock_result) as mock_extract:
+            recognizer.analyze(text)
+            
+            # Verify extract was called
+            assert mock_extract.called
+            call_kwargs = mock_extract.call_args[1]
+            
+            # Verify extract params were passed
+            assert call_kwargs["max_char_buffer"] == 1500
+            assert call_kwargs["use_schema_constraints"] is False
+            assert call_kwargs["fence_output"] is False
+            
+            # Verify language model params were passed
+            assert "language_model_params" in call_kwargs
+            assert call_kwargs["language_model_params"]["timeout"] == 180
+            assert call_kwargs["language_model_params"]["num_ctx"] == 8192
+            
+            # Verify provider params
+            assert call_kwargs["model_id"] == "qwen2.5:1.5b"
+            assert call_kwargs["model_url"] == "http://localhost:11434"
+
