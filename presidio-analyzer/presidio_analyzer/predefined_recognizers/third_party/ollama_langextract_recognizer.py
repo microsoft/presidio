@@ -34,7 +34,7 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
                 "extract": {
                     "use_schema_constraints": False,
                     "fence_output": False,
-                    "max_char_buffer": 2000,
+                    "max_char_buffer": 400,
                 },
                 "language_model": {
                     "timeout": 240,
