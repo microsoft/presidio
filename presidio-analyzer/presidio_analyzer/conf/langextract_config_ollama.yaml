@@ -1,5 +1,8 @@
-# Ollama Configuration
+# Ollama Configuration for LangExtract
 # https://github.com/google/langextract#using-local-llms-with-ollama
+#
+# Required parameters: model_id, model_url
+# Optional parameters use defaults if not specified
 
 lm_recognizer:
   supported_entities:
@@ -30,6 +33,13 @@ langextract:
     model_id: "qwen2.5:1.5b"
     model_url: "http://localhost:11434"
     temperature: null
+    
+    # Optional: Uncomment to override defaults
+    # max_char_buffer: 2000
+    # use_schema_constraints: false
+    # fence_output: false
+    # timeout: 240
+    # num_ctx: 8192
   
   entity_mappings:
     person: PERSON
