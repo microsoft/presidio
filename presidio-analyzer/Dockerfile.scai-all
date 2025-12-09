@@ -1,0 +1,47 @@
+FROM python:3.12-slim
+
+ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
+ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
+ARG GLINER_MODELS="nvidia/gliner-pii urchade/gliner_multi_pii-v1"
+ENV PIP_NO_CACHE_DIR=1
+ENV POETRY_VIRTUALENVS_CREATE=false
+
+ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
+ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
+ENV NLP_CONF_FILE=${NLP_CONF_FILE}
+
+ENV PORT=3000
+ENV WORKERS=1
+
+WORKDIR /app
+
+# Install essential build tools and curl for health checks
+RUN apt-get update \
+  && apt-get install curl --no-install-recommends -y \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY ./pyproject.toml /app/
+
+RUN pip install poetry \
+    && poetry install --no-root --only=main -E server -E gliner -E langextract \
+    && rm -rf $(poetry config cache-dir)
+    
+COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
+COPY install_*.py /app/
+
+WORKDIR /app
+RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
+RUN poetry run python install_gliner_models.py --models ${GLINER_MODELS}
+
+COPY . /app/
+
+# Create a non-root user and set ownership
+RUN useradd -m -u 1001 presidio && chown -R presidio:presidio /app
+
+USER 1001
+
+EXPOSE ${PORT}
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+CMD ["./entrypoint.sh"]

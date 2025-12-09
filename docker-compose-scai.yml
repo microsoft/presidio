@@ -1,0 +1,10 @@
+services:
+  presidio-analyzer:
+    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-analyzer${TAG}
+    build:
+      context: ./presidio-analyzer
+      dockerfile: ./Dockerfile.scai-all
+    environment:
+      - PORT=5001
+    ports:
+      - "5002:5001"
