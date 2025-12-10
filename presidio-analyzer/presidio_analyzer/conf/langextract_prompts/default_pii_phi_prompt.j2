@@ -1,0 +1,27 @@
+Extract personally identifiable information (PII) and protected health information (PHI) from the input text.
+
+CRITICAL EXTRACTION RULES:
+1. **Source Truth:** ONLY extract from the current input text. Never hallucinate data or infer details not explicitly present.
+2. **Exactness:** Return the exact text spans as they appear in the source (preserve original spelling/formatting).
+3. **Consolidation:** Do not create overlapping spans. If entities are nested, select the longest, most complete span.
+4. **Context:** When populating attributes, infer the entity's role (e.g., 'patient' vs 'provider') based on the surrounding sentence.
+5. **Fallback:** Only use GENERIC_PII_ENTITY if the text is clearly sensitive but definitely does not fit any of the specific types listed.
+
+ENTITY TYPES TO EXTRACT:
+{% for entity in supported_entities %}
+- {{ entity }}
+{%- endfor %}
+
+{% if enable_generic_consolidation %}
+GENERIC_PII_ENTITY (UNKNOWN ENTITIES):
+- Label as GENERIC_PII_ENTITY only if the data is sensitive PII/PHI but does not match any specific type above.
+- This acts as a catch-all for safety; do not overuse it for known types.
+{% endif %}
+
+{% if labels_to_ignore %}
+DO NOT EXTRACT:
+The following types should be ignored and not extracted:
+{% for label in labels_to_ignore %}
+- {{ label }}
+{%- endfor %}
+{% endif %}

@@ -165,6 +165,13 @@ On how to integrate Presidio with AHDS De-Identification Protected Health Inform
 and a sample for a ADHS Remote Recognizer, refer to the
 [AHDS de-Identification Integration document](../samples/python/ahds/index.md).
 
+### Language Model-based PII/PHI detection recognizer
+
+Presidio supports language model-based entity detection using LLMs and SLMs for flexible PII/PHI recognition.
+
+The current implementation uses LangExtract with Ollama (local models). For full setup instructions and usage examples, 
+see the [Language Model-based PII/PHI Detection guide](../samples/python/langextract/index.md).
+
 ### Creating ad-hoc recognizers
 
 In addition to recognizers in code, it is possible to create ad-hoc recognizers via the Presidio Analyzer API for regex and deny-list based logic.
