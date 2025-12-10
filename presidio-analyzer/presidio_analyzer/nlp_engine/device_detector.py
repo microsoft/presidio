@@ -1,7 +1,6 @@
 """GPU/CPU device detection singleton for Presidio NLP engines."""
 
 import logging
-import sys
 from typing import Optional
 
 logger = logging.getLogger("presidio-analyzer")
@@ -33,8 +32,8 @@ class DeviceDetector:
 
             if torch.cuda.is_available():
                 logger.info("GPU found, attempting CUDA initialization")
-                
-                
+
+
                 try:
                     # Force CUDA initialization
                     str(torch.tensor([1.0], device="cuda"))
@@ -45,9 +44,10 @@ class DeviceDetector:
                     DeviceDetector._has_torch_gpu = True
                     DeviceDetector._torch_device = "cuda"
                     logger.info(
-                        f"GPU and CUDA available. Device: {DeviceDetector._torch_device_name}"
+                        "GPU and CUDA available. Device: "
+                        f"{DeviceDetector._torch_device_name}"
                     )
-                        
+
                 except Exception as e:
                     logger.warning(f"PyTorch Pre-Check: FAILED with error: {e}")
                     DeviceDetector._has_torch_gpu = False

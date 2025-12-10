@@ -17,7 +17,11 @@ from spacy import Language, blank
 from spacy.tokens import Doc, Token
 from spacy.util import registry
 
-from presidio_analyzer.nlp_engine import DeviceDetector, NerModelConfiguration, SpacyNlpEngine
+from presidio_analyzer.nlp_engine import (
+    DeviceDetector,
+    NerModelConfiguration,
+    SpacyNlpEngine,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -57,7 +61,7 @@ class StanzaNlpEngine(SpacyNlpEngine):
         # Detect GPU availability
         device_detector = DeviceDetector()
         use_gpu = device_detector.has_torch_gpu()
-        
+
         if use_gpu:
             logger.info("Stanza will use GPU")
         else:

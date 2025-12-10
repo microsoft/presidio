@@ -75,7 +75,7 @@ class TransformersNlpEngine(SpacyNlpEngine):
         """Load the spaCy and transformers models."""
 
         logger.debug(f"Loading SpaCy and transformers models: {self.models}")
-        
+
         # Configure GPU if available
         device_detector = DeviceDetector()
         if device_detector.has_torch_gpu():
@@ -84,7 +84,7 @@ class TransformersNlpEngine(SpacyNlpEngine):
                 logger.info("spaCy GPU configured successfully")
             except Exception as e:
                 logger.warning(f"Failed to configure spaCy for GPU: {e}")
-        
+
         self.nlp = {}
 
         for model in self.models:
@@ -94,8 +94,9 @@ class TransformersNlpEngine(SpacyNlpEngine):
             self._download_spacy_model_if_needed(spacy_model)
 
             nlp = spacy.load(spacy_model, disable=["parser", "ner"])
-            
-            # Configure pipeline without device parameter (handled by spacy.require_gpu())
+
+            # Configure pipeline without device parameter
+            # (handled by spacy.require_gpu())
             pipe_config = {
                 "model": transformers_model,
                 "annotate": "spans",
@@ -104,7 +105,7 @@ class TransformersNlpEngine(SpacyNlpEngine):
                 "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa: E501
                 "annotate_spans_key": self.entity_key,
             }
-            
+
             nlp.add_pipe("hf_token_pipe", config=pipe_config)
             self.nlp[model["lang_code"]] = nlp
 
