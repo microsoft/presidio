@@ -33,18 +33,21 @@ class DeviceDetector:
 
             if torch.cuda.is_available():
                 logger.info("GPU found, attempting CUDA initialization")
+                
+                
                 try:
                     # Force CUDA initialization
-                    str(torch.tensor([1.0], device="cuda:0"))
+                    str(torch.tensor([1.0], device="cuda"))
                     DeviceDetector._torch_device_name = torch.cuda.get_device_name(0)
                     torch.cuda.get_device_capability(0)
                     torch.cuda.empty_cache()
 
                     DeviceDetector._has_torch_gpu = True
-                    DeviceDetector._torch_device = "cuda:0"
+                    DeviceDetector._torch_device = "cuda"
                     logger.info(
                         f"GPU and CUDA available. Device: {DeviceDetector._torch_device_name}"
                     )
+                        
                 except Exception as e:
                     logger.warning(f"PyTorch Pre-Check: FAILED with error: {e}")
                     DeviceDetector._has_torch_gpu = False
@@ -60,6 +63,7 @@ class DeviceDetector:
             DeviceDetector._torch_device = "cpu"
 
         DeviceDetector._torch_initialized = True
+
 
     def has_torch_gpu(self) -> bool:
         """Return True if PyTorch GPU is available."""
@@ -80,3 +84,7 @@ class DeviceDetector:
             "device_name": DeviceDetector._torch_device_name,
             "device": DeviceDetector._torch_device,
         }
+
+
+# Initialize singleton at module import to preload CUDA libraries if GPU available
+DeviceDetector()

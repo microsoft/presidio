@@ -59,9 +59,8 @@ class SpacyNlpEngine(NlpEngine):
         device_detector = DeviceDetector()
         if device_detector.has_torch_gpu():
             try:
-                logger.info("Configuring spaCy to use GPU")
                 spacy.require_gpu()
-                logger.info("spaCy GPU configuration successful")
+                logger.info("spaCy GPU configured successfully")
             except Exception as e:
                 logger.warning(f"Failed to configure spaCy for GPU: {e}")
 

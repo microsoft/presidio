@@ -1,17 +1,39 @@
 #!/usr/bin/env python3
 """
 Comprehensive benchmark script for Presidio Analyzer performance testing.
-Tests different dataset sizes and generates a markdown report.
+Tests different dataset sizes and NLP engines (spaCy, Transformers, GLiNER).
+Generates a markdown report.
 """
 
 import argparse
 import json
+import logging
 import time
 import sys
 from datetime import datetime
 from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
-from presidio_analyzer.nlp_engine import DeviceDetector
+
+# Configure logging - suppress presidio-analyzer INFO logs
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(levelname)s - %(name)s - %(message)s',
+    stream=sys.stderr
+)
+
+# Optional imports for different NLP engines
+try:
+    from presidio_analyzer.nlp_engine import TransformersNlpEngine, NlpEngineProvider
+    from presidio_analyzer.nlp_engine.ner_model_configuration import NerModelConfiguration
+    HAS_TRANSFORMERS = True
+except ImportError:
+    HAS_TRANSFORMERS = False
+
+try:
+    from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
+    HAS_GLINER = True
+except ImportError:
+    HAS_GLINER = False
 
 # Sample texts for testing - large dataset
 TEST_TEXT_TEMPLATES = [
@@ -112,26 +134,135 @@ def generate_test_texts(count):
     return texts
 
 
-def run_benchmark(num_texts, batch_size):
-    """Run benchmark for a specific dataset size."""
+def create_transformers_analyzer():
+    """Create an analyzer with Transformers NLP engine."""
+    if not HAS_TRANSFORMERS:
+        raise ImportError("Transformers support not available. Install with: pip install 'presidio-analyzer[transformers]'")
+    
+    # Use simple configuration (same as previous working version)
+    # This gives better performance than loading from config file
+    model_config = [{
+        "lang_code": "en",
+        "model_name": {
+            "spacy": "en_core_web_sm",
+            "transformers": "StanfordAIMI/stanford-deidentifier-base"
+        }
+    }]
+    
+    # Entity mapping from official transformers.yaml config
+    mapping = {
+        "PER": "PERSON",
+        "PERSON": "PERSON",
+        "LOC": "LOCATION",
+        "LOCATION": "LOCATION",
+        "GPE": "LOCATION",
+        "ORG": "ORGANIZATION",
+        "ORGANIZATION": "ORGANIZATION",
+        "NORP": "NRP",
+        "AGE": "AGE",
+        "ID": "ID",
+        "EMAIL": "EMAIL",
+        "PATIENT": "PERSON",
+        "STAFF": "PERSON",
+        "HOSP": "ORGANIZATION",
+        "PATORG": "ORGANIZATION",
+        "DATE": "DATE_TIME",
+        "TIME": "DATE_TIME",
+        "PHONE": "PHONE_NUMBER",
+        "HCW": "PERSON",
+        "HOSPITAL": "LOCATION",
+        "FACILITY": "LOCATION",
+        "VENDOR": "ORGANIZATION",
+    }
+    
+    ner_model_configuration = NerModelConfiguration(
+        model_to_presidio_entity_mapping=mapping,
+        alignment_mode="strict",  # faster than expand
+        aggregation_strategy="simple",  # faster than max
+        labels_to_ignore=["O"]
+    )
+    
+    nlp_engine = TransformersNlpEngine(
+        models=model_config,
+        ner_model_configuration=ner_model_configuration
+    )
+    
+    return AnalyzerEngine(nlp_engine=nlp_engine, supported_languages=["en"])
+
+
+def create_gliner_analyzer():
+    """Create an analyzer with GLiNER recognizer."""
+    if not HAS_GLINER:
+        raise ImportError("GLiNER support not available. Install with: pip install 'presidio-analyzer[gliner]'")
+    
+    # Use small spaCy model (we don't need spaCy's NER)
+    nlp_config = {
+        "nlp_engine_name": "spacy",
+        "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+    }
+    
+    provider = NlpEngineProvider(nlp_configuration=nlp_config)
+    nlp_engine = provider.create_engine()
+    
+    analyzer = AnalyzerEngine(nlp_engine=nlp_engine, supported_languages=["en"])
+    
+    # Entity mapping for GLiNER
+    entity_mapping = {
+        "person": "PERSON",
+        "name": "PERSON",
+        "organization": "ORGANIZATION",
+        "location": "LOCATION",
+        "phone number": "PHONE_NUMBER",
+        "email": "EMAIL_ADDRESS",
+        "email address": "EMAIL_ADDRESS",
+        "credit card number": "CREDIT_CARD",
+        "social security number": "US_SSN",
+        "date of birth": "DATE_TIME",
+        "address": "LOCATION",
+    }
+    
+    # Create GLiNER recognizer - will auto-detect GPU via DeviceDetector
+    gliner_recognizer = GLiNERRecognizer(
+        model_name="urchade/gliner_multi_pii-v1",
+        entity_mapping=entity_mapping,
+        flat_ner=False,
+        multi_label=True,
+    )
+    
+    # Add GLiNER and remove spaCy NER recognizer
+    analyzer.registry.add_recognizer(gliner_recognizer)
+    analyzer.registry.remove_recognizer("SpacyRecognizer")
+    
+    return analyzer
+
+
+def run_benchmark(num_texts, batch_size, engine_type="spacy"):
+    """Run benchmark for a specific dataset size and NLP engine.
+    
+    Args:
+        num_texts: Number of texts to process
+        batch_size: Batch size for processing
+        engine_type: Type of NLP engine - "spacy", "transformers", or "gliner"
+    """
     print(f"\n{'='*80}")
-    print(f"Running benchmark: {num_texts} texts, batch_size={batch_size}")
+    print(f"Running benchmark: {num_texts} texts, batch_size={batch_size}, engine={engine_type}")
     print('='*80)
     
     # Generate texts
     print(f"Generating {num_texts} test texts...")
     texts = generate_test_texts(num_texts)
     
-    # Get device info
-    device_detector = DeviceDetector()
-    device_info = device_detector.get_torch_device_info()
-    
-    print(f"Device: {device_info['device']} ({device_info['device_name'] or 'CPU'})")
-    
-    # Initialize analyzer
-    print("Initializing AnalyzerEngine...")
+    # Initialize analyzer based on engine type
+    print(f"Initializing AnalyzerEngine ({engine_type})...")
     start_init = time.time()
-    analyzer = AnalyzerEngine()
+    
+    if engine_type == "transformers":
+        analyzer = create_transformers_analyzer()
+    elif engine_type == "gliner":
+        analyzer = create_gliner_analyzer()
+    else:  # spacy (default)
+        analyzer = AnalyzerEngine()
+    
     batch_analyzer = BatchAnalyzerEngine(analyzer)
     init_time = time.time() - start_init
     print(f"  Initialization: {init_time:.2f}s")
@@ -168,9 +299,7 @@ def run_benchmark(num_texts, batch_size):
     return {
         "num_texts": num_texts,
         "batch_size": batch_size,
-        "device": device_info['device'],
-        "device_name": device_info['device_name'] or 'CPU',
-        "has_gpu": device_info['has_gpu'],
+        "engine_type": engine_type,
         "init_time": init_time,
         "warmup_time": warmup_time,
         "total_time": total_analysis_time,
@@ -180,118 +309,92 @@ def run_benchmark(num_texts, batch_size):
     }
 
 
-def generate_markdown_report(results, output_file):
-    """Generate a markdown report from benchmark results."""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # Get device info from first result
-    device_name = results[0]['device_name']
-    device = results[0]['device']
-    has_gpu = results[0]['has_gpu']
-    
-    md = f"""# Presidio Analyzer Performance Benchmark
-
-**Date**: {timestamp}  
-**Device**: {device} ({device_name})  
-**GPU Enabled**: {has_gpu}
-
-## Summary
-
-This benchmark measures Presidio Analyzer performance across different dataset sizes using batch processing.
-
-## Results
-
-| Dataset Size | Batch Size | Total Time (s) | Avg Time (ms) | Throughput (texts/s) | Entities Found |
-|--------------|------------|----------------|---------------|---------------------|----------------|
-"""
-    
-    for result in results:
-        md += f"| {result['num_texts']:,} | {result['batch_size']} | {result['total_time']:.2f} | {result['avg_time_ms']:.2f} | {result['throughput']:.2f} | {result['total_entities']:,} |\n"
-    
-    md += f"""
-## Performance Scaling
-
-"""
-    
-    # Calculate scaling metrics
-    base_result = results[0]
-    base_throughput = base_result['throughput']
-    
-    md += "| Dataset Size | Throughput (texts/s) | Scaling Factor | Efficiency |\n"
-    md += "|--------------|---------------------|----------------|------------|\n"
-    
-    for result in results:
-        scaling_factor = result['num_texts'] / base_result['num_texts']
-        efficiency = (result['throughput'] / base_throughput) / scaling_factor * 100
-        md += f"| {result['num_texts']:,} | {result['throughput']:.2f} | {scaling_factor:.1f}x | {efficiency:.1f}% |\n"
-    
-    md += f"""
-## Configuration Details
-
-- **Initialization Time**: {results[0]['init_time']:.2f}s
-- **Language**: English (en)
-- **NLP Engine**: spaCy
-- **Processing Mode**: Batch processing with `BatchAnalyzerEngine`
-
-## Test Data
-
-- Generated synthetic PII data (names, emails, phones, SSNs, addresses, credit cards, etc.)
-- {len(TEST_TEXT_TEMPLATES)} unique text templates
-- Varied entity types per text
-
-## Notes
-
-- All tests use the same spaCy NLP engine configuration
-- Batch processing leverages GPU parallelization when available
-- Throughput measured as texts processed per second
-- Warm-up run performed before each test to ensure fair comparison
-
----
-*Generated by Presidio Performance Benchmark Script*
-"""
-    
-    with open(output_file, 'w') as f:
-        f.write(md)
-    
-    print(f"\n✅ Markdown report saved to: {output_file}")
-
-
 def main():
     parser = argparse.ArgumentParser(
         description="Comprehensive Presidio Analyzer performance benchmark"
     )
     parser.add_argument(
-        "--output",
-        type=str,
-        default="benchmark_results.md",
-        help="Output markdown file (default: benchmark_results.md)",
-    )
-    parser.add_argument(
         "--json",
         type=str,
-        help="Also save results as JSON to this file",
+        default="benchmark_results.json",
+        help="Save results as JSON to this file (default: benchmark_results.json)",
+    )
+    parser.add_argument(
+        "--engines",
+        type=str,
+        default="spacy",
+        help="Comma-separated list of engines to test: spacy,transformers,gliner (default: spacy)",
+    )
+    parser.add_argument(
+        "--sizes",
+        type=str,
+        default="50,500,5000",
+        help="Comma-separated list of dataset sizes to test (default: 50,500,5000)",
     )
     args = parser.parse_args()
     
-    # Test configurations: (num_texts, batch_size)
-    test_configs = [
-        (50, 16),
-        (500, 32),
-        (5000, 64),
-        (50000, 128),
-    ]
+    # Parse engines to test
+    requested_engines = [e.strip() for e in args.engines.split(',')]
+    available_engines = []
+    
+    for engine in requested_engines:
+        if engine == "spacy":
+            available_engines.append("spacy")
+        elif engine == "transformers":
+            if HAS_TRANSFORMERS:
+                available_engines.append("transformers")
+            else:
+                print(f"⚠️  Transformers engine requested but not available. Install with: pip install 'presidio-analyzer[transformers]'")
+        elif engine == "gliner":
+            if HAS_GLINER:
+                available_engines.append("gliner")
+            else:
+                print(f"⚠️  GLiNER engine requested but not available. Install with: pip install 'presidio-analyzer[gliner]'")
+        else:
+            print(f"⚠️  Unknown engine: {engine}. Skipping.")
+    
+    if not available_engines:
+        print("❌ No valid engines available. Exiting.")
+        sys.exit(1)
+    
+    # Parse dataset sizes
+    try:
+        dataset_sizes = [int(s.strip()) for s in args.sizes.split(',')]
+    except ValueError:
+        print("❌ Invalid dataset sizes format. Use comma-separated integers (e.g., 50,500,5000)")
+        sys.exit(1)
+    
+    # Auto-adjust batch sizes based on dataset size
+    def get_batch_size(num_texts):
+        if num_texts <= 100:
+            return 16
+        # elif num_texts <= 1000:
+        #     return 32
+        # elif num_texts <= 10000:
+        #     return 64
+        # else:
+        #     return 128
+    
+    # Create test configurations
+    test_configs = []
+    for engine in available_engines:
+        for size in dataset_sizes:
+            batch_size = get_batch_size(size)
+            test_configs.append((size, batch_size, engine))
     
     print("="*80)
     print("PRESIDIO ANALYZER COMPREHENSIVE BENCHMARK")
     print("="*80)
-    print(f"\nRunning {len(test_configs)} benchmark tests...")
+    print(f"\nEngines to test: {', '.join(available_engines)}")
+    print(f"Dataset sizes: {', '.join(str(s) for s in dataset_sizes)}")
+    print(f"Total tests: {len(test_configs)}")
     print("This may take several minutes...\n")
     
     all_results = []
     
-    for num_texts, batch_size in test_configs:
+    for num_texts, batch_size, engine in test_configs:
         try:
-            result = run_benchmark(num_texts, batch_size)
+            result = run_benchmark(num_texts, batch_size, engine)
             all_results.append(result)
         except KeyboardInterrupt:
             print("\n\n⚠️  Benchmark interrupted by user")
@@ -302,20 +405,16 @@ def main():
                 sys.exit(1)
             break
         except Exception as e:
-            print(f"\n❌ Error running benchmark for {num_texts} texts: {e}")
+            print(f"\n❌ Error running benchmark for {num_texts} texts with {engine} engine: {e}")
             import traceback
             traceback.print_exc()
             continue
     
     if all_results:
-        # Generate markdown report
-        generate_markdown_report(all_results, args.output)
-        
-        # Save JSON if requested
-        if args.json:
-            with open(args.json, 'w') as f:
-                json.dump(all_results, f, indent=2)
-            print(f"✅ JSON results saved to: {args.json}")
+        # Save JSON results
+        with open(args.json, 'w') as f:
+            json.dump(all_results, f, indent=2)
+        print(f"✅ JSON results saved to: {args.json}")
         
         print("\n" + "="*80)
         print("BENCHMARK COMPLETE")
