@@ -1,0 +1,54 @@
+[
+  {
+    "num_texts": 50,
+    "batch_size": 16,
+    "device": "cuda:0",
+    "device_name": "NVIDIA RTX A500 Laptop GPU",
+    "has_gpu": true,
+    "init_time": 1.2038919925689697,
+    "warmup_time": 0.3360781669616699,
+    "total_time": 0.31418538093566895,
+    "avg_time_ms": 6.283707618713379,
+    "throughput": 159.1417138859104,
+    "total_entities": 235
+  },
+  {
+    "num_texts": 500,
+    "batch_size": 32,
+    "device": "cuda:0",
+    "device_name": "NVIDIA RTX A500 Laptop GPU",
+    "has_gpu": true,
+    "init_time": 1.1143877506256104,
+    "warmup_time": 0.05640983581542969,
+    "total_time": 2.4570164680480957,
+    "avg_time_ms": 4.914032936096191,
+    "throughput": 203.49883954876796,
+    "total_entities": 2377
+  },
+  {
+    "num_texts": 5000,
+    "batch_size": 64,
+    "device": "cuda:0",
+    "device_name": "NVIDIA RTX A500 Laptop GPU",
+    "has_gpu": true,
+    "init_time": 1.3966434001922607,
+    "warmup_time": 0.06608295440673828,
+    "total_time": 24.040990352630615,
+    "avg_time_ms": 4.808198070526123,
+    "throughput": 207.97812097840176,
+    "total_entities": 23794
+  },
+  {
+    "num_texts": 50000,
+    "batch_size": 128,
+    "device": "cuda:0",
+    "device_name": "NVIDIA RTX A500 Laptop GPU",
+    "has_gpu": true,
+    "init_time": 1.0308079719543457,
+    "warmup_time": 0.05951404571533203,
+    "total_time": 386.0857906341553,
+    "avg_time_ms": 7.721715812683105,
+    "throughput": 129.50489557741503,
+    "total_entities": 237758
+  }
+]
