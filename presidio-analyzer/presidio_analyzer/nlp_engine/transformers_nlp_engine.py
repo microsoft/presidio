@@ -12,6 +12,7 @@ except ImportError:
     transformers = None
 
 from presidio_analyzer.nlp_engine import (
+    DeviceDetector,
     NerModelConfiguration,
     SpacyNlpEngine,
 )
@@ -74,6 +75,19 @@ class TransformersNlpEngine(SpacyNlpEngine):
         """Load the spaCy and transformers models."""
 
         logger.debug(f"Loading SpaCy and transformers models: {self.models}")
+        
+        # Configure GPU if available
+        device_detector = DeviceDetector()
+        device = device_detector.get_torch_device()
+        
+        if device_detector.has_torch_gpu():
+            try:
+                logger.info("Configuring spaCy to use GPU")
+                spacy.require_gpu()
+                logger.info("spaCy GPU configuration successful")
+            except Exception as e:
+                logger.warning(f"Failed to configure spaCy for GPU: {e}")
+        
         self.nlp = {}
 
         for model in self.models:
@@ -83,17 +97,23 @@ class TransformersNlpEngine(SpacyNlpEngine):
             self._download_spacy_model_if_needed(spacy_model)
 
             nlp = spacy.load(spacy_model, disable=["parser", "ner"])
-            nlp.add_pipe(
-                "hf_token_pipe",
-                config={
-                    "model": transformers_model,
-                    "annotate": "spans",
-                    "stride": self.ner_model_configuration.stride,
-                    "alignment_mode": self.ner_model_configuration.alignment_mode,
-                    "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa: E501
-                    "annotate_spans_key": self.entity_key,
-                },
-            )
+            
+            # Configure pipeline with GPU device if available
+            pipe_config = {
+                "model": transformers_model,
+                "annotate": "spans",
+                "stride": self.ner_model_configuration.stride,
+                "alignment_mode": self.ner_model_configuration.alignment_mode,
+                "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa: E501
+                "annotate_spans_key": self.entity_key,
+            }
+            
+            # Add device configuration if GPU is available
+            if device_detector.has_torch_gpu():
+                pipe_config["device"] = device
+                logger.info(f"Configuring transformers pipeline to use device: {device}")
+            
+            nlp.add_pipe("hf_token_pipe", config=pipe_config)
             self.nlp[model["lang_code"]] = nlp
 
     @staticmethod

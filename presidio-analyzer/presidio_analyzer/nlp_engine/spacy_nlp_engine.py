@@ -7,6 +7,7 @@ from spacy.language import Language
 from spacy.tokens import Doc, Span
 
 from presidio_analyzer.nlp_engine import (
+    DeviceDetector,
     NerModelConfiguration,
     NlpArtifacts,
     NlpEngine,
@@ -53,6 +54,16 @@ class SpacyNlpEngine(NlpEngine):
     def load(self) -> None:
         """Load the spaCy NLP model."""
         logger.debug(f"Loading SpaCy models: {self.models}")
+
+        # Configure GPU if available
+        device_detector = DeviceDetector()
+        if device_detector.has_torch_gpu():
+            try:
+                logger.info("Configuring spaCy to use GPU")
+                spacy.require_gpu()
+                logger.info("spaCy GPU configuration successful")
+            except Exception as e:
+                logger.warning(f"Failed to configure spaCy for GPU: {e}")
 
         self.nlp = {}
         # Download spaCy model if missing

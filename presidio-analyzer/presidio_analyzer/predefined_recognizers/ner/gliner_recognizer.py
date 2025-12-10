@@ -7,7 +7,7 @@ from presidio_analyzer import (
     LocalRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts
+from presidio_analyzer.nlp_engine import DeviceDetector, NerModelConfiguration, NlpArtifacts
 
 try:
     from gliner import GLiNER, GLiNERConfig
@@ -34,7 +34,7 @@ class GLiNERRecognizer(LocalRecognizer):
         flat_ner: bool = True,
         multi_label: bool = False,
         threshold: float = 0.30,
-        map_location: str = "cpu",
+        map_location: Optional[str] = None,
     ):
         """GLiNER model based entity recognizer.
 
@@ -53,7 +53,8 @@ class GLiNERRecognizer(LocalRecognizer):
         (see GLiNER's documentation)
         :param threshold: The threshold for the model's output
         (see GLiNER's documentation)
-        :param map_location: The device to use for the model
+        :param map_location: The device to use for the model.
+        If None, will auto-detect GPU or use CPU.
 
 
         """
@@ -82,7 +83,15 @@ class GLiNERRecognizer(LocalRecognizer):
         logger.info("Using entity mapping %s", json.dumps(entity_mapping, indent=2))
         supported_entities = list(set(self.model_to_presidio_entity_mapping.values()))
         self.model_name = model_name
-        self.map_location = map_location
+        
+        # Auto-detect GPU if map_location not explicitly provided
+        if map_location is None:
+            device_detector = DeviceDetector()
+            self.map_location = device_detector.get_torch_device()
+            logger.info(f"GLiNER auto-detected device: {self.map_location}")
+        else:
+            self.map_location = map_location
+            
         self.flat_ner = flat_ner
         self.multi_label = multi_label
         self.threshold = threshold
@@ -103,7 +112,10 @@ class GLiNERRecognizer(LocalRecognizer):
         """Load the GLiNER model."""
         if not GLiNER:
             raise ImportError("GLiNER is not installed. Please install it.")
-        self.gliner = GLiNER.from_pretrained(self.model_name)
+        logger.info(f"Loading GLiNER model on device: {self.map_location}")
+        self.gliner = GLiNER.from_pretrained(
+            self.model_name, map_location=self.map_location
+        )
 
     def analyze(
         self,
