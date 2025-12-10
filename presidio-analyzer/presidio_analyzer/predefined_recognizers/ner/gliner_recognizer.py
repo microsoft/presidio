@@ -7,7 +7,11 @@ from presidio_analyzer import (
     LocalRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.nlp_engine import DeviceDetector, NerModelConfiguration, NlpArtifacts
+from presidio_analyzer.nlp_engine import (
+    DeviceDetector,
+    NerModelConfiguration,
+    NlpArtifacts,
+)
 
 try:
     from gliner import GLiNER, GLiNERConfig
@@ -83,7 +87,7 @@ class GLiNERRecognizer(LocalRecognizer):
         logger.info("Using entity mapping %s", json.dumps(entity_mapping, indent=2))
         supported_entities = list(set(self.model_to_presidio_entity_mapping.values()))
         self.model_name = model_name
-        
+
         # Auto-detect GPU if map_location not explicitly provided
         if map_location is None:
             device_detector = DeviceDetector()
@@ -91,7 +95,7 @@ class GLiNERRecognizer(LocalRecognizer):
             logger.info(f"GLiNER auto-detected device: {self.map_location}")
         else:
             self.map_location = map_location
-            
+
         self.flat_ner = flat_ner
         self.multi_label = multi_label
         self.threshold = threshold
