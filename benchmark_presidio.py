@@ -39,6 +39,12 @@ try:
 except ImportError:
     HAS_GLINER = False
 
+try:
+    from presidio_analyzer.nlp_engine import StanzaNlpEngine
+    HAS_STANZA = True
+except ImportError:
+    HAS_STANZA = False
+
 # Sample texts for testing - large dataset
 TEST_TEXT_TEMPLATES = [
     "My name is {name} and my email is {email}. I work at {company} as a software engineer.",
@@ -240,6 +246,40 @@ def create_gliner_analyzer():
     return analyzer
 
 
+def create_stanza_analyzer():
+    """Create an analyzer with Stanza NLP engine."""
+    if not HAS_STANZA:
+        raise ImportError("Stanza support not available. Install with: pip install 'presidio-analyzer[stanza]'")
+    
+    # Entity mapping from stanza.yaml config
+    mapping = {
+        "PER": "PERSON",
+        "PERSON": "PERSON",
+        "NORP": "NRP",
+        "FAC": "LOCATION",
+        "LOC": "LOCATION",
+        "LOCATION": "LOCATION",
+        "GPE": "LOCATION",
+        "ORG": "ORGANIZATION",
+        "ORGANIZATION": "ORGANIZATION",
+        "DATE": "DATE_TIME",
+        "TIME": "DATE_TIME",
+    }
+    
+    ner_model_configuration = NerModelConfiguration(
+        model_to_presidio_entity_mapping=mapping,
+        labels_to_ignore=["O"]
+    )
+    
+    # Create Stanza NLP engine with GPU support
+    nlp_engine = StanzaNlpEngine(
+        models=[{"lang_code": "en", "model_name": "en"}],
+        ner_model_configuration=ner_model_configuration
+    )
+    
+    return AnalyzerEngine(nlp_engine=nlp_engine, supported_languages=["en"])
+
+
 def run_benchmark(num_texts, batch_size, engine_type="spacy"):
     """Run benchmark for a specific dataset size and NLP engine.
     
@@ -264,6 +304,8 @@ def run_benchmark(num_texts, batch_size, engine_type="spacy"):
         analyzer = create_transformers_analyzer()
     elif engine_type == "gliner":
         analyzer = create_gliner_analyzer()
+    elif engine_type == "stanza":
+        analyzer = create_stanza_analyzer()
     else:  # spacy (default)
         analyzer = AnalyzerEngine()
     
@@ -327,7 +369,7 @@ def main():
         "--engines",
         type=str,
         default="spacy",
-        help="Comma-separated list of engines to test: spacy,transformers,gliner (default: spacy)",
+        help="Comma-separated list of engines to test: spacy,transformers,gliner,stanza (default: spacy)",
     )
     parser.add_argument(
         "--sizes",
@@ -354,6 +396,11 @@ def main():
                 available_engines.append("gliner")
             else:
                 print(f"⚠️  GLiNER engine requested but not available. Install with: pip install 'presidio-analyzer[gliner]'")
+        elif engine == "stanza":
+            if HAS_STANZA:
+                available_engines.append("stanza")
+            else:
+                print(f"⚠️  Stanza engine requested but not available. Install with: pip install 'presidio-analyzer[stanza]'")
         else:
             print(f"⚠️  Unknown engine: {engine}. Skipping.")
     
@@ -370,14 +417,7 @@ def main():
     
     # Auto-adjust batch sizes based on dataset size
     def get_batch_size(num_texts):
-        if num_texts <= 100:
-            return 16
-        # elif num_texts <= 1000:
-        #     return 32
-        # elif num_texts <= 10000:
-        #     return 64
-        # else:
-        #     return 128
+        return 16
     
     # Create test configurations
     test_configs = []
