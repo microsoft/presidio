@@ -10,6 +10,7 @@ import json
 import logging
 import time
 import sys
+import warnings
 from datetime import datetime
 from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
@@ -20,6 +21,9 @@ logging.basicConfig(
     format='%(levelname)s - %(name)s - %(message)s',
     stream=sys.stderr
 )
+
+# Suppress warnings from spacy_huggingface_pipelines and other libraries
+warnings.filterwarnings('ignore')
 
 # Optional imports for different NLP engines
 try:
