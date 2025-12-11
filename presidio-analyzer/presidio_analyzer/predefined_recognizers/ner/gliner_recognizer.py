@@ -89,12 +89,11 @@ class GLiNERRecognizer(LocalRecognizer):
         self.model_name = model_name
 
         # Auto-detect GPU if map_location not explicitly provided
-        if map_location is None:
-            device_detector = DeviceDetector()
-            self.map_location = device_detector.get_torch_device()
-            logger.info(f"GLiNER auto-detected device: {self.map_location}")
-        else:
-            self.map_location = map_location
+        self.map_location = (
+            map_location
+            if map_location is not None
+            else DeviceDetector().get_torch_device()
+        )
 
         self.flat_ner = flat_ner
         self.multi_label = multi_label
