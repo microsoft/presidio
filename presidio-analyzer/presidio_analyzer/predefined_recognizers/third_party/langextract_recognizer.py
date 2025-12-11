@@ -12,6 +12,7 @@ from presidio_analyzer.llm_utils import (
     load_prompt_file,
     load_yaml_examples,
     load_yaml_file,
+    lx,
     render_jinja_template,
     validate_config_fields,
 )
@@ -156,8 +157,6 @@ class LangExtractRecognizer(LMRecognizer, ABC):
     def _call_langextract(self, **kwargs):
         """Call LangExtract with configured parameters."""
         try:
-            from presidio_analyzer.llm_utils import lx
-
             extract_params = {
                 "text_or_documents": kwargs.pop("text"),
                 "prompt_description": kwargs.pop("prompt"),
@@ -166,7 +165,6 @@ class LangExtractRecognizer(LMRecognizer, ABC):
 
             # Add provider-specific params from subclass
             extract_params.update(self._get_provider_params())
-
             # Add extract-level params
             extract_params.update(self._extract_params)
 
