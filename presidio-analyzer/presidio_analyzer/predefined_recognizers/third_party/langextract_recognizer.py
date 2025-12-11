@@ -164,17 +164,10 @@ class LangExtractRecognizer(LMRecognizer, ABC):
                 "examples": kwargs.pop("examples"),
             }
 
-            # Add provider-specific params from subclass
             extract_params.update(self._get_provider_params())
-
-            # Add extract-level params
             extract_params.update(self._extract_params)
-
-            # Add language model params as nested dict
             if self._language_model_params:
                 extract_params["language_model_params"] = self._language_model_params
-
-            # Add any additional kwargs
             extract_params.update(kwargs)
 
             return lx.extract(**extract_params)
