@@ -103,17 +103,17 @@
 | presidio\_analyzer/predefined\_recognizers/third\_party/\_\_init\_\_.py                                          |        5 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/third\_party/ahds\_recognizer.py                                      |       56 |       23 |     59% |11-15, 58, 65, 96, 109-136, 140-148 |
 | presidio\_analyzer/predefined\_recognizers/third\_party/azure\_ai\_language.py                                   |       60 |       17 |     72% |9-11, 52, 63, 72, 88-106, 132, 134 |
-| presidio\_analyzer/predefined\_recognizers/third\_party/azure\_openai\_langextract\_recognizer.py                |       40 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/third\_party/azure\_openai\_langextract\_recognizer.py                |       34 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/third\_party/azure\_openai\_provider.py                               |       54 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/third\_party/langextract\_recognizer.py                               |       34 |        1 |     97% |        52 |
-| presidio\_analyzer/predefined\_recognizers/third\_party/ollama\_langextract\_recognizer.py                       |       23 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/third\_party/langextract\_recognizer.py                               |       56 |        1 |     98% |        56 |
+| presidio\_analyzer/predefined\_recognizers/third\_party/ollama\_langextract\_recognizer.py                       |       16 |        0 |    100% |           |
 | presidio\_analyzer/recognizer\_registry/\_\_init\_\_.py                                                          |        3 |        0 |    100% |           |
 | presidio\_analyzer/recognizer\_registry/recognizer\_registry.py                                                  |      114 |       15 |     87% |125, 155, 158, 208, 290-291, 306-309, 312-316, 328 |
 | presidio\_analyzer/recognizer\_registry/recognizer\_registry\_provider.py                                        |       63 |        1 |     98% |       173 |
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      169 |        9 |     95% |28, 44, 125, 133, 244-245, 447-448, 465 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-|                                                                                                        **TOTAL** | **3569** |  **199** | **94%** |           |
+|                                                                                                        **TOTAL** | **3578** |  **199** | **94%** |           |
 
 
 ## Setup coverage badge
