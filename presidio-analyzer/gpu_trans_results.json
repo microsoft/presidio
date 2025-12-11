@@ -1,0 +1,24 @@
+[
+  {
+    "num_texts": 50,
+    "batch_size": 16,
+    "engine_type": "transformers",
+    "init_time": 1.8468782901763916,
+    "warmup_time": 1.5114922523498535,
+    "total_time": 0.7709858417510986,
+    "avg_time_ms": 15.419716835021973,
+    "throughput": 64.85203397047823,
+    "total_entities": 273
+  },
+  {
+    "num_texts": 500,
+    "batch_size": 16,
+    "engine_type": "transformers",
+    "init_time": 1.2162683010101318,
+    "warmup_time": 0.1569383144378662,
+    "total_time": 7.970991134643555,
+    "avg_time_ms": 15.941982269287111,
+    "throughput": 62.72745654262466,
+    "total_entities": 2746
+  }
+]
