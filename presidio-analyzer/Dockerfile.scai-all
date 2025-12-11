@@ -41,6 +41,9 @@ RUN poetry run python install_gliner_models.py --models ${GLINER_MODELS}
 COPY . /app/
 USER 0
 RUN chown -R presidio:presidio /app
+RUN rm -rf /root/.cache/huggingface/hub && \
+	mkdir -p /root/.cache/huggingface && \
+	ln -s /home/presidio/.cache/huggingface/hub /root/.cache/huggingface/hub
 
 USER 1001
 
