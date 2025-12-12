@@ -36,6 +36,7 @@ from .country_specific.italy.it_vat_code import ItVatCodeRecognizer
 
 # Korea recognizers
 from .country_specific.korea.kr_rrn_recognizer import KrRrnRecognizer
+from .country_specific.korea.kr_passport_recognizer import KrPassportRecognizer
 
 # Poland recognizers
 from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
@@ -159,4 +160,5 @@ __all__ = [
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
     "OllamaLangExtractRecognizer",
+    "KrPassportRecognizer",
 ]
