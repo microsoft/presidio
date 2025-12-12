@@ -112,7 +112,13 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
         super().__init__(
             config_path=actual_config_path,
             name="Azure OpenAI LangExtract PII",
-            supported_language=supported_language
+            supported_language=supported_language,
+            extract_params={
+                "extract": {
+                    "fence_output": True,
+                    "use_schema_constraints": False,
+                },
+            }
         )
 
         # Override model_id if provided as parameter (deployment name)
@@ -133,44 +139,20 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
                 f"See {AZURE_OPENAI_DOCS_URL} for details."
             )
 
-    def _call_langextract(self, **kwargs):
-        """
-        Call Azure OpenAI through LangExtract for PII extraction.
+    def _get_provider_params(self):
+        """Return Azure OpenAI-specific params."""
+        model_id_with_prefix = f"azure:{self.model_id}"
 
-        Uses LangExtract's provider registry system to instantiate the custom
-        Azure OpenAI provider. The model_id with 'azure:' prefix triggers the
-        provider registration.
-        """
-        try:
+        language_model_params = {
+            "azure_endpoint": self.azure_endpoint,
+            "api_version": self.api_version,
+            "azure_deployment": self.model_id,
+        }
 
-            model_id_with_prefix = f"azure:{self.model_id}"
+        if self.api_key:
+            language_model_params["api_key"] = self.api_key
 
-            language_model_params = {
-                "azure_endpoint": self.azure_endpoint,
-                "api_version": self.api_version,
-                "azure_deployment": self.model_id,
-            }
-
-            if self.api_key:
-                language_model_params["api_key"] = self.api_key
-
-            extract_params = {
-                "text_or_documents": kwargs.pop("text"),
-                "prompt_description": kwargs.pop("prompt"),
-                "examples": kwargs.pop("examples"),
-                "model_id": model_id_with_prefix,
-                "language_model_params": language_model_params,
-                "fence_output": True,
-                "use_schema_constraints": False,
-            }
-
-            extract_params.update(kwargs)
-
-            return lx.extract(**extract_params)
-
-        except Exception:
-            logger.exception(
-                "LangExtract extraction failed (Azure OpenAI at %s, model '%s')",
-                self.azure_endpoint, self.model_id
-            )
-            raise
+        return {
+            "model_id": model_id_with_prefix,
+            "language_model_params": language_model_params,
+        }

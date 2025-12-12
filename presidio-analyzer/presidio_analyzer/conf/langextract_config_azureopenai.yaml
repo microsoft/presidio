@@ -1,17 +1,8 @@
 # Azure OpenAI Configuration for LangExtract
 #
-# This config file is OPTIONAL for basic usage. You can pass model_id and credentials
-# as parameters instead of using this file.
-#
-# Use this file when you need to customize:
-# - Supported entities
-# - Entity mappings
-# - Prompts and examples
-# - Detection parameters
-#
-# IMPORTANT: The model_id below is a placeholder. You can:
-# 1. Pass model_id as a parameter: AzureOpenAILangExtractRecognizer(model_id="your-deployment-name")
-# 2. OR update model_id below to match your Azure OpenAI deployment name
+# Required parameters: model_id (deployment name)
+# Auth parameters: azure_endpoint, api_key (via constructor or environment variables)
+# Optional parameters use defaults if not specified
 
 lm_recognizer:
   supported_entities:
@@ -41,11 +32,12 @@ langextract:
   examples_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
   
   model:
-    # Azure OpenAI deployment name (e.g., "gpt-4", "gpt-4o", "my-gpt-deployment")
-    # This is the deployment name from Azure Portal, NOT the model name
-    # You can override this by passing model_id parameter to the recognizer
     model_id: "gpt-4o"
     temperature: null
+    
+    # Optional: Uncomment to override defaults
+    # fence_output: true
+    # use_schema_constraints: false
   
   entity_mappings:
     person: PERSON

@@ -370,3 +370,133 @@ class TestAzureOpenAIProvider:
                         azure_endpoint="https://test.openai.azure.com/"
                         # No API key, so should try managed identity
                     )
+
+
+class TestAzureOpenAILangExtractRecognizerParameterConfiguration:
+    """Test parameter configuration with defaults and YAML overrides."""
+
+    def test_when_no_config_params_then_uses_defaults(self, mock_langextract, tmp_path):
+        """Test that default extract params are used when not in config."""
+        import yaml
+        
+        config = {
+            "lm_recognizer": {
+                "supported_entities": ["PERSON"],
+            },
+            "langextract": {
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                "model": {
+                    "model_id": "gpt-4o",
+                }
+            }
+        }
+        
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        recognizer = AzureOpenAILangExtractRecognizer(
+            config_path=str(config_file),
+            azure_endpoint="https://test.openai.azure.com/",
+            api_key="test-key"
+        )
+        
+        # Verify Azure defaults are set (different from Ollama)
+        assert recognizer._extract_params["fence_output"] is True
+        assert recognizer._extract_params["use_schema_constraints"] is False
+
+    def test_when_config_has_params_then_overrides_defaults(self, mock_langextract, tmp_path):
+        """Test that config values override defaults."""
+        import yaml
+        
+        config = {
+            "lm_recognizer": {
+                "supported_entities": ["PERSON"],
+            },
+            "langextract": {
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                "model": {
+                    "model_id": "gpt-4o",
+                    "fence_output": False,  # Override default
+                    "use_schema_constraints": True,  # Override default
+                }
+            }
+        }
+        
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        recognizer = AzureOpenAILangExtractRecognizer(
+            config_path=str(config_file),
+            azure_endpoint="https://test.openai.azure.com/",
+            api_key="test-key"
+        )
+        
+        # Verify config values override defaults
+        assert recognizer._extract_params["fence_output"] is False
+        assert recognizer._extract_params["use_schema_constraints"] is True
+
+    def test_when_analyze_called_then_params_passed_to_langextract(self, tmp_path):
+        """Test that configured params are passed to langextract.extract()."""
+        import yaml
+        
+        config = {
+            "lm_recognizer": {
+                "supported_entities": ["PERSON"],
+            },
+            "langextract": {
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                "model": {
+                    "model_id": "gpt-4o",
+                    "fence_output": False,
+                }
+            }
+        }
+        
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        recognizer = AzureOpenAILangExtractRecognizer(
+            config_path=str(config_file),
+            azure_endpoint="https://test.openai.azure.com/",
+            api_key="test-key"
+        )
+
+        text = "My name is John Doe"
+        
+        mock_extraction = MagicMock()
+        mock_extraction.extraction_class = "person"
+        mock_extraction.extraction_text = "John Doe"
+        mock_extraction.char_interval = MagicMock(start_pos=11, end_pos=19)
+        mock_extraction.alignment_status = "MATCH_EXACT"
+        mock_extraction.attributes = {}
+
+        mock_result = MagicMock()
+        mock_result.extractions = [mock_extraction]
+
+        with patch('langextract.extract', return_value=mock_result) as mock_extract:
+            recognizer.analyze(text)
+            
+            # Verify extract was called
+            assert mock_extract.called
+            call_kwargs = mock_extract.call_args[1]
+            
+            # Verify extract params were passed
+            assert call_kwargs["fence_output"] is False
+            assert call_kwargs["use_schema_constraints"] is False
+            
+            # Verify Azure-specific provider params
+            assert call_kwargs["model_id"] == "azure:gpt-4o"
+            assert "language_model_params" in call_kwargs
+            assert call_kwargs["language_model_params"]["azure_endpoint"] == "https://test.openai.azure.com/"
+            assert call_kwargs["language_model_params"]["azure_deployment"] == "gpt-4o"
+            assert call_kwargs["language_model_params"]["api_key"] == "test-key"
+
