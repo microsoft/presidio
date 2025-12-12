@@ -1,0 +1,449 @@
+"""Tests for BasicLangExtractRecognizer using mocks."""
+import pytest
+from unittest.mock import Mock, patch
+
+
+def create_test_config(
+    supported_entities=None,
+    entity_mappings=None,
+    model_id="gpt-4o",
+    provider_name="openai",
+    provider_kwargs=None,
+    min_score=0.5,
+    labels_to_ignore=None,
+    enable_generic_consolidation=True
+):
+    """Create test config for BasicLangExtractRecognizer."""
+    if supported_entities is None:
+        supported_entities = ["PERSON", "EMAIL_ADDRESS"]
+    if entity_mappings is None:
+        entity_mappings = {"person": "PERSON", "email": "EMAIL_ADDRESS"}
+    if labels_to_ignore is None:
+        labels_to_ignore = []
+    if provider_kwargs is None:
+        provider_kwargs = {"api_key": "test-api-key"}
+
+    return {
+        "lm_recognizer": {
+            "supported_entities": supported_entities,
+            "labels_to_ignore": labels_to_ignore,
+            "enable_generic_consolidation": enable_generic_consolidation,
+            "min_score": min_score,
+        },
+        "langextract": {
+            "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+            "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
+            "model": {
+                "model_id": model_id,
+                "provider": {
+                    "name": provider_name,
+                    "kwargs": provider_kwargs,
+                },
+            },
+            "entity_mappings": entity_mappings,
+        }
+    }
+
+
+class TestBasicLangExtractRecognizerInitialization:
+    """Test BasicLangExtractRecognizer initialization and configuration loading."""
+
+    def test_when_langextract_not_installed_then_raises_import_error(self):
+        """Test that ImportError is raised when langextract is not installed."""
+        with patch(
+            'presidio_analyzer.llm_utils.langextract_helper.lx',
+            None
+        ):
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            with pytest.raises(ImportError, match="LangExtract is not installed"):
+                BasicLangExtractRecognizer()
+
+    def test_when_initialized_with_mocked_openai_then_succeeds(self, tmp_path):
+        """Test BasicLangExtractRecognizer initialization with openai provider."""
+        import yaml
+
+        config = create_test_config(
+            supported_entities=["PERSON", "EMAIL_ADDRESS"],
+            entity_mappings={"person": "PERSON", "email": "EMAIL_ADDRESS"},
+            model_id="gpt-4o",
+            provider_name="openai",
+            provider_kwargs={"api_key": "test-api-key"},
+            min_score=0.5
+        )
+
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            with patch('presidio_analyzer.llm_utils.langextract_helper.lx_factory') as mock_factory:
+                mock_factory.ModelConfig = Mock()
+
+                from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+                recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
+
+                # Verify initialization
+                assert recognizer.name == "Basic LangExtract PII"
+                assert recognizer.model_id == "gpt-4o"
+                assert recognizer.provider == "openai"
+                assert recognizer.provider_kwargs == {"api_key": "test-api-key"}
+                assert len(recognizer.supported_entities) == 3  # PERSON, EMAIL_ADDRESS, GENERIC_PII_ENTITY
+                assert "PERSON" in recognizer.supported_entities
+                assert "EMAIL_ADDRESS" in recognizer.supported_entities
+                assert "GENERIC_PII_ENTITY" in recognizer.supported_entities
+
+                # Verify inheritance hierarchy
+                from presidio_analyzer.lm_recognizer import LMRecognizer
+                from presidio_analyzer.predefined_recognizers.third_party.langextract_recognizer import LangExtractRecognizer
+                assert isinstance(recognizer, BasicLangExtractRecognizer)
+                assert isinstance(recognizer, LangExtractRecognizer)
+                assert isinstance(recognizer, LMRecognizer)
+
+    def test_when_config_file_missing_then_raises_file_not_found_error(self):
+        """Test FileNotFoundError when config file doesn't exist."""
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            with pytest.raises(FileNotFoundError, match="File not found"):
+                BasicLangExtractRecognizer(config_path="/nonexistent/path.yaml")
+
+    def test_when_model_section_missing_then_raises_value_error(self, tmp_path):
+        """Test ValueError when config missing 'langextract.model' section."""
+        import yaml
+
+        config = {
+            "lm_recognizer": {
+                "supported_entities": ["PERSON"],
+                "labels_to_ignore": [],
+                "enable_generic_consolidation": True,
+                "min_score": 0.5,
+            },
+            "langextract": {
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                # Missing 'model' section
+            }
+        }
+
+        config_file = tmp_path / "bad_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            with pytest.raises(ValueError, match="Configuration must contain 'langextract.model'"):
+                BasicLangExtractRecognizer(config_path=str(config_file))
+
+    def test_when_model_id_missing_then_raises_value_error(self, tmp_path):
+        """Test ValueError when model_id is missing."""
+        import yaml
+
+        config = {
+            "lm_recognizer": {
+                "supported_entities": ["PERSON"],
+                "labels_to_ignore": [],
+                "enable_generic_consolidation": True,
+                "min_score": 0.5,
+            },
+            "langextract": {
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                "model": {
+                    "provider": {
+                        "name": "openai",
+                        "kwargs": {"api_key": "test-key"}
+                    }
+                    # Missing model_id
+                }
+            }
+        }
+
+        config_file = tmp_path / "bad_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            with patch('presidio_analyzer.llm_utils.langextract_helper.lx_factory') as mock_factory:
+                mock_factory.ModelConfig = Mock()
+                from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+                with pytest.raises(ValueError, match="Configuration must contain 'langextract.model.model_id'"):
+                    BasicLangExtractRecognizer(config_path=str(config_file))
+
+    def test_when_provider_missing_then_raises_value_error(self, tmp_path):
+        """Test ValueError when provider is missing."""
+        import yaml
+
+        config = {
+            "lm_recognizer": {
+                "supported_entities": ["PERSON"],
+                "labels_to_ignore": [],
+                "enable_generic_consolidation": True,
+                "min_score": 0.5,
+            },
+            "langextract": {
+                "prompt_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2",
+                "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
+                "entity_mappings": {"person": "PERSON"},
+                "model": {
+                    "model_id": "gpt-4o"
+                    # Missing provider
+                }
+            }
+        }
+
+        config_file = tmp_path / "bad_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            with patch('presidio_analyzer.llm_utils.langextract_helper.lx_factory') as mock_factory:
+                mock_factory.ModelConfig = Mock()
+                from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+                with pytest.raises(ValueError, match="Configuration must contain 'provider'"):
+                    BasicLangExtractRecognizer(config_path=str(config_file))
+
+
+class TestBasicLangExtractRecognizerAnalyze:
+    """Test the analyze method with mocked LangExtract."""
+
+    @pytest.fixture
+    def mock_recognizer(self, tmp_path):
+        """Fixture to create a mocked BasicLangExtractRecognizer."""
+        import yaml
+
+        config = create_test_config(
+            supported_entities=["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER"],
+            entity_mappings={
+                "person": "PERSON",
+                "email": "EMAIL_ADDRESS",
+                "phone": "PHONE_NUMBER"
+            },
+            model_id="gpt-4o",
+            provider_name="openai",
+            provider_kwargs={"api_key": "test-api-key"},
+            min_score=0.5
+        )
+
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            with patch('presidio_analyzer.llm_utils.langextract_helper.lx_factory') as mock_factory:
+                mock_factory.ModelConfig = Mock()
+                from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+                return BasicLangExtractRecognizer(config_path=str(config_file))
+
+    def test_when_text_contains_person_then_detects_entity(self, mock_recognizer):
+        """Test analysis detecting a person entity with mocked LangExtract."""
+        text = "My name is John Doe"
+
+        # Create mock extraction
+        mock_extraction = Mock()
+        mock_extraction.extraction_class = "person"
+        mock_extraction.extraction_text = "John Doe"
+        mock_extraction.char_interval = Mock()
+        mock_extraction.char_interval.start_pos = 11
+        mock_extraction.char_interval.end_pos = 19
+        mock_extraction.alignment_status = "MATCH_EXACT"
+        mock_extraction.attributes = {"type": "full_name"}
+
+        mock_result = Mock()
+        mock_result.extractions = [mock_extraction]
+
+        with patch('langextract.extract', return_value=mock_result):
+            results = mock_recognizer.analyze(text, entities=["PERSON"])
+
+        assert len(results) == 1
+        assert results[0].entity_type == "PERSON"
+        assert results[0].start == 11
+        assert results[0].end == 19
+        assert results[0].score == 0.95  # MATCH_EXACT score
+
+    def test_when_text_contains_multiple_entities_then_detects_all(self, mock_recognizer):
+        """Test analysis detecting multiple entity types."""
+        text = "Contact John Doe at john@example.com or 555-1234"
+
+        # Create mock extractions
+        person_extraction = Mock()
+        person_extraction.extraction_class = "person"
+        person_extraction.extraction_text = "John Doe"
+        person_extraction.char_interval = Mock(start_pos=8, end_pos=16)
+        person_extraction.alignment_status = "MATCH_EXACT"
+        person_extraction.attributes = {}
+
+        email_extraction = Mock()
+        email_extraction.extraction_class = "email"
+        email_extraction.extraction_text = "john@example.com"
+        email_extraction.char_interval = Mock(start_pos=20, end_pos=36)
+        email_extraction.alignment_status = "MATCH_EXACT"
+        email_extraction.attributes = {}
+
+        phone_extraction = Mock()
+        phone_extraction.extraction_class = "phone"
+        phone_extraction.extraction_text = "555-1234"
+        phone_extraction.char_interval = Mock(start_pos=40, end_pos=48)
+        phone_extraction.alignment_status = "MATCH_FUZZY"
+        phone_extraction.attributes = {}
+
+        mock_result = Mock()
+        mock_result.extractions = [person_extraction, email_extraction, phone_extraction]
+
+        with patch('langextract.extract', return_value=mock_result):
+            results = mock_recognizer.analyze(text)
+
+        assert len(results) == 3
+        assert results[0].entity_type == "PERSON"
+        assert results[1].entity_type == "EMAIL_ADDRESS"
+        assert results[2].entity_type == "PHONE_NUMBER"
+        assert results[2].score == 0.80  # MATCH_FUZZY score
+
+    def test_when_text_is_empty_then_returns_no_results(self, mock_recognizer):
+        """Test analysis with empty text returns no results."""
+        results = mock_recognizer.analyze("")
+        assert len(results) == 0
+
+        results = mock_recognizer.analyze("   ")
+        assert len(results) == 0
+
+    def test_when_no_entities_match_then_returns_empty_list(self, mock_recognizer):
+        """Test analysis when requested entities don't match supported entities."""
+        text = "Some text here"
+
+        # Request unsupported entity type
+        results = mock_recognizer.analyze(text, entities=["CREDIT_CARD"])
+        assert len(results) == 0
+
+    def test_when_entities_requested_then_filters_results(self, mock_recognizer):
+        """Test that analyze filters results based on requested entities."""
+        from presidio_analyzer import RecognizerResult
+
+        text = "Contact John Doe at john@example.com"
+
+        # Create RecognizerResult objects (what _call_llm returns)
+        person_result = RecognizerResult(
+            entity_type="PERSON",
+            start=8,
+            end=16,
+            score=0.95
+        )
+
+        email_result = RecognizerResult(
+            entity_type="EMAIL_ADDRESS",
+            start=20,
+            end=36,
+            score=0.95
+        )
+
+        with patch.object(mock_recognizer, '_call_llm', return_value=[person_result, email_result]):
+            # Request only PERSON entities - EMAIL_ADDRESS should be filtered out by analyze()
+            results = mock_recognizer.analyze(text, entities=["PERSON"])
+
+        # Should only return PERSON, EMAIL_ADDRESS filtered by analyze() method
+        assert len(results) == 1
+        assert results[0].entity_type == "PERSON"
+        assert results[0].start == 8
+        assert results[0].end == 16
+
+    def test_when_min_score_set_then_filters_low_confidence_results(self, mock_recognizer):
+        """Test that results below min_score are filtered out."""
+        # Set min_score to 0.5 (default in config)
+        text = "Some text"
+
+        mock_extraction = Mock()
+        mock_extraction.extraction_class = "person"
+        mock_extraction.extraction_text = "Some text"
+        mock_extraction.char_interval = Mock(start_pos=0, end_pos=9)
+        mock_extraction.alignment_status = "NOT_ALIGNED"  # Score 0.60
+        mock_extraction.attributes = {}
+
+        mock_result = Mock()
+        mock_result.extractions = [mock_extraction]
+
+        with patch('langextract.extract', return_value=mock_result):
+            results = mock_recognizer.analyze(text)
+
+        # NOT_ALIGNED has score 0.60, which is above min_score 0.5
+        assert len(results) == 1
+
+    def test_when_langextract_raises_exception_then_exception_propagates(self, mock_recognizer):
+        """Test that exceptions from LangExtract propagate to caller."""
+        text = "Some text"
+
+        with patch('langextract.extract', side_effect=Exception("LangExtract error")):
+            with pytest.raises(Exception, match="LangExtract error"):
+                mock_recognizer.analyze(text)
+
+    def test_when_entity_has_no_mapping_and_consolidation_enabled_then_creates_generic(
+        self, mock_recognizer
+    ):
+        """Test that extractions with unknown entity classes become GENERIC_PII_ENTITY."""
+        text = "Some text"
+
+        mock_extraction = Mock()
+        mock_extraction.extraction_class = "unknown_type"  # Not in entity_mappings
+        mock_extraction.extraction_text = "Some text"
+        mock_extraction.char_interval = Mock(start_pos=0, end_pos=9)
+        mock_extraction.alignment_status = "MATCH_EXACT"
+        mock_extraction.attributes = {}
+
+        mock_result = Mock()
+        mock_result.extractions = [mock_extraction]
+
+        with patch('langextract.extract', return_value=mock_result):
+            results = mock_recognizer.analyze(text)
+
+        # Unknown entity type should be consolidated to GENERIC_PII_ENTITY
+        assert len(results) == 1
+        assert results[0].entity_type == "GENERIC_PII_ENTITY"
+        assert results[0].recognition_metadata["original_entity_type"] == "UNKNOWN_TYPE"
+        assert results[0].start == 0
+        assert results[0].end == 9
+
+    def test_when_entity_has_no_mapping_and_consolidation_disabled_then_skips(self, tmp_path):
+        """Test that unknown entities are skipped when consolidation is disabled."""
+        import yaml
+
+        # Create config with consolidation disabled
+        config = create_test_config(
+            supported_entities=["PERSON", "EMAIL_ADDRESS"],
+            entity_mappings={"person": "PERSON", "email": "EMAIL_ADDRESS"},
+            enable_generic_consolidation=False
+        )
+
+        config_file = tmp_path / "test_config.yaml"
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f)
+
+        with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
+                   return_value=Mock()):
+            with patch('presidio_analyzer.llm_utils.langextract_helper.lx_factory') as mock_factory:
+                mock_factory.ModelConfig = Mock()
+
+                from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+                recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
+
+        text = "Some text"
+
+        mock_extraction = Mock()
+        mock_extraction.extraction_class = "unknown_type"  # Not in entity_mappings
+        mock_extraction.extraction_text = "Some text"
+        mock_extraction.char_interval = Mock(start_pos=0, end_pos=9)
+        mock_extraction.alignment_status = "MATCH_EXACT"
+        mock_extraction.attributes = {}
+
+        mock_result = Mock()
+        mock_result.extractions = [mock_extraction]
+
+        with patch('langextract.extract', return_value=mock_result):
+            results = recognizer.analyze(text)
+
+        # Unknown entity type should be skipped when consolidation is disabled
+        assert len(results) == 0
