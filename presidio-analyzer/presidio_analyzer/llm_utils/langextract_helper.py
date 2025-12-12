@@ -8,11 +8,14 @@ logger = logging.getLogger("presidio-analyzer")
 
 try:
     import langextract as lx
+    import langextract.factory as lx_factory
 except ImportError:
     lx = None
+    lx_factory = None
 
 __all__ = [
     "lx",
+    "lx_factory",
     "check_langextract_available",
     "extract_lm_config",
     "get_supported_entities",

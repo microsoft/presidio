@@ -324,7 +324,12 @@ class RecognizerListLoader:
                         new_conf, language_conf, recognizer_cls
                     )
 
-                    recognizer_instances.append(recognizer_cls(**kwargs))
+                    try:
+                        recognizer_instances.append(recognizer_cls(**kwargs))
+                    except Exception as e:
+                        logger.error(f"Failed to initialize recognizer {recognizer_name}")
+                        logger.error(f"Error: {str(e)}")
+                        raise
 
         for recognizer_conf in custom:
             if RecognizerListLoader.is_recognizer_enabled(recognizer_conf):
