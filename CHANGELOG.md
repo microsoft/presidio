@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### Image Redactor
+#### Changed
+- DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.
+- Image Redactor: Added redact_and_return_bbox method to ImageRedactorEngine, which returns both the redacted image and the detected bounding boxes for redacted regions.
 
 ## [2.2.360] - 2025-09-09
 ### Analyzer
@@ -673,3 +677,4 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 - Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
 - Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
+- Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).

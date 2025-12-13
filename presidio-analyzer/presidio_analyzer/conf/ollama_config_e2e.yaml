@@ -1,0 +1,50 @@
+# Ollama LangExtract E2E Test Configuration
+# https://github.com/google/langextract
+
+lm_recognizer:
+  supported_entities:
+    - PERSON
+    - LOCATION
+    - ORGANIZATION
+    - PHONE_NUMBER
+    - EMAIL_ADDRESS
+    - DATE_TIME
+    - US_SSN
+    - CREDIT_CARD
+    - MEDICAL_LICENSE
+    - IP_ADDRESS
+    - URL
+    - IBAN_CODE
+  
+  labels_to_ignore:
+    - payment_status
+    - metadata
+  
+  enable_generic_consolidation: true  # Consolidates unknown entity types to GENERIC_PII_ENTITY
+  min_score: 0.5
+
+langextract:
+  prompt_file: "langextract_prompts/default_pii_phi_prompt.j2"
+  examples_file: "langextract_prompts/default_pii_phi_examples.yaml"
+  
+  model:
+    model_id: "qwen2.5:1.5b"
+    model_url: "http://ollama:11434"
+    temperature: null
+  
+  entity_mappings:
+    person: PERSON
+    full_name: PERSON
+    location: LOCATION
+    address: LOCATION
+    organization: ORGANIZATION
+    phone: PHONE_NUMBER
+    email: EMAIL_ADDRESS
+    date: DATE_TIME
+    ssn: US_SSN
+    credit_card: CREDIT_CARD
+    medical_record: MEDICAL_LICENSE
+    ip_address: IP_ADDRESS
+    ip-address: IP_ADDRESS
+    url: URL
+    iban: IBAN_CODE

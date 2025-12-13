@@ -23,12 +23,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -38,12 +38,35 @@ jobs:
       - name: Run ruff check
         run: ruff check
 
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: low
+          allow-licenses: MIT, Apache-2.0, BSD-3-Clause
+          comment-summary-in-pr: on-failure
+
   test:
     name: Test ${{ matrix.component.name }} (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12', '3.13']
         component: 
           - name: 'Analyzer'
             path: 'presidio-analyzer'
@@ -65,14 +88,19 @@ jobs:
             path: 'presidio-structured'
             extras: ''
             spacy-models: ''
+    env:
+      POETRY_CACHE_DIR: /mnt/poetry_cache
+      COVERAGE_THRESHOLD: 90
+      PRIMARY_PYTHON: '3.13'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
-          persist-credentials: false
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -82,6 +110,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install poetry
+
+      - name: Setup Poetry Cache Directory
+        run: |
+          sudo mkdir -p $POETRY_CACHE_DIR
+          sudo chown -R runner $POETRY_CACHE_DIR    
 
       - name: Install system dependencies for Image Redactor
         if: matrix.component.name == 'Image Redactor'
@@ -108,10 +141,30 @@ jobs:
             poetry run python -m spacy download $model
           done
 
-      - name: Run unit tests
+      - name: Run tests with coverage
         working-directory: ${{ matrix.component.path }}
         run: |
-          poetry run pytest -vv --tb=short
+          PACKAGE_NAME=$(echo "${{ matrix.component.path }}" | sed 's/-/_/g')
+          poetry run pytest --cov=$PACKAGE_NAME --cov-report=xml:coverage.xml --cov-report=term --cov-report=html -vv --tb=short
+          
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Checking PR difference coverage (>= ${{ env.COVERAGE_THRESHOLD }}%) with diff-cover..."
+            poetry run diff-cover coverage.xml \
+              --compare-branch=origin/${{ github.base_ref }} \
+              --fail-under=${{ env.COVERAGE_THRESHOLD }} \
+              --show-uncovered
+          fi
+
+      - name: Comment PR with Coverage
+        if: matrix.python-version == env.PRIMARY_PYTHON
+        uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          MINIMUM_GREEN: 85
+          MINIMUM_ORANGE: 70
+          COVERAGE_DATA_BRANCH: coverage-data
+          SUBPROJECT_ID: ${{ matrix.component.path }}
+          COVERAGE_PATH: ${{ matrix.component.path }}
 
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
@@ -123,7 +176,7 @@ jobs:
     name: Build ${{ matrix.image }} (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
     needs: [lint]
-    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     permissions:
       id-token: write
       contents: read
@@ -150,7 +203,7 @@ jobs:
             runner: ubuntu-24.04-arm
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -175,9 +228,10 @@ jobs:
             --platform ${{ matrix.platform }} \
             --push \
             --tag ${{ env.REGISTRY_NAME }}/${{ matrix.image }}:${{ env.TAG }}-${PLATFORM_TAG} \
-            --build-arg NAME=${{ matrix.image }} \
-            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/${{ matrix.image }}:latest \
+            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/public/${{ matrix.image }}:latest \
             --cache-to type=inline \
+            --attest type=sbom \
+            --attest type=provenance,mode=max \
             ./${{ matrix.image }}
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
@@ -187,7 +241,7 @@ jobs:
     name: Create Multi-Platform Manifests
     runs-on: ubuntu-latest
     needs: build-platform-images
-    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     permissions:
       id-token: write
       contents: read
@@ -224,7 +278,7 @@ jobs:
     name: E2E Tests (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
     needs: create-manifests
-    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     permissions:
       id-token: write
       contents: read
@@ -237,7 +291,7 @@ jobs:
             runner: ubuntu-24.04-arm
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -256,7 +310,7 @@ jobs:
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
           docker compose -f docker-compose.yml pull
         env:
-          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}/
+          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           TAG: :${{ env.TAG }}
 
       - name: Start Presidio cluster
@@ -264,11 +318,11 @@ jobs:
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
           docker compose -f docker-compose.yml up -d
         env:
-          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}/
+          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           TAG: :${{ env.TAG }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
@@ -294,6 +348,11 @@ jobs:
       - name: Wait for services to be ready
         run: sleep 60
 
+      - name: Download Ollama model for Ollama LangExtract recognizer tests
+        run: |
+          docker exec $(docker ps -qf "name=ollama") ollama pull qwen2.5:1.5b
+          docker exec $(docker ps -qf "name=ollama") ollama run qwen2.5:1.5b
+
       - name: Run E2E tests
         working-directory: e2e-tests
         run: |
@@ -313,13 +372,20 @@ jobs:
 
   # Local build and test jobs for external contributors (no secrets required) 
   local-build-and-test:
-    name: Local Build and E2E Tests
-    runs-on: ubuntu-latest
+    name: Local Build and E2E Tests (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
     needs: [lint]
-    if: github.event.pull_request.head.repo.full_name != github.repository
+    if: github.ref != 'refs/heads/main'
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -331,20 +397,20 @@ jobs:
           # Build all images locally without pushing
           docker compose -f docker-compose.yml build
         env:
-          REGISTRY_NAME: ''
+          REGISTRY_NAME: 'mcr.microsoft.com'
           IMAGE_PREFIX: ''
-          TAG: ''
+          TAG: gha${{ github.run_number }}
 
       - name: Start Presidio cluster locally
         run: |
           docker compose -f docker-compose.yml up -d
         env:
-          REGISTRY_NAME: ''
+          REGISTRY_NAME: 'mcr.microsoft.com'
           IMAGE_PREFIX: ''
-          TAG: ''
+          TAG: gha${{ github.run_number }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
@@ -354,9 +420,9 @@ jobs:
           path: |
             ~/.cache/pip
             e2e-tests/env
-          key: ${{ runner.os }}-local-e2e-${{ hashFiles('e2e-tests/requirements.txt') }}
+          key: ${{ runner.os }}-${{ matrix.platform }}-local-e2e-${{ hashFiles('e2e-tests/requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-local-e2e-
+            ${{ runner.os }}-${{ matrix.platform }}-local-e2e-
 
       - name: Install E2E test dependencies
         working-directory: e2e-tests
@@ -369,6 +435,11 @@ jobs:
 
       - name: Wait for services to be ready
         run: sleep 60
+
+      - name: Download Ollama model for Ollama LangExtract recognizer tests
+        run: |
+          docker exec $(docker ps -qf "name=ollama") ollama pull qwen2.5:1.5b
+          docker exec $(docker ps -qf "name=ollama") ollama run qwen2.5:1.5b
 
       - name: Run E2E tests
         working-directory: e2e-tests

@@ -11,29 +11,31 @@ license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 keywords = ["presidio_analyzer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 include = ["conf/*",]
 
-requires-python = ">=3.9,<3.14"
+requires-python = ">=3.10,<3.14"
 dependencies = [
     "spacy (>=3.4.4, !=3.7.0)",
     "regex",
     "tldextract",
     "pyyaml",
-    "phonenumbers (>=8.12,<10.0.0)"
+    "phonenumbers (>=8.12,<10.0.0)",
+    "pydantic (>=2.0.0,<3.0.0)"
 ]
 
 [project.optional-dependencies]
 server = [
     "flask (>=1.1)",
-    "gunicorn"
+    "gunicorn; platform_system != 'Windows'",
+    "waitress; platform_system == 'Windows'"
 ]
 transformers = [
     "transformers",
@@ -58,11 +60,24 @@ gliner = [
     "gliner (>=0.2.13,<1.0.0) ; python_version >= '3.10'",
     "onnxruntime (>=1.19) ; python_version >= '3.10'"
 ]
+langextract = [
+    "langextract (>=1.0.0)",
+    "openai (>=1.50.0)",
+    "azure-identity (>=1.18.0)",
+    "more-itertools (>=10.0.0)",
+    "jinja2 (>=3.0.0)",
+]
 
 [tool.poetry.group.dev.dependencies]
 pip = "*"
 ruff = "*"
 pytest = "*"
+pytest-cov = "*"
 pytest-mock = "*"
 python-dotenv = "*"
 pre_commit = "*"
+diff-cover = "*"
+
+[tool.coverage.run]
+relative_files = true
+source = ["."]

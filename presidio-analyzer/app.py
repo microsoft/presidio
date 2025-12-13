@@ -147,7 +147,7 @@ def _exclude_attributes_from_dto(recognizer_result_list):
                 delattr(result, attr)
 
 
-def create_app():  # noqa
+def create_app():  # noqa: D103
     server = Server()
     return server.app
 

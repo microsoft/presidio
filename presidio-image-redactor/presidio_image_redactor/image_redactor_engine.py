@@ -5,6 +5,7 @@ from PIL import Image, ImageChops, ImageDraw
 from presidio_analyzer import PatternRecognizer
 
 from presidio_image_redactor import BboxProcessor, ImageAnalyzerEngine
+from presidio_image_redactor.entities import ImageRecognizerResult
 
 
 class ImageRedactorEngine:
@@ -24,15 +25,15 @@ class ImageRedactorEngine:
 
         self.bbox_processor = BboxProcessor()
 
-    def redact(
+    def redact_and_return_bbox(
         self,
-        image: Image,
+        image: Image.Image,
         fill: Union[int, Tuple[int, int, int]] = (0, 0, 0),
         ocr_kwargs: Optional[dict] = None,
         ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
-    ) -> Image:
-        """Redact method to redact the given image.
+    ) -> Tuple[Image.Image, List[ImageRecognizerResult]]:
+        """Redact method to redact the given image and return the bboxes.
 
         Please notice, this method duplicates the image, creates a new instance and
         manipulate it.
@@ -45,7 +46,7 @@ class ImageRedactorEngine:
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
-        :return: the redacted image
+        :return: the redacted image and the list of bboxes
         """
 
         image = ImageChops.duplicate(image)
@@ -77,7 +78,41 @@ class ImageRedactorEngine:
             y1 = y0 + box.height
             draw.rectangle([x0, y0, x1, y1], fill=fill)
 
-        return image
+        return image, bboxes
+
+    def redact(
+        self,
+        image: Image.Image,
+        fill: Union[int, Tuple[int, int, int]] = (0, 0, 0),
+        ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
+        **text_analyzer_kwargs,
+    ) -> Image.Image:
+        """Redact method to redact the given image.
+
+        Please notice, this method duplicates the image, creates a new instance and
+        manipulate it.
+        :param image: PIL Image to be processed.
+        :param fill: colour to fill the shape - int (0-255) for
+        grayscale or Tuple(R, G, B) for RGB.
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
+
+        :return: the redacted image
+        """
+
+        redacted_image, _ = self.redact_and_return_bbox(
+            image=image,
+            fill=fill,
+            ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=ad_hoc_recognizers,
+            **text_analyzer_kwargs,
+        )
+
+        return redacted_image
 
     @staticmethod
     def _check_ad_hoc_recognizer_list(

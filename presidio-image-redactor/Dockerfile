@@ -1,10 +1,10 @@
 FROM python:3.13-slim
 
-ARG NAME
 ARG NLP_CONF_FILE
 ARG ANALYZER_CONF_FILE
 ARG RECOGNIZER_REGISTRY_CONF_FILE
 ENV PIP_NO_CACHE_DIR=1
+ENV POETRY_VIRTUALENVS_CREATE=false
 
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
 ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
@@ -13,29 +13,33 @@ ENV NLP_CONF_FILE=${NLP_CONF_FILE}
 ENV PORT=3000
 ENV WORKERS=1
 
-COPY ${ANALYZER_CONF_FILE} /usr/bin/${NAME}/${ANALYZER_CONF_FILE}
-COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /usr/bin/${NAME}/${RECOGNIZER_REGISTRY_CONF_FILE}
-COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
+COPY ${ANALYZER_CONF_FILE} /app/${ANALYZER_CONF_FILE}
+COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /app/${RECOGNIZER_REGISTRY_CONF_FILE}
+COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
-WORKDIR /usr/bin/${NAME}
+WORKDIR /app
 
-# Install essential build tools
 RUN apt-get update \
-  && apt-get install -y build-essential
-
-# install tesseract and other image related dependencies
-RUN apt-get update \
-  && apt-get install tesseract-ocr -y \
+  && apt-get install build-essential tesseract-ocr ffmpeg libsm6 libxext6 curl --no-install-recommends -y \
   && rm -rf /var/lib/apt/lists/* \
   && tesseract -v
 
-RUN apt-get update  \
-  && apt-get install ffmpeg libsm6 libxext6  -y
+COPY ./pyproject.toml /app/
+RUN pip install poetry \
+    && poetry install --no-root --only=main -E server\
+    && rm -rf $(poetry config cache-dir)
 
-COPY ./pyproject.toml /usr/bin/${NAME}/
-COPY ./README.md /usr/bin/${NAME}/
-RUN pip install poetry && poetry install --no-root --only=main -E server
+# Install spaCy model during build (as root) so it's available to non-root user at runtime
+RUN python -m spacy download en_core_web_lg
 
-COPY . /usr/bin/${NAME}/
+COPY . /app/
+
+# Create a non-root user and set ownership
+RUN useradd -m -u 1001 presidio && chown -R presidio:presidio /app
+
+USER 1001
+
 EXPOSE ${PORT}
-CMD poetry run gunicorn -w $WORKERS -b 0.0.0.0:$PORT 'app:create_app()'
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+CMD ["./entrypoint.sh"]

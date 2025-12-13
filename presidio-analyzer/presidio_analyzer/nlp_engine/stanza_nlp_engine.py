@@ -72,7 +72,7 @@ def load_pipeline(
     name: str,
     *,
     lang: str = "",
-    dir: Optional[str] = None,  # noqa
+    dir: Optional[str] = None,
     package: str = "default",
     processors: Union[dict, str] = None,
     logging_level: Optional[Union[int, str]] = None,
@@ -124,7 +124,7 @@ def load_pipeline(
 @registry.tokenizers("PipelineAsTokenizer.v1")
 def create_tokenizer(
     lang: str = "",
-    dir: Optional[str] = None,  # noqa
+    dir: Optional[str] = None,
     package: str = "default",
     processors: Union[dict, str] = None,
     logging_level: Optional[Union[int, str]] = None,
@@ -150,17 +150,17 @@ def create_tokenizer(
 
     def tokenizer_factory(
         nlp,
-        lang=lang,  # noqa
-        dir=dir,  # noqa
-        package=package,  # noqa
-        processors=processors,  # noqa
-        logging_level=logging_level,  # noqa
-        verbose=verbose,  # noqa
-        use_gpu=use_gpu,  # noqa
-        kwargs=kwargs,  # noqa
+        lang=lang,
+        dir=dir,
+        package=package,
+        processors=processors,
+        logging_level=logging_level,
+        verbose=verbose,
+        use_gpu=use_gpu,
+        kwargs=kwargs,
     ) -> StanzaTokenizer:
         if dir is None:
-            dir = DEFAULT_MODEL_DIR  # noqa
+            dir = DEFAULT_MODEL_DIR
         snlp = Pipeline(
             lang=lang,
             dir=dir,
@@ -298,7 +298,7 @@ class StanzaTokenizer(object):
                 f"expansion or because the character offsets don't map to "
                 f"valid tokens produced by the Stanza tokenizer:\n"
                 f"Words: {words}\n"
-                f"Entities: {[(e.text, e.type, e.start_char, e.end_char) for e in snlp_doc.entities]}", # noqa
+                f"Entities: {[(e.text, e.type, e.start_char, e.end_char) for e in snlp_doc.entities]}",  # noqa
                 stacklevel=4,
             )
         else:
@@ -375,7 +375,7 @@ class StanzaTokenizer(object):
             text_spaces.append(False)
         return text_words, text_spaces
 
-    def token_vector(self, token:Token):
+    def token_vector(self, token: Token):
         """Get Stanza's pretrained word embedding for given token.
 
         :param token: The token whose embedding will be returned

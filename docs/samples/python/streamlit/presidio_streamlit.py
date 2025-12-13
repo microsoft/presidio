@@ -258,7 +258,7 @@ with st.expander("About this demo", expanded=False):
     )
 
     st.markdown(
-        "[![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)"  # noqa
+        "[![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)"
         "[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)"
         "![GitHub Repo stars](https://img.shields.io/github/stars/microsoft/presidio?style=social)"
     )

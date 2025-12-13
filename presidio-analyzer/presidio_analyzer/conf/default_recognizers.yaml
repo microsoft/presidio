@@ -155,7 +155,14 @@ recognizers:
 
   - name: KrRrnRecognizer
     supported_languages: 
+    - ko
     - kr
+    type: predefined
+    enabled: false
+
+  - name: ThTninRecognizer
+    supported_languages:
+    - th
     type: predefined
     enabled: false
 
@@ -186,3 +193,16 @@ recognizers:
   - name: InVoterRecognizer
     type: predefined
     enabled: false
+
+  - name: InGstinRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+    enabled: false
+
+  - name: OllamaLangExtractRecognizer
+    supported_languages:
+      - en
+    type: predefined
+    enabled: false
+    config_path: presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml

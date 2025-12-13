@@ -26,6 +26,8 @@ on:
   schedule:
     - cron: '26 12 * * 1'
 
+permissions: read-all
+
 jobs:
   MSDO:
     # currently only windows latest is supported
@@ -36,8 +38,8 @@ jobs:
       security-events: write
 
     steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-dotnet@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
           5.0.x
@@ -46,11 +48,13 @@ jobs:
       uses: microsoft/security-devops-action@latest
       id: msdo
       env:
-        GDN_CHECKOV_SKIPPATH: 'docs/'
+        GDN_CHECKOV_SKIPPATH: 'docs'
       with:
-        tools: bandit, checkov, templateanalyzer, trivy
+        # bandit removed due to tool bug preventing CI from passing
+        # TODO: re-add bandit when fixed
+        tools: checkov, templateanalyzer, trivy
 
     - name: Upload results to Security tab
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: ${{ steps.msdo.outputs.sarifFile }}

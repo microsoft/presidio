@@ -19,10 +19,24 @@ and health (PHI) information. A list of all supported entities can be found in t
 [official documentation](https://learn.microsoft.com/en-us/azure/healthcare-apis/deidentification/overview).
 
 ## Prerequisites
-To use AHDS De-Identification with Preisido, an Azure De-Identification Service resource should
+To use AHDS De-Identification with Presidio, an Azure De-Identification Service resource should
 first be created under an Azure subscription. Follow the [official documentation](https://learn.microsoft.com/en-us/azure/healthcare-apis/deidentification/quickstart)
 for instructions. The endpoint, generated once the resource is created, 
 will be used when integrating with AHDS De-Identification, using a Presidio remote recognizer.
+
+### Authentication Setup
+
+The integration uses a secure-by-default authentication approach:
+
+**Production Mode (Default)**: Uses a restricted credential chain (EnvironmentCredential, WorkloadIdentityCredential, ManagedIdentityCredential)
+
+**Development Mode**: Set `ENV=development` to use DefaultAzureCredential for local development with Azure CLI:
+```bash
+export ENV=development
+az login
+```
+
+For more details, see the [AHDS Integration Authentication documentation](../../../ahds_integration.md#authentication).
 
 ## Azure Health Data Services de-identification Recognizer
 [The implementation of a `AzureHealthDeid` recognizer can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/ahds_recognizer.py).

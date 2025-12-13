@@ -35,7 +35,7 @@ class KrRrnRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "RRN (Medium)",
-            r"\b\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])(-?)\d{7}\b",
+            r"(?<!\d)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(-?)[1-4]\d{6}(?!\d)",
             0.5,
         )
     ]
@@ -53,7 +53,7 @@ class KrRrnRecognizer(PatternRecognizer):
         self,
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
-        supported_language: str = "kr",
+        supported_language: str = "ko",
         supported_entity: str = "KR_RRN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):

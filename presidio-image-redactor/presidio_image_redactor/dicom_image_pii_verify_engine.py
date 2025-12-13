@@ -93,7 +93,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         # Get OCR results
         perform_ocr_kwargs, ocr_threshold = (
             self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)
-        )  # noqa: E501
+        )
         ocr_results = self.ocr_engine.perform_ocr(image, **perform_ocr_kwargs)
         if ocr_threshold:
             ocr_results = self.image_analyzer_engine.threshold_ocr_result(

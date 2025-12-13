@@ -1,15 +1,21 @@
 FROM python:3.13-windowsservercore
 
 ENV PIP_NO_CACHE_DIR=1
+ENV POETRY_VIRTUALENVS_CREATE=false
+ENV PORT=3000
+
 WORKDIR /app
 
-COPY ./pyproject.toml /usr/bin/${NAME}/
-COPY ./README.md /usr/bin/${NAME}/
-COPY ./pyproject.toml /app/pyproject.toml
-RUN pip install --upgrade pip
-RUN pip install poetry; poetry install --no-root --only=main -E server
+COPY ./pyproject.toml /app/
+RUN python.exe -m pip install --upgrade pip; pip install poetry; poetry install --no-root --only=main -E server
 
-COPY . .
+COPY . /app/
+
+# Create a non-root user for Windows container
+RUN net user presidio /add
+USER presidio
 
 EXPOSE ${PORT}
-CMD poetry run python app.py
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD powershell -Command "try { Invoke-WebRequest -Uri http://localhost:$env:PORT/health -UseBasicParsing | Out-Null; exit 0 } catch { exit 1 }"
+CMD ["powershell", "-Command", "poetry run waitress-serve --port=$env:PORT app:create_app"]

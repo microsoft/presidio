@@ -40,9 +40,9 @@ class IbanRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "IBAN Generic",
-            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2})"  # noqa
-            r"([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?"  # noqa
-            r"([ \-]?[A-Z0-9]{1,3})?\b",  # noqa
+            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2})"  # noqa: E501
+            r"([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?"  # noqa: E501
+            r"([ \-]?[A-Z0-9]{1,3})?\b",
             0.5,
         ),
     ]
@@ -77,7 +77,7 @@ class IbanRecognizer(PatternRecognizer):
             global_regex_flags=regex_flags,
         )
 
-    def validate_result(self, pattern_text: str):  # noqa D102
+    def validate_result(self, pattern_text: str):  # noqa: D102
         try:
             pattern_text = EntityRecognizer.sanitize_value(
                 pattern_text, self.replacement_pairs

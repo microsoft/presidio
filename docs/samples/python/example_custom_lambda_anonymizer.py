@@ -46,7 +46,7 @@ if __name__ == "__main__":
     analyzer = AnalyzerEngine()
     anonymizer = AnonymizerEngine()
 
-    text = "The user has the following two emails: email1@contoso.com and email2@contoso.com"  # noqa E501
+    text = "The user has the following two emails: email1@contoso.com and email2@contoso.com"  # noqa: E501
     analyzer_results = analyzer.analyze(
         text=text, entities=["EMAIL_ADDRESS"], language="en"
     )
@@ -54,6 +54,6 @@ if __name__ == "__main__":
     print(f"Analyzer result: {analyzer_results}\n")
 
     print(
-        f"Reverse lambda result: {anonymize_reverse_lambda(analyzer_results, text).text}"  # noqa E501
+        f"Reverse lambda result: {anonymize_reverse_lambda(analyzer_results, text).text}"  # noqa: E501
     )
     print(f"Faker lambda result: {anonymize_faker_lambda(analyzer_results, text).text}")

@@ -1,6 +1,8 @@
 import json
 from typing import Dict
 
+import regex as re
+
 
 class Pattern:
     """
@@ -17,6 +19,24 @@ class Pattern:
         self.score = score
         self.compiled_regex = None
         self.compiled_with_flags = None
+
+        self.__validate_regex(self.regex)
+        self.__validate_score(self.score)
+
+    @staticmethod
+    def __validate_regex(pattern: str) -> None:
+        """Validate that the regex pattern is valid."""
+        try:
+            re.compile(pattern)
+        except re.error as e:
+            raise ValueError(f"Invalid regex pattern: {e}")
+
+    @staticmethod
+    def __validate_score(score: float) -> None:
+        if score < 0 or score > 1:
+            raise ValueError(
+                f"Invalid score: {score}. " "Score should be between 0 and 1"
+            )
 
     def to_dict(self) -> Dict:
         """

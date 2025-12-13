@@ -1,8 +1,7 @@
 """Predefined recognizers package. Holds all the default recognizers."""
 
-
 # Australia recognizers
-from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  #noqa: E501
+from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  # noqa: E501
     TransformersRecognizer,
 )
 
@@ -21,6 +20,7 @@ from .country_specific.india import (
 
 # India recognizers
 from .country_specific.india.in_aadhaar_recognizer import InAadhaarRecognizer
+from .country_specific.india.in_gstin_recognizer import InGstinRecognizer
 from .country_specific.india.in_pan_recognizer import InPanRecognizer
 from .country_specific.india.in_passport_recognizer import InPassportRecognizer
 from .country_specific.india.in_voter_recognizer import InVoterRecognizer
@@ -47,6 +47,9 @@ from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
 # Spain recognizers
 from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
+
+# Thai recognizers
+from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
 # UK recognizers
 from .country_specific.uk.uk_nhs_recognizer import NhsRecognizer
@@ -81,6 +84,11 @@ from .third_party.ahds_recognizer import AzureHealthDeidRecognizer
 
 # Third-party recognizers
 from .third_party.azure_ai_language import AzureAILanguageRecognizer
+from .third_party.azure_openai_langextract_recognizer import (
+    AzureOpenAILangExtractRecognizer,
+)
+from .third_party.langextract_recognizer import LangExtractRecognizer
+from .third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
 
 PREDEFINED_RECOGNIZERS = [
     "PhoneRecognizer",
@@ -137,6 +145,7 @@ __all__ = [
     "PlPeselRecognizer",
     "AzureAILanguageRecognizer",
     "InAadhaarRecognizer",
+    "InGstinRecognizer",
     "InVehicleRegistrationRecognizer",
     "SgUenRecognizer",
     "InVoterRecognizer",
@@ -146,4 +155,8 @@ __all__ = [
     "UkNinoRecognizer",
     "AzureHealthDeidRecognizer",
     "KrRrnRecognizer",
+    "ThTninRecognizer",
+    "LangExtractRecognizer",
+    "AzureOpenAILangExtractRecognizer",
+    "OllamaLangExtractRecognizer",
 ]

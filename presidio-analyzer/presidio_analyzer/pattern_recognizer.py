@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import regex as re
 
@@ -11,7 +11,9 @@ from presidio_analyzer import (
     Pattern,
     RecognizerResult,
 )
-from presidio_analyzer.nlp_engine import NlpArtifacts
+
+if TYPE_CHECKING:
+    from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -72,14 +74,14 @@ class PatternRecognizer(LocalRecognizer):
         else:
             self.deny_list = []
 
-    def load(self):  # noqa D102
+    def load(self):  # noqa: D102
         pass
 
     def analyze(
         self,
         text: str,
         entities: List[str],
-        nlp_artifacts: Optional[NlpArtifacts] = None,
+        nlp_artifacts: Optional["NlpArtifacts"] = None,
         regex_flags: Optional[int] = None,
     ) -> List[RecognizerResult]:
         """
@@ -198,7 +200,7 @@ class PatternRecognizer(LocalRecognizer):
             logger.debug(
                 "--- match_time[%s]: %.6f seconds",
                 pattern.name,
-                match_time.total_seconds()
+                match_time.total_seconds(),
             )
 
             for match in matches:
@@ -266,9 +268,30 @@ class PatternRecognizer(LocalRecognizer):
     @classmethod
     def from_dict(cls, entity_recognizer_dict: Dict) -> "PatternRecognizer":
         """Create instance from a serialized dict."""
+        # Make a copy to avoid mutating the input
+        entity_recognizer_dict = entity_recognizer_dict.copy()
+
         patterns = entity_recognizer_dict.get("patterns")
         if patterns:
             patterns_list = [Pattern.from_dict(pat) for pat in patterns]
             entity_recognizer_dict["patterns"] = patterns_list
+
+        # Transform supported_entities (plural) to supported_entity (singular)
+        # PatternRecognizer only accepts supported_entity (singular)
+        if (
+            "supported_entity" in entity_recognizer_dict
+            and "supported_entities" in entity_recognizer_dict
+        ):
+            raise ValueError(
+                "Both 'supported_entity' and 'supported_entities' "
+                "are present in the input dictionary. "
+                "Only one should be provided."
+            )
+        if "supported_entities" in entity_recognizer_dict:
+            supported_entities = entity_recognizer_dict.pop("supported_entities")
+            if supported_entities and len(supported_entities) > 0:
+                # Only set if not already present
+                if "supported_entity" not in entity_recognizer_dict:
+                    entity_recognizer_dict["supported_entity"] = supported_entities[0]
 
         return cls(**entity_recognizer_dict)
