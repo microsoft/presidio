@@ -95,7 +95,7 @@
 | presidio\_analyzer/predefined\_recognizers/generic/phone\_recognizer.py                                          |       34 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/url\_recognizer.py                                            |       10 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/ner/\_\_init\_\_.py                                                   |        2 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/ner/gliner\_recognizer.py                                             |       52 |        8 |     85% |14-16, 63, 70-74, 105, 165 |
+| presidio\_analyzer/predefined\_recognizers/ner/gliner\_recognizer.py                                             |       52 |        8 |     85% |14-16, 63, 70-74, 105, 168 |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/\_\_init\_\_.py                              |        4 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/spacy\_recognizer.py                         |       40 |        2 |     95% |   57, 137 |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/stanza\_recognizer.py                        |        5 |        0 |    100% |           |
