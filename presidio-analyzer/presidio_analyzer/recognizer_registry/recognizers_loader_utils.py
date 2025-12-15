@@ -311,7 +311,7 @@ class RecognizerListLoader:
         # For custom recognizers, we keep 'supported_languages'
         # and don't exclude 'supported_entity'
         # because PatternRecognizer needs it
-        custom_to_exclude = {"enabled", "type"}
+        custom_to_exclude = {"enabled", "type", "class_name"}
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
                 recognizer_conf=recognizer_conf, supported_languages=supported_languages
