@@ -61,6 +61,22 @@ with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
         
         Stanza models would be loaded lazily. To pre-load them, see: [Downloading a pre-trained model](./analyzer/nlp_engines/spacy_stanza.md#download-the-pre-trained-model).
 
+### GPU acceleration (optional)
+
+For GPU acceleration with spaCy, Stanza, Transformers, or GLiNER:
+
+- Install the `gpu` extra (includes `cupy-cuda12x`):
+  ```sh
+  pip install "presidio-analyzer[gpu]"
+  ```
+
+- Combine with other extras:
+  ```sh
+  pip install "presidio-analyzer[transformers,gpu]"
+  ```
+
+- Or install your own CUDA dependencies
+
 ### PII redaction in images
 
 For PII redaction in images
