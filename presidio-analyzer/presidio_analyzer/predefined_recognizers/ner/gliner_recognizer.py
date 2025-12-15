@@ -8,9 +8,9 @@ from presidio_analyzer import (
     RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import (
-    device_detector,
     NerModelConfiguration,
     NlpArtifacts,
+    device_detector,
 )
 
 try:
