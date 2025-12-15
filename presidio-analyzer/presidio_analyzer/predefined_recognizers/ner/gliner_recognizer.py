@@ -8,7 +8,7 @@ from presidio_analyzer import (
     RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import (
-    DeviceDetector,
+    device_detector,
     NerModelConfiguration,
     NlpArtifacts,
 )
@@ -92,7 +92,7 @@ class GLiNERRecognizer(LocalRecognizer):
         self.map_location = (
             map_location
             if map_location is not None
-            else DeviceDetector().get_torch_device()
+            else device_detector.get_device()
         )
 
         self.flat_ner = flat_ner
@@ -117,7 +117,9 @@ class GLiNERRecognizer(LocalRecognizer):
             raise ImportError("GLiNER is not installed. Please install it.")
 
         logger.info(f"Loading GLiNER model on device: {self.map_location}")
-        self.gliner = GLiNER.from_pretrained(self.model_name).to(self.map_location)
+        self.gliner = GLiNER.from_pretrained(
+            self.model_name, map_location=self.map_location
+        )
 
     def analyze(
         self,
