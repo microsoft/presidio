@@ -113,7 +113,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      169 |        9 |     95% |28, 44, 125, 133, 244-245, 447-448, 465 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-|                                                                                                        **TOTAL** | **3578** |  **199** | **94%** |           |
+| **TOTAL**                                                                                                        | **3578** |  **199** | **94%** |           |
 
 
 ## Setup coverage badge
