@@ -19,7 +19,7 @@
 | presidio\_image\_redactor/image\_redactor\_engine.py            |       39 |        2 |     95% |    24, 65 |
 | presidio\_image\_redactor/ocr.py                                |       10 |        1 |     90% |        16 |
 | presidio\_image\_redactor/tesseract\_ocr.py                     |        6 |        0 |    100% |           |
-|                                                       **TOTAL** | **1069** |  **102** | **90%** |           |
+| **TOTAL**                                                       | **1069** |  **102** | **90%** |           |
 
 
 ## Setup coverage badge

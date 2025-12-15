@@ -344,6 +344,8 @@ kbd { border: 1px solid black; border-color: #888 #333 #333 #888; padding: .1em 
 
 @media (prefers-color-scheme: dark) { #index th { color: #ddd; } }
 
+@media (prefers-color-scheme: dark) { #index th { border-color: #444; } }
+
 #index th:hover { background: #eee; }
 
 @media (prefers-color-scheme: dark) { #index th:hover { background: #333; } }
@@ -359,6 +361,8 @@ kbd { border: 1px solid black; border-color: #888 #333 #333 #888; padding: .1em 
 #index th[aria-sort="descending"] .arrows::after { content: " ▼"; }
 
 #index tr.grouphead th { cursor: default; font-style: normal; border-color: #999; }
+
+@media (prefers-color-scheme: dark) { #index tr.grouphead th { border-color: #777; } }
 
 #index td.name { font-size: 1.15em; }
 
