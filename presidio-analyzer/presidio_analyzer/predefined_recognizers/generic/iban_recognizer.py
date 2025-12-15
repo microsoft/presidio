@@ -37,10 +37,19 @@ class IbanRecognizer(PatternRecognizer):
     This can allow a greater variety in input, for example by removing dashes or spaces.
     """
 
+    # Pattern explanation:
+    # - (?<![A-Z0-9]): Negative lookbehind - ensures we don't start mid-IBAN
+    # - ([A-Z]{2}[0-9]{2}(?:[ -]?[A-Z0-9]{4}){2,6}): First capture group with
+    #   country code, check digits, and 2-6 groups of 4 alphanumerics
+    # - ((?:[ -]?[A-Z0-9]{4})?): Second optional capture group for 1 more group of 4
+    # - ((?:[ -]?[A-Z0-9]{1,3})?): Third optional capture group for trailing 1-3 chars
+    # - (?![A-Z0-9]): Negative lookahead - ensures we don't end mid-IBAN
+    # Multiple capture groups allow validation fallback: if validation fails on
+    # the full match (e.g., "IBAN X"), the code tries shorter matches (e.g., "IBAN")
     PATTERNS = [
         Pattern(
             "IBAN Generic",
-            r"(?<![A-Z0-9])([A-Z]{2}\d{2}(?:[ -]?[A-Z0-9]{4}){2,6})"
+            r"(?<![A-Z0-9])([A-Z]{2}[0-9]{2}(?:[ -]?[A-Z0-9]{4}){2,6})"
             r"((?:[ -]?[A-Z0-9]{4})?)((?:[ -]?[A-Z0-9]{1,3})?)(?![A-Z0-9])",
             0.5,
         ),
