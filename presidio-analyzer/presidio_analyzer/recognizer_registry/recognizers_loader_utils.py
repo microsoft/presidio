@@ -125,7 +125,11 @@ class RecognizerListLoader:
         """
         if isinstance(recognizer_conf, str):
             return recognizer_conf
-        return recognizer_conf.get("class_name", recognizer_conf["name"])
+        # Use class_name if it exists and is not None, otherwise use name
+        class_name = recognizer_conf.get("class_name")
+        if class_name:
+            return class_name
+        return recognizer_conf["name"]
 
     @staticmethod
     def _convert_supported_entities_to_entity(conf: Dict[str, Any]) -> None:
