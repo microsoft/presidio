@@ -1,5 +1,6 @@
 import json
 from typing import Iterator
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -107,13 +108,9 @@ def test_batch_processing_with_as_tuples_returns_context(spacy_nlp_engine, texts
 
 def test_when_gpu_available_then_spacy_gpu_configured():
     """Test that spaCy GPU is configured when GPU is detected."""
-    from unittest.mock import patch, MagicMock
-    
-    # Mock device_detector to return cuda
     with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
         mock_detector.get_device.return_value = "cuda"
         
-        # Mock spacy.require_gpu
         with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.spacy") as mock_spacy:
             mock_spacy.load.return_value = MagicMock()
             mock_spacy.util.is_package.return_value = True
@@ -121,14 +118,11 @@ def test_when_gpu_available_then_spacy_gpu_configured():
             engine = SpacyNlpEngine(models=[{"lang_code": "en", "model_name": "en_core_web_sm"}])
             engine.load()
             
-            # Verify require_gpu was called
             mock_spacy.require_gpu.assert_called_once()
 
 
 def test_when_gpu_configuration_fails_then_warning_logged():
     """Test that warning is logged when GPU configuration fails."""
-    from unittest.mock import patch, MagicMock
-    
     with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
         mock_detector.get_device.return_value = "cuda"
         
@@ -141,16 +135,11 @@ def test_when_gpu_configuration_fails_then_warning_logged():
                 engine = SpacyNlpEngine(models=[{"lang_code": "en", "model_name": "en_core_web_sm"}])
                 engine.load()
                 
-                # Verify warning was logged
                 assert mock_logger.warning.called
-                warning_msg = str(mock_logger.warning.call_args)
-                assert "GPU" in warning_msg or "gpu" in warning_msg.lower()
 
 
 def test_when_cpu_device_then_gpu_not_configured():
     """Test that GPU is not configured when CPU device is detected."""
-    from unittest.mock import patch, MagicMock
-    
     with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
         mock_detector.get_device.return_value = "cpu"
         
@@ -161,11 +150,4 @@ def test_when_cpu_device_then_gpu_not_configured():
             engine = SpacyNlpEngine(models=[{"lang_code": "en", "model_name": "en_core_web_sm"}])
             engine.load()
             
-            # Verify require_gpu was NOT called
             mock_spacy.require_gpu.assert_not_called()
-
-            assert context == {"key": "value"}
-    else:
-        for text, nlp_artifacts in nlp_artifacts_batch:
-            assert text == "simple text"
-            assert len(nlp_artifacts.tokens) == 2

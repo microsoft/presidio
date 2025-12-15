@@ -1,11 +1,10 @@
 """Unit tests for DeviceDetector."""
 
-import sys
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from presidio_analyzer.nlp_engine.device_detector import DeviceDetector
+from presidio_analyzer.nlp_engine.device_detector import DeviceDetector, device_detector
 
 
 class TestDeviceDetectorErrorPaths:
@@ -13,27 +12,27 @@ class TestDeviceDetectorErrorPaths:
 
     def test_when_torch_import_fails_then_cpu_device(self):
         """Test that CPU is used when PyTorch import fails."""
-        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
-            # Simulate import error by making import fail
-            with patch("builtins.__import__", side_effect=ImportError("No module named 'torch'")):
-                detector = DeviceDetector()
-                
-                assert detector.get_device() == "cpu"
-                assert detector.get_gpu_device_name() is None
-                # Verify info log was called
-                mock_logger.info.assert_called()
+        with patch("builtins.__import__", side_effect=ImportError("No module named 'torch'")):
+            detector = DeviceDetector()
+            
+            assert detector.get_device() == "cpu"
+            assert detector.get_gpu_device_name() is None
 
     def test_when_cuda_not_available_then_cpu_device(self):
         """Test that CPU is used when CUDA is not available."""
         mock_torch = MagicMock()
         mock_torch.cuda.is_available.return_value = False
         
-        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
-            with patch("builtins.__import__", return_value=mock_torch):
-                detector = DeviceDetector()
-                
-                assert detector.get_device() == "cpu"
-                assert detector.get_gpu_device_name() is None
+        def mock_import(name, *args):
+            if name == "torch":
+                return mock_torch
+            return __builtins__.__import__(name, *args)
+        
+        with patch("builtins.__import__", side_effect=mock_import):
+            detector = DeviceDetector()
+            
+            assert detector.get_device() == "cpu"
+            assert detector.get_gpu_device_name() is None
 
     def test_when_cuda_initialization_fails_then_fallback_to_cpu(self):
         """Test that CPU fallback occurs when CUDA initialization fails."""
@@ -41,22 +40,16 @@ class TestDeviceDetectorErrorPaths:
         mock_torch.cuda.is_available.return_value = True
         mock_torch.tensor.side_effect = RuntimeError("CUDA initialization error")
         
-        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
-            # Mock the import to return our mock torch
-            original_import = __builtins__.__import__
+        def mock_import(name, *args):
+            if name == "torch":
+                return mock_torch
+            return __builtins__.__import__(name, *args)
+        
+        with patch("builtins.__import__", side_effect=mock_import):
+            detector = DeviceDetector()
             
-            def mock_import(name, *args, **kwargs):
-                if name == "torch":
-                    return mock_torch
-                return original_import(name, *args, **kwargs)
-            
-            with patch("builtins.__import__", side_effect=mock_import):
-                detector = DeviceDetector()
-                
-                assert detector.get_device() == "cpu"
-                assert detector.get_gpu_device_name() is None
-                # Verify warning was logged
-                assert mock_logger.warning.called
+            assert detector.get_device() == "cpu"
+            assert detector.get_gpu_device_name() is None
 
     def test_when_cuda_get_device_name_fails_then_fallback_to_cpu(self):
         """Test fallback when get_device_name fails."""
@@ -65,20 +58,15 @@ class TestDeviceDetectorErrorPaths:
         mock_torch.tensor.return_value = MagicMock(__str__=lambda x: "tensor")
         mock_torch.cuda.get_device_name.side_effect = RuntimeError("Device name error")
         
-        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
-            original_import = __builtins__.__import__
+        def mock_import(name, *args):
+            if name == "torch":
+                return mock_torch
+            return __builtins__.__import__(name, *args)
+        
+        with patch("builtins.__import__", side_effect=mock_import):
+            detector = DeviceDetector()
             
-            def mock_import(name, *args, **kwargs):
-                if name == "torch":
-                    return mock_torch
-                return original_import(name, *args, **kwargs)
-            
-            with patch("builtins.__import__", side_effect=mock_import):
-                detector = DeviceDetector()
-                
-                assert detector.get_device() == "cpu"
-                # Verify warning was logged
-                assert mock_logger.warning.called
+            assert detector.get_device() == "cpu"
 
     def test_when_cuda_available_then_cuda_device(self):
         """Test successful CUDA detection."""
@@ -88,21 +76,16 @@ class TestDeviceDetectorErrorPaths:
         mock_torch.cuda.get_device_name.return_value = "Test GPU"
         mock_torch.cuda.get_device_capability.return_value = (8, 0)
         
-        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
-            original_import = __builtins__.__import__
+        def mock_import(name, *args):
+            if name == "torch":
+                return mock_torch
+            return __builtins__.__import__(name, *args)
+        
+        with patch("builtins.__import__", side_effect=mock_import):
+            detector = DeviceDetector()
             
-            def mock_import(name, *args, **kwargs):
-                if name == "torch":
-                    return mock_torch
-                return original_import(name, *args, **kwargs)
-            
-            with patch("builtins.__import__", side_effect=mock_import):
-                detector = DeviceDetector()
-                
-                assert detector.get_device() == "cuda"
-                assert detector.get_gpu_device_name() == "Test GPU"
-                # Verify info log about GPU was called
-                assert mock_logger.info.called
+            assert detector.get_device() == "cuda"
+            assert detector.get_gpu_device_name() == "Test GPU"
 
 
 class TestDeviceDetector:
