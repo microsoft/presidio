@@ -8,7 +8,7 @@ from presidio_analyzer import (
     RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import (
-    DeviceDetector,
+    device_detector,
     NerModelConfiguration,
     NlpArtifacts,
 )
@@ -92,7 +92,7 @@ class GLiNERRecognizer(LocalRecognizer):
         self.map_location = (
             map_location
             if map_location is not None
-            else DeviceDetector().get_torch_device()
+            else device_detector.get_device()
         )
 
         self.flat_ner = flat_ner

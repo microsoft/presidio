@@ -1,4 +1,11 @@
-"""GPU/CPU device detection singleton for Presidio NLP engines."""
+"""GPU/CPU device detection for Presidio NLP engines.
+
+This module creates a single, process-wide DeviceDetector instance.
+Consumers may import and use the shared instance directly.
+
+The detector is initialized once at import time and is intended to be
+read-only in practice.
+"""
 
 import logging
 from typing import Optional
@@ -7,84 +14,52 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 class DeviceDetector:
-    """Singleton for GPU/CPU detection. Lazy initialization on first use."""
+    """Detect and expose PyTorch GPU/CPU availability.
 
-    _instance: Optional["DeviceDetector"] = None
-    _torch_initialized: bool = False
-    _has_torch_gpu: bool = False
-    _torch_device: str = "cpu"
-    _torch_device_name: Optional[str] = None
+    This class performs a one-time detection of CUDA availability and
+    exposes the result for reuse across the process.
+    """
 
-    def __new__(cls) -> "DeviceDetector":
-        """Return singleton instance and detect torch GPU on first creation."""
-        if cls._instance is None:
-            cls._instance = super(DeviceDetector, cls).__new__(cls)
-            cls._instance._detect_torch_gpu()
-        return cls._instance
+    def __init__(self) -> None:
+        self._device = "cpu"
+        self._device_name: Optional[str] = None
+        self._detect()
 
-    def _detect_torch_gpu(self) -> None:
-        """Detect PyTorch GPU/CUDA once."""
-        if DeviceDetector._torch_initialized:
-            return
-
+    def _detect(self) -> None:
+        """Detect PyTorch CUDA support once."""
         try:
             import torch
 
             if torch.cuda.is_available():
                 logger.info("GPU found, attempting CUDA initialization")
-
-
                 try:
                     # Force CUDA initialization
-                    str(torch.tensor([1.0], device="cuda"))
-                    DeviceDetector._torch_device_name = torch.cuda.get_device_name(0)
+                    _ = str(torch.tensor([1.0], device="cuda"))
+                    self._device_name = torch.cuda.get_device_name(0)
                     torch.cuda.get_device_capability(0)
                     torch.cuda.empty_cache()
 
-                    DeviceDetector._has_torch_gpu = True
-                    DeviceDetector._torch_device = "cuda"
+                    self._device = "cuda"
                     logger.info(
-                        "GPU and CUDA available. Device: "
-                        f"{DeviceDetector._torch_device_name}"
+                        "CUDA available. Device: %s",
+                        self._device_name,
                     )
-
                 except Exception as e:
-                    logger.warning(f"PyTorch Pre-Check: FAILED with error: {e}")
-                    DeviceDetector._has_torch_gpu = False
-                    DeviceDetector._torch_device = "cpu"
-            else:
-                logger.info("No GPU found, using CPU")
-                DeviceDetector._has_torch_gpu = False
-                DeviceDetector._torch_device = "cpu"
-
+                    logger.warning(
+                        "PyTorch CUDA initialization failed, falling back to CPU: %s",
+                        e,
+                    )
         except ImportError:
             logger.info("PyTorch not available, using CPU")
-            DeviceDetector._has_torch_gpu = False
-            DeviceDetector._torch_device = "cpu"
 
-        DeviceDetector._torch_initialized = True
+    def get_device(self) -> str:
+        """Return device string ('cuda' or 'cpu')."""
+        return self._device
 
-
-    def has_torch_gpu(self) -> bool:
-        """Return True if PyTorch GPU is available."""
-        return DeviceDetector._has_torch_gpu
-
-    def get_torch_device(self) -> str:
-        """Return torch device string: 'cuda:0' or 'cpu'."""
-        return DeviceDetector._torch_device
-
-    def get_torch_device_name(self) -> Optional[str]:
-        """Return PyTorch GPU device name or None."""
-        return DeviceDetector._torch_device_name
-
-    def get_torch_device_info(self) -> dict:
-        """Return PyTorch device information."""
-        return {
-            "has_gpu": DeviceDetector._has_torch_gpu,
-            "device_name": DeviceDetector._torch_device_name,
-            "device": DeviceDetector._torch_device,
-        }
+    def get_gpu_device_name(self) -> Optional[str]:
+        """Return GPU device name if available."""
+        return self._device_name
 
 
-# Initialize singleton at module import to preload CUDA libraries if GPU available
-DeviceDetector()
+# Shared, process-wide instance
+device_detector = DeviceDetector()

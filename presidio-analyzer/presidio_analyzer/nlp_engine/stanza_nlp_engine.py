@@ -1,6 +1,6 @@
 import logging
 import warnings
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
 try:
     import stanza
@@ -18,9 +18,10 @@ from spacy.tokens import Doc, Token
 from spacy.util import registry
 
 from presidio_analyzer.nlp_engine import (
-    DeviceDetector,
     NerModelConfiguration,
+    NlpArtifacts,
     SpacyNlpEngine,
+    device_detector,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -52,20 +53,12 @@ class StanzaNlpEngine(SpacyNlpEngine):
     ):
         super().__init__(models, ner_model_configuration)
         self.download_if_missing = download_if_missing
+        self.use_gpu = device_detector.get_device() == "cuda"
 
     def load(self) -> None:
         """Load the NLP model."""
 
         logger.debug(f"Loading Stanza models: {self.models}")
-
-        # Detect GPU availability
-        device_detector = DeviceDetector()
-        use_gpu = device_detector.has_torch_gpu()
-
-        if use_gpu:
-            logger.info("Stanza will use GPU")
-        else:
-            logger.info("Stanza will use CPU")
 
         self.nlp = {}
         for model in self.models:
@@ -76,8 +69,81 @@ class StanzaNlpEngine(SpacyNlpEngine):
                 download_method="DOWNLOAD_RESOURCES"
                 if self.download_if_missing
                 else None,
-                use_gpu=use_gpu,
+                use_gpu=self.use_gpu,
             )
+
+    def process_batch(
+        self,
+        texts: Union[List[str], List[Tuple[str, object]]],
+        language: str,
+        batch_size: int = 1,
+        n_process: int = 1,
+        as_tuples: bool = False,
+    ) -> Generator[
+        Union[Tuple[Any, NlpArtifacts, Any], Tuple[Any, NlpArtifacts]], Any, None
+    ]:
+        """Execute the NLP pipeline on a batch of texts using Stanza's bulk processing.
+
+        This method overrides SpacyNlpEngine.process_batch to leverage Stanza's
+        efficient bulk_process method, which processes multiple documents together
+        for better GPU utilization.
+
+        Note: Stanza batches internally at the sentence/token level, not docs.
+        For optimal GPU performance, use larger batch sizes (e.g., 16-32 docs).
+        GPU utilization depends on total sentences/tokens across all docs in batch.
+
+        :param texts: A list of texts to process. if as_tuples is set to True,
+            texts should be a list of tuples (text, context).
+        :param language: The language of the texts.
+        :param batch_size: Number of documents per bulk_process call.
+            Recommended: 16-32+ for GPU, lower values acceptable for CPU.
+        :param n_process: Not used for Stanza (kept for API compatibility).
+        :param as_tuples: If set to True, inputs should be a sequence of
+            (text, context) tuples. Output will then be a sequence of
+            (text, NlpArtifacts, context) tuples. Defaults to False.
+
+        :return: A generator of tuples (text, NlpArtifacts, context) or
+            (text, NlpArtifacts) depending on the value of as_tuples.
+        """
+
+        if not self.nlp:
+            raise ValueError("NLP engine is not loaded. Consider calling .load()")
+
+        # Get the StanzaTokenizer (which wraps the Stanza pipeline)
+        # In spaCy, tokenizers are accessed via .tokenizer, not .get_pipe()
+        stanza_tokenizer = self.nlp[language].tokenizer
+        stanza_pipeline = stanza_tokenizer.snlp
+
+        # Process texts in batches
+        text_list = list(texts) if not isinstance(texts, list) else texts
+
+        for batch_start in range(0, len(text_list), batch_size):
+            batch_end = min(batch_start + batch_size, len(text_list))
+            batch = text_list[batch_start:batch_end]
+
+            # Prepare batch for Stanza
+            if as_tuples:
+                batch_texts = [str(text) for text, context in batch]
+                contexts = [context for text, context in batch]
+            else:
+                batch_texts = [str(text) for text in batch]
+                contexts = None
+
+            # Create Stanza Document objects and process via bulk_process
+            # Stanza handles internal batching at sentence/token level
+            stanza_docs = [stanza.Document([], text=text) for text in batch_texts]
+            processed_stanza_docs = stanza_pipeline.bulk_process(stanza_docs)
+
+            # Convert processed Stanza docs to spaCy docs using spacy-stanza's logic
+            # We call _convert_doc() which reuses StanzaTokenizer's conversion path
+            for idx, processed_stanza_doc in enumerate(processed_stanza_docs):
+                spacy_doc = stanza_tokenizer._convert_doc(processed_stanza_doc)
+                nlp_artifacts = self._doc_to_nlp_artifact(spacy_doc, language)
+
+                if as_tuples:
+                    yield batch_texts[idx], nlp_artifacts, contexts[idx]
+                else:
+                    yield batch_texts[idx], nlp_artifacts
 
 
 # Code taken from https://github.com/explosion/spacy-stanza
@@ -226,6 +292,22 @@ class StanzaTokenizer(object):
             return Doc(self.vocab, words=[text], spaces=[False])
 
         snlp_doc = self.snlp(text)
+        return self._convert_doc(snlp_doc)
+
+    def _convert_doc(self, snlp_doc):
+        """Convert a processed Stanza Document to a spaCy Doc.
+
+        This method contains the conversion logic separated from text processing,
+        allowing it to be called with already-processed Stanza documents.
+
+        :param snlp_doc: Processed Stanza Document
+        :return: spaCy Doc object
+        """
+        if not snlp_doc.text:
+            return Doc(self.vocab)
+        elif snlp_doc.text.isspace():
+            return Doc(self.vocab, words=[snlp_doc.text], spaces=[False])
+
         text = snlp_doc.text
         snlp_tokens, snlp_heads = self.__get_tokens_with_heads(snlp_doc)
         pos = []

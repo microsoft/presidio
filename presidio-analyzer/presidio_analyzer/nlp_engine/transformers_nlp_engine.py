@@ -12,7 +12,6 @@ except ImportError:
     transformers = None
 
 from presidio_analyzer.nlp_engine import (
-    DeviceDetector,
     NerModelConfiguration,
     SpacyNlpEngine,
 )
@@ -75,15 +74,6 @@ class TransformersNlpEngine(SpacyNlpEngine):
         """Load the spaCy and transformers models."""
 
         logger.debug(f"Loading SpaCy and transformers models: {self.models}")
-
-        # Configure GPU if available
-        device_detector = DeviceDetector()
-        if device_detector.has_torch_gpu():
-            try:
-                spacy.require_gpu()
-                logger.info("spaCy GPU configured successfully")
-            except Exception as e:
-                logger.warning(f"Failed to configure spaCy for GPU: {e}")
 
         self.nlp = {}
 

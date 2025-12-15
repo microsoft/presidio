@@ -29,10 +29,12 @@ dependencies = [
     "pyyaml",
     "phonenumbers (>=8.12,<10.0.0)",
     "pydantic (>=2.0.0,<3.0.0)",
-    "cupy-cuda12x>=13.4.1",
 ]
 
 [project.optional-dependencies]
+gpu = [
+    "cupy-cuda12x>=13.4.1",
+]
 server = [
     "flask (>=1.1)",
     "gunicorn; platform_system != 'Windows'",
