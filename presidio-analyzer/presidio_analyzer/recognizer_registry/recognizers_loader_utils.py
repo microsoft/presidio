@@ -298,9 +298,11 @@ class RecognizerListLoader:
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
 
-        # Note: 'name' and 'class_name' are excluded - only used for class lookup
-        # Recognizers use their class name unless explicitly overridden in their __init__
-        predefined_to_exclude = {"enabled", "type", "supported_languages", "name", "class_name"}
+        # Note: 'name' and 'class_name' are excluded - used for class lookup
+        # Recognizers use their class name unless overridden in __init__
+        predefined_to_exclude = {
+            "enabled", "type", "supported_languages", "name", "class_name"
+        }
 
         # For custom recognizers, we keep 'supported_languages'
         # and don't exclude 'supported_entity'
