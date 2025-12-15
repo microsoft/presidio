@@ -1,53 +1,131 @@
 """Unit tests for DeviceDetector."""
 
+import sys
 from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from presidio_analyzer.nlp_engine import device_detector
 from presidio_analyzer.nlp_engine.device_detector import DeviceDetector
+
+
+class TestDeviceDetectorErrorPaths:
+    """Test suite for DeviceDetector error handling."""
+
+    def test_when_torch_import_fails_then_cpu_device(self):
+        """Test that CPU is used when PyTorch import fails."""
+        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
+            # Simulate import error by making import fail
+            with patch("builtins.__import__", side_effect=ImportError("No module named 'torch'")):
+                detector = DeviceDetector()
+                
+                assert detector.get_device() == "cpu"
+                assert detector.get_gpu_device_name() is None
+                # Verify info log was called
+                mock_logger.info.assert_called()
+
+    def test_when_cuda_not_available_then_cpu_device(self):
+        """Test that CPU is used when CUDA is not available."""
+        mock_torch = MagicMock()
+        mock_torch.cuda.is_available.return_value = False
+        
+        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
+            with patch("builtins.__import__", return_value=mock_torch):
+                detector = DeviceDetector()
+                
+                assert detector.get_device() == "cpu"
+                assert detector.get_gpu_device_name() is None
+
+    def test_when_cuda_initialization_fails_then_fallback_to_cpu(self):
+        """Test that CPU fallback occurs when CUDA initialization fails."""
+        mock_torch = MagicMock()
+        mock_torch.cuda.is_available.return_value = True
+        mock_torch.tensor.side_effect = RuntimeError("CUDA initialization error")
+        
+        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
+            # Mock the import to return our mock torch
+            original_import = __builtins__.__import__
+            
+            def mock_import(name, *args, **kwargs):
+                if name == "torch":
+                    return mock_torch
+                return original_import(name, *args, **kwargs)
+            
+            with patch("builtins.__import__", side_effect=mock_import):
+                detector = DeviceDetector()
+                
+                assert detector.get_device() == "cpu"
+                assert detector.get_gpu_device_name() is None
+                # Verify warning was logged
+                assert mock_logger.warning.called
+
+    def test_when_cuda_get_device_name_fails_then_fallback_to_cpu(self):
+        """Test fallback when get_device_name fails."""
+        mock_torch = MagicMock()
+        mock_torch.cuda.is_available.return_value = True
+        mock_torch.tensor.return_value = MagicMock(__str__=lambda x: "tensor")
+        mock_torch.cuda.get_device_name.side_effect = RuntimeError("Device name error")
+        
+        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
+            original_import = __builtins__.__import__
+            
+            def mock_import(name, *args, **kwargs):
+                if name == "torch":
+                    return mock_torch
+                return original_import(name, *args, **kwargs)
+            
+            with patch("builtins.__import__", side_effect=mock_import):
+                detector = DeviceDetector()
+                
+                assert detector.get_device() == "cpu"
+                # Verify warning was logged
+                assert mock_logger.warning.called
+
+    def test_when_cuda_available_then_cuda_device(self):
+        """Test successful CUDA detection."""
+        mock_torch = MagicMock()
+        mock_torch.cuda.is_available.return_value = True
+        mock_torch.tensor.return_value = MagicMock(__str__=lambda x: "tensor")
+        mock_torch.cuda.get_device_name.return_value = "Test GPU"
+        mock_torch.cuda.get_device_capability.return_value = (8, 0)
+        
+        with patch("presidio_analyzer.nlp_engine.device_detector.logger") as mock_logger:
+            original_import = __builtins__.__import__
+            
+            def mock_import(name, *args, **kwargs):
+                if name == "torch":
+                    return mock_torch
+                return original_import(name, *args, **kwargs)
+            
+            with patch("builtins.__import__", side_effect=mock_import):
+                detector = DeviceDetector()
+                
+                assert detector.get_device() == "cuda"
+                assert detector.get_gpu_device_name() == "Test GPU"
+                # Verify info log about GPU was called
+                assert mock_logger.info.called
 
 
 class TestDeviceDetector:
     """Test suite for DeviceDetector functionality."""
 
-    def test_when_device_detector_imported_then_singleton_exists(self):
-        """Test that device_detector singleton is available on import."""
-        assert device_detector is not None
-        assert isinstance(device_detector, DeviceDetector)
-
     def test_when_get_device_then_returns_string(self):
         """Test that get_device() returns a valid device string."""
-        device = device_detector.get_device()
+        detector = DeviceDetector()
+        device = detector.get_device()
         assert isinstance(device, str)
         assert device in ["cpu", "cuda"]
 
     def test_when_get_gpu_device_name_then_returns_optional_string(self):
         """Test that get_gpu_device_name() returns None or string."""
-        device_name = device_detector.get_gpu_device_name()
+        detector = DeviceDetector()
+        device_name = detector.get_gpu_device_name()
         assert device_name is None or isinstance(device_name, str)
-
-    def test_when_device_is_cuda_then_has_device_name(self):
-        """Test that if CUDA is available, device name is set."""
-        if device_detector.get_device() == "cuda":
-            assert device_detector.get_gpu_device_name() is not None
-        else:
-            # If CPU, device name may be None
-            assert device_detector.get_gpu_device_name() is None
-
-    def test_when_device_is_cpu_or_cuda_then_consistent(self):
-        """Test that device detection is consistent."""
-        # Device should be either cpu or cuda
-        device = device_detector.get_device()
-        assert device in ["cpu", "cuda"]
-        
-        # Multiple calls should return same value
-        assert device_detector.get_device() == device
 
     def test_when_multiple_instances_then_same_values(self):
         """Test that multiple DeviceDetector instances have consistent values."""
         detector1 = DeviceDetector()
         detector2 = DeviceDetector()
+
         
         # Both should return the same device
         assert detector1.get_device() == detector2.get_device()
