@@ -108,12 +108,12 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
             recognizers_used.add(recognizer_name)
             
             langextract_detected_at_least_one |= (
-                recognizer_name == "Ollama LangExtract PII"
+                recognizer_name == "e2eollama"
             )
     
     # Verify that Ollama LangExtract recognizer participated in detection
     assert langextract_detected_at_least_one, \
-        f"Expected 'Ollama LangExtract PII' recognizer to detect at least one entity. Recognizers used: {recognizers_used}"
+        f"Expected 'e2eollama' recognizer to detect at least one entity. Recognizers used: {recognizers_used}"
 
 
 @pytest.mark.package
@@ -161,7 +161,7 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
         f"Expected exactly 1 Ollama recognizer, found {len(ollama_recognizers)}"
     
     ollama_rec = ollama_recognizers[0]
-    assert ollama_rec.name == "Ollama LangExtract PII"
+    assert ollama_rec.name == "e2eollama"
     assert ollama_rec.supported_language == "en"
     assert len(ollama_rec.supported_entities) > 0
     

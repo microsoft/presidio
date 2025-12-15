@@ -117,13 +117,15 @@ class RecognizerListLoader:
 
     @staticmethod
     def get_recognizer_name(recognizer_conf: Union[Dict[str, Any], str]) -> str:
-        """Get the name of a recognizer in the configuration.
+        """Get the class name for recognizer instantiation.
+
+        Uses 'class_name' if present, otherwise 'name'.
 
         :param recognizer_conf: The recognizer configuration.
         """
         if isinstance(recognizer_conf, str):
             return recognizer_conf
-        return recognizer_conf["name"]
+        return recognizer_conf.get("class_name", recognizer_conf["name"])
 
     @staticmethod
     def _convert_supported_entities_to_entity(conf: Dict[str, Any]) -> None:
@@ -296,7 +298,9 @@ class RecognizerListLoader:
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
 
-        predefined_to_exclude = {"enabled", "type", "supported_languages", "name"}
+        # Note: 'name' and 'class_name' are excluded - only used for class lookup
+        # Recognizers use their class name unless explicitly overridden in their __init__
+        predefined_to_exclude = {"enabled", "type", "supported_languages", "name", "class_name"}
 
         # For custom recognizers, we keep 'supported_languages'
         # and don't exclude 'supported_entity'
