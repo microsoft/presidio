@@ -12,7 +12,7 @@
 | presidio\_structured/data/data\_processors.py       |       93 |       19 |     80% |51, 146-149, 156, 170-179, 206-207, 212-216 |
 | presidio\_structured/data/data\_reader.py           |       17 |        5 |     71% |26, 47, 68-70 |
 | presidio\_structured/structured\_engine.py          |       26 |        2 |     92% |     66-67 |
-|                                           **TOTAL** |  **271** |   **39** | **86%** |           |
+| **TOTAL**                                           |  **271** |   **39** | **86%** |           |
 
 
 ## Setup coverage badge
