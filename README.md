@@ -39,7 +39,7 @@
 | presidio\_anonymizer/services/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | presidio\_anonymizer/services/app\_entities\_convertor.py        |       20 |        0 |    100% |           |
 | presidio\_anonymizer/services/validators.py                      |       26 |        0 |    100% |           |
-|                                                        **TOTAL** |  **828** |   **59** | **93%** |           |
+| **TOTAL**                                                        |  **828** |   **59** | **93%** |           |
 
 
 ## Setup coverage badge
