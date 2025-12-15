@@ -93,6 +93,25 @@ Using Presidio's modules as Python packages to get started:
         !!! tip "Tip: Downloading models"
             If not available, the transformers model and the spacy model would be downloaded on the first call to the `AnalyzerEngine`. To pre-download, see [this doc](../analyzer/nlp_engines/transformers.md#downloading-a-pre-trained-model).
 
+=== "GPU Acceleration (Optional)"
+
+    GPU support is available for spaCy, Stanza, Transformers, and GLiNER.
+
+    - Install the `gpu` extra (includes `cupy-cuda12x`):
+      ```sh
+      pip install "presidio-analyzer[gpu]"
+      pip install presidio-anonymizer
+      ```
+
+    - Combine with other extras:
+      ```sh
+      pip install "presidio-analyzer[transformers,gpu]"
+      pip install presidio-anonymizer
+      python -m spacy download en_core_web_sm
+      ```
+
+    - Or install your own CUDA dependencies
+
 ## Simple flow - Docker container
 
 Presidio provides Docker containers that you can use to de-identify text data. Each module, analyzer, and anonymizer, has its own Docker container. The containers are available on Docker Hub.
