@@ -44,8 +44,11 @@ class IbanRecognizer(PatternRecognizer):
     # - ((?:[ -]?[A-Z0-9]{4})?): Second optional capture group for 1 more group of 4
     # - ((?:[ -]?[A-Z0-9]{1,3})?): Third optional capture group for trailing 1-3 chars
     # - (?![A-Z0-9]): Negative lookahead - ensures we don't end mid-IBAN
-    # Multiple capture groups allow validation fallback: if validation fails on
-    # the full match (e.g., "IBAN X"), the code tries shorter matches (e.g., "IBAN")
+    #
+    # Multiple capture groups enable validation fallback: the __analyze_patterns method
+    # iterates through groups in reverse order (3→2→1), trying progressively shorter
+    # matches. Example: for "IBAN123456 X", tries "IBAN123456 X" (fails validation),
+    # then "IBAN123456" (passes), avoiding false positives from trailing characters.
     PATTERNS = [
         Pattern(
             "IBAN Generic",
