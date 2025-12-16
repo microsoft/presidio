@@ -90,7 +90,7 @@
 | presidio\_analyzer/predefined\_recognizers/generic/date\_recognizer.py                                           |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/email\_recognizer.py                                          |       13 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/iban\_patterns.py                                             |       17 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/generic/iban\_recognizer.py                                           |       80 |        6 |     92% |95, 97-99, 148, 205 |
+| presidio\_analyzer/predefined\_recognizers/generic/iban\_recognizer.py                                           |       80 |        8 |     90% |105-106, 108-110, 159, 216, 219 |
 | presidio\_analyzer/predefined\_recognizers/generic/ip\_recognizer.py                                             |       15 |        2 |     87% |     62-63 |
 | presidio\_analyzer/predefined\_recognizers/generic/phone\_recognizer.py                                          |       34 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/url\_recognizer.py                                            |       10 |        0 |    100% |           |
@@ -113,7 +113,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      169 |        9 |     95% |28, 44, 125, 133, 244-245, 447-448, 465 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **3578** |  **199** | **94%** |           |
+| **TOTAL**                                                                                                        | **3578** |  **201** | **94%** |           |
 
 
 ## Setup coverage badge
