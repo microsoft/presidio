@@ -37,7 +37,7 @@ class DeviceDetector:
         if torch.cuda.is_available():
             try:
                 _ = str(torch.tensor([1.0], device="cuda"))
-                device_name = torch.cuda.get_device_name(0)
+                _ = torch.cuda.get_device_name(0)
                 torch.cuda.get_device_capability(0)
                 torch.cuda.empty_cache()
                 self._device = "cuda"
@@ -53,7 +53,9 @@ class DeviceDetector:
                     self._device = "mps"
                     return
                 except Exception as e:
-                    logger.warning(f"PyTorch MPS initialization failed, falling back to CPU: {e}")
+                    logger.warning(
+                        f"PyTorch MPS initialization failed, falling back to CPU: {e}"
+                    )
 
     def get_device(self) -> str:
         """Return device string ('cuda', 'mps', or 'cpu')."""
