@@ -16,12 +16,12 @@ class TestDeviceDetectorErrorPaths:
             detector = DeviceDetector()
             
             assert detector.get_device() == "cpu"
-            assert detector.get_gpu_device_name() is None
 
     def test_when_cuda_not_available_then_cpu_device(self):
         """Test that CPU is used when CUDA is not available."""
         mock_torch = MagicMock()
         mock_torch.cuda.is_available.return_value = False
+        mock_torch.backends.mps = None
         
         def mock_import(name, *args):
             if name == "torch":
@@ -32,13 +32,13 @@ class TestDeviceDetectorErrorPaths:
             detector = DeviceDetector()
             
             assert detector.get_device() == "cpu"
-            assert detector.get_gpu_device_name() is None
 
     def test_when_cuda_initialization_fails_then_fallback_to_cpu(self):
         """Test that CPU fallback occurs when CUDA initialization fails."""
         mock_torch = MagicMock()
         mock_torch.cuda.is_available.return_value = True
         mock_torch.tensor.side_effect = RuntimeError("CUDA initialization error")
+        mock_torch.backends.mps = None
         
         def mock_import(name, *args):
             if name == "torch":
@@ -49,7 +49,6 @@ class TestDeviceDetectorErrorPaths:
             detector = DeviceDetector()
             
             assert detector.get_device() == "cpu"
-            assert detector.get_gpu_device_name() is None
 
     def test_when_cuda_get_device_name_fails_then_fallback_to_cpu(self):
         """Test fallback when get_device_name fails."""
@@ -57,6 +56,8 @@ class TestDeviceDetectorErrorPaths:
         mock_torch.cuda.is_available.return_value = True
         mock_torch.tensor.return_value = MagicMock(__str__=lambda x: "tensor")
         mock_torch.cuda.get_device_name.side_effect = RuntimeError("Device name error")
+        # Mock MPS as not available so we fall through to CPU
+        mock_torch.backends.mps.is_built.return_value = False
         
         def mock_import(name, *args):
             if name == "torch":
@@ -85,7 +86,69 @@ class TestDeviceDetectorErrorPaths:
             detector = DeviceDetector()
             
             assert detector.get_device() == "cuda"
-            assert detector.get_gpu_device_name() == "Test GPU"
+
+    def test_when_mps_available_then_mps_device(self):
+        """Test successful MPS detection."""
+        mock_torch = MagicMock()
+        mock_torch.cuda.is_available.return_value = False
+        mock_mps = MagicMock()
+        mock_mps.is_built.return_value = True
+        mock_mps.is_available.return_value = True
+        mock_torch.backends.mps = mock_mps
+        mock_torch.tensor.return_value = MagicMock(__str__=lambda x: "tensor")
+        
+        def mock_import(name, *args):
+            if name == "torch":
+                return mock_torch
+            return __builtins__.__import__(name, *args)
+        
+        with patch("builtins.__import__", side_effect=mock_import):
+            detector = DeviceDetector()
+            
+            assert detector.get_device() == "mps"
+
+    def test_when_mps_initialization_fails_then_fallback_to_cpu(self):
+        """Test that CPU fallback occurs when MPS initialization fails."""
+        mock_torch = MagicMock()
+        mock_torch.cuda.is_available.return_value = False
+        mock_mps = MagicMock()
+        mock_mps.is_built.return_value = True
+        mock_mps.is_available.return_value = True
+        mock_torch.backends.mps = mock_mps
+        mock_torch.tensor.side_effect = RuntimeError("MPS initialization error")
+        
+        def mock_import(name, *args):
+            if name == "torch":
+                return mock_torch
+            return __builtins__.__import__(name, *args)
+        
+        with patch("builtins.__import__", side_effect=mock_import):
+            detector = DeviceDetector()
+            
+            assert detector.get_device() == "cpu"
+
+    def test_when_cuda_priority_over_mps(self):
+        """Test that CUDA takes priority over MPS when both are available."""
+        mock_torch = MagicMock()
+        mock_torch.cuda.is_available.return_value = True
+        mock_mps = MagicMock()
+        mock_mps.is_built.return_value = True
+        mock_mps.is_available.return_value = True
+        mock_torch.backends.mps = mock_mps
+        mock_torch.tensor.return_value = MagicMock(__str__=lambda x: "tensor")
+        mock_torch.cuda.get_device_name.return_value = "Test GPU"
+        mock_torch.cuda.get_device_capability.return_value = (8, 0)
+        
+        def mock_import(name, *args):
+            if name == "torch":
+                return mock_torch
+            return __builtins__.__import__(name, *args)
+        
+        with patch("builtins.__import__", side_effect=mock_import):
+            detector = DeviceDetector()
+            
+            # CUDA should take priority
+            assert detector.get_device() == "cuda"
 
 
 class TestDeviceDetector:
@@ -96,13 +159,7 @@ class TestDeviceDetector:
         detector = DeviceDetector()
         device = detector.get_device()
         assert isinstance(device, str)
-        assert device in ["cpu", "cuda"]
-
-    def test_when_get_gpu_device_name_then_returns_optional_string(self):
-        """Test that get_gpu_device_name() returns None or string."""
-        detector = DeviceDetector()
-        device_name = detector.get_gpu_device_name()
-        assert device_name is None or isinstance(device_name, str)
+        assert device in ["cpu", "cuda", "mps"]
 
     def test_when_multiple_instances_then_same_values(self):
         """Test that multiple DeviceDetector instances have consistent values."""
@@ -112,7 +169,6 @@ class TestDeviceDetector:
         
         # Both should return the same device
         assert detector1.get_device() == detector2.get_device()
-        assert detector1.get_gpu_device_name() == detector2.get_gpu_device_name()
 
 
 class TestDeviceDetectorIntegration:
@@ -127,19 +183,19 @@ class TestDeviceDetectorIntegration:
         )
         
         # Verify device_detector is accessible
-        assert device_detector.get_device() in ["cpu", "cuda"]
+        assert device_detector.get_device() in ["cpu", "cuda", "mps"]
 
-    def test_when_stanza_engine_initializes_then_sets_use_gpu(self):
-        """Test that StanzaNlpEngine correctly sets use_gpu from device_detector."""
+    def test_when_stanza_engine_initializes_then_sets_device(self):
+        """Test that StanzaNlpEngine correctly sets device from device_detector."""
         from presidio_analyzer.nlp_engine import StanzaNlpEngine
         
         engine = StanzaNlpEngine(
             models=[{"lang_code": "en", "model_name": "en"}]
         )
         
-        # use_gpu should match device_detector
-        expected_use_gpu = device_detector.get_device() == "cuda"
-        assert engine.use_gpu == expected_use_gpu
+        # device should match device_detector
+        expected_device = device_detector.get_device()
+        assert engine.device == expected_device
 
     def test_when_gliner_recognizer_initializes_then_uses_correct_device(self):
         """Test that GLiNERRecognizer uses device from device_detector."""
@@ -151,16 +207,16 @@ class TestDeviceDetectorIntegration:
         # map_location should match device_detector.get_device()
         assert recognizer.map_location == device_detector.get_device()
 
-    def test_when_stanza_engine_use_gpu_matches_device_detector(self):
-        """Test that StanzaNlpEngine.use_gpu matches device_detector."""
+    def test_when_stanza_engine_device_matches_device_detector(self):
+        """Test that StanzaNlpEngine.device matches device_detector."""
         from presidio_analyzer.nlp_engine import StanzaNlpEngine
         
         engine = StanzaNlpEngine(
             models=[{"lang_code": "en", "model_name": "en"}]
         )
         
-        expected_use_gpu = device_detector.get_device() == "cuda"
-        assert engine.use_gpu == expected_use_gpu
+        expected_device = device_detector.get_device()
+        assert engine.device == expected_device
 
 
 class TestDeviceDetectorBehavior:
@@ -173,15 +229,3 @@ class TestDeviceDetectorBehavior:
         
         # Both should detect the same device
         assert detector1.get_device() == detector2.get_device()
-
-    def test_when_device_is_cuda_then_has_capabilities(self):
-        """Test that CUDA device has expected capabilities."""
-        if device_detector.get_device() == "cuda":
-            # Should have a device name
-            assert device_detector.get_gpu_device_name() is not None
-            assert len(device_detector.get_gpu_device_name()) > 0
-        
-    def test_when_device_is_cpu_then_no_gpu_name(self):
-        """Test that CPU device has no GPU name."""
-        if device_detector.get_device() == "cpu":
-            assert device_detector.get_gpu_device_name() is None

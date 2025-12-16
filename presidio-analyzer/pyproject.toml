@@ -35,6 +35,9 @@ dependencies = [
 gpu = [
     "cupy-cuda12x>=13.4.1",
 ]
+apple = [
+    "thinc-apple-ops",
+]
 server = [
     "flask (>=1.1)",
     "gunicorn; platform_system != 'Windows'",
