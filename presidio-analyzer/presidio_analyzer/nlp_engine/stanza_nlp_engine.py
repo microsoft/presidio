@@ -53,7 +53,7 @@ class StanzaNlpEngine(SpacyNlpEngine):
     ):
         super().__init__(models, ner_model_configuration)
         self.download_if_missing = download_if_missing
-        self.use_gpu = device_detector.get_device() == "cuda"
+        self.device = device_detector.get_device()
 
     def load(self) -> None:
         """Load the NLP model."""
@@ -69,7 +69,7 @@ class StanzaNlpEngine(SpacyNlpEngine):
                 download_method="DOWNLOAD_RESOURCES"
                 if self.download_if_missing
                 else None,
-                use_gpu=self.use_gpu,
+                device=self.device,
             )
 
     def process_batch(
@@ -157,7 +157,7 @@ def load_pipeline(
     processors: Union[dict, str] = None,
     logging_level: Optional[Union[int, str]] = None,
     verbose: Optional[bool] = None,
-    use_gpu: bool = True,
+    device: Optional[str] = None,
     **kwargs,
 ) -> Language:
     """Create a blank nlp object for a given language code.
@@ -175,7 +175,7 @@ def load_pipeline(
     processors: Union[dict, str] = {},
     logging_level: Optional[Union[int, str]] = None,
     verbose: Optional[bool] = None,
-    use_gpu: bool = True,
+    device: Optional[str] = None,
     **kwargs: Options for the individual stanza processors.
     RETURNS (Language): The nlp object.
     """
@@ -196,7 +196,7 @@ def load_pipeline(
     config["nlp"]["tokenizer"]["processors"] = processors
     config["nlp"]["tokenizer"]["logging_level"] = logging_level
     config["nlp"]["tokenizer"]["verbose"] = verbose
-    config["nlp"]["tokenizer"]["use_gpu"] = use_gpu
+    config["nlp"]["tokenizer"]["device"] = device
     config["nlp"]["tokenizer"]["kwargs"].update(kwargs)
     return blank(name, config=config)
 
@@ -209,7 +209,7 @@ def create_tokenizer(
     processors: Union[dict, str] = None,
     logging_level: Optional[Union[int, str]] = None,
     verbose: Optional[bool] = None,
-    use_gpu: bool = True,
+    device: Optional[str] = None,
     kwargs: dict = None,
 ):
     """Create a tokenizer factory for a given language code.
@@ -220,7 +220,7 @@ def create_tokenizer(
     :param processors: The processors to use.
     :param logging_level: The logging level.
     :param verbose: Whether to be verbose.
-    :param use_gpu: Whether to use the GPU.
+    :param device: The device to use (e.g., "cpu", "cuda", "mps").
     :param kwargs: Additional keyword arguments.
     """
     if not processors:
@@ -236,7 +236,7 @@ def create_tokenizer(
         processors=processors,
         logging_level=logging_level,
         verbose=verbose,
-        use_gpu=use_gpu,
+        device=device,
         kwargs=kwargs,
     ) -> StanzaTokenizer:
         if dir is None:
@@ -248,7 +248,7 @@ def create_tokenizer(
             processors=processors,
             logging_level=logging_level,
             verbose=verbose,
-            use_gpu=use_gpu,
+            device=device,
             **kwargs,
         )
         return StanzaTokenizer(
