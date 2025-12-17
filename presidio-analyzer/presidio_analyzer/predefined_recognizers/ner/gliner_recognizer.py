@@ -115,9 +115,10 @@ class GLiNERRecognizer(LocalRecognizer):
         """Load the GLiNER model."""
         if not GLiNER:
             raise ImportError("GLiNER is not installed. Please install it.")
+
+        logger.info(f"Loading GLiNER model on device: {self.map_location}")
         self.gliner = GLiNER.from_pretrained(
-            self.model_name,
-            map_location=self.map_location
+            self.model_name, map_location=self.map_location
         )
 
     def analyze(
