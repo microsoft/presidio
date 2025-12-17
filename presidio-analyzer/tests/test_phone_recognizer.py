@@ -6,7 +6,9 @@ from tests import assert_result, assert_result_with_textual_explanation
 
 @pytest.fixture(scope="module")
 def recognizer():
-    return PhoneRecognizer()
+    return PhoneRecognizer(
+        supported_regions=PhoneRecognizer.DEFAULT_SUPPORTED_REGIONS + ("JP", "CN")
+    )
 
 
 
@@ -24,6 +26,8 @@ def recognizer():
         ("_: +55 11 98456 5666", 1, ["PHONE_NUMBER"], ((3, 20), ), 0.4),
         ("Brazil: +55 11 98456 5666", 1, ["PHONE_NUMBER"], ((8, 25), ), 0.4),
         ("BR: +55 11 98456 5666", 1, ["PHONE_NUMBER"], ((4, 21), ), 0.4),
+        ("My Japanese number is 090-1234-5678", 1, ["PHONE_NUMBER"],((22, 35), ), 0.4),
+        ("My CN number is 13812345678", 1, ["PHONE_NUMBER"],((16, 27), ), 0.4),
         # fmt: on
     ],
 )
