@@ -114,14 +114,12 @@ class StanzaNlpEngine(SpacyNlpEngine):
         stanza_tokenizer = self.nlp[language].tokenizer
         stanza_pipeline = stanza_tokenizer.snlp
 
-        # Process texts in batches
         text_list = list(texts) if not isinstance(texts, list) else texts
 
         for batch_start in range(0, len(text_list), batch_size):
             batch_end = min(batch_start + batch_size, len(text_list))
             batch = text_list[batch_start:batch_end]
 
-            # Prepare batch for Stanza
             if as_tuples:
                 batch_texts = [str(text) for text, context in batch]
                 contexts = [context for text, context in batch]

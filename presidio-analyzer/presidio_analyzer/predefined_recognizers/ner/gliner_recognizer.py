@@ -84,7 +84,7 @@ class GLiNERRecognizer(LocalRecognizer):
                     entity: entity for entity in supported_entities
                 }
 
-        logger.info("Using entity mapping %s", json.dumps(entity_mapping, indent=2))
+        logger.info(f"Using entity mapping {json.dumps(entity_mapping, indent=2)}")
         supported_entities = list(set(self.model_to_presidio_entity_mapping.values()))
         self.model_name = model_name
 

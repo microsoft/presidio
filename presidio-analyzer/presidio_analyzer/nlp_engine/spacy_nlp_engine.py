@@ -55,7 +55,6 @@ class SpacyNlpEngine(NlpEngine):
         """Load the spaCy NLP model."""
         logger.debug(f"Loading SpaCy models: {self.models}")
 
-        # Configure GPU if available
         if device_detector.get_device() == "cuda":
             try:
                 spacy.require_gpu()
@@ -64,7 +63,6 @@ class SpacyNlpEngine(NlpEngine):
                 logger.warning(f"Failed to configure spaCy for GPU: {e}")
 
         self.nlp = {}
-        # Download spaCy model if missing
         for model in self.models:
             self._validate_model_params(model)
             self._download_spacy_model_if_needed(model["model_name"])
