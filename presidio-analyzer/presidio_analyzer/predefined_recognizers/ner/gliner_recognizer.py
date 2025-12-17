@@ -88,7 +88,6 @@ class GLiNERRecognizer(LocalRecognizer):
         supported_entities = list(set(self.model_to_presidio_entity_mapping.values()))
         self.model_name = model_name
 
-        # Auto-detect GPU if map_location not explicitly provided
         self.map_location = (
             map_location
             if map_location is not None

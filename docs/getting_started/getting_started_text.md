@@ -95,22 +95,10 @@ Using Presidio's modules as Python packages to get started:
 
 === "GPU Acceleration (Optional)"
 
-    GPU support is available for spaCy, Stanza, Transformers, and GLiNER.
+    For GPU acceleration, install the appropriate dependencies for your hardware:
 
-    - Install the `gpu` extra (includes `cupy-cuda12x`):
-      ```sh
-      pip install "presidio-analyzer[gpu]"
-      pip install presidio-anonymizer
-      ```
-
-    - Combine with other extras:
-      ```sh
-      pip install "presidio-analyzer[transformers,gpu]"
-      pip install presidio-anonymizer
-      python -m spacy download en_core_web_sm
-      ```
-
-    - Or install your own CUDA dependencies
+    - **Linux with NVIDIA GPU**: cupy-cuda12x (or the version matching your CUDA installation)
+    - **macOS with Apple Silicon**: MPS support is included (no extra dependencies needed)
 
 ## Simple flow - Docker container
 

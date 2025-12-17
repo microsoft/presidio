@@ -86,19 +86,10 @@ print(results)
 
 ## GPU Acceleration
 
-GPU support is available for spaCy, Stanza, Transformers, and GLiNER.
+For GPU acceleration, install the appropriate dependencies for your hardware:
 
-- Install the `gpu` extra (includes `cupy-cuda12x`):
-  ```bash
-  pip install "presidio-analyzer[gpu]"
-  ```
-
-- Combine with other extras:
-  ```bash
-  pip install "presidio-analyzer[transformers,gpu]"
-  ```
-
-- Or install your own CUDA dependencies
+- **Linux with NVIDIA GPU**: cupy-cuda12x (or the version matching your CUDA installation)
+- **macOS with Apple Silicon**: MPS support is included (no extra dependencies needed)
 
 ## Documentation
 

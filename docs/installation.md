@@ -63,19 +63,10 @@ with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
 
 ### GPU acceleration (optional)
 
-For GPU acceleration with spaCy, Stanza, Transformers, or GLiNER:
+For GPU acceleration, install the appropriate dependencies for your hardware:
 
-- Install the `gpu` extra (includes `cupy-cuda12x`):
-  ```sh
-  pip install "presidio-analyzer[gpu]"
-  ```
-
-- Combine with other extras:
-  ```sh
-  pip install "presidio-analyzer[transformers,gpu]"
-  ```
-
-- Or install your own CUDA dependencies
+- **Linux with NVIDIA GPU**: cupy-cuda12x (or the version matching your CUDA installation)
+- **macOS with Apple Silicon**: MPS support is included (no extra dependencies needed)
 
 ### PII redaction in images
 
