@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from presidio_analyzer import EntityRecognizer
-from presidio_analyzer.nlp_engine import NlpArtifacts
+
+if TYPE_CHECKING:
+    from presidio_analyzer.nlp_engine import NlpArtifacts
 
 
 class RemoteRecognizer(ABC, EntityRecognizer):
@@ -35,7 +37,7 @@ class RemoteRecognizer(ABC, EntityRecognizer):
         pass
 
     @abstractmethod
-    def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
+    def analyze(self, text: str, entities: List[str], nlp_artifacts: "NlpArtifacts"):
         """
         Call an external service for PII detection.
 
