@@ -1,11 +1,16 @@
 import json
 import logging
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from presidio_analyzer import (
     AnalysisExplanation,
     LocalRecognizer,
     RecognizerResult,
+)
+from presidio_analyzer.chunkers import (
+    BaseTextChunker,
+    CharacterBasedTextChunker,
+    predict_with_chunking,
 )
 from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts
 
@@ -35,6 +40,9 @@ class GLiNERRecognizer(LocalRecognizer):
         multi_label: bool = False,
         threshold: float = 0.30,
         map_location: str = "cpu",
+        chunk_size: int = 250,
+        chunk_overlap: int = 50,
+        text_chunker: Optional[BaseTextChunker] = None,
     ):
         """GLiNER model based entity recognizer.
 
@@ -54,6 +62,12 @@ class GLiNERRecognizer(LocalRecognizer):
         :param threshold: The threshold for the model's output
         (see GLiNER's documentation)
         :param map_location: The device to use for the model
+        :param chunk_size: Maximum character length for text chunks
+            (default: 250)
+        :param chunk_overlap: Characters to overlap between chunks
+            (default: 50)
+        :param text_chunker: Custom text chunking strategy. If None, uses
+            CharacterBasedTextChunker
 
 
         """
@@ -86,6 +100,15 @@ class GLiNERRecognizer(LocalRecognizer):
         self.flat_ner = flat_ner
         self.multi_label = multi_label
         self.threshold = threshold
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
+
+        # Use provided chunker or default to CharacterBasedTextChunker
+        self.text_chunker = (
+            text_chunker
+            if text_chunker is not None
+            else CharacterBasedTextChunker(chunk_size, chunk_overlap)
+        )
 
         self.gliner = None
 
@@ -124,13 +147,22 @@ class GLiNERRecognizer(LocalRecognizer):
         # combine the input labels as this model allows for ad-hoc labels
         labels = self.__create_input_labels(entities)
 
-        predictions = self.gliner.predict_entities(
+        # Process text with automatic chunking
+        def predict_func(text: str) -> List[Dict[str, Any]]:
+            return self.gliner.predict_entities(
+                text=text,
+                labels=labels,
+                flat_ner=self.flat_ner,
+                threshold=self.threshold,
+                multi_label=self.multi_label,
+            )
+
+        predictions = predict_with_chunking(
             text=text,
-            labels=labels,
-            flat_ner=self.flat_ner,
-            threshold=self.threshold,
-            multi_label=self.multi_label,
+            predict_func=predict_func,
+            chunker=self.text_chunker,
         )
+
         recognizer_results = []
         for prediction in predictions:
             presidio_entity = self.model_to_presidio_entity_mapping.get(
