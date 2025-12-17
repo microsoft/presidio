@@ -85,8 +85,6 @@ class TransformersNlpEngine(SpacyNlpEngine):
 
             nlp = spacy.load(spacy_model, disable=["parser", "ner"])
 
-            # Configure pipeline without device parameter
-            # (handled by spacy.require_gpu())
             pipe_config = {
                 "model": transformers_model,
                 "annotate": "spans",
