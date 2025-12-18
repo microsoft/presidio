@@ -17,6 +17,7 @@ def entities():
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
+        # fmt: off
         # Valid license numbers with correct regional codes (e.g., 11 for Seoul)
         ("11-22-123456-12", 1, ((0, 15),), ((1.0, 1.0),), ),
         ("112212345612", 1, ((0, 12),), ((1.0, 1.0),), ),
@@ -39,6 +40,7 @@ def entities():
         # Boundary test: Ensure lookaround prevents matching part of a longer digit string
         ("111-22-123456-12", 0, (), (),),
         ("11-22-123456-123", 0, (), (),),
+        # fmt: on
     ],
 )
 def test_when_all_driver_licenses_then_succeed(
