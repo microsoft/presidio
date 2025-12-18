@@ -36,6 +36,9 @@ from .country_specific.italy.it_vat_code import ItVatCodeRecognizer
 
 # Korea recognizers
 from .country_specific.korea.kr_rrn_recognizer import KrRrnRecognizer
+from .country_specific.korea.kr_driver_license_recognizer import (
+    KrDriverLicenseRecognizer,
+)
 
 # Poland recognizers
 from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
@@ -155,6 +158,7 @@ __all__ = [
     "UkNinoRecognizer",
     "AzureHealthDeidRecognizer",
     "KrRrnRecognizer",
+    "KrDriverLicenseRecognizer",
     "ThTninRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
