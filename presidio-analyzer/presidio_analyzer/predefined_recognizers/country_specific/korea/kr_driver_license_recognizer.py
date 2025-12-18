@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
@@ -6,6 +6,7 @@ from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 class KrDriverLicenseRecognizer(PatternRecognizer):
     """
     Recognize Korean Driver's License Number.
+
     The Korean Driver's License Number consists of 12 digits,
     typically formatted as AA-BB-CCCCCC-DD.
 
@@ -81,7 +82,7 @@ class KrDriverLicenseRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str) -> Union[bool, None]:
+    def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
         Validate length, region code.
 
@@ -100,7 +101,7 @@ class KrDriverLicenseRecognizer(PatternRecognizer):
             return False
 
         region_code = sanitized_value[:2]
-        if region_code not in self.REGION_CODES:
-            return False
+        if region_code in self.REGION_CODES:
+            return True
 
-        return True
+        return None
