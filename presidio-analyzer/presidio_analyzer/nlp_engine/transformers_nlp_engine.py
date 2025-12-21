@@ -14,7 +14,6 @@ except ImportError:
 from presidio_analyzer.nlp_engine import (
     NerModelConfiguration,
     SpacyNlpEngine,
-    device_detector,
 )
 
 logger = logging.getLogger("presidio-analyzer")

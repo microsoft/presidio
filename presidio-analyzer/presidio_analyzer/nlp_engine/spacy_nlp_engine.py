@@ -58,7 +58,9 @@ class SpacyNlpEngine(NlpEngine):
             try:
                 spacy.require_gpu()
             except Exception as e:
-                logger.warning(f"Failed to enable GPU ({device}), falling back to CPU: {e}")
+                logger.warning(
+                    f"Failed to enable GPU ({device}), falling back to CPU: {e}"
+                )
 
     def load(self) -> None:
         """Load the spaCy NLP model."""
