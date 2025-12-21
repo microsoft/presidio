@@ -60,6 +60,9 @@ class StanzaNlpEngine(SpacyNlpEngine):
 
         logger.debug(f"Loading Stanza models: {self.models}")
 
+        # Enable GPU support using parent class method
+        super()._enable_gpu()
+
         self.nlp = {}
         for model in self.models:
             self._validate_model_params(model)

@@ -14,6 +14,7 @@ except ImportError:
 from presidio_analyzer.nlp_engine import (
     NerModelConfiguration,
     SpacyNlpEngine,
+    device_detector,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -74,6 +75,8 @@ class TransformersNlpEngine(SpacyNlpEngine):
         """Load the spaCy and transformers models."""
 
         logger.debug(f"Loading SpaCy and transformers models: {self.models}")
+
+        super()._enable_gpu()
 
         self.nlp = {}
 
