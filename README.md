@@ -29,14 +29,15 @@
 | presidio\_analyzer/llm\_utils/prompt\_loader.py                                                                  |       19 |        2 |     89% |     53-54 |
 | presidio\_analyzer/lm\_recognizer.py                                                                             |       47 |        1 |     98% |        50 |
 | presidio\_analyzer/local\_recognizer.py                                                                          |        3 |        0 |    100% |           |
-| presidio\_analyzer/nlp\_engine/\_\_init\_\_.py                                                                   |        8 |        0 |    100% |           |
+| presidio\_analyzer/nlp\_engine/\_\_init\_\_.py                                                                   |        9 |        0 |    100% |           |
+| presidio\_analyzer/nlp\_engine/device\_detector.py                                                               |       26 |        0 |    100% |           |
 | presidio\_analyzer/nlp\_engine/ner\_model\_configuration.py                                                      |       43 |        0 |    100% |           |
 | presidio\_analyzer/nlp\_engine/nlp\_artifacts.py                                                                 |       30 |        0 |    100% |           |
 | presidio\_analyzer/nlp\_engine/nlp\_engine.py                                                                    |       22 |        2 |     91% |    60, 65 |
 | presidio\_analyzer/nlp\_engine/nlp\_engine\_provider.py                                                          |       48 |        0 |    100% |           |
-| presidio\_analyzer/nlp\_engine/spacy\_nlp\_engine.py                                                             |      111 |        9 |     92% |78, 83, 99, 140, 144, 185, 243, 267, 273 |
-| presidio\_analyzer/nlp\_engine/stanza\_nlp\_engine.py                                                            |      188 |       20 |     89% |12-13, 210, 212, 227-231, 296, 318-319, 351, 361-362, 388-389, 393, 416, 419 |
-| presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       47 |        3 |     94% |     10-12 |
+| presidio\_analyzer/nlp\_engine/spacy\_nlp\_engine.py                                                             |      119 |        9 |     92% |91, 96, 112, 153, 157, 198, 256, 280, 286 |
+| presidio\_analyzer/nlp\_engine/stanza\_nlp\_engine.py                                                            |      218 |       20 |     91% |12-13, 292, 294, 325-329, 394, 416-417, 449, 459-460, 486-487, 491, 514, 517 |
+| presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       49 |        3 |     94% |     10-12 |
 | presidio\_analyzer/pattern.py                                                                                    |       32 |        2 |     94% |    62, 66 |
 | presidio\_analyzer/pattern\_recognizer.py                                                                        |      100 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       52 |        0 |    100% |           |
@@ -95,7 +96,7 @@
 | presidio\_analyzer/predefined\_recognizers/generic/phone\_recognizer.py                                          |       34 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/url\_recognizer.py                                            |       10 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/ner/\_\_init\_\_.py                                                   |        2 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/ner/gliner\_recognizer.py                                             |       52 |        8 |     85% |14-16, 63, 70-74, 105, 168 |
+| presidio\_analyzer/predefined\_recognizers/ner/gliner\_recognizer.py                                             |       52 |        6 |     88% |18-20, 68, 116, 179 |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/\_\_init\_\_.py                              |        4 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/spacy\_recognizer.py                         |       40 |        2 |     95% |   57, 137 |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/stanza\_recognizer.py                        |        5 |        0 |    100% |           |
@@ -113,7 +114,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      169 |        9 |     95% |28, 44, 125, 133, 244-245, 447-448, 465 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **3578** |  **201** | **94%** |           |
+| **TOTAL**                                                                                                        | **3645** |  **199** | **95%** |           |
 
 
 ## Setup coverage badge
