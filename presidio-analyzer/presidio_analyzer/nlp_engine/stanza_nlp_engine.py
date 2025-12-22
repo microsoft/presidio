@@ -221,7 +221,8 @@ def create_tokenizer(
     :param processors: The processors to use.
     :param logging_level: The logging level.
     :param verbose: Whether to be verbose.
-    :param device: The device to use (e.g., "cpu", "cuda", "mps").
+    :param device: The device to use (e.g., "cpu", "cuda").
+        Note: MPS is currently not supported.
     :param kwargs: Additional keyword arguments.
     """
     if not processors:

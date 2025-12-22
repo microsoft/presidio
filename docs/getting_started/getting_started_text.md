@@ -98,7 +98,7 @@ Using Presidio's modules as Python packages to get started:
     For GPU acceleration, install the appropriate dependencies for your hardware:
 
     - **Linux with NVIDIA GPU**: cupy-cuda12x (or the version matching your CUDA installation)
-    - **macOS with Apple Silicon**: MPS support is included (no extra dependencies needed)
+    - **macOS with Apple Silicon**: MPS (Metal Performance Shaders) is currently not supported. The analyzer will use CPU for PyTorch operations.
 
 ## Simple flow - Docker container
 

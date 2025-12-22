@@ -16,8 +16,9 @@ class DeviceDetector:
     """Detect and expose PyTorch device availability.
 
     Prefer CUDA when available (Linux/Windows/NVIDIA),
-    otherwise use MPS on macOS (Apple Silicon),
     otherwise fall back to CPU.
+
+    Note: MPS (Apple Silicon/Metal) is currently not supported.
     """
 
     def __init__(self) -> None:
@@ -26,7 +27,7 @@ class DeviceDetector:
         logger.info(f"Using device of type: {self._device}")
 
     def _detect(self) -> None:
-        """Detect PyTorch CUDA/MPS support once."""
+        """Detect PyTorch CUDA support once."""
         try:
             import torch
         except ImportError:
@@ -45,20 +46,8 @@ class DeviceDetector:
             except Exception as e:
                 logger.warning(f"PyTorch CUDA initialization failed, falling back: {e}")
 
-        # 2) MPS (Apple Metal / macOS)
-        if getattr(torch.backends, "mps", None) is not None:
-            if torch.backends.mps.is_built() and torch.backends.mps.is_available():
-                try:
-                    _ = str(torch.tensor([1.0], device="mps"))
-                    self._device = "mps"
-                    return
-                except Exception as e:
-                    logger.warning(
-                        f"PyTorch MPS initialization failed, falling back to CPU: {e}"
-                    )
-
     def get_device(self) -> str:
-        """Return device string ('cuda', 'mps', or 'cpu')."""
+        """Return device string ('cuda' or 'cpu')."""
         return self._device
 
 

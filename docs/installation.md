@@ -66,7 +66,7 @@ with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
 For GPU acceleration, install the appropriate dependencies for your hardware:
 
 - **Linux with NVIDIA GPU**: cupy-cuda12x (or the version matching your CUDA installation)
-- **macOS with Apple Silicon**: MPS support is included (no extra dependencies needed)
+- **macOS with Apple Silicon**: MPS (Metal Performance Shaders) is currently not supported. The analyzer will use CPU for PyTorch operations.
 
 ### PII redaction in images
 
