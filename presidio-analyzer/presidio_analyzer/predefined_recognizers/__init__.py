@@ -89,6 +89,7 @@ from .third_party.azure_openai_langextract_recognizer import (
 )
 from .third_party.langextract_recognizer import LangExtractRecognizer
 from .third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+from .third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
 
 PREDEFINED_RECOGNIZERS = [
     "PhoneRecognizer",
@@ -159,4 +160,5 @@ __all__ = [
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
     "OllamaLangExtractRecognizer",
+    "BasicLangExtractRecognizer",
 ]
