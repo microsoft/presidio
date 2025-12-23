@@ -16,4 +16,4 @@ class StanzaRecognizer(SpacyRecognizer):
 
     def __init__(self, name: Optional[str] = None, **kwargs):
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace("Spacy", "Stanza")
-        super().__init__(name=name)
+        super().__init__(name=name, **kwargs)

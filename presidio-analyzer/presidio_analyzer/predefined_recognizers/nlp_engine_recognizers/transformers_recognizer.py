@@ -34,4 +34,4 @@ class TransformersRecognizer(SpacyRecognizer):
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace(
             "Spacy", "Transformers"
         )
-        super().__init__(name=name)
+        super().__init__(name=name, **kwargs)
