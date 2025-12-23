@@ -74,6 +74,7 @@ class IbanRecognizer(PatternRecognizer):
         bos_eos: Tuple[str, str] = (BOS, EOS),
         regex_flags: int = re.DOTALL | re.MULTILINE,
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        name: Optional[str] = None,
         **kwargs,
     ):
         self.replacement_pairs = replacement_pairs or [("-", ""), (" ", "")]
@@ -87,7 +88,7 @@ class IbanRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
             global_regex_flags=regex_flags,
-            **kwargs,
+            name=name,
         )
 
     def validate_result(self, pattern_text: str):  # noqa: D102

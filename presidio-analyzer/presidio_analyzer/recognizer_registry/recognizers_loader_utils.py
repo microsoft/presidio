@@ -120,11 +120,11 @@ class RecognizerListLoader:
         """Get the class name for recognizer instantiation.
 
         Uses 'class_name' if present, otherwise 'name'.
-        
+
         Logic:
-        - If only 'name' exists: Use 'name' as both class name (for instantiation) 
+        - If only 'name' exists: Use 'name' as both class name (for instantiation)
           and instance name (passed to __init__)
-        - If 'class_name' exists: Use 'class_name' for instantiation and 'name' 
+        - If 'class_name' exists: Use 'class_name' for instantiation and 'name'
           as the instance name (passed to __init__)
 
         :param recognizer_conf: The recognizer configuration.

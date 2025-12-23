@@ -38,8 +38,7 @@ class UsItinRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
-        supported_entity: str = "US_ITIN",
-        **kwargs,
+        supported_entity: str = "US_ITIN", name: Optional[str] = None, **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -47,6 +46,5 @@ class UsItinRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             patterns=patterns,
             context=context,
-            supported_language=supported_language,
-            **kwargs,
+            supported_language=supported_language, name=name,
         )

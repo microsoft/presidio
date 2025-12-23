@@ -42,8 +42,7 @@ class InVoterRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
-        supported_entity: str = "IN_VOTER",
-        **kwargs,
+        supported_entity: str = "IN_VOTER", name: Optional[str] = None, **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -51,6 +50,5 @@ class InVoterRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
-            supported_entity=supported_entity,
-            **kwargs,
+            supported_entity=supported_entity, name=name,
         )

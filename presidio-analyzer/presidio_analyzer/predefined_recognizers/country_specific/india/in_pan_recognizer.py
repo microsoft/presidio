@@ -53,6 +53,7 @@ class InPanRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "IN_PAN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        name: Optional[str] = None,
         **kwargs,
     ):
         self.replacement_pairs = (
@@ -64,6 +65,5 @@ class InPanRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             patterns=patterns,
             context=context,
-            supported_language=supported_language,
-            **kwargs,
+            supported_language=supported_language, name=name,
         )

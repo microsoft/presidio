@@ -41,6 +41,7 @@ class InAadhaarRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "IN_AADHAAR",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        name: Optional[str] = None,
         **kwargs,
     ) -> None:
         self.replacement_pairs = (
@@ -54,8 +55,7 @@ class InAadhaarRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             patterns=patterns,
             context=context,
-            supported_language=supported_language,
-            **kwargs,
+            supported_language=supported_language, name=name,
         )
 
     def validate_result(self, pattern_text: str) -> bool:

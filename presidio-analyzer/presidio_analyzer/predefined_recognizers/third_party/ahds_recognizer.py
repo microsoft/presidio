@@ -35,6 +35,7 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         supported_entities: Optional[List[str]] = None,
         supported_language: str = "en",
         client: Optional[DeidentificationClient] = None,
+        name: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -47,9 +48,8 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
-            name="Azure Health Data Services Deidentification",
+            name=name if name else "Azure Health Data Services Deidentification",
             version="1.0.0",
-            **kwargs,
         )
 
 

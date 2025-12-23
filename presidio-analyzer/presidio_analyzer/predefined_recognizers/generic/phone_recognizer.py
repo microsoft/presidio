@@ -33,8 +33,7 @@ class PhoneRecognizer(LocalRecognizer):
         supported_language: str = "en",
         # For all regions, use phonenumbers.SUPPORTED_REGIONS
         supported_regions=DEFAULT_SUPPORTED_REGIONS,
-        leniency: Optional[int] = 1,
-        **kwargs,
+        leniency: Optional[int] = 1, name: Optional[str] = None, **kwargs,
     ):
         context = context if context else self.CONTEXT
         self.supported_regions = supported_regions
