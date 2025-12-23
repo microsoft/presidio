@@ -34,6 +34,7 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "fi",
         supported_entity: str = "FI_PERSONAL_IDENTITY_CODE",
+        **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -42,6 +43,7 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            **kwargs,
         )
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:

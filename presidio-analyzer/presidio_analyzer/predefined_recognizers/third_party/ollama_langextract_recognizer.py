@@ -20,6 +20,8 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         config_path: Optional[str] = None,
         supported_language: str = "en",
         context: Optional[list] = None,
+        name: str = "Ollama LangExtract PII",
+        **kwargs,
     ):
         """Initialize Ollama LangExtract recognizer."""
         actual_config_path = (
@@ -28,7 +30,7 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
 
         super().__init__(
             config_path=actual_config_path,
-            name="Ollama LangExtract PII",
+            name=name,
             supported_language=supported_language,
             extract_params={
                 "extract": {
@@ -40,7 +42,8 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
                     "timeout": 240,
                     "num_ctx": 8192,
                 }
-            }
+            },
+            **kwargs,
         )
 
         model_config = self.config.get("model", {})

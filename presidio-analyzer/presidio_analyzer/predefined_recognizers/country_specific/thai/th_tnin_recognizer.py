@@ -68,6 +68,7 @@ class ThTninRecognizer(PatternRecognizer):
         supported_language: str = "th",
         supported_entity: str = "TH_TNIN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        **kwargs,
     ):
         self.replacement_pairs = replacement_pairs if replacement_pairs else []
 
@@ -78,6 +79,7 @@ class ThTninRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            **kwargs,
         )
 
     def validate_result(self, pattern_text: str) -> Union[bool, None]:

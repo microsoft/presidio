@@ -78,7 +78,9 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
     )
 
     # Create Ollama recognizer with custom config and custom name
-    ollama_recognizer = OllamaLangExtractRecognizer(config_path=config_path, name="e2eollama")
+    ollama_recognizer = OllamaLangExtractRecognizer(
+        config_path=config_path, name="e2eollama"
+    )
 
     # Verify the recognizer has the custom name
     assert ollama_recognizer.name == "e2eollama", \

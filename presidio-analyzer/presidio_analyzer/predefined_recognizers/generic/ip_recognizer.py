@@ -40,6 +40,7 @@ class IpRecognizer(PatternRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "IP_ADDRESS",
+        **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -48,6 +49,7 @@ class IpRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            **kwargs,
         )
 
     def invalidate_result(self, pattern_text: str) -> bool:

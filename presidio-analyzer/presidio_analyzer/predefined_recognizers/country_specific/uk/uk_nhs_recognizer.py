@@ -38,6 +38,7 @@ class NhsRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "UK_NHS",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        **kwargs,
     ):
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
@@ -49,6 +50,7 @@ class NhsRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            **kwargs,
         )
 
     def validate_result(self, pattern_text: str) -> bool:
