@@ -162,9 +162,11 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     registry = provider.create_recognizer_registry()
     
     # Verify Ollama recognizer was loaded from config with custom name (direct match)
-    ollama_recognizer = registry.get_recognizer("e2eollama")
-    assert ollama_recognizer is not None, \
-        "Expected to find recognizer with name 'e2eollama' in registry"
+    ollama_recognizers = [r for r in registry.recognizers if r.name == "e2eollama"]
+    assert len(ollama_recognizers) == 1, \
+        f"Expected exactly 1 recognizer with name 'e2eollama', found {len(ollama_recognizers)}"
+    
+    ollama_recognizer = ollama_recognizers[0]
     
     # Verify the recognizer is actually an instance of the correct class
     assert ollama_recognizer.__class__.__name__ == "OllamaLangExtractRecognizer", \
