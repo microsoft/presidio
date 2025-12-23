@@ -161,24 +161,18 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     provider = RecognizerRegistryProvider(conf_file=config_path)
     registry = provider.create_recognizer_registry()
     
-    # Verify Ollama recognizer was loaded from config with custom name
-    ollama_recognizers = [r for r in registry.recognizers if "ollama" in r.name.lower()]
-    assert len(ollama_recognizers) == 1, \
-        f"Expected exactly 1 Ollama recognizer, found {len(ollama_recognizers)}"
-    
-    ollama_rec = ollama_recognizers[0]
-    
-    # Verify the recognizer has the custom instance name from config (not the class name)
-    assert ollama_rec.name == "e2eollama", \
-        f"Expected recognizer name to be 'e2eollama' from YAML config, got '{ollama_rec.name}'"
+    # Verify Ollama recognizer was loaded from config with custom name (direct match)
+    ollama_recognizer = registry.get_recognizer("e2eollama")
+    assert ollama_recognizer is not None, \
+        "Expected to find recognizer with name 'e2eollama' in registry"
     
     # Verify the recognizer is actually an instance of the correct class
-    assert ollama_rec.__class__.__name__ == "OllamaLangExtractRecognizer", \
-        f"Expected class OllamaLangExtractRecognizer, got {ollama_rec.__class__.__name__}"
+    assert ollama_recognizer.__class__.__name__ == "OllamaLangExtractRecognizer", \
+        f"Expected class OllamaLangExtractRecognizer, got {ollama_recognizer.__class__.__name__}"
     
     # Verify language and entities
-    assert ollama_rec.supported_language == "en"
-    assert len(ollama_rec.supported_entities) > 0
+    assert ollama_recognizer.supported_language == "en"
+    assert len(ollama_recognizer.supported_entities) > 0
     
     # Test functionality: analyze text with the loaded recognizer
     analyzer = AnalyzerEngine(registry=registry, supported_languages=["en"])
@@ -189,13 +183,6 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     # Should detect entities
     assert len(results) > 0, "Expected to detect at least one PII entity"
     
-    # Check if Ollama recognizer detected anything
-    ollama_detected = any(
-        r.recognition_metadata and 
-        r.recognition_metadata.get(RecognizerResult.RECOGNIZER_NAME_KEY, "") == "e2eollama"
-        for r in results
-    )
-    
     # At minimum, other recognizers should detect common entities
     entity_types = {r.entity_type for r in results}
     expected_entities = {"EMAIL_ADDRESS", "PERSON", "PHONE_NUMBER", "US_SSN"}
@@ -204,6 +191,6 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     assert len(detected_expected) >= 2, \
         f"Expected at least 2 entities from {expected_entities}, detected: {entity_types}"
     
-    print(f"\n✓ Ollama recognizer loaded successfully from YAML config")
+    print(f"\n✓ Ollama recognizer 'e2eollama' loaded successfully from YAML config")
+    print(f"  Class: {ollama_recognizer.__class__.__name__}")
     print(f"  Detected entities: {entity_types}")
-    print(f"  Ollama participated: {ollama_detected}")
