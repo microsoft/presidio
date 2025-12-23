@@ -37,12 +37,23 @@ class IbanRecognizer(PatternRecognizer):
     This can allow a greater variety in input, for example by removing dashes or spaces.
     """
 
+    # Pattern explanation:
+    # - (?<![A-Z0-9]): Negative lookbehind - ensures we don't start mid-IBAN
+    # - ([A-Z]{2}[0-9]{2}(?:[ -]?[A-Z0-9]{4}){2,6}): First capture group with
+    #   country code, check digits, and 2-6 groups of 4 alphanumerics
+    # - ((?:[ -]?[A-Z0-9]{4})?): Second optional capture group for 1 more group of 4
+    # - ((?:[ -]?[A-Z0-9]{1,3})?): Third optional capture group for trailing 1-3 chars
+    # - (?![A-Z0-9]): Negative lookahead - ensures we don't end mid-IBAN
+    #
+    # Multiple capture groups enable validation fallback: the __analyze_patterns method
+    # iterates through groups in reverse order (3→2→1), trying progressively shorter
+    # matches. Example: for "IBAN123456 X", tries "IBAN123456 X" (fails validation),
+    # then "IBAN123456" (passes), avoiding false positives from trailing characters.
     PATTERNS = [
         Pattern(
             "IBAN Generic",
-            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2})"  # noqa: E501
-            r"([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?"  # noqa: E501
-            r"([ \-]?[A-Z0-9]{1,3})?\b",
+            r"(?<![A-Z0-9])([A-Z]{2}[0-9]{2}(?:[ -]?[A-Z0-9]{4}){2,6})"
+            r"((?:[ -]?[A-Z0-9]{4})?)((?:[ -]?[A-Z0-9]{1,3})?)(?![A-Z0-9])",
             0.5,
         ),
     ]
