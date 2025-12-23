@@ -160,7 +160,7 @@ recognizers:
     type: predefined
     enabled: false
 
-    - name: KrDriverLicenseRecognizer
+  - name: KrDriverLicenseRecognizer
     supported_languages: 
     - ko
     - kr
