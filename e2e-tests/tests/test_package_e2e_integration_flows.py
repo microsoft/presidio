@@ -77,8 +77,12 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
         os.path.dirname(__file__), "..", "resources", "ollama_test_config.yaml"
     )
 
-    # Create Ollama recognizer with custom config
-    ollama_recognizer = OllamaLangExtractRecognizer(config_path=config_path)
+    # Create Ollama recognizer with custom config and custom name
+    ollama_recognizer = OllamaLangExtractRecognizer(config_path=config_path, name="e2eollama")
+
+    # Verify the recognizer has the custom name
+    assert ollama_recognizer.name == "e2eollama", \
+        f"Expected recognizer name to be 'e2eollama', got '{ollama_recognizer.name}'"
 
     # Create analyzer with ONLY Ollama recognizer (no NLP engine, no default recognizers)
     from presidio_analyzer.recognizer_registry import RecognizerRegistry
@@ -155,13 +159,22 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     provider = RecognizerRegistryProvider(conf_file=config_path)
     registry = provider.create_recognizer_registry()
     
-    # Verify Ollama recognizer was loaded
-    ollama_recognizers = [r for r in registry.recognizers if "Ollama" in r.name]
+    # Verify Ollama recognizer was loaded from config with custom name
+    ollama_recognizers = [r for r in registry.recognizers if "ollama" in r.name.lower()]
     assert len(ollama_recognizers) == 1, \
         f"Expected exactly 1 Ollama recognizer, found {len(ollama_recognizers)}"
     
     ollama_rec = ollama_recognizers[0]
-    assert ollama_rec.name == "e2eollama"
+    
+    # Verify the recognizer has the custom instance name from config (not the class name)
+    assert ollama_rec.name == "e2eollama", \
+        f"Expected recognizer name to be 'e2eollama' from YAML config, got '{ollama_rec.name}'"
+    
+    # Verify the recognizer is actually an instance of the correct class
+    assert ollama_rec.__class__.__name__ == "OllamaLangExtractRecognizer", \
+        f"Expected class OllamaLangExtractRecognizer, got {ollama_rec.__class__.__name__}"
+    
+    # Verify language and entities
     assert ollama_rec.supported_language == "en"
     assert len(ollama_rec.supported_entities) > 0
     
@@ -177,7 +190,7 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     # Check if Ollama recognizer detected anything
     ollama_detected = any(
         r.recognition_metadata and 
-        "Ollama" in r.recognition_metadata.get(RecognizerResult.RECOGNIZER_NAME_KEY, "")
+        r.recognition_metadata.get(RecognizerResult.RECOGNIZER_NAME_KEY, "") == "e2eollama"
         for r in results
     )
     

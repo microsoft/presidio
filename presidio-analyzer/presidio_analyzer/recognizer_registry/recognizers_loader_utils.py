@@ -262,13 +262,28 @@ class RecognizerListLoader:
         Converts supported_entities to supported_entity
         for PatternRecognizer subclasses.
         Removes both fields if they are None to allow recognizer defaults to be used.
+        Handles 'name' parameter if the recognizer accepts it.
 
         :param recognizer_conf: The recognizer configuration.
         :param language_conf: The language configuration.
         :param recognizer_cls: The recognizer class.
         :return: Prepared kwargs for recognizer instantiation.
         """
+        import inspect
+
         kwargs = {**recognizer_conf, **language_conf}
+
+        # Check if recognizer accepts 'name' parameter
+        try:
+            sig = inspect.signature(recognizer_cls.__init__)
+            # If 'name' is not in signature and not **kwargs, remove it
+            if 'name' in kwargs and 'name' not in sig.parameters and not any(
+                p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values()
+            ):
+                kwargs.pop('name', None)
+        except (ValueError, TypeError):
+            # If we can't inspect, keep 'name' - it will fail later if not accepted
+            pass
 
         # If this is a PatternRecognizer, handle supported_entities/supported_entity
         if RecognizerListLoader._is_pattern_recognizer(recognizer_cls):
@@ -302,15 +317,17 @@ class RecognizerListLoader:
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
 
-        # Note: 'name' and 'class_name' are excluded - used for class lookup
-        # Recognizers use their class name unless overridden in __init__
+        # Note: 'class_name' is excluded - used only for class lookup
+        # 'name' is passed to recognizer __init__ to set the instance name
+        # If 'name' is not provided in config, recognizer will use class name as default
         predefined_to_exclude = {
-            "enabled", "type", "supported_languages", "name", "class_name"
+            "enabled", "type", "supported_languages", "class_name"
         }
 
         # For custom recognizers, we keep 'supported_languages'
         # and don't exclude 'supported_entity'
         # because PatternRecognizer needs it
+        # 'name' is passed to allow custom instance names
         custom_to_exclude = {"enabled", "type", "class_name"}
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
@@ -330,11 +347,27 @@ class RecognizerListLoader:
 
                     # Prepare kwargs, converting supported_entities
                     # to supported_entity if needed
+                    # Store the intended name before kwargs preparation
+                    intended_name = new_conf.get("name")
                     kwargs = RecognizerListLoader._prepare_recognizer_kwargs(
                         new_conf, language_conf, recognizer_cls
                     )
 
-                    recognizer_instances.append(recognizer_cls(**kwargs))
+                    # Create recognizer instance
+                    recognizer = recognizer_cls(**kwargs)
+
+                    # If 'name' was removed from kwargs (recognizer doesn't accept it)
+                    # but we have an intended name, set it directly on the instance
+                    if (
+                        intended_name
+                        and "name" not in kwargs
+                        and hasattr(recognizer, "name")
+                    ):
+                        recognizer.name = intended_name
+                        # Update the _id to reflect the new name
+                        recognizer._id = f"{recognizer.name}_{id(recognizer)}"
+
+                    recognizer_instances.append(recognizer)
 
         for recognizer_conf in custom:
             if RecognizerListLoader.is_recognizer_enabled(recognizer_conf):
