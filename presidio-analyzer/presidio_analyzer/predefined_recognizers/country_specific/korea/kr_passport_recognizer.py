@@ -1,19 +1,20 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional
 
-from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
+from presidio_analyzer import Pattern, PatternRecognizer
+
 
 class KrPassportRecognizer(PatternRecognizer):
     """
     Recognize Korean Passport Number.
-    
+
     https://learn.microsoft.com/en-us/purview/sit-defn-south-korea-passport-number
-    
+
     the current passport number format:
         - one letter 'M' or 'm' or 'S' or 's' or 'R' or 'r' or 'O' or 'o' or 'D' or 'd'
         - three digits
         - one letter (A-Z, a-z)
         - four digits
-        
+
     the previous passport number format:
         - one letter 'M' or 'm' or 'S' or 's' or 'R' or 'r' or 'O' or 'o' or 'D' or 'd'
         - eight digits
