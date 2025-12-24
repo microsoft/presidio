@@ -24,7 +24,7 @@
 | presidio\_anonymizer/entities/invalid\_exception.py              |        4 |        0 |    100% |           |
 | presidio\_anonymizer/operators/\_\_init\_\_.py                   |       21 |        3 |     86% |     19-21 |
 | presidio\_anonymizer/operators/aes\_cipher.py                    |       28 |        0 |    100% |           |
-| presidio\_anonymizer/operators/ahds\_surrogate.py                |      103 |       40 |     61% |9, 222, 230, 234, 277, 279, 281-282, 286-311, 323-330, 334-338, 342-360 |
+| presidio\_anonymizer/operators/ahds\_surrogate.py                |      103 |       40 |     61% |9, 223, 231, 235, 278, 280, 282-283, 287-312, 324-331, 335-339, 343-361 |
 | presidio\_anonymizer/operators/custom.py                         |       18 |        0 |    100% |           |
 | presidio\_anonymizer/operators/deanonymize\_keep.py              |        7 |        1 |     86% |        18 |
 | presidio\_anonymizer/operators/decrypt.py                        |       18 |        0 |    100% |           |
