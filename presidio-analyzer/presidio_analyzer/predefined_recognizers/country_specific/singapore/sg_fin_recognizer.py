@@ -29,7 +29,7 @@ class SgFinRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
-        supported_entity: str = "SG_NRIC_FIN",
+        supported_entity: str = "SG_NRIC_FIN", name: Optional[str] = None, **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -37,5 +37,5 @@ class SgFinRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             patterns=patterns,
             context=context,
-            supported_language=supported_language,
+            supported_language=supported_language, name=name,
         )

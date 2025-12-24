@@ -34,7 +34,15 @@ class LanguageContextConfig(BaseModel):
 class BaseRecognizerConfig(BaseModel):
     """Base validation for all recognizer configuration types.
 
-    :param name: Name of the recognizer
+    :param name: Instance name for this recognizer. This name will be used in
+    analysis results to identify which recognizer detected each entity.
+    If not provided, the recognizer will use its class name as the default.
+    Use different names when creating multiple instances of the same
+    recognizer class with different configurations.
+    :param class_name: Python class name for predefined recognizers.
+    Used to lookup the recognizer class. If not provided, 'name' is used
+    for class lookup. Use this when you want a custom instance name
+    that differs from the Python class name.
     :param enabled: Whether the recognizer is enabled
     :param type: Type of recognizer (predefined/custom)
     :param supported_language: Single supported language (legacy)
@@ -50,7 +58,14 @@ class BaseRecognizerConfig(BaseModel):
     :param supported_entities: List of supported entities for this recognizer.
     """
 
-    name: str = Field(..., description="Name of the recognizer")
+    name: str = Field(..., description="Instance name for the recognizer")
+    class_name: Optional[str] = Field(
+        default=None,
+        description=(
+            "Python class name for predefined recognizers "
+            "(if different from instance name)"
+        ),
+    )
     enabled: bool = Field(default=True, description="Whether the recognizer is enabled")
     type: Optional[str] = Field(
         default="predefined", description="Type of recognizer (predefined/custom)"
@@ -136,11 +151,13 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
     @model_validator(mode="after")
     def validate_predefined_recognizer_exists(self):
         """Validate that the predefined recognizer class actually exists."""
+        # Use class_name if provided, otherwise use name
+        recognizer_class_name = self.class_name if self.class_name else self.name
         try:
-            RecognizerListLoader.get_existing_recognizer_cls(self.name)
+            RecognizerListLoader.get_existing_recognizer_cls(recognizer_class_name)
         except PredefinedRecognizerNotFoundError as e:
             raise ValueError(
-                f"Predefined recognizer '{self.name}' not found: {str(e)}"
+                f"Predefined recognizer '{recognizer_class_name}' not found: {str(e)}"
             ) from e
         return self
 

@@ -24,6 +24,7 @@ class RemoteRecognizer(ABC, EntityRecognizer):
         supported_language: str,
         version: str,
         context: Optional[List[str]] = None,
+        **kwargs,
     ):
         super().__init__(
             supported_entities=supported_entities,
@@ -31,6 +32,7 @@ class RemoteRecognizer(ABC, EntityRecognizer):
             supported_language=supported_language,
             version=version,
             context=context,
+            **kwargs,
         )
 
     def load(self):  # noqa: D102

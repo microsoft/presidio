@@ -30,7 +30,7 @@ class PlPeselRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "pl",
-        supported_entity: str = "PL_PESEL",
+        supported_entity: str = "PL_PESEL", name: Optional[str] = None, **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -38,7 +38,7 @@ class PlPeselRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             patterns=patterns,
             context=context,
-            supported_language=supported_language,
+            supported_language=supported_language, name=name,
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa: D102

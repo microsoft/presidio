@@ -8,6 +8,7 @@ recognizers:
   # For predefined:
   # - If only a recognizer name is provided, a predefined recognizer with this name and default parameters will be loaded.
   # - If a parameter isn't provided, the default one would be loaded.
+  # - Use 'class_name' to specify the Python class when using a custom 'name' for display/metadata
   # For custom:
   # - See an example configuration here: https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml
   # - Custom pattern recognizers with this configuration can be added to this file, with type: custom
@@ -199,8 +200,9 @@ recognizers:
     - en
     type: predefined
     enabled: false
-
-  - name: OllamaLangExtractRecognizer
+  
+  - name: OllamaRecognizer
+    class_name: OllamaLangExtractRecognizer
     supported_languages:
       - en
     type: predefined

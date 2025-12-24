@@ -117,12 +117,24 @@ class RecognizerListLoader:
 
     @staticmethod
     def get_recognizer_name(recognizer_conf: Union[Dict[str, Any], str]) -> str:
-        """Get the name of a recognizer in the configuration.
+        """Get the class name for recognizer instantiation.
+
+        Uses 'class_name' if present, otherwise 'name'.
+
+        Logic:
+        - If only 'name' exists: Use 'name' as both class name (for instantiation)
+          and instance name (passed to __init__)
+        - If 'class_name' exists: Use 'class_name' for instantiation and 'name'
+          as the instance name (passed to __init__)
 
         :param recognizer_conf: The recognizer configuration.
         """
         if isinstance(recognizer_conf, str):
             return recognizer_conf
+        # Use class_name if it exists and is not None, otherwise use name
+        class_name = recognizer_conf.get("class_name")
+        if class_name:
+            return class_name
         return recognizer_conf["name"]
 
     @staticmethod
@@ -296,12 +308,18 @@ class RecognizerListLoader:
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
 
-        predefined_to_exclude = {"enabled", "type", "supported_languages", "name"}
+        # Note: 'class_name' is excluded - used only for class lookup
+        # 'name' is passed to recognizer __init__ to set the instance name
+        # If 'name' is not provided in config, recognizer will use class name as default
+        predefined_to_exclude = {
+            "enabled", "type", "supported_languages", "class_name"
+        }
 
         # For custom recognizers, we keep 'supported_languages'
         # and don't exclude 'supported_entity'
         # because PatternRecognizer needs it
-        custom_to_exclude = {"enabled", "type"}
+        # 'name' is passed to allow custom instance names
+        custom_to_exclude = {"enabled", "type", "class_name"}
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
                 recognizer_conf=recognizer_conf, supported_languages=supported_languages

@@ -38,7 +38,7 @@ class UsBankRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
-        supported_entity: str = "US_BANK_NUMBER",
+        supported_entity: str = "US_BANK_NUMBER", name: Optional[str] = None, **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -46,5 +46,5 @@ class UsBankRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             patterns=patterns,
             context=context,
-            supported_language=supported_language,
+            supported_language=supported_language, name=name,
         )
