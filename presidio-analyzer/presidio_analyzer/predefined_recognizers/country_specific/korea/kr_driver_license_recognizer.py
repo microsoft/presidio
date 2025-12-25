@@ -82,7 +82,7 @@ class KrDriverLicenseRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str) -> Optional[bool]:
+    def validate_result(self, pattern_text: str) -> bool:
         """
         Validate length, region code.
 
@@ -101,7 +101,7 @@ class KrDriverLicenseRecognizer(PatternRecognizer):
             return False
 
         region_code = sanitized_value[:2]
-        if region_code in self.REGION_CODES:
-            return True
+        if region_code not in self.REGION_CODES:
+            return False
 
-        return None
+        return True
