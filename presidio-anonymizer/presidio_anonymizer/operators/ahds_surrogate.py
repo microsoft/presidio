@@ -178,6 +178,7 @@ class AHDSSurrogate(Operator):
 
         # === KOREA-SPECIFIC PRESIDIO ENTITIES ===
         'KR_RRN': 'ID_NUM',  # Korean Resident Registration Number
+        'KR_PASSPORT': 'ID_NUM',  # Korean Passport Number
 
         # === GENERIC CATEGORIES ===
         'ID_NUMBER': 'ID_NUM',
