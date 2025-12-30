@@ -6,7 +6,7 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 
 class UsMbiRecognizer(PatternRecognizer):
-    """Recognise US Medicare Beneficiary Identifier (MBI) using regex.
+    """Recognize US Medicare Beneficiary Identifier (MBI) using regex.
 
     The MBI is an 11-character identifier used by Medicare. The format follows
     specific rules defined by CMS (Centers for Medicare & Medicaid Services):
