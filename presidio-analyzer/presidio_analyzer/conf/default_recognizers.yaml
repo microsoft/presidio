@@ -153,6 +153,13 @@ recognizers:
     - pl
     type: predefined
 
+  - name: KrBrnRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
   - name: KrRrnRecognizer
     supported_languages: 
     - ko
