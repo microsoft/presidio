@@ -15,6 +15,8 @@ class KrBrnRecognizer(PatternRecognizer):
     - BB: Type of business code
     - CCCCC: Serial number and check digit
 
+    Reference: https://org-id.guide/list/KR-BRN
+
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
     :param supported_language: Language this recognizer supports
