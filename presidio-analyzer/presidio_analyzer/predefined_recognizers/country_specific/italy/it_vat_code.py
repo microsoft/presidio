@@ -37,7 +37,6 @@ class ItVatCodeRecognizer(PatternRecognizer):
         supported_language: str = "it",
         supported_entity: str = "IT_VAT_CODE",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
-        **kwargs,
     ):
         self.replacement_pairs = (
             replacement_pairs
@@ -51,7 +50,6 @@ class ItVatCodeRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
-            **kwargs,
         )
 
     def validate_result(self, pattern_text: str) -> bool:

@@ -36,7 +36,6 @@ class AzureHealthDeidRecognizer(RemoteRecognizer):
         supported_language: str = "en",
         client: Optional[DeidentificationClient] = None,
         name: Optional[str] = None,
-        **kwargs,
     ):
         """
         Wrap PHI detection using Azure Health Data Services de-identification.
