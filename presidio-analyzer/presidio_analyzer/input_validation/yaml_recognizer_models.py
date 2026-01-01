@@ -34,7 +34,8 @@ class LanguageContextConfig(BaseModel):
 class BaseRecognizerConfig(BaseModel):
     """Base validation for all recognizer configuration types.
 
-    :param name: Name of the recognizer
+    :param name: Instance name used in analysis results. Defaults to class name.
+    :param class_name: Python class name for lookup. If not provided, uses 'name'.
     :param enabled: Whether the recognizer is enabled
     :param type: Type of recognizer (predefined/custom)
     :param supported_language: Single supported language (legacy)
@@ -50,7 +51,14 @@ class BaseRecognizerConfig(BaseModel):
     :param supported_entities: List of supported entities for this recognizer.
     """
 
-    name: str = Field(..., description="Name of the recognizer")
+    name: str = Field(..., description="Instance name for the recognizer")
+    class_name: Optional[str] = Field(
+        default=None,
+        description=(
+            "Python class name for predefined recognizers "
+            "(if different from instance name)"
+        ),
+    )
     enabled: bool = Field(default=True, description="Whether the recognizer is enabled")
     type: Optional[str] = Field(
         default="predefined", description="Type of recognizer (predefined/custom)"
@@ -136,11 +144,12 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
     @model_validator(mode="after")
     def validate_predefined_recognizer_exists(self):
         """Validate that the predefined recognizer class actually exists."""
+        recognizer_class_name = self.class_name if self.class_name else self.name
         try:
-            RecognizerListLoader.get_existing_recognizer_cls(self.name)
+            RecognizerListLoader.get_existing_recognizer_cls(recognizer_class_name)
         except PredefinedRecognizerNotFoundError as e:
             raise ValueError(
-                f"Predefined recognizer '{self.name}' not found: {str(e)}"
+                f"Predefined recognizer '{recognizer_class_name}' not found: {str(e)}"
             ) from e
         return self
 
@@ -201,8 +210,6 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
                         f"for your custom recognizer."
                     )
                 except PredefinedRecognizerNotFoundError:
-                    # Name is not a predefined recognizer,
-                    # which is fine for custom recognizers
                     pass
         return data
 
@@ -328,7 +335,6 @@ class RecognizerRegistryConfig(BaseModel):
         parsed_recognizers = []
         for recognizer in recognizers:
             if isinstance(recognizer, str):
-                # Simple string recognizer name - treat as predefined
                 parsed_recognizers.append(recognizer)
                 continue
 
@@ -346,7 +352,6 @@ class RecognizerRegistryConfig(BaseModel):
                         f"Either use type: 'custom' or remove these fields."
                     )
 
-                # Auto-detect type if not provided
                 if not recognizer_type:
                     if "patterns" in recognizer or "deny_list" in recognizer:
                         recognizer_type = "custom"
@@ -357,7 +362,6 @@ class RecognizerRegistryConfig(BaseModel):
                         recognizer_type = "predefined"
                     recognizer["type"] = recognizer_type
 
-                # Final append based on resolved type (only once)
                 if recognizer_type == "predefined":
                     parsed_recognizers.append(PredefinedRecognizerConfig(**recognizer))
                 elif recognizer_type == "custom":
@@ -369,7 +373,6 @@ class RecognizerRegistryConfig(BaseModel):
                     )
                 continue
 
-            # Fallback: unrecognized structure, keep as-is
             parsed_recognizers.append(recognizer)
 
         return parsed_recognizers
@@ -378,7 +381,6 @@ class RecognizerRegistryConfig(BaseModel):
     def __check_if_predefined(cls, recognizer_name: Optional[Any]) -> None:
         try:
             RecognizerListLoader.get_existing_recognizer_cls(recognizer_name)
-            # If we reach here, it IS a predefined recognizer, so raise an error
             raise ValueError(
                 f"Recognizer '{recognizer_name}' conflicts with a predefined "
                 f"recognizer. "
@@ -388,7 +390,6 @@ class RecognizerRegistryConfig(BaseModel):
                 f"for your custom recognizer."
             )
         except PredefinedRecognizerNotFoundError:
-            # Name is not a predefined recognizer, which is fine for custom recognizers
             pass
 
     @model_validator(mode="after")
@@ -401,12 +402,10 @@ class RecognizerRegistryConfig(BaseModel):
             custom_without_language_present = False
             for r in self.recognizers:
                 if isinstance(r, (PredefinedRecognizerConfig, CustomRecognizerConfig)):
-                    # Track if any language is defined
                     if (r.supported_language and r.supported_language.strip()) or (
                         r.supported_languages and len(r.supported_languages) > 0
                     ):
                         any_language_defined = True
-                    # Track custom recognizers lacking language info
                     if (
                         isinstance(r, CustomRecognizerConfig)
                         and not r.supported_language
