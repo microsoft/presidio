@@ -131,7 +131,6 @@ class RecognizerListLoader:
         """
         if isinstance(recognizer_conf, str):
             return recognizer_conf
-        # Use class_name if it exists and is not None, otherwise use name
         class_name = recognizer_conf.get("class_name")
         if class_name:
             return class_name
@@ -308,17 +307,9 @@ class RecognizerListLoader:
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
 
-        # Note: 'class_name' is excluded - used only for class lookup
-        # 'name' is passed to recognizer __init__ to set the instance name
-        # If 'name' is not provided in config, recognizer will use class name as default
         predefined_to_exclude = {
             "enabled", "type", "supported_languages", "class_name"
         }
-
-        # For custom recognizers, we keep 'supported_languages'
-        # and don't exclude 'supported_entity'
-        # because PatternRecognizer needs it
-        # 'name' is passed to allow custom instance names
         custom_to_exclude = {"enabled", "type", "class_name"}
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
@@ -336,8 +327,6 @@ class RecognizerListLoader:
                         recognizer_name=recognizer_name
                     )
 
-                    # Prepare kwargs, converting supported_entities
-                    # to supported_entity if needed
                     kwargs = RecognizerListLoader._prepare_recognizer_kwargs(
                         new_conf, language_conf, recognizer_cls
                     )
