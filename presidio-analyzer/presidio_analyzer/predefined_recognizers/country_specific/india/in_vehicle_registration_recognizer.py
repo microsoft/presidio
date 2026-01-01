@@ -332,7 +332,6 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
         supported_entity: str = "IN_VEHICLE_REGISTRATION",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
         name: Optional[str] = None,
-        **kwargs,
     ):
         self.replacement_pairs = (
             replacement_pairs

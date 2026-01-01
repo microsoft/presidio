@@ -32,7 +32,6 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
         supported_language: str = "it",
         supported_entity: str = "IT_DRIVER_LICENSE",
         name: Optional[str] = None,
-        **kwargs,
     ) -> None:
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT

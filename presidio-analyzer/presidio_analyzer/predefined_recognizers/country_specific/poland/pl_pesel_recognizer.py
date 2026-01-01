@@ -30,7 +30,7 @@ class PlPeselRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "pl",
-        supported_entity: str = "PL_PESEL", name: Optional[str] = None, **kwargs,
+        supported_entity: str = "PL_PESEL", name: Optional[str] = None,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT

@@ -57,7 +57,6 @@ class KrRrnRecognizer(PatternRecognizer):
         supported_entity: str = "KR_RRN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
         name: Optional[str] = None,
-        **kwargs,
     ):
         self.replacement_pairs = replacement_pairs if replacement_pairs else [("-", "")]
 

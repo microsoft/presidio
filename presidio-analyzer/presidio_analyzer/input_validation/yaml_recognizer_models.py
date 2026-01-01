@@ -34,15 +34,8 @@ class LanguageContextConfig(BaseModel):
 class BaseRecognizerConfig(BaseModel):
     """Base validation for all recognizer configuration types.
 
-    :param name: Instance name for this recognizer. This name will be used in
-    analysis results to identify which recognizer detected each entity.
-    If not provided, the recognizer will use its class name as the default.
-    Use different names when creating multiple instances of the same
-    recognizer class with different configurations.
-    :param class_name: Python class name for predefined recognizers.
-    Used to lookup the recognizer class. If not provided, 'name' is used
-    for class lookup. Use this when you want a custom instance name
-    that differs from the Python class name.
+    :param name: Instance name used in analysis results. Defaults to class name.
+    :param class_name: Python class name for lookup. If not provided, uses 'name'.
     :param enabled: Whether the recognizer is enabled
     :param type: Type of recognizer (predefined/custom)
     :param supported_language: Single supported language (legacy)

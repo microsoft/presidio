@@ -75,7 +75,6 @@ class IbanRecognizer(PatternRecognizer):
         regex_flags: int = re.DOTALL | re.MULTILINE,
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
         name: Optional[str] = None,
-        **kwargs,
     ):
         self.replacement_pairs = replacement_pairs or [("-", ""), (" ", "")]
         self.exact_match = exact_match

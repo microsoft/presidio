@@ -60,7 +60,6 @@ class ItIdentityCardRecognizer(PatternRecognizer):
         supported_language: str = "it",
         supported_entity: str = "IT_IDENTITY_CARD",
         name: Optional[str] = None,
-        **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT

@@ -39,7 +39,7 @@ class IpRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
-        supported_entity: str = "IP_ADDRESS", name: Optional[str] = None, **kwargs,
+        supported_entity: str = "IP_ADDRESS", name: Optional[str] = None,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT

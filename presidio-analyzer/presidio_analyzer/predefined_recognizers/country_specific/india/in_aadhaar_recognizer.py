@@ -42,7 +42,6 @@ class InAadhaarRecognizer(PatternRecognizer):
         supported_entity: str = "IN_AADHAAR",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
         name: Optional[str] = None,
-        **kwargs,
     ) -> None:
         self.replacement_pairs = (
             replacement_pairs

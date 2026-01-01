@@ -56,7 +56,6 @@ class UsLicenseRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "US_DRIVER_LICENSE",
         name: Optional[str] = None,
-        **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT

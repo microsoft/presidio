@@ -35,7 +35,6 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
         supported_language: str = "fi",
         supported_entity: str = "FI_PERSONAL_IDENTITY_CODE",
         name: Optional[str] = None,
-        **kwargs,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
