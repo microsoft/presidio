@@ -1,11 +1,13 @@
 """Korea-specific recognizers."""
 
 from .kr_driver_license_recognizer import KrDriverLicenseRecognizer
+from .kr_frn_recognizer import KrFrnRecognizer
 from .kr_passport_recognizer import KrPassportRecognizer
 from .kr_rrn_recognizer import KrRrnRecognizer
 
 __all__ = [
-    "KrRrnRecognizer",
     "KrDriverLicenseRecognizer",
     "KrPassportRecognizer",
+    "KrFrnRecognizer",
+    "KrRrnRecognizer",
 ]
