@@ -99,9 +99,11 @@ For more information, refer to the [adding new recognizers documentation](analyz
 ### Korea
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
-| KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
 | KR_DRIVER_LICENSE    |  The Korean driver license number is a 12-digit number. | Pattern match, context and custom logic. |
+| KR_FRN     | The Korean Foreigner Registration Number (FRN) is a 13-digit number. | Pattern match, context and custom logic. |
 | KR_PASSPORT| The Korean Passport Number  | Pattern match, context. |
+| KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
+
 
 ### Thai
 | FieldType  | Description                                                                                             | Detection Method                         |
