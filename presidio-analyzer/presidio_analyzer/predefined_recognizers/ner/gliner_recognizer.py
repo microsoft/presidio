@@ -39,7 +39,6 @@ class GLiNERRecognizer(LocalRecognizer):
         multi_label: bool = False,
         threshold: float = 0.30,
         map_location: Optional[str] = None,
-        **kwargs,
     ):
         """GLiNER model based entity recognizer.
 
@@ -107,7 +106,6 @@ class GLiNERRecognizer(LocalRecognizer):
             supported_language=supported_language,
             version=version,
             context=context,
-            **kwargs,
         )
 
         self.gliner_labels = list(self.model_to_presidio_entity_mapping.keys())

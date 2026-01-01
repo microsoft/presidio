@@ -31,14 +31,13 @@ class LMRecognizer(RemoteRecognizer, ABC):
         self,
         supported_entities: Optional[List[str]] = None,
         supported_language: str = "en",
-        name: str = "Language Model PII Recognizer",
+        name: Optional[str] = None,
         version: str = "1.0.0",
         model_id: Optional[str] = None,
         temperature: Optional[float] = None,
         min_score: float = 0.5,
         labels_to_ignore: Optional[List[str]] = None,
         enable_generic_consolidation: bool = True,
-        **kwargs,
     ):
         """Initialize LM recognizer.
 
@@ -57,7 +56,6 @@ class LMRecognizer(RemoteRecognizer, ABC):
             supported_language=supported_language,
             name=name,
             version=version,
-            **kwargs,
         )
 
         self.model_id = model_id

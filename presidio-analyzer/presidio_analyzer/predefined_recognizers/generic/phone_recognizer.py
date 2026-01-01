@@ -33,7 +33,8 @@ class PhoneRecognizer(LocalRecognizer):
         supported_language: str = "en",
         # For all regions, use phonenumbers.SUPPORTED_REGIONS
         supported_regions=DEFAULT_SUPPORTED_REGIONS,
-        leniency: Optional[int] = 1, name: Optional[str] = None, **kwargs,
+        leniency: Optional[int] = 1,
+        name: Optional[str] = None,
     ):
         context = context if context else self.CONTEXT
         self.supported_regions = supported_regions
@@ -42,7 +43,7 @@ class PhoneRecognizer(LocalRecognizer):
             supported_entities=self.get_supported_entities(),
             supported_language=supported_language,
             context=context,
-            **kwargs,
+            name=name,
         )
 
     def load(self) -> None:  # noqa: D102

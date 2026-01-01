@@ -34,7 +34,6 @@ class LangExtractRecognizer(LMRecognizer, ABC):
         name: str = "LangExtract LLM PII",
         supported_language: str = "en",
         extract_params: Optional[Dict[str, Any]] = None,
-        **kwargs,
     ):
         """Initialize LangExtract recognizer.
 
@@ -88,7 +87,6 @@ class LangExtractRecognizer(LMRecognizer, ABC):
             enable_generic_consolidation=lm_config.get(
                 "enable_generic_consolidation"
             ),
-            **kwargs,
         )
 
         examples_data = load_yaml_examples(

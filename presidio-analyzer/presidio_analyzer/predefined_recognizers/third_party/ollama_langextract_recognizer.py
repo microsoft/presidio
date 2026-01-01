@@ -21,7 +21,6 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
         supported_language: str = "en",
         context: Optional[list] = None,
         name: str = "Ollama LangExtract PII",
-        **kwargs,
     ):
         """Initialize Ollama LangExtract recognizer."""
         actual_config_path = (
@@ -43,7 +42,6 @@ class OllamaLangExtractRecognizer(LangExtractRecognizer):
                     "num_ctx": 8192,
                 }
             },
-            **kwargs,
         )
 
         model_config = self.config.get("model", {})

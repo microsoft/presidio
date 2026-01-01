@@ -60,7 +60,6 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
         api_version: Optional[str] = None,
         supported_language: str = "en",
         name: str = "Azure OpenAI LangExtract PII",
-        **kwargs,
     ):
         """
         Initialize Azure OpenAI LangExtract recognizer for PII/PHI detection.
@@ -121,7 +120,6 @@ class AzureOpenAILangExtractRecognizer(LangExtractRecognizer):
                     "use_schema_constraints": False,
                 },
             },
-            **kwargs,
         )
 
         # Override model_id if provided as parameter (deployment name)
