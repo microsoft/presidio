@@ -344,7 +344,8 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             patterns=patterns,
             context=context,
-            supported_language=supported_language, name=name,
+            supported_language=supported_language,
+            name=name,
         )
 
     def validate_result(self, pattern_text: str) -> bool:

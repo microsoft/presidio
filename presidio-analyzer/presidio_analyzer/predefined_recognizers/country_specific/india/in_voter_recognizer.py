@@ -51,5 +51,6 @@ class InVoterRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
-            supported_entity=supported_entity, name=name,
+            supported_entity=supported_entity,
+            name=name,
         )

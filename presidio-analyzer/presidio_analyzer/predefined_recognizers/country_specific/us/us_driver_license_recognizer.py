@@ -63,5 +63,6 @@ class UsLicenseRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             supported_language=supported_language,
             patterns=patterns,
-            context=context, name=name,
+            context=context,
+            name=name,
         )

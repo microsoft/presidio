@@ -71,7 +71,8 @@ class InGstinRecognizer(PatternRecognizer):
             supported_entity=supported_entity,
             patterns=patterns,
             context=context,
-            supported_language=supported_language, name=name,
+            supported_language=supported_language,
+            name=name,
         )
         self.supported_entity = supported_entity
 
