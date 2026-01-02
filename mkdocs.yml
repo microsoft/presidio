@@ -48,6 +48,7 @@ nav:
                   - Home: analyzer/customizing_nlp_models.md
                   - Spacy/Stanza: analyzer/nlp_engines/spacy_stanza.md
                   - Transformers: analyzer/nlp_engines/transformers.md
+                  - GPU Acceleration: analyzer/nlp_engines/gpu_usage.md
               - Tracing the decision process: analyzer/decision_process.md
               - Configure from file: analyzer/analyzer_engine_provider.md
           - Presidio Anonymizer:
