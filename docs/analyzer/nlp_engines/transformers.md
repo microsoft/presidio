@@ -29,9 +29,6 @@ sequenceDiagram
 
 ## Adding a new model
 
-!!! note "GPU Acceleration"
-    Transformer models can benefit significantly from GPU acceleration. See the [GPU Usage Guide](gpu_usage.md) for setup instructions and performance tips.
-
 As the underlying transformers model, you can choose from either a public pretrained model or a custom model.
 
 ### Using a public pre-trained transformers model

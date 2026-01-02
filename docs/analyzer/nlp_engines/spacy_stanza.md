@@ -29,8 +29,6 @@ For the available models, follow these links: [spaCy](https://spacy.io/usage/mod
 
 !!! tip "Tip"
     For Person, Location and Organization detection, it could be useful to try out the transformers based models (e.g. `en_core_web_trf`) which uses a more modern deep-learning architecture, but is generally slower than the default `en_core_web_lg` model.
-    
-    For improved performance with transformer models, consider using [GPU acceleration](gpu_usage.md).
 
 ### Configure Presidio to use the pre-trained model
 
