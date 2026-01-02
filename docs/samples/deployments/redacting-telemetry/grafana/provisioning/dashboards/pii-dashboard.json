@@ -38,7 +38,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=~\".*pii-demo-app.*\"} |~ \"\\[UNREDACTED\\]\"",
+          "expr": "{job=~\".*pii-demo-app.*\"} |~ `\\[UNREDACTED\\]`",
           "queryType": "range",
           "refId": "A"
         }
@@ -75,7 +75,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=~\".*pii-demo-app.*\"} |~ \"\\[REDACTED\\]\"",
+          "expr": "{job=~\".*pii-demo-app.*\"} |~ `\\[REDACTED\\]`",
           "queryType": "range",
           "refId": "B"
         }
