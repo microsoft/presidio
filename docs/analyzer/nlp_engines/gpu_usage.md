@@ -19,13 +19,19 @@ Presidio supports the following hardware acceleration:
 
 === "NVIDIA GPU"
 
+    To use GPU acceleration, you need to install the appropriate `spacy` CUDA library matching your CUDA version.
+
+    | Hardware | Requirement | Command |
+    |----------|-------------|---------|
+    | **NVIDIA GPU (CUDA 12.x)** | CUDA 12.x drivers | `pip install "spacy[cuda12x]"` |
+    | **NVIDIA GPU (CUDA 11.x)** | CUDA 11.x drivers | `pip install "spacy[cuda11x]"` |
+
+    !!! warning "Silent Fallback"
+        If `cupy` is not installed or the version mismatches your CUDA driver, spaCy will silently fall back to CPU without throwing an error. Always verify your setup by checking the logs or monitoring GPU usage.
+
     ```bash
-    # Install presidio with GPU support
-    pip install "presidio-analyzer[gpu]"
-    
-    # Alternatively, install dependencies separately
-    pip install cupy-cuda12x  # For CUDA 12.x (or cupy-cuda11x for CUDA 11.x)
-    pip install torch --index-url https://download.pytorch.org/whl/cu121  # PyTorch with CUDA
+    # Install presidio with transformers support
+    pip install "presidio-analyzer[transformers]"
     
     # Download spaCy transformer model
     python -m spacy download en_core_web_trf
@@ -52,7 +58,7 @@ Presidio supports the following hardware acceleration:
     ```
 
 !!! tip "Tip"
-    Use `pip install "presidio-analyzer[gpu]"` to install commonly used GPU dependencies. Ensure the CUDA version matches your system installation.
+    Use `pip install "spacy[cuda12x]"` (or valid version) to install all necessary GPU dependencies. Ensure the CUDA version matches your system installation.
 
 ## Automatic GPU Detection
 
