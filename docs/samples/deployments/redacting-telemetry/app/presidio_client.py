@@ -1,5 +1,5 @@
 """
-Presidio HTTP Client for PHI/PII Masking
+Presidio HTTP Client for PII Masking
 """
 
 import os
