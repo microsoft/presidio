@@ -153,8 +153,9 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         """
         Find words in the text which are relevant for context evaluation.
 
-        A word is considered a supportive context word if there's exact match
-        between a keyword in context_text and any keyword in context_list.
+        A word is considered a supportive context word if there's an exact
+        whole-word match (case-insensitive) between a keyword in context_list
+        and any keyword in recognizer_context_list.
 
         :param context_list words before and after the matched entity within
                a specified window size
@@ -168,13 +169,13 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
 
         for predefined_context_word in recognizer_context_list:
             # result == true only if any of the predefined context words
-            # is found exactly or as a substring in any of the collected
+            # is found as a whole word (exact match) in any of the collected
             # context words
             result = next(
                 (
                     True
                     for keyword in context_list
-                    if predefined_context_word in keyword
+                    if predefined_context_word.lower() == keyword.lower()
                 ),
                 False,
             )
