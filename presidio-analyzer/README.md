@@ -84,6 +84,13 @@ print(results)
 
 ```
 
+## GPU Acceleration
+
+For GPU acceleration, install the appropriate dependencies for your hardware:
+
+- **Linux with NVIDIA GPU**: cupy-cuda12x (or the version matching your CUDA installation)
+- **macOS with Apple Silicon**: MPS (Metal Performance Shaders) is currently not supported. The analyzer will use CPU for PyTorch operations.
+
 ## Documentation
 
 Additional documentation on installation, usage and extending the Analyzer can be found under the [Analyzer](https://microsoft.github.io/presidio/analyzer/) section of [Presidio Documentation](https://microsoft.github.io/presidio)

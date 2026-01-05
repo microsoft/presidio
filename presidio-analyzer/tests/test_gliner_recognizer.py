@@ -16,6 +16,7 @@ def mock_gliner():
 
     # Mock the GLiNER class and its methods
     mock_gliner_instance = MagicMock()
+    mock_gliner_instance.to.return_value = mock_gliner_instance
     # Mock the from_pretrained method to return the mock instance
     with patch("gliner.GLiNER.from_pretrained", return_value=mock_gliner_instance):
         yield mock_gliner_instance
