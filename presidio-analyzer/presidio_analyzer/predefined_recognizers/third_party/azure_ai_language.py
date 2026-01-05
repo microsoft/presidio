@@ -24,7 +24,7 @@ class AzureAILanguageRecognizer(RemoteRecognizer):
         supported_language: str = "en",
         ta_client: Optional["TextAnalyticsClient"] = None,
         azure_ai_key: Optional[str] = None,
-        azure_ai_endpoint: Optional[str] = None
+        azure_ai_endpoint: Optional[str] = None,
     ):
         """
         Wrap the PII detection in Azure AI Language.
