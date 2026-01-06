@@ -51,7 +51,7 @@ nav:
                   - GPU Acceleration: analyzer/nlp_engines/gpu_usage.md
               - Tracing the decision process: analyzer/decision_process.md
               - Configure from file: analyzer/analyzer_engine_provider.md
-          - Presidio Anonymizer:
+          - Presidio Anonymizer: 
               - Home: anonymizer/index.md
               - Developing PII anonymization operators: anonymizer/adding_operators.md
       - Azure Health Data Services de-identification service integration: ahds_integration.md
@@ -118,6 +118,7 @@ nav:
       - Presidio with Kubernetes: samples/deployments/k8s/index.md
       - Presidio with Spark: samples/deployments/spark/index.md
       - Presidio with Fabric: samples/fabric/index.md
+      - Redacting Telemetry with Presidio: samples/deployments/redacting-telemetry/index.md
       - Azure Data Factory:
         - ETL using AppService/Databricks: samples/deployments/data-factory/presidio-data-factory.md
         - Add Presidio as an HTTP service to your Azure Data Factory: samples/deployments/data-factory/presidio-data-factory-template-gallery-http.md
