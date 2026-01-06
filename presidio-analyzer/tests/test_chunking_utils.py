@@ -15,9 +15,10 @@ class TestProcessTextInChunks:
         """Test text shorter than chunk size is not chunked."""
         chunker = CharacterBasedTextChunker(chunk_size=100, chunk_overlap=20)
         text = "Short text"
+        chunks = chunker.chunk(text)
         predict_func = lambda chunk: [{"start": 0, "end": 5, "label": "PERSON", "score": 0.9}]
         
-        result = process_text_in_chunks(text, chunker, predict_func)
+        result = process_text_in_chunks(chunks, predict_func)
         
         assert len(result) == 1
         assert result[0]["start"] == 0
@@ -27,6 +28,7 @@ class TestProcessTextInChunks:
         """Test offset adjustment for chunked text."""
         chunker = CharacterBasedTextChunker(chunk_size=20, chunk_overlap=5)
         text = "John Smith lives in New York City with Jane Doe"
+        chunks = chunker.chunk(text)
         
         # Mock predict function that finds entities in each chunk
         def predict_func(chunk):
@@ -37,7 +39,7 @@ class TestProcessTextInChunks:
                 return [{"start": idx, "end": idx + 8, "label": "PERSON", "score": 0.85}]
             return []
         
-        result = process_text_in_chunks(text, chunker, predict_func)
+        result = process_text_in_chunks(chunks, predict_func)
         
         # First entity should be at original position
         assert result[0]["start"] == 0
@@ -49,9 +51,10 @@ class TestProcessTextInChunks:
         """Test handling of no predictions."""
         chunker = CharacterBasedTextChunker(chunk_size=50, chunk_overlap=10)
         text = "Some text without entities"
+        chunks = chunker.chunk(text)
         predict_func = lambda chunk: []
         
-        result = process_text_in_chunks(text, chunker, predict_func)
+        result = process_text_in_chunks(chunks, predict_func)
         
         assert result == []
 

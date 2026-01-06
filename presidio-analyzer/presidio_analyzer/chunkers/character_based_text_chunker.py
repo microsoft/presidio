@@ -6,7 +6,7 @@ https://github.com/theirstory/gliner-spacy/blob/main/gliner_spacy/pipeline.py#L6
 import logging
 from typing import List
 
-from presidio_analyzer.chunkers.base_chunker import BaseTextChunker
+from presidio_analyzer.chunkers.base_chunker import BaseTextChunker, TextChunk
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -35,10 +35,26 @@ class CharacterBasedTextChunker(BaseTextChunker):
                 "chunk_overlap must be non-negative and less than chunk_size"
             )
 
-        self.chunk_size = chunk_size
-        self.chunk_overlap = chunk_overlap
+        self._chunk_size = chunk_size
+        self._chunk_overlap = chunk_overlap
 
-    def chunk(self, text: str) -> List[str]:
+    @property
+    def chunk_size(self) -> int:
+        """Get the chunk size.
+        
+        :return: The chunk size
+        """
+        return self._chunk_size
+
+    @property
+    def chunk_overlap(self) -> int:
+        """Get the chunk overlap.
+        
+        :return: The chunk overlap
+        """
+        return self._chunk_overlap
+
+    def chunk(self, text: str) -> List[TextChunk]:
         """Split text into overlapping chunks at word boundaries.
 
         Chunks are extended to the nearest word boundary (space or newline)
@@ -47,7 +63,7 @@ class CharacterBasedTextChunker(BaseTextChunker):
         may extend to end of text.
 
         :param text: The input text to chunk
-        :return: List of text chunks with overlap
+        :return: List of TextChunk objects with text and position information
         """
         if not text:
             logger.debug("Empty text provided, returning empty chunk list")
@@ -56,8 +72,8 @@ class CharacterBasedTextChunker(BaseTextChunker):
         logger.debug(
             "Chunking text: length=%d, chunk_size=%d, overlap=%d",
             len(text),
-            self.chunk_size,
-            self.chunk_overlap,
+            self._chunk_size,
+            self._chunk_overlap,
         )
 
         chunks = []
@@ -66,8 +82,8 @@ class CharacterBasedTextChunker(BaseTextChunker):
         while start < len(text):
             # Calculate end position
             end = (
-                start + self.chunk_size
-                if start + self.chunk_size < len(text)
+                start + self._chunk_size
+                if start + self._chunk_size < len(text)
                 else len(text)
             )
 
@@ -75,12 +91,12 @@ class CharacterBasedTextChunker(BaseTextChunker):
             while end < len(text) and text[end] not in [" ", "\n"]:
                 end += 1
 
-            chunks.append(text[start:end])
+            chunks.append(TextChunk(text=text[start:end], start=start, end=end))
 
             # Move start position with overlap (stop if we've covered all text)
             if end >= len(text):
                 break
-            start = end - self.chunk_overlap
+            start = end - self._chunk_overlap
 
         logger.debug("Created %d chunks from text", len(chunks))
         return chunks

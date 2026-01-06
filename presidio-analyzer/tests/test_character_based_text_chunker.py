@@ -19,7 +19,9 @@ class TestCharacterBasedTextChunker:
         text = "This is a short text."
         result = chunker.chunk(text)
         assert len(result) == 1
-        assert result[0] == text
+        assert result[0].text == text
+        assert result[0].start == 0
+        assert result[0].end == len(text)
 
     def test_long_text_without_overlap(self):
         """Test long text with no overlap."""
@@ -28,8 +30,12 @@ class TestCharacterBasedTextChunker:
         result = chunker.chunk(text)
         # Actual behavior: word boundaries extend chunks: ["1 2", " 3 4"]
         assert len(result) == 2
-        assert result[0] == "1 2"
-        assert result[1] == " 3 4"
+        assert result[0].text == "1 2"
+        assert result[0].start == 0
+        assert result[0].end == 3
+        assert result[1].text == " 3 4"
+        assert result[1].start == 3
+        assert result[1].end == 7
 
     def test_long_text_with_overlap(self):
         """Test long text with overlap."""
@@ -38,10 +44,14 @@ class TestCharacterBasedTextChunker:
         result = chunker.chunk(text)
         
         assert len(result) == 2
-        assert result[0] == "1 3 5"
-        assert result[1] == " 5 7 9"
+        assert result[0].text == "1 3 5"
+        assert result[0].start == 0
+        assert result[0].end == 5
+        assert result[1].text == " 5 7 9"
+        assert result[1].start == 3
+        assert result[1].end == 9
         # Verify overlap exists
-        assert result[0].endswith(" 5") and result[1].startswith(" 5")
+        assert result[0].text.endswith(" 5") and result[1].text.startswith(" 5")
 
     def test_word_boundary_preservation(self):
         """Test that chunks extend to word boundaries."""
@@ -49,7 +59,9 @@ class TestCharacterBasedTextChunker:
         text = "one two three four"
         result = chunker.chunk(text)
         # Chunks extend to word boundaries: "one two three" (13 chars) instead of breaking at 8
-        assert result[0] == "one two three"
+        assert result[0].text == "one two three"
+        assert result[0].start == 0
+        assert result[0].end == 13
         assert len(result) == 2
 
     def test_exact_chunk_size(self):
@@ -58,7 +70,9 @@ class TestCharacterBasedTextChunker:
         text = "1 2 3"
         result = chunker.chunk(text)
         assert len(result) == 1
-        assert result[0] == text
+        assert result[0].text == text
+        assert result[0].start == 0
+        assert result[0].end == len(text)
 
     def test_validation_zero_chunk_size(self):
         """Test that chunk_size must be > 0."""
@@ -98,11 +112,17 @@ class TestCharacterBasedTextChunker:
         result = chunker.chunk(text)
         # Actual result: ['1 2 3', '3 4 5', '5 6']
         assert len(result) == 3
-        assert result[0] == "1 2 3"
-        assert result[1] == "3 4 5"
-        assert result[2] == "5 6"
+        assert result[0].text == "1 2 3"
+        assert result[0].start == 0
+        assert result[0].end == 5
+        assert result[1].text == "3 4 5"
+        assert result[1].start == 4
+        assert result[1].end == 9
+        assert result[2].text == "5 6"
+        assert result[2].start == 8
+        assert result[2].end == 11
         # Verify all digits appear (overlap causes duplication in joined string)
-        all_text = "".join(result)
+        all_text = "".join([c.text for c in result])
         for digit in ["1", "2", "3", "4", "5", "6"]:
             assert digit in all_text
 
@@ -114,10 +134,14 @@ class TestCharacterBasedTextChunker:
         # Chunk 1: "line1\nline2" (12 chars, extends to newline boundary at position 11)
         # Chunk 2: "\nline3" (remaining 6 chars)
         assert len(result) == 2
-        assert result[0] == "line1\nline2"
-        assert result[1] == "\nline3"
+        assert result[0].text == "line1\nline2"
+        assert result[0].start == 0
+        assert result[0].end == 11
+        assert result[1].text == "\nline3"
+        assert result[1].start == 11
+        assert result[1].end == 17
         # Verify complete text preserved
-        assert "".join(result) == text
+        assert "".join([c.text for c in result]) == text
 
     def test_default_parameters(self):
         """Test chunker with default overlap (0)."""
@@ -127,8 +151,12 @@ class TestCharacterBasedTextChunker:
         # Chunk 1: "1 2 3" (5 chars, extends to word boundary at position 4)
         # Chunk 2: starts at position 5: " 4" (remaining)
         assert len(result) == 2
-        assert result[0] == "1 2 3"
-        assert result[1] == " 4"
+        assert result[0].text == "1 2 3"
+        assert result[0].start == 0
+        assert result[0].end == 5
+        assert result[1].text == " 4"
+        assert result[1].start == 5
+        assert result[1].end == 7
 
     def test_very_long_text(self):
         """Test chunking very long text."""
@@ -139,11 +167,12 @@ class TestCharacterBasedTextChunker:
         # With chunk_size=10, overlap=2, word boundaries: creates 16 chunks
         assert len(result) == 16
         # First chunk
-        assert result[0] == "0 1 2 3 4 5"
+        assert result[0].text == "0 1 2 3 4 5"
+        assert result[0].start == 0
         # Last chunk
-        assert result[-1] == "48 49"
+        assert result[-1].text == "48 49"
         # Verify all numbers appear in chunks
-        all_text = " ".join(result)
+        all_text = " ".join([c.text for c in result])
         for i in range(50):
             assert str(i) in all_text
 
@@ -158,7 +187,7 @@ class TestCharacterBasedTextChunker:
         # Text is 251 chars, creates 2 chunks with overlap
         assert len(result) == 2
         # All PII should be present across chunks
-        all_text = " ".join(result)
+        all_text = " ".join([c.text for c in result])
         assert "4532-1234-5678-9010" in all_text
         assert "123-45-6789" in all_text
         assert "john.smith@example.com" in all_text
@@ -172,7 +201,9 @@ class TestCharacterBasedTextChunker:
         # No spaces, so first chunk extends all the way to end
         # (word boundary extension continues until end of text)
         assert len(result) == 1
-        assert result[0] == text
+        assert result[0].text == text
+        assert result[0].start == 0
+        assert result[0].end == len(text)
 
     def test_unicode_emoji_handling(self):
         """Test Unicode characters and emojis are handled correctly."""
@@ -180,7 +211,7 @@ class TestCharacterBasedTextChunker:
         text = "Hello 👋 World 🌍 Test"
         result = chunker.chunk(text)
         # Verify emojis are preserved in chunks
-        all_text = "".join(result)
+        all_text = "".join([c.text for c in result])
         assert "👋" in all_text
         assert "🌍" in all_text
         # Verify all words appear (overlap may cause partial duplication)

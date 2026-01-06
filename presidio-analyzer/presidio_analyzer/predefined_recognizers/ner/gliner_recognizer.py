@@ -40,8 +40,6 @@ class GLiNERRecognizer(LocalRecognizer):
         multi_label: bool = False,
         threshold: float = 0.30,
         map_location: str = "cpu",
-        chunk_size: int = 250,
-        chunk_overlap: int = 50,
         text_chunker: Optional[BaseTextChunker] = None,
     ):
         """GLiNER model based entity recognizer.
@@ -62,12 +60,9 @@ class GLiNERRecognizer(LocalRecognizer):
         :param threshold: The threshold for the model's output
         (see GLiNER's documentation)
         :param map_location: The device to use for the model
-        :param chunk_size: Maximum character length for text chunks
-            (default: 250)
-        :param chunk_overlap: Characters to overlap between chunks
-            (default: 50)
         :param text_chunker: Custom text chunking strategy. If None, uses
-            CharacterBasedTextChunker
+            CharacterBasedTextChunker with default settings (chunk_size=250,
+            chunk_overlap=50)
 
 
         """
@@ -100,14 +95,12 @@ class GLiNERRecognizer(LocalRecognizer):
         self.flat_ner = flat_ner
         self.multi_label = multi_label
         self.threshold = threshold
-        self.chunk_size = chunk_size
-        self.chunk_overlap = chunk_overlap
 
         # Use provided chunker or default to CharacterBasedTextChunker
         self.text_chunker = (
             text_chunker
             if text_chunker is not None
-            else CharacterBasedTextChunker(chunk_size, chunk_overlap)
+            else CharacterBasedTextChunker(chunk_size=250, chunk_overlap=50)
         )
 
         self.gliner = None

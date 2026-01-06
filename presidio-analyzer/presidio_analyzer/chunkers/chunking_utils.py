@@ -1,7 +1,7 @@
 """Utility functions for processing text with chunking strategies."""
 from typing import Any, Callable, Dict, List
 
-from presidio_analyzer.chunkers.base_chunker import BaseTextChunker
+from presidio_analyzer.chunkers.base_chunker import BaseTextChunker, TextChunk
 
 
 def predict_with_chunking(
@@ -11,50 +11,46 @@ def predict_with_chunking(
 ) -> List[Dict[str, Any]]:
     """Process text with automatic chunking for long texts.
 
-    For short text (≤ chunker.chunk_size), calls predict_func directly.
+    For short text, calls predict_func directly.
     For long text, chunks it and merges predictions with deduplication.
 
     :param text: Input text to process
     :param predict_func: Function that takes text and returns predictions
-    :param chunker: Text chunking strategy (contains chunk_size and chunk_overlap)
+    :param chunker: Text chunking strategy
     :return: List of predictions with correct offsets
     """
-    if len(text) <= chunker.chunk_size:
+    # Try direct prediction first for potentially short texts
+    chunks = chunker.chunk(text)
+    if len(chunks) <= 1:
         return predict_func(text)
 
     predictions = process_text_in_chunks(
-        text=text,
-        chunker=chunker,
+        chunks=chunks,
         process_func=predict_func,
     )
     return deduplicate_overlapping_entities(predictions)
 
 def process_text_in_chunks(
-    text: str,
-    chunker: BaseTextChunker,
+    chunks: List[TextChunk],
     process_func: Callable[[str], List[Dict[str, Any]]],
 ) -> List[Dict[str, Any]]:
-    """Process text in chunks and adjust entity offsets.
+    """Process text chunks and adjust entity offsets.
 
-    :param text: Input text to process
-    :param chunker: Text chunking strategy
+    :param chunks: List of TextChunk objects with text and position information
     :param process_func: Function that takes chunk text and returns predictions
     :return: List of predictions with adjusted offsets
     """
-    chunks = chunker.chunk(text)
     all_predictions = []
-    offset = 0
 
     for chunk in chunks:
-        chunk_predictions = process_func(chunk)
+        chunk_predictions = process_func(chunk.text)
 
         # Adjust offsets to match original text position
         for pred in chunk_predictions:
-            pred["start"] += offset
-            pred["end"] += offset
+            pred["start"] += chunk.start
+            pred["end"] += chunk.start
 
         all_predictions.extend(chunk_predictions)
-        offset += len(chunk) - chunker.chunk_overlap
 
     return all_predictions
 
