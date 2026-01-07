@@ -1,6 +1,6 @@
 """Text chunking strategies for handling long texts."""
 
-from presidio_analyzer.chunkers.base_chunker import BaseTextChunker
+from presidio_analyzer.chunkers.base_chunker import BaseTextChunker, TextChunk
 from presidio_analyzer.chunkers.character_based_text_chunker import (
     CharacterBasedTextChunker,
 )
@@ -12,6 +12,7 @@ from presidio_analyzer.chunkers.chunking_utils import (
 
 __all__ = [
     "BaseTextChunker",
+    "TextChunk",
     "CharacterBasedTextChunker",
     "predict_with_chunking",
     "process_text_in_chunks",

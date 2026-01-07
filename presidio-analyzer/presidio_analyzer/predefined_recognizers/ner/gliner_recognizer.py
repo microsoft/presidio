@@ -141,14 +141,43 @@ class GLiNERRecognizer(LocalRecognizer):
         labels = self.__create_input_labels(entities)
 
         # Process text with automatic chunking
-        def predict_func(text: str) -> List[Dict[str, Any]]:
-            return self.gliner.predict_entities(
+        def predict_func(text: str) -> List[RecognizerResult]:
+            # Get predictions from GLiNER (returns dicts)
+            gliner_predictions = self.gliner.predict_entities(
                 text=text,
                 labels=labels,
                 flat_ner=self.flat_ner,
                 threshold=self.threshold,
                 multi_label=self.multi_label,
             )
+            
+            # Convert dicts to RecognizerResult objects
+            results = []
+            for pred in gliner_predictions:
+                presidio_entity = self.model_to_presidio_entity_mapping.get(
+                    pred["label"], pred["label"]
+                )
+                
+                # Filter by requested entities
+                if entities and presidio_entity not in entities:
+                    continue
+                
+                analysis_explanation = AnalysisExplanation(
+                    recognizer=self.name,
+                    original_score=pred["score"],
+                    textual_explanation=f"Identified as {presidio_entity} by GLiNER",
+                )
+                
+                results.append(
+                    RecognizerResult(
+                        entity_type=presidio_entity,
+                        start=pred["start"],
+                        end=pred["end"],
+                        score=pred["score"],
+                        analysis_explanation=analysis_explanation,
+                    )
+                )
+            return results
 
         predictions = predict_with_chunking(
             text=text,
@@ -156,31 +185,7 @@ class GLiNERRecognizer(LocalRecognizer):
             chunker=self.text_chunker,
         )
 
-        recognizer_results = []
-        for prediction in predictions:
-            presidio_entity = self.model_to_presidio_entity_mapping.get(
-                prediction["label"], prediction["label"]
-            )
-            if entities and presidio_entity not in entities:
-                continue
-
-            analysis_explanation = AnalysisExplanation(
-                recognizer=self.name,
-                original_score=prediction["score"],
-                textual_explanation=f"Identified as {presidio_entity} by GLiNER",
-            )
-
-            recognizer_results.append(
-                RecognizerResult(
-                    entity_type=presidio_entity,
-                    start=prediction["start"],
-                    end=prediction["end"],
-                    score=prediction["score"],
-                    analysis_explanation=analysis_explanation,
-                )
-            )
-
-        return recognizer_results
+        return predictions
 
     def __create_input_labels(self, entities):
         """Append the entities requested by the user to the list of labels if it's not there."""  # noqa: E501
