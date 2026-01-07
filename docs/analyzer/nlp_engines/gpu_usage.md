@@ -31,10 +31,8 @@ Presidio supports GPU acceleration for NLP models, which can significantly impro
 
     No additional dependencies required. MPS is detected automatically.
 
-    ```bash
-    pip install presidio-analyzer
-    python -m spacy download en_core_web_trf
-    ```
+
+
 
 ## Verifying GPU Usage
 
