@@ -200,9 +200,10 @@ recognizers:
     type: predefined
     enabled: false
 
-  - name: OllamaLangExtractRecognizer
+  - name: e2eollama
     supported_languages:
       - en
     type: predefined
+    class_name: OllamaLangExtractRecognizer
     enabled: true
     config_path: e2e-tests/resources/ollama_test_config.yaml
