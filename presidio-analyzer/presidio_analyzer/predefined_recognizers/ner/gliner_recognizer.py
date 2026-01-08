@@ -10,7 +10,6 @@ from presidio_analyzer import (
 from presidio_analyzer.chunkers import (
     BaseTextChunker,
     CharacterBasedTextChunker,
-    predict_with_chunking,
 )
 from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts
 
@@ -179,10 +178,9 @@ class GLiNERRecognizer(LocalRecognizer):
                 )
             return results
 
-        predictions = predict_with_chunking(
+        predictions = self.text_chunker.predict_with_chunking(
             text=text,
             predict_func=predict_func,
-            chunker=self.text_chunker,
         )
 
         return predictions

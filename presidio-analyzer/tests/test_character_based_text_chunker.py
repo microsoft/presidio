@@ -144,19 +144,16 @@ class TestCharacterBasedTextChunker:
         assert "".join([c.text for c in result]) == text
 
     def test_default_parameters(self):
-        """Test chunker with default overlap (0)."""
-        chunker = CharacterBasedTextChunker(chunk_size=5)  # No overlap specified (default=0)
-        text = "1 2 3 4"  # 7 chars
+        """Test chunker with default parameters (250 chunk_size, 50 overlap)."""
+        chunker = CharacterBasedTextChunker()  # Uses defaults: chunk_size=250, chunk_overlap=50
+        assert chunker.chunk_size == 250
+        assert chunker.chunk_overlap == 50
+        
+        # Short text should produce single chunk
+        text = "Short text for testing"
         result = chunker.chunk(text)
-        # Chunk 1: "1 2 3" (5 chars, extends to word boundary at position 4)
-        # Chunk 2: starts at position 5: " 4" (remaining)
-        assert len(result) == 2
-        assert result[0].text == "1 2 3"
-        assert result[0].start == 0
-        assert result[0].end == 5
-        assert result[1].text == " 4"
-        assert result[1].start == 5
-        assert result[1].end == 7
+        assert len(result) == 1
+        assert result[0].text == text
 
     def test_very_long_text(self):
         """Test chunking very long text."""

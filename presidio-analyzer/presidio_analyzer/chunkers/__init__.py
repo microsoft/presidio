@@ -4,17 +4,28 @@ from presidio_analyzer.chunkers.base_chunker import BaseTextChunker, TextChunk
 from presidio_analyzer.chunkers.character_based_text_chunker import (
     CharacterBasedTextChunker,
 )
-from presidio_analyzer.chunkers.chunking_utils import (
-    deduplicate_overlapping_entities,
-    predict_with_chunking,
-    process_text_in_chunks,
-)
+
+_CHUNKER_REGISTRY = {
+    "character": CharacterBasedTextChunker,
+}
+
+
+def create_chunker(kind: str, **kwargs) -> BaseTextChunker:
+    """Factory helper for chunker selection by name.
+
+    Kept minimal to avoid over-abstraction while letting configs select a chunker.
+    """
+
+    try:
+        cls = _CHUNKER_REGISTRY[kind]
+    except KeyError as exc:  # pragma: no cover - defensive for config typos
+        raise ValueError(f"Unsupported chunker kind: {kind}") from exc
+    return cls(**kwargs)
+
 
 __all__ = [
     "BaseTextChunker",
     "TextChunk",
     "CharacterBasedTextChunker",
-    "predict_with_chunking",
-    "process_text_in_chunks",
-    "deduplicate_overlapping_entities",
+    "create_chunker",
 ]
