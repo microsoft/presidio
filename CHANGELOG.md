@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 ### Analyzer
 #### Changed
-- Fixed context enhancement substring matching bug where context words were incorrectly matched as substrings (e.g., 'lic' matching 'duplicate'). Now uses whole-word matching for accurate context detection (#1061)
+- Fixed context enhancement substring matching bug where context words were incorrectly matched as substrings (e.g., 'lic' matching 'duplicate'). Added configurable `context_matching_mode` parameter to `LemmaContextAwareEnhancer` with three options: "whole_word" (default, safer), "substring" (for compound words like "creditcard"), and "hybrid" (tries whole-word first, then substring) (#1061)
 
 ### Image Redactor
 #### Changed
