@@ -31,6 +31,7 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "it",
         supported_entity: str = "IT_DRIVER_LICENSE",
+        name: Optional[str] = None,
     ) -> None:
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -39,4 +40,5 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            name=name,
         )

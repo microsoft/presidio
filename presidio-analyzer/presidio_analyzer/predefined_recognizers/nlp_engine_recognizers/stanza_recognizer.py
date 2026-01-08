@@ -1,3 +1,5 @@
+from typing import Optional
+
 from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.spacy_recognizer import (  # noqa: E501
     SpacyRecognizer,
 )
@@ -12,6 +14,6 @@ class StanzaRecognizer(SpacyRecognizer):
     Stanza's interface with spaCy's
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, name: Optional[str] = None, **kwargs):
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace("Spacy", "Stanza")
-        super().__init__(**kwargs)
+        super().__init__(name=name, **kwargs)
