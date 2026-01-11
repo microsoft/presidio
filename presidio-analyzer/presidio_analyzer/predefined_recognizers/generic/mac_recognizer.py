@@ -1,5 +1,5 @@
-from typing import List, Optional
 import re
+from typing import List, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -54,18 +54,18 @@ class MacAddressRecognizer(PatternRecognizer):
         """
         # Remove separators and validate hex characters and length
         cleaned = re.sub(r'[:\-.]', '', pattern_text)
-        
+
         # MAC address must be exactly 12 hex characters
         if len(cleaned) != 12:
             return True
-        
+
         # All characters must be valid hex
         if not all(c in '0123456789ABCDEFabcdef' for c in cleaned):
             return True
-        
+
         # Optionally reject broadcast/multicast addresses if needed
         # Broadcast: FF:FF:FF:FF:FF:FF
         if cleaned.upper() == 'FFFFFFFFFFFF':
             return True
-        
+
         return False

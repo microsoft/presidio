@@ -75,9 +75,9 @@ from .generic.date_recognizer import DateRecognizer
 from .generic.email_recognizer import EmailRecognizer
 from .generic.iban_recognizer import IbanRecognizer
 from .generic.ip_recognizer import IpRecognizer
+from .generic.mac_recognizer import MacAddressRecognizer
 from .generic.phone_recognizer import PhoneRecognizer
 from .generic.url_recognizer import UrlRecognizer
-from .generic.mac_recognizer import MacAddressRecognizer
 
 # NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
