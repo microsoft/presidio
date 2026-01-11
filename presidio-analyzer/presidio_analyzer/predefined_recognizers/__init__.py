@@ -77,6 +77,7 @@ from .generic.iban_recognizer import IbanRecognizer
 from .generic.ip_recognizer import IpRecognizer
 from .generic.phone_recognizer import PhoneRecognizer
 from .generic.url_recognizer import UrlRecognizer
+from .generic.mac_recognizer import MacAddressRecognizer
 
 # NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
@@ -165,4 +166,5 @@ __all__ = [
     "AzureOpenAILangExtractRecognizer",
     "OllamaLangExtractRecognizer",
     "KrPassportRecognizer",
+    "MacAddressRecognizer",
 ]

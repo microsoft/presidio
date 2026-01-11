@@ -7,6 +7,7 @@ from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
 from .phone_recognizer import PhoneRecognizer
 from .url_recognizer import UrlRecognizer
+from .mac_recognizer import MacAddressRecognizer
 
 __all__ = [
     "CreditCardRecognizer",
@@ -16,4 +17,5 @@ __all__ = [
     "IpRecognizer",
     "PhoneRecognizer",
     "UrlRecognizer",
+    "MacAddressRecognizer",
 ]
