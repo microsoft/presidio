@@ -103,6 +103,23 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | KR_DRIVER_LICENSE    |  The Korean driver license number is a 12-digit number. | Pattern match, context and custom logic. |
 | KR_PASSPORT| The Korean Passport Number  | Pattern match, context. |
 
+### Germany
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| DE_BSNR | The German Betriebsstättennummer (BSNR) is a 9-digit facility identifier for healthcare providers. | Pattern match, context and checksum. |
+| DE_COMMERCIAL_REGISTER | German commercial register number (Handelsregisternummer) in formats like HRA/HRB 12345 for registered businesses. | Pattern match and context. |
+| DE_DRIVER_LICENSE | German driver license number (Führerscheinnummer), an 11-character alphanumeric identifier. | Pattern match and context. |
+| DE_KVNR | The German Krankenversichertennummer (KVNR) is a 10-character health insurance number starting with a letter. | Pattern match, context and checksum. |
+| DE_LANR | The German Lebenslange Arztnummer (LANR) is a 9-digit lifelong physician identifier. | Pattern match, context and checksum. |
+| DE_LICENSE_PLATE | German vehicle license plate (Kfz-Kennzeichen) in standard format like B-AB 1234. | Pattern match and context. |
+| DE_PASSPORT | German passport number (Reisepassnummer), a 9-character alphanumeric identifier. | Pattern match, context and checksum. |
+| DE_PERSONAL_ID | German personal identity card number (Personalausweisnummer), a 10-character alphanumeric identifier. | Pattern match, context and checksum. |
+| DE_POSTAL_CODE | German postal code (Postleitzahl/PLZ), a 5-digit number from 01001 to 99998. | Pattern match and context. |
+| DE_SOCIAL_SECURITY | German social security number (Sozialversicherungsnummer/SVNR), a 12-character identifier with area code and birthdate. | Pattern match, context and checksum. |
+| DE_TAX_ID | German tax identification number (Steuer-Identifikationsnummer), an 11-digit unique tax identifier. | Pattern match, context and checksum. |
+| DE_TELEMATIK_ID | German Telematik-ID for healthcare IT infrastructure, identifying patients and healthcare professionals. | Pattern match and context. |
+| DE_VAT_CODE | German VAT identification number (Umsatzsteuer-Identifikationsnummer), format DE followed by 9 digits. | Pattern match, context and checksum. |
+
 ### Thai
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|

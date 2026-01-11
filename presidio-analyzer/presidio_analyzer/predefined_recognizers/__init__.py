@@ -14,11 +14,34 @@ from .country_specific.australia.au_tfn_recognizer import AuTfnRecognizer
 from .country_specific.finland.fi_personal_identity_code_recognizer import (
     FiPersonalIdentityCodeRecognizer,
 )
+
+# Germany recognizers
+from .country_specific.germany.de_bsnr_recognizer import DeBsnrRecognizer
+from .country_specific.germany.de_commercial_register_recognizer import (
+    DeCommercialRegisterRecognizer,
+)
+from .country_specific.germany.de_driver_license_recognizer import (
+    DeDriverLicenseRecognizer,
+)
+from .country_specific.germany.de_kvnr_recognizer import DeKvnrRecognizer
+from .country_specific.germany.de_lanr_recognizer import DeLanrRecognizer
+from .country_specific.germany.de_license_plate_recognizer import (
+    DeLicensePlateRecognizer,
+)
+from .country_specific.germany.de_passport_recognizer import DePassportRecognizer
+from .country_specific.germany.de_personal_id_recognizer import DePersonalIdRecognizer
+from .country_specific.germany.de_postal_code_recognizer import DePostalCodeRecognizer
+from .country_specific.germany.de_social_security_recognizer import (
+    DeSocialSecurityRecognizer,
+)
+from .country_specific.germany.de_tax_id_recognizer import DeTaxIdRecognizer
+from .country_specific.germany.de_telematik_id_recognizer import DeTelematikIdRecognizer
+from .country_specific.germany.de_vat_code_recognizer import DeVatCodeRecognizer
+
+# India recognizers
 from .country_specific.india import (
     InVehicleRegistrationRecognizer,
 )
-
-# India recognizers
 from .country_specific.india.in_aadhaar_recognizer import InAadhaarRecognizer
 from .country_specific.india.in_gstin_recognizer import InGstinRecognizer
 from .country_specific.india.in_pan_recognizer import InPanRecognizer
@@ -115,6 +138,19 @@ NLP_RECOGNIZERS = {
 __all__ = [
     "AbaRoutingRecognizer",
     "CreditCardRecognizer",
+    "DeBsnrRecognizer",
+    "DeCommercialRegisterRecognizer",
+    "DeDriverLicenseRecognizer",
+    "DeKvnrRecognizer",
+    "DeLanrRecognizer",
+    "DeLicensePlateRecognizer",
+    "DePassportRecognizer",
+    "DePersonalIdRecognizer",
+    "DePostalCodeRecognizer",
+    "DeSocialSecurityRecognizer",
+    "DeTaxIdRecognizer",
+    "DeTelematikIdRecognizer",
+    "DeVatCodeRecognizer",
     "CryptoRecognizer",
     "DateRecognizer",
     "EmailRecognizer",
