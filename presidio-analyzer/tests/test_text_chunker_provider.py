@@ -5,6 +5,7 @@ import pytest
 from presidio_analyzer.chunkers import (
     TextChunkerProvider,
     CharacterBasedTextChunker,
+    LangChainTextChunker,
 )
 
 
@@ -35,4 +36,14 @@ class TestTextChunkerProvider:
         })
         with pytest.raises(ValueError, match="Unknown chunker_type"):
             provider.create_chunker()
+
+    def test_langchain_chunker_type(self):
+        """Provider creates LangChainTextChunker when type is 'langchain'."""
+        provider = TextChunkerProvider(chunker_configuration={
+            "chunker_type": "langchain",
+            "chunk_size": 300,
+        })
+        chunker = provider.create_chunker()
+        assert isinstance(chunker, LangChainTextChunker)
+        assert chunker.chunk_size == 300
 

@@ -7,12 +7,14 @@ from presidio_analyzer.chunkers.base_chunker import BaseTextChunker
 from presidio_analyzer.chunkers.character_based_text_chunker import (
     CharacterBasedTextChunker,
 )
+from presidio_analyzer.chunkers.langchain_text_chunker import LangChainTextChunker
 
 logger = logging.getLogger("presidio-analyzer")
 
 # Registry mapping chunker type names to classes
 _CHUNKER_REGISTRY: Dict[str, Type[BaseTextChunker]] = {
     "character": CharacterBasedTextChunker,
+    "langchain": LangChainTextChunker,
 }
 
 
