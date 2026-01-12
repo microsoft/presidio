@@ -37,26 +37,6 @@ class DePostalCodeRecognizer(PatternRecognizer):
         "stadt",
     ]
 
-    # Valid postal code ranges per German region (approximate)
-    # This is a simplified list; actual ranges are more complex
-    VALID_RANGES = {
-        "BW": (70000, 79999),  # Baden-Württemberg
-        "BY": (80000, 87999),  # Bavaria
-        "BE": (10000, 14999),  # Berlin
-        "BB": (14500, 19999),  # Brandenburg
-        "HB": (28000, 28999),  # Bremen
-        "HH": (20000, 21999),  # Hamburg
-        "HE": (60000, 65999),  # Hesse
-        "MV": (17000, 18999),  # Mecklenburg-Vorpommern
-        "NI": (20000, 49999),  # Lower Saxony
-        "NW": (40000, 59999),  # North Rhine-Westphalia
-        "RP": (50000, 57999),  # Rhineland-Palatinate
-        "SL": (66000, 66999),  # Saarland
-        "SN": (1000, 9999),    # Saxony (includes leading zero)
-        "ST": (6000, 39999),   # Saxony-Anhalt
-        "SH": (22000, 25999),  # Schleswig-Holstein
-        "TH": (97000, 99999),  # Thuringia
-    }
 
     def __init__(
         self,

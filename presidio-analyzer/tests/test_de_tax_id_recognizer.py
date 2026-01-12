@@ -1,6 +1,6 @@
 import pytest
 
-from tests import assert_result, assert_result_within_score_range
+from tests import assert_result_within_score_range
 from presidio_analyzer.predefined_recognizers import DeTaxIdRecognizer
 
 

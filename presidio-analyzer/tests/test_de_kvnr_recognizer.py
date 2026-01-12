@@ -32,8 +32,8 @@ def entities():
         ("1123456789", 0, (), ()),
 
         # Invalid - lowercase letter (regex matches uppercase only)
-        # But the checksum also validates it after uppercase conversion
-        ("a123456780", 1, ((0, 10),), ((0.4, 1.0),)),
+        # Checksum would validate it after uppercase conversion, but regex should not match
+        ("a123456780", 0, (), ()),
 
         # Invalid - too short
         ("A12345678", 0, (), ()),

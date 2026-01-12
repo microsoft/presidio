@@ -53,25 +53,6 @@ class DeLicensePlateRecognizer(PatternRecognizer):
         "fahrzeugregistrierung",
     ]
 
-    # German state codes for license plates
-    STATE_CODES = {
-        "B": "Berlin",
-        "M": "Munich",
-        "K": "Cologne",
-        "F": "Frankfurt",
-        "H": "Hamburg",
-        "HH": "Hamburg",
-        "DU": "Duesseldorf",
-        "D": "Duesseldorf",
-        "P": "Dortmund",
-        "E": "Essen",
-        "S": "Stuttgart",
-        "W": "Wuppertal",
-        "L": "Leipzig",
-        "DD": "Dresden",
-        "KL": "Kaiserslautern",
-    }
-
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,

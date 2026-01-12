@@ -94,8 +94,8 @@ class DePassportRecognizer(PatternRecognizer):
         if pattern_text[0] not in valid_prefixes:
             return None  # Could still be valid older format
 
-        # German passport uses forbidden characters: A, E, I, O, U (vowels)
-        forbidden_chars = set("ABEIOQU")
+        # German passport uses forbidden characters: A, B, D, E, I, O, Q, S, U
+        forbidden_chars = set("ABDEIOQSU")
         if any(c in forbidden_chars for c in pattern_text):
             return False
 

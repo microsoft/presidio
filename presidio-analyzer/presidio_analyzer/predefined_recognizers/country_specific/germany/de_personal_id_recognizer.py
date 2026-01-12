@@ -92,7 +92,7 @@ class DePersonalIdRecognizer(PatternRecognizer):
 
         # German ID uses forbidden characters: A, E, I, O, U (vowels) and some others
         # Valid characters are: 0-9, C, F, G, H, J, K, L, M, N, P, R, T, V, W, X, Y, Z
-        forbidden_chars = set("ABEIOQSU")
+        forbidden_chars = set("ABDEIOQSU")
         if any(c in forbidden_chars for c in pattern_text):
             return False
 
