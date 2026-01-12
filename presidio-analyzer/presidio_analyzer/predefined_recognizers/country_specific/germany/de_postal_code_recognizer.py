@@ -7,7 +7,7 @@ class DePostalCodeRecognizer(PatternRecognizer):
     """
     Recognize German Postleitzahl (Postal Code) using regex.
 
-    German postal codes are 5 digits (01000 - 99999).
+    German postal codes are 5 digits (01001 - 99998).
     Geographic regions use specific ranges, but regex validation is flexible.
 
     :param patterns: List of patterns to be used by this recognizer
@@ -72,9 +72,9 @@ class DePostalCodeRecognizer(PatternRecognizer):
         if not pattern_text.isdigit():
             return False
 
-        # Check if in valid range (01000 - 99999)
+        # Check if in valid range (01001 - 99998)
         postal_code = int(pattern_text)
-        if postal_code < 1000 or postal_code > 99999:
+        if postal_code < 1001 or postal_code > 99998:
             return False
 
         return None  # Return None to use pattern score (no definitive validation)
