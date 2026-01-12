@@ -9,7 +9,7 @@ from presidio_analyzer import (
 )
 from presidio_analyzer.chunkers import (
     BaseTextChunker,
-    CharacterBasedTextChunker,
+    LangChainTextChunker,
 )
 from presidio_analyzer.nlp_engine import NerModelConfiguration, NlpArtifacts
 
@@ -60,7 +60,7 @@ class GLiNERRecognizer(LocalRecognizer):
         (see GLiNER's documentation)
         :param map_location: The device to use for the model
         :param text_chunker: Custom text chunking strategy. If None, uses
-            CharacterBasedTextChunker with default settings (chunk_size=250,
+            LangChainTextChunker with default settings (chunk_size=250,
             chunk_overlap=50)
 
 
@@ -95,11 +95,11 @@ class GLiNERRecognizer(LocalRecognizer):
         self.multi_label = multi_label
         self.threshold = threshold
 
-        # Use provided chunker or default to CharacterBasedTextChunker
+        # Use provided chunker or default to LangChainTextChunker
         self.text_chunker = (
             text_chunker
             if text_chunker is not None
-            else CharacterBasedTextChunker(chunk_size=250, chunk_overlap=50)
+            else LangChainTextChunker(chunk_size=250, chunk_overlap=50)
         )
 
         self.gliner = None

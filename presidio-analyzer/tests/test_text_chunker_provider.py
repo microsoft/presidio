@@ -4,7 +4,6 @@ import pytest
 
 from presidio_analyzer.chunkers import (
     TextChunkerProvider,
-    CharacterBasedTextChunker,
     LangChainTextChunker,
 )
 
@@ -12,16 +11,16 @@ from presidio_analyzer.chunkers import (
 class TestTextChunkerProvider:
     """Test TextChunkerProvider."""
 
-    def test_default_creates_character_chunker(self):
-        """Default provider creates CharacterBasedTextChunker."""
+    def test_default_creates_langchain_chunker(self):
+        """Default provider creates LangChainTextChunker."""
         provider = TextChunkerProvider()
         chunker = provider.create_chunker()
-        assert isinstance(chunker, CharacterBasedTextChunker)
+        assert isinstance(chunker, LangChainTextChunker)
 
     def test_custom_params_passed_to_chunker(self):
         """Custom parameters are passed to chunker."""
         provider = TextChunkerProvider(chunker_configuration={
-            "chunker_type": "character",
+            "chunker_type": "langchain",
             "chunk_size": 500,
             "chunk_overlap": 100,
         })
