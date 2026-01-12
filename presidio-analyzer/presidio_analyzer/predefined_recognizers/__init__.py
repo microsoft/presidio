@@ -123,6 +123,7 @@ __all__ = [
     "IpRecognizer",
     "NhsRecognizer",
     "MedicalLicenseRecognizer",
+    "MacAddressRecognizer",
     "PhoneRecognizer",
     "SgFinRecognizer",
     "UrlRecognizer",
@@ -166,5 +167,4 @@ __all__ = [
     "AzureOpenAILangExtractRecognizer",
     "OllamaLangExtractRecognizer",
     "KrPassportRecognizer",
-    "MacAddressRecognizer",
 ]
