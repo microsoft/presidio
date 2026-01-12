@@ -33,6 +33,9 @@ class KrFrnRecognizer(KrRrnRecognizer):
     :param context: List of context words to increase confidence in detection
     :param supported_language: Language this recognizer supports
     :param supported_entity: The entity this recognizer can detect
+    :param replacement_pairs: List of tuples with potential replacement values
+    for different strings to be used during pattern matching.
+    This can allow a greater variety in input, for example by removing dashes.
     """
 
     PATTERNS = [
@@ -59,6 +62,7 @@ class KrFrnRecognizer(KrRrnRecognizer):
         supported_language: str = "ko",
         supported_entity: str = "KR_FRN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        name: Optional[str] = None,
     ):
         super().__init__(
             patterns=patterns if patterns else self.PATTERNS,
@@ -66,6 +70,7 @@ class KrFrnRecognizer(KrRrnRecognizer):
             supported_language=supported_language,
             supported_entity=supported_entity,
             replacement_pairs=replacement_pairs,
+            name=name,
         )
 
     def _validate_checksum(self, frn: str) -> bool:

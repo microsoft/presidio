@@ -1,7 +1,7 @@
 import pytest
 
 from tests import assert_result_within_score_range
-from presidio_analyzer.predefined_recognizers.country_specific.korea.kr_frn_recognizer import KrFrnRecognizer   
+from presidio_analyzer.predefined_recognizers.country_specific.korea.kr_frn_recognizer import KrFrnRecognizer
 
 @pytest.fixture(scope="module")
 def recognizer():
@@ -26,7 +26,7 @@ def entities():
         ("9111245678906", 1, ((0, 13),), ((1.0, 1.0),), ),
         ("050912-6000012", 1, ((0, 14),), ((1.0, 1.0),), ),
         ("0509126000012", 1, ((0, 13),), ((1.0, 1.0),), ),
-        ("His RRN is 9111245678906", 1, ((11, 24),), ((1.0, 1.0),), ),
+        ("His FRN is 9111245678906", 1, ((11, 24),), ((1.0, 1.0),), ),
 
         # Invalid FRNs 
         ("001332-1234567", 0, (), (),),

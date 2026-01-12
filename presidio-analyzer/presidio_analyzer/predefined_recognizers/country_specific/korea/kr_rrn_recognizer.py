@@ -113,6 +113,16 @@ class KrRrnRecognizer(PatternRecognizer):
         return True if 0 <= region_code <= 95 else False
 
     def _compute_checksum(self, rn: str) -> int:
+        """
+        Compute the weighted digit sum used for the RRN checksum calculation.
+
+        The sum is calculated over the first 12 digits of the RRN using
+        the weights [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5].
+
+        :param rn: The resident registration number as a string.
+            Only the first 12 digits are used in the computation.
+        :return: The integer sum of the products of digits and weights.
+        """
         weights = [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5]
         return sum(int(rn[i]) * weights[i] for i in range(12))
 
