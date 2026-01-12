@@ -11,6 +11,8 @@ from presidio_analyzer import Pattern, PatternRecognizer
 # http://rosettacode.org/wiki/Bitcoin/address_validation#Python
 # The Bech32/Bech32m address validation algorithm by Pieter Wuille can be found
 # at: https://github.com/sipa/bech32/blob/master/ref/python/segwit_addr.py
+# The Ethereum address validation algorithm follows EIP-55 (Mixed-case checksum):
+# https://github.com/ethereum/ercs/blob/master/ERCS/erc-55.md
 
 # Constants for encoding types
 BECH32 = 1
@@ -57,6 +59,8 @@ class CryptoRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> bool:
         """Validate the Bitcoin address using checksum.
+
+        Supports Bitcoin (P2PKH, P2SH, Bech32, Bech32m) and Ethereum (EIP-55).
 
         :param pattern_text: The cryptocurrency address to validate.
         :return: True if the address is valid according to its respective
