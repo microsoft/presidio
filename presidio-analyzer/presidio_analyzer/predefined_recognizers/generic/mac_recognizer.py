@@ -12,6 +12,10 @@ class MacAddressRecognizer(PatternRecognizer):
     - Colon-separated: 00:1A:2B:3C:4D:5E
     - Hyphen-separated: 00-1A-2B-3C-4D-5E
     - Cisco format (dot-separated groups of 4): 0012.3456.789A
+
+    ref : 
+    - https://en.wikipedia.org/wiki/MAC_address#Notational_conventions
+    - https://www.ieee802.org/1/files/public/docs2020/yangsters-smansfield-mac-address-format-0420-v01.pdf
     """
 
     PATTERNS = [
