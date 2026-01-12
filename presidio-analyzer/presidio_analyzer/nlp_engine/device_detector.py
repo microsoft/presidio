@@ -1,15 +1,18 @@
 """GPU/CPU device detection for Presidio NLP engines.
 
-This module creates a single, process-wide DeviceDetector instance.
-Consumers may import and use the shared instance directly.
+This module provides lazy device detection using module-level __getattr__.
+Access via `device_detector` attribute which is lazily initialized on first use.
 
-The detector is initialized once at import time and is intended to be
-read-only in practice.
+Usage:
+    from presidio_analyzer.nlp_engine.device_detector import device_detector
+    device = device_detector.get_device()
 """
 
 import logging
 
 logger = logging.getLogger("presidio-analyzer")
+
+_detector_instance = None
 
 
 class DeviceDetector:
@@ -30,26 +33,25 @@ class DeviceDetector:
         """Detect PyTorch CUDA support once."""
         try:
             import torch
-        except ImportError:
-            logger.info("PyTorch not available, using CPU")
-            return
-
-        # 1) CUDA (NVIDIA)
-        if torch.cuda.is_available():
-            try:
+            if torch.cuda.is_available():
                 _ = str(torch.tensor([1.0], device="cuda"))
                 _ = torch.cuda.get_device_name(0)
                 torch.cuda.get_device_capability(0)
                 torch.cuda.empty_cache()
                 self._device = "cuda"
-                return
-            except Exception as e:
-                logger.warning(f"PyTorch CUDA initialization failed, falling back: {e}")
+        except Exception as e:
+            logger.warning(f"Device detection failed, falling back to CPU: {e}")
 
     def get_device(self) -> str:
         """Return device string ('cuda' or 'cpu')."""
         return self._device
 
 
-# Shared, process-wide instance
-device_detector = DeviceDetector()
+def __getattr__(name: str):
+    """Lazily initialize device_detector on first access."""
+    if name == "device_detector":
+        global _detector_instance
+        if _detector_instance is None:
+            _detector_instance = DeviceDetector()
+        return _detector_instance
+    raise AttributeError(f"module {__name__} has no attribute {name}")
