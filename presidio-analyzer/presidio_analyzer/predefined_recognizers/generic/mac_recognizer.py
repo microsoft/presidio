@@ -20,12 +20,12 @@ class MacAddressRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "MAC_ADDRESS",
+            "MAC_COLON_OR_HYPHEN",
             r"\b[0-9A-Fa-f]{2}([:-])(?:[0-9A-Fa-f]{2}\1){4}[0-9A-Fa-f]{2}\b",
             0.6,
         ),
         Pattern(
-            "MAC_CISCO",
+            "MAC_CISCO_DOT",
             r"\b[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}\b",
             0.6,
         ),
@@ -59,12 +59,8 @@ class MacAddressRecognizer(PatternRecognizer):
         # Remove separators and validate hex characters and length
         cleaned = re.sub(r'[:\-.]', '', pattern_text)
 
-        # MAC address must be exactly 12 hex characters
-        if len(cleaned) != 12:
-            return True
-
         # All characters must be valid hex
-        if not all(c in '0123456789ABCDEFabcdef' for c in cleaned):
+        if re.fullmatch(r"[0-9A-Fa-f]{12}", cleaned) is None:
             return True
 
         # Optionally reject broadcast/multicast addresses if needed
