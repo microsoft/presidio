@@ -61,6 +61,15 @@ with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
         
         Stanza models would be loaded lazily. To pre-load them, see: [Downloading a pre-trained model](./analyzer/nlp_engines/spacy_stanza.md#download-the-pre-trained-model).
 
+### GPU acceleration (optional)
+
+For GPU acceleration, install the appropriate dependencies for your hardware:
+
+- **Linux with NVIDIA GPU**: `pip install "spacy[cuda12x]"` (or the version matching your CUDA installation)
+- **macOS with Apple Silicon**: MPS is detected automatically, no additional dependencies required.
+
+For detailed GPU setup, verification, and troubleshooting, see [GPU Acceleration](./analyzer/nlp_engines/gpu_usage.md).
+
 ### PII redaction in images
 
 For PII redaction in images
