@@ -14,6 +14,7 @@ from presidio_anonymizer.operators import (
     Mask,
     Operator,
     OperatorType,
+    Pseudonymize,
     Redact,
     Replace,
 )
@@ -21,7 +22,7 @@ from presidio_anonymizer.operators import (
 logger = logging.getLogger("presidio-anonymizer")
 
 # Predefined operators
-ANONYMIZERS = [Custom, Encrypt, Hash, Keep, Mask, Redact, Replace]
+ANONYMIZERS = [Custom, Encrypt, Hash, Keep, Mask, Pseudonymize, Redact, Replace]
 if AHDS_AVAILABLE and AHDSSurrogate:
     ANONYMIZERS.append(AHDSSurrogate)
 

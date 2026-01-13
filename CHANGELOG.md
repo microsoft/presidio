@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 #### Added
 - US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (@chrisvoncsefalvay)
 
+### Anonymizer
+#### Added
+- Pseudonymize operator for generating realistic fake data using Faker library with support for multiple locales, consistent mapping, and reproducible results via seed parameter
+
 ## [unreleased]
 ### Image Redactor
 #### Changed
