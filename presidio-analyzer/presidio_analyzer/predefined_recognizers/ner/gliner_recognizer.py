@@ -7,10 +7,7 @@ from presidio_analyzer import (
     LocalRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.chunkers import (
-    BaseTextChunker,
-    LangChainTextChunker,
-)
+from presidio_analyzer.chunkers import BaseTextChunker
 from presidio_analyzer.nlp_engine import (
     NerModelConfiguration,
     NlpArtifacts,
@@ -22,6 +19,11 @@ try:
 except ImportError:
     GLiNER = None
     GLiNERConfig = None
+
+try:
+    from presidio_analyzer.chunkers import LangChainTextChunker
+except ImportError:
+    LangChainTextChunker = None
 
 
 logger = logging.getLogger("presidio-analyzer")
@@ -107,11 +109,13 @@ class GLiNERRecognizer(LocalRecognizer):
         self.threshold = threshold
 
         # Use provided chunker or default to LangChainTextChunker
-        self.text_chunker = (
-            text_chunker
-            if text_chunker is not None
-            else LangChainTextChunker(chunk_size=250, chunk_overlap=50)
-        )
+        if text_chunker is not None:
+            self.text_chunker = text_chunker
+        else:
+            if LangChainTextChunker is None:
+                raise ImportError("langchain-text-splitters is required for GLiNER chunking.")
+
+            self.text_chunker = LangChainTextChunker()
 
         self.gliner = None
 
@@ -198,7 +202,7 @@ class GLiNERRecognizer(LocalRecognizer):
 
     def __create_input_labels(self, entities):
         """Append the entities requested by the user to the list of labels if it's not there."""  # noqa: E501
-        labels = self.gliner_labels
+        labels = list(self.gliner_labels)
         for entity in entities:
             if (
                 entity not in self.model_to_presidio_entity_mapping.values()

@@ -12,7 +12,7 @@ class TestLangChainTextChunkerInit:
         """Test default initialization values."""
         chunker = LangChainTextChunker()
         assert chunker.chunk_size == 250
-        assert chunker.chunk_overlap == 0
+        assert chunker.chunk_overlap == 50
 
     def test_custom_chunk_size(self):
         """Test custom chunk size."""

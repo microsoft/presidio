@@ -17,12 +17,19 @@ class LangChainTextChunker(BaseTextChunker):
     Requires: pip install langchain-text-splitters
     """
 
-    def __init__(self, chunk_size: int = 250, chunk_overlap: int = 0):
+    def __init__(self, chunk_size: int = 250, chunk_overlap: int = 50):
         """Initialize the chunker.
 
         :param chunk_size: Maximum characters per chunk
         :param chunk_overlap: Characters to overlap between chunks
         """
+        if chunk_size <= 0:
+            raise ValueError("chunk_size must be positive")
+        if chunk_overlap < 0:
+            raise ValueError("chunk_overlap cannot be negative")
+        if chunk_overlap >= chunk_size:
+            raise ValueError("chunk_overlap must be smaller than chunk_size")
+
         self._chunk_size = chunk_size
         self._chunk_overlap = chunk_overlap
         self._splitter = RecursiveCharacterTextSplitter(

@@ -88,6 +88,8 @@ def test_analyze_with_unsupported_entity(mock_gliner):
         supported_entities=entities,
     )
 
+    gliner_recognizer.gliner = mock_gliner
+
     results = gliner_recognizer.analyze(text, entities)
 
     # Should filter out unsupported entities
@@ -106,6 +108,8 @@ def test_analyze_with_entity_mapping(mock_gliner):
     gliner_recognizer = GLiNERRecognizer(
         entity_mapping=entity_mapping,
     )
+
+    gliner_recognizer.gliner = mock_gliner
 
     results = gliner_recognizer.analyze(text, ["ORG"])
 

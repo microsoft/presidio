@@ -22,7 +22,8 @@ class TextChunkerProvider:
 
             {"chunker_type": "langchain", "chunk_size": 300, "chunk_overlap": 75}
 
-    If no configuration provided, uses langchain chunker with default params.
+    If no configuration provided, uses langchain chunker with default params
+    tuned for boundary coverage (chunk_size=250, chunk_overlap=50).
     Requires: pip install langchain-text-splitters
     """
 
@@ -30,8 +31,11 @@ class TextChunkerProvider:
         self,
         chunker_configuration: Optional[Dict[str, Any]] = None,
     ):
+        # Default to a safe overlap to avoid boundary losses for cross-chunk entities.
         self.chunker_configuration = chunker_configuration or {
-            "chunker_type": "langchain"
+            "chunker_type": "langchain",
+            "chunk_size": 250,
+            "chunk_overlap": 50,
         }
 
     def create_chunker(self) -> BaseTextChunker:
