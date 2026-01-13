@@ -42,9 +42,8 @@ class GLiNERRecognizer(LocalRecognizer):
         flat_ner: bool = True,
         multi_label: bool = False,
         threshold: float = 0.30,
-        map_location: str = "cpu",
-        text_chunker: Optional[BaseTextChunker] = None,
         map_location: Optional[str] = None,
+        text_chunker: Optional[BaseTextChunker] = None,
     ):
         """GLiNER model based entity recognizer.
 
@@ -63,12 +62,11 @@ class GLiNERRecognizer(LocalRecognizer):
         (see GLiNER's documentation)
         :param threshold: The threshold for the model's output
         (see GLiNER's documentation)
-        :param map_location: The device to use for the model
+        :param map_location: The device to use for the model.
+            If None, will auto-detect GPU or use CPU.
         :param text_chunker: Custom text chunking strategy. If None, uses
             LangChainTextChunker with default settings (chunk_size=250,
             chunk_overlap=50)
-        :param map_location: The device to use for the model.
-        If None, will auto-detect GPU or use CPU.
 
 
         """
