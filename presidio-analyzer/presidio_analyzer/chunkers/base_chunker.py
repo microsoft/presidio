@@ -1,7 +1,7 @@
 """Abstract base class for text chunking strategies."""
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Callable, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, List
 
 if TYPE_CHECKING:
     from presidio_analyzer import RecognizerResult
@@ -10,11 +10,12 @@ if TYPE_CHECKING:
 @dataclass
 class TextChunk:
     """Represents a chunk of text with its position in the original text.
-    
+
     :param text: The chunk content
     :param start: Start position in the original text (inclusive)
     :param end: End position in the original text (exclusive)
     """
+
     text: str
     start: int
     end: int
@@ -22,10 +23,10 @@ class TextChunk:
 
 class BaseTextChunker(ABC):
     """Abstract base class for text chunking strategies.
-    
+
     Subclasses must implement the chunk() method to split text into
     TextChunk objects that include both content and position information.
-    
+
     Provides methods for processing predictions across chunks and
     deduplicating overlapping entities.
     """
@@ -50,7 +51,8 @@ class BaseTextChunker(ABC):
         For long text, chunks it and merges predictions with deduplication.
 
         :param text: Input text to process
-        :param predict_func: Function that takes text and returns RecognizerResult objects
+        :param predict_func: Function that takes text and returns
+            RecognizerResult objects
         :return: List of RecognizerResult with correct offsets
         """
         chunks = self.chunk(text)
@@ -70,7 +72,8 @@ class BaseTextChunker(ABC):
         """Process text chunks and adjust entity offsets.
 
         :param chunks: List of TextChunk objects with text and position information
-        :param process_func: Function that takes chunk text and returns RecognizerResult objects
+        :param process_func: Function that takes chunk text and returns
+            RecognizerResult objects
         :return: List of RecognizerResult with adjusted offsets
         """
         all_predictions = []
@@ -120,7 +123,8 @@ class BaseTextChunker(ABC):
                         pred_len = pred.end - pred.start
                         kept_len = kept.end - kept.start
 
-                        # Skip zero-length spans to avoid division by zero and malformed data
+                        # Skip zero-length spans to avoid division by zero
+                        # and malformed data
                         if pred_len <= 0 or kept_len <= 0:
                             continue
 

@@ -66,9 +66,13 @@ class LangChainTextChunker(BaseTextChunker):
             # Ensure the chunk_text actually appears at or after the cursor.
             offset = text.find(chunk_text, cursor)
             if offset == -1:
-                raise ValueError("Chunk text not found in source; chunking misalignment detected")
+                raise ValueError(
+                    "Chunk text not found in source; chunking misalignment detected"
+                )
             if offset < cursor:
-                raise ValueError("Chunk offsets would go backwards; chunking misalignment detected")
+                raise ValueError(
+                    "Chunk offsets would go backwards; chunking misalignment detected"
+                )
 
             chunks.append(TextChunk(
                 text=chunk_text,

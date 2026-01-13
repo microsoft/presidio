@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from presidio_analyzer import (
     AnalysisExplanation,
@@ -113,9 +113,14 @@ class GLiNERRecognizer(LocalRecognizer):
             self.text_chunker = text_chunker
         else:
             if LangChainTextChunker is None:
-                raise ImportError("langchain-text-splitters is required for GLiNER chunking.")
+                raise ImportError(
+                    "langchain-text-splitters is required for GLiNER chunking."
+                )
 
-            self.text_chunker = LangChainTextChunker()
+            self.text_chunker = LangChainTextChunker(
+                chunk_size=250,
+                chunk_overlap=50,
+            )
 
         self.gliner = None
 
@@ -164,24 +169,24 @@ class GLiNERRecognizer(LocalRecognizer):
                 threshold=self.threshold,
                 multi_label=self.multi_label,
             )
-            
+
             # Convert dicts to RecognizerResult objects
             results = []
             for pred in gliner_predictions:
                 presidio_entity = self.model_to_presidio_entity_mapping.get(
                     pred["label"], pred["label"]
                 )
-                
+
                 # Filter by requested entities
                 if entities and presidio_entity not in entities:
                     continue
-                
+
                 analysis_explanation = AnalysisExplanation(
                     recognizer=self.name,
                     original_score=pred["score"],
                     textual_explanation=f"Identified as {presidio_entity} by GLiNER",
                 )
-                
+
                 results.append(
                     RecognizerResult(
                         entity_type=presidio_entity,
