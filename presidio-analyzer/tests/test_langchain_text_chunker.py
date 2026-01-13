@@ -16,7 +16,7 @@ class TestLangChainTextChunkerInit:
 
     def test_custom_chunk_size(self):
         """Test custom chunk size."""
-        chunker = LangChainTextChunker(chunk_size=100)
+        chunker = LangChainTextChunker(chunk_size=100, chunk_overlap=10)
         assert chunker.chunk_size == 100
 
     def test_custom_chunk_overlap(self):
@@ -40,12 +40,12 @@ class TestLangChainTextChunkerChunk:
 
     def test_empty_text(self):
         """Test chunking empty text returns empty list."""
-        chunker = LangChainTextChunker(chunk_size=50)
+        chunker = LangChainTextChunker(chunk_size=50, chunk_overlap=10)
         assert chunker.chunk("") == []
 
     def test_short_text_single_chunk(self):
         """Test text shorter than chunk_size returns single chunk."""
-        chunker = LangChainTextChunker(chunk_size=100)
+        chunker = LangChainTextChunker(chunk_size=100, chunk_overlap=10)
         text = "Hello world"
         chunks = chunker.chunk(text)
 
@@ -56,7 +56,7 @@ class TestLangChainTextChunkerChunk:
 
     def test_splits_on_paragraph(self):
         """Test splitting on paragraph separator (\\n\\n)."""
-        chunker = LangChainTextChunker(chunk_size=30)
+        chunker = LangChainTextChunker(chunk_size=30, chunk_overlap=10)
         text = "First paragraph.\n\nSecond paragraph."
         chunks = chunker.chunk(text)
 
@@ -66,7 +66,7 @@ class TestLangChainTextChunkerChunk:
 
     def test_splits_on_newline(self):
         """Test splitting on newline when paragraphs too large."""
-        chunker = LangChainTextChunker(chunk_size=20)
+        chunker = LangChainTextChunker(chunk_size=20, chunk_overlap=10)
         text = "Line one.\nLine two.\nLine three."
         chunks = chunker.chunk(text)
 
@@ -78,7 +78,7 @@ class TestLangChainTextChunkerChunk:
 
     def test_offset_calculation(self):
         """Test that offsets are correctly calculated."""
-        chunker = LangChainTextChunker(chunk_size=20)
+        chunker = LangChainTextChunker(chunk_size=20, chunk_overlap=10)
         text = "First part.\n\nSecond part."
         chunks = chunker.chunk(text)
 
@@ -88,7 +88,7 @@ class TestLangChainTextChunkerChunk:
 
     def test_returns_textchunk_objects(self):
         """Test that chunk returns TextChunk objects."""
-        chunker = LangChainTextChunker(chunk_size=50)
+        chunker = LangChainTextChunker(chunk_size=50, chunk_overlap=10)
         chunks = chunker.chunk("Some text here")
 
         assert all(isinstance(c, TextChunk) for c in chunks)
@@ -99,7 +99,7 @@ class TestLangChainTextChunkerIntegration:
 
     def test_long_text_chunking(self):
         """Test chunking of longer text."""
-        chunker = LangChainTextChunker(chunk_size=100)
+        chunker = LangChainTextChunker(chunk_size=100, chunk_overlap=10)
         text = """This is a long document with multiple paragraphs.
 
 Each paragraph contains some important information.
@@ -120,7 +120,7 @@ Finally, it uses spaces as a last resort."""
 
     def test_uses_langchain_splitter(self):
         """Test that LangChain's splitter is actually being used."""
-        chunker = LangChainTextChunker(chunk_size=50)
+        chunker = LangChainTextChunker(chunk_size=50, chunk_overlap=10)
         # Verify the internal splitter exists
         assert hasattr(chunker, "_splitter")
         from langchain_text_splitters import RecursiveCharacterTextSplitter
