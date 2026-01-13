@@ -22,11 +22,14 @@ def entities():
         ("My MAC address is 00:1A:2B:3C:4D:5E", 1, ((18, 35),), ((0.6, 0.6),)),
         ("Device MAC: AA:BB:CC:DD:EE:FF", 1, ((12, 29),), ((0.6, 0.6),)),
         ("MAC: 01:23:45:67:89:AB", 1, ((5, 22),), ((0.6, 0.6),)),
+        ("Lowercase MAC: 0a:23:f5:67:89:ac", 1, ((15, 32),), ((0.6, 0.6),)),
         
         # Hyphen-separated format
         ("My MAC address is 00-1A-2B-3C-4D-5E", 1, ((18, 35),), ((0.6, 0.6),)),
         ("Hardware address: AA-BB-CC-DD-EE-FF", 1, ((18, 35),), ((0.6, 0.6),)),
         ("MAC: 01-23-45-67-89-AB", 1, ((5, 22),), ((0.6, 0.6),)),
+        ("Lowercase MAC: 01-b3-4a-67-d9-cf", 1, ((15, 32),), ((0.6, 0.6),)),
+        ("Mixedcase MAC: 0d-B3-4a-6A-d9-cF", 1, ((15, 32),), ((0.6, 0.6),)),
         
         # Cisco dot-separated format
         ("Cisco MAC: 0012.3456.789A", 1, ((11, 25),), ((0.6, 0.6),)),
