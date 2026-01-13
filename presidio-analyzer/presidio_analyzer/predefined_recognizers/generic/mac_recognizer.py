@@ -21,7 +21,7 @@ class MacAddressRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "MAC_ADDRESS",
-            r"\b([0-9A-Fa-f]{2}[:\-]){5}[0-9A-Fa-f]{2}\b",
+            r"\b[0-9A-Fa-f]{2}([:-])(?:[0-9A-Fa-f]{2}\1){4}[0-9A-Fa-f]{2}\b",
             0.6,
         ),
         Pattern(
@@ -69,7 +69,7 @@ class MacAddressRecognizer(PatternRecognizer):
 
         # Optionally reject broadcast/multicast addresses if needed
         # Broadcast: FF:FF:FF:FF:FF:FF
-        if cleaned.upper() == 'FFFFFFFFFFFF':
+        if cleaned.upper() == 'FFFFFFFFFFFF' or cleaned.upper() == '000000000000':
             return True
 
         return False
