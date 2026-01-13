@@ -44,6 +44,8 @@ def entities():
         ("Not a MAC: 00:1A:2B:3C:4D", 0, (), ()),  # Too short
         ("Invalid: ZZ:ZZ:ZZ:ZZ:ZZ:ZZ", 0, (), ()),  # Invalid hex
         ("Broadcast: FF:FF:FF:FF:FF:FF", 0, (), ()),  # Broadcast address (filtered by invalidate_result)
+        ("Invalid: 00:00:00:00:00:00", 0, (), ()),
+        ("Mixed test cases for hyphens and colons: 10:2F:33-AC-29-C3", 0, (), ()),
         # fmt: on
     ],
 )
