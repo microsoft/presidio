@@ -51,18 +51,27 @@ class LangChainTextChunker(BaseTextChunker):
 
         chunks_text = self._splitter.split_text(text)
 
-        # Calculate offsets (LangChain doesn't provide them)
+        # Calculate offsets deterministically using a running cursor to avoid
+        # ambiguous find() matches when chunks repeat.
         chunks = []
-        search_start = 0
+        cursor = 0
         for chunk_text in chunks_text:
-            offset = text.find(chunk_text, search_start)
+            # Ensure the chunk_text actually appears at or after the cursor.
+            offset = text.find(chunk_text, cursor)
             if offset == -1:
-                offset = search_start
+                raise ValueError("Chunk text not found in source; chunking misalignment detected")
+            if offset < cursor:
+                raise ValueError("Chunk offsets would go backwards; chunking misalignment detected")
+
             chunks.append(TextChunk(
                 text=chunk_text,
                 start=offset,
                 end=offset + len(chunk_text),
             ))
-            search_start = offset + len(chunk_text) - self._chunk_overlap
+
+            # Advance cursor accounting for configured overlap
+            cursor = offset + len(chunk_text) - self._chunk_overlap
+            if cursor < offset:
+                cursor = offset
 
         return chunks

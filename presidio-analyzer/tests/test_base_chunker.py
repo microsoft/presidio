@@ -92,3 +92,34 @@ class TestDeduplicateOverlappingEntities:
 
         assert result[0].start == 0
         assert result[1].start == 20
+
+    def test_zero_length_span_does_not_raise(self):
+        """Zero-length spans should not cause ZeroDivisionError."""
+        chunker = LangChainTextChunker()
+        predictions = [
+            RecognizerResult(entity_type="PERSON", start=5, end=5, score=0.9),
+            RecognizerResult(entity_type="PERSON", start=0, end=10, score=0.8),
+        ]
+
+        # Should not raise ZeroDivisionError
+        result = chunker.deduplicate_overlapping_entities(predictions)
+        assert len(result) == 2
+
+
+class TestPredictWithChunkingEdgeCases:
+    """Test edge cases in predict_with_chunking."""
+
+    def test_empty_text_returns_empty_without_calling_predict(self):
+        """Empty text should return [] without invoking predict_func."""
+        chunker = LangChainTextChunker(chunk_size=100)
+        call_count = 0
+
+        def predict_func(t):
+            nonlocal call_count
+            call_count += 1
+            return []
+
+        result = chunker.predict_with_chunking("", predict_func)
+
+        assert result == []
+        assert call_count == 0, "predict_func should not be called for empty text"

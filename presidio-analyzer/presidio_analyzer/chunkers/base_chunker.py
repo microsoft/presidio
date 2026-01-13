@@ -54,7 +54,9 @@ class BaseTextChunker(ABC):
         :return: List of RecognizerResult with correct offsets
         """
         chunks = self.chunk(text)
-        if len(chunks) <= 1:
+        if not chunks:
+            return []
+        if len(chunks) == 1:
             return predict_func(text)
 
         predictions = self._process_chunks(chunks, predict_func)
@@ -117,6 +119,10 @@ class BaseTextChunker(ABC):
                         overlap_len = overlap_end - overlap_start
                         pred_len = pred.end - pred.start
                         kept_len = kept.end - kept.start
+
+                        # Skip zero-length spans to avoid division by zero and malformed data
+                        if pred_len <= 0 or kept_len <= 0:
+                            continue
 
                         # Check if overlap exceeds threshold
                         if overlap_len / min(pred_len, kept_len) > overlap_threshold:
