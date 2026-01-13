@@ -192,6 +192,9 @@ recognizers:
   - name: MedicalLicenseRecognizer
     type: predefined
 
+  - name: MacAddressRecognizr
+    type: predefined
+
   - name: PhoneRecognizer
     type: predefined
 
