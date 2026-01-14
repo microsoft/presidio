@@ -7,7 +7,7 @@ from presidio_analyzer import (
     LocalRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.chunkers import BaseTextChunker
+from presidio_analyzer.chunkers import BaseTextChunker, LangChainTextChunker
 from presidio_analyzer.nlp_engine import (
     NerModelConfiguration,
     NlpArtifacts,
@@ -19,12 +19,6 @@ try:
 except ImportError:
     GLiNER = None
     GLiNERConfig = None
-
-try:
-    from presidio_analyzer.chunkers import LangChainTextChunker
-except ImportError:
-    LangChainTextChunker = None
-
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -109,18 +103,10 @@ class GLiNERRecognizer(LocalRecognizer):
         self.threshold = threshold
 
         # Use provided chunker or default to LangChainTextChunker
-        if text_chunker is not None:
-            self.text_chunker = text_chunker
-        else:
-            if LangChainTextChunker is None:
-                raise ImportError(
-                    "langchain-text-splitters is required for GLiNER chunking."
-                )
-
-            self.text_chunker = LangChainTextChunker(
-                chunk_size=250,
-                chunk_overlap=50,
-            )
+        self.text_chunker = text_chunker or LangChainTextChunker(
+            chunk_size=250,
+            chunk_overlap=50,
+        )
 
         self.gliner = None
 
