@@ -33,6 +33,11 @@ class DeviceDetector:
         """Detect PyTorch CUDA support once."""
         try:
             import torch
+        except ImportError:
+            # torch not installed - this is expected, silently fall back to CPU
+            return
+
+        try:
             if torch.cuda.is_available():
                 _ = str(torch.tensor([1.0], device="cuda"))
                 _ = torch.cuda.get_device_name(0)
@@ -40,7 +45,7 @@ class DeviceDetector:
                 torch.cuda.empty_cache()
                 self._device = "cuda"
         except Exception as e:
-            logger.warning(f"Device detection failed, falling back to CPU: {e}")
+            logger.warning(f"CUDA device detection failed, falling back to CPU: {e}")
 
     def get_device(self) -> str:
         """Return device string ('cuda' or 'cpu')."""
