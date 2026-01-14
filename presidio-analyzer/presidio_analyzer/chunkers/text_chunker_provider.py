@@ -50,5 +50,10 @@ class TextChunkerProvider:
             )
 
         chunker_class = _CHUNKER_REGISTRY[chunker_type]
-        return chunker_class(**config)
+        try:
+            return chunker_class(**config)
+        except TypeError as exc:
+            raise ValueError(
+                f"Invalid configuration for chunker_type '{chunker_type}': {config}"
+            ) from exc
 
