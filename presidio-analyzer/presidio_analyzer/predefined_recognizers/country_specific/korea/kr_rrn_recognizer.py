@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
@@ -70,7 +70,7 @@ class KrRrnRecognizer(PatternRecognizer):
             name=name,
         )
 
-    def validate_result(self, pattern_text: str) -> Union[bool, None]:
+    def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
         Validate the pattern logic e.g., by running checksum on a detected pattern.
 
@@ -112,6 +112,20 @@ class KrRrnRecognizer(PatternRecognizer):
         """
         return True if 0 <= region_code <= 95 else False
 
+    def _compute_checksum(self, rn: str) -> int:
+        """
+        Compute the weighted digit sum used for the RRN checksum calculation.
+
+        The sum is calculated over the first 12 digits of the RRN using
+        the weights [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5].
+
+        :param rn: The resident registration number as a string.
+            Only the first 12 digits are used in the computation.
+        :return: The integer sum of the products of digits and weights.
+        """
+        weights = [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5]
+        return sum(int(rn[i]) * weights[i] for i in range(12))
+
     def _validate_checksum(self, rrn: str) -> bool:
         """
         Validate the checksum of Korean RRN.
@@ -122,21 +136,6 @@ class KrRrnRecognizer(PatternRecognizer):
         :param rrn: The RRN to validate
         :return: True if checksum is valid, False otherwise
         """
-
-        digit_sum = (
-            2 * int(rrn[0])
-            + 3 * int(rrn[1])
-            + 4 * int(rrn[2])
-            + 5 * int(rrn[3])
-            + 6 * int(rrn[4])
-            + 7 * int(rrn[5])
-            + 8 * int(rrn[6])
-            + 9 * int(rrn[7])
-            + 2 * int(rrn[8])
-            + 3 * int(rrn[9])
-            + 4 * int(rrn[10])
-            + 5 * int(rrn[11])
-        )
+        digit_sum = self._compute_checksum(rrn)
         checksum = (11 - (digit_sum % 11)) % 10
-
         return checksum == int(rrn[12])

@@ -175,6 +175,13 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: KrFrnRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
   - name: ThTninRecognizer
     supported_languages:
     - th
