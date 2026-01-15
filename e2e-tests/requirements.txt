@@ -1,4 +1,4 @@
 requests>=2.32.4
 pytest
--e ../presidio-analyzer[langextract]
+-e ../presidio-analyzer[langextract,gliner]
 -e ../presidio-anonymizer
