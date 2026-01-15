@@ -40,7 +40,7 @@
 | presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       49 |        3 |     94% |     10-12 |
 | presidio\_analyzer/pattern.py                                                                                    |       32 |        2 |     94% |    62, 66 |
 | presidio\_analyzer/pattern\_recognizer.py                                                                        |      100 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       55 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       56 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/\_\_init\_\_.py                           |        5 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/au\_abn\_recognizer.py                    |       20 |        0 |    100% |           |
@@ -62,11 +62,12 @@
 | presidio\_analyzer/predefined\_recognizers/country\_specific/italy/it\_identity\_card\_recognizer.py             |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/italy/it\_passport\_recognizer.py                   |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/italy/it\_vat\_code.py                              |       28 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/country\_specific/korea/\_\_init\_\_.py                               |        5 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/korea/\_\_init\_\_.py                               |        6 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_brn\_recognizer.py                        |       28 |        2 |     93% |    85, 88 |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_driver\_license\_recognizer.py            |       21 |        2 |     90% |   98, 101 |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_frn\_recognizer.py                        |       12 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_passport\_recognizer.py                   |        9 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_rrn\_recognizer.py                        |       26 |        2 |     92% |    91, 95 |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_rrn\_recognizer.py                        |       29 |        2 |     93% |    91, 95 |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/poland/\_\_init\_\_.py                              |        2 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/poland/pl\_pesel\_recognizer.py                     |       15 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/singapore/\_\_init\_\_.py                           |        3 |        0 |    100% |           |
@@ -117,7 +118,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      172 |        9 |     95% |28, 44, 133, 144, 255-256, 454-455, 472 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **3723** |  **203** | **95%** |           |
+| **TOTAL**                                                                                                        | **3740** |  **203** | **95%** |           |
 
 
 ## Setup coverage badge

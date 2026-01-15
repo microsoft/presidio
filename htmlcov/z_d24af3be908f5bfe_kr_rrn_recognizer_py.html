@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for presidio_analyzer/predefined_recognizers/country_specific/korea/kr_rrn_recognizer.py: 92%</title>
+    <title>Coverage for presidio_analyzer/predefined_recognizers/country_specific/korea/kr_rrn_recognizer.py: 93%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
     <link rel="stylesheet" href="style_cb_9ff733b0.css" type="text/css">
     <script src="coverage_html_cb_dd2e7eb5.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>presidio_analyzer&#8201;/&#8201;predefined_recognizers&#8201;/&#8201;country_specific&#8201;/&#8201;korea&#8201;/&#8201;kr_rrn_recognizer.py</b>:
-            <span class="pc_cov">92%</span>
+            <span class="pc_cov">93%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">26 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">24<span class="text"> run</span></button>
+            <span class="text">29 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">27<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">2<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_8f5ab665b1134d99___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-15 10:08 +0000
+            created at 2026-01-15 10:27 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -80,7 +80,7 @@
     </div>
 </header>
 <main id="source">
-    <p class="run"><span class="n"><a id="t1" href="#t1">1</a></span><span class="t"><span class="key">from</span> <span class="nam">typing</span> <span class="key">import</span> <span class="nam">List</span><span class="op">,</span> <span class="nam">Optional</span><span class="op">,</span> <span class="nam">Tuple</span><span class="op">,</span> <span class="nam">Union</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1" href="#t1">1</a></span><span class="t"><span class="key">from</span> <span class="nam">typing</span> <span class="key">import</span> <span class="nam">List</span><span class="op">,</span> <span class="nam">Optional</span><span class="op">,</span> <span class="nam">Tuple</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t2" href="#t2">2</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t3" href="#t3">3</a></span><span class="t"><span class="key">from</span> <span class="nam">presidio_analyzer</span> <span class="key">import</span> <span class="nam">EntityRecognizer</span><span class="op">,</span> <span class="nam">Pattern</span><span class="op">,</span> <span class="nam">PatternRecognizer</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t4" href="#t4">4</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -152,7 +152,7 @@
     <p class="run run2"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">            <span class="nam">name</span><span class="op">=</span><span class="nam">name</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">    <span class="key">def</span> <span class="nam">validate_result</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">pattern_text</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">Union</span><span class="op">[</span><span class="nam">bool</span><span class="op">,</span> <span class="key">None</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">    <span class="key">def</span> <span class="nam">validate_result</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">pattern_text</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">Optional</span><span class="op">[</span><span class="nam">bool</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t74" href="#t74">74</a></span><span class="t">        <span class="str">"""</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t75" href="#t75">75</a></span><span class="t"><span class="str">        Validate the pattern logic e.g., by running checksum on a detected pattern.</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t76" href="#t76">76</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -194,34 +194,33 @@
     <p class="pln"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">        <span class="key">return</span> <span class="key">True</span> <span class="key">if</span> <span class="num">0</span> <span class="op">&lt;=</span> <span class="nam">region_code</span> <span class="op">&lt;=</span> <span class="num">95</span> <span class="key">else</span> <span class="key">False</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">    <span class="key">def</span> <span class="nam">_validate_checksum</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">rrn</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">bool</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">    <span class="key">def</span> <span class="nam">_compute_checksum</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">rn</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">int</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">        <span class="str">"""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t"><span class="str">        Validate the checksum of Korean RRN.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t"><span class="str">        Compute the weighted digit sum used for the RRN checksum calculation.</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t119" href="#t119">119</a></span><span class="t"><span class="str">        The checksum is calculated using the preceding 12 digits.</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t120" href="#t120">120</a></span><span class="t"><span class="str">        X = (11 - (2A+3B+4C+5D+6E+7F+8G+9H+2I+3J+4K+5L) mod 11) mod 10</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t119" href="#t119">119</a></span><span class="t"><span class="str">        The sum is calculated over the first 12 digits of the RRN using</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t120" href="#t120">120</a></span><span class="t"><span class="str">        the weights [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5].</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t121" href="#t121">121</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t122" href="#t122">122</a></span><span class="t"><span class="str">        :param rrn: The RRN to validate</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t123" href="#t123">123</a></span><span class="t"><span class="str">        :return: True if checksum is valid, False otherwise</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t124" href="#t124">124</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t125" href="#t125">125</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t126" href="#t126">126</a></span><span class="t">        <span class="nam">digit_sum</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t127" href="#t127">127</a></span><span class="t">            <span class="num">2</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t128" href="#t128">128</a></span><span class="t">            <span class="op">+</span> <span class="num">3</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">1</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t">            <span class="op">+</span> <span class="num">4</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">2</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">            <span class="op">+</span> <span class="num">5</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">3</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t">            <span class="op">+</span> <span class="num">6</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">4</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">            <span class="op">+</span> <span class="num">7</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">5</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">            <span class="op">+</span> <span class="num">8</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">6</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">            <span class="op">+</span> <span class="num">9</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">7</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">            <span class="op">+</span> <span class="num">2</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">8</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t">            <span class="op">+</span> <span class="num">3</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">9</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t137" href="#t137">137</a></span><span class="t">            <span class="op">+</span> <span class="num">4</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">10</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t138" href="#t138">138</a></span><span class="t">            <span class="op">+</span> <span class="num">5</span> <span class="op">*</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">11</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t139" href="#t139">139</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t122" href="#t122">122</a></span><span class="t"><span class="str">        :param rn: The resident registration number as a string.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t123" href="#t123">123</a></span><span class="t"><span class="str">            Only the first 12 digits are used in the computation.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t124" href="#t124">124</a></span><span class="t"><span class="str">        :return: The integer sum of the products of digits and weights.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t125" href="#t125">125</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t126" href="#t126">126</a></span><span class="t">        <span class="nam">weights</span> <span class="op">=</span> <span class="op">[</span><span class="num">2</span><span class="op">,</span> <span class="num">3</span><span class="op">,</span> <span class="num">4</span><span class="op">,</span> <span class="num">5</span><span class="op">,</span> <span class="num">6</span><span class="op">,</span> <span class="num">7</span><span class="op">,</span> <span class="num">8</span><span class="op">,</span> <span class="num">9</span><span class="op">,</span> <span class="num">2</span><span class="op">,</span> <span class="num">3</span><span class="op">,</span> <span class="num">4</span><span class="op">,</span> <span class="num">5</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t127" href="#t127">127</a></span><span class="t">        <span class="key">return</span> <span class="nam">sum</span><span class="op">(</span><span class="nam">int</span><span class="op">(</span><span class="nam">rn</span><span class="op">[</span><span class="nam">i</span><span class="op">]</span><span class="op">)</span> <span class="op">*</span> <span class="nam">weights</span><span class="op">[</span><span class="nam">i</span><span class="op">]</span> <span class="key">for</span> <span class="nam">i</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="num">12</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t128" href="#t128">128</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t">    <span class="key">def</span> <span class="nam">_validate_checksum</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">rrn</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">bool</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">        <span class="str">"""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t"><span class="str">        Validate the checksum of Korean RRN.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t"><span class="str">        The checksum is calculated using the preceding 12 digits.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t"><span class="str">        X = (11 - (2A+3B+4C+5D+6E+7F+8G+9H+2I+3J+4K+5L) mod 11) mod 10</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t"><span class="str">        :param rrn: The RRN to validate</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t137" href="#t137">137</a></span><span class="t"><span class="str">        :return: True if checksum is valid, False otherwise</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t138" href="#t138">138</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t139" href="#t139">139</a></span><span class="t">        <span class="nam">digit_sum</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_compute_checksum</span><span class="op">(</span><span class="nam">rrn</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t140" href="#t140">140</a></span><span class="t">        <span class="nam">checksum</span> <span class="op">=</span> <span class="op">(</span><span class="num">11</span> <span class="op">-</span> <span class="op">(</span><span class="nam">digit_sum</span> <span class="op">%</span> <span class="num">11</span><span class="op">)</span><span class="op">)</span> <span class="op">%</span> <span class="num">10</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t141" href="#t141">141</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">        <span class="key">return</span> <span class="nam">checksum</span> <span class="op">==</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">12</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t141" href="#t141">141</a></span><span class="t">        <span class="key">return</span> <span class="nam">checksum</span> <span class="op">==</span> <span class="nam">int</span><span class="op">(</span><span class="nam">rrn</span><span class="op">[</span><span class="num">12</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -231,7 +230,7 @@
             <a class="nav" href="z_8f5ab665b1134d99___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-15 10:08 +0000
+            created at 2026-01-15 10:27 +0000
         </p>
     </div>
 </footer>
