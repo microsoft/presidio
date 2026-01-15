@@ -9,10 +9,12 @@ Usage:
 """
 
 import logging
+import threading
 
 logger = logging.getLogger("presidio-analyzer")
 
 _detector_instance = None
+_lock = threading.Lock()
 
 
 class DeviceDetector:
@@ -57,6 +59,7 @@ def __getattr__(name: str):
     if name == "device_detector":
         global _detector_instance
         if _detector_instance is None:
-            _detector_instance = DeviceDetector()
+            with _lock:
+                _detector_instance = _detector_instance or DeviceDetector()
         return _detector_instance
     raise AttributeError(f"module {__name__} has no attribute {name}")
