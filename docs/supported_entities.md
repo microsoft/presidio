@@ -100,6 +100,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 ### Korea
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| KR_BRN     | The Korean Business Registration Number (BRN) is a 10-digit number assigned to business entities for taxation purposes. | Pattern match, context and custom logic. |
 | KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
 | KR_DRIVER_LICENSE    |  The Korean driver license number is a 12-digit number. | Pattern match, context and custom logic. |
 | KR_PASSPORT| The Korean Passport Number  | Pattern match, context. |
