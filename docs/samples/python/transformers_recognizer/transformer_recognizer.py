@@ -2,13 +2,13 @@ import copy
 import logging
 from typing import Optional, List
 
-import torch
 from presidio_analyzer import (
     RecognizerResult,
     EntityRecognizer,
     AnalysisExplanation,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer.nlp_engine.device_detector import device_detector
 
 from .configuration import BERT_DEID_CONFIGURATION
 
@@ -133,7 +133,7 @@ class TransformersRecognizer(EntityRecognizer):
         """Initialize NER transformers pipeline using the model_path provided"""
 
         logging.debug(f"Initializing NER pipeline using {self.model_path} path")
-        device = 0 if torch.cuda.is_available() else -1
+        device = 0 if device_detector.get_device() == "cuda" else -1
         self.pipeline = pipeline(
             "ner",
             model=AutoModelForTokenClassification.from_pretrained(self.model_path),
