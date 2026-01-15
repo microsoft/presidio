@@ -89,11 +89,24 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | IN_VEHICLE_REGISTRATION | Indian government issued transport (govt, personal, diplomatic, defence)  vehicle registration number                                                               | Pattern match, context, and checksum |
 | IN_VOTER | Indian Election Commission issued 10 digit alpha numeric voter id for all indian citizens (age 18 or above) | Pattern match, context |
 | IN_PASSPORT | Indian Passport Number | Pattern match, Context |
+| IN_GSTIN | The Indian Goods and Services Tax Identification Number (GSTIN) is a 15-character identifier with state code (01-37), PAN, registration number, 'Z', and checksum. | Pattern match, context, and validation |
 
 ### Finland
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | FI_PERSONAL_IDENTITY_CODE     | The Finnish Personal Identity Code (Henkilötunnus) is a unique 11 character individual identity number. | Pattern match, context and custom logic. |
+
+### Korea
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
+| KR_DRIVER_LICENSE    |  The Korean driver license number is a 12-digit number. | Pattern match, context and custom logic. |
+| KR_PASSPORT| The Korean Passport Number  | Pattern match, context. |
+
+### Thai
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| TH_TNIN    | The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents. | Pattern match, context and custom logic. |
 
 ## Adding a custom PII entity
 
@@ -107,6 +120,16 @@ See [this documentation](analyzer/adding_recognizers.md) for instructions on how
 A list of supported entities by Azure AI Language PII [can be found here](https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/concepts/entity-categories).
 
 To add Azure AI language into Presidio, [see this sample](samples/python/text_analytics/index.md#how-to-integrate-azure-ai-language-into-presidio).
+
+
+## Complementing Presidio with Azure Health Data Services PHI
+
+Azure Health Data Services PHI is a cloud-based service that provides Natural Language Processing (NLP) features for detecting PHI in text.
+
+A list of supported entities by Azure Health Data Services PHI [can be found here](https://learn.microsoft.com/en-us/azure/healthcare-apis/deidentification/overview).
+
+To add Azure AI language into Presidio, [see this sample](samples/python/ahds/index.md#how-to-integrate-azure-health-data-services-dei-dentification-into-presidio).
+
 
 ### Connecting to 3rd party PII detectors
 

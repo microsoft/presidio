@@ -17,6 +17,9 @@
 | Usage | Text       | Python file                           | [Remote Recognizer](python/example_remote_recognizer.py) |
 | Usage | Structured     | Python Notebook                   | [Presidio Structured Basic Usage Notebook](python/example_structured.ipynb) |
 | Usage | Text      | Python file                            | [Azure AI Language as a Remote Recognizer](python/text_analytics/index.md)  |
+| Usage | Text      | Python file                            | [Azure Health Data Services de-identification Service as a Remote Recognizer](python/ahds/index.md)  |
+| Usage | Text      | Python file                            | [AHDS Surrogate Example](python/ahds/example_ahds_surrogate.py)  |
+| Usage | Text      | Python file                            | [Language Model-based PII/PHI Detection using LangExtract](python/langextract/index.md)  |
 | Usage | CSV       | Python file                            | [Analyze and Anonymize CSV file](https://github.com/microsoft/presidio/blob/main/docs/samples/python/process_csv_file.py) |
 | Usage | Text      | Python                                 | [Using Flair as an external PII model](https://github.com/microsoft/presidio/blob/main/docs/samples/python/flair_recognizer.py)|
 | Usage | Text      | Python file                            | [Using Span Marker as an external PII model](https://github.com/microsoft/presidio/blob/main/docs/samples/python/span_marker_recognizer.py)|
@@ -32,6 +35,7 @@
 | Deployment | | App Service                                 | [Presidio with App Service](deployments/app-service/index.md)|
 | Deployment | | Kubernetes                                  | [Presidio with Kubernetes](deployments/k8s/index.md)|
 | Deployment | | Spark/Azure Databricks                      | [Presidio with Spark](deployments/spark/index.md)|
+| Deployment | | OpenTelemetry/Grafana                       | [Redacting Telemetry with Presidio](deployments/redacting-telemetry/index.md)|
 | Deployment | | Data Protection toolkit for OpenAI          | [Data Protection toolkit for OpenAI](deployments/openai-anonymaztion-and-deanonymaztion-best-practices/index.md)|
 | Deployment | | Spark with Microsoft Fabric                 | [Presidio with Fabric](fabric/index.md)|
 | Deployment | | Azure Data Factory with App Service         | [ETL for small dataset](deployments/data-factory/presidio-data-factory.md#option-1-presidio-as-an-http-rest-endpoint) |

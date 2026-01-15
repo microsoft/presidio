@@ -1,0 +1,56 @@
+# Ollama Configuration for LangExtract
+# https://github.com/google/langextract#using-local-llms-with-ollama
+#
+# Required parameters: model_id, model_url
+# Optional parameters use defaults if not specified
+
+lm_recognizer:
+  supported_entities:
+    - PERSON
+    - EMAIL_ADDRESS
+    - PHONE_NUMBER
+    - US_SSN
+    - LOCATION
+    - ORGANIZATION
+    - DATE_TIME
+    - CREDIT_CARD
+    - IP_ADDRESS
+    - URL
+  
+  labels_to_ignore:
+    - payment_status
+    - metadata
+    - annotation
+  
+  enable_generic_consolidation: true
+  min_score: 0.5
+
+langextract:
+  prompt_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
+  examples_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
+  
+  model:
+    model_id: "qwen2.5:1.5b"
+    model_url: "http://localhost:11434"
+    temperature: null
+    
+    # Optional: Uncomment to override defaults
+    # max_char_buffer: 400
+    # use_schema_constraints: false
+    # fence_output: false
+    # timeout: 240
+    # num_ctx: 8192
+  
+  entity_mappings:
+    person: PERSON
+    name: PERSON
+    email: EMAIL_ADDRESS
+    phone: PHONE_NUMBER
+    ssn: US_SSN
+    location: LOCATION
+    address: LOCATION
+    organization: ORGANIZATION
+    date: DATE_TIME
+    credit_card: CREDIT_CARD
+    ip_address: IP_ADDRESS
+    url: URL

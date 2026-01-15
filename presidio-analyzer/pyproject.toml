@@ -4,42 +4,45 @@ requires = ["poetry-core"]
 
 [project]
 name = "presidio_analyzer"
-version = "2.2.358"
+version = "2.2.360"
 description = "Presidio Analyzer package"
 authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
 license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 keywords = ["presidio_analyzer"]
 urls = {Homepage = "https://github.com/Microsoft/presidio"}
 readme = "README.md"
 include = ["conf/*",]
 
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.10,<3.14"
 dependencies = [
-    "spacy (>=3.4.4, <4.0.0, !=3.7.0)",
+    "spacy (>=3.4.4, !=3.7.0)",
     "regex",
     "tldextract",
     "pyyaml",
-    "phonenumbers (>=8.12,<9.0.0)"
+    "phonenumbers (>=8.12,<10.0.0)",
+    "pydantic (>=2.0.0,<3.0.0)",
 ]
 
 [project.optional-dependencies]
 server = [
     "flask (>=1.1)",
-    "gunicorn"
+    "gunicorn; platform_system != 'Windows'",
+    "waitress; platform_system == 'Windows'"
 ]
 transformers = [
     "transformers",
     "accelerate",
     "huggingface_hub",
     "spacy_huggingface_pipelines"]
+
 stanza = [
     "stanza (>=1.10.1,<2.0.0)",
 ]
@@ -47,17 +50,34 @@ azure-ai-language = [
     "azure-ai-textanalytics",
     "azure-core",
 ]
+ahds = [
+    "azure-identity (>=1.23.0,<2.0.0)",
+    "azure-health-deidentification (>=1.1.0b1,<2.0.0)"
+]
 gliner = [
     "transformers",
     "huggingface_hub",
     "gliner (>=0.2.13,<1.0.0) ; python_version >= '3.10'",
     "onnxruntime (>=1.19) ; python_version >= '3.10'"
 ]
+langextract = [
+    "langextract (>=1.0.0)",
+    "openai (>=1.50.0)",
+    "azure-identity (>=1.18.0)",
+    "more-itertools (>=10.0.0)",
+    "jinja2 (>=3.0.0)",
+]
 
 [tool.poetry.group.dev.dependencies]
 pip = "*"
 ruff = "*"
 pytest = "*"
+pytest-cov = "*"
 pytest-mock = "*"
 python-dotenv = "*"
 pre_commit = "*"
+diff-cover = "*"
+
+[tool.coverage.run]
+relative_files = true
+source = ["."]

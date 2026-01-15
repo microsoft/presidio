@@ -442,7 +442,7 @@ def test_when_entities_is_none_all_recognizers_loaded_then_return_all_fields(
 def test_when_analyze_then_apptracer_has_value(
     loaded_registry, unit_test_guid, spacy_nlp_engine
 ):
-    text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"  # noqa E501
+    text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"  # noqa: E501
     language = "en"
     entities = ["CREDIT_CARD", "PHONE_NUMBER", "PERSON"]
     app_tracer_mock = AppTracerMock(enable_decision_process=True)

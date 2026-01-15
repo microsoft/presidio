@@ -1,7 +1,7 @@
 import pytest
 
 from tests import assert_result
-from presidio_analyzer.predefined_recognizers.iban_recognizer import IbanRecognizer
+from presidio_analyzer.predefined_recognizers.generic.iban_recognizer import IbanRecognizer
 
 
 @pytest.fixture(scope="module")
@@ -357,7 +357,8 @@ def update_iban_checksum(iban):
         ),
         ("Slash as iban separator: AL47/2121/1009/0000/0002/3569/8741", 0, (),),
         ("Dalla's Pizza | 3843 Peartree Road, Bamblee, SD 20241 440-600-5124", 0, ()),
-        ("AL47212110090000000235698741 ALL CAPS", 1, ((0, 28),),)
+        ("AL47212110090000000235698741 ALL CAPS", 1, ((0, 28),),),
+        ("CY17 0020 0128 0000 0012 0052 7601 failed", 0, (),),
         # fmt: on
     ],
 )

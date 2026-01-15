@@ -4,7 +4,7 @@
   - [What is Presidio?](#what-is-presidio)
   - [Why did Microsoft create Presidio?](#why-did-microsoft-create-presidio)
   - [Is Microsoft Presidio an official Microsoft product?](#is-microsoft-presidio-an-official-microsoft-product)
-  - [What is the difference between Presidio and different PII detection services like Azure AI Language and Amazon Comprehend?](#what-is-the-difference-between-presidio-and-different-pii-detection-services-like-azure-ai-language-and-amazon-comprehend)
+  - [What is the difference between Presidio and different PII detection services like Azure AI Language, Azure Health Data Services, and Amazon Comprehend?](#what-is-the-difference-between-presidio-and-different-pii-detection-services-like-azure-ai-language-and-amazon-comprehend)
 - [Using Presidio](#using-presidio)
   - [How can I start using Presidio?](#how-can-i-start-using-presidio)
   - [What are the main building blocks in Presidio?](#what-are-the-main-building-blocks-in-presidio)
@@ -50,7 +50,7 @@ The authors and maintainers of Presidio come from the [Industry Solutions Engine
 !!! note "Note"
     Microsoft Presidio is not an official Microsoft product. Usage terms are defined in the [repository's license](https://github.com/microsoft/presidio/blob/main/LICENSE).
 
-### What is the difference between Presidio and different PII detection services like Azure AI Language and Amazon Comprehend?
+### What is the difference between Presidio and different PII detection services like Azure AI Language, Azure Health Data Services, and Amazon Comprehend?
 
 In a nutshell, Presidio is a library which is meant to be customized, whereas different SaaS tools for PII detection have less customization capabilities. Most of these SaaS offerings use dedicated ML models and other logic for PII detection and often have better entity coverage or accuracy than Presidio.
 
@@ -100,7 +100,7 @@ Pseudonymization is a de-identification technique in which the real data is repl
 
 ### Does Presidio work on structured/tabular data?
 
-[Presidio-structured](https://microsoft.github.io/presidio/structured/) is a new capability in Presidio for detecting PII entities in structured/semi-structured data, and is still in alpha. If you have a question, suggestion, or a contribution in this area, please reach out by opening an issue, starting a discussion or reaching us directly at <presidio@microsoft.com>
+[Presidio-structured](https://microsoft.github.io/presidio/structured/) is a capability in Presidio for detecting PII entities in structured/semi-structured data. It scans datasets for PII using Presidio Analyzer, and supports the redaction of text, cells, or columns in a tabular dataset.
 
 ## Improving detection accuracy
 

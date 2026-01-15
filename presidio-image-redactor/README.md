@@ -1,7 +1,5 @@
 # Presidio Image Redactor
 
-***Please notice, this package is still in alpha and not production ready.***
-
 ## Description
 
 The Presidio Image Redactor is a Python based module for detecting and redacting PII text entities in images.
@@ -155,7 +153,7 @@ See the example notebook for more details and visual confirmation of the output:
 
 ### Side note for Windows
 
-If you are using a Windows machine, you may run into issues if file paths are too long. Unfortunatley, this is not rare when working with DICOM images that are often nested in directories with descriptive names.
+If you are using a Windows machine, you may run into issues if file paths are too long. Unfortunately, this is not rare when working with DICOM images that are often nested in directories with descriptive names.
 
 To avoid errors where the code may not recognize a path as existing due to the length of the characters in the file path, please [enable long paths on your system](https://learn.microsoft.com/en-us/answers/questions/293227/longpathsenabled.html).
 

@@ -8,6 +8,7 @@ recognizers:
   # For predefined:
   # - If only a recognizer name is provided, a predefined recognizer with this name and default parameters will be loaded.
   # - If a parameter isn't provided, the default one would be loaded.
+  # - Use 'class_name' to specify the Python class when using a custom 'name' for display/metadata
   # For custom:
   # - See an example configuration here: https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml
   # - Custom pattern recognizers with this configuration can be added to this file, with type: custom
@@ -57,51 +58,61 @@ recognizers:
     supported_languages:
     - en
     type: predefined
+    enabled: false
 
   - name: SgFinRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: AuAbnRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: AuAcnRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: AuTfnRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: AuMedicareRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: InPanRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: InAadhaarRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: InVehicleRegistrationRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: InPassportRecognizer
     supported_languages: 
     - en
     type: predefined
+    enabled: false
 
   - name: EsNifRecognizer
     supported_languages: 
@@ -143,6 +154,26 @@ recognizers:
     - pl
     type: predefined
 
+  - name: KrRrnRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
+  - name: KrDriverLicenseRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
+  - name: ThTninRecognizer
+    supported_languages:
+    - th
+    type: predefined
+    enabled: false
+
   - name: CryptoRecognizer
     type: predefined
 
@@ -169,3 +200,18 @@ recognizers:
 
   - name: InVoterRecognizer
     type: predefined
+    enabled: false
+
+  - name: InGstinRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+    enabled: false
+  
+  - name: OllamaRecognizer
+    class_name: OllamaLangExtractRecognizer
+    supported_languages:
+      - en
+    type: predefined
+    enabled: false
+    config_path: presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml

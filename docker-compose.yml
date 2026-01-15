@@ -1,31 +1,54 @@
 services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "127.0.0.1:11434:11434"   # or "127.0.0.1:11435:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      retries: 30        # ~5 minutes total
+      start_period: 60s  
   presidio-anonymizer:
-    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer${TAG}
+    image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-anonymizer${TAG}
     build:
       context: ./presidio-anonymizer
-      args:
-        - NAME=presidio-anonymizer
+      cache_from:
+        - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-anonymizer:latest
     environment:
       - PORT=5001
     ports:
       - "5001:5001"
+
   presidio-analyzer:
-    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-analyzer${TAG}
+    image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-analyzer${TAG}
     build:
       context: ./presidio-analyzer
-      args:
-        - NAME=presidio-analyzer
+      cache_from:
+        - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-analyzer:latest
     environment:
       - PORT=5001
+      - OLLAMA_HOST=http://ollama:11434
     ports:
       - "5002:5001"
+    depends_on:
+      ollama:
+        condition: service_healthy
+
   presidio-image-redactor:
-    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor${TAG}
+    image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
       context: ./presidio-image-redactor
-      args:
-        - NAME=presidio-image-redactor
+      cache_from:
+        - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-image-redactor:latest
     environment:
       - PORT=5001
     ports:
       - "5003:5001"
+
+volumes:
+  ollama-data:

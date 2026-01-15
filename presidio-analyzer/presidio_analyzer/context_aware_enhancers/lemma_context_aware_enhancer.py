@@ -64,7 +64,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                               accuracy of the context enhancement process
         :param recognizers: the list of recognizers
         :param context: list of context words
-        """  # noqa D205 D400
+        """  # noqa: D205,D400
 
         # create a deep copy of the results object, so we can manipulate it
         results = copy.deepcopy(raw_results)
@@ -245,11 +245,11 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         word: str,
         start: int,
         tokens,
-        tokens_indices: List[int],  # noqa ANN001
+        tokens_indices: List[int],
     ) -> int:
         found = False
         # we use the known start index of the original word to find the actual
-        # token at that index, we are not checking for equivilance since the
+        # token at that index, we are not checking for equivalence since the
         # token might be just a substring of that word (e.g. for phone number
         # 555-124564 the first token might be just '555' or for a match like '
         # rocket' the actual token will just be 'rocket' hence the misalignment

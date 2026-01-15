@@ -1,0 +1,160 @@
+# LangExtract PII/PHI Extraction Examples for Presidio
+# Using uppercase Presidio entity names directly
+
+examples:
+  # 1) Person + Email + Phone
+  - text: "My name is John Doe and my email is john.doe@example.com. Call me at (555) 123-4567."
+    extractions:
+      - extraction_class: "PERSON"
+        extraction_text: "John Doe"
+        attributes:
+          type: "full_name"
+      - extraction_class: "EMAIL_ADDRESS"
+        extraction_text: "john.doe@example.com"
+        attributes:
+          type: "email_address"
+      - extraction_class: "PHONE_NUMBER"
+        extraction_text: "(555) 123-4567"
+        attributes:
+          type: "phone_number"
+
+  # 2) Street address
+  - text: "Ship to 742 Evergreen Terrace, Springfield, IL 62704."
+    extractions:
+      - extraction_class: "LOCATION"
+        extraction_text: "742 Evergreen Terrace, Springfield, IL 62704"
+        attributes:
+          type: "street_address"
+
+  # 3) SSN + Date of Birth
+  - text: "SSN: 123-45-6789; Date of Birth: 01/15/1980."
+    extractions:
+      - extraction_class: "US_SSN"
+        extraction_text: "123-45-6789"
+        attributes:
+          type: "us_ssn"
+      - extraction_class: "DATE_TIME"
+        extraction_text: "01/15/1980"
+        attributes:
+          type: "date_of_birth"
+          format: "MM/DD/YYYY"
+
+  # 4) Credit card variations
+  - text: "Use card 4532123412341234 or 4532-1234-1234-1234."
+    extractions:
+      - extraction_class: "CREDIT_CARD"
+        extraction_text: "4532123412341234"
+        attributes:
+          type: "credit_card_number"
+      - extraction_class: "CREDIT_CARD"
+        extraction_text: "4532-1234-1234-1234"
+        attributes:
+          type: "credit_card_number"
+
+  # 5) Email with plus-tag + Organization
+  - text: "Contact jane.smith+billing@sub.acme-corp.com at Acme Corp."
+    extractions:
+      - extraction_class: "EMAIL_ADDRESS"
+        extraction_text: "jane.smith+billing@sub.acme-corp.com"
+        attributes:
+          type: "email_address"
+      - extraction_class: "ORGANIZATION"
+        extraction_text: "Acme Corp"
+        attributes:
+          type: "company"
+
+  # 6) Phone international formats
+  - text: "EU office: +44 20 7946 0958; US office: +1-415-555-2671."
+    extractions:
+      - extraction_class: "PHONE_NUMBER"
+        extraction_text: "+44 20 7946 0958"
+        attributes:
+          type: "phone_number"
+          region: "GB"
+      - extraction_class: "PHONE_NUMBER"
+        extraction_text: "+1-415-555-2671"
+        attributes:
+          type: "phone_number"
+          region: "US"
+
+  # 7) URL + IP addresses
+  - text: "Visit https://example.com/login or example.org. Server IPs: 192.168.1.100 and fe80::1ff:fe23:4567:890a."
+    extractions:
+      - extraction_class: "URL"
+        extraction_text: "https://example.com/login"
+        attributes:
+          type: "website_url"
+      - extraction_class: "URL"
+        extraction_text: "example.org"
+        attributes:
+          type: "domain"
+      - extraction_class: "IP_ADDRESS"
+        extraction_text: "192.168.1.100"
+        attributes:
+          type: "ipv4"
+      - extraction_class: "IP_ADDRESS"
+        extraction_text: "fe80::1ff:fe23:4567:890a"
+        attributes:
+          type: "ipv6"
+
+  # 8) Email without TLD + Phone
+  - text: "Reach me at alex.roe@mailserver or at the office line 555.987.6543."
+    extractions:
+      - extraction_class: "EMAIL_ADDRESS"
+        extraction_text: "alex.roe@mailserver"
+        attributes:
+          type: "email_address"
+      - extraction_class: "PHONE_NUMBER"
+        extraction_text: "555.987.6543"
+        attributes:
+          type: "phone_number"
+
+  # 9) Organization + Person (healthcare)
+  - text: "Seen at City General Hospital by Dr. Alice Carter."
+    extractions:
+      - extraction_class: "ORGANIZATION"
+        extraction_text: "City General Hospital"
+        attributes:
+          type: "hospital"
+      - extraction_class: "PERSON"
+        extraction_text: "Dr. Alice Carter"
+        attributes:
+          type: "healthcare_provider"
+
+  # 10) Location (city + address)
+  - text: "Patient resides at 55 King Street in Boston."
+    extractions:
+      - extraction_class: "LOCATION"
+        extraction_text: "55 King Street"
+        attributes:
+          type: "street_address"
+      - extraction_class: "LOCATION"
+        extraction_text: "Boston"
+        attributes:
+          type: "city"
+
+  # 11) Person + Location (city, state)
+  - text: "Sarah Johnson lives in Seattle, Washington."
+    extractions:
+      - extraction_class: "PERSON"
+        extraction_text: "Sarah Johnson"
+        attributes:
+          type: "full_name"
+      - extraction_class: "LOCATION"
+        extraction_text: "Seattle, Washington"
+        attributes:
+          type: "city_state"
+
+  # 12) Multiple dates
+  - text: "Admitted on 2024-03-15 and discharged on 2024-03-20."
+    extractions:
+      - extraction_class: "DATE_TIME"
+        extraction_text: "2024-03-15"
+        attributes:
+          type: "admission_date"
+          format: "YYYY-MM-DD"
+      - extraction_class: "DATE_TIME"
+        extraction_text: "2024-03-20"
+        attributes:
+          type: "discharge_date"
+          format: "YYYY-MM-DD"

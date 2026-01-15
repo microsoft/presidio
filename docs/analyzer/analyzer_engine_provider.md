@@ -133,7 +133,7 @@ from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider
 
 provider = AnalyzerEngineProvider().create_engine()
 
-results = analyzer.analyze(text="My name is Morris", language="en")
+results = provider.analyze(text="My name is Morris", language="en")
 print(results)
 ```
 
@@ -174,3 +174,82 @@ nlp_configuration:
 ```
 
 In this example, the `SpacyRecognizer` is disabled, and the `CreditCardRecognizer` is enabled, resulting in only the `CREDIT_CARD` PII entity to be returned if detected.
+
+### Adding context words in YAML recognizers
+
+Recognizers defined in YAML can also include a `context` field.  
+When used with `AnalyzerEngine` and a context enhancer, these words boost the score if they appear near the detected entity.
+
+Example:
+
+```yaml
+recognizers:
+  - name: "Date of Birth Recognizer"
+    supported_entity: "DATE_TIME"
+    supported_language: "en"
+    patterns:
+      - name: "DOB without slashes"
+        regex: "((19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))"
+        score: 0.8
+    context:
+      - DOB
+```
+```python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer.nlp_engine import NlpEngineProvider
+from presidio_analyzer.context_aware_enhancers.lemma_context_aware_enhancer import LemmaContextAwareEnhancer
+
+# Save the DOB recognizer YAML to disk
+dob_yaml = """
+recognizers:
+  - name: "Date of Birth Recognizer"
+    supported_entity: "DATE_TIME"
+    supported_language: "en"
+    patterns:
+      - name: "DOB without slashes"
+        regex: "((19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))"
+        score: 0.8
+    context:
+      - DOB
+"""
+with open("dob_recognizer.yml", "w") as f:
+    f.write(dob_yaml)
+
+# Configure NLP engine
+configuration = {
+    "nlp_engine_name": "spacy",
+    "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+}
+provider = NlpEngineProvider(nlp_configuration=configuration)
+nlp_engine = provider.create_engine()
+
+# Load recognizer from YAML
+registry = RecognizerRegistry()
+registry.add_recognizers_from_yaml("dob_recognizer.yml")
+
+# Analyzer with custom registry
+analyzer = AnalyzerEngine(
+    registry=registry,
+    nlp_engine=nlp_engine,
+    supported_languages=["en"]
+)
+
+text = "DOB: 19571012"
+
+# Run base analysis
+results = analyzer.analyze(text=text, language="en")
+print("Base results:", results)
+
+# Apply context enhancer
+enhancer = LemmaContextAwareEnhancer()
+nlp_artifacts = analyzer.nlp_engine.process_text(text, language="en")
+
+boosted = enhancer.enhance_using_context(
+    text=text,
+    raw_results=results,
+    nlp_artifacts=nlp_artifacts,
+    recognizers=registry.recognizers,
+    context=["DOB"]
+)
+print("Boosted results:", boosted)
+```

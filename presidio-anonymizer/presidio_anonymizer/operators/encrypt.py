@@ -44,10 +44,10 @@ class Encrypt(Operator):
                 )
         else:
             validate_parameter(key, self.KEY, bytes)
-        if not AESCipher.is_valid_key_size(key):
-            raise InvalidParamError(
-                f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
-            )
+            if not AESCipher.is_valid_key_size(key):
+                raise InvalidParamError(
+                    f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
+                )
 
     def operator_name(self) -> str:
         """Return operator name."""

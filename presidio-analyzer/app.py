@@ -76,8 +76,9 @@ class Server:
                     context=req_data.context,
                     allow_list=req_data.allow_list,
                     allow_list_match=req_data.allow_list_match,
-                    regex_flags=req_data.regex_flags
+                    regex_flags=req_data.regex_flags,
                 )
+                _exclude_attributes_from_dto(recognizer_result_list)
 
                 return Response(
                     json.dumps(
@@ -135,9 +136,21 @@ class Server:
         def http_exception(e):
             return jsonify(error=e.description), e.code
 
-def create_app(): # noqa
+
+def _exclude_attributes_from_dto(recognizer_result_list):
+    excluded_attributes = [
+        "recognition_metadata",
+    ]
+    for result in recognizer_result_list:
+        for attr in excluded_attributes:
+            if hasattr(result, attr):
+                delattr(result, attr)
+
+
+def create_app():  # noqa: D103
     server = Server()
     return server.app
+
 
 if __name__ == "__main__":
     app = create_app()
