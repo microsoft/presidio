@@ -1,10 +1,74 @@
 """Unit tests for DeviceDetector."""
 
+import os
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from presidio_analyzer.nlp_engine.device_detector import DeviceDetector, device_detector
+from presidio_analyzer.nlp_engine.device_detector import (
+    DeviceDetector,
+    PRESIDIO_DEVICE_ENV_VAR,
+    device_detector,
+)
+
+
+class TestDeviceDetectorEnvironmentVariable:
+    """Test suite for PRESIDIO_DEVICE environment variable handling."""
+
+    def test_when_env_var_set_to_cpu_then_uses_cpu(self):
+        """Test that CPU is used when PRESIDIO_DEVICE=cpu."""
+        with patch.dict(os.environ, {PRESIDIO_DEVICE_ENV_VAR: "cpu"}):
+            detector = DeviceDetector()
+            assert detector.get_device() == "cpu"
+
+    def test_when_env_var_set_to_cuda_then_uses_cuda(self):
+        """Test that CUDA is used when PRESIDIO_DEVICE=cuda."""
+        with patch.dict(os.environ, {PRESIDIO_DEVICE_ENV_VAR: "cuda"}):
+            detector = DeviceDetector()
+            assert detector.get_device() == "cuda"
+
+    def test_when_env_var_set_to_specific_gpu_then_uses_it(self):
+        """Test that specific GPU device strings are passed through."""
+        with patch.dict(os.environ, {PRESIDIO_DEVICE_ENV_VAR: "cuda:0"}):
+            detector = DeviceDetector()
+            assert detector.get_device() == "cuda:0"
+
+        with patch.dict(os.environ, {PRESIDIO_DEVICE_ENV_VAR: "cuda:1"}):
+            detector = DeviceDetector()
+            assert detector.get_device() == "cuda:1"
+
+    def test_when_env_var_has_whitespace_then_trimmed(self):
+        """Test that whitespace in env var value is trimmed."""
+        with patch.dict(os.environ, {PRESIDIO_DEVICE_ENV_VAR: "  cpu  "}):
+            detector = DeviceDetector()
+            assert detector.get_device() == "cpu"
+
+        with patch.dict(os.environ, {PRESIDIO_DEVICE_ENV_VAR: "  cuda:0  "}):
+            detector = DeviceDetector()
+            assert detector.get_device() == "cuda:0"
+
+    def test_when_env_var_empty_then_auto_detects(self):
+        """Test that empty env var triggers auto-detection."""
+        with patch.dict(os.environ, {PRESIDIO_DEVICE_ENV_VAR: ""}):
+            detector = DeviceDetector()
+            assert detector.get_device() in ["cpu", "cuda"]
+
+    def test_when_env_var_not_set_then_auto_detects(self):
+        """Test that missing env var triggers auto-detection."""
+        env_without_presidio_device = {
+            k: v for k, v in os.environ.items() if k != PRESIDIO_DEVICE_ENV_VAR
+        }
+        with patch.dict(os.environ, env_without_presidio_device, clear=True):
+            detector = DeviceDetector()
+            assert detector.get_device() in ["cpu", "cuda"]
+
+    def test_when_env_var_set_skips_auto_detection(self):
+        """Test that setting env var skips auto-detection entirely."""
+        with patch.dict(os.environ, {PRESIDIO_DEVICE_ENV_VAR: "cpu"}):
+            with patch.object(DeviceDetector, "_detect") as mock_detect:
+                detector = DeviceDetector()
+                mock_detect.assert_not_called()
+                assert detector.get_device() == "cpu"
 
 
 class TestDeviceDetectorErrorPaths:

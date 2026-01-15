@@ -2,6 +2,28 @@
 
 Presidio supports GPU acceleration for NLP models, which can significantly improve performance when processing large volumes of text. GPU is automatically detected and used when available—no code changes required.
 
+## Environment Variable Override
+
+You can explicitly control device selection using the `PRESIDIO_DEVICE` environment variable. Any valid PyTorch device string is accepted:
+
+```bash
+# Force CPU usage
+export PRESIDIO_DEVICE=cpu
+
+# Force GPU usage
+export PRESIDIO_DEVICE=cuda
+
+# Use a specific GPU
+export PRESIDIO_DEVICE=cuda:0
+export PRESIDIO_DEVICE=cuda:1
+
+# Or when running Docker containers
+docker run -e PRESIDIO_DEVICE=cuda mcr.microsoft.com/presidio-analyzer:latest
+```
+
+!!! note "Priority"
+    When `PRESIDIO_DEVICE` is set, it takes priority over automatic detection. If not set (or empty), Presidio will auto-detect available hardware.
+
 ## Prerequisites
 
 ### Hardware Requirements
