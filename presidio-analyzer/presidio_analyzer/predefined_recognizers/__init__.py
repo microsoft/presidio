@@ -77,6 +77,7 @@ from .generic.date_recognizer import DateRecognizer
 from .generic.email_recognizer import EmailRecognizer
 from .generic.iban_recognizer import IbanRecognizer
 from .generic.ip_recognizer import IpRecognizer
+from .generic.mac_recognizer import MacAddressRecognizer
 from .generic.phone_recognizer import PhoneRecognizer
 from .generic.url_recognizer import UrlRecognizer
 
@@ -124,6 +125,7 @@ __all__ = [
     "IpRecognizer",
     "NhsRecognizer",
     "MedicalLicenseRecognizer",
+    "MacAddressRecognizer",
     "PhoneRecognizer",
     "SgFinRecognizer",
     "UrlRecognizer",

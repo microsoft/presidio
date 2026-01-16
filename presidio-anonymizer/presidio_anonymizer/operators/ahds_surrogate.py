@@ -116,6 +116,7 @@ class AHDSSurrogate(Operator):
         'PASSWORD': 'USERNAME',  # No specific password category, use username
         'DEVICE': 'DEVICE',
         'DEVICE_ID': 'DEVICE',
+        'MAC_ADDRESS': 'MAC_ADDRESS',
 
         # Organization/Institution/Profession
         'ORGANIZATION': 'ORGANIZATION',
