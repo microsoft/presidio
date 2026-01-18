@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### Analyzer
+#### Added
+- US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (@chrisvoncsefalvay)
+
+## [unreleased]
 ### Image Redactor
 #### Changed
 - DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.
