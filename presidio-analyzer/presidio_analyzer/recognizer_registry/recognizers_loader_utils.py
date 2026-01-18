@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import logging
 from collections.abc import ItemsView
 from pathlib import Path
@@ -16,6 +17,7 @@ class PredefinedRecognizerNotFoundError(Exception):
     """Exception raised when a predefined recognizer is not found."""
 
     pass
+
 
 class RecognizerListLoader:
     """A utility class that initializes recognizers based on configuration."""
@@ -193,7 +195,9 @@ class RecognizerListLoader:
 
             # Transform supported_entities -> supported_entity
             # (PatternRecognizer expects singular)
-            RecognizerListLoader._convert_supported_entities_to_entity(copied_recognizer)
+            RecognizerListLoader._convert_supported_entities_to_entity(
+                copied_recognizer
+            )
 
             kwargs = {**copied_recognizer, **supported_language}
             recognizers.append(PatternRecognizer.from_dict(kwargs))
@@ -264,34 +268,48 @@ class RecognizerListLoader:
         """
         Prepare kwargs for recognizer instantiation.
 
-        Converts supported_entities to supported_entity
-        for PatternRecognizer subclasses.
-        Removes both fields if they are None to allow recognizer defaults to be used.
-
         :param recognizer_conf: The recognizer configuration.
         :param language_conf: The language configuration.
         :param recognizer_cls: The recognizer class.
         :return: Prepared kwargs for recognizer instantiation.
         """
-        kwargs = {**recognizer_conf, **language_conf}
+        # Merge order: recognizer_conf (base) -> language_conf (overrides)
+        # language_conf contains the specific 'supported_language' and 'context'
+        # for this instance, so it should act as an override for the generic config.
+        raw_kwargs = {**recognizer_conf, **language_conf}
 
-        # If this is a PatternRecognizer, handle supported_entities/supported_entity
-        if RecognizerListLoader._is_pattern_recognizer(recognizer_cls):
-            # Convert supported_entities (plural) to supported_entity
-            # (singular) if present
-            RecognizerListLoader._convert_supported_entities_to_entity(kwargs)
+        try:
+            sig = inspect.signature(recognizer_cls)
+            params = sig.parameters
 
-            # Remove supported_entity if it's None
-            # to allow the recognizer's default to be used
-            if kwargs.get("supported_entity") is None:
-                kwargs.pop("supported_entity", None)
-        else:
-            # For non-PatternRecognizer classes, remove both fields
-            # as they may not accept these parameters
-            kwargs.pop("supported_entities", None)
-            kwargs.pop("supported_entity", None)
+            # Check if the recognizer accepts **kwargs (variable keyword arguments)
+            has_var_keyword = any(
+                p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values()
+            )
 
-        return kwargs
+            if has_var_keyword:
+                # If it accepts **kwargs, pass everything but remove None values
+                # to avoid overwriting defaults with None
+                return {k: v for k, v in raw_kwargs.items() if v is not None}
+
+            # If it doesn't accept **kwargs, strictly filter
+            allowed_args = set(params.keys())
+
+            # Filter: must be in allowed_args AND not None
+            filtered_kwargs = {
+                k: v
+                for k, v in raw_kwargs.items()
+                if k in allowed_args and v is not None
+            }
+            return filtered_kwargs
+
+        except Exception as e:
+            logger.warning(
+                f"Failed to inspect signature for {recognizer_cls.__name__}: {e}. "
+                "Proceeding with basic merge."
+            )
+            # Fallback: remove None values just in case
+            return {k: v for k, v in raw_kwargs.items() if v is not None}
 
     @staticmethod
     def get(
@@ -307,9 +325,7 @@ class RecognizerListLoader:
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
 
-        predefined_to_exclude = {
-            "enabled", "type", "supported_languages", "class_name"
-        }
+        predefined_to_exclude = {"enabled", "type", "supported_languages", "class_name"}
         custom_to_exclude = {"enabled", "type", "class_name"}
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
@@ -444,17 +460,14 @@ class RecognizerConfigurationLoader:
 
             except OSError:
                 logger.warning(
-                    f"configuration file {conf_file} not found.  "
-                    f"Using default config."
+                    f"configuration file {conf_file} not found.  Using default config."
                 )
                 with open(RecognizerConfigurationLoader._get_full_conf_path()) as file:
                     config_from_file = yaml.safe_load(file)
                 use_defaults = False
 
             except Exception as e:
-                raise ValueError(
-                    f"Failed to parse file {conf_file}." f"Error: {str(e)}"
-                )
+                raise ValueError(f"Failed to parse file {conf_file}.Error: {str(e)}")
 
         # Load defaults if needed (no config provided,
         # or registry_configuration is incomplete)
