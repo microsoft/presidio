@@ -87,6 +87,16 @@ The recognizer list comprises of both the predefined and custom recognizers, for
     supported_entity: "TITLE"
     deny_list: [Mr., Mrs., Ms., Miss, Dr., Prof.]
     deny_list_score: 1
+
+  - name: "HuggingFace NER"
+    type: "predefined"
+    class_name: "HuggingFaceNerRecognizer"
+    model_name: "dslim/bert-base-NER"
+    supported_languages:
+      - en
+    supported_entities: ["PERSON", "LOCATION", "ORGANIZATION"]
+    aggregation_strategy: "simple"
+    device: "cpu"
 ```
 
 ### The recognizer parameters
