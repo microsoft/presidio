@@ -76,17 +76,25 @@ class BaseTextChunker(ABC):
             RecognizerResult objects
         :return: List of RecognizerResult with adjusted offsets
         """
+        from presidio_analyzer import RecognizerResult
+
         all_predictions = []
 
         for chunk in chunks:
             chunk_predictions = process_func(chunk.text)
 
-            # Adjust offsets to match original text position
+            # Create new RecognizerResult objects with adjusted offsets
+            # to avoid mutating the original predictions
             for pred in chunk_predictions:
-                pred.start += chunk.start
-                pred.end += chunk.start
-
-            all_predictions.extend(chunk_predictions)
+                adjusted_pred = RecognizerResult(
+                    entity_type=pred.entity_type,
+                    start=pred.start + chunk.start,
+                    end=pred.end + chunk.start,
+                    score=pred.score,
+                    analysis_explanation=pred.analysis_explanation,
+                    recognition_metadata=pred.recognition_metadata,
+                )
+                all_predictions.append(adjusted_pred)
 
         return all_predictions
 

@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 
 from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
-from presidio_analyzer.chunkers import LangChainTextChunker
+from presidio_analyzer.chunkers import CharacterBasedTextChunker
 
 
 @pytest.fixture
@@ -161,7 +161,7 @@ def test_gliner_handles_long_text_with_chunking(mock_gliner):
 
     gliner_recognizer = GLiNERRecognizer(
         entity_mapping={"person": "PERSON"},
-        text_chunker=LangChainTextChunker(chunk_size=250, chunk_overlap=50),
+        text_chunker=CharacterBasedTextChunker(chunk_size=250, chunk_overlap=50),
     )
     gliner_recognizer.gliner = mock_gliner
 
@@ -203,7 +203,7 @@ def test_gliner_detects_entity_split_across_chunk_boundary(mock_gliner):
 
     gliner_recognizer = GLiNERRecognizer(
         entity_mapping={"person": "PERSON"},
-        text_chunker=LangChainTextChunker(chunk_size=250, chunk_overlap=50),
+        text_chunker=CharacterBasedTextChunker(chunk_size=250, chunk_overlap=50),
     )
     gliner_recognizer.gliner = mock_gliner
 
@@ -239,7 +239,7 @@ def test_gliner_deduplicates_entities_in_overlap_region(mock_gliner):
 
     gliner_recognizer = GLiNERRecognizer(
         entity_mapping={"person": "PERSON"},
-        text_chunker=LangChainTextChunker(chunk_size=250, chunk_overlap=50),
+        text_chunker=CharacterBasedTextChunker(chunk_size=250, chunk_overlap=50),
     )
     gliner_recognizer.gliner = mock_gliner
 

@@ -2,7 +2,7 @@
 import pytest
 
 from presidio_analyzer import RecognizerResult
-from presidio_analyzer.chunkers import LangChainTextChunker
+from presidio_analyzer.chunkers import CharacterBasedTextChunker
 
 
 class TestPredictWithChunking:
@@ -10,7 +10,7 @@ class TestPredictWithChunking:
 
     def test_short_text_not_chunked(self):
         """Short text bypasses chunking."""
-        chunker = LangChainTextChunker(chunk_size=100, chunk_overlap=20)
+        chunker = CharacterBasedTextChunker(chunk_size=100, chunk_overlap=20)
         predict_func = lambda t: [
             RecognizerResult(entity_type="PERSON", start=0, end=5, score=0.9)
         ]
@@ -22,7 +22,7 @@ class TestPredictWithChunking:
 
     def test_long_text_offsets_adjusted(self):
         """Entity offsets are adjusted to original text positions."""
-        chunker = LangChainTextChunker(chunk_size=20, chunk_overlap=5)
+        chunker = CharacterBasedTextChunker(chunk_size=20, chunk_overlap=5)
         text = "John Smith lives in New York City with Jane Doe"
 
         def predict_func(chunk):
@@ -45,7 +45,7 @@ class TestDeduplicateOverlappingEntities:
 
     def test_exact_duplicates_keeps_highest_score(self):
         """Same entity from overlapping chunks keeps higher score."""
-        chunker = LangChainTextChunker()
+        chunker = CharacterBasedTextChunker()
         predictions = [
             RecognizerResult(entity_type="PERSON", start=0, end=10, score=0.9),
             RecognizerResult(entity_type="PERSON", start=0, end=10, score=0.7),
@@ -58,7 +58,7 @@ class TestDeduplicateOverlappingEntities:
 
     def test_overlapping_same_type_deduplicated(self):
         """Overlapping entities of same type are deduplicated."""
-        chunker = LangChainTextChunker()
+        chunker = CharacterBasedTextChunker()
         predictions = [
             RecognizerResult(entity_type="PERSON", start=0, end=10, score=0.9),
             RecognizerResult(entity_type="PERSON", start=3, end=13, score=0.8),
@@ -70,7 +70,7 @@ class TestDeduplicateOverlappingEntities:
 
     def test_different_types_not_deduplicated(self):
         """Overlapping entities of different types are kept."""
-        chunker = LangChainTextChunker()
+        chunker = CharacterBasedTextChunker()
         predictions = [
             RecognizerResult(entity_type="PERSON", start=0, end=10, score=0.9),
             RecognizerResult(entity_type="LOCATION", start=5, end=15, score=0.8),
@@ -82,7 +82,7 @@ class TestDeduplicateOverlappingEntities:
 
     def test_results_sorted_by_position(self):
         """Results are sorted by start position."""
-        chunker = LangChainTextChunker()
+        chunker = CharacterBasedTextChunker()
         predictions = [
             RecognizerResult(entity_type="PERSON", start=20, end=30, score=0.9),
             RecognizerResult(entity_type="PERSON", start=0, end=10, score=0.8),
@@ -95,7 +95,7 @@ class TestDeduplicateOverlappingEntities:
 
     def test_zero_length_span_does_not_raise(self):
         """Zero-length spans should not cause ZeroDivisionError."""
-        chunker = LangChainTextChunker()
+        chunker = CharacterBasedTextChunker()
         predictions = [
             RecognizerResult(entity_type="PERSON", start=5, end=5, score=0.9),
             RecognizerResult(entity_type="PERSON", start=0, end=10, score=0.8),
@@ -111,7 +111,7 @@ class TestPredictWithChunkingEdgeCases:
 
     def test_empty_text_returns_empty_without_calling_predict(self):
         """Empty text should return [] without invoking predict_func."""
-        chunker = LangChainTextChunker(chunk_size=100)
+        chunker = CharacterBasedTextChunker(chunk_size=100)
         call_count = 0
 
         def predict_func(t):

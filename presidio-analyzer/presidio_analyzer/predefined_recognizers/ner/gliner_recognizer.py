@@ -61,7 +61,7 @@ class GLiNERRecognizer(LocalRecognizer):
         :param map_location: The device to use for the model.
             If None, will auto-detect GPU or use CPU.
         :param text_chunker: Custom text chunking strategy. If None, uses
-            LangChainTextChunker with default settings (chunk_size=250,
+            CharacterBasedTextChunker with default settings (chunk_size=250,
             chunk_overlap=50)
 
 
@@ -102,19 +102,13 @@ class GLiNERRecognizer(LocalRecognizer):
         self.multi_label = multi_label
         self.threshold = threshold
 
-        # Use provided chunker or lazily import default chunker to keep dependency optional
+        # Use provided chunker or default to in-house character-based chunker
         if text_chunker is not None:
             self.text_chunker = text_chunker
         else:
-            try:
-                from presidio_analyzer.chunkers import LangChainTextChunker
-            except ImportError as exc:
-                raise ImportError(
-                    "langchain-text-splitters is required for GLiNER chunking. "
-                    "Install presidio-analyzer[gliner] or provide a custom text_chunker."
-                ) from exc
+            from presidio_analyzer.chunkers import CharacterBasedTextChunker
 
-            self.text_chunker = LangChainTextChunker(
+            self.text_chunker = CharacterBasedTextChunker(
                 chunk_size=250,
                 chunk_overlap=50,
             )
