@@ -47,7 +47,7 @@ class CharacterBasedTextChunker(BaseTextChunker):
 
         self._chunk_size = chunk_size
         self._chunk_overlap = chunk_overlap
-        # Allow callers to tune boundaries 
+        # Allow callers to tune boundaries
         # (e.g., punctuation, tabs) without changing defaults.
         self._boundary_chars: Tuple[str, ...] = (
             tuple(boundary_chars) if boundary_chars is not None else WORD_BOUNDARY_CHARS
