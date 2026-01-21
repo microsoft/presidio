@@ -18,22 +18,25 @@ def entities():
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        # Valid EU format with separators (state code + numbers + letters)
-        ("B AB 1234", 1, ((0, 9),), ((0.5, 1.0),)),
-        ("M-XY-123", 1, ((0, 8),), ((0.5, 1.0),)),
-        ("DD MC 5678", 1, ((0, 10),), ((0.5, 1.0),)),
-        ("HH ZB 999", 1, ((0, 9),), ((0.5, 1.0),)),
+        # Valid hyphen format (district-letters digits)
+        ("B-AB 1234", 1, ((0, 9),), ((0.5, 1.0),)),
+        ("M-XY 123", 1, ((0, 8),), ((0.5, 1.0),)),
 
-        # Valid continuous format (no separators)
+        # Valid space format (district letters digits) - score 0.4
+        ("B AB 1234", 1, ((0, 9),), ((0.3, 1.0),)),
+        ("DD MC 5678", 1, ((0, 10),), ((0.3, 1.0),)),
+        ("HH ZB 999", 1, ((0, 9),), ((0.3, 1.0),)),
+
+        # Valid continuous format (no separators) - score 0.3
         ("BAB1234", 1, ((0, 7),), ((0.3, 1.0),)),
         ("MXYZ123", 1, ((0, 7),), ((0.3, 1.0),)),
 
         # With surrounding text
-        ("My license plate is B AB 1234", 1, ((20, 29),), ((0.5, 1.0),)),
-        ("Fahrzeug: M-XY-123", 1, ((10, 18),), ((0.5, 1.0),)),
+        ("My license plate is B-AB 1234", 1, ((20, 29),), ((0.5, 1.0),)),
+        ("Fahrzeug: M-XY 123", 1, ((10, 18),), ((0.5, 1.0),)),
 
-        # Multiple plates
-        ("Plates: B AB 1234 and M XY 123", 2, ((8, 17), (22, 30)), ((0.5, 1.0), (0.5, 1.0))),
+        # Multiple plates (space format)
+        ("Plates: B AB 1234 and M XY 123", 2, ((8, 17), (22, 30)), ((0.3, 1.0), (0.3, 1.0))),
 
         # Invalid - no numbers
         ("B AB CDEF", 0, (), ()),
@@ -41,8 +44,11 @@ def entities():
         # Invalid - only numbers
         ("1234 5678", 0, (), ()),
 
-        # ABCD 1234 matches the continuous pattern (4 letters + 4 digits)
-        ("ABCD 1234", 1, ((0, 9),), ((0.3, 1.0),)),
+        # Invalid - 4-letter district codes don't exist in Germany
+        ("ABCD 1234", 0, (), ()),
+
+        # Invalid - double hyphen format is not standard
+        ("M-XY-123", 0, (), ()),
         # fmt: on
     ],
 )

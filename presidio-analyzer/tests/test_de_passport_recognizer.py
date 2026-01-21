@@ -29,20 +29,21 @@ def entities():
 
         # With surrounding text
         ("My passport is C01X00T41 here", 1, ((15, 24),), ((0.2, 1.0),)),
-        # "Reisepass" matches generic pattern (9 alphanumeric chars), returns 2 results
-        # Results are returned in order: higher score first, then lower score
-        ("Reisepass: F2N3P4M53", 2, ((11, 20), (0, 9)), ((0.2, 1.0), (0.01, 0.1))),
+        # "Reisepass" rejected by validation (contains forbidden chars E, I, A, S)
+        ("Reisepass: F2N3P4M53", 1, ((11, 20),), ((0.2, 1.0),)),
 
-        # Multiple passports - "Passports" also matches generic pattern
-        ("Passports: C01X00T41 and F2N3P4M53", 3, ((11, 20), (25, 34), (0, 9)), ((0.2, 1.0), (0.2, 1.0), (0.01, 0.1))),
+        # Multiple passports - "Passports" rejected (contains forbidden chars A, S, O)
+        ("Passports: C01X00T41 and F2N3P4M53", 2, ((11, 20), (25, 34)), ((0.2, 1.0), (0.2, 1.0))),
 
-        # Invalid - wrong first letter (matched by generic pattern but low score)
-        # These match the generic pattern r"\b[A-Z0-9]{9}\b" with score 0.05
-        ("A12345678", 1, ((0, 9),), ((0.01, 0.1),)),
-        ("B12345678", 1, ((0, 9),), ((0.01, 0.1),)),
-        ("D12345678", 1, ((0, 9),), ((0.01, 0.1),)),
+        # Invalid - contain forbidden characters (A, B, D, E, I, O, Q, S, U)
+        ("A12345678", 0, (), ()),  # Contains A
+        ("B12345678", 0, (), ()),  # Contains B
+        ("D12345678", 0, (), ()),  # Contains D
 
-        # Invalid - contains vowels (matched by generic but validation rejects)
+        # Wrong prefix but no forbidden chars - matches generic with low score
+        ("L12345678", 1, ((0, 9),), ((0.01, 0.1),)),
+
+        # Invalid - contains forbidden vowels
         ("CAEIOU123", 0, (), ()),
 
         # Invalid - wrong length
@@ -81,8 +82,10 @@ def test_when_passport_in_text_then_all_passports_found(
         ("CAEIOU123", False),
         # Invalid - wrong length
         ("C1234567", False),
-        # Wrong prefix - returns None (could be older format)
-        ("A12345678", None),
+        # Contains forbidden char - returns False
+        ("A12345678", False),
+        # Wrong prefix but no forbidden chars - returns None (could be older format)
+        ("L12345678", None),
     ],
 )
 def test_validate_result(text, expected, recognizer):

@@ -89,15 +89,16 @@ class DePassportRecognizer(PatternRecognizer):
         if len(pattern_text) != 9:
             return False
 
-        # Check first character is valid passport prefix
-        valid_prefixes = {"C", "F", "G", "H", "J", "K"}
-        if pattern_text[0] not in valid_prefixes:
-            return None  # Could still be valid older format
-
         # German passport uses forbidden characters: A, B, D, E, I, O, Q, S, U
+        # Check this FIRST to reject common German words (DIAGNOSEN, SCHMERZEN, etc.)
         forbidden_chars = set("ABDEIOQSU")
         if any(c in forbidden_chars for c in pattern_text):
             return False
+
+        # Check first character is valid passport prefix
+        valid_prefixes = {"C", "F", "G", "H", "J", "K"}
+        if pattern_text[0] not in valid_prefixes:
+            return None  # Could still be valid older format, use pattern score
 
         return self._validate_checksum(pattern_text)
 

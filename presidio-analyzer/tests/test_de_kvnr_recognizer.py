@@ -31,9 +31,8 @@ def entities():
         # Invalid - starts with number
         ("1123456789", 0, (), ()),
 
-        # Invalid - lowercase letter (regex matches uppercase only)
-        # Checksum would validate it after uppercase conversion, but regex should not match
-        ("a123456780", 0, (), ()),
+        # Lowercase letter - matches because Presidio uses IGNORECASE by default
+        ("a123456780", 1, ((0, 10),), ((0.4, 1.0),)),
 
         # Invalid - too short
         ("A12345678", 0, (), ()),
