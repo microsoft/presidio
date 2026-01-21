@@ -18,6 +18,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |EMAIL_ADDRESS|An email address identifies an email box to which email messages are delivered|Pattern match, context and RFC-822 validation|
 |IBAN_CODE|The International Bank Account Number (IBAN) is an internationally agreed system of identifying bank accounts across national borders to facilitate the communication and processing of cross border transactions with a reduced risk of transcription errors.|Pattern match, context and checksum|
 |IP_ADDRESS|An Internet Protocol (IP) address (either IPv4 or IPv6).|Pattern match, context and checksum|
+|MAC_ADDRESS| A Media Access Control (MAC) address is a unique identifier assigned to network interfaces for communications on the physical network segment.|Pattern match and context|
 |NRP|A person’s Nationality, religious or political group.|Custom logic and context|
 |LOCATION|Name of politically or geographically defined location (cities, provinces, countries, international regions, bodies of water, mountains|Custom logic and context|
 |PERSON|A full person name, which can include first names, middle names or initials, and last names.|Custom logic and context|
@@ -99,9 +100,12 @@ For more information, refer to the [adding new recognizers documentation](analyz
 ### Korea
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
-| KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
 | KR_DRIVER_LICENSE    |  The Korean driver license number is a 12-digit number. | Pattern match, context and custom logic. |
+| KR_FRN     | The Korean Foreigner Registration Number (FRN) is a 13-digit number. | Pattern match, context and custom logic. |
 | KR_PASSPORT| The Korean Passport Number  | Pattern match, context. |
+| KR_BRN     | The Korean Business Registration Number (BRN) is a 10-digit number assigned to business entities for taxation purposes. | Pattern match, context and custom logic. |
+| KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
+
 
 ### Germany
 | FieldType  | Description                                                                                             | Detection Method                         |
