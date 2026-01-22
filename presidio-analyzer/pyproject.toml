@@ -58,7 +58,7 @@ gliner = [
     "transformers",
     "huggingface_hub",
     "gliner (>=0.2.13,<1.0.0) ; python_version >= '3.10'",
-    "onnxruntime (>=1.19) ; python_version >= '3.10'",
+    "onnxruntime (>=1.19) ; python_version >= '3.10'"
 ]
 langextract = [
     "langextract (>=1.0.0)",
