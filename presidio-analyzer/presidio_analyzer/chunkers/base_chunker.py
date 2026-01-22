@@ -131,8 +131,6 @@ class BaseTextChunker(ABC):
                         pred_len = pred.end - pred.start
                         kept_len = kept.end - kept.start
 
-                        # Skip zero-length spans to avoid division by zero
-                        # and malformed data
                         if pred_len <= 0 or kept_len <= 0:
                             continue
 
