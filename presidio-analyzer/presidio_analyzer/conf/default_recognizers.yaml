@@ -154,6 +154,13 @@ recognizers:
     - pl
     type: predefined
 
+  - name: KrBrnRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
   - name: KrRrnRecognizer
     supported_languages: 
     - ko
@@ -162,6 +169,13 @@ recognizers:
     enabled: false
 
   - name: KrDriverLicenseRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
+  - name: KrFrnRecognizer
     supported_languages: 
     - ko
     - kr
@@ -190,6 +204,9 @@ recognizers:
     type: predefined
 
   - name: MedicalLicenseRecognizer
+    type: predefined
+
+  - name: MacAddressRecognizer
     type: predefined
 
   - name: PhoneRecognizer
