@@ -88,7 +88,7 @@ class TestBasicLangExtractRecognizerInitialization:
             recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
             
             # Verify initialization
-            assert recognizer.name == "Basic LangExtract PII"
+            assert recognizer.name == "BasicLangExtractRecognizer"
             assert recognizer.model_id == "qwen2.5:1.5b"
             assert len(recognizer.supported_entities) == 3  # PERSON, EMAIL_ADDRESS, GENERIC_PII_ENTITY
             assert "PERSON" in recognizer.supported_entities
