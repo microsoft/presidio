@@ -26,15 +26,15 @@ lm_recognizer:
   min_score: 0.5
 
 langextract:
-  prompt_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
-  examples_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
-  
+  prompt_file: "presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
+  examples_file: "presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
+
+  # ollama example
   model:
     model_id: "qwen2.5:1.5b"
     provider:
-      name: "ollama" # or "openai", etc
+      name: "ollama"
       kwargs:
-        # these will be provider-specific
         model_url: "http://localhost:11434"
       extract_params:
         temperature: null
@@ -44,6 +44,23 @@ langextract:
       language_model_params:
         timeout: 240
         num_ctx: 8192
+
+  # litellm example
+  #model:
+  #  model_id: "ollama/qwen2.5:1.5b"
+  #  provider:
+  #    name: "openai"
+  #    kwargs:
+  #      base_url: "http://localhost:4000"
+  #      api_key: "API_KEY_GOES_HERE"
+  #    extract_params:
+  #      temperature: null
+  #      use_schema_constraints: false
+  #      fence_output: false
+  #      max_char_buffer: 400
+  #    language_model_params:
+  #      timeout: 240
+  #      num_ctx: 8192
 
   entity_mappings:
     person: PERSON

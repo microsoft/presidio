@@ -31,7 +31,9 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
         self,
         config_path: Optional[str] = None,
         supported_language: str = "en",
-        context: Optional[list] = None
+        context: Optional[list] = None,
+        name="BasicLangExtractRecognizer",
+        **kwargs
     ):
         """Initialize Basic LangExtract recognizer.
 
@@ -47,7 +49,7 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
 
         super().__init__(
             config_path=actual_config_path,
-            name="Basic LangExtract PII",
+            name=name,
             supported_language=supported_language,
             extract_params={
                 "extract": DEFAULT_EXTRACT_PARAMS,
