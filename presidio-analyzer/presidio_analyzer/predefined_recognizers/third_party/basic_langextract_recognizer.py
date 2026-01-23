@@ -1,9 +1,9 @@
 import logging
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
-from presidio_analyzer.llm_utils import lx, lx_factory
+from presidio_analyzer.llm_utils import lx_factory
 from presidio_analyzer.predefined_recognizers.third_party.\
     langextract_recognizer import LangExtractRecognizer
 
@@ -34,13 +34,24 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
             config_path if config_path else str(self.DEFAULT_CONFIG_PATH)
         )
 
+        model_config = self.config.get("model", {})
+        extract_params: dict[str, dict[str, Any]] = {}
+        if "max_char_buffer" in model_config:
+            extract_params["extract"] = {
+                "max_char_buffer": model_config["max_char_buffer"]
+            }
+
+        for key in ["timeout", "num_ctx"]:
+            if key in model_config:
+                extract_params["language_model"][key] = model_config[key]
+
         super().__init__(
             config_path=actual_config_path,
             name="Basic LangExtract PII",
-            supported_language=supported_language
+            supported_language=supported_language,
+            extract_params=extract_params,
         )
 
-        model_config = self.config.get("model", {})
         provider_config = model_config.get("provider", {})
         self.model_id = model_config.get("model_id")
         self.provider = provider_config.get("name")

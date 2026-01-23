@@ -224,14 +224,6 @@ recognizers:
     - en
     type: predefined
     enabled: false
-  
-  - name: OllamaRecognizer
-    class_name: OllamaLangExtractRecognizer
-    supported_languages:
-      - en
-    type: predefined
-    enabled: false
-    config_path: presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml
 
   - name: BasicLangExtractRecognizer
     supported_languages:
