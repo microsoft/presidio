@@ -31,16 +31,19 @@ langextract:
   
   model:
     model_id: "qwen2.5:1.5b"
-    model_url: "http://localhost:11434"
-    temperature: null
-    
-    # Optional: Uncomment to override defaults
-    # max_char_buffer: 400
-    # use_schema_constraints: false
-    # fence_output: false
-    # timeout: 240
-    # num_ctx: 8192
-  
+    provider:
+      name: "ollama"
+      kwargs:
+        model_url: "http://localhost:11434"
+      extract_params:
+        temperature: null
+        use_schema_constraints: false
+        fence_output: false
+        max_char_buffer: 400
+      language_model_params:
+        timeout: 240
+        num_ctx: 8192
+
   entity_mappings:
     person: PERSON
     name: PERSON
