@@ -229,5 +229,5 @@ recognizers:
     supported_languages:
       - en
     type: predefined
-    enabled: true
+    enabled: false
     config_path: presidio_analyzer/conf/langextract_config_basic.yaml
