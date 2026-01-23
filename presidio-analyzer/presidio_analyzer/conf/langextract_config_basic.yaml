@@ -1,5 +1,5 @@
-# Ollama Configuration for LangExtract
-# https://github.com/google/langextract#using-local-llms-with-ollama
+# Basic LangExtract Configuration
+# Supports different LLM providers via LangExtract's ModelConfig
 #
 # Required parameters: model_id, model_url
 # Optional parameters use defaults if not specified
@@ -32,8 +32,9 @@ langextract:
   model:
     model_id: "qwen2.5:1.5b"
     provider:
-      name: "ollama"
+      name: "ollama" # or "openai", etc
       kwargs:
+        # these will be provider-specific
         model_url: "http://localhost:11434"
       extract_params:
         temperature: null
