@@ -71,9 +71,6 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
         if not self.provider:
             raise ValueError("Configuration must contain 'langextract.model.provider.name'")
 
-        self.fence_output = model_config.get("fence_output", "openai" in self.provider.lower())
-        self.use_schema_constraints = model_config.get("use_schema_constraints", False)
-
         if "api_key" not in self.provider_kwargs and "LANGEXTRACT_API_KEY" in os.environ:
             self.provider_kwargs["api_key"] = os.environ["LANGEXTRACT_API_KEY"]
 
