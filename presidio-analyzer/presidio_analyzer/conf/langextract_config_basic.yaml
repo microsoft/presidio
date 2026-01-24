@@ -1,5 +1,8 @@
-# Configurable LangExtract Configuration
-# Supports multiple LLM providers via LangExtract's ModelConfig
+# Basic LangExtract Configuration
+# Supports different LLM providers via LangExtract's ModelConfig
+#
+# Required parameters: model_id, provider.name
+# Optional parameters use defaults if not specified
 
 lm_recognizer:
   supported_entities:
@@ -13,12 +16,12 @@ lm_recognizer:
     - CREDIT_CARD
     - IP_ADDRESS
     - URL
-
+  
   labels_to_ignore:
     - payment_status
     - metadata
     - annotation
-
+  
   enable_generic_consolidation: true
   min_score: 0.5
 
@@ -26,13 +29,38 @@ langextract:
   prompt_file: "presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
   examples_file: "presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
 
+  # ollama example
   model:
-    model_id: "gpt-4o"
+    model_id: "qwen2.5:1.5b"
     provider:
-      name: "openai"
+      name: "ollama"
       kwargs:
-        base_url: "https://api.openai.com/v1"
-        # api_key: "API_KEY_GOES_HERE" or set env LANGEXTRACT_API_KEY
+        model_url: "http://localhost:11434"
+      extract_params:
+        temperature: null
+        use_schema_constraints: false
+        fence_output: false
+        max_char_buffer: 400
+      language_model_params:
+        timeout: 240
+        num_ctx: 8192
+
+  # litellm example
+  #model:
+  #  model_id: "ollama/qwen2.5:1.5b"
+  #  provider:
+  #    name: "openai"
+  #    kwargs:
+  #      base_url: "http://localhost:4000"
+  #      api_key: "API_KEY_GOES_HERE"
+  #    extract_params:
+  #      temperature: null
+  #      use_schema_constraints: false
+  #      fence_output: false
+  #      max_char_buffer: 400
+  #    language_model_params:
+  #      timeout: 240
+  #      num_ctx: 8192
 
   entity_mappings:
     person: PERSON

@@ -1,13 +1,24 @@
 import logging
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional, Dict
 
-from presidio_analyzer.llm_utils import lx, lx_factory
+from presidio_analyzer.llm_utils import lx_factory
 from presidio_analyzer.predefined_recognizers.third_party.\
     langextract_recognizer import LangExtractRecognizer
 
 logger = logging.getLogger("presidio-analyzer")
+
+DEFAULT_EXTRACT_PARAMS = {
+    "max_char_buffer": 400,
+    "use_schema_constraints": False,
+    "fence_output": False,
+}
+
+DEFAULT_LANGUAGE_MODEL_PARAMS = {
+    "timeout": 240,
+    "num_ctx": 8192
+}
 
 class BasicLangExtractRecognizer(LangExtractRecognizer):
     """Basic LangExtract recognizer using configurable backend."""
@@ -20,7 +31,9 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
         self,
         config_path: Optional[str] = None,
         supported_language: str = "en",
-        context: Optional[list] = None
+        context: Optional[list] = None,
+        name="BasicLangExtractRecognizer",
+        **kwargs
     ):
         """Initialize Basic LangExtract recognizer.
 
@@ -36,22 +49,27 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
 
         super().__init__(
             config_path=actual_config_path,
-            name="Basic LangExtract PII",
-            supported_language=supported_language
+            name=name,
+            supported_language=supported_language,
+            extract_params={
+                "extract": DEFAULT_EXTRACT_PARAMS,
+                "language_model": DEFAULT_LANGUAGE_MODEL_PARAMS
+            }
         )
 
-        model_config = self.config.get("model", {})
+        model_config: Dict[str, Any] = self.config.get("model", {})
         provider_config = model_config.get("provider", {})
+
         self.model_id = model_config.get("model_id")
         self.provider = provider_config.get("name")
         self.provider_kwargs = provider_config.get("kwargs", {})
-        if not self.model_id:
-            raise ValueError("Configuration must contain 'model_id'")
-        if not self.provider:
-            raise ValueError("Configuration must contain 'provider'")
 
-        self.fence_output = model_config.get("fence_output", "openai" in self.provider.lower())
-        self.use_schema_constraints = model_config.get("use_schema_constraints", False)
+        # Not ideal, but update _extract_params now that self.config is fully loaded.
+        self._extract_params.update(provider_config.get("extract_params", {}))
+        self._language_model_params.update(provider_config.get("language_model_params", {}))
+
+        if not self.provider:
+            raise ValueError("Configuration must contain 'langextract.model.provider.name'")
 
         if "api_key" not in self.provider_kwargs and "LANGEXTRACT_API_KEY" in os.environ:
             self.provider_kwargs["api_key"] = os.environ["LANGEXTRACT_API_KEY"]
@@ -66,6 +84,4 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
         """Return Azure OpenAI-specific params."""
         return {
             "config": self.lx_model_config,
-            "fence_output": self.fence_output,
-            "use_schema_constraints": self.use_schema_constraints,
         }

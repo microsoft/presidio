@@ -34,7 +34,16 @@ def create_test_config(
             "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
             "model": {
                 "model_id": model_id,
-                "model_url": model_url,
+                "provider": {
+                    "name": "ollama",
+                    "kwargs": {
+                        "model_url": model_url,
+                    },
+                    "extract_params": {
+                    },
+                    "language_model_params": {
+                    }
+                },
                 "temperature": temperature,
             },
             "entity_mappings": entity_mappings,
@@ -42,8 +51,8 @@ def create_test_config(
     }
 
 
-class TestOllamaLangExtractRecognizerInitialization:
-    """Test OllamaLangExtractRecognizer initialization and configuration loading."""
+class TestBasicLangExtractRecognizerInitialization:
+    """Test BasicLangExtractRecognizer initialization and configuration loading."""
 
     def test_when_langextract_not_installed_then_raises_import_error(self):
         """Test that ImportError is raised when langextract is not installed."""
@@ -51,12 +60,12 @@ class TestOllamaLangExtractRecognizerInitialization:
             'presidio_analyzer.llm_utils.langextract_helper.lx',
             None
         ):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
             with pytest.raises(ImportError, match="LangExtract is not installed"):
-                OllamaLangExtractRecognizer()
+                BasicLangExtractRecognizer()
 
     def test_when_initialized_with_mocked_ollama_then_succeeds(self, tmp_path):
-        """Test OllamaLangExtractRecognizer initialization."""
+        """Test BasicLangExtractRecognizer initialization."""
         import yaml
         
         config = create_test_config(
@@ -75,13 +84,12 @@ class TestOllamaLangExtractRecognizerInitialization:
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
             
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
             
             # Verify initialization
-            assert recognizer.name == "Ollama LangExtract PII"
+            assert recognizer.name == "BasicLangExtractRecognizer"
             assert recognizer.model_id == "qwen2.5:1.5b"
-            assert recognizer.model_url == "http://localhost:11434"
             assert len(recognizer.supported_entities) == 3  # PERSON, EMAIL_ADDRESS, GENERIC_PII_ENTITY
             assert "PERSON" in recognizer.supported_entities
             assert "EMAIL_ADDRESS" in recognizer.supported_entities
@@ -90,7 +98,7 @@ class TestOllamaLangExtractRecognizerInitialization:
             # Verify inheritance hierarchy
             from presidio_analyzer.lm_recognizer import LMRecognizer
             from presidio_analyzer.predefined_recognizers.third_party.langextract_recognizer import LangExtractRecognizer
-            assert isinstance(recognizer, OllamaLangExtractRecognizer)
+            assert isinstance(recognizer, BasicLangExtractRecognizer)
             assert isinstance(recognizer, LangExtractRecognizer)
             assert isinstance(recognizer, LMRecognizer)
 
@@ -98,9 +106,9 @@ class TestOllamaLangExtractRecognizerInitialization:
         """Test FileNotFoundError when config file doesn't exist."""
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
             with pytest.raises(FileNotFoundError, match="File not found"):
-                OllamaLangExtractRecognizer(config_path="/nonexistent/path.yaml")
+                BasicLangExtractRecognizer(config_path="/nonexistent/path.yaml")
 
     def test_when_model_section_missing_then_raises_value_error(self, tmp_path):
         """Test ValueError when config missing 'langextract.model' section."""
@@ -127,9 +135,9 @@ class TestOllamaLangExtractRecognizerInitialization:
         
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
             with pytest.raises(ValueError, match="Configuration must contain 'langextract.model'"):
-                OllamaLangExtractRecognizer(config_path=str(config_file))
+                BasicLangExtractRecognizer(config_path=str(config_file))
 
     def test_when_model_id_missing_then_raises_value_error(self, tmp_path):
         """Test ValueError when model_id is missing."""
@@ -147,9 +155,11 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "examples_file": "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml",
                 "entity_mappings": {"person": "PERSON"},
                 "model": {
-                    "model_url": "http://localhost:11434"
                     # Missing model_id
-                }
+                    "provider": {
+                        "name": "ollama",
+                    },
+                },
             }
         }
         
@@ -159,11 +169,11 @@ class TestOllamaLangExtractRecognizerInitialization:
         
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
             with pytest.raises(ValueError, match="Configuration must contain 'langextract.model.model_id'"):
-                OllamaLangExtractRecognizer(config_path=str(config_file))
+                BasicLangExtractRecognizer(config_path=str(config_file))
 
-    def test_when_model_url_missing_then_raises_value_error(self, tmp_path):
+    def test_when_provier_missing_then_raises_value_error(self, tmp_path):
         """Test ValueError when model_url is missing."""
         import yaml
         
@@ -180,7 +190,7 @@ class TestOllamaLangExtractRecognizerInitialization:
                 "entity_mappings": {"person": "PERSON"},
                 "model": {
                     "model_id": "qwen2.5:1.5b"
-                    # Missing model_url
+                    # Missing provider
                 }
             }
         }
@@ -191,17 +201,17 @@ class TestOllamaLangExtractRecognizerInitialization:
         
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            with pytest.raises(ValueError, match="Ollama model configuration must contain 'model_url'"):
-                OllamaLangExtractRecognizer(config_path=str(config_file))
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            with pytest.raises(ValueError, match="Configuration must contain 'langextract.model.provider.name'"):
+                BasicLangExtractRecognizer(config_path=str(config_file))
 
 
-class TestOllamaLangExtractRecognizerAnalyze:
+class TestBasicLangExtractRecognizerAnalyze:
     """Test the analyze method with mocked LangExtract."""
 
     @pytest.fixture
     def mock_recognizer(self, tmp_path):
-        """Fixture to create a mocked OllamaLangExtractRecognizer."""
+        """Fixture to create a mocked BasicLangExtractRecognizer."""
         import yaml
         
         config = create_test_config(
@@ -223,8 +233,8 @@ class TestOllamaLangExtractRecognizerAnalyze:
 
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            return OllamaLangExtractRecognizer(config_path=str(config_file))
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            return BasicLangExtractRecognizer(config_path=str(config_file))
 
     def test_when_text_contains_person_then_detects_entity(self, mock_recognizer):
         """Test analysis detecting a person entity with mocked LangExtract."""
@@ -410,8 +420,8 @@ class TestOllamaLangExtractRecognizerAnalyze:
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
             
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
 
         text = "Some text"
 
@@ -432,7 +442,7 @@ class TestOllamaLangExtractRecognizerAnalyze:
         assert len(results) == 0
 
 
-class TestOllamaLangExtractRecognizerParameterConfiguration:
+class TestBasicLangExtractRecognizerParameterConfiguration:
     """Test parameter configuration with defaults and YAML overrides."""
 
     def test_when_no_config_params_then_uses_defaults(self, tmp_path):
@@ -448,8 +458,8 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
 
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
             
             # Verify defaults are set
             assert recognizer._extract_params["max_char_buffer"] == 400
@@ -464,11 +474,11 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
         
         config = create_test_config()
         # Add custom values to override defaults
-        config["langextract"]["model"]["max_char_buffer"] = 1000
-        config["langextract"]["model"]["use_schema_constraints"] = True
-        config["langextract"]["model"]["fence_output"] = True
-        config["langextract"]["model"]["timeout"] = 120
-        config["langextract"]["model"]["num_ctx"] = 4096
+        config["langextract"]["model"]["provider"]["extract_params"]["max_char_buffer"] = 1000
+        config["langextract"]["model"]["provider"]["extract_params"]["use_schema_constraints"] = True
+        config["langextract"]["model"]["provider"]["extract_params"]["fence_output"] = True
+        config["langextract"]["model"]["provider"]["language_model_params"]["timeout"] = 120
+        config["langextract"]["model"]["provider"]["language_model_params"]["num_ctx"] = 4096
         
         config_file = tmp_path / "test_config.yaml"
         with open(config_file, 'w') as f:
@@ -476,8 +486,8 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
 
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
             
             # Verify config values override defaults
             assert recognizer._extract_params["max_char_buffer"] == 1000
@@ -492,8 +502,8 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
         
         config = create_test_config()
         # Override only some params
-        config["langextract"]["model"]["max_char_buffer"] = 500
-        config["langextract"]["model"]["timeout"] = 60
+        config["langextract"]["model"]["provider"]["extract_params"]["max_char_buffer"] = 500
+        config["langextract"]["model"]["provider"]["language_model_params"]["timeout"] = 60
         
         config_file = tmp_path / "test_config.yaml"
         with open(config_file, 'w') as f:
@@ -501,8 +511,8 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
 
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
             
             # Verify overridden values
             assert recognizer._extract_params["max_char_buffer"] == 500
@@ -518,8 +528,8 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
         import yaml
         
         config = create_test_config()
-        config["langextract"]["model"]["max_char_buffer"] = 1500
-        config["langextract"]["model"]["timeout"] = 180
+        config["langextract"]["model"]["provider"]["extract_params"]["max_char_buffer"] = 1500
+        config["langextract"]["model"]["provider"]["language_model_params"]["timeout"] = 180
         
         config_file = tmp_path / "test_config.yaml"
         with open(config_file, 'w') as f:
@@ -527,8 +537,8 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
 
         with patch('presidio_analyzer.llm_utils.langextract_helper.lx',
                    return_value=Mock()):
-            from presidio_analyzer.predefined_recognizers.third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
-            recognizer = OllamaLangExtractRecognizer(config_path=str(config_file))
+            from presidio_analyzer.predefined_recognizers.third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
+            recognizer = BasicLangExtractRecognizer(config_path=str(config_file))
 
         text = "My name is John Doe"
         
@@ -548,7 +558,7 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
             # Verify extract was called
             assert mock_extract.called
             call_kwargs = mock_extract.call_args[1]
-            
+
             # Verify extract params were passed
             assert call_kwargs["max_char_buffer"] == 1500
             assert call_kwargs["use_schema_constraints"] is False
@@ -560,6 +570,7 @@ class TestOllamaLangExtractRecognizerParameterConfiguration:
             assert call_kwargs["language_model_params"]["num_ctx"] == 8192
             
             # Verify provider params
-            assert call_kwargs["model_id"] == "qwen2.5:1.5b"
-            assert call_kwargs["model_url"] == "http://localhost:11434"
+            assert call_kwargs["config"].model_id == "qwen2.5:1.5b"
+            assert call_kwargs["config"].provider == "ollama"
+            assert call_kwargs["config"].provider_kwargs["model_url"] == "http://localhost:11434"
 
