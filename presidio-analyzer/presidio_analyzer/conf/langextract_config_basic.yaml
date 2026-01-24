@@ -1,7 +1,7 @@
 # Basic LangExtract Configuration
 # Supports different LLM providers via LangExtract's ModelConfig
 #
-# Required parameters: model_id, model_url
+# Required parameters: model_id, provider.name
 # Optional parameters use defaults if not specified
 
 lm_recognizer:
