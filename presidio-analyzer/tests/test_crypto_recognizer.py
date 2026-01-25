@@ -19,6 +19,7 @@ def entities():
     "text, expected_len, expected_positions",
     [
         # fmt: off
+        ## Bitcoin
         ## Match
         # Test with valid P2PKH address that starts with 1 and 33 base58 characters
         ("16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ", 1, ((0, 34),),),        
@@ -41,6 +42,20 @@ def entities():
         # Test with empty string
         ("", 0, (),),
         ("8f953371d3e85eddb89b05ed6b9e680791055315c73e1025ab5dba7bb2aee189", 0, (),),
+        
+        ## Ethereum
+        ## Match
+        # Test with valid Ethereum address
+        ("0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed", 1, ((0, 42),),),
+        # Test with multiple valid Ethereum addresses
+        ("0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed 0xD1220A0cf47c7B9Be7A2E6BA89F429762e7b9aDb", 2, ((0, 42), (43, 85)),),
+        # Test with valid Ethereum address
+        ("My Ethereum wallet is 0xdbF03B407c01E7cD3CBea99509d93f8DDDC8C6FB", 1, ((22, 64),),),
+        
+        ## No match
+        ("lowercase address 0x5aaeb6053f3e94c9b9a09f33669435e7ef1beaed", 0, (),),
+        ("checksummed but invalid address 0xdbF03B407c01E7cD3CBea99509d93f8DDdC8C6FB", 0, (),),
+        
         # fmt: on
     ],
 )

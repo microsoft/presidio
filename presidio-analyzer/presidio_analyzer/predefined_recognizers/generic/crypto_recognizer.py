@@ -1,4 +1,3 @@
-import binascii
 from hashlib import sha256
 from typing import List, Optional
 
@@ -75,6 +74,9 @@ class CryptoRecognizer(PatternRecognizer):
             # Bech32 or Bech32m address validation
             if CryptoRecognizer.validate_bech32_address(pattern_text)[0]:
                 return True
+        elif pattern_text.startswith("0x"):
+            # Ethereum address validation
+            return CryptoRecognizer.validate_eth_address(pattern_text)
         return False
 
     @staticmethod
@@ -160,13 +162,12 @@ class CryptoRecognizer(PatternRecognizer):
             return  False
 
         checksummed_buffer = ""
-        hex_addr = address[2:]
-        address_bytes = CryptoRecognizer.convert_hex_to_bytes(address)
+        hex_addr = (address[2:] if address.startswith("0x") else address).lower()
+        address_bytes = CryptoRecognizer.convert_hex_to_bytes(hex_addr)
         hashed_address = keccak(address_bytes).hex()
 
         # Iterate over each character in the hex address
         for nibble_index, character in enumerate(hex_addr):
-
             if character in "0123456789":
                 # We can't upper-case the decimal digits
                 checksummed_buffer += character
@@ -187,11 +188,9 @@ class CryptoRecognizer(PatternRecognizer):
 
         :param hex_str: The hex string to convert.
         :return: The corresponding bytes.
-        :https://github.com/ethereum/eth-utils/blob/main/eth_utils/hexadecimal.py#L22-L28
+        :https://github.com/ethereum/eth-utils/blob/main/eth_utils/conversions.py#L136-L137
         """
 
-        hex_str = hex_str[2:] if hex_str.startswith("0x") else  hex_str
-        hex_str = hex_str if len(hex_str) % 2 == 0 else "0" + hex_str[2:]
-        hex_bytes = hex_str.encode("ascii")
+        hex_str = hex_str if len(hex_str) % 2 == 0 else "0" + hex_str
 
-        return binascii.unhexlify(hex_bytes)
+        return hex_str.encode("utf-8")
