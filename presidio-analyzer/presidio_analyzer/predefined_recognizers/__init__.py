@@ -169,7 +169,6 @@ __all__ = [
     "ThTninRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
-    "OllamaLangExtractRecognizer",
     "BasicLangExtractRecognizer",
     "KrPassportRecognizer",
 ]
