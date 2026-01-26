@@ -81,7 +81,7 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
         )
 
     def _get_provider_params(self):
-        """Return Azure OpenAI-specific params."""
+        """Return supplementary params."""
         return {
             "config": self.lx_model_config,
         }
