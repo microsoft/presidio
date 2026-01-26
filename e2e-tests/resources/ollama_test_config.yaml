@@ -29,7 +29,7 @@ langextract:
     provider:
       name: "ollama"
       kwargs:
-        model_url: "http://ollama:11434"
+        model_url: "http://localhost:11434"
       extract_params:
         temperature: null
         use_schema_constraints: false
