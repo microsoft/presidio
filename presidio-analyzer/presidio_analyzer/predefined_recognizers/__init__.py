@@ -35,9 +35,11 @@ from .country_specific.italy.it_passport_recognizer import ItPassportRecognizer
 from .country_specific.italy.it_vat_code import ItVatCodeRecognizer
 
 # Korea recognizers
+from .country_specific.korea.kr_brn_recognizer import KrBrnRecognizer
 from .country_specific.korea.kr_driver_license_recognizer import (
     KrDriverLicenseRecognizer,
 )
+from .country_specific.korea.kr_frn_recognizer import KrFrnRecognizer
 from .country_specific.korea.kr_passport_recognizer import KrPassportRecognizer
 from .country_specific.korea.kr_rrn_recognizer import KrRrnRecognizer
 
@@ -75,6 +77,7 @@ from .generic.date_recognizer import DateRecognizer
 from .generic.email_recognizer import EmailRecognizer
 from .generic.iban_recognizer import IbanRecognizer
 from .generic.ip_recognizer import IpRecognizer
+from .generic.mac_recognizer import MacAddressRecognizer
 from .generic.phone_recognizer import PhoneRecognizer
 from .generic.url_recognizer import UrlRecognizer
 
@@ -122,6 +125,7 @@ __all__ = [
     "IpRecognizer",
     "NhsRecognizer",
     "MedicalLicenseRecognizer",
+    "MacAddressRecognizer",
     "PhoneRecognizer",
     "SgFinRecognizer",
     "UrlRecognizer",
@@ -158,8 +162,10 @@ __all__ = [
     "EsNieRecognizer",
     "UkNinoRecognizer",
     "AzureHealthDeidRecognizer",
+    "KrBrnRecognizer",
     "KrRrnRecognizer",
     "KrDriverLicenseRecognizer",
+    "KrFrnRecognizer",
     "ThTninRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
