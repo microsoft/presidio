@@ -9,6 +9,12 @@ logger = logging.getLogger("presidio-analyzer")
 try:
     import langextract as lx
     import langextract.factory as lx_factory
+
+    # Make sure builtin providers are pre-loaded to work around a bug in LangExtract
+    # that fails to load them automatically if the provider name is specified for a
+    # built-in provider rather than inferred from the model_id.
+    lx.providers.load_builtins_once()
+    lx.providers.load_plugins_once()
 except ImportError:
     lx = None
     lx_factory = None

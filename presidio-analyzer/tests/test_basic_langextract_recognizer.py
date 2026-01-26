@@ -173,7 +173,7 @@ class TestBasicLangExtractRecognizerInitialization:
             with pytest.raises(ValueError, match="Configuration must contain 'langextract.model.model_id'"):
                 BasicLangExtractRecognizer(config_path=str(config_file))
 
-    def test_when_provier_missing_then_raises_value_error(self, tmp_path):
+    def test_when_provider_missing_then_raises_value_error(self, tmp_path):
         """Test ValueError when model_url is missing."""
         import yaml
         
