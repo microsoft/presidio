@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import os
 import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -58,13 +57,11 @@ class RecognizerRegistryProvider:
             conf_file=conf_file, registry_configuration=registry_configuration
         )
 
-        if os.environ.get("PRESIDIO_ENABLE_SCHEMA_VALIDATION", "").lower() == "true":
-            self.configuration = (
-                ConfigurationValidator.validate_recognizer_registry_configuration(
-                    self.configuration
-                )
+        self.configuration = (
+            ConfigurationValidator.validate_recognizer_registry_configuration(
+                self.configuration
             )
-
+        )
         self.nlp_engine = nlp_engine
 
     def create_recognizer_registry(self) -> RecognizerRegistry:
