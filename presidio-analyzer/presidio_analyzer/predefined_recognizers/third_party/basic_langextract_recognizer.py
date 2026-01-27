@@ -1,7 +1,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Any, Optional, Dict
+from typing import Any, Dict, Optional
 
 from presidio_analyzer.llm_utils import lx_factory
 from presidio_analyzer.predefined_recognizers.third_party.\
@@ -66,12 +66,16 @@ class BasicLangExtractRecognizer(LangExtractRecognizer):
 
         # Not ideal, but update _extract_params now that self.config is fully loaded.
         self._extract_params.update(provider_config.get("extract_params", {}))
-        self._language_model_params.update(provider_config.get("language_model_params", {}))
+        self._language_model_params.update(
+            provider_config.get("language_model_params", {})
+        )
 
         if not self.provider:
-            raise ValueError("Configuration must contain 'langextract.model.provider.name'")
+            raise ValueError("Configuration must contain "
+                             "'langextract.model.provider.name'")
 
-        if "api_key" not in self.provider_kwargs and "LANGEXTRACT_API_KEY" in os.environ:
+        if ("api_key" not in self.provider_kwargs
+                and "LANGEXTRACT_API_KEY" in os.environ):
             self.provider_kwargs["api_key"] = os.environ["LANGEXTRACT_API_KEY"]
 
         self.lx_model_config = lx_factory.ModelConfig(
