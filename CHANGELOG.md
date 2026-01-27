@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### Analyzer
+#### Added
+- HuggingFace NER Recognizer (HuggingFaceNerRecognizer) for direct HuggingFace model inference, bypassing spaCy tokenizer alignment issues with agglutinative languages
+
 ### Image Redactor
 #### Changed
 - DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.

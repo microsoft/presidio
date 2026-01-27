@@ -79,7 +79,7 @@ class BaseRecognizerConfig(BaseModel):
         default=None, description="Supported entity for this recognizer"
     )
     supported_entities: Optional[List[str]] = Field(
-        default=None, description="List of supported entities " "for this recognizer"
+        default=None, description="List of supported entities for this recognizer"
     )
 
     @field_validator("supported_language")
@@ -140,6 +140,22 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
     """Configuration for predefined recognizers."""
 
     type: str = Field(default="predefined", description="Type of recognizer")
+
+    # HuggingFaceNerRecognizer and other ML model configuration
+    model_name: Optional[str] = Field(None, description="HuggingFace model name")
+    tokenizer_name: Optional[str] = Field(
+        None, description="HuggingFace tokenizer name"
+    )
+    label_mapping: Optional[Dict[str, str]] = Field(None, description="Label mapping")
+    threshold: Optional[float] = Field(None, description="Confidence threshold")
+    aggregation_strategy: Optional[str] = Field(
+        None, description="Aggregation strategy"
+    )
+    chunk_overlap_size: Optional[int] = Field(None, description="Chunk overlap size")
+    chunk_size: Optional[int] = Field(None, description="Chunk size")
+    batch_size: Optional[int] = Field(None, description="Batch size")
+    max_text_length: Optional[int] = Field(None, description="Max text length")
+    device: Optional[Union[str, int]] = Field(None, description="Device (cpu/gpu)")
 
     @model_validator(mode="after")
     def validate_predefined_recognizer_exists(self):
@@ -243,8 +259,7 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
         """Ensure custom recognizer has at least patterns or deny_list."""
         if not self.patterns and not self.deny_list:
             raise ValueError(
-                "Custom recognizer must have at least one "
-                "of 'patterns' or 'deny_list'"
+                "Custom recognizer must have at least one of 'patterns' or 'deny_list'"
             )
         return self
 
