@@ -20,7 +20,7 @@ env:
 jobs:
   lint:
     name: Linting
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -40,7 +40,7 @@ jobs:
 
   dependency-review:
     name: Dependency Review
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     if: github.event_name == 'pull_request'
     permissions:
       contents: read
