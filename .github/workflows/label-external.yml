@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   label-external:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Label PRs from contributors without write access
         uses: actions/github-script@v8
