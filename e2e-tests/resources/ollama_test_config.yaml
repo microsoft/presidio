@@ -21,9 +21,24 @@ lm_recognizer:
   min_score: 0.5
 
 langextract:
-  prompt_file: presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2
-  examples_file: presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml
-  
+  prompt_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
+  examples_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
+
+  model:
+    model_id: "qwen2.5:1.5b"
+    provider:
+      name: "ollama"
+      kwargs:
+        model_url: "http://localhost:11434"
+      extract_params:
+        temperature: null
+        use_schema_constraints: false
+        fence_output: false
+        max_char_buffer: 400
+      language_model_params:
+        timeout: 240
+        num_ctx: 8192
+
   entity_mappings:
     person: PERSON
     full_name: PERSON
@@ -44,8 +59,3 @@ langextract:
     ip_address: IP_ADDRESS
     url: URL
     iban: IBAN_CODE
-
-  model:
-    model_id: qwen2.5:1.5b
-    model_url: http://localhost:11434
-    temperature: 0.0
