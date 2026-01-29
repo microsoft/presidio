@@ -8,11 +8,6 @@ All notable changes to this project will be documented in this file.
 - DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.
 - Image Redactor: Added redact_and_return_bbox method to ImageRedactorEngine, which returns both the redacted image and the detected bounding boxes for redacted regions.
 
-### General
-#### Changed
-- Migrated lightweight GitHub Actions workflows to ubuntu-slim runners for improved cost efficiency and faster startup times (lint, dependency-review, label-external, github-pages-release, get-version, github-release jobs) (#TBD) (Thanks @Copilot)
-- Note: CodeQL analysis retained on ubuntu-latest due to CPU-intensive requirements (minimum 2 cores recommended)
-
 ## [2.2.360] - 2025-09-09
 ### Analyzer
 #### Added
