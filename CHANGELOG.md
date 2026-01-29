@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### General
 #### Changed
-- Migrated lightweight GitHub Actions workflows to ubuntu-slim runners for improved cost efficiency and faster startup times (lint, dependency-review, label-external, release-docs, get-version, github-release jobs) (#TBD) (Thanks @Copilot)
+- Migrated lightweight GitHub Actions workflows to ubuntu-slim runners for improved cost efficiency and faster startup times (lint, dependency-review, label-external, github-pages-release, get-version, github-release jobs) (#TBD) (Thanks @Copilot)
 - Note: CodeQL analysis retained on ubuntu-latest due to CPU-intensive requirements (minimum 2 cores recommended)
 
 ## [2.2.360] - 2025-09-09
