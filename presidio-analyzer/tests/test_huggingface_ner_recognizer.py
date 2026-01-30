@@ -257,11 +257,11 @@ def test_analyze_long_text_chunking(mock_transformers_pipeline):
     # Use text with spaces for predictable boundaries
     # Text: "A A A A A A A A A A..." (Indices: 0, 2, 4, 6, 8...)
     text = ("A " * 20).strip() # Length 39
-    
+
     recognizer = HuggingFaceNerRecognizer(
         model_name="test",
-        chunk_size=10, 
-        chunk_overlap=4 
+        chunk_size=10,
+        chunk_overlap=4
     )
     # The CharacterBasedTextChunker is initialized inside the recognizer
     # using these parameters.
@@ -270,7 +270,7 @@ def test_analyze_long_text_chunking(mock_transformers_pipeline):
     # Chunk 1: "A A A A A " (0-10). Extends to 11 (space at 11 is boundary).
     # Range 0-11.
     # Mock Entity: PER at 2-3 ("A"). Global 2-3.
-    
+
     # Next start: 11 - 4 = 7.
     # Chunk 2 Start 7.
     # Text[7] is ' '. Text[8] is 'A'.
@@ -303,23 +303,23 @@ def test_analyze_long_text_chunking(mock_transformers_pipeline):
 def test_analyze_deduplication_keeps_highest_score(mock_transformers_pipeline):
     """Test deduplication keeps highest score when same span detected twice."""
     text = ("A " * 20).strip()
-    
+
     recognizer = HuggingFaceNerRecognizer(
         model_name="test-model",
         chunk_size=10,
         chunk_overlap=8  # Start 11-8=3 to overlap Global 4-5
     )
     recognizer.ner_pipeline = mock_transformers_pipeline
-    
+
     # Chunk 1: 0-11.
     #   Mock: PER at 4-5 (Global 4-5). Score 0.6.
-    
+
     # Next start: 11 - 8 = 3.
     # Chunk 2 Start 3.
     #   Mock: PER at Global 4-5.
     #   Relative start: 4 - 3 = 1.
     #   Relative end: 5 - 3 = 2.
-    
+
     mock_transformers_pipeline.side_effect = [
         [{"entity_group": "PER", "start": 4, "end": 5, "score": 0.60}],
         [{"entity_group": "PER", "start": 1, "end": 2, "score": 0.95}],

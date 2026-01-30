@@ -14,7 +14,6 @@ This recognizer solves the problem by using the HuggingFace NER model's
 own tokenizer and returning results directly without spaCy alignment.
 """
 
-import copy
 import logging
 from typing import Dict, List, Optional, Union
 
@@ -261,12 +260,12 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         try:
             # Run inference on the chunk
             preds = self.ner_pipeline(chunk_text)
-            
+
             # Helper to process a single prediction dictionary
             def process_pred(pred):
                 raw_label = pred.get("entity_group", pred.get("entity"))
                 model_label = HuggingFaceNerRecognizer._normalize_label(raw_label)
-                
+
                 presidio_entity = self.label_mapping.get(model_label)
                 if not presidio_entity:
                     return
@@ -279,7 +278,7 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                     f"Identified as {presidio_entity} by {self.model_name} "
                     f"(original label: {model_label})"
                 )
-                
+
                 explanation = AnalysisExplanation(
                     recognizer=self.name,
                     original_score=score,
