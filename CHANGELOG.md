@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 ### Analyzer
 #### Added
-- HuggingFace NER Recognizer (HuggingFaceNerRecognizer) for direct HuggingFace model inference, bypassing spaCy tokenizer alignment issues with agglutinative languages
+- HuggingFace NER Recognizer (HuggingFaceNerRecognizer) for direct HuggingFace model inference, bypassing spaCy tokenizer alignment issues with agglutinative languages. Includes unified character-based text chunking support for long inputs.
 
 ### Image Redactor
 #### Changed

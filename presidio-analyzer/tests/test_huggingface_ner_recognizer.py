@@ -181,7 +181,7 @@ def test_analyze_empty_text(mock_transformers_pipeline):
 
 def test_analyze_no_entities_found(mock_transformers_pipeline):
     """Test when no entities are found."""
-    mock_transformers_pipeline.return_value = [[]]
+    mock_transformers_pipeline.return_value = [[], []] # Empty for any chunks calls
 
     recognizer = HuggingFaceNerRecognizer(model_name="dslim/bert-base-NER")
     recognizer.ner_pipeline = mock_transformers_pipeline
@@ -249,92 +249,90 @@ def test_load_invokes_hf_pipeline_with_expected_args():
         )
 
 
-def test_split_text_to_char_chunks():
-    """Test text splitting logic."""
-    # text length 100, chunk 50, overlap 10
-    chunks = HuggingFaceNerRecognizer.split_text_to_char_chunks(100, 50, 10)
 
-    assert len(chunks) == 3
-    assert chunks[0] == [0, 50]
-    assert chunks[1] == [40, 90]
-    assert chunks[2] == [80, 100]
 
 
 def test_analyze_long_text_chunking(mock_transformers_pipeline):
     """Test that long text is split into chunks and offsets are corrected."""
-    text = "0123456789" * 4  # 40 chars
-
-    # Force chunking by setting small chunk_size
-    # Chunk size 20, overlap 10 -> step 10
-    # Chunks: [0, 20], [10, 30], [20, 40]
+    # Use text with spaces for predictable boundaries
+    # Text: "A A A A A A A A A A..." (Indices: 0, 2, 4, 6, 8...)
+    text = ("A " * 20).strip() # Length 39
+    
     recognizer = HuggingFaceNerRecognizer(
         model_name="test",
-        chunk_size=20,
-        chunk_overlap_size=10
+        chunk_size=10, 
+        chunk_overlap=4 
     )
+    # The CharacterBasedTextChunker is initialized inside the recognizer
+    # using these parameters.
     recognizer.ner_pipeline = mock_transformers_pipeline
 
-    # Mock return values for BATCH processing (list of lists)
-    # The pipeline is called ONCE with a list of 3 strings.
-    # Chunk 1 (0-20): Find 'A' at 5-6 -> global 5-6
-    # Chunk 2 (10-30): Find 'B' at 5-6 (local) -> 10+5=15 -> global 15-16
-    # Chunk 3 (20-40): No entities
-    mock_transformers_pipeline.return_value = [
-        [{"entity_group": "PER", "start": 5, "end": 6, "score": 0.9}],
-        [{"entity_group": "LOC", "start": 5, "end": 6, "score": 0.9}],
-        [],
+    # Chunk 1: "A A A A A " (0-10). Extends to 11 (space at 11 is boundary).
+    # Range 0-11.
+    # Mock Entity: PER at 2-3 ("A"). Global 2-3.
+    
+    # Next start: 11 - 4 = 7.
+    # Chunk 2 Start 7.
+    # Text[7] is ' '. Text[8] is 'A'.
+    # Mock Entity: LOC at 8-9 (Global).
+    # Relative start for Global 8: 8 - 7 = 1.
+    # Relative end for Global 9: 9 - 7 = 2.
+
+    mock_transformers_pipeline.side_effect = [
+        [{"entity_group": "PER", "start": 2, "end": 3, "score": 0.9}],
+        [{"entity_group": "LOC", "start": 1, "end": 2, "score": 0.9}],
+        [], [], [], [], [], [], [], [], [], [] # Extended returns
     ]
 
     results = recognizer.analyze(text, ["PERSON", "LOCATION"])
-
-    # Sort results by start index for stable assertions
     results.sort(key=lambda x: x.start)
 
-    # Should find 2 entities
     assert len(results) == 2
 
-    # First entity: PERSON at 5-6
+    # First entity: PERSON at 2-3
     assert results[0].entity_type == "PERSON"
-    assert results[0].start == 5
-    assert results[0].end == 6
+    assert results[0].start == 2
+    assert results[0].end == 3
 
-    # Second entity: LOCATION at 15-16
+    # Second entity: LOCATION at 8-9
     assert results[1].entity_type == "LOCATION"
-    assert results[1].start == 15
-    assert results[1].end == 16
+    assert results[1].start == 8
+    assert results[1].end == 9
 
 
 def test_analyze_deduplication_keeps_highest_score(mock_transformers_pipeline):
     """Test deduplication keeps highest score when same span detected twice."""
-    # Scenario: Chunking creates two detections for the same entity span
-    # One has low score (0.6), one has high score (0.95)
-    mock_transformers_pipeline.return_value = [
-        # Chunk 1 (0~20): Detects "A...A" at global 16~18 (Local 16~18)
-        [{"entity_group": "PER", "start": 16, "end": 18, "score": 0.60}],
-        # Chunk 2 (15~35): Detects "A...A" at global 16~18
-        # Since chunk_start is 15, Global 16~18 maps to Local 1~3 (16-15=1, 18-15=3)
-        [{"entity_group": "PER", "start": 1, "end": 3, "score": 0.95}],
-        # Chunk 3 (30~50): No entities
-        []
-    ]
-
+    text = ("A " * 20).strip()
+    
     recognizer = HuggingFaceNerRecognizer(
         model_name="test-model",
-        chunk_size=20,     # Small chunk size to force chunking
-        chunk_overlap_size=5
+        chunk_size=10,
+        chunk_overlap=8  # Start 11-8=3 to overlap Global 4-5
     )
     recognizer.ner_pipeline = mock_transformers_pipeline
+    
+    # Chunk 1: 0-11.
+    #   Mock: PER at 4-5 (Global 4-5). Score 0.6.
+    
+    # Next start: 11 - 8 = 3.
+    # Chunk 2 Start 3.
+    #   Mock: PER at Global 4-5.
+    #   Relative start: 4 - 3 = 1.
+    #   Relative end: 5 - 3 = 2.
+    
+    mock_transformers_pipeline.side_effect = [
+        [{"entity_group": "PER", "start": 4, "end": 5, "score": 0.60}],
+        [{"entity_group": "PER", "start": 1, "end": 2, "score": 0.95}],
+        [], [], [], [], [], [], [], [], [], []
+    ]
 
-    text = "A" * 50  # Dummy text
     results = recognizer.analyze(text, ["PERSON"])
-
-    # Sort results by start index for stable assertions
     results.sort(key=lambda x: x.start)
 
-    # Should be deduplicated to 1 result
     assert len(results) == 1
-    # Highest score should be kept
     assert results[0].score == pytest.approx(0.95, rel=1e-2)
+    assert results[0].start == 4
+    assert results[0].end == 5
 
 
 def test_analyze_text_too_long(mock_transformers_pipeline):
@@ -355,41 +353,8 @@ def test_analyze_text_too_long(mock_transformers_pipeline):
 
     recognizer.analyze(text, ["PERSON"])
 
-    # Verify the first positional arg is a list of strings for batching
+    # Verify the first positional arg is the string (not list, since iterative)
     args, _ = mock_transformers_pipeline.call_args
-    assert args[0] == ["12345"]
-
-
-def test_analyze_batch_processing_fallback(mock_transformers_pipeline):
-    """Test fallback to iterative processing when batching fails."""
-    # Scenario: Batch processing raises RuntimeError -> Iterative calls match
-    # Text length 20, chunk size 10 -> 2 chunks (if overlap=0)
-
-    # Side effects:
-    # 1. Batch call (list input): Raises RuntimeError
-    # 2. Iterative call 1 (str input): Returns result
-    # 3. Iterative call 2 (str input): Returns empty
-    mock_transformers_pipeline.side_effect = [
-        RuntimeError("Batching failed"),
-        [{"entity_group": "PER", "start": 0, "end": 5, "score": 0.9}],
-        []
-    ]
-
-    recognizer = HuggingFaceNerRecognizer(
-        model_name="test",
-        chunk_size=10,
-        chunk_overlap_size=0,
-        batch_size=2
-    )
-    recognizer.ner_pipeline = mock_transformers_pipeline
-
-    text = "12345678901234567890" # 20 chars
-    results = recognizer.analyze(text, ["PERSON"])
-
-    # Fallback should succeed and find entity from first chunk
-    assert len(results) == 1
-    assert results[0].entity_type == "PERSON"
-
-    # Must have called pipeline at least twice (1 failed batch + 2 iterative)
-    assert mock_transformers_pipeline.call_count >= 2
+    # It should be called with the truncated string
+    assert args[0] == "12345"
 

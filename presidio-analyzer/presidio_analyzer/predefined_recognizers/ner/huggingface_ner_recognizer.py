@@ -23,6 +23,7 @@ from presidio_analyzer import (
     LocalRecognizer,
     RecognizerResult,
 )
+from presidio_analyzer.chunkers import CharacterBasedTextChunker
 from presidio_analyzer.nlp_engine import NlpArtifacts, device_detector
 
 try:
@@ -106,12 +107,12 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         label_mapping: Optional[Dict[str, str]] = None,
         threshold: float = 0.3,
         aggregation_strategy: str = "simple",
-        chunk_overlap_size: int = 40,
+        chunk_overlap: int = 40,
         chunk_size: int = 400,
-        batch_size: int = 1,
         max_text_length: Optional[int] = None,
         device: Optional[Union[str, int]] = None,
         tokenizer_name: Optional[str] = None,
+        text_chunker: Optional[CharacterBasedTextChunker] = None,
     ):
         """Initialize the HuggingFace NER Recognizer.
 
@@ -130,18 +131,14 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             ("simple", "first", "average", "max").
             Recommendation: Use "simple" or "first" so that entities are pre-aggregated
             by the model, preserving performance and alignment.
-        :param chunk_overlap_size: Number of overlapping characters in each chunk.
-            Defaults to 40.
-        :param chunk_size: Size of text chunks (in characters). Defaults to 400.
-        :param batch_size: Batch size for inference. Defaults to 1.
-        :param max_text_length: Maximum allowed text length. If exceeded,
-            text is truncated. Defaults to None (no limit).
         :param device: Device to use. Accepts:
             - "cpu" or -1 for CPU
             - "cuda" or "cuda:N" or int N for GPU
             - None for auto-detection (GPU if available, else CPU)
             Defaults to None.
-        :param tokenizer_name: Name of the tokenizer to use. Defaults to model_name.
+        :param tokenizer_name: Name of the tokenizer. Defaults to model_name.
+        :param text_chunker: Custom text chunking strategy. If None, uses
+            CharacterBasedTextChunker with provided chunk_size and chunk_overlap.
         """
         self.model_name = model_name
         self.tokenizer_name = tokenizer_name or model_name
@@ -153,9 +150,6 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 "aggregation_strategy='none' may result in fragmented entities "
                 "(e.g., 'B-PER', 'I-PER'). Recommended: 'simple' or 'first'."
             )
-        self.chunk_overlap_size = chunk_overlap_size
-        self.chunk_size = chunk_size
-        self.batch_size = batch_size
         self.max_text_length = max_text_length
         self.device = device
         self.ner_pipeline = None
@@ -175,14 +169,13 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             context=context,
         )
 
-        if self.chunk_size <= 0:
-            raise ValueError("chunk_size must be positive")
-        if self.chunk_overlap_size < 0:
-            raise ValueError("chunk_overlap_size must be non-negative")
-
-        if self.chunk_size <= self.chunk_overlap_size:
-            raise ValueError(
-                "chunk_overlap_size must be smaller than chunk_size"
+        # Initialize the text chunker
+        if text_chunker:
+            self.text_chunker = text_chunker
+        else:
+            self.text_chunker = CharacterBasedTextChunker(
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
             )
 
         logger.info(
@@ -241,74 +234,6 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         )
         logger.info(f"Successfully loaded {self.model_name}")
 
-    def _get_ner_results_for_text(self, text: str) -> List[dict]:
-        """Run model inference on text, chunking if necessary."""
-        # Calculate inputs based on the text
-        text_length = len(text)
-
-        # 1. Split text into chunks
-        # Note: We chunk even short texts to ensure consistent deduplication logic
-        logger.debug(
-            f"Splitting text into chunks: length {text_length}"
-        )
-        predictions = []
-        chunk_indexes = HuggingFaceNerRecognizer.split_text_to_char_chunks(
-            text_length, self.chunk_size, self.chunk_overlap_size
-        )
-
-        # 2. Iterate over chunks and run inference
-        chunk_texts = [text[start:end] for start, end in chunk_indexes]
-
-        # Use batch processing for efficiency with fallback for older versions
-        try:
-            batch_preds = self.ner_pipeline(
-                chunk_texts, batch_size=self.batch_size, truncation=True
-            )
-        except (TypeError, ValueError, RuntimeError) as e:
-            # Fallback: older pipeline versions may not accept batch_size/truncation
-            logger.debug(f"Batch processing failed, falling back to iterative: {e}")
-            batch_preds = [
-                self.ner_pipeline(chunk_text) for chunk_text in chunk_texts
-            ]
-
-        for i, chunk_preds in enumerate(batch_preds):
-            chunk_start = chunk_indexes[i][0]
-
-            # Align indexes: add chunk_start to start/end positions
-            for prediction in chunk_preds:
-                # Use deepcopy to ensure full object safety
-                aligned_pred = copy.deepcopy(prediction)
-                aligned_pred["start"] += chunk_start
-                aligned_pred["end"] += chunk_start
-                predictions.append(aligned_pred)
-
-        # 3. Remove duplicates
-        # Overlapping chunks might detect the same entity twice.
-        # We keep the one with the highest confidence score.
-        deduplicated = {}
-        for pred in predictions:
-            # Handle both 'entity_group' (aggregation) and 'entity' (token level)
-            raw_label = pred.get("entity_group", pred.get("entity"))
-            label = HuggingFaceNerRecognizer._normalize_label(raw_label)
-
-            # Key using Presidio entity for semantic deduplication.
-            # Different model labels mapping to the same Presidio entity
-            # are considered duplicates; we keep the higher score.
-            presidio_entity = self.label_mapping.get(label)
-            if not presidio_entity:
-                continue
-
-            key = (pred["start"], pred["end"], presidio_entity)
-
-            if key not in deduplicated:
-                deduplicated[key] = pred
-            else:
-                # If existing score is lower, replace it
-                if deduplicated[key]["score"] < pred["score"]:
-                    deduplicated[key] = pred
-
-        return list(deduplicated.values())
-
     @staticmethod
     def _normalize_label(label: str) -> str:
         """Normalize label by removing B-/I- prefix.
@@ -324,34 +249,68 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 return label[2:]
         return label
 
-    @staticmethod
-    def split_text_to_char_chunks(
-        input_length: int, chunk_length: int, overlap_length: int
-    ) -> List[List[int]]:
-        """Calculate chunks of text with size chunk_length.
+    def _predict_chunk(self, chunk_text: str) -> List[RecognizerResult]:
+        """Perform NER prediction on a single text chunk.
 
-        Each chunk has overlap_length number of characters to create
-        context and continuity for the model.
+        This is a callback method used by the CharacterBasedTextChunker.
 
-        :param input_length: Length of input text
-        :param chunk_length: Length of each chunk
-        :param overlap_length: Number of overlapping characters
-        :return: List of [start, end] positions for chunks
+        :param chunk_text: The chunk of text to analyze.
+        :return: List of RecognizerResult objects.
         """
-        if chunk_length <= 0:
-            raise ValueError("chunk_length must be positive")
-        if overlap_length < 0:
-            raise ValueError("overlap_length must be non-negative")
+        chunk_results = []
+        try:
+            # Run inference on the chunk
+            preds = self.ner_pipeline(chunk_text)
+            
+            # Helper to process a single prediction dictionary
+            def process_pred(pred):
+                raw_label = pred.get("entity_group", pred.get("entity"))
+                model_label = HuggingFaceNerRecognizer._normalize_label(raw_label)
+                
+                presidio_entity = self.label_mapping.get(model_label)
+                if not presidio_entity:
+                    return
 
-        if input_length <= chunk_length:
-            return [[0, input_length]]
+                if pred["score"] < self.threshold:
+                    return
 
-        return [
-            [i, min(i + chunk_length, input_length)]
-            for i in range(
-                0, input_length - overlap_length, chunk_length - overlap_length
-            )
-        ]
+                score = float(pred.get("score", 0))
+                textual_explanation = (
+                    f"Identified as {presidio_entity} by {self.model_name} "
+                    f"(original label: {model_label})"
+                )
+                
+                explanation = AnalysisExplanation(
+                    recognizer=self.name,
+                    original_score=score,
+                    textual_explanation=textual_explanation,
+                )
+
+                chunk_results.append(
+                    RecognizerResult(
+                        entity_type=presidio_entity,
+                        start=pred["start"],
+                        end=pred["end"],
+                        score=score,
+                        analysis_explanation=explanation,
+                    )
+                )
+
+            if isinstance(preds, list):
+                for pred in preds:
+                    if isinstance(pred, list):
+                        for p in pred:
+                            process_pred(p)
+                    else:
+                        process_pred(pred)
+            elif isinstance(preds, dict):
+                process_pred(preds)
+
+        except Exception as e:
+            logger.warning(f"NER prediction failed for chunk: {e}", exc_info=True)
+            return []
+
+        return chunk_results
 
     def analyze(
         self,
@@ -361,8 +320,8 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
     ) -> List[RecognizerResult]:
         """Analyze text for NER entities using HuggingFace model.
 
-        This method intentionally ignores nlp_artifacts (spaCy results)
-        to bypass tokenizer alignment issues.
+        This method uses the CharacterBasedTextChunker to handle long texts
+        and ignores nlp_artifacts (spaCy results) to bypass tokenizer alignment issues.
 
         :param text: The text to analyze
         :param entities: List of entity types to detect
@@ -382,49 +341,15 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         if not self.ner_pipeline:
             self.load()
 
-        results = []
+        # Use the standard predict_with_chunking method from BaseTextChunker
+        # This handles chunking, processing, and duplicating/merging results
+        results = self.text_chunker.predict_with_chunking(
+            text=text,
+            predict_func=self._predict_chunk,
+        )
 
-        try:
-            # Get NER predictions with chunking and deduplication
-            predictions = self._get_ner_results_for_text(text)
-        except Exception as e:
-            logger.warning(f"NER prediction failed: {e}", exc_info=True)
-            return []
-
-        for pred in predictions:
-            raw_label = pred.get("entity_group", pred.get("entity"))
-            model_label = HuggingFaceNerRecognizer._normalize_label(raw_label)
-
-            presidio_entity = self.label_mapping.get(model_label)
-            if not presidio_entity:
-                continue
-
-            if pred["score"] < self.threshold:
-                continue
-
-            if entities and presidio_entity not in entities:
-                continue
-
-            score = float(pred.get("score", 0))
-            textual_explanation = (
-                f"Identified as {presidio_entity} by {self.model_name} "
-                f"(original label: {model_label})"
-            )
-
-            explanation = AnalysisExplanation(
-                recognizer=self.name,
-                original_score=score,
-                textual_explanation=textual_explanation,
-            )
-
-            results.append(
-                RecognizerResult(
-                    entity_type=presidio_entity,
-                    start=pred["start"],
-                    end=pred["end"],
-                    score=score,
-                    analysis_explanation=explanation,
-                )
-            )
+        # Filter by requested entities
+        if entities:
+            results = [r for r in results if r.entity_type in entities]
 
         return results
