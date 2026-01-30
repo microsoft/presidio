@@ -33,6 +33,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |US_BANK_NUMBER|A US bank account number is between 8 to 17 digits.|Pattern match and context|
 |US_DRIVER_LICENSE|A US driver license according to <https://ntsi.com/drivers-license-format/>|Pattern match and context|
 |US_ITIN | US Individual Taxpayer Identification Number (ITIN). Nine digits that start with a "9" and contain a "7" or "8" as the 4 digit.|Pattern match and context|
+|US_MBI|A US Medicare Beneficiary Identifier (MBI) with 11 alphanumeric characters.|Pattern match and context|
 |US_PASSPORT |A US passport number with 9 digits.|Pattern match and context|
 |US_SSN|A US Social Security Number (SSN) with 9 digits.|Pattern match and context|
 
