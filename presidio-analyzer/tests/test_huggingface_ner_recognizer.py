@@ -1,9 +1,14 @@
 """Tests for HuggingFaceNerRecognizer."""
 
-from unittest.mock import MagicMock, patch
+import logging
+from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 from presidio_analyzer.predefined_recognizers import HuggingFaceNerRecognizer
+from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
+    RecognizerConfigurationLoader,
+    RecognizerListLoader,
+)
 
 # Path to mock the HuggingFace pipeline import
 HF_PIPELINE_PATH = (
@@ -233,12 +238,11 @@ def test_load_requires_model_name():
 def test_load_invokes_hf_pipeline_with_expected_args():
     """Test that load() calls hf_pipeline with correct arguments."""
     with patch(HF_PIPELINE_PATH) as mock_hf_pipeline:
-        recognizer = HuggingFaceNerRecognizer(
+        HuggingFaceNerRecognizer(
             model_name="test-model",
             aggregation_strategy="simple",
             device=-1  # Explicitly set device to ensure deterministic test
         )
-        recognizer.load()
 
         mock_hf_pipeline.assert_called_once_with(
             "token-classification",
@@ -340,10 +344,7 @@ def test_analyze_text_too_long(mock_transformers_pipeline):
     text = "1234567890"  # 10 chars
 
     # Set max length to 5
-    recognizer = HuggingFaceNerRecognizer(
-        model_name="test",
-        max_text_length=5
-    )
+    recognizer = HuggingFaceNerRecognizer(model_name="test", max_text_length=5)
     recognizer.ner_pipeline = mock_transformers_pipeline
 
     # Mock return for the truncated text "12345"
@@ -358,3 +359,149 @@ def test_analyze_text_too_long(mock_transformers_pipeline):
     # It should be called with the truncated string
     assert args[0] == "12345"
 
+
+def test_hf_recognizer_init_variations(caplog):
+    """Test various initialization scenarios and warnings."""
+    caplog.set_level(logging.WARNING)
+    path = HF_PIPELINE_PATH
+    with patch(path, new=MagicMock()):
+        # Check warning for aggregation_strategy='none'
+        HuggingFaceNerRecognizer(model_name="test", aggregation_strategy="none")
+        assert (
+            "aggregation_strategy='none' may result in fragmented entities"
+            in caplog.text
+        )
+
+        # Verify supported_entities is correctly stored in the base class field
+        rec2 = HuggingFaceNerRecognizer(
+            model_name="test", supported_entities=["TEST_ENTITY"]
+        )
+        assert "TEST_ENTITY" in rec2.supported_entities
+
+
+def test_hf_recognizer_load_errors():
+    """Test error handling during model loading phase."""
+    path = HF_PIPELINE_PATH
+    # 1. Test ImportError when transformers is missing
+    with patch(path, new=None):
+        with pytest.raises(ImportError):
+            HuggingFaceNerRecognizer(model_name="test")
+
+    # 2. Test ValueError when model_name is missing
+    with patch(path, new=MagicMock()):
+        with pytest.raises(ValueError, match="model_name must be set"):
+            HuggingFaceNerRecognizer(model_name=None)
+
+
+def test_hf_recognizer_analyze_truncation_and_lazy_load(caplog):
+    """Test text truncation logic and automatic lazy loading in analyze()."""
+    caplog.set_level(logging.WARNING)
+    path = HF_PIPELINE_PATH
+    with patch(path, new=MagicMock()):
+        rec = HuggingFaceNerRecognizer(model_name="test", max_text_length=5)
+
+        # Stub predict_with_chunking to avoid calling the real internal predict_func
+        rec.text_chunker = MagicMock()
+        rec.text_chunker.predict_with_chunking.side_effect = lambda **kwargs: []
+
+        rec.ner_pipeline = None
+
+        with patch.object(rec, "load") as mock_load:
+            rec.analyze("123456", entities=[])  # Input longer than max_text_length
+
+            # Verify automatic load was triggered
+            mock_load.assert_called_once()
+            # Verify truncation warning was logged
+            assert "exceeds max_text_length" in caplog.text
+            # Verify call_args to ensure text was actually truncated to 5 chars
+            assert rec.text_chunker.predict_with_chunking.called
+            called_kwargs = rec.text_chunker.predict_with_chunking.call_args.kwargs
+            assert called_kwargs["text"] == "12345"
+
+
+@pytest.mark.parametrize(
+    "device_input, expected_device",
+    [
+        ("cpu", -1),
+        ("cuda", 0),
+        ("cuda:1", 1),
+        (0, 0),
+    ],
+)
+def test_hf_recognizer_device_parsing(device_input, expected_device):
+    """Test that various device strings/ints are correctly parsed for the pipeline."""
+    path = HF_PIPELINE_PATH
+    with patch(path) as mock_pipeline:
+        HuggingFaceNerRecognizer(model_name="test", device=device_input)
+        # Ensure it was called exactly once with expected device
+        mock_pipeline.assert_called_once()
+        _, kwargs = mock_pipeline.call_args
+        assert kwargs["device"] == expected_device
+
+
+def test_hf_recognizer_prediction_edge_cases(caplog):
+    """Test prediction callback with various model output formats."""
+    caplog.set_level(logging.WARNING)
+    path = HF_PIPELINE_PATH
+    # Inject explicit label_mapping and threshold to avoid dependency on global defaults
+    test_mapping = {"PER": "TEST_PERSON"}
+    with patch(path, new=MagicMock()):
+        rec = HuggingFaceNerRecognizer(
+            model_name="test",
+            label_mapping=test_mapping,
+            threshold=0.0,
+        )
+
+    rec.ner_pipeline = MagicMock()
+
+    # Case 1: Model returns a label not in mapping (entity key)
+    rec.ner_pipeline.return_value = [
+        {"entity": "UNKNOWN", "score": 0.9, "start": 0, "end": 4}
+    ]
+    assert len(rec._predict_chunk("text")) == 0
+
+    # Case 2: Model returns BIO-prefixed label (B-PER -> mapped to TEST_PERSON)
+    rec.ner_pipeline.return_value = [
+        {"entity_group": "B-PER", "score": 0.9, "start": 0, "end": 4}
+    ]
+    results = rec._predict_chunk("text")
+    assert len(results) == 1
+    assert results[0].entity_type == "TEST_PERSON"
+
+    # Case 3: Inference engine throws an exception
+    rec.ner_pipeline.side_effect = Exception("Pipeline failure")
+    assert rec._predict_chunk("text") == []
+    assert "NER prediction failed" in caplog.text
+
+
+def test_prepare_recognizer_kwargs_exception(caplog):
+    """Test fallback logic when inspect.signature fails."""
+    caplog.set_level(logging.WARNING)
+
+    class DummyRec:
+        pass
+
+    # Patch inspect.signature relative to the utility module
+    target = (
+        "presidio_analyzer.recognizer_registry."
+        "recognizers_loader_utils.inspect.signature"
+    )
+    with patch(target, side_effect=Exception("Inspection failed")):
+        kwargs = RecognizerListLoader._prepare_recognizer_kwargs(
+            {"p1": "v1"}, {"p2": "v2"}, DummyRec
+        )
+        # Verify warning log and fallback to basic merge
+        assert "Failed to inspect signature" in caplog.text
+        assert kwargs == {"p1": "v1", "p2": "v2"}
+
+
+def test_get_config_yaml_error():
+    """Test error wrapping when YAML parsing fails in ConfigurationLoader."""
+    # Patch safe_load relative to the utility module
+    yaml_patch = (
+        "presidio_analyzer.recognizer_registry.recognizers_loader_utils.yaml.safe_load"
+    )
+    with patch("builtins.open", mock_open(read_data="dummy: content")):
+        with patch(yaml_patch, side_effect=Exception("YAML Parse Error")):
+            with pytest.raises(ValueError, match="Failed to parse file"):
+                RecognizerConfigurationLoader.get(conf_file="invalid.yaml")
