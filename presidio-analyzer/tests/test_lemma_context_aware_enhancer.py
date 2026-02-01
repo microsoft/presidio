@@ -110,15 +110,15 @@ def test_when_context_word_no_match_then_empty_string():
     assert result == ""
 
 
-def test_when_duplicate_word_in_text_then_lic_context_not_matched(
+def test_when_duplicate_word_in_text_then_lic_context_not_matched_with_whole_word(
     spacy_nlp_engine,
 ):
     """
-    Integration test for issue #1061: 'lic' should not match 'duplicate'.
+    Integration test for issue #1061: 'lic' should not match 'duplicate' with whole_word mode.
     
-    This test verifies that when the word 'duplicate' appears in text,
-    the context word 'lic' (from US_DRIVER_LICENSE recognizer) should
-    NOT cause false context enhancement.
+    This test verifies that when using "whole_word" mode, the context word 'lic'
+    (from US_DRIVER_LICENSE recognizer) should NOT cause false context enhancement
+    when 'duplicate' appears in text.
     """
     from presidio_analyzer import PatternRecognizer, Pattern
     from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
@@ -131,8 +131,8 @@ def test_when_duplicate_word_in_text_then_lic_context_not_matched(
         patterns=[Pattern("test_pattern", r"\b[A-Z0-9]{8}\b", 0.3)],
     )
     
-    # Test case 1: Text with 'duplicate' but no actual license context words
-    # The word 'duplicate' contains 'lic' as a substring, but should NOT match
+    # Test case: Text with 'duplicate' but no actual license context words
+    # The word 'duplicate' contains 'lic' as a substring, but should NOT match with whole_word mode
     text = "This is a duplicate document with code ABC12345"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
     
@@ -141,7 +141,8 @@ def test_when_duplicate_word_in_text_then_lic_context_not_matched(
     
     original_score = recognizer_results[0].score
     
-    enhancer = LemmaContextAwareEnhancer()
+    # Use whole_word mode to prevent false positives
+    enhancer = LemmaContextAwareEnhancer(context_matching_mode="whole_word")
     enhanced_results = enhancer.enhance_using_context(
         text, recognizer_results, nlp_artifacts, [test_recognizer]
     )
@@ -151,6 +152,49 @@ def test_when_duplicate_word_in_text_then_lic_context_not_matched(
     assert enhanced_results[0].score == original_score
     assert (
         enhanced_results[0].analysis_explanation.supportive_context_word == ""
+    )
+
+
+def test_when_duplicate_word_in_text_then_lic_context_matches_with_substring(
+    spacy_nlp_engine,
+):
+    """
+    Test that substring mode (default) maintains backward compatibility.
+    
+    This test verifies that with the default "substring" mode, 'lic' DOES match
+    'duplicate' (the original behavior), maintaining backward compatibility.
+    """
+    from presidio_analyzer import PatternRecognizer, Pattern
+    from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
+    
+    # Create a recognizer with 'lic' as context word
+    test_recognizer = PatternRecognizer(
+        supported_entity="TEST_LICENSE",
+        name="test_license_recognizer",
+        context=["lic"],
+        patterns=[Pattern("test_pattern", r"\b[A-Z0-9]{8}\b", 0.3)],
+    )
+    
+    # Text with 'duplicate' - with substring mode (default), 'lic' should match
+    text = "This is a duplicate document with code ABC12345"
+    nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
+    
+    recognizer_results = test_recognizer.analyze(text, nlp_artifacts)
+    assert len(recognizer_results) > 0
+    
+    original_score = recognizer_results[0].score
+    
+    # Use default substring mode (backward compatible behavior)
+    enhancer = LemmaContextAwareEnhancer()  # Default is "substring"
+    enhanced_results = enhancer.enhance_using_context(
+        text, recognizer_results, nlp_artifacts, [test_recognizer]
+    )
+    
+    # With substring matching (default), 'lic' DOES match 'duplicate' (original behavior)
+    # So the score should be enhanced
+    assert enhanced_results[0].score > original_score
+    assert (
+        enhanced_results[0].analysis_explanation.supportive_context_word == "lic"
     )
 
 
@@ -183,47 +227,6 @@ def test_when_substring_matching_mode_then_compound_words_match():
     assert result == "lic"
 
 
-def test_when_hybrid_matching_mode_then_whole_word_preferred():
-    """
-    Test that hybrid matching mode tries whole-word first, then substring.
-    
-    Hybrid mode should prefer whole-word matches but fall back to substring
-    for compound words.
-    """
-    # Case 1: Whole-word match exists - should use it
-    context_list = ["license", "creditcard"]
-    recognizer_context_list = ["license", "card"]
-    
-    result = LemmaContextAwareEnhancer._find_supportive_word_in_context(
-        context_list, recognizer_context_list, matching_mode="hybrid"
-    )
-    
-    # Should match 'license' as whole-word (first in list)
-    assert result == "license"
-    
-    # Case 2: No whole-word match, but substring match exists
-    context_list = ["creditcard", "passportnumber"]
-    recognizer_context_list = ["card"]
-    
-    result = LemmaContextAwareEnhancer._find_supportive_word_in_context(
-        context_list, recognizer_context_list, matching_mode="hybrid"
-    )
-    
-    # Should fall back to substring match: 'card' in 'creditcard'
-    assert result == "card"
-    
-    # Case 3: No match at all
-    context_list = ["random", "words"]
-    recognizer_context_list = ["card", "license"]
-    
-    result = LemmaContextAwareEnhancer._find_supportive_word_in_context(
-        context_list, recognizer_context_list, matching_mode="hybrid"
-    )
-    
-    # Should return empty string
-    assert result == ""
-
-
 def test_when_invalid_matching_mode_then_raises_error():
     """
     Test that invalid matching mode raises ValueError.
@@ -232,6 +235,10 @@ def test_when_invalid_matching_mode_then_raises_error():
     
     with pytest.raises(ValueError, match="context_matching_mode must be one of"):
         LemmaContextAwareEnhancer(context_matching_mode="invalid_mode")
+    
+    # Test that "hybrid" is no longer a valid mode (it was redundant)
+    with pytest.raises(ValueError, match="context_matching_mode must be one of"):
+        LemmaContextAwareEnhancer(context_matching_mode="hybrid")
 
 
 def test_when_substring_mode_then_compound_words_work_in_integration(spacy_nlp_engine):
