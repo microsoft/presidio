@@ -45,9 +45,15 @@ recognizers:
     type: predefined
   
   - name: UsSsnRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
+
+  - name: UsMbiRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
 
   - name: NhsRecognizer
     supported_languages: 
@@ -154,6 +160,13 @@ recognizers:
     - pl
     type: predefined
 
+  - name: KrBrnRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
   - name: KrRrnRecognizer
     supported_languages: 
     - ko
@@ -162,6 +175,13 @@ recognizers:
     enabled: false
 
   - name: KrDriverLicenseRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
+  - name: KrFrnRecognizer
     supported_languages: 
     - ko
     - kr
@@ -190,6 +210,9 @@ recognizers:
     type: predefined
 
   - name: MedicalLicenseRecognizer
+    type: predefined
+
+  - name: MacAddressRecognizer
     type: predefined
 
   - name: PhoneRecognizer

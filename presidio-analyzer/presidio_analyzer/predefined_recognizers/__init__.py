@@ -35,9 +35,11 @@ from .country_specific.italy.it_passport_recognizer import ItPassportRecognizer
 from .country_specific.italy.it_vat_code import ItVatCodeRecognizer
 
 # Korea recognizers
+from .country_specific.korea.kr_brn_recognizer import KrBrnRecognizer
 from .country_specific.korea.kr_driver_license_recognizer import (
     KrDriverLicenseRecognizer,
 )
+from .country_specific.korea.kr_frn_recognizer import KrFrnRecognizer
 from .country_specific.korea.kr_passport_recognizer import KrPassportRecognizer
 from .country_specific.korea.kr_rrn_recognizer import KrRrnRecognizer
 
@@ -65,6 +67,7 @@ from .country_specific.us.medical_license_recognizer import MedicalLicenseRecogn
 from .country_specific.us.us_bank_recognizer import UsBankRecognizer
 from .country_specific.us.us_driver_license_recognizer import UsLicenseRecognizer
 from .country_specific.us.us_itin_recognizer import UsItinRecognizer
+from .country_specific.us.us_mbi_recognizer import UsMbiRecognizer
 from .country_specific.us.us_passport_recognizer import UsPassportRecognizer
 from .country_specific.us.us_ssn_recognizer import UsSsnRecognizer
 
@@ -75,6 +78,7 @@ from .generic.date_recognizer import DateRecognizer
 from .generic.email_recognizer import EmailRecognizer
 from .generic.iban_recognizer import IbanRecognizer
 from .generic.ip_recognizer import IpRecognizer
+from .generic.mac_recognizer import MacAddressRecognizer
 from .generic.phone_recognizer import PhoneRecognizer
 from .generic.url_recognizer import UrlRecognizer
 
@@ -122,12 +126,14 @@ __all__ = [
     "IpRecognizer",
     "NhsRecognizer",
     "MedicalLicenseRecognizer",
+    "MacAddressRecognizer",
     "PhoneRecognizer",
     "SgFinRecognizer",
     "UrlRecognizer",
     "UsBankRecognizer",
     "UsItinRecognizer",
     "UsLicenseRecognizer",
+    "UsMbiRecognizer",
     "UsPassportRecognizer",
     "UsSsnRecognizer",
     "EsNifRecognizer",
@@ -158,8 +164,10 @@ __all__ = [
     "EsNieRecognizer",
     "UkNinoRecognizer",
     "AzureHealthDeidRecognizer",
+    "KrBrnRecognizer",
     "KrRrnRecognizer",
     "KrDriverLicenseRecognizer",
+    "KrFrnRecognizer",
     "ThTninRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",

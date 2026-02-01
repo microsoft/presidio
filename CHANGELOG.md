@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - Fixed context enhancement substring matching bug where context words were incorrectly matched as substrings (e.g., 'lic' matching 'duplicate'). Added configurable `context_matching_mode` parameter to `LemmaContextAwareEnhancer` with three options: "whole_word" (default, safer), "substring" (for compound words like "creditcard"), and "hybrid" (tries whole-word first, then substring) (#1061)
 
+#### Added
+- US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (@chrisvoncsefalvay)
+
 ### Image Redactor
 #### Changed
 - DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.
