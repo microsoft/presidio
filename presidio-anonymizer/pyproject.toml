@@ -22,7 +22,7 @@ readme = "README.md"
 
 requires-python = ">=3.10,<4.0"
 dependencies = [
-    "cryptography (<44.1)"
+    "cryptography (>=46.0.4)"
 ]
 
 [project.optional-dependencies]
