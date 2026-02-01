@@ -45,9 +45,15 @@ recognizers:
     type: predefined
   
   - name: UsSsnRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
+
+  - name: UsMbiRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
 
   - name: NhsRecognizer
     supported_languages: 
