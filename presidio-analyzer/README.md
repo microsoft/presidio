@@ -28,8 +28,8 @@ pip install presidio-analyzer[langextract]
 **Ollama** (local models):
 
 ```python
-from presidio_analyzer.predefined_recognizers import OllamaLangExtractRecognizer
-recognizer = OllamaLangExtractRecognizer()  # Uses default config
+from presidio_analyzer.predefined_recognizers import BasicLangExtractRecognizer
+recognizer = BasicLangExtractRecognizer()  # Uses default config
 ```
 
 **Azure OpenAI** (cloud models):

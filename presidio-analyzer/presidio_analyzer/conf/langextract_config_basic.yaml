@@ -1,7 +1,7 @@
-# Ollama Configuration for LangExtract
-# https://github.com/google/langextract#using-local-llms-with-ollama
+# Basic LangExtract Configuration
+# Supports different LLM providers via LangExtract's ModelConfig
 #
-# Required parameters: model_id, model_url
+# Required parameters: model_id, provider.name
 # Optional parameters use defaults if not specified
 
 lm_recognizer:
@@ -28,19 +28,40 @@ lm_recognizer:
 langextract:
   prompt_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
   examples_file: "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
-  
+
+  # ollama example
   model:
     model_id: "qwen2.5:1.5b"
-    model_url: "http://localhost:11434"
-    temperature: null
-    
-    # Optional: Uncomment to override defaults
-    # max_char_buffer: 400
-    # use_schema_constraints: false
-    # fence_output: false
-    # timeout: 240
-    # num_ctx: 8192
-  
+    provider:
+      name: "ollama"
+      kwargs:
+        model_url: "http://localhost:11434"
+      extract_params:
+        temperature: null
+        use_schema_constraints: false
+        fence_output: false
+        max_char_buffer: 400
+      language_model_params:
+        timeout: 240
+        num_ctx: 8192
+
+  # litellm example
+  #model:
+  #  model_id: "ollama/qwen2.5:1.5b"
+  #  provider:
+  #    name: "openai"
+  #    kwargs:
+  #      base_url: "http://localhost:4000"
+  #      api_key: "API_KEY_GOES_HERE"
+  #    extract_params:
+  #      temperature: null
+  #      use_schema_constraints: false
+  #      fence_output: false
+  #      max_char_buffer: 400
+  #    language_model_params:
+  #      timeout: 240
+  #      num_ctx: 8192
+
   entity_mappings:
     person: PERSON
     name: PERSON

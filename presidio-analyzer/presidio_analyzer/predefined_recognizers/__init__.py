@@ -95,8 +95,8 @@ from .third_party.azure_ai_language import AzureAILanguageRecognizer
 from .third_party.azure_openai_langextract_recognizer import (
     AzureOpenAILangExtractRecognizer,
 )
+from .third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
 from .third_party.langextract_recognizer import LangExtractRecognizer
-from .third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
 
 PREDEFINED_RECOGNIZERS = [
     "PhoneRecognizer",
@@ -171,6 +171,6 @@ __all__ = [
     "ThTninRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
-    "OllamaLangExtractRecognizer",
+    "BasicLangExtractRecognizer",
     "KrPassportRecognizer",
 ]
