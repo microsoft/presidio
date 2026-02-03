@@ -111,15 +111,16 @@ The recognizer list comprises of both the predefined and custom recognizers, for
   - `deny_list`: A list of words to detect, in case the recognizer uses a predefined list of words.
   - `deny_list_score`: confidence score for a term identified using a deny-list.
 
-!!! tip "Configuration Tip: Handling Agglutinative Languages (e.g., Korean)"
+!!! tip "Configuration Tip: Agglutinative languages (e.g., Korean)"
 
-    When using `HuggingFaceNerRecognizer` for languages where the default spaCy tokenizer performs poorly, keep the default NLP engine enabled (for startup) but disable its output by setting `supported_entities` to an empty list.
+    If spaCy-based NER produces noisy or redundant results, disable `SpacyRecognizer` while keeping the spaCy NLP engine available for other components (like `HuggingFaceNerRecognizer`).
+
+
 
     ```yaml
     - name: "SpacyRecognizer"
       type: "predefined"
       class_name: "SpacyRecognizer"
       supported_languages: ["ko"]
-      enabled: true # Ensure at least one NLP engine is active for this language
-      supported_entities: []  # Disable output while keeping the engine active
+      enabled: false
     ```

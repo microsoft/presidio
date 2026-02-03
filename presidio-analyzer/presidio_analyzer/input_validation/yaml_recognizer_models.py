@@ -1,6 +1,6 @@
 """Pydantic models for YAML recognizer configurations."""
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -141,7 +141,12 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
 
     type: str = Field(default="predefined", description="Type of recognizer")
 
-    # HuggingFaceNerRecognizer and other ML model configuration
+
+class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
+    """Configuration specifically for HuggingFace NER models."""
+
+    model_config = ConfigDict(extra="forbid")
+
     model_name: Optional[str] = Field(None, description="HuggingFace model name")
     tokenizer_name: Optional[str] = Field(
         None, description="HuggingFace tokenizer name"
@@ -155,6 +160,9 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
     chunk_size: Optional[int] = Field(None, description="Chunk size")
     max_text_length: Optional[int] = Field(None, description="Max text length")
     device: Optional[Union[str, int]] = Field(None, description="Device (cpu/gpu)")
+    label_prefixes: Optional[List[str]] = Field(
+        default=None, description="Prefixes to strip from labels (e.g. B-, I-)"
+    )
 
     @model_validator(mode="after")
     def validate_predefined_recognizer_exists(self):
@@ -271,7 +279,12 @@ class RecognizerRegistryConfig(BaseModel):
     )
     global_regex_flags: int = Field(default=26, description="Global regex flags")
     recognizers: List[
-        Union[PredefinedRecognizerConfig, CustomRecognizerConfig, str]
+        Union[
+            HuggingFaceRecognizerConfig,
+            PredefinedRecognizerConfig,
+            CustomRecognizerConfig,
+            str,
+        ]
     ] = Field(default_factory=list, description="List of recognizer configurations")
 
     model_config = ConfigDict(extra="forbid")
@@ -377,7 +390,13 @@ class RecognizerRegistryConfig(BaseModel):
                     recognizer["type"] = recognizer_type
 
                 if recognizer_type == "predefined":
-                    parsed_recognizers.append(PredefinedRecognizerConfig(**recognizer))
+                    # Determine the config model based on the recognizer name.
+                    recognizer_name = recognizer.get("name")
+                    config_model = CONFIG_MODEL_MAP.get(
+                        recognizer_name, PredefinedRecognizerConfig
+                    )
+
+                    parsed_recognizers.append(config_model(**recognizer))
                 elif recognizer_type == "custom":
                     parsed_recognizers.append(CustomRecognizerConfig(**recognizer))
                 else:
@@ -434,3 +453,10 @@ class RecognizerRegistryConfig(BaseModel):
                     "or specify languages for each custom recognizer."
                 )
         return self
+
+
+# Map specific recognizer classes to their dedicated config models
+# This allows for modular expansion without polluting the base config
+CONFIG_MODEL_MAP: Dict[str, Type[BaseModel]] = {
+    "HuggingFaceNerRecognizer": HuggingFaceRecognizerConfig,
+}

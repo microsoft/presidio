@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import inspect
 import logging
 from collections.abc import ItemsView
 from pathlib import Path
@@ -268,48 +267,40 @@ class RecognizerListLoader:
         """
         Prepare kwargs for recognizer instantiation.
 
+        Converts supported_entities to supported_entity
+        for PatternRecognizer subclasses.
+        Removes both fields if they are None to allow recognizer defaults to be used.
+
         :param recognizer_conf: The recognizer configuration.
         :param language_conf: The language configuration.
         :param recognizer_cls: The recognizer class.
         :return: Prepared kwargs for recognizer instantiation.
         """
-        # Merge order: recognizer_conf (base) -> language_conf (overrides)
-        # language_conf contains the specific 'supported_language' and 'context'
-        # for this instance, so it should act as an override for the generic config.
-        raw_kwargs = {**recognizer_conf, **language_conf}
+        kwargs = {**recognizer_conf, **language_conf}
 
-        try:
-            sig = inspect.signature(recognizer_cls)
-            params = sig.parameters
+        # HuggingFaceNerRecognizer expects `supported_entities` (plural) as-is.
+        # Do not normalize/remove it via PatternRecognizer/non-PatternRecognizer rules.
+        if recognizer_cls.__name__ == "HuggingFaceNerRecognizer":
+            return kwargs
 
-            # Check if the recognizer accepts **kwargs (variable keyword arguments)
-            has_var_keyword = any(
-                p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values()
-            )
+        # If this is a PatternRecognizer, handle supported_entities/supported_entity
+        elif RecognizerListLoader._is_pattern_recognizer(recognizer_cls):
+            # Convert supported_entities (plural) to supported_entity
+            # (singular) if present
+            RecognizerListLoader._convert_supported_entities_to_entity(kwargs)
 
-            if has_var_keyword:
-                # If it accepts **kwargs, pass everything but remove None values
-                # to avoid overwriting defaults with None
-                return {k: v for k, v in raw_kwargs.items() if v is not None}
+            # Remove supported_entity if it's None
+            # to allow the recognizer's default to be used
+            if kwargs.get("supported_entity") is None:
+                kwargs.pop("supported_entity", None)
 
-            # If it doesn't accept **kwargs, strictly filter
-            allowed_args = set(params.keys())
+        else:
+            # For non-PatternRecognizer classes, remove both fields
+            # as they may not accept these parameters
+            kwargs.pop("supported_entities", None)
+            kwargs.pop("supported_entity", None)
 
-            # Filter: must be in allowed_args AND not None
-            filtered_kwargs = {
-                k: v
-                for k, v in raw_kwargs.items()
-                if k in allowed_args and v is not None
-            }
-            return filtered_kwargs
-
-        except Exception as e:
-            logger.warning(
-                f"Failed to inspect signature for {recognizer_cls.__name__}: {e}. "
-                "Proceeding with basic merge."
-            )
-            # Fallback: remove None values just in case
-            return {k: v for k, v in raw_kwargs.items() if v is not None}
+        return kwargs
 
     @staticmethod
     def get(

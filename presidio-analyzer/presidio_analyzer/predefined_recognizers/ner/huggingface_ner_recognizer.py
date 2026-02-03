@@ -22,8 +22,8 @@ from presidio_analyzer import (
     LocalRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.chunkers import CharacterBasedTextChunker
-from presidio_analyzer.nlp_engine import NlpArtifacts, device_detector
+from presidio_analyzer.chunkers import BaseTextChunker, CharacterBasedTextChunker
+from presidio_analyzer.nlp_engine import NlpArtifacts
 
 try:
     from transformers import pipeline as hf_pipeline
@@ -56,10 +56,9 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         >>>
         >>> # For Korean
         >>> recognizer = HuggingFaceNerRecognizer(
-        ...     model_name="Leo97/KoELECTRA-small-v3-modu-ner",
+        ...     model_name="test-owner/test-model",
         ...     supported_language="ko"
         ... )
-        >>> recognizer.load()
         >>>
         >>> # For English
         >>> recognizer = HuggingFaceNerRecognizer(
@@ -94,6 +93,10 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         "ORGANIZATION": "ORGANIZATION",
         "DATE_TIME": "DATE_TIME",
     }
+    DEFAULT_HF_TASK = "token-classification"
+    DEFAULT_CHUNK_SIZE = 400
+    DEFAULT_CHUNK_OVERLAP = 40
+    DEFAULT_THRESHOLD = 0.3
 
     def __init__(
         self,
@@ -104,14 +107,16 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         context: Optional[List[str]] = None,
         model_name: Optional[str] = None,
         label_mapping: Optional[Dict[str, str]] = None,
-        threshold: float = 0.3,
+        threshold: float = DEFAULT_THRESHOLD,
         aggregation_strategy: str = "simple",
-        chunk_overlap: int = 40,
-        chunk_size: int = 400,
+        chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+        chunk_size: int = DEFAULT_CHUNK_SIZE,
         max_text_length: Optional[int] = None,
         device: Optional[Union[str, int]] = None,
         tokenizer_name: Optional[str] = None,
-        text_chunker: Optional[CharacterBasedTextChunker] = None,
+        text_chunker: Optional[BaseTextChunker] = None,
+        label_prefixes: Optional[List[str]] = None,
+        **kwargs,
     ):
         """Initialize the HuggingFace NER Recognizer.
 
@@ -135,23 +140,41 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             - "cuda" or "cuda:N" or int N for GPU
             - None for auto-detection (GPU if available, else CPU)
             Defaults to None.
+        :param chunk_overlap: Number of characters to overlap between chunks.
+        :param chunk_size: Maximum number of characters per chunk.
+        :param max_text_length: Maximum total text length. Longer texts are truncated.
         :param tokenizer_name: Name of the tokenizer. Defaults to model_name.
         :param text_chunker: Custom text chunking strategy. If None, uses
             CharacterBasedTextChunker with provided chunk_size and chunk_overlap.
+        :param label_prefixes: List of label prefixes to strip (e.g., B-, I-).
         """
         self.model_name = model_name
         self.tokenizer_name = tokenizer_name or model_name
-        self.label_mapping = label_mapping or self.DEFAULT_LABEL_MAPPING
-        self.threshold = threshold
-        self.aggregation_strategy = aggregation_strategy
+        self.label_mapping = (
+            label_mapping
+            if label_mapping is not None
+            else self.DEFAULT_LABEL_MAPPING
+        )
+        self.threshold = (
+            threshold if threshold is not None else self.DEFAULT_THRESHOLD
+        )
+        self.aggregation_strategy = aggregation_strategy or "simple"
         if self.aggregation_strategy == "none":
             logger.warning(
                 "aggregation_strategy='none' may result in fragmented entities "
                 "(e.g., 'B-PER', 'I-PER'). Recommended: 'simple' or 'first'."
             )
         self.max_text_length = max_text_length
-        self.device = device
+        self.device = self._parse_device(device)
+        self.label_prefixes = label_prefixes or ["B-", "I-", "U-", "L-"]
         self.ner_pipeline = None
+
+        if kwargs:
+            logger.warning(
+                "Ignoring unsupported kwargs in %s: %s",
+                name,
+                sorted(kwargs.keys()),
+            )
 
         # Derive supported entities from label mapping
         if supported_entities:
@@ -173,8 +196,12 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             self.text_chunker = text_chunker
         else:
             self.text_chunker = CharacterBasedTextChunker(
-                chunk_size=chunk_size,
-                chunk_overlap=chunk_overlap,
+                chunk_size=chunk_size
+                if chunk_size is not None
+                else self.DEFAULT_CHUNK_SIZE,
+                chunk_overlap=chunk_overlap
+                if chunk_overlap is not None
+                else self.DEFAULT_CHUNK_OVERLAP,
             )
 
         logger.info(
@@ -182,8 +209,45 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             f"threshold={self.threshold}, device={self.device}"
         )
 
+    def _parse_device(self, device: Optional[Union[str, int]]) -> int:
+        """Parse device string or int into a transformer-compatible int.
+
+        Normalize diverse device inputs (None, "cpu", "cuda", "cuda:1", 0)
+        to a standard integer format for the Transformers pipeline.
+        If None, it uses Presidio's DeviceDetector for auto-detection.
+        """
+        if device is None:
+            from presidio_analyzer.nlp_engine import device_detector
+
+            detected = device_detector.get_device()
+            return 0 if detected == "cuda" else -1
+
+        if isinstance(device, int):
+            return device
+
+        device_str = str(device).strip().lower()
+        if device_str == "cpu":
+            return -1
+        if device_str == "cuda":
+            return 0
+        if device_str.startswith("cuda:"):
+            try:
+                return int(device_str.split(":", 1)[1])
+            except (ValueError, IndexError):
+                pass
+
+        raise ValueError(
+            f"Invalid device specified: {device}. "
+            "Accepts 'cpu', 'cuda', 'cuda:N', or integer index."
+        )
+
     def load(self) -> None:
         """Load the HuggingFace NER pipeline.
+
+        This method handles:
+        1. Environment validation (transformers/torch installation)
+        2. Hardware acceleration setup (CUDA validation and fallback)
+        3. Lazy-loading of the heavyweight ML pipeline.
 
         :raises ImportError: If transformers library is not installed
         :raises ValueError: If model_name is not set
@@ -191,10 +255,10 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         if self.ner_pipeline is not None:
             return
 
-        if hf_pipeline is None:
+        if not hf_pipeline:
             raise ImportError(
-                "transformers is not installed. "
-                "Install with: pip install transformers torch"
+                "transformers is not installed. Please install it "
+                "(pip install transformers torch) to use this recognizer."
             )
 
         if not self.model_name:
@@ -203,49 +267,52 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 "Pass it to __init__() or set it directly."
             )
 
-        device = -1
-        device_str = str(self.device).lower() if self.device else ""
+        # Device validation and fallback
+        device = self.device
+        if device >= 0:
+            try:
+                import torch
 
-        if isinstance(self.device, int):
-            device = self.device
-        elif "cpu" in device_str:
-            device = -1
-        elif "cuda" in device_str:
-            if ":" in device_str:
-                try:
-                    device = int(device_str.split(":")[1])
-                except ValueError:
-                    device = 0
-            else:
-                device = 0  # Default to first GPU if just "cuda" is passed
-        elif self.device is None:
-            # Auto-detect: Use GPU if available, else CPU
-            device = device_detector.get_device()
+                if not torch.cuda.is_available():
+                    logger.warning("CUDA is not available. Falling back to CPU.")
+                    device = -1
+                elif device >= torch.cuda.device_count():
+                    logger.warning(
+                        f"Device index {device} out of range "
+                        f"(count={torch.cuda.device_count()}). Falling back to CPU."
+                    )
+                    device = -1
+            except ImportError:
+                logger.debug("Torch not installed, skipping device validation.")
 
         logger.info(f"Loading HuggingFace model: {self.model_name}, device={device}")
 
-        self.ner_pipeline = hf_pipeline(
-            "token-classification",
-            model=self.model_name,
-            tokenizer=self.tokenizer_name,
-            aggregation_strategy=self.aggregation_strategy,
-            device=device,
-        )
-        logger.info(f"Successfully loaded {self.model_name}")
+        try:
+            self.ner_pipeline = hf_pipeline(
+                self.DEFAULT_HF_TASK,
+                model=self.model_name,
+                tokenizer=self.tokenizer_name,
+                aggregation_strategy=self.aggregation_strategy,
+                device=device,
+            )
+            logger.info(f"Successfully loaded {self.model_name}")
+        except Exception as e:
+            logger.error(f"Failed to load model {self.model_name}: {e}")
+            raise e
 
-    @staticmethod
-    def _normalize_label(label: str) -> str:
-        """Normalize label by removing B-/I- prefix.
+    def _normalize_label(self, label: str) -> str:
+        """Normalize label by removing prefixes like B-/I-/U-/L-.
 
-        Some models return BIO-format labels (e.g., "B-PER", "I-PER") even with
-        aggregation_strategy="simple". This method strips the prefix so that
-        label_mapping can correctly map to Presidio entities.
+        This method strips the prefix so that label_mapping can correctly
+        map to Presidio entities.
 
-        Example: "B-PER" -> "PER" -> mapped to "PERSON"
+        :param label: The raw label from the model.
+        :return: Normalized label.
         """
         if isinstance(label, str):
-            if label.startswith("B-") or label.startswith("I-"):
-                return label[2:]
+            for prefix in self.label_prefixes:
+                if label.startswith(prefix):
+                    return label[len(prefix) :]
         return label
 
     def _predict_chunk(self, chunk_text: str) -> List[RecognizerResult]:
@@ -257,57 +324,70 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         :return: List of RecognizerResult objects.
         """
         chunk_results = []
+        # Run inference on the chunk
         try:
-            # Run inference on the chunk
             preds = self.ner_pipeline(chunk_text)
-
-            # Helper to process a single prediction dictionary
-            def process_pred(pred):
-                raw_label = pred.get("entity_group", pred.get("entity"))
-                model_label = HuggingFaceNerRecognizer._normalize_label(raw_label)
-
-                presidio_entity = self.label_mapping.get(model_label)
-                if not presidio_entity:
-                    return
-
-                if pred["score"] < self.threshold:
-                    return
-
-                score = float(pred.get("score", 0))
-                textual_explanation = (
-                    f"Identified as {presidio_entity} by {self.model_name} "
-                    f"(original label: {model_label})"
-                )
-
-                explanation = AnalysisExplanation(
-                    recognizer=self.name,
-                    original_score=score,
-                    textual_explanation=textual_explanation,
-                )
-
-                chunk_results.append(
-                    RecognizerResult(
-                        entity_type=presidio_entity,
-                        start=pred["start"],
-                        end=pred["end"],
-                        score=score,
-                        analysis_explanation=explanation,
-                    )
-                )
-
-            if isinstance(preds, list):
-                for pred in preds:
-                    if isinstance(pred, list):
-                        for p in pred:
-                            process_pred(p)
-                    else:
-                        process_pred(pred)
-            elif isinstance(preds, dict):
-                process_pred(preds)
-
         except Exception as e:
             logger.warning(f"NER prediction failed for chunk: {e}", exc_info=True)
             return []
+
+        # Helper to process a single prediction dictionary
+        def process_pred(pred):
+            raw_label = pred.get("entity_group") or pred.get("entity")
+            if not raw_label:
+                return
+
+            model_label = self._normalize_label(raw_label)
+
+            presidio_entity = self.label_mapping.get(model_label)
+            if not presidio_entity:
+                # If label is not mapped, use the model's label as is. This allows
+                # discovering entities not explicitly defined in the mapping.
+                presidio_entity = model_label
+
+            try:
+                score = float(pred.get("score") or 0.0)
+            except (TypeError, ValueError):
+                return
+
+            if score < self.threshold:
+                return
+
+            start = pred.get("start")
+            end = pred.get("end")
+            if start is None or end is None:
+                return
+
+            textual_explanation = (
+                f"Identified as {presidio_entity} by {self.model_name} "
+                f"(original label: {raw_label}, normalized: {model_label})"
+            )
+
+            explanation = AnalysisExplanation(
+                recognizer=self.name,
+                original_score=score,
+                textual_explanation=textual_explanation,
+            )
+
+            chunk_results.append(
+                RecognizerResult(
+                    entity_type=presidio_entity,
+                    start=start,
+                    end=end,
+                    score=score,
+                    analysis_explanation=explanation,
+                )
+            )
+
+        if isinstance(preds, list):
+            for pred in preds:
+                if isinstance(pred, list):
+                    for p in pred:
+                        process_pred(p)
+                else:
+                    process_pred(pred)
+        elif isinstance(preds, dict):
+            process_pred(preds)
 
         return chunk_results
 
@@ -330,6 +410,9 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         if not text or not text.strip():
             return []
 
+        # Defensive guard for entities input
+        entities = entities or []
+
         if self.max_text_length and len(text) > self.max_text_length:
             logger.warning(
                 f"Text length ({len(text)}) exceeds max_text_length "
@@ -347,8 +430,17 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             predict_func=self._predict_chunk,
         )
 
-        # Filter by requested entities
+        # Filter policy:
+        # 1. If an entity is requested, it is always kept.
+        # 2. If it's a known 'supported' entity but NOT requested, it is filtered out.
+        # 3. If it's an unmapped/unexpected entity, it is kept for Discovery.
         if entities:
-            results = [r for r in results if r.entity_type in entities]
+            requested = set(entities)
+            supported = set(self.supported_entities)
+            results = [
+                r
+                for r in results
+                if (r.entity_type in requested) or (r.entity_type not in supported)
+            ]
 
         return results
