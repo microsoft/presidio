@@ -458,7 +458,7 @@ class RecognizerConfigurationLoader:
                 use_defaults = False
 
             except Exception as e:
-                raise ValueError(f"Failed to parse file {conf_file}.Error: {str(e)}")
+                raise ValueError(f"Failed to parse file {conf_file}. Error: {str(e)}")
 
         # Load defaults if needed (no config provided,
         # or registry_configuration is incomplete)
