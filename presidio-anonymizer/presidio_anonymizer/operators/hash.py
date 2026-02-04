@@ -27,18 +27,18 @@ class Hash(Operator):
         :return: hashed original text with salt
         """
         hash_type = self._get_hash_type_or_default(params)
-        
+
         # Use user-provided salt if available, otherwise use engine-generated hash_salt
         # If neither is provided, use empty bytes (for backward compatibility)
         salt = params.get(self.SALT, params.get("hash_salt", b""))
-        
+
         # Ensure salt is bytes
         if isinstance(salt, str):
             salt = salt.encode()
-        
+
         # Concatenate text and salt before hashing
         salted_text = text.encode() + salt
-        
+
         hash_switcher = {
             self.SHA256: lambda s: sha256(s),
             self.SHA512: lambda s: sha512(s),

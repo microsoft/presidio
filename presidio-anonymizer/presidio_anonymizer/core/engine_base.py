@@ -53,7 +53,11 @@ class EngineBase(ABC):
                 entity.entity_type, operators_metadata
             )
             changed_text = self.__operate_on_text(
-                entity, text_to_operate_on, operator_metadata, operator_type, operator_kwargs
+                entity,
+                text_to_operate_on,
+                operator_metadata,
+                operator_type,
+                operator_kwargs,
             )
             index_from_end = text_replace_builder.replace_text_get_insertion_index(
                 changed_text, entity.start, entity.end
@@ -89,13 +93,14 @@ class EngineBase(ABC):
             operator_metadata.operator_name, operator_type
         )
         self.logger.debug(f"validating operator {operator} for {entity_type}")
-        
+
         # Make a copy of params to avoid modifying the original config
         params = operator_metadata.params.copy()
         params["entity_type"] = entity_type
-        
+
         # Pass additional engine-level parameters to operators (e.g., hash_salt)
-        # Engine-level params are added if not already present in operator-specific params
+        # Engine-level params are added if not already present in
+        # operator-specific params
         if operator_kwargs:
             for key, value in operator_kwargs.items():
                 if key not in params:

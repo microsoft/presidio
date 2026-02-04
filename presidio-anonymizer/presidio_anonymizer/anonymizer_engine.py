@@ -101,7 +101,7 @@ class AnonymizerEngine(EngineBase):
         )
 
         operators = self.__check_or_add_default_operator(operators)
-        
+
         # Generate a random salt for hash operations in this anonymization session
         # This salt is used to prevent brute-force and dictionary attacks
         # while maintaining deterministic hashing within the same session
