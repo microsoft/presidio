@@ -9,7 +9,7 @@ permissions:
 jobs:
   github-pages-release:
     name: Push to github pages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     
     permissions:
       contents: write  # Required for pushing to gh-pages branch
