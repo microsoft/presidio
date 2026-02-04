@@ -40,13 +40,20 @@ paths:
           content:
             application/json:
               schema:
-                description: "A list analysis results"
-                type: array
-                items:
-                  $ref: "#/components/schemas/RecognizerResultWithAnalysisExplanation"
+                oneOf:
+                  - description: "A list of analysis results (when input text is a single string)"
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RecognizerResultWithAnalysisExplanation"
+                  - description: "A list of analysis result lists (when input text is an array of strings)"
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/RecognizerResultWithAnalysisExplanation"
 
               examples:
-                Enhanced response:
+                Enhanced response (single text):
                   value:
                     [
                       { "entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85,
@@ -66,7 +73,7 @@ paths:
                         }
                       }
                     ]
-                Lean response:
+                Lean response (single text):
                   value:
                     [
                       {
@@ -76,6 +83,17 @@ paths:
                         "score": 0.6499999999999999,
                         "start": 30
                       }
+                    ]
+                Batch response (array of texts):
+                  value:
+                    [
+                      [
+                        { "entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation": null },
+                        { "entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation": null }
+                      ],
+                      [
+                        { "entity_type": "EMAIL_ADDRESS", "start": 15, "end": 35, "score": 0.95, "analysis_explanation": null }
+                      ]
                     ]
 
   /recognizers:
@@ -272,13 +290,19 @@ components:
           schema:
             $ref: "#/components/schemas/AnalyzeRequest"
           examples:
-            Minimal Request:
+            Minimal Request (single text):
               value:
                 {
                   "text": "John Smith drivers license is AC432223",
                   "language": "en"
                 }
-            Enhanced Request :
+            Minimal Request (batch request):
+              value:
+                {
+                  "text": ["John Smith drivers license is AC432223", "John Smith drivers license is AC432223 and the zip code is 12345"],
+                  "language": "en"
+                }
+            Enhanced Request (single text):
               value:
                 {
                   "text": "John Smith drivers license is AC432223 and the zip code is 12345",
@@ -370,8 +394,12 @@ components:
         - language
       properties:
         text:
-          type: string
-          description: "The text to analyze"
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+          description: "The text to analyze. Can be a single string or an array of strings."
           example: "hello world, my name is Jane Doe. My number is: 034453334"
         language:
           type: string
