@@ -37,6 +37,7 @@ class EngineBase(ABC):
         :param operators_metadata: dictionary where the key is the entity_type and what
         :type operator_type: either anonymize or deanonymize
         we want to perform over this entity_type.
+        :param operator_kwargs: Additional keyword arguments to pass to operators
         :return:
         """
         text_replace_builder = TextReplaceBuilder(original_text=text)
@@ -52,7 +53,7 @@ class EngineBase(ABC):
                 entity.entity_type, operators_metadata
             )
             changed_text = self.__operate_on_text(
-                entity, text_to_operate_on, operator_metadata, operator_type
+                entity, text_to_operate_on, operator_metadata, operator_type, operator_kwargs
             )
             index_from_end = text_replace_builder.replace_text_get_insertion_index(
                 changed_text, entity.start, entity.end
@@ -80,6 +81,7 @@ class EngineBase(ABC):
         text_to_operate_on: str,
         operator_metadata: OperatorConfig,
         operator_type: OperatorType,
+        operator_kwargs: Dict,
     ) -> str:
         entity_type = text_metadata.entity_type
         self.logger.debug(f"getting operator for {entity_type}")
@@ -87,8 +89,17 @@ class EngineBase(ABC):
             operator_metadata.operator_name, operator_type
         )
         self.logger.debug(f"validating operator {operator} for {entity_type}")
-        params = operator_metadata.params
+        
+        # Make a copy of params to avoid modifying the original config
+        params = operator_metadata.params.copy()
         params["entity_type"] = entity_type
+        
+        # Pass additional engine-level parameters to operators (e.g., hash_salt)
+        # Engine-level params are added if not already present in operator-specific params
+        if operator_kwargs:
+            for key, value in operator_kwargs.items():
+                if key not in params:
+                    params[key] = value
 
         operator.validate(params=params)
 

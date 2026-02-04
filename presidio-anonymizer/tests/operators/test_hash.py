@@ -119,5 +119,103 @@ def test_when_validate_anonymizer_then_correct_name():
     assert Hash().operator_name() == "hash"
 
 
+def test_when_salt_provided_then_hash_is_different():
+    """Test that providing salt changes the hash output."""
+    text = "123456"
+    
+    # Hash without salt
+    params_no_salt = {}
+    hash_no_salt = Hash().operate(text=text, params=params_no_salt)
+    
+    # Hash with salt
+    params_with_salt = {"salt": b"random_salt_value"}
+    hash_with_salt = Hash().operate(text=text, params=params_with_salt)
+    
+    # Hashes should be different
+    assert hash_no_salt != hash_with_salt
+
+
+def test_when_same_salt_provided_then_hash_is_deterministic():
+    """Test that same text with same salt produces same hash."""
+    text = "sensitive_data"
+    salt = b"my_secret_salt"
+    
+    params = {"salt": salt}
+    hash1 = Hash().operate(text=text, params=params)
+    hash2 = Hash().operate(text=text, params=params)
+    
+    # Same text + same salt should produce same hash
+    assert hash1 == hash2
+
+
+def test_when_different_salt_provided_then_hash_is_different():
+    """Test that same text with different salts produces different hashes."""
+    text = "sensitive_data"
+    
+    params1 = {"salt": b"salt1"}
+    hash1 = Hash().operate(text=text, params=params1)
+    
+    params2 = {"salt": b"salt2"}
+    hash2 = Hash().operate(text=text, params=params2)
+    
+    # Same text + different salt should produce different hashes
+    assert hash1 != hash2
+
+
+def test_when_salt_is_string_then_it_is_converted_to_bytes():
+    """Test that string salt is properly converted to bytes."""
+    text = "data"
+    salt_str = "my_salt"
+    salt_bytes = b"my_salt"
+    
+    params_str = {"salt": salt_str}
+    hash_str = Hash().operate(text=text, params=params_str)
+    
+    params_bytes = {"salt": salt_bytes}
+    hash_bytes = Hash().operate(text=text, params=params_bytes)
+    
+    # String and bytes salt should produce same hash
+    assert hash_str == hash_bytes
+
+
+def test_when_hash_salt_provided_then_it_is_used():
+    """Test that hash_salt parameter (engine-generated) is used when no user salt is provided."""
+    text = "123456"
+    
+    # Hash without any salt
+    params_no_salt = {}
+    hash_no_salt = Hash().operate(text=text, params=params_no_salt)
+    
+    # Hash with engine-generated hash_salt
+    params_with_hash_salt = {"hash_salt": b"engine_generated_salt"}
+    hash_with_hash_salt = Hash().operate(text=text, params=params_with_hash_salt)
+    
+    # Hashes should be different
+    assert hash_no_salt != hash_with_hash_salt
+
+
+def test_when_user_salt_provided_then_it_takes_precedence_over_hash_salt():
+    """Test that user-provided salt takes precedence over engine-generated hash_salt."""
+    text = "data"
+    user_salt = b"user_salt"
+    engine_salt = b"engine_salt"
+    
+    # Hash with user salt
+    params_user = {"salt": user_salt}
+    hash_user = Hash().operate(text=text, params=params_user)
+    
+    # Hash with both user salt and engine salt (user salt should win)
+    params_both = {"salt": user_salt, "hash_salt": engine_salt}
+    hash_both = Hash().operate(text=text, params=params_both)
+    
+    # Should produce same hash (user salt takes precedence)
+    assert hash_user == hash_both
+    
+    # Verify it's different from hash with only engine salt
+    params_engine = {"hash_salt": engine_salt}
+    hash_engine = Hash().operate(text=text, params=params_engine)
+    assert hash_user != hash_engine
+
+
 def _get_default_hash_parameters():
     return {"hash_type": ""}

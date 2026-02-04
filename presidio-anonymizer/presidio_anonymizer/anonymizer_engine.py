@@ -1,6 +1,7 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 
 import logging
+import os
 import re
 from typing import Dict, List, Optional, Type
 
@@ -100,12 +101,18 @@ class AnonymizerEngine(EngineBase):
         )
 
         operators = self.__check_or_add_default_operator(operators)
+        
+        # Generate a random salt for hash operations in this anonymization session
+        # This salt is used to prevent brute-force and dictionary attacks
+        # while maintaining deterministic hashing within the same session
+        hash_salt = os.urandom(32)
 
         return self._operate(
             text=text,
             pii_entities=merged_results,
             operators_metadata=operators,
             operator_type=OperatorType.Anonymize,
+            hash_salt=hash_salt,
         )
 
     def add_anonymizer(self, anonymizer_cls: Type[Operator]) -> None:

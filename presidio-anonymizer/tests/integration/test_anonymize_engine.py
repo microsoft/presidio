@@ -156,42 +156,15 @@ def test_given_intersecting_the_same_entities_then_we_anonymize_correctly():
 
 @pytest.mark.parametrize(
     # fmt: off
-    "hash_type,result",
+    "hash_type,expected_hash_length",
     [
-        ("sha256",
-         '{"text": "hello world, my name is '
-         '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a. '
-         'My number is: 230451ebc7df208f1d5227aceaebf6d8e9'
-         '36f17d74330a5a5c5cbbd4e41d0d57", "items": [{"start": 104, "end": 168, '
-         '"entity_type": "PHONE_NUMBER", "text": "230451ebc7df208f1d5227aceaebf6d8e'
-         '936f17d74330a5a5c5cbbd4e41d0d57", "operator": "hash"}, {"start": 24, '
-         '"end": 88, "entity_type": "NAME", "text": "01332c876518a793b7c1b8dfaf6d4b404f'
-         'f5db09b21c6627ca59710cc24f696a", "operator": "hash"}]}'),
-        ("sha512",
-         '{"text": "hello world, my name is 508789e7c17beebf2f17e611b43920792b692a'
-         'd9ae53f9be3a947b04fbf820f40d57f42864a20e7121180e9467fda3fa2480e50c0da15244b'
-         '6153abe2509362c. My number is: 8ea244bbf71264237db23324b3ff83f6ef6601c9da08a'
-         'f42122f992ec45d757c3efd953185b2590e4542aa1ca3637fa8935ebff2b43af0ea1245e7c84'
-         '3fbebdc", "items": [{"start": 168, "end": 296, "entity_type": "PHONE_NUMBER",'
-         ' "text": "8ea244bbf71264237db23324b3ff83f6ef6601c9da08af42122f992ec45d757c'
-         '3efd953185b2590e4542aa1ca3637fa8935ebff2b43af0ea1245e7c843fbebdc", '
-         '"operator": "hash"}, {"start": 24, "end": 152, "entity_type": "NAME", '
-         '"text": "508789e7c17beebf2f17e611b43920792b692ad9ae53f9be3a947b04fbf820f40'
-         'd57f42864a20e7121180e9467fda3fa2480e50c0da15244b6153abe2509362c", '
-         '"operator": "hash"}]}'),
-        ("",
-         '{"text": "hello world, my name is 01332c876518a793b7c1b8dfaf6d4b404ff5db09b'
-         '21c6627ca59710cc24f696a. My number is: 230451ebc7df208f1d5227aceaebf6d8e936f'
-         '17d74330a5a5c5cbbd4e41d0d57", "items": [{"start": 104, "end": 168, '
-         '"entity_type": "PHONE_NUMBER", "text": "230451ebc7df208f1d5227aceaebf6d8e936'
-         'f17d74330a5a5c5cbbd4e41d0d57", "operator": "hash"}, {"start": 24, '
-         '"end": 88, "entity_type": "NAME", "text": "01332c876518a793b7c1b8dfaf6d4b404'
-         'ff5db09b21c6627ca59710cc24f696a", "operator": "hash"}]}'
-         )
+        ("sha256", 64),  # SHA256 produces 64 hex characters
+        ("sha512", 128),  # SHA512 produces 128 hex characters
+        ("", 64),  # Default is SHA256
     ],
     # fmt: on
 )
-def test_given_hash_then_we_anonymize_correctly(hash_type, result):
+def test_given_hash_then_we_anonymize_correctly(hash_type, expected_hash_length):
     text = "hello world, my name is Jane Doe. My number is: 034453334"
     params = {}
     if hash_type:
@@ -203,7 +176,88 @@ def test_given_hash_then_we_anonymize_correctly(hash_type, result):
         RecognizerResult(start=29, end=32, score=0.6, entity_type="LAST_NAME"),
         RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),
     ]
-    run_engine_and_validate(text, anonymizer_config, analyzer_results, result)
+    
+    engine = AnonymizerEngine()
+    result = engine.anonymize(text, analyzer_results, anonymizer_config)
+    
+    # Verify the structure
+    assert len(result.items) == 2  # NAME and PHONE_NUMBER (merged duplicates)
+    
+    # Verify hash lengths
+    for item in result.items:
+        assert len(item.text) == expected_hash_length
+        assert item.operator == "hash"
+        # Verify it's a valid hex string
+        assert all(c in '0123456789abcdef' for c in item.text)
+        # Verify it's not the original text
+        assert item.text.lower() not in text.lower()
+    
+    # Verify that "Jane Doe" was hashed to the same value
+    # (there should be only one NAME entity due to merging)
+    name_items = [item for item in result.items if item.entity_type == "NAME"]
+    assert len(name_items) == 1
+
+
+def test_when_hash_with_engine_generated_salt_then_same_entities_get_same_hash():
+    """Test that hash operator with engine-generated salt produces consistent hashes within a session."""
+    text = "My name is Jane Doe and Jane Doe number is: 034453334"
+    anonymizer_config = {"DEFAULT": OperatorConfig("hash", {})}
+    analyzer_results = [
+        RecognizerResult(start=11, end=19, score=0.8, entity_type="NAME"),  # First "Jane Doe"
+        RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),  # Second "Jane Doe"
+        RecognizerResult(start=44, end=53, score=0.95, entity_type="PHONE_NUMBER"),
+    ]
+    
+    engine = AnonymizerEngine()
+    result = engine.anonymize(text, analyzer_results, anonymizer_config)
+    
+    # Extract the hashed values
+    hashed_names = [item.text for item in result.items if item.entity_type == "NAME"]
+    
+    # Both "Jane Doe" occurrences should have the same hash (deterministic within session)
+    assert len(hashed_names) == 2
+    assert hashed_names[0] == hashed_names[1]
+
+
+def test_when_hash_with_different_sessions_then_different_hashes():
+    """Test that hash operator produces different hashes across different anonymization sessions."""
+    text = "My name is Jane Doe"
+    anonymizer_config = {"DEFAULT": OperatorConfig("hash", {})}
+    analyzer_results = [
+        RecognizerResult(start=11, end=19, score=0.8, entity_type="NAME"),
+    ]
+    
+    engine = AnonymizerEngine()
+    
+    # Run anonymization twice
+    result1 = engine.anonymize(text, analyzer_results, anonymizer_config)
+    result2 = engine.anonymize(text, analyzer_results, anonymizer_config)
+    
+    # Hashes should be different (different salts in different sessions)
+    hash1 = result1.items[0].text
+    hash2 = result2.items[0].text
+    assert hash1 != hash2
+
+
+def test_when_hash_with_user_provided_salt_then_hash_is_reproducible():
+    """Test that user-provided salt produces reproducible hashes across sessions."""
+    text = "My name is Jane Doe"
+    user_salt = "my_consistent_salt"
+    anonymizer_config = {"DEFAULT": OperatorConfig("hash", {"salt": user_salt})}
+    analyzer_results = [
+        RecognizerResult(start=11, end=19, score=0.8, entity_type="NAME"),
+    ]
+    
+    engine = AnonymizerEngine()
+    
+    # Run anonymization twice with same user salt
+    result1 = engine.anonymize(text, analyzer_results, anonymizer_config)
+    result2 = engine.anonymize(text, analyzer_results, anonymizer_config)
+    
+    # Hashes should be the same (same user-provided salt)
+    hash1 = result1.items[0].text
+    hash2 = result2.items[0].text
+    assert hash1 == hash2
 
 
 def run_engine_and_validate(
