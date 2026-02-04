@@ -390,10 +390,16 @@ class RecognizerRegistryConfig(BaseModel):
                     recognizer["type"] = recognizer_type
 
                 if recognizer_type == "predefined":
-                    # Determine the config model based on the recognizer name.
+                    # Determine the config model based on the recognizer class_name or name.
+                    recognizer_class_name = recognizer.get("class_name")
                     recognizer_name = recognizer.get("name")
+                    
+                    # Prioritize class_name for lookup
+                    # (e.g., custom instance of HuggingFaceNerRecognizer)
+                    config_model_key = recognizer_class_name or recognizer_name
+
                     config_model = CONFIG_MODEL_MAP.get(
-                        recognizer_name, PredefinedRecognizerConfig
+                        config_model_key, PredefinedRecognizerConfig
                     )
 
                     parsed_recognizers.append(config_model(**recognizer))
