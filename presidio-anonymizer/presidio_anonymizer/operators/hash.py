@@ -28,9 +28,14 @@ class Hash(Operator):
         """
         hash_type = self._get_hash_type_or_default(params)
 
-        # Use user-provided salt if available, otherwise use engine-generated hash_salt
-        # If neither is provided, use empty bytes (for backward compatibility)
-        salt = params.get(self.SALT, params.get("hash_salt", b""))
+        # Use user-provided salt if available, otherwise use engine-generated
+        # hash_salt. If neither is provided, use empty bytes (backward compat).
+        if self.SALT in params:
+            salt = params[self.SALT]
+        elif "hash_salt" in params:
+            salt = params["hash_salt"]
+        else:
+            salt = b""
 
         # Ensure salt is bytes
         if isinstance(salt, str):
