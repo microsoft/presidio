@@ -42,7 +42,7 @@ class DeviceDetector:
     def _get_device_from_env(self) -> str | None:
         """Get device from PRESIDIO_DEVICE environment variable.
 
-        Returns:
+        Returns
             Device string if env var is set, None otherwise.
         """
         env_device = os.environ.get(PRESIDIO_DEVICE_ENV_VAR, "").strip()
@@ -55,7 +55,7 @@ class DeviceDetector:
     def _detect(self) -> str:
         """Auto-detect PyTorch CUDA support.
 
-        Returns:
+        Returns
             'cuda' if available, 'cpu' otherwise.
         """
         try:
