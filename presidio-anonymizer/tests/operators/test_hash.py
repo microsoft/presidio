@@ -181,29 +181,30 @@ def test_when_salt_is_string_then_it_is_converted_to_bytes():
     assert hash_str == hash_bytes
 
 
-def test_when_no_salt_provided_then_session_salt_is_used():
-    """Test that when no salt is provided, operator generates session salt automatically."""
+def test_when_no_salt_provided_then_random_salt_is_used():
+    """Test that when no salt is provided, operator generates random salt per call."""
     text = "123456"
     
-    # Create one operator instance - it should generate and reuse session salt
+    # Create one operator instance
     operator = Hash()
     
-    # Hash same text twice with same operator instance
+    # Hash same text twice without salt
     params = {}
     hash1 = operator.operate(text=text, params=params)
     hash2 = operator.operate(text=text, params=params)
     
-    # Same operator instance should produce same hash (session salt is consistent)
-    assert hash1 == hash2
+    # Each call should produce different hash (random salt per call)
+    assert hash1 != hash2
     
-    # Different operator instance should produce different hash (different session salt)
+    # Different operator instance should also produce different hash
     operator2 = Hash()
     hash3 = operator2.operate(text=text, params=params)
     assert hash1 != hash3
+    assert hash2 != hash3
 
 
-def test_when_user_salt_provided_then_session_salt_is_not_used():
-    """Test that user-provided salt takes precedence over auto-generated session salt."""
+def test_when_user_salt_provided_then_hash_is_deterministic():
+    """Test that user-provided salt produces deterministic hashes."""
     text = "data"
     user_salt = b"user_salt"
     
@@ -216,13 +217,13 @@ def test_when_user_salt_provided_then_session_salt_is_not_used():
     hash1 = operator1.operate(text=text, params=params)
     hash2 = operator2.operate(text=text, params=params)
     
-    # Should produce same hash (user salt takes precedence over session salt)
+    # Should produce same hash (deterministic with user salt)
     assert hash1 == hash2
     
     # Verify it's different from hash without explicit salt
     params_no_salt = {}
     hash_no_explicit_salt = operator1.operate(text=text, params=params_no_salt)
-    # This will use operator1's session salt, which is different from user_salt
+    # Random salt will produce different hash
     assert hash1 != hash_no_explicit_salt
 
 

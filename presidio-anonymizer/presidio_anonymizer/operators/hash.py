@@ -16,11 +16,6 @@ class Hash(Operator):
     SHA256 = "sha256"
     SHA512 = "sha512"
 
-    def __init__(self):
-        """Initialize Hash operator."""
-        # Lazy initialization of session salt - generated on first use
-        self._session_salt = None
-
     def operate(self, text: str = None, params: Dict = None) -> str:
         """
         Hash given value using sha256 or sha512 with salt.
@@ -28,24 +23,21 @@ class Hash(Operator):
         :param text: The text to hash
         :param params: Dictionary containing:
             - hash_type: The hash algorithm to use (sha256 or sha512)
-            - salt: Optional user-provided salt for reproducible hashing
+            - salt: Optional user-provided salt for reproducible hashing.
+                    If not provided, a random salt is generated per entity.
         :return: hashed original text with salt
         """
         hash_type = self._get_hash_type_or_default(params)
 
-        # Use user-provided salt if available, otherwise use the session salt
-        # Session salt is lazily generated on first use for this operator instance
+        # Use user-provided salt if available, otherwise generate random salt
         if self.SALT in params:
             salt = params[self.SALT]
+            # Ensure salt is bytes
+            if isinstance(salt, str):
+                salt = salt.encode()
         else:
-            # Lazily generate session salt if not already done
-            if self._session_salt is None:
-                self._session_salt = os.urandom(32)
-            salt = self._session_salt
-
-        # Ensure salt is bytes
-        if isinstance(salt, str):
-            salt = salt.encode()
+            # Generate random salt for this entity (prevents brute-force attacks)
+            salt = os.urandom(32)
 
         # Concatenate text and salt before hashing
         salted_text = text.encode() + salt

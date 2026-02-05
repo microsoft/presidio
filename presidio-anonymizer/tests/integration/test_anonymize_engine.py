@@ -198,8 +198,8 @@ def test_given_hash_then_we_anonymize_correctly(hash_type, expected_hash_length)
     assert len(name_items) == 1
 
 
-def test_when_hash_with_engine_generated_salt_then_same_entities_get_same_hash():
-    """Test that hash operator with engine-generated salt produces consistent hashes within a session."""
+def test_when_hash_without_salt_then_different_hashes_per_entity():
+    """Test that hash operator produces different hashes for each entity when no salt provided."""
     text = "My name is Jane Doe and Jane Doe number is: 034453334"
     anonymizer_config = {"DEFAULT": OperatorConfig("hash", {})}
     analyzer_results = [
@@ -214,7 +214,28 @@ def test_when_hash_with_engine_generated_salt_then_same_entities_get_same_hash()
     # Extract the hashed values
     hashed_names = [item.text for item in result.items if item.entity_type == "NAME"]
     
-    # Both "Jane Doe" occurrences should have the same hash (deterministic within session)
+    # Each entity gets a different hash (no within-call consistency without user salt)
+    assert len(hashed_names) == 2
+    assert hashed_names[0] != hashed_names[1]
+
+
+def test_when_hash_with_user_salt_then_same_values_get_same_hash():
+    """Test that user-provided salt produces consistent hashes for same values."""
+    text = "My name is Jane Doe and Jane Doe called"
+    user_salt = "my_consistent_salt"
+    anonymizer_config = {"DEFAULT": OperatorConfig("hash", {"salt": user_salt})}
+    analyzer_results = [
+        RecognizerResult(start=11, end=19, score=0.8, entity_type="NAME"),  # First "Jane Doe"
+        RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),  # Second "Jane Doe"
+    ]
+    
+    engine = AnonymizerEngine()
+    result = engine.anonymize(text, analyzer_results, anonymizer_config)
+    
+    # Extract the hashed values
+    hashed_names = [item.text for item in result.items if item.entity_type == "NAME"]
+    
+    # With user salt, same value gets same hash (referential integrity)
     assert len(hashed_names) == 2
     assert hashed_names[0] == hashed_names[1]
 
