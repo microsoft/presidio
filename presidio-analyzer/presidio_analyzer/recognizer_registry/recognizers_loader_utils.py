@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import inspect
 import logging
 from collections.abc import ItemsView
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Type, Union
+from typing import Any, ClassVar, Dict, Iterable, List, Optional, Set, Tuple, Type, Union
 
 import yaml
 
@@ -20,6 +21,9 @@ class PredefinedRecognizerNotFoundError(Exception):
 
 class RecognizerListLoader:
     """A utility class that initializes recognizers based on configuration."""
+
+    SUPPORTED_ENTITY: ClassVar[str] = "supported_entity"
+    SUPPORTED_ENTITIES: ClassVar[str] = "supported_entities"
 
     @staticmethod
     def _get_recognizer_items(
@@ -139,10 +143,10 @@ class RecognizerListLoader:
 
     @staticmethod
     def _convert_supported_entities_to_entity(conf: Dict[str, Any]) -> None:
-        if "supported_entities" in conf:
-            supported_entities = conf.pop("supported_entities")
-            if "supported_entity" not in conf and supported_entities:
-                conf["supported_entity"] = supported_entities[0]
+        if RecognizerListLoader.SUPPORTED_ENTITIES in conf:
+            supported_entities = conf.pop(RecognizerListLoader.SUPPORTED_ENTITIES)
+            if RecognizerListLoader.SUPPORTED_ENTITY not in conf and supported_entities:
+                conf[RecognizerListLoader.SUPPORTED_ENTITY] = supported_entities[0]
 
     @staticmethod
     def _is_language_supported_globally(
@@ -246,19 +250,6 @@ class RecognizerListLoader:
         )
 
     @staticmethod
-    def _is_pattern_recognizer(recognizer_cls: Type[EntityRecognizer]) -> bool:
-        """
-        Check if a recognizer class inherits from PatternRecognizer.
-
-        :param recognizer_cls: The recognizer class to check.
-        :return: True if the recognizer inherits from PatternRecognizer.
-        """
-        try:
-            return issubclass(recognizer_cls, PatternRecognizer)
-        except TypeError:
-            return False
-
-    @staticmethod
     def _prepare_recognizer_kwargs(
         recognizer_conf: Dict[str, Any],
         language_conf: Dict[str, Any],
@@ -267,28 +258,60 @@ class RecognizerListLoader:
         """
         Prepare kwargs for recognizer instantiation.
 
-        For PatternRecognizer subclasses, converts supported_entities (plural)
-        to supported_entity (singular). For all other recognizers, kwargs are
-        passed as-is since EntityRecognizer base class accepts supported_entities.
+        This function adapts supported_entity/supported_entities based on the
+        recognizer class __init__ signature to avoid passing unexpected kwargs.
 
-        :param recognizer_conf: The recognizer configuration.
-        :param language_conf: The language configuration.
-        :param recognizer_cls: The recognizer class.
-        :return: Prepared kwargs for recognizer instantiation.
+        - If recognizer accepts only supported_entity (singular), convert
+          supported_entities -> supported_entity (first element).
+        - If recognizer accepts only supported_entities (plural), remove
+          supported_entity.
+        - If recognizer accepts both, keep as-is.
+        - If recognizer accepts neither, remove both.
         """
         kwargs = {**recognizer_conf, **language_conf}
 
-        # PatternRecognizer requires supported_entity (singular) instead of
-        # supported_entities (plural). Convert if this is a PatternRecognizer.
-        if RecognizerListLoader._is_pattern_recognizer(recognizer_cls):
-            # Convert supported_entities (plural) to supported_entity
-            # (singular) if present
-            RecognizerListLoader._convert_supported_entities_to_entity(kwargs)
+        try:
+            params = inspect.signature(recognizer_cls.__init__).parameters
+        except (TypeError, ValueError):
+            # Drop entity-related kwargs to avoid passing unexpected arguments when the
+            # signature cannot be inspected.
+            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
+            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES, None)
+            return kwargs
 
-            # Remove supported_entity if it's None
-            # to allow the recognizer's default to be used
-            if kwargs.get("supported_entity") is None:
-                kwargs.pop("supported_entity", None)
+        # If the recognizer accepts **kwargs, passing extra fields won't raise
+        # TypeError. Whether the recognizer uses them is up to the implementation.
+        has_var_kw = any(
+            p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values()
+        )
+        if has_var_kw:
+            return kwargs
+
+        accepts_supported_entity = RecognizerListLoader.SUPPORTED_ENTITY in params
+        accepts_supported_entities = RecognizerListLoader.SUPPORTED_ENTITIES in params
+
+        # Convert plural -> singular only when singular is accepted and plural is not.
+        if accepts_supported_entity and not accepts_supported_entities:
+            if RecognizerListLoader.SUPPORTED_ENTITIES in kwargs:
+                supported_entities = kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES)
+
+                if isinstance(supported_entities, list) and supported_entities:
+                    kwargs.setdefault(
+                        RecognizerListLoader.SUPPORTED_ENTITY, supported_entities[0]
+                    )
+
+        # if the argument is not in the signature, pop it to avoid TypeError.
+        if not accepts_supported_entities:
+            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES, None)
+        if not accepts_supported_entity:
+            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
+
+        # Keep defaults: if supported_entity exists but is None, remove it.
+        if kwargs.get(RecognizerListLoader.SUPPORTED_ENTITY) is None:
+            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
+
+        if kwargs.get(RecognizerListLoader.SUPPORTED_ENTITIES) is None:
+            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES, None)
 
         return kwargs
 

@@ -4,7 +4,11 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
-from presidio_analyzer.predefined_recognizers import HuggingFaceNerRecognizer
+from presidio_analyzer.predefined_recognizers import (
+    EmailRecognizer,
+    HuggingFaceNerRecognizer,
+    PhoneRecognizer,
+)
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
     RecognizerListLoader,
 )
@@ -28,8 +32,7 @@ def mock_installed_packages():
         "presidio_analyzer.predefined_recognizers.ner.huggingface_ner_recognizer.torch",
         mock_torch,
     ):
-        with patch(HF_PIPELINE_PATH, new=MagicMock()):
-            yield
+        yield
 
 
 @pytest.fixture
@@ -54,12 +57,13 @@ def mock_recognizer(mock_installed_packages, mock_transformers_pipeline):
         return_value=None, model_name=TEST_MODEL_NAME, supported_language="en", **kwargs
     ):
         if return_value is not None:
+            # mock_transformers_pipeline is the pipeline mock.
+            # Setting its return_value defines the result of calling it.
             mock_transformers_pipeline.return_value = return_value
 
         rec = HuggingFaceNerRecognizer(
             model_name=model_name, supported_language=supported_language, **kwargs
         )
-        rec.ner_pipeline = mock_transformers_pipeline
         return rec
 
     return _create
@@ -305,7 +309,16 @@ def test_analyze_long_text_chunking(mock_recognizer):
     recognizer.ner_pipeline.side_effect = [
         [{"entity_group": "PER", "start": 2, "end": 3, "score": 0.9}],
         [{"entity_group": "LOC", "start": 1, "end": 2, "score": 0.9}],
-        [], [], [], [], [], [], [], [], [], [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
     ]
 
     results = recognizer.analyze(text, ["PERSON", "LOCATION"])
@@ -346,7 +359,16 @@ def test_analyze_deduplication_keeps_highest_score(mock_recognizer):
     recognizer.ner_pipeline.side_effect = [
         [{"entity_group": "PER", "start": 4, "end": 5, "score": 0.60}],
         [{"entity_group": "PER", "start": 1, "end": 2, "score": 0.95}],
-        [], [], [], [], [], [], [], [], [], [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
     ]
 
     results = recognizer.analyze(text, ["PERSON"])
@@ -356,26 +378,6 @@ def test_analyze_deduplication_keeps_highest_score(mock_recognizer):
     assert results[0].score == pytest.approx(0.95, rel=1e-2)
     assert results[0].start == 4
     assert results[0].end == 5
-
-
-def test_analyze_text_too_long(mock_recognizer):
-    """Test that text is truncated when exceeding max_text_length."""
-    text = "1234567890"  # 10 chars
-
-    # Set max length to 5
-    recognizer = mock_recognizer(model_name="test-sample-model", max_text_length=5)
-
-    # Mock return for the truncated text "12345"
-    recognizer.ner_pipeline.return_value = [
-        [{"entity_group": "PER", "start": 0, "end": 2, "score": 0.9}]
-    ]
-
-    recognizer.analyze(text, ["PERSON"])
-
-    # Verify the first positional arg is the string (not list, since iterative)
-    args, _ = recognizer.ner_pipeline.call_args
-    # It should be called with the truncated string
-    assert args[0] == "12345"
 
 
 @pytest.mark.usefixtures("mock_installed_packages")
@@ -401,32 +403,24 @@ def test_hf_recognizer_init_variations(caplog):
 
 
 @pytest.mark.usefixtures("mock_installed_packages")
-def test_hf_recognizer_analyze_truncation_and_lazy_load(caplog):
-    """Test text truncation logic and automatic lazy loading in analyze()."""
+def test_hf_recognizer_analyze_lazy_load(caplog):
+    """Test automatic lazy loading in analyze()."""
     caplog.set_level(logging.WARNING)
     path = HF_PIPELINE_PATH
     with patch(path, new=MagicMock()):
-        rec = HuggingFaceNerRecognizer(
-            model_name="test-sample-model", max_text_length=5
-        )
+        rec = HuggingFaceNerRecognizer(model_name="test-sample-model")
 
-        # Stub predict_with_chunking to avoid calling the real internal predict_func
+        # Stub predict_with_chunking
         rec.text_chunker = MagicMock()
-        rec.text_chunker.predict_with_chunking.side_effect = lambda **kwargs: []
+        rec.text_chunker.predict_with_chunking.return_value = []
 
         rec.ner_pipeline = None
 
         with patch.object(rec, "load") as mock_load:
-            rec.analyze("123456", entities=[])  # Input longer than max_text_length
+            rec.analyze("some text", entities=[])
 
             # Verify automatic load was triggered
             mock_load.assert_called_once()
-            # Verify truncation warning was logged
-            assert "exceeds max_text_length" in caplog.text
-            # Verify call_args to ensure text was actually truncated to 5 chars
-            assert rec.text_chunker.predict_with_chunking.called
-            called_kwargs = rec.text_chunker.predict_with_chunking.call_args.kwargs
-            assert called_kwargs["text"] == "12345"
 
 
 @pytest.mark.usefixtures("mock_installed_packages")
@@ -536,8 +530,9 @@ def test_hf_recognizer_loader_supported_entities_filtering():
     }
     lang_conf = {"supported_language": "en"}
 
-    # Even though HuggingFaceNerRecognizer is not a PatternRecognizer, the loader
-    # should NOT filter out supported_entities for it (due to our exception logic).
+    # HuggingFaceNerRecognizer accepts **kwargs, so the loader will not strip
+    # extra fields (like supported_entities) during kwargs preparation.
+    # Whether the recognizer uses them is handled by the recognizer implementation.
     kwargs = RecognizerListLoader._prepare_recognizer_kwargs(
         rec_conf, lang_conf, HuggingFaceNerRecognizer
     )
@@ -547,3 +542,50 @@ def test_hf_recognizer_loader_supported_entities_filtering():
         "supported_entities was filtered out by loader!"
     )
     assert kwargs["supported_entities"] == ["STAY_PERSISTENT"]
+
+
+def test_recognizer_loader_utils_prepare_kwargs_variations():
+    """Verify loader logic across different recognizer types.
+
+    Ensures that entity-related arguments are correctly stripped, converted,
+    or preserved based on the recognizer's signature and VAR_KEYWORD support.
+    """
+
+    lang_conf = {"supported_language": "en"}
+
+    # Use constants from the class for robustness
+    s_entity = RecognizerListLoader.SUPPORTED_ENTITY
+    s_entities = RecognizerListLoader.SUPPORTED_ENTITIES
+
+    # Case 1: PhoneRecognizer - lacks entity params, should strip them
+    rec_conf_phone = {s_entities: ["PHONE_NUMBER"]}
+    kwargs_phone = RecognizerListLoader._prepare_recognizer_kwargs(
+        rec_conf_phone, lang_conf, PhoneRecognizer
+    )
+    assert s_entities not in kwargs_phone
+    assert s_entity not in kwargs_phone
+
+    # Case 2: EmailRecognizer - accepts singular, should convert plural to singular
+    rec_conf_email = {s_entities: ["EMAIL_ADDRESS"]}
+    kwargs_email = RecognizerListLoader._prepare_recognizer_kwargs(
+        rec_conf_email, lang_conf, EmailRecognizer
+    )
+    assert kwargs_email[s_entity] == "EMAIL_ADDRESS"
+    assert s_entities not in kwargs_email
+
+    # Case 3: HuggingFaceNerRecognizer - accepts **kwargs, should keep plural
+    rec_conf_hf = {s_entities: ["PERSON"]}
+    kwargs_hf = RecognizerListLoader._prepare_recognizer_kwargs(
+        rec_conf_hf, lang_conf, HuggingFaceNerRecognizer
+    )
+    assert kwargs_hf[s_entities] == ["PERSON"]
+
+    # Case 4: Fallback - when signature cannot be inspected
+    with patch("inspect.signature") as mock_sig:
+        mock_sig.side_effect = TypeError("Mocked failure")
+        rec_conf_fallback = {s_entities: ["FALLBACK"]}
+        kwargs_fallback = RecognizerListLoader._prepare_recognizer_kwargs(
+            rec_conf_fallback, lang_conf, EmailRecognizer
+        )
+        assert s_entities not in kwargs_fallback
+        assert s_entity not in kwargs_fallback

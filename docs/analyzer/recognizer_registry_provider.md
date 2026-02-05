@@ -113,7 +113,7 @@ The recognizer list comprises of both the predefined and custom recognizers, for
 
 !!! tip "Configuration Tip: Agglutinative languages (e.g., Korean)"
 
-    If spaCy-based NER produces noisy or redundant results, disable `SpacyRecognizer` while keeping the spaCy NLP engine available for other components (like `HuggingFaceNerRecognizer`).
+    If spaCy-based NER produces noisy or redundant results, you can disable `SpacyRecognizer` and use `HuggingFaceNerRecognizer` as an alternative. Note that `HuggingFaceNerRecognizer` does not require the spaCy NLP engine.
 
 
 

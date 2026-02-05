@@ -170,7 +170,6 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     )
     chunk_overlap: Optional[int] = Field(None, description="Chunk overlap")
     chunk_size: Optional[int] = Field(None, description="Chunk size")
-    max_text_length: Optional[int] = Field(None, description="Max text length")
     device: Optional[Union[str, int]] = Field(None, description="Device (cpu/gpu)")
     label_prefixes: Optional[List[str]] = Field(
         default=None, description="Prefixes to strip from labels (e.g. B-, I-)"

@@ -113,7 +113,6 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         aggregation_strategy: str = "simple",
         chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
         chunk_size: int = DEFAULT_CHUNK_SIZE,
-        max_text_length: Optional[int] = None,
         device: Optional[Union[str, int]] = None,
         tokenizer_name: Optional[str] = None,
         text_chunker: Optional[BaseTextChunker] = None,
@@ -144,7 +143,6 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             Defaults to None.
         :param chunk_overlap: Number of characters to overlap between chunks.
         :param chunk_size: Maximum number of characters per chunk.
-        :param max_text_length: Maximum total text length. Longer texts are truncated.
         :param tokenizer_name: Name of the tokenizer. Defaults to model_name.
         :param text_chunker: Custom text chunking strategy. If None, uses
             CharacterBasedTextChunker with provided chunk_size and chunk_overlap.
@@ -175,7 +173,6 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 "aggregation_strategy='none' may result in fragmented entities "
                 "(e.g., 'B-PER', 'I-PER'). Recommended: 'simple' or 'first'."
             )
-        self.max_text_length = max_text_length
         self.device = self._parse_device(device)
         self.label_prefixes = label_prefixes or ["B-", "I-", "U-", "L-"]
         self.ner_pipeline = None
@@ -419,14 +416,6 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
 
         # Defensive guard for entities input
         entities = entities or []
-
-        # Optional safety guard: limit very large inputs to avoid excessive runtime.
-        if self.max_text_length and len(text) > self.max_text_length:
-            logger.warning(
-                f"Text length ({len(text)}) exceeds max_text_length "
-                f"({self.max_text_length}). Truncating."
-            )
-            text = text[: self.max_text_length]
 
         if not self.ner_pipeline:
             self.load()
