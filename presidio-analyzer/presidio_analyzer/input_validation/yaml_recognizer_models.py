@@ -141,6 +141,18 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
 
     type: str = Field(default="predefined", description="Type of recognizer")
 
+    @model_validator(mode="after")
+    def validate_predefined_recognizer_exists(self):
+        """Validate that the predefined recognizer class actually exists."""
+        recognizer_class_name = self.class_name if self.class_name else self.name
+        try:
+            RecognizerListLoader.get_existing_recognizer_cls(recognizer_class_name)
+        except PredefinedRecognizerNotFoundError as e:
+            raise ValueError(
+                f"Predefined recognizer '{recognizer_class_name}' not found: {str(e)}"
+            ) from e
+        return self
+
 
 class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     """Configuration specifically for HuggingFace NER models."""
@@ -163,18 +175,6 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     label_prefixes: Optional[List[str]] = Field(
         default=None, description="Prefixes to strip from labels (e.g. B-, I-)"
     )
-
-    @model_validator(mode="after")
-    def validate_predefined_recognizer_exists(self):
-        """Validate that the predefined recognizer class actually exists."""
-        recognizer_class_name = self.class_name if self.class_name else self.name
-        try:
-            RecognizerListLoader.get_existing_recognizer_cls(recognizer_class_name)
-        except PredefinedRecognizerNotFoundError as e:
-            raise ValueError(
-                f"Predefined recognizer '{recognizer_class_name}' not found: {str(e)}"
-            ) from e
-        return self
 
 
 class CustomRecognizerConfig(BaseRecognizerConfig):
@@ -390,10 +390,9 @@ class RecognizerRegistryConfig(BaseModel):
                     recognizer["type"] = recognizer_type
 
                 if recognizer_type == "predefined":
-                    # Determine the config model based on the recognizer class_name or name.
+                    # Determine config model based on recognizer class_name or name.
                     recognizer_class_name = recognizer.get("class_name")
                     recognizer_name = recognizer.get("name")
-                    
                     # Prioritize class_name for lookup
                     # (e.g., custom instance of HuggingFaceNerRecognizer)
                     config_model_key = recognizer_class_name or recognizer_name
