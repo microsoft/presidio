@@ -27,7 +27,8 @@ from presidio_anonymizer.entities import InvalidParamError
 def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_returned(
     text, anonymized_text
 ):
-    params = {}
+    # Test unsalted hash for backward compatibility
+    params = {"salt": b""}
     actual_anonymized_text = Hash().operate(text=text, params=params)
 
     assert anonymized_text == actual_anonymized_text
@@ -76,8 +77,10 @@ def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_re
 def test_when_given_valid_value_with_hash_type_then_expected_string_returned(
     text, hash_type, anonymized_text
 ):
+    # Test unsalted hash for backward compatibility
     params = {
         "hash_type": hash_type,
+        "salt": b"",
     }
     actual_anonymized_text = Hash().operate(text=text, params=params)
 
@@ -178,43 +181,49 @@ def test_when_salt_is_string_then_it_is_converted_to_bytes():
     assert hash_str == hash_bytes
 
 
-def test_when_hash_salt_provided_then_it_is_used():
-    """Test that hash_salt parameter (engine-generated) is used when no user salt is provided."""
+def test_when_no_salt_provided_then_session_salt_is_used():
+    """Test that when no salt is provided, operator generates session salt automatically."""
     text = "123456"
     
-    # Hash without any salt
-    params_no_salt = {}
-    hash_no_salt = Hash().operate(text=text, params=params_no_salt)
+    # Create one operator instance - it should generate and reuse session salt
+    operator = Hash()
     
-    # Hash with engine-generated hash_salt
-    params_with_hash_salt = {"hash_salt": b"engine_generated_salt"}
-    hash_with_hash_salt = Hash().operate(text=text, params=params_with_hash_salt)
+    # Hash same text twice with same operator instance
+    params = {}
+    hash1 = operator.operate(text=text, params=params)
+    hash2 = operator.operate(text=text, params=params)
     
-    # Hashes should be different
-    assert hash_no_salt != hash_with_hash_salt
+    # Same operator instance should produce same hash (session salt is consistent)
+    assert hash1 == hash2
+    
+    # Different operator instance should produce different hash (different session salt)
+    operator2 = Hash()
+    hash3 = operator2.operate(text=text, params=params)
+    assert hash1 != hash3
 
 
-def test_when_user_salt_provided_then_it_takes_precedence_over_hash_salt():
-    """Test that user-provided salt takes precedence over engine-generated hash_salt."""
+def test_when_user_salt_provided_then_session_salt_is_not_used():
+    """Test that user-provided salt takes precedence over auto-generated session salt."""
     text = "data"
     user_salt = b"user_salt"
-    engine_salt = b"engine_salt"
     
-    # Hash with user salt
-    params_user = {"salt": user_salt}
-    hash_user = Hash().operate(text=text, params=params_user)
+    # Create two operator instances
+    operator1 = Hash()
+    operator2 = Hash()
     
-    # Hash with both user salt and engine salt (user salt should win)
-    params_both = {"salt": user_salt, "hash_salt": engine_salt}
-    hash_both = Hash().operate(text=text, params=params_both)
+    # Use same user salt with both operators
+    params = {"salt": user_salt}
+    hash1 = operator1.operate(text=text, params=params)
+    hash2 = operator2.operate(text=text, params=params)
     
-    # Should produce same hash (user salt takes precedence)
-    assert hash_user == hash_both
+    # Should produce same hash (user salt takes precedence over session salt)
+    assert hash1 == hash2
     
-    # Verify it's different from hash with only engine salt
-    params_engine = {"hash_salt": engine_salt}
-    hash_engine = Hash().operate(text=text, params=params_engine)
-    assert hash_user != hash_engine
+    # Verify it's different from hash without explicit salt
+    params_no_salt = {}
+    hash_no_explicit_salt = operator1.operate(text=text, params=params_no_salt)
+    # This will use operator1's session salt, which is different from user_salt
+    assert hash1 != hash_no_explicit_salt
 
 
 def _get_default_hash_parameters():

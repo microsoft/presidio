@@ -43,6 +43,11 @@ class EngineBase(ABC):
         text_replace_builder = TextReplaceBuilder(original_text=text)
         engine_result = EngineResult()
         sorted_pii_entities = sorted(pii_entities, reverse=True)
+
+        # Cache operator instances per operator name to maintain consistency
+        # within a single anonymization call (e.g., same salt for hash operator)
+        operator_cache = {}
+
         for entity in sorted_pii_entities:
             text_to_operate_on = text_replace_builder.get_text_in_position(
                 entity.start, entity.end
@@ -58,6 +63,7 @@ class EngineBase(ABC):
                 operator_metadata,
                 operator_type,
                 operator_kwargs,
+                operator_cache,
             )
             index_from_end = text_replace_builder.replace_text_get_insertion_index(
                 changed_text, entity.start, entity.end
@@ -86,22 +92,27 @@ class EngineBase(ABC):
         operator_metadata: OperatorConfig,
         operator_type: OperatorType,
         operator_kwargs: Dict,
+        operator_cache: Dict,
     ) -> str:
         entity_type = text_metadata.entity_type
         self.logger.debug(f"getting operator for {entity_type}")
-        operator = self.operators_factory.create_operator_class(
-            operator_metadata.operator_name, operator_type
-        )
+
+        # Use cached operator instance if available to maintain consistency
+        # within a single anonymization call (e.g., same salt for hash)
+        cache_key = operator_metadata.operator_name
+        if cache_key in operator_cache:
+            operator = operator_cache[cache_key]
+        else:
+            operator = self.operators_factory.create_operator_class(
+                operator_metadata.operator_name, operator_type
+            )
+            operator_cache[cache_key] = operator
+
         self.logger.debug(f"validating operator {operator} for {entity_type}")
 
         # Make a copy of params to avoid modifying the original config
         params = operator_metadata.params.copy()
         params["entity_type"] = entity_type
-
-        # Pass hash_salt to hash operator only
-        if operator_metadata.operator_name == "hash" and "hash_salt" in operator_kwargs:
-            if "hash_salt" not in params:
-                params["hash_salt"] = operator_kwargs["hash_salt"]
 
         operator.validate(params=params)
 
