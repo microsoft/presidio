@@ -98,13 +98,10 @@ class EngineBase(ABC):
         params = operator_metadata.params.copy()
         params["entity_type"] = entity_type
 
-        # Pass additional engine-level parameters to operators (e.g., hash_salt)
-        # Engine-level params are added if not already present in
-        # operator-specific params
-        if operator_kwargs:
-            for key, value in operator_kwargs.items():
-                if key not in params:
-                    params[key] = value
+        # Pass hash_salt to hash operator only
+        if operator_metadata.operator_name == "hash" and "hash_salt" in operator_kwargs:
+            if "hash_salt" not in params:
+                params["hash_salt"] = operator_kwargs["hash_salt"]
 
         operator.validate(params=params)
 
