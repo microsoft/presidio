@@ -19,6 +19,20 @@ TEST_MODEL_NAME = "dslim/bert-base-NER"
 
 
 @pytest.fixture
+def mock_installed_packages():
+    """Fixture to mock torch and transformers as installed."""
+    mock_torch = MagicMock()
+    mock_torch.cuda.is_available.return_value = True
+    mock_torch.cuda.device_count.return_value = 1
+    with patch(
+        "presidio_analyzer.predefined_recognizers.ner.huggingface_ner_recognizer.torch",
+        mock_torch,
+    ):
+        with patch(HF_PIPELINE_PATH, new=MagicMock()):
+            yield
+
+
+@pytest.fixture
 def mock_transformers_pipeline():
     """Fixture to mock HuggingFace transformers pipeline."""
     mock_pipeline_instance = MagicMock()
@@ -29,7 +43,7 @@ def mock_transformers_pipeline():
 
 
 @pytest.fixture
-def mock_recognizer(mock_transformers_pipeline):
+def mock_recognizer(mock_installed_packages, mock_transformers_pipeline):
     """
     Create a HuggingFaceNerRecognizer with a mocked pipeline.
 
@@ -203,6 +217,7 @@ def test_analyze_no_entities_found(mock_recognizer):
 
 
 @patch(HF_PIPELINE_PATH, return_value=MagicMock())
+@pytest.mark.usefixtures("mock_installed_packages")
 def test_default_supported_language(_mock_pipeline):
     """Test that default supported language is English."""
     recognizer = HuggingFaceNerRecognizer(model_name=TEST_MODEL_NAME)
@@ -210,6 +225,7 @@ def test_default_supported_language(_mock_pipeline):
 
 
 @patch(HF_PIPELINE_PATH, return_value=MagicMock())
+@pytest.mark.usefixtures("mock_installed_packages")
 def test_custom_supported_language(_mock_pipeline):
     """Test setting custom supported language."""
     recognizer = HuggingFaceNerRecognizer(
@@ -219,6 +235,7 @@ def test_custom_supported_language(_mock_pipeline):
 
 
 @patch(HF_PIPELINE_PATH, return_value=MagicMock())
+@pytest.mark.usefixtures("mock_installed_packages")
 def test_supported_entities_from_label_mapping(_mock_pipeline):
     """Test that supported entities are derived from label mapping."""
     recognizer = HuggingFaceNerRecognizer(model_name=TEST_MODEL_NAME)
@@ -228,6 +245,7 @@ def test_supported_entities_from_label_mapping(_mock_pipeline):
     assert "ORGANIZATION" in recognizer.supported_entities
 
 
+@pytest.mark.usefixtures("mock_installed_packages")
 def test_hf_recognizer_load_errors():
     """Test error handling during model loading phase."""
     path = HF_PIPELINE_PATH
@@ -242,6 +260,7 @@ def test_hf_recognizer_load_errors():
             HuggingFaceNerRecognizer(model_name=None)
 
 
+@pytest.mark.usefixtures("mock_installed_packages")
 def test_load_invokes_hf_pipeline_with_expected_args():
     """Test that load() calls hf_pipeline with correct arguments."""
     # Patch with MagicMock to ensure it acts as "installed"
@@ -359,6 +378,7 @@ def test_analyze_text_too_long(mock_recognizer):
     assert args[0] == "12345"
 
 
+@pytest.mark.usefixtures("mock_installed_packages")
 def test_hf_recognizer_init_variations(caplog):
     """Test various initialization scenarios and warnings."""
     caplog.set_level(logging.WARNING)
@@ -380,6 +400,7 @@ def test_hf_recognizer_init_variations(caplog):
         assert "TEST_ENTITY" in rec2.supported_entities
 
 
+@pytest.mark.usefixtures("mock_installed_packages")
 def test_hf_recognizer_analyze_truncation_and_lazy_load(caplog):
     """Test text truncation logic and automatic lazy loading in analyze()."""
     caplog.set_level(logging.WARNING)
@@ -408,6 +429,7 @@ def test_hf_recognizer_analyze_truncation_and_lazy_load(caplog):
             assert called_kwargs["text"] == "12345"
 
 
+@pytest.mark.usefixtures("mock_installed_packages")
 @pytest.mark.parametrize(
     "device_input, expected_device",
     [
@@ -434,6 +456,7 @@ def test_hf_recognizer_device_parsing(device_input, expected_device):
             assert rec.device == expected_device
 
 
+@pytest.mark.usefixtures("mock_installed_packages")
 def test_hf_recognizer_device_fallback_and_validation():
     """Test device fallback to CPU and invalid device validation (fail-fast)."""
     mock_torch = MagicMock()

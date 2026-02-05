@@ -267,9 +267,9 @@ class RecognizerListLoader:
         """
         Prepare kwargs for recognizer instantiation.
 
-        Converts supported_entities to supported_entity
-        for PatternRecognizer subclasses.
-        Removes both fields if they are None to allow recognizer defaults to be used.
+        For PatternRecognizer subclasses, converts supported_entities (plural)
+        to supported_entity (singular). For all other recognizers, kwargs are
+        passed as-is since EntityRecognizer base class accepts supported_entities.
 
         :param recognizer_conf: The recognizer configuration.
         :param language_conf: The language configuration.
@@ -278,13 +278,9 @@ class RecognizerListLoader:
         """
         kwargs = {**recognizer_conf, **language_conf}
 
-        # HuggingFaceNerRecognizer expects `supported_entities` (plural) as-is.
-        # Do not normalize/remove it via PatternRecognizer/non-PatternRecognizer rules.
-        if recognizer_cls.__name__ == "HuggingFaceNerRecognizer":
-            return kwargs
-
-        # If this is a PatternRecognizer, handle supported_entities/supported_entity
-        elif RecognizerListLoader._is_pattern_recognizer(recognizer_cls):
+        # PatternRecognizer requires supported_entity (singular) instead of
+        # supported_entities (plural). Convert if this is a PatternRecognizer.
+        if RecognizerListLoader._is_pattern_recognizer(recognizer_cls):
             # Convert supported_entities (plural) to supported_entity
             # (singular) if present
             RecognizerListLoader._convert_supported_entities_to_entity(kwargs)
@@ -293,12 +289,6 @@ class RecognizerListLoader:
             # to allow the recognizer's default to be used
             if kwargs.get("supported_entity") is None:
                 kwargs.pop("supported_entity", None)
-
-        else:
-            # For non-PatternRecognizer classes, remove both fields
-            # as they may not accept these parameters
-            kwargs.pop("supported_entities", None)
-            kwargs.pop("supported_entity", None)
 
         return kwargs
 

@@ -15,7 +15,7 @@ own tokenizer and returning results directly without spaCy alignment.
 """
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from presidio_analyzer import (
     AnalysisExplanation,
@@ -23,12 +23,14 @@ from presidio_analyzer import (
     RecognizerResult,
 )
 from presidio_analyzer.chunkers import BaseTextChunker, CharacterBasedTextChunker
-from presidio_analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer.nlp_engine import NlpArtifacts, device_detector
 
 try:
+    import torch
     from transformers import pipeline as hf_pipeline
 except ImportError:
     hf_pipeline = None
+    torch = None
 
 
 logger = logging.getLogger("presidio-analyzer")
@@ -147,17 +149,26 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         :param text_chunker: Custom text chunking strategy. If None, uses
             CharacterBasedTextChunker with provided chunk_size and chunk_overlap.
         :param label_prefixes: List of label prefixes to strip (e.g., B-, I-).
+        :raises ImportError: If transformers or torch libraries are not installed.
         """
+        # Early check for required dependencies
+        if hf_pipeline is None:
+            raise ImportError(
+                "transformers is not installed. Please install it "
+                "(pip install transformers torch) to use this recognizer."
+            )
+        if torch is None:
+            raise ImportError(
+                "torch is not installed. Please install it "
+                "(pip install torch) to use this recognizer."
+            )
+
         self.model_name = model_name
         self.tokenizer_name = tokenizer_name or model_name
         self.label_mapping = (
-            label_mapping
-            if label_mapping is not None
-            else self.DEFAULT_LABEL_MAPPING
+            label_mapping if label_mapping is not None else self.DEFAULT_LABEL_MAPPING
         )
-        self.threshold = (
-            threshold if threshold is not None else self.DEFAULT_THRESHOLD
-        )
+        self.threshold = threshold if threshold is not None else self.DEFAULT_THRESHOLD
         self.aggregation_strategy = aggregation_strategy or "simple"
         if self.aggregation_strategy == "none":
             logger.warning(
@@ -217,8 +228,6 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         If None, it uses Presidio's DeviceDetector for auto-detection.
         """
         if device is None:
-            from presidio_analyzer.nlp_engine import device_detector
-
             detected = device_detector.get_device()
             return 0 if detected == "cuda" else -1
 
@@ -245,21 +254,13 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         """Load the HuggingFace NER pipeline.
 
         This method handles:
-        1. Environment validation (transformers/torch installation)
-        2. Hardware acceleration setup (CUDA validation and fallback)
-        3. Lazy-loading of the heavyweight ML pipeline.
+        1. Hardware acceleration setup (CUDA validation and fallback)
+        2. Lazy-loading of the heavyweight ML pipeline.
 
-        :raises ImportError: If transformers library is not installed
         :raises ValueError: If model_name is not set
         """
         if self.ner_pipeline is not None:
             return
-
-        if not hf_pipeline:
-            raise ImportError(
-                "transformers is not installed. Please install it "
-                "(pip install transformers torch) to use this recognizer."
-            )
 
         if not self.model_name:
             raise ValueError(
@@ -270,20 +271,16 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         # Device validation and fallback
         device = self.device
         if device >= 0:
-            try:
-                import torch
-
-                if not torch.cuda.is_available():
-                    logger.warning("CUDA is not available. Falling back to CPU.")
-                    device = -1
-                elif device >= torch.cuda.device_count():
-                    logger.warning(
-                        f"Device index {device} out of range "
-                        f"(count={torch.cuda.device_count()}). Falling back to CPU."
-                    )
-                    device = -1
-            except ImportError:
-                logger.debug("Torch not installed, skipping device validation.")
+            if not torch.cuda.is_available():
+                logger.warning("CUDA is not available. Falling back to CPU.")
+                device = -1
+            elif device >= torch.cuda.device_count():
+                logger.warning(
+                    "Device index %d out of range (count=%d). Falling back to CPU.",
+                    device,
+                    torch.cuda.device_count(),
+                )
+                device = -1
 
         logger.info(f"Loading HuggingFace model: {self.model_name}, device={device}")
 
@@ -332,7 +329,8 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             return []
 
         # Helper to process a single prediction dictionary
-        def process_pred(pred):
+        def process_pred(pred: Dict[str, Any]) -> None:
+            """Convert a single HuggingFace prediction dict to RecognizerResult."""
             raw_label = pred.get("entity_group") or pred.get("entity")
             if not raw_label:
                 return
@@ -345,9 +343,11 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 # discovering entities not explicitly defined in the mapping.
                 presidio_entity = model_label
 
+            raw_score = pred.get("score", 0.0)
             try:
-                score = float(pred.get("score") or 0.0)
+                score = float(raw_score)
             except (TypeError, ValueError):
+                logger.warning("Failed to convert score to float: %r", raw_score)
                 return
 
             if score < self.threshold:
@@ -358,10 +358,16 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             if start is None or end is None:
                 return
 
-            textual_explanation = (
-                f"Identified as {presidio_entity} by {self.model_name} "
-                f"(original label: {raw_label}, normalized: {model_label})"
-            )
+            if raw_label == model_label:
+                textual_explanation = (
+                    f"Identified as {presidio_entity} by {self.model_name} "
+                    f"(label: {raw_label})"
+                )
+            else:
+                textual_explanation = (
+                    f"Identified as {presidio_entity} by {self.model_name} "
+                    f"(original label: {raw_label}, normalized: {model_label})"
+                )
 
             explanation = AnalysisExplanation(
                 recognizer=self.name,
@@ -379,15 +385,16 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 )
             )
 
-        if isinstance(preds, list):
-            for pred in preds:
-                if isinstance(pred, list):
-                    for p in pred:
-                        process_pred(p)
-                else:
-                    process_pred(pred)
-        elif isinstance(preds, dict):
-            process_pred(preds)
+        # Validate preds is a list before iterating
+        if not isinstance(preds, list):
+            logger.warning("Unexpected pipeline output type: %s", type(preds))
+            return []
+
+        for pred in preds:
+            if isinstance(pred, dict):
+                process_pred(pred)
+            else:
+                logger.warning("Unexpected prediction item type: %s", type(pred))
 
         return chunk_results
 
@@ -413,6 +420,7 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         # Defensive guard for entities input
         entities = entities or []
 
+        # Optional safety guard: limit very large inputs to avoid excessive runtime.
         if self.max_text_length and len(text) > self.max_text_length:
             logger.warning(
                 f"Text length ({len(text)}) exceeds max_text_length "
