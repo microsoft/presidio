@@ -256,7 +256,7 @@ of the AnalyzerEngine"
 ### Hash operator with salt for referential integrity
 
 !!! warning "BREAKING CHANGE in Hash Operator"
-    **Starting from version 2.2.360, the hash operator uses random salt by default for security.**
+    **Starting from version 2.2.361, the hash operator uses random salt by default for security.**
     
     **Impact:**
     - Hash outputs are different from previous versions
