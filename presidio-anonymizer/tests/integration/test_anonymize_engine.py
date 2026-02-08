@@ -281,6 +281,64 @@ def test_when_hash_with_user_provided_salt_then_hash_is_reproducible():
     assert hash1 == hash2
 
 
+@pytest.mark.parametrize(
+    "text, salt, hash_type, expected_hash",
+    [
+        # fmt: off
+        # SHA256 known-answer tests with specific salt
+        (
+            "123456",
+            b"test_salt_16byte",  # 16 bytes exactly
+            "sha256",
+            "31ac5824179e43275be4f75b10886a915b8ffbe4238786dd17e2cc23325d6e47",
+        ),
+        (
+            "Jane Doe",
+            b"my_secure_salt16",  # 16 bytes exactly
+            "sha256",
+            "4180ab6f00d4379f01e57fc87593247f05fe2a3e3ad7b2b223d41d593ff3374e",
+        ),
+        # SHA512 known-answer tests with specific salt
+        (
+            "123456",
+            b"test_salt_16byte",
+            "sha512",
+            "3a19179a550de9c20ff6c99d8dfd43e819835d4981fd972ac1280b393cd79357"
+            "6386cafd7a955d0802760bc3169609c25f8bbf0e6b3c93c7a44ebadc223f1fa6",
+        ),
+        (
+            "sensitive_data",
+            b"0123456789abcdef",  # 16 bytes exactly
+            "sha512",
+            "0acd60e620b6894a99ed05d481bab628f0c3cabb3f4b37f9c8c5c2ba2cc06d4b"
+            "09656c589761018cefcef8bc81b2a7ace5b4803a91e997376f4a2559e0418640",
+        ),
+        # fmt: on
+    ],
+)
+def test_hash_with_known_salt_produces_expected_output(text, salt, hash_type, expected_hash):
+    """Test that hashing with a known salt produces expected deterministic output."""
+    from presidio_anonymizer import AnonymizerEngine
+    
+    params = {"hash_type": hash_type, "salt": salt}
+    anonymizer_config = {"DEFAULT": OperatorConfig("hash", params)}
+    
+    # Create a simple analyzer result for the entire text
+    analyzer_results = [
+        RecognizerResult(start=0, end=len(text), score=0.9, entity_type="TEST"),
+    ]
+    
+    engine = AnonymizerEngine()
+    result = engine.anonymize(text, analyzer_results, anonymizer_config)
+    
+    # The hash should match the expected value
+    assert result.items[0].text == expected_hash
+    
+    # Verify it's reproducible
+    result2 = engine.anonymize(text, analyzer_results, anonymizer_config)
+    assert result2.items[0].text == expected_hash
+
+
 def run_engine_and_validate(
     text: str, anonymizers_config, analyzer_results, expected_result
 ):

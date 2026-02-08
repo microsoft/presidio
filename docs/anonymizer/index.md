@@ -299,8 +299,10 @@ print(result.text)
 ```
 
 !!! warning "Security Considerations"
-    - Store your salt securely (e.g., in a key vault or secrets manager)
-    - Use a salt of at least 128 bits (16 bytes)
+    - **Discard the salt after processing**: The salt should be discarded once all data is anonymized to prevent re-identification if leaked
+    - Store salt only if you need to process additional data later for referential integrity (increases re-identification risk)
+    - If you must store salt, use secure storage (e.g., key vault or secrets manager) with strict access controls
+    - Use a salt of at least 128 bits (16 bytes) - enforced by the operator
     - Never include the salt in anonymized output
     - For maximum security without referential integrity needs, omit the salt parameter to use random per-entity salts
 

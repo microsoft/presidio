@@ -25,6 +25,7 @@ class Hash(Operator):
             - hash_type: The hash algorithm to use (sha256 or sha512)
             - salt: Optional user-provided salt for reproducible hashing.
                     If not provided, a random salt is generated per entity.
+                    Must be at least 16 bytes (128 bits) if provided.
         :return: hashed original text with salt
         """
         hash_type = self._get_hash_type_or_default(params)
@@ -35,6 +36,14 @@ class Hash(Operator):
             # Ensure salt is bytes
             if isinstance(salt, str):
                 salt = salt.encode()
+            # Validate salt length (minimum 16 bytes / 128 bits) if non-empty
+            # Empty salt is allowed for backward compatibility but not recommended
+            if len(salt) > 0 and len(salt) < 16:
+                from presidio_anonymizer.entities import InvalidParamError
+                raise InvalidParamError(
+                    f"Salt must be either empty (not recommended) or at least "
+                    f"16 bytes (128 bits). Provided salt is {len(salt)} bytes."
+                )
         else:
             # Generate random salt for this entity (prevents brute-force attacks)
             salt = os.urandom(32)

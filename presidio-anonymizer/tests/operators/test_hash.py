@@ -130,8 +130,8 @@ def test_when_salt_provided_then_hash_is_different():
     params_no_salt = {}
     hash_no_salt = Hash().operate(text=text, params=params_no_salt)
     
-    # Hash with salt
-    params_with_salt = {"salt": b"random_salt_value"}
+    # Hash with salt (must be at least 16 bytes)
+    params_with_salt = {"salt": b"random_salt_val1"}  # 16 bytes
     hash_with_salt = Hash().operate(text=text, params=params_with_salt)
     
     # Hashes should be different
@@ -141,7 +141,7 @@ def test_when_salt_provided_then_hash_is_different():
 def test_when_same_salt_provided_then_hash_is_deterministic():
     """Test that same text with same salt produces same hash."""
     text = "sensitive_data"
-    salt = b"my_secret_salt"
+    salt = b"my_secret_salt16"  # 16 bytes minimum
     
     params = {"salt": salt}
     hash1 = Hash().operate(text=text, params=params)
@@ -155,10 +155,10 @@ def test_when_different_salt_provided_then_hash_is_different():
     """Test that same text with different salts produces different hashes."""
     text = "sensitive_data"
     
-    params1 = {"salt": b"salt1"}
+    params1 = {"salt": b"salt1_0123456789"}  # 16 bytes
     hash1 = Hash().operate(text=text, params=params1)
     
-    params2 = {"salt": b"salt2"}
+    params2 = {"salt": b"salt2_0123456789"}  # 16 bytes
     hash2 = Hash().operate(text=text, params=params2)
     
     # Same text + different salt should produce different hashes
@@ -168,8 +168,8 @@ def test_when_different_salt_provided_then_hash_is_different():
 def test_when_salt_is_string_then_it_is_converted_to_bytes():
     """Test that string salt is properly converted to bytes."""
     text = "data"
-    salt_str = "my_salt"
-    salt_bytes = b"my_salt"
+    salt_str = "my_salt123456789"  # 16 chars = 16 bytes
+    salt_bytes = b"my_salt123456789"
     
     params_str = {"salt": salt_str}
     hash_str = Hash().operate(text=text, params=params_str)
@@ -206,7 +206,7 @@ def test_when_no_salt_provided_then_random_salt_is_used():
 def test_when_user_salt_provided_then_hash_is_deterministic():
     """Test that user-provided salt produces deterministic hashes."""
     text = "data"
-    user_salt = b"user_salt"
+    user_salt = b"user_salt_123456"  # 16 bytes minimum
     
     # Create two operator instances
     operator1 = Hash()
@@ -225,6 +225,31 @@ def test_when_user_salt_provided_then_hash_is_deterministic():
     hash_no_explicit_salt = operator1.operate(text=text, params=params_no_salt)
     # Random salt will produce different hash
     assert hash1 != hash_no_explicit_salt
+
+
+def test_when_salt_too_short_then_error_raised():
+    """Test that salt shorter than 16 bytes raises InvalidParamError."""
+    text = "data"
+    short_salt = b"short"  # Only 5 bytes, less than minimum 16
+    
+    params = {"salt": short_salt}
+    with pytest.raises(
+        InvalidParamError,
+        match="Salt must be either empty .* or at least 16 bytes"
+    ):
+        Hash().operate(text=text, params=params)
+
+
+def test_when_salt_minimum_length_then_accepted():
+    """Test that salt with exactly 16 bytes is accepted."""
+    text = "data"
+    min_salt = b"0123456789abcdef"  # Exactly 16 bytes
+    
+    params = {"salt": min_salt}
+    # Should not raise an error
+    result = Hash().operate(text=text, params=params)
+    assert result is not None
+    assert len(result) == 64  # SHA256 default produces 64 hex characters
 
 
 def _get_default_hash_parameters():
