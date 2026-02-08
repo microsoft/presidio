@@ -267,8 +267,8 @@ of the AnalyzerEngine"
     - If you need the same hash for the same value (referential integrity), you **must** explicitly provide a `salt` parameter
     - If you're upgrading from a previous version and need to match existing hashes, this is not possible without the original salt
     
-    **Privacy Note:**
-    Presidio does not store or maintain stateful sessions. For referential integrity across records or calls, users must securely manage and provide their own salt.
+    !!! note: Note
+        Presidio does not store or maintain stateful sessions. For referential integrity across records or calls, users must securely manage and provide their own salt.
 
 The hash operator uses random salt by default for maximum security, which means the same PII value will get different hashes in different entities or calls. If you need referential integrity (same values getting the same hash), you must provide a consistent salt:
 
