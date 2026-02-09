@@ -4,7 +4,18 @@ import inspect
 import logging
 from collections.abc import ItemsView
 from pathlib import Path
-from typing import Any, ClassVar, Dict, Iterable, List, Optional, Set, Tuple, Type, Union
+from typing import (
+    Any,
+    ClassVar,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+    Union,
+)
 
 import yaml
 

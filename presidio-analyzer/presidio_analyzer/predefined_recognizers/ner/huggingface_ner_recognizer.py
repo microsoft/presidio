@@ -96,9 +96,6 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         "DATE_TIME": "DATE_TIME",
     }
     DEFAULT_HF_TASK = "token-classification"
-    DEFAULT_CHUNK_SIZE = 400
-    DEFAULT_CHUNK_OVERLAP = 40
-    DEFAULT_THRESHOLD = 0.3
 
     def __init__(
         self,
@@ -109,10 +106,10 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         context: Optional[List[str]] = None,
         model_name: Optional[str] = None,
         label_mapping: Optional[Dict[str, str]] = None,
-        threshold: float = DEFAULT_THRESHOLD,
+        threshold: float = 0.3,
         aggregation_strategy: str = "simple",
-        chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
-        chunk_size: int = DEFAULT_CHUNK_SIZE,
+        chunk_overlap: int = 40,
+        chunk_size: int = 400,
         device: Optional[Union[str, int]] = None,
         tokenizer_name: Optional[str] = None,
         text_chunker: Optional[BaseTextChunker] = None,
@@ -166,8 +163,8 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         self.label_mapping = (
             label_mapping if label_mapping is not None else self.DEFAULT_LABEL_MAPPING
         )
-        self.threshold = threshold if threshold is not None else self.DEFAULT_THRESHOLD
-        self.aggregation_strategy = aggregation_strategy or "simple"
+        self.threshold = threshold
+        self.aggregation_strategy = aggregation_strategy
         if self.aggregation_strategy == "none":
             logger.warning(
                 "aggregation_strategy='none' may result in fragmented entities "
@@ -204,12 +201,8 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             self.text_chunker = text_chunker
         else:
             self.text_chunker = CharacterBasedTextChunker(
-                chunk_size=chunk_size
-                if chunk_size is not None
-                else self.DEFAULT_CHUNK_SIZE,
-                chunk_overlap=chunk_overlap
-                if chunk_overlap is not None
-                else self.DEFAULT_CHUNK_OVERLAP,
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
             )
 
         logger.info(
