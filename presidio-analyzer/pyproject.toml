@@ -57,8 +57,9 @@ ahds = [
 gliner = [
     "transformers",
     "huggingface_hub",
-    "gliner (>=0.2.13,<1.0.0) ; python_version >= '3.10'",
-    "onnxruntime (>=1.19,<1.24.1) ; python_version >= '3.10'" 
+    "gliner (>=0.2.13,<1.0.0),
+    "onnxruntime (>=1.19, <1.24.1) ; python_version == '3.10'",
+    # "onnxruntime (>=1.19) ; python_version > '3.10'"
 ]
 langextract = [
     "langextract (>=1.0.0)",
