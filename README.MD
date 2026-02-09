@@ -109,3 +109,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 <a href="https://github.com/microsoft/presidio/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=microsoft/presidio" />
 </a>
+
