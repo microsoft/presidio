@@ -77,14 +77,17 @@ def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_re
 def test_when_given_valid_value_with_hash_type_then_expected_string_returned(
     text, hash_type, anonymized_text
 ):
-    # Test unsalted hash for backward compatibility
+    # Test with no salt parameter - should generate random salt
     params = {
         "hash_type": hash_type,
-        "salt": b"",
     }
     actual_anonymized_text = Hash().operate(text=text, params=params)
-
-    assert anonymized_text == actual_anonymized_text
+    
+    # Since salt is random, we can't check exact value, just verify it's a valid hash
+    expected_length = 64 if hash_type == "sha256" else 128
+    assert len(actual_anonymized_text) == expected_length
+    # Verify it's different from unsalted hash (since we're using random salt)
+    assert anonymized_text != actual_anonymized_text
 
 
 def test_when_hash_type_not_in_range_then_ipe_raised():
@@ -235,7 +238,20 @@ def test_when_salt_too_short_then_error_raised():
     params = {"salt": short_salt}
     with pytest.raises(
         InvalidParamError,
-        match="Salt must either be empty .* or at least 16 bytes"
+        match="Salt must be at least 16 bytes"
+    ):
+        Hash().operate(text=text, params=params)
+
+
+def test_when_salt_is_empty_then_error_raised():
+    """Test that empty salt parameter raises InvalidParamError."""
+    text = "data"
+    empty_salt = b""  # Empty salt
+    
+    params = {"salt": empty_salt}
+    with pytest.raises(
+        InvalidParamError,
+        match="Salt parameter cannot be empty"
     ):
         Hash().operate(text=text, params=params)
 

@@ -4,6 +4,7 @@ import os
 from hashlib import sha256, sha512
 from typing import Dict
 
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.services.validators import validate_parameter_in_range
 
@@ -36,13 +37,17 @@ class Hash(Operator):
             # Ensure salt is bytes
             if isinstance(salt, str):
                 salt = salt.encode()
-            # Validate salt length (minimum 16 bytes / 128 bits) if non-empty
-            # Empty salt will trigger auto-generation of random salt
-            if len(salt) > 0 and len(salt) < 16:
-                from presidio_anonymizer.entities import InvalidParamError
+            # Validate salt is not empty and meets minimum length (16 bytes / 128 bits)
+            if len(salt) == 0:
                 raise InvalidParamError(
-                    f"Salt must either be empty (will be auto-generated) or at "
-                    f"least 16 bytes (128 bits). Provided salt is {len(salt)} bytes."
+                    "Salt parameter cannot be empty. Either omit the salt parameter "
+                    "to auto-generate a random salt, or provide a salt of at least "
+                    "16 bytes (128 bits)."
+                )
+            if len(salt) < 16:
+                raise InvalidParamError(
+                    f"Salt must be at least 16 bytes (128 bits). "
+                    f"Provided salt is {len(salt)} bytes."
                 )
         else:
             # Generate random salt for this entity (prevents brute-force attacks)
