@@ -235,7 +235,7 @@ def test_when_salt_too_short_then_error_raised():
     params = {"salt": short_salt}
     with pytest.raises(
         InvalidParamError,
-        match="Salt must be either empty .* or at least 16 bytes"
+        match="Salt must either be empty .* or at least 16 bytes"
     ):
         Hash().operate(text=text, params=params)
 
