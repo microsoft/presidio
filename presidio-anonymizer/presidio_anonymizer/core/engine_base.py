@@ -27,7 +27,6 @@ class EngineBase(ABC):
         pii_entities: List[PIIEntity],
         operators_metadata: Dict[str, OperatorConfig],
         operator_type: OperatorType,
-        **operator_kwargs: Dict,
     ) -> EngineResult:
         """
         Operate will do the operations required by the user over the text.
@@ -37,7 +36,6 @@ class EngineBase(ABC):
         :param operators_metadata: dictionary where the key is the entity_type and what
         :type operator_type: either anonymize or deanonymize
         we want to perform over this entity_type.
-        :param operator_kwargs: Additional keyword arguments to pass to operators
         :return:
         """
         text_replace_builder = TextReplaceBuilder(original_text=text)
@@ -58,7 +56,6 @@ class EngineBase(ABC):
                 text_to_operate_on,
                 operator_metadata,
                 operator_type,
-                operator_kwargs,
             )
             index_from_end = text_replace_builder.replace_text_get_insertion_index(
                 changed_text, entity.start, entity.end
@@ -86,7 +83,6 @@ class EngineBase(ABC):
         text_to_operate_on: str,
         operator_metadata: OperatorConfig,
         operator_type: OperatorType,
-        operator_kwargs: Dict,
     ) -> str:
         entity_type = text_metadata.entity_type
         self.logger.debug(f"getting operator for {entity_type}")
