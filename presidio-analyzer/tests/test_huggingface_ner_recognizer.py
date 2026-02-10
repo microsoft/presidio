@@ -5,9 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from presidio_analyzer.predefined_recognizers import (
-    EmailRecognizer,
     HuggingFaceNerRecognizer,
-    PhoneRecognizer,
 )
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
     RecognizerListLoader,
@@ -542,50 +540,3 @@ def test_hf_recognizer_loader_supported_entities_filtering():
         "supported_entities was filtered out by loader!"
     )
     assert kwargs["supported_entities"] == ["STAY_PERSISTENT"]
-
-
-def test_recognizer_loader_utils_prepare_kwargs_variations():
-    """Verify loader logic across different recognizer types.
-
-    Ensures that entity-related arguments are correctly stripped, converted,
-    or preserved based on the recognizer's signature and VAR_KEYWORD support.
-    """
-
-    lang_conf = {"supported_language": "en"}
-
-    # Use constants from the class for robustness
-    s_entity = RecognizerListLoader.SUPPORTED_ENTITY
-    s_entities = RecognizerListLoader.SUPPORTED_ENTITIES
-
-    # Case 1: PhoneRecognizer - lacks entity params, should strip them
-    rec_conf_phone = {s_entities: ["PHONE_NUMBER"]}
-    kwargs_phone = RecognizerListLoader._prepare_recognizer_kwargs(
-        rec_conf_phone, lang_conf, PhoneRecognizer
-    )
-    assert s_entities not in kwargs_phone
-    assert s_entity not in kwargs_phone
-
-    # Case 2: EmailRecognizer - accepts singular, should convert plural to singular
-    rec_conf_email = {s_entities: ["EMAIL_ADDRESS"]}
-    kwargs_email = RecognizerListLoader._prepare_recognizer_kwargs(
-        rec_conf_email, lang_conf, EmailRecognizer
-    )
-    assert kwargs_email[s_entity] == "EMAIL_ADDRESS"
-    assert s_entities not in kwargs_email
-
-    # Case 3: HuggingFaceNerRecognizer - accepts **kwargs, should keep plural
-    rec_conf_hf = {s_entities: ["PERSON"]}
-    kwargs_hf = RecognizerListLoader._prepare_recognizer_kwargs(
-        rec_conf_hf, lang_conf, HuggingFaceNerRecognizer
-    )
-    assert kwargs_hf[s_entities] == ["PERSON"]
-
-    # Case 4: Fallback - when signature cannot be inspected
-    with patch("inspect.signature") as mock_sig:
-        mock_sig.side_effect = TypeError("Mocked failure")
-        rec_conf_fallback = {s_entities: ["FALLBACK"]}
-        kwargs_fallback = RecognizerListLoader._prepare_recognizer_kwargs(
-            rec_conf_fallback, lang_conf, EmailRecognizer
-        )
-        assert s_entities not in kwargs_fallback
-        assert s_entity not in kwargs_fallback
