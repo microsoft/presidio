@@ -4,6 +4,87 @@ from presidio_anonymizer.operators import Hash
 from presidio_anonymizer.entities import InvalidParamError
 
 
+@pytest.mark.parametrize(
+    "text, anonymized_text",
+    [
+        # fmt: off
+        (
+            "123456",
+            "09cc8b29be2dbdcef23f37ba045fd9eddbd9900473260cb72651e4e62715eba4",
+        ),  # Hash 123456 + salt
+        (
+            "54321",
+            "677280e77c0b09c902fc2c5dcbaa8667c66ff00dfb96afed583355ce326b82b1",
+        ),  # Hash 54321 + salt
+        (
+            "😈😈😈😈",
+            "a42d48e20f00251055b13aaa0b4596045dba4c409f96ebe541f80048cbbf9e5f",
+        ),
+        # Hash 'Unicode EmojiSources' character + salt
+        # fmt: on
+    ],
+)
+def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_returned(
+    text, anonymized_text
+):
+    params = {"salt": b"0123456789abcdef"}
+    actual_anonymized_text = Hash().operate(text=text, params=params)
+
+    assert anonymized_text == actual_anonymized_text
+
+
+@pytest.mark.parametrize(
+    "text, hash_type, anonymized_text",
+    [
+        # fmt: off
+        (
+            "123456",
+            "sha256",
+            "09cc8b29be2dbdcef23f37ba045fd9eddbd9900473260cb72651e4e62715eba4",
+        ),  # Sha256 Hash 123456 + salt
+        (
+            "54321",
+            "sha256",
+            "677280e77c0b09c902fc2c5dcbaa8667c66ff00dfb96afed583355ce326b82b1",
+        ),  # Sha256 Hash 54321 + salt
+        (
+            "😈😈😈😈",
+            "sha256",
+            "a42d48e20f00251055b13aaa0b4596045dba4c409f96ebe541f80048cbbf9e5f",
+        ),  # Sha256 Hash 'Unicode EmojiSources' character + salt
+        (
+            "123456",
+            "sha512",
+            "94ca1fb2ea72ef4ec2bb191a68e2b16708881be543c0c90c1ec329b9c04c231"
+            "3350fa129c5395c308fc7de7e16d5c09fb804da0a84f254638c72ce11ce06d7b6",
+        ),  # Sha512 Hash 123456 + salt
+        (
+            "54321",
+            "sha512",
+            "c6f994054cd8be2769b94f74a00bc580f19d17ab0a2d99c732d682b6dfec76ae"
+            "666a44bc475c996b47ac5c4657dc68037d0c9a70c931a402e47031fc6081761c",
+        ),  # Sha512 Hash 54321 + salt
+        (
+            "😈😈😈😈",
+            "sha512",
+            "a01d392a6a28fea6496fc3ad5b0d56420d24032de2ef41dfd3f378ac7ad0dbc2"
+            "dce9d9714a6c95e6b119bd01b7c4f1af95dde222f9dc68fa0dee91649b0f98cf",
+        ),  # Sha512 Hash 'Unicode EmojiSources' character + salt
+        # fmt: on
+    ],
+)
+def test_when_given_valid_value_with_hash_type_then_expected_string_returned(
+    text, hash_type, anonymized_text
+):
+    params = {
+        "hash_type": hash_type,
+        "salt": b"0123456789abcdef",
+    }
+    actual_anonymized_text = Hash().operate(text=text, params=params)
+
+    assert anonymized_text == actual_anonymized_text
+
+
 def test_when_hash_type_not_in_range_then_ipe_raised():
     params = _get_default_hash_parameters()
     params["hash_type"] = "not_a_hash"
