@@ -276,10 +276,26 @@ class RecognizerListLoader:
           supported_entities -> supported_entity (first element).
         - If recognizer accepts only supported_entities (plural), remove
           supported_entity.
-        - If recognizer accepts both, keep as-is.
-        - If recognizer accepts neither, remove both.
+        - If recognizer accepts both, keep keys as provided (after None cleanup).
+        - Filtering policy:
+            - supported_entity: kept only if explicitly accepted.
+            - supported_entities: kept if explicitly accepted or if the recognizer
+              accepts **kwargs.
         """
         kwargs = {**recognizer_conf, **language_conf}
+
+        # Cleanup: Remove provided entity arguments if they are explicitly None
+        if (
+            RecognizerListLoader.SUPPORTED_ENTITY in kwargs
+            and kwargs[RecognizerListLoader.SUPPORTED_ENTITY] is None
+        ):
+            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
+
+        if (
+            RecognizerListLoader.SUPPORTED_ENTITIES in kwargs
+            and kwargs[RecognizerListLoader.SUPPORTED_ENTITIES] is None
+        ):
+            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES, None)
 
         try:
             params = inspect.signature(recognizer_cls.__init__).parameters
@@ -295,34 +311,34 @@ class RecognizerListLoader:
         has_var_kw = any(
             p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values()
         )
-        if has_var_kw:
-            return kwargs
 
         accepts_supported_entity = RecognizerListLoader.SUPPORTED_ENTITY in params
         accepts_supported_entities = RecognizerListLoader.SUPPORTED_ENTITIES in params
 
-        # Convert plural -> singular only when singular is accepted and plural is not.
+        # 1. Normalize: Convert plural -> singular if needed
+        # (Only when singular is accepted and plural is NOT accepted)
         if accepts_supported_entity and not accepts_supported_entities:
             if RecognizerListLoader.SUPPORTED_ENTITIES in kwargs:
-                supported_entities = kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES)
+                supported_entities = kwargs.get(RecognizerListLoader.SUPPORTED_ENTITIES)
 
+                # Use the first entity if available
                 if isinstance(supported_entities, list) and supported_entities:
+                    kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES)
                     kwargs.setdefault(
                         RecognizerListLoader.SUPPORTED_ENTITY, supported_entities[0]
                     )
 
-        # if the argument is not in the signature, pop it to avoid TypeError.
-        if not accepts_supported_entities:
+        # 2. Filter: Remove keys that are NOT in the signature
+
+        # For supported_entities (plural):
+        # If not explicitly accepted, remove unless **kwargs is present (compat).
+        if not accepts_supported_entities and not has_var_kw:
             kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES, None)
+
+        # Drop unsupported 'supported_entity' even for **kwargs
+        # to prevent leaking into strict parent __init__.
         if not accepts_supported_entity:
             kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
-
-        # Keep defaults: if supported_entity exists but is None, remove it.
-        if kwargs.get(RecognizerListLoader.SUPPORTED_ENTITY) is None:
-            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
-
-        if kwargs.get(RecognizerListLoader.SUPPORTED_ENTITIES) is None:
-            kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITIES, None)
 
         return kwargs
 
