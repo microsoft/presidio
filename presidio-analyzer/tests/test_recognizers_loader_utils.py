@@ -1,7 +1,9 @@
-
 import functools
+import re
 
+import pytest
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
+    RecognizerConfigurationLoader,
     RecognizerListLoader,
 )
 
@@ -141,3 +143,24 @@ def test_inheritance_forwarding_does_not_crash():
 
     assert "supported_entity" not in kwargs
     assert kwargs["supported_entities"] == ["ENT"]
+
+
+def test_configuration_loader_bad_yaml_raises_value_error(tmp_path):
+    """Test that invalid YAML content raises a ValueError."""
+    # Create a dummy file with invalid YAML
+    f = tmp_path / "bad.yaml"
+    f.write_text("invalid: [unclosed_list_without_bracket", encoding="utf-8")
+
+    # Check for the filename part and the error prefix.
+    match_pattern = rf"Failed to parse file.*{re.escape(f.name)}"
+    with pytest.raises(ValueError, match=match_pattern):
+        RecognizerConfigurationLoader.get(conf_file=str(f))
+
+
+def test_convert_supported_entities_to_entity_uses_first_item():
+    """Test that supported_entities list is converted to single supported_entity."""
+    conf = {"supported_entities": ["ENT1", "ENT2"]}
+    RecognizerListLoader._convert_supported_entities_to_entity(conf)
+
+    assert "supported_entities" not in conf
+    assert conf["supported_entity"] == "ENT1"

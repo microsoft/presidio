@@ -21,8 +21,8 @@ TEST_MODEL_NAME = "dslim/bert-base-NER"
 
 
 @pytest.fixture
-def mock_installed_packages():
-    """Fixture to mock torch and transformers as installed."""
+def mock_torch_installed():
+    """Fixture to mock torch as installed and configured."""
     mock_torch = MagicMock()
     mock_torch.cuda.is_available.return_value = True
     mock_torch.cuda.device_count.return_value = 1
@@ -44,7 +44,7 @@ def mock_transformers_pipeline():
 
 
 @pytest.fixture
-def mock_recognizer(mock_installed_packages, mock_transformers_pipeline):
+def mock_recognizer(mock_torch_installed, mock_transformers_pipeline):
     """
     Create a HuggingFaceNerRecognizer with a mocked pipeline.
 
@@ -219,7 +219,7 @@ def test_analyze_no_entities_found(mock_recognizer):
 
 
 @patch(HF_PIPELINE_PATH, return_value=MagicMock())
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_default_supported_language(_mock_pipeline):
     """Test that default supported language is English."""
     recognizer = HuggingFaceNerRecognizer(model_name=TEST_MODEL_NAME)
@@ -227,7 +227,7 @@ def test_default_supported_language(_mock_pipeline):
 
 
 @patch(HF_PIPELINE_PATH, return_value=MagicMock())
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_custom_supported_language(_mock_pipeline):
     """Test setting custom supported language."""
     recognizer = HuggingFaceNerRecognizer(
@@ -237,7 +237,7 @@ def test_custom_supported_language(_mock_pipeline):
 
 
 @patch(HF_PIPELINE_PATH, return_value=MagicMock())
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_supported_entities_from_label_mapping(_mock_pipeline):
     """Test that supported entities are derived from label mapping."""
     recognizer = HuggingFaceNerRecognizer(model_name=TEST_MODEL_NAME)
@@ -247,7 +247,7 @@ def test_supported_entities_from_label_mapping(_mock_pipeline):
     assert "ORGANIZATION" in recognizer.supported_entities
 
 
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_hf_recognizer_load_errors():
     """Test error handling during model loading phase."""
     path = HF_PIPELINE_PATH
@@ -262,7 +262,7 @@ def test_hf_recognizer_load_errors():
             HuggingFaceNerRecognizer(model_name=None)
 
 
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_load_invokes_hf_pipeline_with_expected_args():
     """Test that load() calls hf_pipeline with correct arguments."""
     # Patch with MagicMock to ensure it acts as "installed"
@@ -378,7 +378,7 @@ def test_analyze_deduplication_keeps_highest_score(mock_recognizer):
     assert results[0].end == 5
 
 
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_hf_recognizer_init_variations(caplog):
     """Test various initialization scenarios and warnings."""
     caplog.set_level(logging.WARNING)
@@ -400,7 +400,7 @@ def test_hf_recognizer_init_variations(caplog):
         assert "TEST_ENTITY" in rec2.supported_entities
 
 
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_hf_recognizer_analyze_lazy_load(caplog):
     """Test automatic lazy loading in analyze()."""
     caplog.set_level(logging.WARNING)
@@ -421,7 +421,7 @@ def test_hf_recognizer_analyze_lazy_load(caplog):
             mock_load.assert_called_once()
 
 
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 @pytest.mark.parametrize(
     "device_input, expected_device",
     [
@@ -448,7 +448,7 @@ def test_hf_recognizer_device_parsing(device_input, expected_device):
             assert rec.device == expected_device
 
 
-@pytest.mark.usefixtures("mock_installed_packages")
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_hf_recognizer_device_fallback_and_validation():
     """Test device fallback to CPU and invalid device validation (fail-fast)."""
     mock_torch = MagicMock()
@@ -469,6 +469,51 @@ def test_hf_recognizer_device_fallback_and_validation():
 
             # Ensure pipeline was NOT called (validation should happen before creation)
             mock_pipeline.assert_not_called()
+
+
+@pytest.mark.usefixtures("mock_torch_installed")
+@patch(HF_PIPELINE_PATH, new=MagicMock())
+def test_hf_recognizer_init_logs_warning_for_extra_kwargs(caplog):
+    """Test that valid but unsupported kwargs trigger a warning."""
+    caplog.set_level(logging.WARNING, logger="presidio-analyzer")
+    # Passed 'unsupported_arg' which is not in __init__
+    HuggingFaceNerRecognizer(model_name="test-model", unsupported_arg="some_value")
+
+    assert "Ignoring unsupported kwargs" in caplog.text
+
+
+@pytest.mark.usefixtures("mock_torch_installed")
+@patch(HF_PIPELINE_PATH, new=MagicMock())
+def test_hf_recognizer_init_uses_provided_text_chunker():
+    """Test that an external text_chunker can be injected."""
+    mock_chunker = MagicMock()
+    rec = HuggingFaceNerRecognizer(model_name="test-model", text_chunker=mock_chunker)
+    assert rec.text_chunker is mock_chunker
+
+
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_hf_recognizer_load_cuda_unavailable_fallback(caplog):
+    """Test fallback to CPU if CUDA is requested but unavailable."""
+    caplog.set_level(logging.WARNING)
+
+    # Simulate CUDA not available
+    mock_torch = MagicMock()
+    mock_torch.cuda.is_available.return_value = False
+    mock_torch.cuda.device_count.return_value = 0
+
+    with patch(
+        "presidio_analyzer.predefined_recognizers.ner.huggingface_ner_recognizer.torch",
+        mock_torch,
+    ):
+        with patch(HF_PIPELINE_PATH) as mock_pipeline:
+            # Request GPU (device=0)
+            rec = HuggingFaceNerRecognizer(model_name="test", device=0)
+            rec.load()
+
+            # Should fallback to -1 (CPU)
+            assert "CUDA is not available. Falling back to CPU." in caplog.text
+            args, kwargs = mock_pipeline.call_args
+            assert kwargs.get("device") == -1
 
 
 def test_hf_recognizer_prediction_edge_cases(mock_recognizer, caplog):
@@ -517,6 +562,44 @@ def test_hf_recognizer_prediction_edge_cases(mock_recognizer, caplog):
     rec.ner_pipeline.side_effect = Exception("Pipeline failure")
     assert rec.analyze("test", entities=["PERSON"]) == []
     assert "NER prediction failed" in caplog.text
+
+
+def test_hf_recognizer_analyze_handles_malformed_pipeline_output(
+    mock_recognizer, caplog
+):
+    """Test that the recognizer handles malformed pipeline outputs gracefully."""
+    caplog.set_level(logging.WARNING)
+    rec = mock_recognizer(model_name="test-model")
+
+    # 1. Pipeline returns non-list
+    caplog.clear()
+    rec.ner_pipeline.return_value = {"not": "a list"}
+    assert rec.analyze("test", entities=["PERSON"]) == []
+    assert "Unexpected pipeline output type" in caplog.text
+
+    # 2. Pipeline returns list with non-dict items
+    caplog.clear()
+    rec.ner_pipeline.return_value = ["not a dict"]
+    assert rec.analyze("test", entities=["PERSON"]) == []
+    assert "Unexpected prediction item type" in caplog.text
+
+    # 3. Prediction missing label
+    caplog.clear()
+    rec.ner_pipeline.return_value = [{"score": 0.9, "start": 0, "end": 4}]
+    assert rec.analyze("test", entities=["PERSON"]) == []
+
+    # 4. Prediction with non-numeric score
+    caplog.clear()
+    rec.ner_pipeline.return_value = [
+        {"entity": "PER", "score": "bad", "start": 0, "end": 4}
+    ]
+    assert rec.analyze("test", entities=["PERSON"]) == []
+    assert "Failed to convert score to float" in caplog.text
+
+    # 5. Prediction missing start/end
+    caplog.clear()
+    rec.ner_pipeline.return_value = [{"entity": "PER", "score": 0.9}]
+    assert rec.analyze("test", entities=["PERSON"]) == []
 
 
 def test_hf_recognizer_loader_supported_entities_filtering():
