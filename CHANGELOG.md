@@ -3,14 +3,53 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+
+## [2.2.361] - 2026-02-12
 ### Analyzer
 #### Added
-- HuggingFace NER Recognizer (HuggingFaceNerRecognizer) for direct HuggingFace model inference, bypassing spaCy tokenizer alignment issues with agglutinative languages. Includes unified character-based text chunking support for long inputs.
-- US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (@chrisvoncsefalvay)
+- US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (Thanks @chrisvoncsefalvay)
+- MAC address recognizer for detecting MAC addresses in various formats (#1829) (Thanks @kyoungbinkim)
+- Korean Business Registration Number (KR_BRN) recognizer (#1822) (Thanks @RektPunk)
+- Korean Foreigner Registration Number (KR_FRN) recognizer (#1825) (Thanks @RektPunk)
+- Korean Driver License (KR_DRIVER_LICENSE) recognizer (#1820) (Thanks @RektPunk)
+- Korean Passport (KR_PASSPORT) recognizer (#1814) (Thanks @kyoungbinkim)
+- Thai National ID Number (TH_TNIN) recognizer with format and checksum validation (#1713) (Thanks @pangchewe)
+- Configurable LangExtract recognizer supporting any LLM provider with custom YAML configurations (#1815) (Thanks @telackey)
+- Azure OpenAI support for LangExtract recognizer with managed identity authentication for GPT-4o, GPT-4, etc. (#1801) (Thanks @dorlugasigal)
+- Batch processing support in REST API - accepts arrays of texts and returns arrays of results with backward compatibility (#1806) (Thanks @telackey)
+- GPU device control via `PRESIDIO_DEVICE` environment variable for explicit GPU/CPU selection (#1843) (Thanks @RonShakutai)
+- Support for multiple recognizer instances from same class via `class_name` parameter (#1819) (Thanks @RonShakutai)
+- Pydantic-based YAML configuration validation with ConfigurationValidator class for improved reliability and error reporting (#1780) (Thanks @omri374)
+- Japanese and Chinese mobile number test cases for PhoneRecognizer (#1808) (Thanks @WenwenHLF)
+
+#### Changed
+- GPU optimizations with DeviceDetector singleton providing 4-10x performance improvements for GLiNER, Transformers, and Stanza engines (#1812) (Thanks @RonShakutai)
+- Configurable extraction parameters for LangExtract recognizers via YAML (max_char_buffer, timeout, num_ctx, fence_output, use_schema_constraints) (#1811) (Thanks @RonShakutai)
+- Lazy initialization for device detector singleton (#1831) (Thanks @RonShakutai)
+- Simplified IBAN regex pattern from 8 to 3 capture groups for better performance (#1818) (Thanks @Copilot)
+- Improved Korean RRN regex pattern with negative lookahead/lookbehind and gender digit validation (#1807) (Thanks @kyoungbinkim)
+
+#### Fixed
+- GLiNER GPU inference by properly passing map_location parameter (#1813) (Thanks @eveningcafe)
+- GLiNER text truncation issue during processing (#1805) (Thanks @jedheaj314)
+- IBAN regex trailing character handling to prevent false matches (#1818) (Thanks @Copilot)
+- Python 3.10 build compatibility by pinning onnxruntime <1.24.1 for Python 3.10 (#1848) (Thanks @SharonHart)
+- TypeError in third-party recognizers by removing invalid **kwargs from __init__ methods (#1800) (Thanks @RonShakutai)
+- Pattern recognizer example language specification (#1835) (Thanks @andyjessen)
 
 ### Anonymizer
 #### Changed
-- **BREAKING CHANGE**: Hash operator now uses random salt by default to prevent brute-force and dictionary attacks. Same PII values will produce different hashes unless a `salt` parameter is explicitly provided. Users requiring referential integrity must provide their own salt. See documentation for migration guide.
+- **BREAKING CHANGE**: Hash operator now uses random salt by default to prevent brute-force and dictionary attacks. Same PII values will produce different hashes unless a `salt` parameter is explicitly provided. Users requiring referential integrity must provide their own salt. Minimum salt length: 16 bytes. See documentation for migration guide. (#1846) (Thanks @Copilot)
+- Updated cryptography dependency to >=46.0.4 to address CVE-2025-15467 security vulnerability (#1841) (Thanks @Copilot)
+
+### General
+#### Added
+- GPU acceleration documentation guide with setup and usage instructions (#1826) (Thanks @dilshad-aee)
+- Telemetry redaction sample demonstrating PII removal from telemetry data (#1824) (Thanks @Jakob-98)
+
+#### Changed
+- Migrated CI workflows (lint, dependency review, release) to ubuntu-slim runners for improved efficiency (#1840) (Thanks @Copilot)
+- Updated actions/cache from v4 to v5 with Node.js 24 runtime support (#1817) (Thanks @dependabot)
 
 ## [unreleased]
 ### Image Redactor
@@ -653,7 +692,8 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.  
 
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.360...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.361...HEAD
+[2.2.361]: https://github.com/microsoft/presidio/compare/2.2.360...2.2.361
 [2.2.360]: https://github.com/microsoft/presidio/compare/2.2.359...2.2.360
 [2.2.359]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
 [2.2.358]: https://github.com/microsoft/presidio/compare/2.2.357...2.2.358
