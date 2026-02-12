@@ -45,9 +45,15 @@ recognizers:
     type: predefined
   
   - name: UsSsnRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
+
+  - name: UsMbiRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
 
   - name: NhsRecognizer
     supported_languages: 
@@ -224,7 +230,7 @@ recognizers:
     - en
     type: predefined
     enabled: false
-  
+
   - name: DeBsnrRecognizer
     supported_languages:
     - de
@@ -305,8 +311,10 @@ recognizers:
 
   - name: OllamaRecognizer
     class_name: OllamaLangExtractRecognizer
+
+  - name: BasicLangExtractRecognizer
     supported_languages:
       - en
     type: predefined
     enabled: false
-    config_path: presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml
+    config_path: presidio_analyzer/conf/langextract_config_basic.yaml

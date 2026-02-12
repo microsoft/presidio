@@ -12,7 +12,7 @@ env:
 jobs:
   get-version:
     name: Get Version Numbers
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       version: ${{ steps.set-version.outputs.version }}
       image-version: ${{ steps.set-image-version.outputs.image-version }}
@@ -40,7 +40,7 @@ jobs:
 
   github-release:
     name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     needs: get-version
     permissions:
       contents: write

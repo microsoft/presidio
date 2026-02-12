@@ -90,6 +90,7 @@ from .country_specific.us.medical_license_recognizer import MedicalLicenseRecogn
 from .country_specific.us.us_bank_recognizer import UsBankRecognizer
 from .country_specific.us.us_driver_license_recognizer import UsLicenseRecognizer
 from .country_specific.us.us_itin_recognizer import UsItinRecognizer
+from .country_specific.us.us_mbi_recognizer import UsMbiRecognizer
 from .country_specific.us.us_passport_recognizer import UsPassportRecognizer
 from .country_specific.us.us_ssn_recognizer import UsSsnRecognizer
 
@@ -117,8 +118,8 @@ from .third_party.azure_ai_language import AzureAILanguageRecognizer
 from .third_party.azure_openai_langextract_recognizer import (
     AzureOpenAILangExtractRecognizer,
 )
+from .third_party.basic_langextract_recognizer import BasicLangExtractRecognizer
 from .third_party.langextract_recognizer import LangExtractRecognizer
-from .third_party.ollama_langextract_recognizer import OllamaLangExtractRecognizer
 
 PREDEFINED_RECOGNIZERS = [
     "PhoneRecognizer",
@@ -168,6 +169,7 @@ __all__ = [
     "UsBankRecognizer",
     "UsItinRecognizer",
     "UsLicenseRecognizer",
+    "UsMbiRecognizer",
     "UsPassportRecognizer",
     "UsSsnRecognizer",
     "EsNifRecognizer",
@@ -205,6 +207,6 @@ __all__ = [
     "ThTninRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
-    "OllamaLangExtractRecognizer",
+    "BasicLangExtractRecognizer",
     "KrPassportRecognizer",
 ]
