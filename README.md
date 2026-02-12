@@ -8,7 +8,7 @@
 | presidio\_anonymizer/anonymizer\_engine.py                       |       95 |        0 |    100% |           |
 | presidio\_anonymizer/batch\_anonymizer\_engine.py                |       31 |        0 |    100% |           |
 | presidio\_anonymizer/core/\_\_init\_\_.py                        |        3 |        0 |    100% |           |
-| presidio\_anonymizer/core/engine\_base.py                        |       44 |        1 |     98% |       107 |
+| presidio\_anonymizer/core/engine\_base.py                        |       44 |        1 |     98% |       116 |
 | presidio\_anonymizer/core/text\_replace\_builder.py              |       23 |        0 |    100% |           |
 | presidio\_anonymizer/deanonymize\_engine.py                      |       18 |        0 |    100% |           |
 | presidio\_anonymizer/entities/\_\_init\_\_.py                    |        9 |        0 |    100% |           |
@@ -29,7 +29,7 @@
 | presidio\_anonymizer/operators/deanonymize\_keep.py              |        7 |        1 |     86% |        18 |
 | presidio\_anonymizer/operators/decrypt.py                        |       18 |        0 |    100% |           |
 | presidio\_anonymizer/operators/encrypt.py                        |       26 |        1 |     96% |        48 |
-| presidio\_anonymizer/operators/hash.py                           |       21 |        0 |    100% |           |
+| presidio\_anonymizer/operators/hash.py                           |       34 |        0 |    100% |           |
 | presidio\_anonymizer/operators/keep.py                           |       13 |        1 |     92% |        38 |
 | presidio\_anonymizer/operators/mask.py                           |       33 |        0 |    100% |           |
 | presidio\_anonymizer/operators/operator.py                       |       20 |        4 |     80% |24, 29, 34, 39 |
@@ -39,7 +39,7 @@
 | presidio\_anonymizer/services/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | presidio\_anonymizer/services/app\_entities\_convertor.py        |       20 |        0 |    100% |           |
 | presidio\_anonymizer/services/validators.py                      |       26 |        0 |    100% |           |
-| **TOTAL**                                                        |  **828** |   **59** | **93%** |           |
+| **TOTAL**                                                        |  **841** |   **59** | **93%** |           |
 
 
 ## Setup coverage badge
