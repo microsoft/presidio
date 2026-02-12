@@ -26,10 +26,13 @@ from presidio_analyzer.chunkers import BaseTextChunker, CharacterBasedTextChunke
 from presidio_analyzer.nlp_engine import NlpArtifacts, device_detector
 
 try:
-    import torch
     from transformers import pipeline as hf_pipeline
 except ImportError:
     hf_pipeline = None
+
+try:
+    import torch
+except ImportError:
     torch = None
 
 
@@ -283,9 +286,9 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 device=device,
             )
             logger.info(f"Successfully loaded {self.model_name}")
-        except Exception as e:
-            logger.error(f"Failed to load model {self.model_name}: {e}")
-            raise e
+        except Exception:
+            logger.exception(f"Failed to load model {self.model_name}")
+            raise
 
     def _normalize_label(self, label: str) -> str:
         """Normalize label by removing prefixes like B-/I-/U-/L-.
