@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 - HuggingFace NER Recognizer (HuggingFaceNerRecognizer) for direct HuggingFace model inference, bypassing spaCy tokenizer alignment issues with agglutinative languages. Includes unified character-based text chunking support for long inputs.
 - US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (@chrisvoncsefalvay)
 
+### Anonymizer
+#### Changed
+- **BREAKING CHANGE**: Hash operator now uses random salt by default to prevent brute-force and dictionary attacks. Same PII values will produce different hashes unless a `salt` parameter is explicitly provided. Users requiring referential integrity must provide their own salt. See documentation for migration guide.
+
 ## [unreleased]
 ### Image Redactor
 #### Changed
