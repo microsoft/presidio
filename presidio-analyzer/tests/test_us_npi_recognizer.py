@@ -53,8 +53,8 @@ def entities():
         ("123456789", 0, (), (),),
         # Invalid: too long (11 digits)
         ("12345678934", 0, (), (),),
-        # Invalid: all same digits → invalidated, filtered out
-        ("1111111118", 0, (), (),),
+        # Invalid: degenerate body (all body digits identical) → invalidated
+        ("1111111112", 0, (), (),),
         # Invalid: fails Luhn check → filtered out
         ("1234567890", 0, (), (),),
         # fmt: on

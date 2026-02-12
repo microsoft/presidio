@@ -38,7 +38,7 @@ class UsNpiRecognizer(PatternRecognizer):
         ),
         Pattern(
             "NPI (medium)",
-            r"\b[12]\d{3}[\s-]\d{3}[\s-]\d{3}\b",
+            r"\b[12]\d{3}[ -]\d{3}[ -]\d{3}\b",
             0.4,
         ),
     ]
@@ -85,9 +85,12 @@ class UsNpiRecognizer(PatternRecognizer):
         sanitized_value = EntityRecognizer.sanitize_value(
             pattern_text, self.replacement_pairs
         )
-        # Reject all-same-digit patterns (e.g. 1111111111)
-        if len(set(sanitized_value)) == 1:
-            return True
+        # Reject degenerate patterns where all body digits are identical
+        # (e.g., 1111111111 or 1111111112 where the last digit is a check digit).
+        if sanitized_value:
+            body = sanitized_value[:-1] if len(sanitized_value) > 1 else sanitized_value
+            if body and len(set(body)) == 1:
+                return True
         return False
 
     @staticmethod
