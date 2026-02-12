@@ -2,554 +2,574 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://microsoft.github.io/presidio/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/ahds_integration/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/api/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/build_release/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/community/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/design/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/development/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/faq/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/getting_started/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/installation/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/presidio_V2/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/supported_entities/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/text_anonymization/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/adding_recognizers/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/customizing_nlp_models/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/decision_process/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/developing_recognizers/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/languages/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/recognizer_registry_provider/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
+    </url>
+    <url>
+         <loc>https://microsoft.github.io/presidio/analyzer/nlp_engines/gpu_usage/</loc>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/nlp_engines/spacy_stanza/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/analyzer/nlp_engines/transformers/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/anonymizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/anonymizer/adding_operators/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/api/analyzer_python/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/api/anonymizer_python/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/api/image_redactor_python/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/api/structured_python/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/evaluation/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/getting_started/getting_started_images/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/getting_started/getting_started_structured/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/getting_started/getting_started_text/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/image-redactor/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/image-redactor/evaluating_dicom_redaction/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/learn_presidio/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/learn_presidio/concepts/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/recipes/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/recipes/CONTRIBUTING/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/recipes/template/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/app-service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/data-factory/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/data-factory/presidio-data-factory-template-gallery-databricks/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/data-factory/presidio-data-factory-template-gallery-http/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/data-factory/presidio-data-factory/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/k8s/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/docs/sample_for_presidio_pr/anonymization_toolkit_sample/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/__init__/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/main/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/config/config/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/__init__/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/toolkit_service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/anonymizers/__init__/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/anonymizers/instance_counter_anonymizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/anonymizers/instance_counter_deanonymizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/presidio/__init__/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/presidio/http_presidio_service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/presidio/hybrid_presidio_service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/presidio/presidio_service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/presidio/python_presidio_service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/state/__init__/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/state/inmemory_state_service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/state/redis_state_service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/api/services/state/state_service/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/client_app/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/client_app/client/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/openai-anonymaztion-and-deanonymaztion-best-practices/src/client_app/serve/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
+    </url>
+    <url>
+         <loc>https://microsoft.github.io/presidio/samples/deployments/redacting-telemetry/</loc>
+         <lastmod>2026-02-12</lastmod>
+    </url>
+    <url>
+         <loc>https://microsoft.github.io/presidio/samples/deployments/redacting-telemetry/app/main/</loc>
+         <lastmod>2026-02-12</lastmod>
+    </url>
+    <url>
+         <loc>https://microsoft.github.io/presidio/samples/deployments/redacting-telemetry/app/presidio_client/</loc>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/spark/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/spark/notebooks/00_setup/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/deployments/spark/notebooks/01_transform_presidio/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/docker/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/docker/litellm/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/fabric/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/fabric/env_setup/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/fabric/artifacts/presidio_and_spark/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/Anonymizing%20known%20values/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/batch_processing/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/custom_presidio/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/customizing_presidio_analyzer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/encrypt_decrypt/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/example_custom_lambda_anonymizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/example_dicom_image_redactor/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/example_dicom_redactor_evaluation/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/example_pdf_annotation/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/example_remote_recognizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/example_structured/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/flair_recognizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/getting_entity_values/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/gliner/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/image_redaction_allow_list_approach/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/integrating_with_external_services/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/keep_entities/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/ner_model_configuration/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/no_code_config/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/plot_custom_bboxes/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/presidio_notebook/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/process_csv_file/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/pseudonymization/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/simple_anonymization_example/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/span_marker_recognizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/synth_data_with_openai/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/ahds/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/ahds/__init__/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/ahds/example_ahds_surrogate/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
+    </url>
+    <url>
+         <loc>https://microsoft.github.io/presidio/samples/python/langextract/</loc>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/streamlit/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/streamlit/azure_ai_language_wrapper/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/streamlit/flair_recognizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/streamlit/openai_fake_data_generator/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/streamlit/presidio_helpers/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/streamlit/presidio_nlp_engine_config/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/streamlit/presidio_streamlit/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/streamlit/test_streamlit/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/text_analytics/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/text_analytics/__init__/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/transformers_recognizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/transformers_recognizer/__init__/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/transformers_recognizer/configuration/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/samples/python/transformers_recognizer/transformer_recognizer/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/structured/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/00_getting_started/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/01_deny_list/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/02_regex/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/03_rule_based/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/04_external_services/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/05_languages/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/06_context/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/07_decision_process/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/08_no_code/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/09_ad_hoc/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/10_simple_anonymization/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/11_custom_anonymization/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/12_encryption/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
     <url>
          <loc>https://microsoft.github.io/presidio/tutorial/13_allow_list/</loc>
-         <lastmod>2025-10-22</lastmod>
+         <lastmod>2026-02-12</lastmod>
     </url>
 </urlset>
