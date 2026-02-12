@@ -85,6 +85,7 @@ from .generic.url_recognizer import UrlRecognizer
 # NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
 from .ner.huggingface_ner_recognizer import HuggingFaceNerRecognizer
+from .ner.medical_ner_recognizer import MedicalNERRecognizer
 
 # NLP Engine recognizers
 from .nlp_engine_recognizers.spacy_recognizer import SpacyRecognizer
@@ -175,4 +176,5 @@ __all__ = [
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
     "KrPassportRecognizer",
+    "MedicalNERRecognizer",
 ]

@@ -61,6 +61,11 @@ gliner = [
     "onnxruntime (>=1.19, <1.24.1) ; python_version == '3.10'",
     "onnxruntime (>=1.19) ; python_version > '3.10'"
 ]
+medical-ner = [
+    "transformers",
+    "torch",
+    "huggingface_hub",
+]
 langextract = [
     "langextract (>=1.0.0)",
     "openai (>=1.50.0)",
