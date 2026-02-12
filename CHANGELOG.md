@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 #### Added
 - US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (@chrisvoncsefalvay)
 
+### Anonymizer
+#### Changed
+- **BREAKING CHANGE**: Hash operator now uses random salt by default to prevent brute-force and dictionary attacks. Same PII values will produce different hashes unless a `salt` parameter is explicitly provided. Users requiring referential integrity must provide their own salt. See documentation for migration guide.
+
 ## [unreleased]
 ### Image Redactor
 #### Changed
