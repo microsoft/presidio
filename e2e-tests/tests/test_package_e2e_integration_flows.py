@@ -6,11 +6,11 @@ from presidio_anonymizer.entities import EngineResult, OperatorResult
 
 try:
     from presidio_analyzer.predefined_recognizers.third_party.\
-        ollama_langextract_recognizer import OllamaLangExtractRecognizer
-    OLLAMA_RECOGNIZER_AVAILABLE = True
+        basic_langextract_recognizer import BasicLangExtractRecognizer
+    LANGEXTRACT_RECOGNIZER_AVAILABLE = True
 except ImportError:
-    OLLAMA_RECOGNIZER_AVAILABLE = False
-    OllamaLangExtractRecognizer = None
+    LANGEXTRACT_RECOGNIZER_AVAILABLE = False
+    BasicLangExtractRecognizer = None
 
 
 @pytest.mark.package
@@ -67,7 +67,7 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_successful
 @pytest.mark.package
 def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_path):
     """Test Ollama LangExtract recognizer detects entities when explicitly added to analyzer."""
-    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
+    assert LANGEXTRACT_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
 
     text_to_test = "Patient John Smith, SSN 123-45-6789, email john@example.com, phone 555-123-4567, lives at 123 Main St, works at Acme Corp"
 
@@ -76,7 +76,7 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
         os.path.dirname(__file__), "..", "resources", "ollama_test_config.yaml"
     )
 
-    ollama_recognizer = OllamaLangExtractRecognizer(
+    ollama_recognizer = BasicLangExtractRecognizer(
         config_path=config_path, name="e2eollama"
     )
 
@@ -128,7 +128,7 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     - Ollama service running with qwen2.5:1.5b model
     - LangExtract library installed
     """
-    if not OLLAMA_RECOGNIZER_AVAILABLE:
+    if not LANGEXTRACT_RECOGNIZER_AVAILABLE:
         pytest.skip("LangExtract not installed")
     
     import os
@@ -146,8 +146,7 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     config_path = os.path.join(
         os.path.dirname(__file__), "..", "resources", "test_ollama_enabled_recognizers.yaml"
     )
-    
-    
+
     provider = RecognizerRegistryProvider(conf_file=config_path)
     registry = provider.create_recognizer_registry()
     
@@ -157,8 +156,8 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     
     ollama_recognizer = ollama_recognizers[0]
     
-    assert ollama_recognizer.__class__.__name__ == "OllamaLangExtractRecognizer", \
-        f"Expected class OllamaLangExtractRecognizer, got {ollama_recognizer.__class__.__name__}"
+    assert ollama_recognizer.__class__.__name__ == "BasicLangExtractRecognizer", \
+        f"Expected class BasicLangExtractRecognizer, got {ollama_recognizer.__class__.__name__}"
     
     assert ollama_recognizer.supported_language == "en"
     assert len(ollama_recognizer.supported_entities) > 0
