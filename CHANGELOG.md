@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+
+## [2.2.361] - 2026-02-12
 ### Analyzer
 #### Added
 - US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (Thanks @chrisvoncsefalvay)
@@ -690,7 +692,8 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.  
 
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.360...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.361...HEAD
+[2.2.361]: https://github.com/microsoft/presidio/compare/2.2.360...2.2.361
 [2.2.360]: https://github.com/microsoft/presidio/compare/2.2.359...2.2.360
 [2.2.359]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
 [2.2.358]: https://github.com/microsoft/presidio/compare/2.2.357...2.2.358
