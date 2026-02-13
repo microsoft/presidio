@@ -646,18 +646,33 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _process_names(cls, text_metadata: list, is_name: list) -> list:
         """Process names to have multiple iterations in our PHI list.
 
-        :param metadata_text: List of all the instance's element values
+        :param text_metadata: List of all the instance's element values
         (excluding pixel data).
         :param is_name: True if the element is specified as being a name.
 
-        :return: Metadata text with additional name iterations appended.
+        :return: List of PHI strings for elements where is_name is True,
+        with additional name augmentations appended.
         """
-        phi_list = text_metadata.copy()
+        from pydicom.multival import MultiValue
+
+        phi_list = []
 
         for i in range(0, len(text_metadata)):
             if is_name[i] is True:
-                original_text = str(text_metadata[i])
-                phi_list += cls.augment_word(original_text)
+                value = text_metadata[i]
+                # Handle MultiValue, list, and tuple by iterating individual
+                # elements rather than stringifying the entire collection
+                if isinstance(value, (MultiValue, list, tuple)):
+                    for item in value:
+                        text = str(item).strip()
+                        if text:
+                            phi_list.append(text)
+                            phi_list += cls.augment_word(text)
+                else:
+                    text = str(value).strip()
+                    if text:
+                        phi_list.append(text)
+                        phi_list += cls.augment_word(text)
 
         return phi_list
 

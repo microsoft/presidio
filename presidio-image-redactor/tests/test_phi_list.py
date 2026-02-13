@@ -13,8 +13,8 @@ def test_make_phi_list_flattens_trims_and_dedupes_without_mutation():
         "",
         None,
     ]
-    # Only first entry is_name, second is_patient (typical split across tags)
-    is_name =    [True,  False, False, False, False]
+    # First entry is_name, second is_patient, third is_name (to test MultiValue)
+    is_name =    [True,  False, True,  False, False]
     is_patient = [False, True,  False, False, False]
 
     out = DicomImageRedactorEngine._make_phi_list(meta, is_name, is_patient)
