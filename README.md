@@ -23,7 +23,7 @@
 | presidio\_analyzer/input\_validation/\_\_init\_\_.py                                                             |        4 |        0 |    100% |           |
 | presidio\_analyzer/input\_validation/language\_validation.py                                                     |        7 |        0 |    100% |           |
 | presidio\_analyzer/input\_validation/schemas.py                                                                  |       63 |        0 |    100% |           |
-| presidio\_analyzer/input\_validation/yaml\_recognizer\_models.py                                                 |      182 |       10 |     95% |224, 228, 274, 327, 348, 370, 376, 384, 414, 417 |
+| presidio\_analyzer/input\_validation/yaml\_recognizer\_models.py                                                 |      198 |       10 |     95% |246, 250, 300, 353, 374, 407, 413, 421, 451, 454 |
 | presidio\_analyzer/llm\_utils/\_\_init\_\_.py                                                                    |        6 |        0 |    100% |           |
 | presidio\_analyzer/llm\_utils/azure\_auth\_helper.py                                                             |       24 |        2 |     92% |    51, 88 |
 | presidio\_analyzer/llm\_utils/config\_loader.py                                                                  |       45 |        4 |     91% |26, 46, 121-122 |
@@ -44,7 +44,7 @@
 | presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       49 |        3 |     94% |     10-12 |
 | presidio\_analyzer/pattern.py                                                                                    |       32 |        2 |     94% |    62, 66 |
 | presidio\_analyzer/pattern\_recognizer.py                                                                        |      100 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       58 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       59 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/\_\_init\_\_.py                           |        5 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/au\_abn\_recognizer.py                    |       20 |        0 |    100% |           |
@@ -105,8 +105,9 @@
 | presidio\_analyzer/predefined\_recognizers/generic/mac\_recognizer.py                                            |       17 |        1 |     94% |        66 |
 | presidio\_analyzer/predefined\_recognizers/generic/phone\_recognizer.py                                          |       34 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/url\_recognizer.py                                            |       10 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/ner/\_\_init\_\_.py                                                   |        2 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/ner/\_\_init\_\_.py                                                   |        3 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/ner/gliner\_recognizer.py                                             |       60 |        6 |     90% |19-21, 72, 131, 207 |
+| presidio\_analyzer/predefined\_recognizers/ner/huggingface\_ner\_recognizer.py                                   |      137 |       10 |     93% |30-31, 35-36, 159, 238-239, 289-291 |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/\_\_init\_\_.py                              |        4 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/spacy\_recognizer.py                         |       40 |        2 |     95% |   58, 139 |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/stanza\_recognizer.py                        |        6 |        0 |    100% |           |
@@ -121,10 +122,10 @@
 | presidio\_analyzer/recognizer\_registry/\_\_init\_\_.py                                                          |        3 |        0 |    100% |           |
 | presidio\_analyzer/recognizer\_registry/recognizer\_registry.py                                                  |      114 |       15 |     87% |125, 155, 158, 208, 290-291, 306-309, 312-316, 328 |
 | presidio\_analyzer/recognizer\_registry/recognizer\_registry\_provider.py                                        |       63 |        1 |     98% |       173 |
-| presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      172 |       10 |     94% |28, 44, 133, 136, 144, 255-256, 454-455, 472 |
+| presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      186 |        5 |     97% |44, 60, 149, 152, 516 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **3923** |  **212** | **95%** |           |
+| **TOTAL**                                                                                                        | **4092** |  **217** | **95%** |           |
 
 
 ## Setup coverage badge
