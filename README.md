@@ -34,7 +34,7 @@
 | presidio\_analyzer/lm\_recognizer.py                                                                             |       47 |        1 |     98% |        50 |
 | presidio\_analyzer/local\_recognizer.py                                                                          |        3 |        0 |    100% |           |
 | presidio\_analyzer/nlp\_engine/\_\_init\_\_.py                                                                   |        9 |        0 |    100% |           |
-| presidio\_analyzer/nlp\_engine/device\_detector.py                                                               |       33 |        0 |    100% |           |
+| presidio\_analyzer/nlp\_engine/device\_detector.py                                                               |       41 |        0 |    100% |           |
 | presidio\_analyzer/nlp\_engine/ner\_model\_configuration.py                                                      |       43 |        0 |    100% |           |
 | presidio\_analyzer/nlp\_engine/nlp\_artifacts.py                                                                 |       30 |        0 |    100% |           |
 | presidio\_analyzer/nlp\_engine/nlp\_engine.py                                                                    |       22 |        2 |     91% |    60, 65 |
@@ -124,7 +124,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      172 |       10 |     94% |28, 44, 133, 136, 144, 255-256, 454-455, 472 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **3915** |  **212** | **95%** |           |
+| **TOTAL**                                                                                                        | **3923** |  **212** | **95%** |           |
 
 
 ## Setup coverage badge
