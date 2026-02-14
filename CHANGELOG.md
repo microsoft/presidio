@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### Analyzer
+#### Added
+- UK Driving Licence Number (UK_DRIVING_LICENCE) recognizer with pattern matching and context support
 
 ## [2.2.361] - 2026-02-12
 ### Analyzer
@@ -728,3 +731,4 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
 - Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
 - Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).
+
