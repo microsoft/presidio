@@ -23,6 +23,7 @@ uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
 uses: actions/setup-python@v6 # v6
 uses: github/codeql-action/init@v3 # v3
 uses: microsoft/security-devops-action@v1 # v1
+uses: py-cov-action/python-coverage-comment-action@v3 # v3
 ```
 
 **Rationale**: 
@@ -36,6 +37,7 @@ uses: microsoft/security-devops-action@v1 # v1
 - `actions/setup-python@v6` - SHA could not be verified
 - `github/codeql-action/*@v3` - SHA could not be verified  
 - `microsoft/security-devops-action@v1` - SHA could not be verified
+- `py-cov-action/python-coverage-comment-action@v3` - SHA could not be verified
 
 
 ### 2. Docker Base Images
