@@ -16,13 +16,13 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
         with:
           fetch-depth: 0  # Fetch all history for proper gh-pages deployment
           persist-credentials: true  # So that the token is available for pushing
       
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8fb9b664d35ec9bd26686cd3d2a673a7c6 # v6.2.0
         with:
           python-version: '3.x'
 

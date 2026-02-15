@@ -23,12 +23,12 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8fb9b664d35ec9bd26686cd3d2a673a7c6 # v6.2.0
         with:
           python-version: '3.11'
 
@@ -47,12 +47,12 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
         with:
           persist-credentials: false
 
       - name: Dependency Review
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@c74b580d73376b7750d3d2a50bfb8adc2c937507 # v4.5.0
         with:
           fail-on-severity: low
           allow-licenses: MIT, Apache-2.0, BSD-3-Clause
@@ -94,13 +94,13 @@ jobs:
       PRIMARY_PYTHON: '3.13'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
         with:
           persist-credentials: true
           fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8fb9b664d35ec9bd26686cd3d2a673a7c6 # v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -157,7 +157,7 @@ jobs:
 
       - name: Comment PR with Coverage
         if: matrix.python-version == env.PRIMARY_PYTHON
-        uses: py-cov-action/python-coverage-comment-action@v3
+        uses: py-cov-action/python-coverage-comment-action@0e3b1c997b1e3ff024b5c3ff4e6f70c9e7b4e5c1 # v3.30
         with:
           GITHUB_TOKEN: ${{ github.token }}
           MINIMUM_GREEN: 85
@@ -203,12 +203,12 @@ jobs:
             runner: ubuntu-24.04-arm
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
         with:
           persist-credentials: false
 
       - name: Azure Login using OIDC
-        uses: azure/login@v2
+        uses: azure/login@6c251865b4e6290e7b78be643ea2d005bc51f69a # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -218,7 +218,7 @@ jobs:
         run: az acr login --name ${{ secrets.ACR_NAME }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
 
       - name: Build and Push ${{ matrix.image }} for ${{ matrix.platform }}
         run: |
@@ -247,7 +247,7 @@ jobs:
       contents: read
     steps:
       - name: Azure Login using OIDC
-        uses: azure/login@v2
+        uses: azure/login@6c251865b4e6290e7b78be643ea2d005bc51f69a # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -257,7 +257,7 @@ jobs:
         run: az acr login --name ${{ secrets.ACR_NAME }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
 
       - name: Create all multi-platform manifests
         run: |
@@ -291,12 +291,12 @@ jobs:
             runner: ubuntu-24.04-arm
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
         with:
           persist-credentials: false
 
       - name: Azure Login using OIDC
-        uses: azure/login@v2
+        uses: azure/login@6c251865b4e6290e7b78be643ea2d005bc51f69a # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -322,12 +322,12 @@ jobs:
           TAG: :${{ env.TAG }}
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8fb9b664d35ec9bd26686cd3d2a673a7c6 # v6.2.0
         with:
           python-version: '3.10'
 
       - name: Cache E2E dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v5.0.0
         with:
           path: |
             ~/.cache/pip
@@ -385,12 +385,12 @@ jobs:
             runner: ubuntu-24.04-arm
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
         with:
           persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
 
       - name: Build Presidio images locally
         run: |
@@ -410,12 +410,12 @@ jobs:
           TAG: gha${{ github.run_number }}
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8fb9b664d35ec9bd26686cd3d2a673a7c6 # v6.2.0
         with:
           python-version: '3.10'
 
       - name: Cache E2E dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v5.0.0
         with:
           path: |
             ~/.cache/pip

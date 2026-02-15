@@ -1,4 +1,4 @@
-FROM python:3.12-windowsservercore
+FROM python:3.12-windowsservercore@sha256:f2ab91b547b695c40a69cb1931cf382cb4019f56e1df5a83c86372d0cc8fb5a4
 
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
