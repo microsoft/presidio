@@ -66,7 +66,11 @@ from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 # UK recognizers
 from .country_specific.uk.uk_nhs_recognizer import NhsRecognizer
 from .country_specific.uk.uk_nino_recognizer import UkNinoRecognizer
+from .country_specific.uk.uk_passport_recognizer import UkPassportRecognizer
 from .country_specific.uk.uk_postcode_recognizer import UkPostcodeRecognizer
+from .country_specific.uk.uk_vehicle_registration_recognizer import (
+    UkVehicleRegistrationRecognizer,
+)
 
 # US recognizers
 from .country_specific.us.aba_routing_recognizer import AbaRoutingRecognizer
@@ -175,7 +179,9 @@ __all__ = [
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
     "UkNinoRecognizer",
+    "UkPassportRecognizer",
     "UkPostcodeRecognizer",
+    "UkVehicleRegistrationRecognizer",
     "AzureHealthDeidRecognizer",
     "KrBrnRecognizer",
     "KrRrnRecognizer",
