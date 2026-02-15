@@ -92,8 +92,8 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install build
+          python -m pip install --upgrade pip==25.0.0
+          pip install build==1.2.2.post1
 
       - name: Build wheel package
         working-directory: ${{ matrix.package.path }}

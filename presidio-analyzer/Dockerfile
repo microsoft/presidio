@@ -26,7 +26,7 @@ RUN apt-get update \
 
 COPY ./pyproject.toml /app/
 
-RUN pip install poetry \
+RUN pip install poetry==2.3.2 \
     && poetry install --no-root --only=main -E server \
     && rm -rf $(poetry config cache-dir)
     

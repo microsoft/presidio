@@ -33,7 +33,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install ruff
-        run: pip install ruff
+        run: pip install ruff==0.9.2
 
       - name: Run ruff check
         run: ruff check
@@ -108,8 +108,8 @@ jobs:
 
       - name: Install Poetry
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install poetry
+          python -m pip install --upgrade pip==25.0.0
+          python -m pip install poetry==2.3.2
 
       - name: Setup Poetry Cache Directory
         run: |
@@ -169,7 +169,7 @@ jobs:
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
         run: |
-          pip install build
+          pip install build==1.2.2.post1
           python -m build --wheel
 
   build-platform-images:
@@ -341,7 +341,7 @@ jobs:
         run: |
           python -m venv env
           source env/bin/activate
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip==25.0.0
           pip install -r requirements.txt
           python -m spacy download en_core_web_lg
 
@@ -429,7 +429,7 @@ jobs:
         run: |
           python -m venv env
           source env/bin/activate
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip==25.0.0
           pip install -r requirements.txt
           python -m spacy download en_core_web_lg
 
