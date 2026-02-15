@@ -22,7 +22,7 @@ jobs:
           persist-credentials: true  # So that the token is available for pushing
       
       - name: Set up Python
-        uses: actions/setup-python@a309ff8fb9b664d35ec9bd26686cd3d2a673a7c6 # v6.2.0
+        uses: actions/setup-python@v6 # v6
         with:
           python-version: '3.x'
 
