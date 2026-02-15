@@ -96,6 +96,12 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: NgNinRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
   - name: InPanRecognizer
     supported_languages: 
     - en

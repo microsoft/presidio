@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### Analyzer
+#### Added
+- Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
 
 ## [2.2.361] - 2026-02-12
 ### Analyzer

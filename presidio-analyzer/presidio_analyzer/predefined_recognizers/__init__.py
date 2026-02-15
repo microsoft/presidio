@@ -43,6 +43,9 @@ from .country_specific.korea.kr_frn_recognizer import KrFrnRecognizer
 from .country_specific.korea.kr_passport_recognizer import KrPassportRecognizer
 from .country_specific.korea.kr_rrn_recognizer import KrRrnRecognizer
 
+# Nigeria recognizers
+from .country_specific.nigeria.ng_nin_recognizer import NgNinRecognizer
+
 # Poland recognizers
 from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
 
@@ -175,4 +178,5 @@ __all__ = [
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
     "KrPassportRecognizer",
+    "NgNinRecognizer",
 ]

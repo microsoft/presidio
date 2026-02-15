@@ -108,6 +108,11 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
 
 
+### Nigeria
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| NG_NIN     | The Nigerian National Identification Number (NIN) is a unique 11-digit number issued by the National Identity Management Commission (NIMC). | Pattern match, context, and checksum |
+
 ### Thai
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
