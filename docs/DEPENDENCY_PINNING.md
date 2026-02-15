@@ -21,14 +21,22 @@ uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
 
 # Acceptable: Semantic version tag (when SHA cannot be verified)
 uses: actions/setup-python@v6 # v6
+uses: github/codeql-action/init@v3 # v3
+uses: microsoft/security-devops-action@v1 # v1
 ```
 
 **Rationale**: 
 - Commit SHAs are immutable and ensure the exact same action code runs every time (preferred)
-- Semantic version tags (e.g., `@v6`) are acceptable when commit SHAs cannot be verified, but provide less security
+- Semantic version tags (e.g., `@v6`, `@v3`) are acceptable when commit SHAs cannot be verified, but provide less security
 - Tags like `@latest` or major version tags can be moved to point to different commits
 
-**Note**: Some actions may use semantic version tags instead of commit SHAs due to verification limitations. This is a pragmatic tradeoff between security and functionality.
+**Note**: Several actions use semantic version tags instead of commit SHAs due to verification limitations. This is a pragmatic tradeoff between security and functionality.
+
+**Actions using version tags:**
+- `actions/setup-python@v6` - SHA could not be verified
+- `github/codeql-action/*@v3` - SHA could not be verified  
+- `microsoft/security-devops-action@v1` - SHA could not be verified
+
 
 ### 2. Docker Base Images
 
