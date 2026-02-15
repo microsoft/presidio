@@ -13,17 +13,22 @@ Dependency pinning is a security best practice that ensures:
 
 ### 1. GitHub Actions (Workflows)
 
-All GitHub Actions in workflow files are pinned to specific commit SHAs for maximum security:
+GitHub Actions in workflow files are pinned using either commit SHAs or semantic version tags:
 
 ```yaml
-# ❌ Before (mutable tag)
-uses: actions/checkout@v6
-
-# ✅ After (immutable commit SHA)
+# Preferred: Pinned to commit SHA (immutable)
 uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
+
+# Acceptable: Semantic version tag (when SHA cannot be verified)
+uses: actions/setup-python@v6 # v6
 ```
 
-**Rationale**: Tags like `v6` can be moved to point to different commits (potentially malicious). Commit SHAs are immutable and ensure the exact same action code runs every time.
+**Rationale**: 
+- Commit SHAs are immutable and ensure the exact same action code runs every time (preferred)
+- Semantic version tags (e.g., `@v6`) are acceptable when commit SHAs cannot be verified, but provide less security
+- Tags like `@latest` or major version tags can be moved to point to different commits
+
+**Note**: Some actions may use semantic version tags instead of commit SHAs due to verification limitations. This is a pragmatic tradeoff between security and functionality.
 
 ### 2. Docker Base Images
 
