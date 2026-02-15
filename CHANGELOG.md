@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Analyzer
 #### Added
 - Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
+- Nigerian Vehicle Registration (NG_VEHICLE_REGISTRATION) recognizer for current format plates (2011+)
 
 ## [2.2.361] - 2026-02-12
 ### Analyzer

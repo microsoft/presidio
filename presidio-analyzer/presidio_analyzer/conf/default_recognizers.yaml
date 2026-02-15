@@ -102,6 +102,12 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: NgVehicleRegistrationRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
   - name: InPanRecognizer
     supported_languages: 
     - en
