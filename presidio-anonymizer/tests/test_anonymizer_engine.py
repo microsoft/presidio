@@ -280,6 +280,7 @@ def _operate(
     pii_entities: List[PIIEntity],
     operators_metadata: Dict[str, OperatorConfig],
     operator_type: OperatorType,
+    **operator_kwargs,
 ) -> EngineResult:
     assert text == "hello world, my name is Jane Doe. My number is: 034453334"
     assert len(pii_entities) == 2

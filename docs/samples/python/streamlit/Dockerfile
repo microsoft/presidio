@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10-slim@sha256:e508a34e5491225a76fbb9e0f43ebde1f691c6a689d096d7510cf7fb17d4ba6f
 
 RUN apt-get update && apt-get install -y \
     build-essential \
