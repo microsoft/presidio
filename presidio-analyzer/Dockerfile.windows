@@ -25,7 +25,7 @@ COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /app/${RECOGNIZER_REGISTRY_CONF_FILE}
 COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
 COPY ./pyproject.toml /app/
-RUN python.exe -m pip install --upgrade pip==25.0.0; pip install poetry==2.3.2; poetry install --no-root --only=main -E server -E transformers
+RUN pip install poetry==2.3.2; poetry install --no-root --only=main -E server -E transformers
 
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py .

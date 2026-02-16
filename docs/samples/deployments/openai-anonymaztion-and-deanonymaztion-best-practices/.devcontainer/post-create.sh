@@ -1,6 +1,5 @@
 #!/bin/bash
 
-pip install --upgrade pip==25.0.0
 python -m spacy download en_core_web_lg
 
 cd src/api
