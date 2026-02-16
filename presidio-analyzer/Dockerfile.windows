@@ -25,7 +25,7 @@ COPY ${RECOGNIZER_REGISTRY_CONF_FILE} /app/${RECOGNIZER_REGISTRY_CONF_FILE}
 COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 
 COPY ./pyproject.toml /app/
-COPY ./requirements-poetry.txt /app/
+COPY --from=pipelines requirements-poetry.txt /app/
 RUN pip install --require-hashes -r requirements-poetry.txt \
     && poetry install --no-root --only=main -E server -E transformers
 

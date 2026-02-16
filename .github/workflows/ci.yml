@@ -33,7 +33,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install ruff
-        run: pip install --no-deps --require-hashes -r .github/pipelines/requirements-ruff.txt
+        run: pip install --no-deps --require-hashes -r requirements-ruff.txt
 
       - name: Run ruff check
         run: ruff check
@@ -108,7 +108,7 @@ jobs:
 
       - name: Install Poetry
         run: |
-          python -m pip install --require-hashes -r .github/pipelines/requirements-poetry.txt
+          python -m pip install --require-hashes -r requirements-poetry.txt
 
       - name: Setup Poetry Cache Directory
         run: |
@@ -168,7 +168,7 @@ jobs:
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
         run: |
-          pip install --require-hashes -r ${{ github.workspace }}/.github/pipelines/requirements-build.txt
+          pip install --require-hashes -r ${{ github.workspace }}/requirements-build.txt
           python -m build --wheel
 
   build-platform-images:
@@ -231,6 +231,7 @@ jobs:
             --cache-to type=inline \
             --attest type=sbom \
             --attest type=provenance,mode=max \
+            --build-context pipelines=. \
             ./${{ matrix.image }}
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
