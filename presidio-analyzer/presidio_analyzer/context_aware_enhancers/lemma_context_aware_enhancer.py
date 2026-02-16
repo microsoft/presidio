@@ -24,8 +24,12 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
     :param context_prefix_count: how many words before the entity to match context
     :param context_suffix_count: how many words after the entity to match context
     :param context_matching_mode: Matching mode for context words. Options:
-        - "substring" (default): Match context words as substrings (e.g., 'card' matches 'creditcard', 'lic' matches 'duplicate'). Maintains backward compatibility.
-        - "whole_word": Match context words only as whole words (e.g., 'lic' matches 'lic' but not 'duplicate'). Prevents false positives.
+        - "substring" (default): Match context words as substrings
+          (e.g., 'card' matches 'creditcard', 'lic' matches 'duplicate').
+          Maintains backward compatibility.
+        - "whole_word": Match context words only as whole words
+          (e.g., 'lic' matches 'lic' but not 'duplicate').
+          Prevents false positives.
     """
 
     def __init__(
@@ -166,14 +170,17 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         Find words in the text which are relevant for context evaluation.
 
         A word is considered a supportive context word based on the matching mode:
-        - "substring" (default): Substring match (e.g., 'card' matches 'creditcard', 'lic' matches 'duplicate')
-        - "whole_word": Exact whole-word match (case-insensitive) (e.g., 'lic' matches 'lic' but not 'duplicate')
+        - "substring" (default): Substring match
+          (e.g., 'card' matches 'creditcard', 'lic' matches 'duplicate')
+        - "whole_word": Exact whole-word match (case-insensitive)
+          (e.g., 'lic' matches 'lic' but not 'duplicate')
 
         :param context_list words before and after the matched entity within
                a specified window size
         :param recognizer_context_list a list of words considered as
                 context keywords manually specified by the recognizer's author
-        :param matching_mode: Matching mode ('whole_word' or 'substring'). Defaults to 'substring'.
+        :param matching_mode: Matching mode ('whole_word' or 'substring').
+               Defaults to 'substring'.
         """
         word = ""
         # If the context list is empty, no need to continue
@@ -184,7 +191,8 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             result = False
 
             if matching_mode == "substring":
-                # Substring match (case-insensitive) - default behavior for backward compatibility
+                # Substring match (case-insensitive) - default behavior
+                # for backward compatibility
                 result = next(
                     (
                         True
