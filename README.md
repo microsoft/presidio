@@ -7,7 +7,7 @@
 | presidio\_image\_redactor/\_\_init\_\_.py                       |       14 |        0 |    100% |           |
 | presidio\_image\_redactor/bbox.py                               |       75 |       10 |     87% |81, 87-88, 92, 104, 125-136, 165-167 |
 | presidio\_image\_redactor/dicom\_image\_pii\_verify\_engine.py  |       95 |        1 |     99% |        99 |
-| presidio\_image\_redactor/dicom\_image\_redactor\_engine.py     |      376 |       23 |     94% |63-66, 181, 249, 308-309, 330, 367-372, 530-531, 539, 711, 758, 882, 1009-1010, 1043 |
+| presidio\_image\_redactor/dicom\_image\_redactor\_engine.py     |      381 |       24 |     94% |64-67, 182, 250, 309-310, 331, 368-373, 531-532, 540, 722, 728, 769, 893, 1020-1021, 1054 |
 | presidio\_image\_redactor/document\_intelligence\_ocr.py        |       58 |       12 |     79% |132-145, 155-156 |
 | presidio\_image\_redactor/entities/\_\_init\_\_.py              |        3 |        0 |    100% |           |
 | presidio\_image\_redactor/entities/api\_request\_convertor.py   |       34 |        4 |     88% |     61-64 |
@@ -19,7 +19,7 @@
 | presidio\_image\_redactor/image\_redactor\_engine.py            |       39 |        2 |     95% |    24, 65 |
 | presidio\_image\_redactor/ocr.py                                |       10 |        1 |     90% |        16 |
 | presidio\_image\_redactor/tesseract\_ocr.py                     |        6 |        0 |    100% |           |
-| **TOTAL**                                                       | **1069** |  **102** | **90%** |           |
+| **TOTAL**                                                       | **1074** |  **103** | **90%** |           |
 
 
 ## Setup coverage badge
