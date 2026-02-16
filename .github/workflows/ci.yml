@@ -33,7 +33,6 @@ jobs:
           python-version: '3.11'
 
       - name: Install ruff
-        # To update: pip-compile --generate-hashes -o .github/pipelines/requirements-ruff.txt .github/pipelines/requirements-ruff.in
         run: pip install --no-deps --require-hashes -r .github/pipelines/requirements-ruff.txt
 
       - name: Run ruff check
