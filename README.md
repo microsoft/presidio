@@ -17,7 +17,7 @@
 | presidio\_analyzer/chunkers/text\_chunker\_provider.py                                                           |       19 |        2 |     89% |     56-57 |
 | presidio\_analyzer/context\_aware\_enhancers/\_\_init\_\_.py                                                     |        3 |        0 |    100% |           |
 | presidio\_analyzer/context\_aware\_enhancers/context\_aware\_enhancer.py                                         |       17 |        1 |     94% |        66 |
-| presidio\_analyzer/context\_aware\_enhancers/lemma\_context\_aware\_enhancer.py                                  |       96 |        8 |     92% |83-84, 101-105, 120-121, 167, 270 |
+| presidio\_analyzer/context\_aware\_enhancers/lemma\_context\_aware\_enhancer.py                                  |      103 |        8 |     92% |97-98, 115-119, 134-135, 188, 304 |
 | presidio\_analyzer/dict\_analyzer\_result.py                                                                     |        5 |        0 |    100% |           |
 | presidio\_analyzer/entity\_recognizer.py                                                                         |       65 |        4 |     94% |90, 135, 143, 184 |
 | presidio\_analyzer/input\_validation/\_\_init\_\_.py                                                             |        4 |        0 |    100% |           |
@@ -125,7 +125,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      186 |        5 |     97% |44, 60, 149, 152, 516 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **4092** |  **217** | **95%** |           |
+| **TOTAL**                                                                                                        | **4099** |  **217** | **95%** |           |
 
 
 ## Setup coverage badge
