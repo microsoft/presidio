@@ -334,7 +334,7 @@ jobs:
           path: |
             ~/.cache/pip
             e2e-tests/env
-          key: ${{ runner.os }}-${{ matrix.platform }}-e2e-${{ hashFiles('e2e-tests/requirements-locked.txt') }}
+          key: ${{ runner.os }}-${{ matrix.platform }}-e2e-${{ hashFiles('e2e-tests/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.platform }}-e2e-
 
@@ -343,8 +343,7 @@ jobs:
         run: |
           python -m venv env
           source env/bin/activate
-          pip install --require-hashes -r requirements-locked.txt
-          pip install -e ../presidio-analyzer[langextract] -e ../presidio-anonymizer
+          pip install -r requirements.txt
           python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready
@@ -422,7 +421,7 @@ jobs:
           path: |
             ~/.cache/pip
             e2e-tests/env
-          key: ${{ runner.os }}-${{ matrix.platform }}-local-e2e-${{ hashFiles('e2e-tests/requirements-locked.txt') }}
+          key: ${{ runner.os }}-${{ matrix.platform }}-local-e2e-${{ hashFiles('e2e-tests/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.platform }}-local-e2e-
 
@@ -431,8 +430,7 @@ jobs:
         run: |
           python -m venv env
           source env/bin/activate
-          pip install --require-hashes -r requirements-locked.txt
-          pip install -e ../presidio-analyzer[langextract] -e ../presidio-anonymizer
+          pip install -r requirements.txt
           python -m spacy download en_core_web_lg
 
       - name: Wait for services to be ready

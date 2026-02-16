@@ -2,9 +2,9 @@ FROM python:3.10-slim@sha256:e508a34e5491225a76fbb9e0f43ebde1f691c6a689d096d7510
 
 WORKDIR /app
 
-COPY requirements-locked.txt .
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir --require-hashes -r requirements-locked.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
