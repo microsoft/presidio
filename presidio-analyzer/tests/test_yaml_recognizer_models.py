@@ -1,8 +1,6 @@
 """Tests for YAML recognizer configuration models."""
 
 import pytest
-from pydantic import ValidationError
-
 from presidio_analyzer.input_validation.yaml_recognizer_models import (
     BaseRecognizerConfig,
     CustomRecognizerConfig,
@@ -10,6 +8,7 @@ from presidio_analyzer.input_validation.yaml_recognizer_models import (
     PredefinedRecognizerConfig,
     RecognizerRegistryConfig,
 )
+from pydantic import ValidationError
 
 
 def test_language_context_config_valid():
@@ -597,3 +596,58 @@ def test_custom_recognizer_with_language_no_global_languages():
     assert isinstance(config.recognizers[0], CustomRecognizerConfig)
     assert config.recognizers[0].supported_language == "en"
     assert config.recognizers[0].supported_languages is None
+
+
+def test_recognizer_registry_config_custom_name_with_hf_class():
+    """Test that class_name takes priority over name for config selection."""
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        HuggingFaceRecognizerConfig,
+        RecognizerRegistryConfig,
+    )
+
+    registry_config = {
+        "recognizers": [
+            {
+                "name": "CustomKoreanWorker",
+                "class_name": "HuggingFaceNerRecognizer",
+                "type": "predefined",
+                "supported_language": "ko",
+                "supported_entities": ["PERSON"],
+                "model_name": "TestModel/Ner"
+            }
+        ]
+    }
+
+    config = RecognizerRegistryConfig(**registry_config)
+    recognizer = config.recognizers[0]
+
+    assert isinstance(recognizer, HuggingFaceRecognizerConfig)
+    assert recognizer.name == "CustomKoreanWorker"
+    assert recognizer.class_name == "HuggingFaceNerRecognizer"
+    assert recognizer.model_name == "TestModel/Ner"
+
+
+def test_config_model_map_fallback_to_predefined():
+    """Test CONFIG_MODEL_MAP falls back to Predefined for unknown class_name."""
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        PredefinedRecognizerConfig,
+        RecognizerRegistryConfig,
+    )
+
+    registry_config = {
+        "recognizers": [
+            {
+                "name": "MySpacy",
+                "class_name": "SpacyRecognizer",
+                "type": "predefined",
+                "supported_language": "en",
+            }
+        ]
+    }
+
+    config = RecognizerRegistryConfig(**registry_config)
+    recognizer = config.recognizers[0]
+
+    assert isinstance(recognizer, PredefinedRecognizerConfig)
+    assert recognizer.name == "MySpacy"
+    assert recognizer.class_name == "SpacyRecognizer"
