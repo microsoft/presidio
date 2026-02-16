@@ -24,9 +24,9 @@ RUN apt-get update \
   && apt-get install -y build-essential curl
 
 COPY ./pyproject.toml /app/
-COPY ./requirements-poetry.txt /app/
 
-RUN pip install --no-deps --require-hashes -r requirements-poetry.txt \
+RUN printf 'poetry==2.3.2 --hash=sha256:4b64412c61b4de2c7268ffebbde7d564b655a37d29c2cd82bf1b52f15c8066b4\n' \
+        | pip install --no-deps --require-hashes -r /dev/stdin \
     && poetry install --no-root --only=main -E server -E stanza
 # install nlp models specified in NLP_CONF_FILE
 COPY ./install_nlp_models.py /app/

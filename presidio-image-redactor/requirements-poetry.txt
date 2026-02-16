@@ -1,3 +1,0 @@
-# Poetry build tool - pinned with hash for supply chain security
-poetry==2.3.2 \
-    --hash=sha256:4b64412c61b4de2c7268ffebbde7d564b655a37d29c2cd82bf1b52f15c8066b4
