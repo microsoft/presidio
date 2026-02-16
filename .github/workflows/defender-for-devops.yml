@@ -45,7 +45,7 @@ jobs:
           5.0.x
           6.0.x
     - name: Run Microsoft Security DevOps
-      uses: microsoft/security-devops-action@v1 # v1
+      uses: microsoft/security-devops-action@cc007d020261b84193ccd49fa298eb8ba2408893 # v1.11.0
       id: msdo
       env:
         GDN_CHECKOV_SKIPPATH: 'docs'
@@ -55,6 +55,6 @@ jobs:
         tools: checkov, templateanalyzer, trivy
 
     - name: Upload results to Security tab
-      uses: github/codeql-action/upload-sarif@v3 # v3
+      uses: github/codeql-action/upload-sarif@f5c2471be782132e47a6e6f9c725e56730d6e9a3 # v3.32.3
       with:
         sarif_file: ${{ steps.msdo.outputs.sarifFile }}

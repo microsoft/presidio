@@ -157,7 +157,7 @@ jobs:
 
       - name: Comment PR with Coverage
         if: matrix.python-version == env.PRIMARY_PYTHON
-        uses: py-cov-action/python-coverage-comment-action@v3 # v3
+        uses: py-cov-action/python-coverage-comment-action@7188638f871f721a365d644f505d1ff3df20d683 # v3
         with:
           GITHUB_TOKEN: ${{ github.token }}
           MINIMUM_GREEN: 85
