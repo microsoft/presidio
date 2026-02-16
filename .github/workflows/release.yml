@@ -92,7 +92,7 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          pip install --require-hashes -r requirements-build.txt
+          pip install --require-hashes -r .github/pipelines/requirements-build.txt
 
       - name: Build wheel package
         working-directory: ${{ matrix.package.path }}
