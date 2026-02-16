@@ -25,8 +25,7 @@ RUN apt-get update \
   && tesseract -v
 
 COPY ./pyproject.toml /app/
-RUN pip install --require-hashes --no-deps poetry==2.3.2 \
-        --hash=sha256:4b64412c61b4de2c7268ffebbde7d564b655a37d29c2cd82bf1b52f15c8066b4 \
+RUN pip install poetry==2.3.2 \
     && poetry install --no-root --only=main -E server\
     && rm -rf $(poetry config cache-dir)
 

@@ -4,5 +4,4 @@ FROM python:3.13-slim@sha256:3de9a8d7aedbb7984dc18f2dff178a7850f16c1ae7c34ba9d7e
 RUN apt-get update \
   && apt-get install -y build-essential
 
-RUN pip install --require-hashes --no-deps poetry==2.3.2 \
-        --hash=sha256:4b64412c61b4de2c7268ffebbde7d564b655a37d29c2cd82bf1b52f15c8066b4
+RUN pip install poetry==2.3.2

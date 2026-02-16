@@ -33,8 +33,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install ruff
-        run: pip install --require-hashes --no-deps ruff==0.9.2 \
-          --hash=sha256:c547f7f256aa366834829a08375c297fa63386cbe5f1459efaf174086b564247
+        run: pip install ruff==0.9.2
 
       - name: Run ruff check
         run: ruff check
@@ -109,8 +108,7 @@ jobs:
 
       - name: Install Poetry
         run: |
-          python -m pip install --require-hashes --no-deps poetry==2.3.2 \
-            --hash=sha256:4b64412c61b4de2c7268ffebbde7d564b655a37d29c2cd82bf1b52f15c8066b4
+          python -m pip install poetry==2.3.2
 
       - name: Setup Poetry Cache Directory
         run: |
@@ -170,8 +168,7 @@ jobs:
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
         run: |
-          pip install --require-hashes --no-deps "build==1.2.2.post1" \
-            --hash=sha256:1d61c0887fa860c01971625baae8bdd338e517b836a2f70dd1f7aa3a6b2fc5b5
+          pip install build==1.2.2.post1
           python -m build --wheel
 
   build-platform-images:
