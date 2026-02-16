@@ -18,7 +18,7 @@ services:
     build:
       context: ./presidio-anonymizer
       additional_contexts:
-        pipelines: .
+        root: .
       cache_from:
         - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-anonymizer:latest
     environment:
@@ -31,7 +31,7 @@ services:
     build:
       context: ./presidio-analyzer
       additional_contexts:
-        pipelines: .
+        root: .
       cache_from:
         - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-analyzer:latest
     environment:
@@ -48,7 +48,7 @@ services:
     build:
       context: ./presidio-image-redactor
       additional_contexts:
-        pipelines: .
+        root: .
       cache_from:
         - type=registry,ref=${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-image-redactor:latest
     environment:

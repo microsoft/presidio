@@ -231,7 +231,7 @@ jobs:
             --cache-to type=inline \
             --attest type=sbom \
             --attest type=provenance,mode=max \
-            --build-context pipelines=. \
+            --build-context root=. \
             ./${{ matrix.image }}
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}

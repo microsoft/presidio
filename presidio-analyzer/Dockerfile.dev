@@ -17,5 +17,5 @@ ENV POETRY_EXTRAS=${POETRY_EXTRAS}
 RUN apt-get update \
   && apt-get install -y build-essential
 
-COPY --from=pipelines requirements-poetry.txt /tmp/requirements-poetry.txt
+COPY --from=root requirements-poetry.txt /tmp/requirements-poetry.txt
 RUN pip install --require-hashes -r /tmp/requirements-poetry.txt

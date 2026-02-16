@@ -13,5 +13,5 @@ RUN apt-get update \
 RUN apt-get update  \
 && apt-get install ffmpeg libsm6 libxext6  -y
 
-COPY --from=pipelines requirements-poetry.txt /tmp/requirements-poetry.txt
+COPY --from=root requirements-poetry.txt /tmp/requirements-poetry.txt
 RUN pip install --require-hashes -r /tmp/requirements-poetry.txt
