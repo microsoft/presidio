@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r docs/requirements-docs.txt
+          pip install --require-hashes -r docs/requirements-docs-locked.txt
       
       - name: Deploy docs
         run: |
