@@ -6,7 +6,7 @@ streamlit-tags
 pandas>=1.0.4
 python-dotenv
 st-annotated-text
-torch>=2.7.0
+torch>=2.8.0
 flair>=0.15.0
 openai
 azure-ai-textanalytics
