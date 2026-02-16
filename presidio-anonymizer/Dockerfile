@@ -12,8 +12,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 COPY ./pyproject.toml /app/
-RUN printf 'poetry==2.3.2 --hash=sha256:4b64412c61b4de2c7268ffebbde7d564b655a37d29c2cd82bf1b52f15c8066b4\n' \
-        | pip install --no-deps --require-hashes -r /dev/stdin \
+RUN pip install poetry==2.3.2 \
     && poetry install --no-root --only=main -E server \
     && rm -rf $(poetry config cache-dir)
 

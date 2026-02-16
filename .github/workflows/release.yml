@@ -92,8 +92,7 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          printf 'build==1.2.2.post1 --hash=sha256:1d61c0887fa860c01971625baae8bdd338e517b836a2f70dd1f7aa3a6b2fc5b5\n' \
-            | pip install --no-deps --require-hashes -r /dev/stdin
+          pip install build==1.2.2.post1
 
       - name: Build wheel package
         working-directory: ${{ matrix.package.path }}
