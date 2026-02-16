@@ -17,4 +17,5 @@ ENV POETRY_EXTRAS=${POETRY_EXTRAS}
 RUN apt-get update \
   && apt-get install -y build-essential
 
-RUN pip install poetry==2.3.2
+COPY ./requirements-poetry.txt /tmp/requirements-poetry.txt
+RUN pip install --no-deps --require-hashes -r /tmp/requirements-poetry.txt

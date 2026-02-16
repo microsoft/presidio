@@ -13,4 +13,5 @@ RUN apt-get update \
 RUN apt-get update  \
 && apt-get install ffmpeg libsm6 libxext6  -y
 
-RUN pip install poetry==2.3.2
+COPY ./requirements-poetry.txt /tmp/requirements-poetry.txt
+RUN pip install --no-deps --require-hashes -r /tmp/requirements-poetry.txt
