@@ -111,7 +111,7 @@ jobs:
 
       - name: Install Poetry
         run: |
-          python -m pip install poetry==2.3.2
+          python -m pip install --require-hashes -r requirements-poetry.txt
 
       - name: Setup Poetry Cache Directory
         run: |
@@ -171,7 +171,7 @@ jobs:
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
         run: |
-          pip install build==1.2.2.post1
+          pip install --require-hashes -r ${{ github.workspace }}/requirements-build.txt
           python -m build --wheel
 
   build-platform-images:
