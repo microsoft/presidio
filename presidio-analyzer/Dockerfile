@@ -25,9 +25,8 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY ./pyproject.toml /app/
-COPY --from=root requirements-poetry.txt /app/
 
-RUN pip install --require-hashes -r requirements-poetry.txt \
+RUN pip install poetry==2.3.2 \
     && poetry install --no-root --only=main -E server \
     && rm -rf $(poetry config cache-dir)
     

@@ -92,7 +92,7 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          pip install --require-hashes -r requirements-build.txt
+          pip install build==1.2.2.post1
 
       - name: Build wheel package
         working-directory: ${{ matrix.package.path }}
