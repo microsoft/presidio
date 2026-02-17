@@ -93,6 +93,15 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | IN_PASSPORT | Indian Passport Number | Pattern match, Context |
 | IN_GSTIN | The Indian Goods and Services Tax Identification Number (GSTIN) is a 15-character identifier with state code (01-37), PAN, registration number, 'Z', and checksum. | Pattern match, context, and validation |
 
+### Germany
+
+|Entity Type|Description|Detection Method|
+|--- |--- |--- |
+|DE_TAX_ID|The German Tax Identification Number (Steueridentifikationsnummer) is an 11-digit number assigned to every person registered in Germany.|Pattern match, context and checksum|
+|DE_ID_CARD|A German ID card number (Personalausweisnummer), 9-character alphanumeric identifier issued since 2010.|Pattern match and context|
+|DE_PASSPORT|A German passport number (Reisepassnummer), 9-character alphanumeric identifier.|Pattern match and context|
+|DE_DRIVER_LICENSE|A German driver license number (Führerscheinnummer), 11-character alphanumeric identifier.|Pattern match and context|
+
 ### Finland
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|

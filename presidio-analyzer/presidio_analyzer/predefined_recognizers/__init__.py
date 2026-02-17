@@ -14,6 +14,15 @@ from .country_specific.australia.au_tfn_recognizer import AuTfnRecognizer
 from .country_specific.finland.fi_personal_identity_code_recognizer import (
     FiPersonalIdentityCodeRecognizer,
 )
+
+# Germany recognizers
+from .country_specific.germany.de_driver_license_recognizer import (
+    DeDriverLicenseRecognizer,
+)
+from .country_specific.germany.de_id_card_recognizer import DeIdCardRecognizer
+from .country_specific.germany.de_passport_recognizer import DePassportRecognizer
+from .country_specific.germany.de_tax_id_recognizer import DeTaxIdRecognizer
+
 from .country_specific.india import (
     InVehicleRegistrationRecognizer,
 )
@@ -175,4 +184,8 @@ __all__ = [
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
     "KrPassportRecognizer",
+    "DeDriverLicenseRecognizer",
+    "DeIdCardRecognizer",
+    "DePassportRecognizer",
+    "DeTaxIdRecognizer",
 ]

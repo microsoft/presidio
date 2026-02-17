@@ -194,6 +194,30 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: DeTaxIdRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeIdCardRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePassportRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeDriverLicenseRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
   - name: HuggingFaceNerRecognizer
     supported_languages:
     - en
