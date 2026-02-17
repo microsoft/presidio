@@ -1,0 +1,11 @@
+supported_languages:
+  - en
+default_score_threshold: 0
+target_entities:
+  - PERSON
+  - EMAIL_ADDRESS
+  - PHONE_NUMBER
+  - LOCATION
+  - US_SSN
+  - CREDIT_CARD
+  - DATE_TIME

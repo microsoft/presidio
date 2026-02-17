@@ -176,6 +176,71 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     )
 
 
+class EdgeONNXGLiNERRecognizerConfig(PredefinedRecognizerConfig):
+    """Configuration for EdgeONNXGLiNERRecognizer."""
+
+    model_config = ConfigDict(extra="allow")
+
+    model_name: Optional[str] = Field(None, description="GLiNER model name")
+    onnx_model_file: Optional[str] = Field(None, description="ONNX model artifact path")
+    entity_mapping: Optional[Dict[str, str]] = Field(
+        None, description="GLiNER label to Presidio entity mapping"
+    )
+    threshold: Optional[float] = Field(None, description="Confidence threshold")
+    flat_ner: Optional[bool] = Field(None, description="Use flat NER mode")
+    multi_label: Optional[bool] = Field(None, description="Use multi-label mode")
+    map_location: Optional[str] = Field(None, description="Device (cpu/cuda)")
+    target_entities: Optional[List[str]] = Field(
+        None, description="Entities allowed for this recognizer"
+    )
+
+
+class ContextAwareUsSsnRecognizerConfig(PredefinedRecognizerConfig):
+    """Configuration for ContextAwareUsSsnRecognizer."""
+
+    model_config = ConfigDict(extra="allow")
+
+    min_score: Optional[float] = Field(None, description="Minimum score before gating")
+    low_score_require_context: Optional[bool] = Field(
+        None, description="Require context for low-score matches"
+    )
+    context_terms: Optional[List[str]] = Field(None, description="SSN context terms")
+    context_window_chars: Optional[int] = Field(
+        None, description="Window size for SSN context lookup"
+    )
+    target_entities: Optional[List[str]] = Field(
+        None, description="Entities allowed for this recognizer"
+    )
+
+
+class GLiNERPartialCardRecognizerConfig(PredefinedRecognizerConfig):
+    """Configuration for GLiNERPartialCardRecognizer."""
+
+    model_config = ConfigDict(extra="allow")
+
+    model_name: Optional[str] = Field(None, description="GLiNER model name")
+    onnx_model_file: Optional[str] = Field(None, description="ONNX model artifact path")
+    threshold: Optional[float] = Field(None, description="Confidence threshold")
+    flat_ner: Optional[bool] = Field(None, description="Use flat NER mode")
+    multi_label: Optional[bool] = Field(None, description="Use multi-label mode")
+    map_location: Optional[str] = Field(None, description="Device (cpu/cuda)")
+    labels: Optional[List[str]] = Field(
+        None, description="GLiNER ad-hoc labels for partial cards"
+    )
+    required_context_terms: Optional[List[str]] = Field(
+        None, description="Context required before fallback is allowed"
+    )
+    strong_context_terms: Optional[List[str]] = Field(
+        None, description="Context terms overriding blocklist"
+    )
+    blocklist_terms: Optional[List[str]] = Field(
+        None, description="Context terms that suppress fallback"
+    )
+    target_entities: Optional[List[str]] = Field(
+        None, description="Entities allowed for this recognizer"
+    )
+
+
 class CustomRecognizerConfig(BaseRecognizerConfig):
     """Configuration for custom pattern-based recognizers."""
 
@@ -280,6 +345,9 @@ class RecognizerRegistryConfig(BaseModel):
     recognizers: List[
         Union[
             HuggingFaceRecognizerConfig,
+            EdgeONNXGLiNERRecognizerConfig,
+            ContextAwareUsSsnRecognizerConfig,
+            GLiNERPartialCardRecognizerConfig,
             PredefinedRecognizerConfig,
             CustomRecognizerConfig,
             str,
@@ -463,4 +531,7 @@ class RecognizerRegistryConfig(BaseModel):
 # This allows for modular expansion without polluting the base config
 CONFIG_MODEL_MAP: Dict[str, Type[BaseModel]] = {
     "HuggingFaceNerRecognizer": HuggingFaceRecognizerConfig,
+    "EdgeONNXGLiNERRecognizer": EdgeONNXGLiNERRecognizerConfig,
+    "ContextAwareUsSsnRecognizer": ContextAwareUsSsnRecognizerConfig,
+    "GLiNERPartialCardRecognizer": GLiNERPartialCardRecognizerConfig,
 }

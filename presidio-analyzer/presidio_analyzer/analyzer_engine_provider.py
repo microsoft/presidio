@@ -92,6 +92,7 @@ class AnalyzerEngineProvider:
         registry = self._load_recognizer_registry(
             supported_languages=supported_languages, nlp_engine=nlp_engine
         )
+        self._apply_target_entities(registry=registry)
 
         analyzer = AnalyzerEngine(
             nlp_engine=nlp_engine,
@@ -140,6 +141,45 @@ class AnalyzerEngineProvider:
         registry = provider.create_recognizer_registry()
 
         return registry
+
+    def _apply_target_entities(self, registry: RecognizerRegistry) -> None:
+        target_entities = self.configuration.get("target_entities")
+        if not target_entities:
+            return
+
+        allowed = set(target_entities)
+        filtered_recognizers = []
+
+        for recognizer in registry.recognizers:
+            supported = list(getattr(recognizer, "supported_entities", []) or [])
+            if not supported:
+                filtered_recognizers.append(recognizer)
+                continue
+
+            reduced = [entity for entity in supported if entity in allowed]
+            if not reduced:
+                continue
+
+            recognizer.supported_entities = reduced
+
+            # Keep GLiNER mappings aligned with target entities when available.
+            if hasattr(recognizer, "model_to_presidio_entity_mapping"):
+                mapping = recognizer.model_to_presidio_entity_mapping
+                recognizer.model_to_presidio_entity_mapping = {
+                    label: mapped
+                    for label, mapped in mapping.items()
+                    if mapped in allowed
+                }
+                recognizer.gliner_labels = list(
+                    recognizer.model_to_presidio_entity_mapping.keys()
+                )
+
+            if hasattr(recognizer, "target_entities"):
+                recognizer.target_entities = list(allowed)
+
+            filtered_recognizers.append(recognizer)
+
+        registry.recognizers = filtered_recognizers
 
     def _load_nlp_engine(self) -> NlpEngine:
         if self.nlp_engine_conf_file:

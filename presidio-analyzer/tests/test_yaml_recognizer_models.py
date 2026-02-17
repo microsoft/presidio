@@ -4,6 +4,8 @@ import pytest
 from presidio_analyzer.input_validation.yaml_recognizer_models import (
     BaseRecognizerConfig,
     CustomRecognizerConfig,
+    EdgeONNXGLiNERRecognizerConfig,
+    GLiNERPartialCardRecognizerConfig,
     LanguageContextConfig,
     PredefinedRecognizerConfig,
     RecognizerRegistryConfig,
@@ -266,12 +268,44 @@ def test_custom_recognizer_config_invalid_score_range():
             "regex": r"\d+",
             "score": score
         }
-        with pytest.raises(ValidationError) as exc_info:
-            CustomRecognizerConfig(
-                name="test",
-                supported_entity="TEST",
-                patterns=[pattern]
-            )
+    with pytest.raises(ValidationError) as exc_info:
+        CustomRecognizerConfig(
+            name="test",
+            supported_entity="TEST",
+            patterns=[pattern]
+        )
+
+
+def test_edge_onnx_gliner_recognizer_config_parses_custom_fields():
+    config = EdgeONNXGLiNERRecognizerConfig(
+        name="GLiNERFreeTextRecognizer",
+        class_name="EdgeONNXGLiNERRecognizer",
+        supported_languages=["en"],
+        onnx_model_file="onnx/model.onnx",
+        model_name="knowledgator/gliner-pii-edge-v1.0",
+        entity_mapping={"name": "PERSON"},
+        threshold=0.45,
+    )
+
+    dumped = config.model_dump()
+    assert dumped["onnx_model_file"] == "onnx/model.onnx"
+    assert dumped["entity_mapping"] == {"name": "PERSON"}
+
+
+def test_gliner_partial_card_config_parses_context_lists():
+    config = GLiNERPartialCardRecognizerConfig(
+        name="GLiNERPartialCardRecognizer",
+        class_name="GLiNERPartialCardRecognizer",
+        supported_languages=["en"],
+        labels=["last 4 digits"],
+        required_context_terms=["credit"],
+        blocklist_terms=["invoice"],
+    )
+
+    dumped = config.model_dump()
+    assert dumped["labels"] == ["last 4 digits"]
+    assert dumped["required_context_terms"] == ["credit"]
+    assert dumped["blocklist_terms"] == ["invoice"]
 
 
 def test_custom_recognizer_config_no_patterns_or_deny_list():

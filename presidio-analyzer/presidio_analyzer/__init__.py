@@ -19,6 +19,11 @@ from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 from presidio_analyzer.analyzer_engine_provider import AnalyzerEngineProvider
+from presidio_analyzer.analyzer.gliner_edge import (
+    ContextAwareUsSsnRecognizer,
+    EdgeONNXGLiNERRecognizer,
+    GLiNERPartialCardRecognizer,
+)
 
 # Define default loggers behavior
 
@@ -51,4 +56,7 @@ __all__ = [
     "LemmaContextAwareEnhancer",
     "BatchAnalyzerEngine",
     "AnalyzerEngineProvider",
+    "EdgeONNXGLiNERRecognizer",
+    "ContextAwareUsSsnRecognizer",
+    "GLiNERPartialCardRecognizer",
 ]

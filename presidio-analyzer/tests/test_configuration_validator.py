@@ -467,3 +467,23 @@ def test_analyzer_config_all_fields():
     validated = ConfigurationValidator.validate_analyzer_configuration(valid_config)
     assert validated == valid_config
 
+
+def test_analyzer_config_with_target_entities():
+    valid_config = {
+        "supported_languages": ["en"],
+        "target_entities": ["PERSON", "EMAIL_ADDRESS"],
+    }
+
+    validated = ConfigurationValidator.validate_analyzer_configuration(valid_config)
+    assert validated == valid_config
+
+
+def test_analyzer_config_with_invalid_target_entities():
+    invalid_config = {
+        "supported_languages": ["en"],
+        "target_entities": "PERSON",
+    }
+
+    with pytest.raises(ValueError) as exc_info:
+        ConfigurationValidator.validate_analyzer_configuration(invalid_config)
+    assert "target_entities must be a list" in str(exc_info.value)

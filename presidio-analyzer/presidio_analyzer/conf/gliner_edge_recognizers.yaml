@@ -1,0 +1,118 @@
+supported_languages:
+  - en
+global_regex_flags: 26
+recognizers:
+  - name: SpacyRecognizer
+    type: predefined
+    supported_languages:
+      - en
+    enabled: false
+
+  - name: GLiNERFreeTextRecognizer
+    class_name: EdgeONNXGLiNERRecognizer
+    type: predefined
+    supported_languages:
+      - en
+    model_name: knowledgator/gliner-pii-edge-v1.0
+    onnx_model_file: onnx/model.onnx
+    threshold: 0.45
+    flat_ner: true
+    multi_label: false
+    map_location: cpu
+    entity_mapping:
+      name: PERSON
+      address: LOCATION
+      organization: ORGANIZATION
+      company: ORGANIZATION
+
+  - name: GLiNERDobRecognizer
+    class_name: EdgeONNXGLiNERRecognizer
+    type: predefined
+    supported_languages:
+      - en
+    model_name: knowledgator/gliner-pii-edge-v1.0
+    onnx_model_file: onnx/model.onnx
+    threshold: 0.25
+    flat_ner: true
+    multi_label: false
+    map_location: cpu
+    entity_mapping:
+      dob: DATE_TIME
+      date of birth: DATE_TIME
+
+  - name: EmailRecognizer
+    type: predefined
+    supported_languages:
+      - en
+
+  - name: PhoneRecognizer
+    type: predefined
+    supported_languages:
+      - en
+
+  - name: ContextAwareUsSsnRecognizer
+    type: predefined
+    supported_languages:
+      - en
+    min_score: 0.5
+    low_score_require_context: true
+    context_terms: [ssn, social security]
+    context_window_chars: 80
+
+  - name: CreditCardRecognizer
+    type: predefined
+    supported_languages:
+      - language: en
+        context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
+
+  - name: GLiNERPartialCardRecognizer
+    type: predefined
+    supported_languages:
+      - en
+    model_name: knowledgator/gliner-pii-edge-v1.0
+    onnx_model_file: onnx/model.onnx
+    threshold: 0.25
+    flat_ner: true
+    multi_label: false
+    map_location: cpu
+    labels:
+      - partial credit card
+      - credit card ending digits
+      - last 4 digits
+    required_context_terms:
+      - credit
+      - debit
+      - payment
+      - charge
+      - charged
+      - transaction
+      - billing
+      - statement
+      - fraud
+      - mastercard
+      - amex
+    strong_context_terms:
+      - credit
+      - debit
+      - payment
+      - charge
+      - charged
+      - transaction
+      - billing
+      - statement
+      - fraud
+      - mastercard
+      - amex
+    blocklist_terms:
+      - invoice
+      - order
+      - ticket
+      - reservation
+      - account
+      - pin
+      - otp
+      - year
+      - code
+      - passport
+      - green card
+      - travel visa

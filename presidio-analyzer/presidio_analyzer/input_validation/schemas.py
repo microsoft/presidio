@@ -97,6 +97,7 @@ class ConfigurationValidator:
             "default_score_threshold",
             "nlp_configuration",
             "recognizer_registry",
+            "target_entities",
         }
 
         # Check for unknown keys
@@ -128,5 +129,14 @@ class ConfigurationValidator:
             ConfigurationValidator.validate_recognizer_registry_configuration(
                 config["recognizer_registry"]
             )
+
+        if "target_entities" in config:
+            target_entities = config["target_entities"]
+            if not isinstance(target_entities, list) or any(
+                not isinstance(entity, str) for entity in target_entities
+            ):
+                raise ValueError(
+                    "target_entities must be a list of entity name strings"
+                )
 
         return config
