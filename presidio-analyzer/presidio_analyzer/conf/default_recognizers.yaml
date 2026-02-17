@@ -72,6 +72,12 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: UkPostcodeRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
   - name: SgFinRecognizer
     supported_languages: 
     - en
