@@ -23,6 +23,13 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
     :param min_score_with_context_similarity: Minimum confidence score
     :param context_prefix_count: how many words before the entity to match context
     :param context_suffix_count: how many words after the entity to match context
+    :param context_matching_mode: Matching mode for context words. Options:
+        - "substring" (default): Match context words as substrings
+          (e.g., 'card' matches 'creditcard', 'lic' matches 'duplicate').
+          Maintains backward compatibility.
+        - "whole_word": Match context words only as whole words
+          (e.g., 'lic' matches 'lic' but not 'duplicate').
+          Prevents false positives.
     """
 
     def __init__(
@@ -31,6 +38,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         min_score_with_context_similarity: float = 0.4,
         context_prefix_count: int = 5,
         context_suffix_count: int = 0,
+        context_matching_mode: str = "substring",
     ):
         super().__init__(
             context_similarity_factor=context_similarity_factor,
@@ -38,6 +46,12 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             context_prefix_count=context_prefix_count,
             context_suffix_count=context_suffix_count,
         )
+        if context_matching_mode not in ["whole_word", "substring"]:
+            raise ValueError(
+                f"context_matching_mode must be one of: 'whole_word', 'substring'. "
+                f"Got: {context_matching_mode}"
+            )
+        self.context_matching_mode = context_matching_mode
 
     def enhance_using_context(
         self,
@@ -131,7 +145,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             surrounding_words.extend(context)
 
             supportive_context_word = self._find_supportive_word_in_context(
-                surrounding_words, recognizer.context
+                surrounding_words, recognizer.context, self.context_matching_mode
             )
             if supportive_context_word != "":
                 result.score += self.context_similarity_factor
@@ -148,18 +162,25 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
 
     @staticmethod
     def _find_supportive_word_in_context(
-        context_list: List[str], recognizer_context_list: List[str]
+        context_list: List[str],
+        recognizer_context_list: List[str],
+        matching_mode: str = "substring",
     ) -> str:
         """
         Find words in the text which are relevant for context evaluation.
 
-        A word is considered a supportive context word if there's exact match
-        between a keyword in context_text and any keyword in context_list.
+        A word is considered a supportive context word based on the matching mode:
+        - "substring" (default): Substring match
+          (e.g., 'card' matches 'creditcard', 'lic' matches 'duplicate')
+        - "whole_word": Exact whole-word match (case-insensitive)
+          (e.g., 'lic' matches 'lic' but not 'duplicate')
 
         :param context_list words before and after the matched entity within
                a specified window size
         :param recognizer_context_list a list of words considered as
                 context keywords manually specified by the recognizer's author
+        :param matching_mode: Matching mode ('whole_word' or 'substring').
+               Defaults to 'substring'.
         """
         word = ""
         # If the context list is empty, no need to continue
@@ -167,17 +188,30 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             return word
 
         for predefined_context_word in recognizer_context_list:
-            # result == true only if any of the predefined context words
-            # is found exactly or as a substring in any of the collected
-            # context words
-            result = next(
-                (
-                    True
-                    for keyword in context_list
-                    if predefined_context_word in keyword
-                ),
-                False,
-            )
+            result = False
+
+            if matching_mode == "substring":
+                # Substring match (case-insensitive) - default behavior
+                # for backward compatibility
+                result = next(
+                    (
+                        True
+                        for keyword in context_list
+                        if predefined_context_word.lower() in keyword.lower()
+                    ),
+                    False,
+                )
+            elif matching_mode == "whole_word":
+                # Exact whole-word match (case-insensitive)
+                result = next(
+                    (
+                        True
+                        for keyword in context_list
+                        if predefined_context_word.lower() == keyword.lower()
+                    ),
+                    False,
+                )
+
             if result:
                 logger.debug("Found context keyword '%s'", predefined_context_word)
                 word = predefined_context_word
