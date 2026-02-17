@@ -60,6 +60,7 @@ from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 # UK recognizers
 from .country_specific.uk.uk_nhs_recognizer import NhsRecognizer
 from .country_specific.uk.uk_nino_recognizer import UkNinoRecognizer
+from .country_specific.uk.uk_postcode_recognizer import UkPostcodeRecognizer
 
 # US recognizers
 from .country_specific.us.aba_routing_recognizer import AbaRoutingRecognizer
@@ -84,6 +85,7 @@ from .generic.url_recognizer import UrlRecognizer
 
 # NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
+from .ner.huggingface_ner_recognizer import HuggingFaceNerRecognizer
 
 # NLP Engine recognizers
 from .nlp_engine_recognizers.spacy_recognizer import SpacyRecognizer
@@ -152,6 +154,7 @@ __all__ = [
     "ItPassportRecognizer",
     "InPanRecognizer",
     "GLiNERRecognizer",
+    "HuggingFaceNerRecognizer",
     "PlPeselRecognizer",
     "AzureAILanguageRecognizer",
     "InAadhaarRecognizer",
@@ -163,6 +166,7 @@ __all__ = [
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
     "UkNinoRecognizer",
+    "UkPostcodeRecognizer",
     "AzureHealthDeidRecognizer",
     "KrBrnRecognizer",
     "KrRrnRecognizer",
