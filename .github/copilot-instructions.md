@@ -2,19 +2,375 @@
 
 Microsoft Presidio is a Python-based data protection and de-identification SDK with multiple components for detecting and anonymizing PII (Personally Identifiable Information) in text and images.
 
-## Code Review Philosophy
+## Core Philosophy
+
+**Data Privacy is Paramount** - This is a PII detection and anonymization system used in sensitive contexts. Security and correctness are non-negotiable.
+
+**Key Principles:**
+- **Accuracy First**: False negatives (missed PII) and false positives (incorrect detections) both damage trust
+- **Security by Default**: Never log PII values, use non-reversible anonymization, validate all inputs
+- **Cross-Component Awareness**: Presidio is a multi-component system - changes ripple across boundaries
+- **Stateless Design**: Presidio is designed for scalability - avoid adding unnecessary state
+- **Documentation Integrity**: Code and docs must stay synchronized - outdated docs are dangerous
+
+---
+
+## Part 1: Implementation Guidelines
+
+Use these guidelines when **generating or writing code** for Presidio.
+
+### Presidio Architecture Patterns
+
+
+
+**Data Flow (Unidirectional):**
+```
+Analyzer (detect PII) → Anonymizer (transform PII) → Output
+    ↓
+nlp_engine → recognizers → context
+```
+
+**Design Patterns:**
+- **Registry Pattern**: `RecognizerRegistry` for dynamic recognizer management
+- **Provider Pattern**: `NlpEngineProvider`, `RecognizerRegistryProvider` for configuration
+
+### Implementing New Recognizers
+
+**1. Choose the Right Base Class:**
+```python
+from presidio_analyzer import PatternRecognizer, LocalRecognizer, RemoteRecognizer
+
+# For regex-based detection
+class MyPatternRecognizer(PatternRecognizer):
+    pass
+
+# For custom logic (NLP, ML)
+class MyCustomRecognizer(LocalRecognizer):
+    def load(self): ...
+    def analyze(self, text, entities, nlp_artifacts): ...
+
+# For calling remote services
+class MyRemoteRecognizer(RemoteRecognizer):
+    def analyze(self, text, entities, nlp_artifacts): ...
+```
+
+**2. Predefined Recognizers Location Matters:**
+- Country-specific: `presidio-analyzer/presidio_analyzer/predefined_recognizers/country_specific/{country}/`
+- Generic patterns: `.../predefined_recognizers/generic/`
+- NLP/ML-based: `.../predefined_recognizers/nlp_engine_recognizers/` or `.../ner/`
+- Third-party: `.../predefined_recognizers/third_party/`
+
+**3. Pattern Design Best Practices:**
+```python
+# ❌ BAD: Too broad - matches month names as persons
+pattern = r"\b[A-Z][a-z]+\b"
+
+# ✅ GOOD: Specific pattern with context
+PATTERNS = [
+    Pattern(
+        "SSN", 
+        r"\b\d{3}-\d{2}-\d{4}\b",
+        0.3  # Low base score, context will boost
+    )
+]
+
+CONTEXT = ["ssn", "social security", "tax id"]
+```
+
+**4. Document Pattern Sources:**
+```python
+"""
+Recognizes US Social Security Numbers.
+
+Pattern based on SSA Publication No. 05-10633:
+https://www.ssa.gov/history/ssn/geocard.html
+
+Validation uses SSN format rules: AAA-GG-SSSS
+- AAA: Area number (001-899, excluding 666)
+- GG: Group number (01-99)
+- SSSS: Serial number (0001-9999)
+"""
+```
+
+**5. Required Configuration Updates:**
+```python
+# Update all of these:
+# 1. presidio_analyzer/predefined_recognizers/__init__.py
+from .country_specific.us.my_recognizer import MyRecognizer
+__all__ = [..., "MyRecognizer"]
+
+# 2. presidio_analyzer/predefined_recognizers/country_specific/us/__init__.py  
+from .my_recognizer import MyRecognizer
+__all__ = [..., "MyRecognizer"]
+
+# 3. presidio_analyzer/conf/default_recognizers.yaml
+recognizers:
+  - name: MyRecognizer
+    supported_languages: ["en"]
+    type: predefined
+    enabled: false  # Country-specific defaults to false
+
+# 4. docs/supported_entities.md (add row to appropriate table)
+# 5. CHANGELOG.md (under "Unreleased" section)
+```
+
+**6. Comprehensive Test Coverage:**
+```python
+@pytest.mark.parametrize("text, expected_len, expected_positions", [
+    # True positives - valid formats
+    ("SSN: 123-45-6789", 1, ((5, 16),)),
+    ("My SSN is 123-45-6789", 1, ((10, 21),)),
+    
+    # True negatives - invalid formats  
+    ("SSN: 000-00-0000", 0, ()),  # Invalid area
+    ("SSN: 666-12-3456", 0, ()),  # Excluded area
+    
+    # Boundary testing - embedded in text
+    ("Contact: 123-45-6789 for info", 1, ((9, 20),)),
+    
+    # False positive prevention
+    ("ISBN: 123-45-6789", 0, ()),  # Different context
+])
+def test_ssn_detection(text, expected_len, expected_positions, recognizer):
+    results = recognizer.analyze(text, ["US_SSN"])
+    assert len(results) == expected_len
+    for result, (start, end) in zip(results, expected_positions):
+        assert result.start == start
+        assert result.end == end
+```
+
+### Implementing New Anonymizers (Operators)
+
+**1. Implement the Operator Interface:**
+```python
+from presidio_anonymizer.operators import Operator, OperatorType
+
+class MyOperator(Operator):
+    """Custom anonymization operator."""
+    
+    def operate(self, text: str, params: dict = None) -> str:
+        """Transform the detected PII."""
+        # Ensure non-reversible transformation
+        import uuid
+        return f"<{params.get('entity_type', 'REDACTED')}_{uuid.uuid4().hex[:8]}>"
+    
+    def validate(self, params: dict = None) -> None:
+        """Validate operator parameters before use."""
+        if params and 'entity_type' not in params:
+            raise ValueError("entity_type is required")
+    
+    def operator_name(self) -> str:
+        return "my_operator"
+    
+    def operator_type(self) -> OperatorType:
+        return OperatorType.Anonymize
+```
+
+**2. Security Checklist:**
+- ✅ **Non-reversible**: Cannot recover original PII from anonymized output
+- ✅ **Entropy**: Uses random/unpredictable values (not deterministic hashing)
+- ✅ **No PII leakage**: Doesn't preserve PII characteristics (length, format)
+
+```python
+# ❌ BAD: Reversible via rainbow tables
+def operate(self, text, params):
+    return hashlib.md5(text.encode()).hexdigest()
+
+# ✅ GOOD: Non-reversible with entropy  
+def operate(self, text, params):
+    return f"<{params['entity_type']}_{uuid.uuid4().hex[:8]}>"
+```
+
+**3. Test Anonymization Quality:**
+```python
+def test_operator_is_non_reversible():
+    """Verify same input produces different output."""
+    operator = MyOperator()
+    result1 = operator.operate("John Doe", {"entity_type": "PERSON"})
+    result2 = operator.operate("John Doe", {"entity_type": "PERSON"})
+    assert result1 != result2  # Different each time
+
+def test_operator_preserves_structure():
+    """Verify anonymized text maintains sentence structure."""
+    text = "Email: john@example.com, Phone: 555-1234"
+    # After anonymization
+    expected = "Email: <EMAIL_xxx>, Phone: <PHONE_yyy>"
+    # Structure preserved, PII replaced
+```
+
+### API Development
+
+**1. Maintain Backward Compatibility:**
+```python
+# ❌ BAD: Breaking change
+def analyze(text: str, language: str, entities: List[str]):
+    ...
+
+# ✅ GOOD: Optional parameter with default
+def analyze(
+    text: str, 
+    language: str, 
+    entities: Optional[List[str]] = None
+) -> List[RecognizerResult]:
+    ...
+```
+
+**2. Required Updates for API Changes:**
+```bash
+# 1. Update OpenAPI schema
+docs/api-docs/api-docs.yml
+
+# 2. Add E2E tests  
+e2e-tests/tests/test_new_endpoint.py
+
+# 3. Add usage example
+docs/samples/python/new_feature_example.ipynb
+
+# 4. Update CHANGELOG.md
+```
+
+### Cross-Component Changes
+
+**When modifying shared interfaces:**
+
+1. **Identify all consumers:**
+```python
+# RecognizerResult is consumed by:
+# - presidio-anonymizer (takes analyzer results)
+# - presidio-cli (displays results)
+# - presidio-structured (processes tabular data)
+# - docs/samples/* (user examples)
+```
+
+2. **Update all components in same changeset:**
+```python
+# If adding field to RecognizerResult:
+# 1. presidio-analyzer: Add field and populate
+# 2. presidio-anonymizer: Handle new field (or ignore safely)
+# 3. presidio-cli: Display new field (optional)
+# 4. Tests: Update expectations
+# 5. Docs: Document new field
+# 6. e2e-tests: Add integration test for new field
+```
+
+3. **Respect component boundaries:**
+```python
+# ❌ BAD: Anonymizer importing analyzer internals
+from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
+
+# ✅ GOOD: Use public interfaces only
+from presidio_analyzer import RecognizerResult
+```
+
+### Performance Optimization
+
+**1. Cache Compiled Regexes:**
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=128)
+def _compile_pattern(pattern_str: str) -> re.Pattern:
+    return re.compile(pattern_str, re.IGNORECASE)
+```
+
+**2. Avoid Catastrophic Backtracking:**
+```python
+# ❌ BAD: O(2^n) on "aaaa...ab"
+pattern = r"(a+)+"
+
+# ✅ GOOD: Atomic grouping
+pattern = r"(?>a+)"
+```
+
+**3. Batch NLP Processing:**
+```python
+# ❌ BAD: Process one at a time
+for text in texts:
+    doc = nlp(text)
+    ...
+
+# ✅ GOOD: Use spaCy pipe for batching
+for doc in nlp.pipe(texts, batch_size=50):
+    ...
+```
+
+### Testing Requirements
+
+**Test Naming Convention:**
+```python
+# ✅ GOOD: Descriptive, intention-revealing
+def test_when_valid_ssn_then_detect_with_correct_boundaries()
+def test_when_invalid_checksum_then_no_match()
+def test_when_context_missing_then_low_confidence()
+
+# ❌ BAD: Non-descriptive
+def test_ssn_1()
+def test_case2()
+```
+
+### Documentation Requirements
+
+**1. Required Documentation Updates:**
+```markdown
+When adding a feature, update ALL of:
+
+✅ CHANGELOG.md - Under "Unreleased" section
+✅ docs/supported_entities.md - For new entity types  
+✅ docs/api-docs/api-docs.yml - For API changes
+✅ README.md - For major features
+✅ Docstrings - All public classes/methods
+✅ docs/samples/ - Usage examples for complex features
+✅ Update docstrings based on the reST docstring format (:param:, :return:, :raises:, :example:)
+```
+
+**2. Pattern Source Documentation:**
+```python
+# In recognizer docstring or comments
+"""
+Pattern based on Royal Mail PAF specification:
+https://www.royalmail.com/find-a-postcode
+
+UK postcodes follow 6 formats:
+- A9 9AA   (e.g., M1 1AA)
+- A99 9AA  (e.g., M60 1NW)  
+- AA9 9AA  (e.g., CR2 6XH)
+- AA99 9AA (e.g., DN55 1PT)
+- A9A 9AA  (e.g., W1A 1HQ)
+- AA9A 9AA (e.g., EC1A 1BB)
+
+Plus special case: GIR 0AA
+"""
+```
+
+---
+
+## Part 2: Code Review Guidelines
+
+Use these guidelines when **reviewing pull requests** for Presidio.
+
+### Review Philosophy
 
 * Only comment when you have HIGH CONFIDENCE (>80%) that an issue exists
 * Be concise: one sentence per comment when possible
 * Focus on actionable feedback, not observations
+* Data privacy is paramount - this is a PII detection/anonymization system
+* All modules in Presidio which process records are stateless - avoid suggesting stateful solutions
+* Presidio is a multi-component system - consider cross-component impacts of changes
+* Don't reinvent the wheel - check for existing patterns, functions and best practices in the codebase before suggesting new approaches
 
-## Review Priorities
+### Review Priorities
 
 Focus on issues in this order of importance:
 
 ### 🔴 CRITICAL (Always Flag)
 
 #### 1. Security & Privacy Vulnerabilities
+
+**PII-Specific Risks:**
+- **PII leakage in logs, error messages, or debug output** - Never log detected PII values, only entity types and positions
+- **Regex injection vulnerabilities** - User-provided patterns must be validated before compilation
+- **Inadequate anonymization** - Reversible transformations, weak masking, deterministic fake data without proper context
+- **Side-channel leaks** - Timing attacks revealing PII presence, cache-based information disclosure
 
 **General Security:**
 - Hardcoded secrets, API keys, credentials (especially for NLP model endpoints, cloud services)
@@ -23,16 +379,14 @@ Focus on issues in this order of importance:
 - Missing input validation on API endpoints (analyzer, anonymizer, image-redactor)
 - Path traversal in file operations
 - Insecure random number generation for fake data
-- PII leakage in logs, error messages, or debug output - Never log detected PII values, only entity types and positions
 
 #### 2. Correctness & Logic Errors
 
 **PII Detection Accuracy:**
-- **False positives** - E.g. overly broad regex patterns matching non-PII with high confidence scores
-- **False negatives** - E.g. limited regex coverage missing valid PII formats, not handling common variations (e.g., "SSN: 123-45-6789" vs "123456789")
-- **Incorrect entity boundaries** - E.g. off-by-one errors in start/end positions causing malformed anonymization
-- **Context handling errors** - E.g. not respecting sentence/document boundaries, locale-specific formats
-- **Confidence score miscalculation** - E.g. scores outside [0.0, 1.0], incorrect aggregation of multiple detection methods
+- **False positives** - Overly broad regex patterns matching non-PII or other entity types with med/high confidence
+- **False negatives** - Missing valid cases for a given entity type, especially edge cases or common variations
+- **Incorrect entity boundaries** - Off-by-one errors in start/end positions causing malformed anonymization
+- **Confidence score miscalculation** - Scores outside [0.0, 1.0], incorrect aggregation of multiple detection methods
 
 **General Logic:**
 - Race conditions in multi-threaded analysis
@@ -61,7 +415,7 @@ Focus on issues in this order of importance:
 #### 4. Cross-Component Alignment & Integration
 
 **Respect the Natural Data Flow:**
-- Presidio follows a unidirectional flow: Analyzer → Anonymizer → Output. Within the analyzer, there's a natural flow from nlp_engine → recognizers → context.
+- Presidio follows a unidirectional flow: Analyzer → Anonymizer → Output
 - Downstream components (CLI, structured, image-redactor) consume analyzer/anonymizer, never the reverse
 - Breaking this flow creates circular dependencies and tight coupling
 - Changes should propagate forward through the data pipeline, not backward
@@ -122,6 +476,8 @@ Focus on issues in this order of importance:
 - **Missing tests for new recognizers** - Must include: true positives, true negatives, edge cases, false positive scenarios, entity within larger context
 - **No validation of entity boundaries** - Tests only check entity type, not exact start/end positions
 - **Missing multilingual tests** - Recognizers claiming multi-language support without language-specific tests
+- **Anonymization reversibility not tested** - No verification that anonymized data can't be de-anonymized
+- **Missing E2E analyzer→anonymizer tests** - Testing components in isolation without integration validation
 
 **General Testing:**
 - Missing tests for critical business logic (PII detection, anonymization)
@@ -163,7 +519,7 @@ Focus on issues in this order of importance:
 - Missing docstrings on public recognizer/operator classes
 - Incomplete type hints on public APIs (especially `analyze()`, `anonymize()` signatures)
 
-## What NOT to Flag
+### What NOT to Flag
 
 **DO NOT comment on these (handled by automated tools):**
 
@@ -179,109 +535,7 @@ Focus on issues in this order of importance:
 - Minor refactoring suggestions that don't fix bugs or improve accuracy
 - Unnecessary abstractions "for future flexibility" in recognizers
 
-## Presidio-Specific Review Guidelines
-
-### When Reviewing Recognizers (PII Detectors)
-
-**Location Validation:**
-```
-✅ GOOD: Country-specific in presidio-analyzer/presidio_analyzer/predefined_recognizers/country_specific/us/
-✅ GOOD: Generic patterns in .../predefined_recognizers/generic/
-❌ BAD: US SSN recognizer in generic/ (should be country_specific/us/)
-```
-
-**Pattern Specificity:**
-```python
-# 🔴 CRITICAL: Too broad - matches "May", "April" as person names
-pattern = r"\b[A-Z][a-z]+\b"
-
-# ✅ GOOD: Specific pattern with context validation
-pattern = r"\b(?:Mr\.|Mrs\.|Dr\.)\s+[A-Z][a-z]+\b"  # Title + name
-# Validate with NLP context in analyze() method
-```
-
-**Configuration Completeness:**
-```yaml
-# When adding recognizer, must update conf/default_recognizers.yaml:
-- name: "AuMedicareRecognizer"
-  supported_languages: ["en"]
-  enabled: false  # Country-specific must default to false
-```
-
-**Test Coverage Requirements:**
-```python
-# Every recognizer MUST have tests for:
-def test_valid_au_medicare_number_returns_match()  # True positive
-def test_invalid_checksum_returns_no_match()  # True negative  
-def test_boundary_detection_exact_positions()  # Exact spans
-def test_common_false_positive_cases()  # e.g., phone numbers mistaken for medicare
-```
-
-### When Reviewing Anonymizers (PII Operators)
-
-**Reversibility Checks:**
-```python
-# 🔴 CRITICAL: Deterministic mapping allows de-anonymization
-def anonymize(text, entity):
-    return hashlib.md5(text.encode()).hexdigest()  # Rainbow table attack
-
-# ✅ GOOD: Non-reversible with entropy
-def anonymize(text, entity):
-    return f"<{entity.entity_type}_{uuid.uuid4().hex[:8]}>"
-```
-
-**Consistency Validation:**
-```python
-# 🟡 Important: Verify anonymized text maintains valid structure
-original = "Email: john@example.com, Phone: 555-1234"
-anonymized = "Email: <EMAIL_ADDRESS>, Phone: <PHONE_NUMBER>"  # Structure preserved
-```
-
-### When Reviewing API Changes
-
-**Backward Compatibility:**
-```python
-# 🔴 CRITICAL: Breaking change to public API
-# OLD: def analyze(text: str, language: str) -> List[RecognizerResult]
-# NEW: def analyze(text: str, language: str, entities: List[str]) -> List[RecognizerResult]
-
-# ✅ GOOD: Backward compatible with default
-def analyze(text: str, language: str, entities: Optional[List[str]] = None) -> List[RecognizerResult]
-```
-
-**Schema Versioning:**
-```python
-# 🟡 Important: REST API schema changes need version bump
-# Update api-docs/api-docs.yml with new fields
-# Mark old fields as deprecated, don't remove immediately
-```
-
-## Repository-Specific Context
-
-### Technology Stack
-- **Python 3.9-3.12** - Must support all versions (use `list[str]` or `List[str]`, both valid)
-- **Poetry** - Package manager, not pip
-- **Ruff** - Linting and formatting (replaces flake8, black, isort)
-- **spaCy** - Default NLP engine (en_core_web_lg for production)
-- **Docker** - Deployment via mcr.microsoft.com registry
-
-### Component Architecture
-```
-presidio-analyzer     → PII detection engine (spaCy, regex, NLP)
-presidio-anonymizer   → PII transformation engine (operators, deanonymizers)
-presidio-cli          → Command-line interface (depends on analyzer)
-presidio-image-redactor → Image PII redaction (OCR + analyzer + image ops)
-presidio-structured   → Tabular data PII handling (pandas integration)
-```
-
-### Critical Files for Cross-Component Changes
-- `RecognizerResult` - Shared analyzer output format
-- `OperatorConfig` - Anonymizer operator configuration
-- `conf/default_recognizers.yaml` - System-wide recognizer registry
-- `docs/supported_entities.md` - Public entity type documentation
-- API schemas in `docs/api-docs/`
-
-## Review Tone & Approach
+### Review Examples
 
 **Be specific and actionable:**
 ```
@@ -306,68 +560,28 @@ Use atomic grouping: (?>a+)b or possessive quantifier a++b"
 
 **Acknowledge good practices:**
 - Well-tested recognizers with comprehensive edge case coverage
-- Proper use of the `validate` and `invalidate` methods and good context words
+- Proper use of context validation (NLP + regex)
 - Good error handling with informative messages
 - Performance optimizations (regex caching, batch processing)
 
-## Code Generation Guidelines
+---
 
-When generating code for Presidio:
+## Part 3: Repository-Specific Context
 
-### New Recognizers
-1. **Start with template**: Inherit from `LocalRecognizer`, `RemoteRecognizer` or `PatternRecognizer`
-2. **Use specific patterns**: Avoid overly broad regex that causes false positives
-3. **Document pattern sources**: Link to official standards (ISO, government docs)
-4. **Comprehensive tests**: Include all four categories (TP, TN, boundaries, false positives)
-5. **Update configuration**: Add to the respective `__init__.py` files, `default_recognizers.yaml` and `supported_entities.md`
+### Technology Stack
+- **Python** - Must support all versions
+- **Poetry** - Package manager, not pip
+- **Ruff** - Linting and formatting (replaces flake8, black, isort)
+- **spaCy** - Default NLP engine (en_core_web_lg for production), although one can use other NLP engines via provider pattern
+- **Docker** - Deployment via mcr.microsoft.com registry
 
-### New Operators
-1. **Implement interface**: All operators need `operate()` and `validate()` methods
-2. **Handle edge cases**: Empty strings, unicode, special characters
-3. **Non-reversible by default**: Unless explicitly building deanonymization support
-4. **Validate params**: Check operator config in `validate()` before `operate()`
-5. **Test anonymization quality**: Verify output doesn't leak original PII
 
-### API Endpoints
-1. **Maintain backward compatibility**: Use optional parameters, not required
-2. **Validate inputs**: Check text length, entity types, language codes
-3. **Update OpenAPI schema**: Modify `docs/api-docs/api-docs.yml`
-4. **Add E2E tests**: New endpoints need tests in `e2e-tests/`
-5. **Document in samples**: Add usage example to `docs/samples/`
-
-### Performance Optimization
-1. **Cache compiled regexes**: Use `@lru_cache` for pattern compilation
-2. **Batch NLP processing**: Process multiple texts in one spaCy pipe
-3. **Lazy load models**: Don't load transformers unless explicitly requested
-4. **Profile before optimizing**: Use `pytest-benchmark` for recognizer performance tests
-
-## Testing Strategy
-
-### Required for All PRs
-```bash
-# Lint check (must pass)
-ruff check .
-
-# Component tests (based on changes)
-cd presidio-analyzer && poetry run pytest -xvv  # If analyzer changed
-cd presidio-anonymizer && poetry run pytest -xvv  # If anonymizer changed
-
-# E2E tests (for cross-component changes)
-# First start services: docker-compose up -d
-cd e2e-tests && pytest -v
-```
-
-### Test Naming Convention
-```python
-# ✅ GOOD: Descriptive, follows convention
-def test_when_valid_ssn_then_detect_with_correct_boundaries()
-def test_when_invalid_checksum_then_no_match()
-def test_when_overlapping_entities_then_merge_by_score()
-
-# ❌ BAD: Non-descriptive
-def test_ssn()
-def test_case1()
-```
+### Critical Files for Cross-Component Changes
+- `RecognizerResult` - Shared analyzer output format
+- `OperatorConfig` - Anonymizer operator configuration
+- `conf/default_recognizers.yaml` - System-wide recognizer registry
+- `docs/supported_entities.md` - Public entity type documentation
+- API schemas in `docs/api-docs/`
 
 ## Quick Reference Commands
 
