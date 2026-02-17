@@ -63,8 +63,9 @@ gliner = [
 ]
 medical-ner = [
     "transformers",
-    "torch",
+    "accelerate",
     "huggingface_hub",
+    "torch",
 ]
 langextract = [
     "langextract (>=1.0.0)",
