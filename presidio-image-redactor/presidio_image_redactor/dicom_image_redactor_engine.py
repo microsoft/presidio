@@ -10,6 +10,7 @@ import pydicom
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
 from PIL import Image, ImageOps
 from presidio_analyzer import PatternRecognizer
+from pydicom.multival import MultiValue
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 
 from presidio_image_redactor import (
@@ -646,18 +647,29 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _process_names(cls, text_metadata: list, is_name: list) -> list:
         """Process names to have multiple iterations in our PHI list.
 
-        :param metadata_text: List of all the instance's element values
+        :param text_metadata: List of all the instance's element values
         (excluding pixel data).
         :param is_name: True if the element is specified as being a name.
 
-        :return: Metadata text with additional name iterations appended.
+        :return: List of PHI strings for elements where is_name is True,
+        with additional name augmentations appended.
         """
-        phi_list = text_metadata.copy()
+        phi_list = []
 
         for i in range(0, len(text_metadata)):
             if is_name[i] is True:
-                original_text = str(text_metadata[i])
-                phi_list += cls.augment_word(original_text)
+                value = text_metadata[i]
+                # Flatten MultiValue/list/tuple into individual elements
+                items = (
+                    value
+                    if isinstance(value, (MultiValue, list, tuple))
+                    else [value]
+                )
+                for item in items:
+                    text = str(item).strip()
+                    if text:
+                        phi_list.append(text)
+                        phi_list += cls.augment_word(text)
 
         return phi_list
 
@@ -702,7 +714,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         phi = cls._add_known_generic_phi(phi)
 
         # 2) Flatten safely (MultiValue/list/tuple) and stringify
-        from pydicom.multival import MultiValue
         flattened: list = []
         for val in phi:
             if isinstance(val, (MultiValue, list, tuple)):

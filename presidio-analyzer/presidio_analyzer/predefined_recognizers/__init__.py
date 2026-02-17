@@ -64,6 +64,7 @@ from .country_specific.uk.uk_passport_recognizer import UkPassportRecognizer
 from .country_specific.uk.uk_vehicle_registration_recognizer import (
     UkVehicleRegistrationRecognizer,
 )
+from .country_specific.uk.uk_postcode_recognizer import UkPostcodeRecognizer
 
 # US recognizers
 from .country_specific.us.aba_routing_recognizer import AbaRoutingRecognizer
@@ -171,6 +172,7 @@ __all__ = [
     "UkNinoRecognizer",
     "UkPassportRecognizer",
     "UkVehicleRegistrationRecognizer",
+    "UkPostcodeRecognizer",
     "AzureHealthDeidRecognizer",
     "KrBrnRecognizer",
     "KrRrnRecognizer",

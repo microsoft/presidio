@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM python:3.13-slim@sha256:3de9a8d7aedbb7984dc18f2dff178a7850f16c1ae7c34ba9d7ecc23d0755e35f
 
 ENV PIP_NO_CACHE_DIR=1
 ENV POETRY_VIRTUALENVS_CREATE=false
@@ -12,7 +12,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 COPY ./pyproject.toml /app/
-RUN pip install poetry \
+RUN pip install poetry==2.3.2 \
     && poetry install --no-root --only=main -E server \
     && rm -rf $(poetry config cache-dir)
 
