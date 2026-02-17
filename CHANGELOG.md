@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 ### Analyzer
 #### Added
+- UK Passport Number (UK_PASSPORT) recognizer for 2-letter + 7-digit format passports issued from 2015 onwards
+- UK Vehicle Registration Number (UK_VEHICLE_REGISTRATION) recognizer for current (2001+), prefix (1983-2001), and suffix (1963-1983) plate formats
 - UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
 
 ## [2.2.361] - 2026-02-12
