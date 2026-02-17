@@ -69,6 +69,7 @@ from .country_specific.us.us_bank_recognizer import UsBankRecognizer
 from .country_specific.us.us_driver_license_recognizer import UsLicenseRecognizer
 from .country_specific.us.us_itin_recognizer import UsItinRecognizer
 from .country_specific.us.us_mbi_recognizer import UsMbiRecognizer
+from .country_specific.us.us_npi_recognizer import UsNpiRecognizer
 from .country_specific.us.us_passport_recognizer import UsPassportRecognizer
 from .country_specific.us.us_ssn_recognizer import UsSsnRecognizer
 
@@ -136,6 +137,7 @@ __all__ = [
     "UsItinRecognizer",
     "UsLicenseRecognizer",
     "UsMbiRecognizer",
+    "UsNpiRecognizer",
     "UsPassportRecognizer",
     "UsSsnRecognizer",
     "EsNifRecognizer",
