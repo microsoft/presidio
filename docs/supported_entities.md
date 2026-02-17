@@ -44,6 +44,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
 |UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
 |UK_DRIVING_LICENCE|UK driving licence number issued by the DVLA. A 16-character alphanumeric string encoding surname, date of birth, and initials.|Pattern match, context and validation|
+|UK_POSTCODE|A UK [postcode](https://en.wikipedia.org/wiki/Postcodes_in_the_United_Kingdom) is a 5-8 character alphanumeric code used by the Royal Mail for mail sorting.|Pattern match and context|
 
 ### Spain
 

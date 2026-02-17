@@ -63,6 +63,7 @@ from .country_specific.uk.uk_driving_licence_recognizer import (
 )
 from .country_specific.uk.uk_nhs_recognizer import NhsRecognizer
 from .country_specific.uk.uk_nino_recognizer import UkNinoRecognizer
+from .country_specific.uk.uk_postcode_recognizer import UkPostcodeRecognizer
 
 # US recognizers
 from .country_specific.us.aba_routing_recognizer import AbaRoutingRecognizer
@@ -169,6 +170,7 @@ __all__ = [
     "EsNieRecognizer",
     "UkDrivingLicenceRecognizer",
     "UkNinoRecognizer",
+    "UkPostcodeRecognizer",
     "AzureHealthDeidRecognizer",
     "KrBrnRecognizer",
     "KrRrnRecognizer",
