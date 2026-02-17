@@ -13,7 +13,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |Entity Type | Description | Detection Method |
 | --- | --- | --- |
 |CREDIT_CARD |A credit card number is between 12 to 19 digits. <https://en.wikipedia.org/wiki/Payment_card_number>|Pattern match and checksum|
-|CRYPTO|A Crypto wallet number. Currently only Bitcoin address is supported|Pattern match, context and checksum|
+|CRYPTO|Cryptocurrency wallet addresses (Bitcoin P2PKH, P2SH, Bech32, Ethereum EOA)|Pattern match, context and checksum|
 |DATE_TIME|Absolute or relative dates or periods or times smaller than a day.|Pattern match and context|
 |EMAIL_ADDRESS|An email address identifies an email box to which email messages are delivered|Pattern match, context and RFC-822 validation|
 |IBAN_CODE|The International Bank Account Number (IBAN) is an internationally agreed system of identifying bank accounts across national borders to facilitate the communication and processing of cross border transactions with a reduced risk of transcription errors.|Pattern match, context and checksum|
