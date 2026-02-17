@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 
 ## [2.2.361] - 2026-02-12
 ### Analyzer
+#### Changed
+- Fixed context enhancement substring matching bug where context words were incorrectly matched as substrings (e.g., 'lic' matching 'duplicate'). Added configurable `context_matching_mode` parameter to `LemmaContextAwareEnhancer` with two options: "substring" (default, maintains backward compatibility for compound words like "creditcard"), and "whole_word" (prevents false positives like 'lic' matching 'duplicate') (#1061)
+
 #### Added
 - US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (Thanks @chrisvoncsefalvay)
 - MAC address recognizer for detecting MAC addresses in various formats (#1829) (Thanks @kyoungbinkim)
@@ -54,7 +57,6 @@ All notable changes to this project will be documented in this file.
 - Migrated CI workflows (lint, dependency review, release) to ubuntu-slim runners for improved efficiency (#1840) (Thanks @Copilot)
 - Updated actions/cache from v4 to v5 with Node.js 24 runtime support (#1817) (Thanks @dependabot)
 
-## [unreleased]
 ### Image Redactor
 #### Changed
 - DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.
