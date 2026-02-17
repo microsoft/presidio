@@ -33,7 +33,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install ruff
-        run: pip install ruff==0.9.2
+        run: pip install --no-deps --require-hashes -r .github/pipelines/requirements-ruff.txt
 
       - name: Run ruff check
         run: ruff check
@@ -55,7 +55,7 @@ jobs:
         uses: actions/dependency-review-action@c74b580d73376b7750d3d2a50bfb8adc2c937507 # v4.5.0
         with:
           fail-on-severity: low
-          allow-licenses: MIT, Apache-2.0, BSD-3-Clause
+          allow-licenses: MIT, Apache-2.0, BSD-3-Clause, 0BSD, 0BSD AND Apache-2.0 AND BSD-3-Clause AND MIT
           comment-summary-in-pr: on-failure
 
   test:
@@ -168,7 +168,7 @@ jobs:
       - name: Build wheel package
         working-directory: ${{ matrix.component.path }}
         run: |
-          pip install build==1.2.2.post1
+          pip install --require-hashes -r ${{ github.workspace }}/.github/pipelines/requirements-build.txt
           python -m build --wheel
 
   build-platform-images:

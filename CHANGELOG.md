@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
 - Nigerian Vehicle Registration (NG_VEHICLE_REGISTRATION) recognizer for current format plates (2011+)
+- UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
 
 ## [2.2.361] - 2026-02-12
 ### Analyzer
