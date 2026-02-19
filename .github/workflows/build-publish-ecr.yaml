@@ -1,0 +1,92 @@
+name: Build and Publish to ECR
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+on:
+  push:
+    branches:
+      - main
+      # XXX Test only
+      - test-ci
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+env:
+  AWS_REGION: us-east-2
+  DOCKER_PLATFORM: linux/amd64,linux/arm64
+
+jobs:
+  changes:
+    name: Changes
+    runs-on: ubuntu-24.04
+    outputs:
+      docker-images: ${{steps.filter.outputs.docker-images}}
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v5
+      - name: Check for Changed Files
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docker-images:
+              - '.github/workflows/build-publish-ecr.yaml'
+              - 'presidio-analyzer/**'
+              - '*'
+
+  build-publish-docker-images:
+    needs: changes
+    name: Build and Publish to ECR
+    if: needs.changes.outputs.docker-images == 'true'
+    env:
+      DOCKER_REGISTRY: ${{secrets.ICS_STG_AWS_ACCOUNT}}.dkr.ecr.us-east-2.amazonaws.com
+      AWS_OIDC_ROLE: ${{secrets.ICS_STG_AWS_GITHUB_OIDC_ROLE_ARN}}
+      BRANCH_NAME: main
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ["ics-mcp-server"]
+
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v5
+      - name: Derive Short SHA
+        id: short-sha
+        run: |
+          short_sha=${GITHUB_SHA::7}
+          echo "short_sha=$short_sha" >> $GITHUB_OUTPUT
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: "linux/amd64,linux/arm64"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{env.AWS_OIDC_ROLE}}
+          aws-region: ${{env.AWS_REGION}}
+      - name: Current AWS Identity
+        run: aws sts get-caller-identity
+      - name: Login to ECR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{env.DOCKER_REGISTRY}}
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        env:
+          ECR_NAMESPACE: ics-stg/${{matrix.service}}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          context: presidio-analyzer
+          file: apps/${{matrix.service}}/Dockerfile
+          platforms: ${{env.DOCKER_PLATFORM}}
+          push: true
+          tags: |
+            ${{env.DOCKER_REGISTRY}}/${{env.ECR_NAMESPACE}}:latest
+            ${{env.DOCKER_REGISTRY}}/${{env.ECR_NAMESPACE}}:${{env.BRANCH_NAME}}-${{steps.short-sha.outputs.short_sha}}-${{github.run_number}}
