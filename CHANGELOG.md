@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### Analyzer
+#### Added
+- UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
 
 ### Analyzer
 #### Changed
