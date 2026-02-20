@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 #### Added
 - UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
 
+### Analyzer
+#### Changed
+- Refactored MedicalNERRecognizer to subclass HuggingFaceNerRecognizer, using HuggingFace pipeline directly without spaCy (#1853) (Thanks @stevenelliottjr)
+
 ## [2.2.361] - 2026-02-12
 ### Analyzer
 #### Changed
