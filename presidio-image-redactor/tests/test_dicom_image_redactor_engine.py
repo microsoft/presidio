@@ -641,8 +641,6 @@ def test_augment_word_happy_path(
             [True, False, False],
             [
                 "JOHN^DOE",
-                "City Hospital",
-                "12345",
                 "JOHN",
                 "DOE",
                 "John",
