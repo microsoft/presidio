@@ -551,8 +551,8 @@ components:
           type: string
           description: "The context word which helped increase the score"
         validation_result:
-          type: number
-          format: double
+          type: boolean
+          nullable: true
           description: "Result of a validation (e.g. checksum)"
     
     Pattern:
