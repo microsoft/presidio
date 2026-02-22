@@ -92,6 +92,7 @@ from .country_specific.us.us_bank_recognizer import UsBankRecognizer
 from .country_specific.us.us_driver_license_recognizer import UsLicenseRecognizer
 from .country_specific.us.us_itin_recognizer import UsItinRecognizer
 from .country_specific.us.us_mbi_recognizer import UsMbiRecognizer
+from .country_specific.us.us_npi_recognizer import UsNpiRecognizer
 from .country_specific.us.us_passport_recognizer import UsPassportRecognizer
 from .country_specific.us.us_ssn_recognizer import UsSsnRecognizer
 
@@ -109,6 +110,7 @@ from .generic.url_recognizer import UrlRecognizer
 # NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
 from .ner.huggingface_ner_recognizer import HuggingFaceNerRecognizer
+from .ner.medical_ner_recognizer import MedicalNERRecognizer
 
 # NLP Engine recognizers
 from .nlp_engine_recognizers.spacy_recognizer import SpacyRecognizer
@@ -172,6 +174,7 @@ __all__ = [
     "UsItinRecognizer",
     "UsLicenseRecognizer",
     "UsMbiRecognizer",
+    "UsNpiRecognizer",
     "UsPassportRecognizer",
     "UsSsnRecognizer",
     "EsNifRecognizer",
@@ -213,4 +216,5 @@ __all__ = [
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
     "KrPassportRecognizer",
+    "MedicalNERRecognizer",
 ]
