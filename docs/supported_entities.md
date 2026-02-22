@@ -115,6 +115,21 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | TH_TNIN    | The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents. | Pattern match, context and custom logic. |
 
+### Medical / Clinical
+
+Detected using the `MedicalNERRecognizer` (requires the `transformers` extra). Uses the [blaze999/Medical-NER](https://huggingface.co/blaze999/Medical-NER) model by default.
+
+|Entity Type | Description | Detection Method |
+| --- | --- | --- |
+|MEDICAL_DISEASE_DISORDER | A disease or disorder (e.g. diabetes, hypertension). | NER model (HuggingFace transformers) |
+|MEDICAL_MEDICATION | A medication or drug name (e.g. metformin, aspirin). | NER model (HuggingFace transformers) |
+|MEDICAL_THERAPEUTIC_PROCEDURE | A therapeutic or diagnostic procedure (e.g. surgery, MRI). | NER model (HuggingFace transformers) |
+|MEDICAL_CLINICAL_EVENT | A clinical event (e.g. admission, discharge). | NER model (HuggingFace transformers) |
+|MEDICAL_BIOLOGICAL_ATTRIBUTE | A biological attribute or measurement (e.g. blood pressure, BMI). | NER model (HuggingFace transformers) |
+|MEDICAL_BIOLOGICAL_STRUCTURE | A biological or anatomical structure (e.g. liver, left ventricle). | NER model (HuggingFace transformers) |
+|MEDICAL_FAMILY_HISTORY | A family medical history reference. | NER model (HuggingFace transformers) |
+|MEDICAL_HISTORY | A patient medical history reference. | NER model (HuggingFace transformers) |
+
 ## Adding a custom PII entity
 
 See [this documentation](analyzer/adding_recognizers.md) for instructions on how to add a new Recognizer for a new type of PII entity.
