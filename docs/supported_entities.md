@@ -34,6 +34,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |US_DRIVER_LICENSE|A US driver license according to <https://ntsi.com/drivers-license-format/>|Pattern match and context|
 |US_ITIN | US Individual Taxpayer Identification Number (ITIN). Nine digits that start with a "9" and contain a "7" or "8" as the 4 digit.|Pattern match and context|
 |US_MBI|A US Medicare Beneficiary Identifier (MBI) with 11 alphanumeric characters.|Pattern match and context|
+|US_NPI|A US National Provider Identifier (NPI) is a 10-digit number issued to healthcare providers by CMS under HIPAA.|Pattern match, context and checksum|
 |US_PASSPORT |A US passport number with 9 digits.|Pattern match and context|
 |US_SSN|A US Social Security Number (SSN) with 9 digits.|Pattern match and context|
 
@@ -114,6 +115,21 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | TH_TNIN    | The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents. | Pattern match, context and custom logic. |
+
+### Medical / Clinical
+
+Detected using the `MedicalNERRecognizer` (requires the `transformers` extra). Uses the [blaze999/Medical-NER](https://huggingface.co/blaze999/Medical-NER) model by default.
+
+|Entity Type | Description | Detection Method |
+| --- | --- | --- |
+|MEDICAL_DISEASE_DISORDER | A disease or disorder (e.g. diabetes, hypertension). | NER model (HuggingFace transformers) |
+|MEDICAL_MEDICATION | A medication or drug name (e.g. metformin, aspirin). | NER model (HuggingFace transformers) |
+|MEDICAL_THERAPEUTIC_PROCEDURE | A therapeutic or diagnostic procedure (e.g. surgery, MRI). | NER model (HuggingFace transformers) |
+|MEDICAL_CLINICAL_EVENT | A clinical event (e.g. admission, discharge). | NER model (HuggingFace transformers) |
+|MEDICAL_BIOLOGICAL_ATTRIBUTE | A biological attribute or measurement (e.g. blood pressure, BMI). | NER model (HuggingFace transformers) |
+|MEDICAL_BIOLOGICAL_STRUCTURE | A biological or anatomical structure (e.g. liver, left ventricle). | NER model (HuggingFace transformers) |
+|MEDICAL_FAMILY_HISTORY | A family medical history reference. | NER model (HuggingFace transformers) |
+|MEDICAL_HISTORY | A patient medical history reference. | NER model (HuggingFace transformers) |
 
 ## Adding a custom PII entity
 

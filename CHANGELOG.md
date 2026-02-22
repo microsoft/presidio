@@ -6,7 +6,12 @@ All notable changes to this project will be documented in this file.
 ### Analyzer
 #### Added
 - UK Driving Licence Number (UK_DRIVING_LICENCE) recognizer with pattern matching and context support
+- US_NPI recognizer for National Provider Identifier with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
 - UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
+
+### Analyzer
+#### Changed
+- Refactored MedicalNERRecognizer to subclass HuggingFaceNerRecognizer, using HuggingFace pipeline directly without spaCy (#1853) (Thanks @stevenelliottjr)
 
 ## [2.2.361] - 2026-02-12
 ### Analyzer
