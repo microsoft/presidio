@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 ### Analyzer
 #### Added
+- US_NPI recognizer for National Provider Identifier with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
 - UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
 
 ### Analyzer

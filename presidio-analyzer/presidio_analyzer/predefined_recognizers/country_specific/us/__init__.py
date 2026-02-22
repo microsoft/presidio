@@ -6,6 +6,7 @@ from .us_bank_recognizer import UsBankRecognizer
 from .us_driver_license_recognizer import UsLicenseRecognizer
 from .us_itin_recognizer import UsItinRecognizer
 from .us_mbi_recognizer import UsMbiRecognizer
+from .us_npi_recognizer import UsNpiRecognizer
 from .us_passport_recognizer import UsPassportRecognizer
 from .us_ssn_recognizer import UsSsnRecognizer
 
@@ -15,6 +16,7 @@ __all__ = [
     "UsBankRecognizer",
     "UsLicenseRecognizer",
     "UsMbiRecognizer",
+    "UsNpiRecognizer",
     "UsPassportRecognizer",
     "AbaRoutingRecognizer",
     "UsSsnRecognizer",
