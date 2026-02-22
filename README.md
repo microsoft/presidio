@@ -44,7 +44,7 @@
 | presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       49 |        3 |     94% |     10-12 |
 | presidio\_analyzer/pattern.py                                                                                    |       32 |        2 |     94% |    62, 66 |
 | presidio\_analyzer/pattern\_recognizer.py                                                                        |      100 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       62 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       64 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/\_\_init\_\_.py                           |        5 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/au\_abn\_recognizer.py                    |       20 |        0 |    100% |           |
@@ -72,6 +72,9 @@
 | presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_frn\_recognizer.py                        |       12 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_passport\_recognizer.py                   |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/korea/kr\_rrn\_recognizer.py                        |       29 |        2 |     93% |    91, 95 |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/nigeria/\_\_init\_\_.py                             |        3 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/nigeria/ng\_nin\_recognizer.py                      |       23 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/nigeria/ng\_vehicle\_registration\_recognizer.py    |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/poland/\_\_init\_\_.py                              |        2 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/poland/pl\_pesel\_recognizer.py                     |       15 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/singapore/\_\_init\_\_.py                           |        3 |        0 |    100% |           |
@@ -128,7 +131,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      186 |        5 |     97% |44, 60, 149, 152, 516 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **4153** |  **217** | **95%** |           |
+| **TOTAL**                                                                                                        | **4190** |  **217** | **95%** |           |
 
 
 ## Setup coverage badge
