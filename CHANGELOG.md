@@ -7,7 +7,12 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
 - Nigerian Vehicle Registration (NG_VEHICLE_REGISTRATION) recognizer for current format plates (2011+)
+- US_NPI recognizer for National Provider Identifier with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
 - UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
+
+### Analyzer
+#### Changed
+- Refactored MedicalNERRecognizer to subclass HuggingFaceNerRecognizer, using HuggingFace pipeline directly without spaCy (#1853) (Thanks @stevenelliottjr)
 
 ## [2.2.361] - 2026-02-12
 ### Analyzer
