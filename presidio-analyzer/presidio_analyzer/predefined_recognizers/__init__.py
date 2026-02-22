@@ -58,6 +58,9 @@ from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
 # UK recognizers
+from .country_specific.uk.uk_driving_licence_recognizer import (
+    UkDrivingLicenceRecognizer,
+)
 from .country_specific.uk.uk_nhs_recognizer import NhsRecognizer
 from .country_specific.uk.uk_nino_recognizer import UkNinoRecognizer
 from .country_specific.uk.uk_postcode_recognizer import UkPostcodeRecognizer
@@ -168,6 +171,7 @@ __all__ = [
     "InPassportRecognizer",
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
+    "UkDrivingLicenceRecognizer",
     "UkNinoRecognizer",
     "UkPostcodeRecognizer",
     "AzureHealthDeidRecognizer",

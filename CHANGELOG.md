@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 ### Analyzer
 #### Added
+- UK Driving Licence Number (UK_DRIVING_LICENCE) recognizer with pattern matching and context support
 - US_NPI recognizer for National Provider Identifier with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
 - UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
 
@@ -738,3 +739,4 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
 - Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
 - Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).
+
