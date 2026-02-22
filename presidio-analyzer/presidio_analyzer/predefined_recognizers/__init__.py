@@ -43,6 +43,12 @@ from .country_specific.korea.kr_frn_recognizer import KrFrnRecognizer
 from .country_specific.korea.kr_passport_recognizer import KrPassportRecognizer
 from .country_specific.korea.kr_rrn_recognizer import KrRrnRecognizer
 
+# Nigeria recognizers
+from .country_specific.nigeria.ng_nin_recognizer import NgNinRecognizer
+from .country_specific.nigeria.ng_vehicle_registration_recognizer import (
+    NgVehicleRegistrationRecognizer,
+)
+
 # Poland recognizers
 from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
 
@@ -87,6 +93,7 @@ from .generic.url_recognizer import UrlRecognizer
 # NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
 from .ner.huggingface_ner_recognizer import HuggingFaceNerRecognizer
+from .ner.medical_ner_recognizer import MedicalNERRecognizer
 
 # NLP Engine recognizers
 from .nlp_engine_recognizers.spacy_recognizer import SpacyRecognizer
@@ -179,4 +186,7 @@ __all__ = [
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
     "KrPassportRecognizer",
+    "NgNinRecognizer",
+    "NgVehicleRegistrationRecognizer",
+    "MedicalNERRecognizer",
 ]
