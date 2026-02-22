@@ -44,7 +44,7 @@
 | presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       49 |        3 |     94% |     10-12 |
 | presidio\_analyzer/pattern.py                                                                                    |       32 |        2 |     94% |    62, 66 |
 | presidio\_analyzer/pattern\_recognizer.py                                                                        |      100 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       60 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       61 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/\_\_init\_\_.py                           |        5 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/au\_abn\_recognizer.py                    |       20 |        0 |    100% |           |
@@ -86,13 +86,14 @@
 | presidio\_analyzer/predefined\_recognizers/country\_specific/uk/uk\_nhs\_recognizer.py                           |       16 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/uk/uk\_nino\_recognizer.py                          |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/uk/uk\_postcode\_recognizer.py                      |        9 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/country\_specific/us/\_\_init\_\_.py                                  |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/us/\_\_init\_\_.py                                  |       10 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/us/aba\_routing\_recognizer.py                      |       19 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/us/medical\_license\_recognizer.py                  |       25 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/us/us\_bank\_recognizer.py                          |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/us/us\_driver\_license\_recognizer.py               |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/us/us\_itin\_recognizer.py                          |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/us/us\_mbi\_recognizer.py                           |       16 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/us/us\_npi\_recognizer.py                           |       31 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/us/us\_passport\_recognizer.py                      |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/us/us\_ssn\_recognizer.py                           |       26 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/\_\_init\_\_.py                                               |        9 |        0 |    100% |           |
@@ -126,7 +127,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      186 |        5 |     97% |44, 60, 149, 152, 516 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **4110** |  **217** | **95%** |           |
+| **TOTAL**                                                                                                        | **4143** |  **217** | **95%** |           |
 
 
 ## Setup coverage badge
