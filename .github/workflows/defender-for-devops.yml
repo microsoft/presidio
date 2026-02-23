@@ -55,6 +55,6 @@ jobs:
         tools: checkov, templateanalyzer, trivy
 
     - name: Upload results to Security tab
-      uses: github/codeql-action/upload-sarif@f5c2471be782132e47a6e6f9c725e56730d6e9a3 # v3.32.3
+      uses: github/codeql-action/upload-sarif@89a39a4e59826350b863aa6b6252a07ad50cf83e # v4.32.4
       with:
         sarif_file: ${{ steps.msdo.outputs.sarifFile }}
