@@ -326,7 +326,7 @@ jobs:
           python-version: '3.10'
 
       - name: Cache E2E dependencies
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v5.0.0
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.0
         with:
           path: |
             ~/.cache/pip
@@ -413,7 +413,7 @@ jobs:
           python-version: '3.10'
 
       - name: Cache E2E dependencies
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v5.0.0
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.0
         with:
           path: |
             ~/.cache/pip
