@@ -261,6 +261,87 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: DeBsnrRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeCommercialRegisterRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeDriverLicenseRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeKvnrRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeLanrRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeLicensePlateRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePassportRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePersonalIdRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePostalCodeRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeSocialSecurityRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeTaxIdRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeTelematikIdRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeVatCodeRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: OllamaRecognizer
+    class_name: OllamaLangExtractRecognizer
+
   - name: BasicLangExtractRecognizer
     supported_languages:
       - en
