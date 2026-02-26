@@ -170,15 +170,17 @@ class RecognizerRegistry:
                 if language == rec.supported_language
             ]
         else:
-            for entity in entities:
-                subset = [
-                    rec
-                    for rec in all_possible_recognizers
-                    if entity in rec.supported_entities
-                    and language == rec.supported_language
-                ]
+            all_entity_recognizers = dict()
+            for rec in all_possible_recognizers:
+                if language == rec.supported_language:
+                    if type(rec.supported_entities) == list and len(rec.supported_entities) > 0:
+                        for supported_entity in rec.supported_entities:
+                            self.add_recognizer_map(all_entity_recognizers, supported_entity, rec)
+                    elif type(rec.supported_entities) == str:
+                        self.add_recognizer_map(all_entity_recognizers, rec.supported_entities, rec)
 
-                if not subset:
+            for entity in entities:
+                if entity not in all_entity_recognizers:
                     logger.warning(
                         "Entity %s doesn't have the corresponding"
                         " recognizer in language : %s",
@@ -186,7 +188,7 @@ class RecognizerRegistry:
                         language,
                     )
                 else:
-                    to_return.update(set(subset))
+                    to_return.update(all_entity_recognizers[entity])
 
         logger.debug(
             "Returning a total of %s recognizers",
@@ -197,6 +199,12 @@ class RecognizerRegistry:
             raise ValueError("No matching recognizers were found to serve the request.")
 
         return list(to_return)
+
+    def add_recognizer_map(self, all_entity_recognizers, supported_entity, rec):
+        if supported_entity in all_entity_recognizers:
+            all_entity_recognizers[supported_entity].add(rec)
+        else:
+            all_entity_recognizers[supported_entity] = {rec}
 
     def add_recognizer(self, recognizer: EntityRecognizer) -> None:
         """
