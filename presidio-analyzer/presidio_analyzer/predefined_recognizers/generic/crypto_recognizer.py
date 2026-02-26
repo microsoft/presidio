@@ -1,6 +1,8 @@
 from hashlib import sha256
 from typing import List, Optional
 
+from eth_hash.auto import keccak
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 # This class includes references to addresses validation algorithms.
@@ -9,6 +11,8 @@ from presidio_analyzer import Pattern, PatternRecognizer
 # http://rosettacode.org/wiki/Bitcoin/address_validation#Python
 # The Bech32/Bech32m address validation algorithm by Pieter Wuille can be found
 # at: https://github.com/sipa/bech32/blob/master/ref/python/segwit_addr.py
+# The Ethereum address validation algorithm follows EIP-55 (Mixed-case checksum):
+# https://github.com/ethereum/ercs/blob/master/ERCS/erc-55.md
 
 # Constants for encoding types
 BECH32 = 1
@@ -19,7 +23,7 @@ BECH32M_CONST = 0x2BC830A3
 
 
 class CryptoRecognizer(PatternRecognizer):
-    """Recognize common crypto account numbers using regex + checksum.
+    """Recognize common crypto account(BIT, ETH) numbers using regex + checksum.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -28,10 +32,12 @@ class CryptoRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        Pattern("Crypto (Medium)", r"(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,59}", 0.5),
+        Pattern("Crypto Bitcoin (Medium)", r"(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,59}", 0.5),
+
+        Pattern("Crypto Ethereum EOA (Medium)", r"0x[a-fA-F0-9]{40}", 0.5),
     ]
 
-    CONTEXT = ["wallet", "btc", "bitcoin", "crypto"]
+    CONTEXT = ["wallet", "btc", "bitcoin", "crypto", "eth", "ethereum"]
 
     def __init__(
         self,
@@ -54,6 +60,8 @@ class CryptoRecognizer(PatternRecognizer):
     def validate_result(self, pattern_text: str) -> bool:
         """Validate the Bitcoin address using checksum.
 
+        Supports Bitcoin (P2PKH, P2SH, Bech32, Bech32m) and Ethereum (EIP-55).
+
         :param pattern_text: The cryptocurrency address to validate.
         :return: True if the address is valid according to its respective
         format, False otherwise.
@@ -70,6 +78,9 @@ class CryptoRecognizer(PatternRecognizer):
             # Bech32 or Bech32m address validation
             if CryptoRecognizer.validate_bech32_address(pattern_text)[0]:
                 return True
+        elif pattern_text.startswith("0x"):
+            # Ethereum address validation
+            return CryptoRecognizer.validate_eth_address(pattern_text)
         return False
 
     @staticmethod
@@ -139,3 +150,51 @@ class CryptoRecognizer(PatternRecognizer):
         if hrp is not None and data is not None:
             return True, spec
         return False, None
+
+    @staticmethod
+    def validate_eth_address(address: str) -> bool:
+        """Validate an Ethereum address using basic checks.
+
+        :param address: The Ethereum address to validate.
+        :return: True if the address is valid, False otherwise.
+        :https://github.com/ethereum/ercs/blob/master/ERCS/erc-55.md
+        """
+        if not isinstance(address, str):
+            return False
+
+        if not address.startswith("0x"):
+            return  False
+
+        checksummed_buffer = ""
+        hex_addr = (address[2:] if address.startswith("0x") else address).lower()
+        address_bytes = CryptoRecognizer.convert_hex_to_bytes(hex_addr)
+        hashed_address = keccak(address_bytes).hex()
+
+        # Iterate over each character in the hex address
+        for nibble_index, character in enumerate(hex_addr):
+            if character in "0123456789":
+                # We can't upper-case the decimal digits
+                checksummed_buffer += character
+            elif character in "abcdef":
+                hashed_address_nibble = int(hashed_address[nibble_index], 16)
+                if hashed_address_nibble > 7:
+                    checksummed_buffer += character.upper()
+                else:
+                    checksummed_buffer += character
+            else:
+                return False
+
+        return "0x" + checksummed_buffer == address
+
+    @staticmethod
+    def convert_hex_to_bytes(hex_str: str) -> bytes:
+        """Convert a hex string to bytes.
+
+        :param hex_str: The hex string to convert.
+        :return: The corresponding bytes.
+        :https://github.com/ethereum/eth-utils/blob/main/eth_utils/conversions.py#L136-L137
+        """
+
+        hex_str = hex_str if len(hex_str) % 2 == 0 else "0" + hex_str
+
+        return hex_str.encode("utf-8")
