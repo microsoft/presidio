@@ -256,78 +256,42 @@ def test_gliner_deduplicates_entities_in_overlap_region(mock_gliner):
     assert text[results[0].start:results[0].end] == "Dr. Smith"
 
 
-def test_when_load_onnx_model_true_then_passes_to_from_pretrained():
-    """Test that load_onnx_model parameter is passed to GLiNER.from_pretrained."""
+GLINER_MOCK_PATH = (
+    "presidio_analyzer.predefined_recognizers.ner.gliner_recognizer.GLiNER"
+)
+
+
+@pytest.mark.parametrize(
+    "load_onnx_model,onnx_model_file,expected_onnx_model,expected_file",
+    [
+        (True, "model.onnx", True, "model.onnx"),
+        (False, "model.onnx", False, "model.onnx"),
+        (True, "custom_model.onnx", True, "custom_model.onnx"),
+    ],
+)
+def test_when_onnx_parameters_then_passes_to_from_pretrained(
+    load_onnx_model, onnx_model_file, expected_onnx_model, expected_file
+):
+    """Test that ONNX parameters are passed to GLiNER.from_pretrained."""
     if sys.version_info < (3, 10):
         pytest.skip("gliner requires Python >= 3.10")
 
     pytest.importorskip("gliner", reason="GLiNER package is not installed")
 
-    mock_path = "presidio_analyzer.predefined_recognizers.ner.gliner_recognizer.GLiNER"
-    with patch(mock_path) as mock_gliner_class:
+    with patch(GLINER_MOCK_PATH) as mock_gliner_class:
         mock_gliner_instance = MagicMock()
         mock_gliner_class.from_pretrained.return_value = mock_gliner_instance
 
         recognizer = GLiNERRecognizer(
             supported_entities=["PERSON"],
-            load_onnx_model=True,
+            load_onnx_model=load_onnx_model,
+            onnx_model_file=onnx_model_file,
         )
         recognizer.load()
 
-        # Verify from_pretrained was called with load_onnx_model=True
+        # Verify from_pretrained was called with expected parameters
         assert mock_gliner_class.from_pretrained.called
         call_kwargs = mock_gliner_class.from_pretrained.call_args[1]
-        assert call_kwargs["load_onnx_model"] is True
-        assert call_kwargs["onnx_model_file"] == "model.onnx"
-
-
-def test_when_load_onnx_model_false_then_passes_to_from_pretrained():
-    """Test that load_onnx_model=False is passed to GLiNER.from_pretrained."""
-    if sys.version_info < (3, 10):
-        pytest.skip("gliner requires Python >= 3.10")
-
-    pytest.importorskip("gliner", reason="GLiNER package is not installed")
-
-    mock_path = "presidio_analyzer.predefined_recognizers.ner.gliner_recognizer.GLiNER"
-    with patch(mock_path) as mock_gliner_class:
-        mock_gliner_instance = MagicMock()
-        mock_gliner_class.from_pretrained.return_value = mock_gliner_instance
-
-        recognizer = GLiNERRecognizer(
-            supported_entities=["PERSON"],
-            load_onnx_model=False,
-        )
-        recognizer.load()
-
-        # Verify from_pretrained was called with load_onnx_model=False
-        assert mock_gliner_class.from_pretrained.called
-        call_kwargs = mock_gliner_class.from_pretrained.call_args[1]
-        assert call_kwargs["load_onnx_model"] is False
-        assert call_kwargs["onnx_model_file"] == "model.onnx"
-
-
-def test_when_custom_onnx_model_file_then_passes_to_from_pretrained():
-    """Test that custom onnx_model_file is passed to GLiNER.from_pretrained."""
-    if sys.version_info < (3, 10):
-        pytest.skip("gliner requires Python >= 3.10")
-
-    pytest.importorskip("gliner", reason="GLiNER package is not installed")
-
-    mock_path = "presidio_analyzer.predefined_recognizers.ner.gliner_recognizer.GLiNER"
-    with patch(mock_path) as mock_gliner_class:
-        mock_gliner_instance = MagicMock()
-        mock_gliner_class.from_pretrained.return_value = mock_gliner_instance
-
-        recognizer = GLiNERRecognizer(
-            supported_entities=["PERSON"],
-            load_onnx_model=True,
-            onnx_model_file="custom_model.onnx",
-        )
-        recognizer.load()
-
-        # Verify from_pretrained was called with custom onnx_model_file
-        assert mock_gliner_class.from_pretrained.called
-        call_kwargs = mock_gliner_class.from_pretrained.call_args[1]
-        assert call_kwargs["load_onnx_model"] is True
-        assert call_kwargs["onnx_model_file"] == "custom_model.onnx"
+        assert call_kwargs["load_onnx_model"] is expected_onnx_model
+        assert call_kwargs["onnx_model_file"] == expected_file
 
