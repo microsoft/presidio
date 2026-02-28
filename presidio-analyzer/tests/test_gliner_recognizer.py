@@ -296,3 +296,30 @@ def test_when_onnx_parameters_then_passes_to_from_pretrained(
         assert call_kwargs["load_onnx_model"] is expected_onnx_model
         assert call_kwargs["onnx_model_file"] == expected_file
 
+
+def test_when_model_kwargs_then_passes_to_from_pretrained():
+    """Test that additional model kwargs are passed to GLiNER.from_pretrained."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    with patch(GLINER_MOCK_PATH) as mock_gliner_class:
+        mock_gliner_instance = MagicMock()
+        mock_gliner_class.from_pretrained.return_value = mock_gliner_instance
+
+        # Pass additional kwargs that might be supported by GLiNER in the future
+        recognizer = GLiNERRecognizer(
+            supported_entities=["PERSON"],
+            custom_param1="value1",
+            custom_param2=42,
+        )
+        recognizer.load()
+
+        # Verify from_pretrained was called with the custom parameters
+        assert mock_gliner_class.from_pretrained.called
+        call_kwargs = mock_gliner_class.from_pretrained.call_args[1]
+        assert call_kwargs["custom_param1"] == "value1"
+        assert call_kwargs["custom_param2"] == 42
+
+

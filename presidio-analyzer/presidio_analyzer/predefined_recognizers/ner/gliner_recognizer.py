@@ -42,6 +42,7 @@ class GLiNERRecognizer(LocalRecognizer):
         text_chunker: Optional[BaseTextChunker] = None,
         load_onnx_model: bool = False,
         onnx_model_file: str = "model.onnx",
+        **model_kwargs,
     ):
         """GLiNER model based entity recognizer.
 
@@ -72,6 +73,9 @@ class GLiNERRecognizer(LocalRecognizer):
             Only used when load_onnx_model is True. This is passed directly to
             GLiNER.from_pretrained(). GLiNER looks for this file in the model
             directory (downloaded or cached model path). Default is "model.onnx".
+        :param model_kwargs: Additional keyword arguments to pass to
+            GLiNER.from_pretrained(). This allows passing future parameters
+            to the GLiNER model without explicit support in this recognizer.
 
 
         """
@@ -112,6 +116,7 @@ class GLiNERRecognizer(LocalRecognizer):
         self.threshold = threshold
         self.load_onnx_model = load_onnx_model
         self.onnx_model_file = onnx_model_file
+        self.model_kwargs = model_kwargs
 
         # Use provided chunker or default to in-house character-based chunker
         if text_chunker is not None:
@@ -146,6 +151,7 @@ class GLiNERRecognizer(LocalRecognizer):
             map_location=self.map_location,
             load_onnx_model=self.load_onnx_model,
             onnx_model_file=self.onnx_model_file,
+            **self.model_kwargs,
         )
 
     def analyze(
