@@ -267,6 +267,7 @@ GLINER_MOCK_PATH = (
         (True, "model.onnx", True, "model.onnx"),
         (False, "model.onnx", False, "model.onnx"),
         (True, "custom_model.onnx", True, "custom_model.onnx"),
+        (False, "custom_model.onnx", False, "custom_model.onnx"),
     ],
 )
 def test_when_onnx_parameters_then_passes_to_from_pretrained(

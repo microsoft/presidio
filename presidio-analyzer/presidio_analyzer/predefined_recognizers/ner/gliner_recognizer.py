@@ -69,7 +69,9 @@ class GLiNERRecognizer(LocalRecognizer):
             If True, uses ONNX Runtime backend which supports CPUs without AVX2.
             Requires onnxruntime to be installed. Default is False.
         :param onnx_model_file: The name of the ONNX model file to load.
-            Only used when load_onnx_model is True. Default is "model.onnx".
+            Only used when load_onnx_model is True. This is passed directly to
+            GLiNER.from_pretrained(). GLiNER looks for this file in the model
+            directory (downloaded or cached model path). Default is "model.onnx".
 
 
         """
