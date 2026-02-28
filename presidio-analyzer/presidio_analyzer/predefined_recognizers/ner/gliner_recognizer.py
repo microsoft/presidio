@@ -40,6 +40,8 @@ class GLiNERRecognizer(LocalRecognizer):
         threshold: float = 0.30,
         map_location: Optional[str] = None,
         text_chunker: Optional[BaseTextChunker] = None,
+        load_onnx_model: bool = False,
+        onnx_model_file: str = "model.onnx",
     ):
         """GLiNER model based entity recognizer.
 
@@ -63,6 +65,11 @@ class GLiNERRecognizer(LocalRecognizer):
         :param text_chunker: Custom text chunking strategy. If None, uses
             CharacterBasedTextChunker with default settings (chunk_size=250,
             chunk_overlap=50)
+        :param load_onnx_model: Whether to load the model using ONNX Runtime.
+            If True, uses ONNX Runtime backend which supports CPUs without AVX2.
+            Requires onnxruntime to be installed. Default is False.
+        :param onnx_model_file: The name of the ONNX model file to load.
+            Only used when load_onnx_model is True. Default is "model.onnx".
 
 
         """
@@ -101,6 +108,8 @@ class GLiNERRecognizer(LocalRecognizer):
         self.flat_ner = flat_ner
         self.multi_label = multi_label
         self.threshold = threshold
+        self.load_onnx_model = load_onnx_model
+        self.onnx_model_file = onnx_model_file
 
         # Use provided chunker or default to in-house character-based chunker
         if text_chunker is not None:
@@ -131,7 +140,10 @@ class GLiNERRecognizer(LocalRecognizer):
             raise ImportError("GLiNER is not installed. Please install it.")
 
         self.gliner = GLiNER.from_pretrained(
-            self.model_name, map_location=self.map_location
+            self.model_name,
+            map_location=self.map_location,
+            load_onnx_model=self.load_onnx_model,
+            onnx_model_file=self.onnx_model_file,
         )
 
     def analyze(
