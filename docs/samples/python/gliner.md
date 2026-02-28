@@ -74,3 +74,31 @@ results = analyzer_engine.analyze(
 
 print(results)
 ```
+
+## ONNX Runtime Support
+
+GLiNERRecognizer supports using ONNX Runtime as a backend, which provides better CPU compatibility and can prevent crashes on older CPUs without AVX2 instruction set support (e.g., Intel Sandy Bridge).
+
+### Using ONNX Runtime Backend
+
+To use ONNX Runtime with GLiNER:
+
+```python
+from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
+
+# Enable ONNX Runtime backend
+gliner_recognizer = GLiNERRecognizer(
+    model_name="urchade/gliner_multi_pii-v1",
+    entity_mapping=entity_mapping,
+    load_onnx_model=True,  # Enable ONNX Runtime
+    map_location="cpu",
+)
+```
+
+**Benefits of using ONNX Runtime:**
+- Works on older CPUs without AVX2 support
+- Prevents "Illegal instruction (core dumped)" crashes on incompatible hardware
+- Can provide better performance on certain CPU architectures
+
+**Note:** Make sure `onnxruntime` is installed when using this feature. It's included in the `gliner` extra dependencies.
+

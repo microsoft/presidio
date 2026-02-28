@@ -254,3 +254,72 @@ def test_gliner_deduplicates_entities_in_overlap_region(mock_gliner):
     # Verify: Kept the one with highest score (0.95 from first chunk)
     assert results[0].score == 0.95
     assert text[results[0].start:results[0].end] == "Dr. Smith"
+
+
+GLINER_MOCK_PATH = (
+    "presidio_analyzer.predefined_recognizers.ner.gliner_recognizer.GLiNER"
+)
+
+
+@pytest.mark.parametrize(
+    "load_onnx_model,onnx_model_file,expected_onnx_model,expected_file",
+    [
+        (True, "model.onnx", True, "model.onnx"),
+        (False, "model.onnx", False, "model.onnx"),
+        (True, "custom_model.onnx", True, "custom_model.onnx"),
+        (False, "custom_model.onnx", False, "custom_model.onnx"),
+    ],
+)
+def test_when_onnx_parameters_then_passes_to_from_pretrained(
+    load_onnx_model, onnx_model_file, expected_onnx_model, expected_file
+):
+    """Test that ONNX parameters are passed to GLiNER.from_pretrained."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    with patch(GLINER_MOCK_PATH) as mock_gliner_class:
+        mock_gliner_instance = MagicMock()
+        mock_gliner_class.from_pretrained.return_value = mock_gliner_instance
+
+        recognizer = GLiNERRecognizer(
+            supported_entities=["PERSON"],
+            load_onnx_model=load_onnx_model,
+            onnx_model_file=onnx_model_file,
+        )
+        recognizer.load()
+
+        # Verify from_pretrained was called with expected parameters
+        assert mock_gliner_class.from_pretrained.called
+        call_kwargs = mock_gliner_class.from_pretrained.call_args[1]
+        assert call_kwargs["load_onnx_model"] is expected_onnx_model
+        assert call_kwargs["onnx_model_file"] == expected_file
+
+
+def test_when_model_kwargs_then_passes_to_from_pretrained():
+    """Test that additional model kwargs are passed to GLiNER.from_pretrained."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    with patch(GLINER_MOCK_PATH) as mock_gliner_class:
+        mock_gliner_instance = MagicMock()
+        mock_gliner_class.from_pretrained.return_value = mock_gliner_instance
+
+        # Pass additional kwargs that might be supported by GLiNER in the future
+        recognizer = GLiNERRecognizer(
+            supported_entities=["PERSON"],
+            custom_param1="value1",
+            custom_param2=42,
+        )
+        recognizer.load()
+
+        # Verify from_pretrained was called with the custom parameters
+        assert mock_gliner_class.from_pretrained.called
+        call_kwargs = mock_gliner_class.from_pretrained.call_args[1]
+        assert call_kwargs["custom_param1"] == "value1"
+        assert call_kwargs["custom_param2"] == 42
+
+
