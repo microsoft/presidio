@@ -55,3 +55,4 @@ making Presidio more accessible to the community.
 ## License
 
 MIT License. See [LICENSE](https://github.com/Microsoft/presidio/blob/main/LICENSE) for details.
+
