@@ -7,7 +7,13 @@
 
 ## Overview
 
-`presidio` is a meta-package that installs [presidio-analyzer](https://pypi.org/project/presidio-analyzer/), the PII detection engine from the [Microsoft Presidio](https://github.com/Microsoft/presidio) project.
+`presidio` is a convenience meta-package that references and installs
+[presidio-analyzer](https://pypi.org/project/presidio-analyzer/), the PII detection engine from the
+[Microsoft Presidio](https://github.com/Microsoft/presidio) project.
+
+> **Note:** This package contains no code of its own. It simply pulls in `presidio-analyzer` as a
+> dependency. For the full feature set, documentation, and source code please refer to the
+> [presidio-analyzer README](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/README.md).
 
 ## Installation
 
@@ -30,6 +36,13 @@ print(results)
 ## Documentation
 
 For full documentation, visit [https://microsoft.github.io/presidio](https://microsoft.github.io/presidio).
+
+## Acknowledgements
+
+The idea of publishing a top-level `presidio` package that references `presidio-analyzer` was
+originally proposed and implemented by the contributors of
+[papercloudtech/presidio](https://github.com/papercloudtech/presidio). We thank them for the
+initiative and for making Presidio more accessible to the community.
 
 ## License
 
