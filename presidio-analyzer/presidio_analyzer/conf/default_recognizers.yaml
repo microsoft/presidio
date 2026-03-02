@@ -72,7 +72,19 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: UkPassportRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
   - name: UkPostcodeRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: UkVehicleRegistrationRecognizer
     supported_languages:
     - en
     type: predefined
