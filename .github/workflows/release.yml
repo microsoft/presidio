@@ -71,6 +71,8 @@ jobs:
       fail-fast: false
       matrix:
         package:
+          - name: "Presidio"
+            path: "presidio"
           - name: "Analyzer"
             path: "presidio-analyzer"
           - name: "Anonymizer"
