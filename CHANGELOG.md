@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### General
+#### Added
+- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected. Inspired by and thanks to Sakthi Santhosh Anumand and Harsha Vardhan for the original idea.
+
 ### Analyzer
 #### Added
 - Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
