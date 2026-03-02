@@ -2,8 +2,9 @@
 
 Verifies that:
 1. The package can be built from source.
-2. Installing ``presidio`` in a clean environment pulls in ``presidio-analyzer``.
-3. Core analyzer imports (``AnalyzerEngine``) are importable after installation.
+2. Installing ``presidio`` in a clean environment pulls in ``presidio-analyzer``
+   and ``presidio-anonymizer``.
+3. Core imports (``AnalyzerEngine``, ``AnonymizerEngine``) are importable after installation.
 """
 
 import subprocess
@@ -37,7 +38,7 @@ def fresh_venv(tmp_path_factory):
     assert wheels, "No wheel was produced by the build step"
     wheel = wheels[0]
 
-    # Install the wheel (and therefore presidio-analyzer) into the fresh venv.
+    # Install the wheel (and therefore presidio-analyzer + presidio-anonymizer) into the fresh venv.
     subprocess.run(
         [str(python), "-m", "pip", "install", "--quiet", str(wheel)],
         check=True,
@@ -61,6 +62,20 @@ def test_presidio_analyzer_is_installed(fresh_venv):
     )
 
 
+def test_presidio_anonymizer_is_installed(fresh_venv):
+    """presidio-anonymizer must be present after installing presidio."""
+    result = subprocess.run(
+        [str(fresh_venv), "-m", "pip", "show", "presidio-anonymizer"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, (
+        "presidio-anonymizer is not installed after installing presidio.\n"
+        + result.stdout
+        + result.stderr
+    )
+
+
 def test_analyzer_engine_importable(fresh_venv):
     """AnalyzerEngine must be importable from presidio_analyzer."""
     result = subprocess.run(
@@ -74,6 +89,25 @@ def test_analyzer_engine_importable(fresh_venv):
     )
     assert result.returncode == 0, (
         "Failed to import AnalyzerEngine from presidio_analyzer.\n"
+        + result.stdout
+        + result.stderr
+    )
+    assert result.stdout.strip() == "ok"
+
+
+def test_anonymizer_engine_importable(fresh_venv):
+    """AnonymizerEngine must be importable from presidio_anonymizer."""
+    result = subprocess.run(
+        [
+            str(fresh_venv),
+            "-c",
+            "from presidio_anonymizer import AnonymizerEngine; print('ok')",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, (
+        "Failed to import AnonymizerEngine from presidio_anonymizer.\n"
         + result.stdout
         + result.stderr
     )

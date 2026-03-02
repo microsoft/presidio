@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 ### General
 #### Added
-- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` as its sole dependency, making `pip install presidio` work as expected. Inspired by and thanks to the contributors of [papercloudtech/presidio](https://github.com/papercloudtech/presidio) for the original idea.
+- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected. Inspired by and thanks to Sakthi Santhosh Anumand and Harsha Vardhan for the original idea.
 
 ### Analyzer
 #### Added
