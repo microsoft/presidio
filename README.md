@@ -113,7 +113,7 @@
 | presidio\_analyzer/predefined\_recognizers/generic/phone\_recognizer.py                                          |       34 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/url\_recognizer.py                                            |       10 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/ner/\_\_init\_\_.py                                                   |        4 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/ner/gliner\_recognizer.py                                             |       60 |        6 |     90% |19-21, 72, 131, 207 |
+| presidio\_analyzer/predefined\_recognizers/ner/gliner\_recognizer.py                                             |       63 |        6 |     90% |19-21, 85, 147, 227 |
 | presidio\_analyzer/predefined\_recognizers/ner/huggingface\_ner\_recognizer.py                                   |      137 |       10 |     93% |30-31, 35-36, 159, 238-239, 289-291 |
 | presidio\_analyzer/predefined\_recognizers/ner/medical\_ner\_recognizer.py                                       |        8 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/nlp\_engine\_recognizers/\_\_init\_\_.py                              |        4 |        0 |    100% |           |
@@ -133,7 +133,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      186 |        5 |     97% |44, 60, 149, 152, 516 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **4222** |  **217** | **95%** |           |
+| **TOTAL**                                                                                                        | **4225** |  **217** | **95%** |           |
 
 
 ## Setup coverage badge
