@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### General
+#### Added
+- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` as its sole dependency, making `pip install presidio` work as expected. Inspired by and thanks to the contributors of [papercloudtech/presidio](https://github.com/papercloudtech/presidio) for the original idea.
+
 ### Analyzer
 #### Added
 - Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
