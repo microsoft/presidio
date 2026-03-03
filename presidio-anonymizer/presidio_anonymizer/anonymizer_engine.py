@@ -140,15 +140,20 @@ class AnonymizerEngine(EngineBase):
         :return: List
         """
         tmp_analyzer_results = []
-        # This list contains all elements which we need to check a single result
-        # against. If a result is dropped, it can also be dropped from this list
-        # since it is intersecting with another result and we selected the other one.
-        other_elements = analyzer_results.copy()
-        for result in analyzer_results:
-            other_elements.remove(result)
+        # Use index-based tracking to avoid O(n) list.remove() operations
+        # active_indices tracks elements still available for merging/comparison
+        n = len(analyzer_results)
+        active_indices = set(range(n))
+
+        for i, result in enumerate(analyzer_results):
+            if i not in active_indices:
+                continue
+            # Temporarily exclude current element from comparison set
+            active_indices.discard(i)
 
             is_merge_same_entity_type = False
-            for other_element in other_elements:
+            for j in active_indices:
+                other_element = analyzer_results[j]
                 if other_element.entity_type != result.entity_type:
                     continue
                 if result.intersects(other_element) == 0:
@@ -160,7 +165,8 @@ class AnonymizerEngine(EngineBase):
                 is_merge_same_entity_type = True
                 break
             if not is_merge_same_entity_type:
-                other_elements.append(result)
+                # Keep this element active and add to results
+                active_indices.add(i)
                 tmp_analyzer_results.append(result)
             else:
                 self.logger.debug(
@@ -168,17 +174,21 @@ class AnonymizerEngine(EngineBase):
                 )
 
         unique_text_metadata_elements = []
-        # This list contains all elements which we need to check a single result
-        # against. If a result is dropped, it can also be dropped from this list
-        # since it is intersecting with another result and we selected the other one.
-        other_elements = tmp_analyzer_results.copy()
-        for result in tmp_analyzer_results:
-            other_elements.remove(result)
-            result_conflicted = self.__is_result_conflicted_with_other_elements(
-                other_elements, result
+        # Use index-based tracking for conflict resolution phase
+        m = len(tmp_analyzer_results)
+        active_indices = set(range(m))
+
+        for i, result in enumerate(tmp_analyzer_results):
+            if i not in active_indices:
+                continue
+            # Temporarily exclude current element
+            active_indices.discard(i)
+            # Use generator for short-circuit evaluation - stops at first conflict
+            result_conflicted = any(
+                result.has_conflict(tmp_analyzer_results[j]) for j in active_indices
             )
             if not result_conflicted:
-                other_elements.append(result)
+                active_indices.add(i)
                 unique_text_metadata_elements.append(result)
             else:
                 self.logger.debug(
@@ -191,18 +201,25 @@ class AnonymizerEngine(EngineBase):
         # All types of conflicts among entities as well as text.
         if conflict_resolution == ConflictResolutionStrategy.REMOVE_INTERSECTIONS:
             unique_text_metadata_elements.sort(key=lambda element: element.start)
-            elements_length = len(unique_text_metadata_elements)
-            index = 0
-            while index < elements_length - 1:
-                current_entity = unique_text_metadata_elements[index]
-                next_entity = unique_text_metadata_elements[index + 1]
-                if current_entity.end <= next_entity.start:
-                    index += 1
-                else:
-                    if current_entity.score >= next_entity.score:
-                        next_entity.start = current_entity.end
+            # Process until no more overlaps require re-sorting
+            needs_resort = True
+            while needs_resort:
+                needs_resort = False
+                index = 0
+                elements_length = len(unique_text_metadata_elements)
+                while index < elements_length - 1:
+                    current_entity = unique_text_metadata_elements[index]
+                    next_entity = unique_text_metadata_elements[index + 1]
+                    if current_entity.end <= next_entity.start:
+                        index += 1
                     else:
-                        current_entity.end = next_entity.start
+                        if current_entity.score >= next_entity.score:
+                            next_entity.start = current_entity.end
+                        else:
+                            current_entity.end = next_entity.start
+                        needs_resort = True
+                        break
+                if needs_resort:
                     unique_text_metadata_elements.sort(
                         key=lambda element: element.start
                     )
@@ -217,13 +234,21 @@ class AnonymizerEngine(EngineBase):
         self, text: str, analyzer_results: List[RecognizerResult]
     ) -> List[RecognizerResult]:
         """Merge adjacent entities of the same type separated by whitespace."""
+        if not analyzer_results:
+            return []
+
+        # Pre-compile regex pattern for efficiency
+        whitespace_pattern = re.compile(r"^( )+$")
+
         merged_results = []
         prev_result = None
         for result in analyzer_results:
             if prev_result is not None:
                 if prev_result.entity_type == result.entity_type:
-                    if re.search(r"^( )+$", text[prev_result.end : result.start]):
-                        merged_results.remove(prev_result)
+                    if whitespace_pattern.search(text[prev_result.end : result.start]):
+                        # Use pop() O(1) instead of remove() O(n)
+                        # prev_result is always the last element in merged_results
+                        merged_results.pop()
                         result.start = prev_result.start
             merged_results.append(result)
             prev_result = result
@@ -236,8 +261,9 @@ class AnonymizerEngine(EngineBase):
 
     @staticmethod
     def __is_result_conflicted_with_other_elements(other_elements, result):
+        # Use generator expression for short-circuit evaluation
         return any(
-            [result.has_conflict(other_element) for other_element in other_elements]
+            result.has_conflict(other_element) for other_element in other_elements
         )
 
     @staticmethod
