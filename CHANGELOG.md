@@ -3,10 +3,18 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+### General
+#### Added
+- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected. Inspired by and thanks to Sakthi Santhosh Anumand and Harsha Vardhan for the original idea.
+
 ### Analyzer
 #### Added
+- Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
+- Nigerian Vehicle Registration (NG_VEHICLE_REGISTRATION) recognizer for current format plates (2011+)
 - US_NPI recognizer for National Provider Identifier with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
 - UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
+- UK Passport Number (UK_PASSPORT) recognizer for 2-letter + 7-digit format passports issued from 2015 onwards
+- UK Vehicle Registration Number (UK_VEHICLE_REGISTRATION) recognizer for current (2001+), prefix (1983-2001), and suffix (1963-1983) plate formats
 
 ### Analyzer
 #### Changed

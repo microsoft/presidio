@@ -44,7 +44,9 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |--- |--- |--- |
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
 |UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
+|UK_PASSPORT|A UK passport number consists of 2 letters followed by 7 digits (e.g., AB1234567), used in passports issued from 2015 onwards.|Pattern match and context|
 |UK_POSTCODE|A UK [postcode](https://en.wikipedia.org/wiki/Postcodes_in_the_United_Kingdom) is a 5-8 character alphanumeric code used by the Royal Mail for mail sorting.|Pattern match and context|
+|UK_VEHICLE_REGISTRATION|A UK vehicle registration number (number plate) in current (2001+), prefix (1983-2001), or suffix (1963-1983) format.|Pattern match, context and validation|
 
 ### Spain
 
@@ -109,6 +111,12 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | KR_BRN     | The Korean Business Registration Number (BRN) is a 10-digit number assigned to business entities for taxation purposes. | Pattern match, context and custom logic. |
 | KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
 
+
+### Nigeria
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| NG_NIN     | The Nigerian National Identification Number (NIN) is a unique 11-digit number issued by the National Identity Management Commission (NIMC). | Pattern match, context, and checksum |
+| NG_VEHICLE_REGISTRATION | Nigerian vehicle registration plate number in the current format (2011+): 3 letters (LGA code), 3 digits (serial), 2 letters (year/batch). | Pattern match and context |
 
 ### Thai
 | FieldType  | Description                                                                                             | Detection Method                         |
