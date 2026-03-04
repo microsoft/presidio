@@ -10,6 +10,7 @@ from .decrypt import Decrypt  # isort:skip
 from .hash import Hash
 from .keep import Keep
 from .mask import Mask
+from .pseudonymize import Pseudonymize
 from .redact import Redact
 from .replace import Replace
 
@@ -31,6 +32,7 @@ __all__ = [
     "Keep",
     "DeanonymizeKeep",
     "Replace",
+    "Pseudonymize",
     "Custom",
     "Encrypt",
     "Decrypt",

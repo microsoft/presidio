@@ -47,6 +47,18 @@ Presidio anonymizer comes by default with the following anonymizers:
 -   **Custom**: Replace the PII with the result of the function executed on the PII string.
     - Parameters: `lambda`: Lambda function to execute on the PII string.
     The lambda return type must be a string.
+-   **Pseudonymize**: Generate realistic fake data using the Faker library while maintaining consistency and reproducibility.
+    - Parameters:
+        - `locale`: Faker locale for generating locale-specific data (default: "en_US"). 
+          Examples: "ko_KR" for Korean, "ja_JP" for Japanese, "de_DE" for German.
+        - `seed`: Random seed for reproducible results (optional, integer).
+        - `consistent`: If True, same input always returns same output (default: True).
+          Useful for maintaining referential integrity across datasets.
+    - Requires: `pip install faker`
+    - Usage: `OperatorConfig("pseudonymize", {"locale": "en_US", "consistent": True})`
+    - Automatically maps entity types to appropriate Faker methods:
+      - PERSON → name, EMAIL_ADDRESS → email, PHONE_NUMBER → phone_number,
+      - LOCATION → city, CREDIT_CARD → credit_card_number, etc.
 -   **AHDS Surrogate**: Use Azure Health Data Services de-identification service surrogation to generate realistic, medically-appropriate surrogates for detected PHI entities. This operator maintains data utility by preserving data relationships and format.
     - Parameters:
         - `endpoint`: AHDS endpoint (optional, can use AHDS_ENDPOINT env var)
