@@ -157,6 +157,12 @@ def test_configuration_loader_bad_yaml_raises_value_error(tmp_path):
         RecognizerConfigurationLoader.get(conf_file=str(f))
 
 
+def test_configuration_loader_nonexistent_file_raises_value_error():
+    """Test that nonexistent configuration file raises a ValueError."""
+    with pytest.raises(ValueError, match="not found or cannot be read"):
+        RecognizerConfigurationLoader.get(conf_file="/tmp/nonexistent_config_file_12345.yaml")
+
+
 def test_convert_supported_entities_to_entity_uses_first_item():
     """Test that supported_entities list is converted to single supported_entity."""
     conf = {"supported_entities": ["ENT1", "ENT2"]}
