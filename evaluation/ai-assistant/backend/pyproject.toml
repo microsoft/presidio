@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "presidio-evaluation-backend"
+version = "0.1.0"
+description = "Backend API for Presidio Evaluation Flow"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = ">=0.115.0"
+uvicorn = { version = ">=0.32.0", extras = ["standard"] }
+pydantic = ">=2.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
