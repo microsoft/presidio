@@ -489,16 +489,16 @@ class RecognizerConfigurationLoader:
                     config_from_file = yaml.safe_load(file)
                 use_defaults = False
 
-            except OSError:
-                logger.warning(
-                    f"configuration file {conf_file} not found.  Using default config."
-                )
-                with open(RecognizerConfigurationLoader._get_full_conf_path()) as file:
-                    config_from_file = yaml.safe_load(file)
-                use_defaults = False
+            except OSError as e:
+                raise ValueError(
+                    f"Configuration file '{conf_file}' not found or cannot be read. "
+                    f"Error: {e}"
+                ) from e
 
-            except Exception as e:
-                raise ValueError(f"Failed to parse file {conf_file}. Error: {str(e)}")
+            except yaml.YAMLError as e:
+                raise ValueError(
+                    f"Failed to parse file {conf_file}. Error: {str(e)}"
+                ) from e
 
         # Load defaults if needed (no config provided,
         # or registry_configuration is incomplete)
