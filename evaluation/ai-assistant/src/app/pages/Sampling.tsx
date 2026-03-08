@@ -91,8 +91,7 @@ export function Sampling() {
             <Info className="size-4" />
             <AlertDescription>
               <div className="text-sm">
-                Larger samples provide more accurate evaluation metrics but require more manual review time. 
-                We recommend 500-800 records for balanced accuracy and efficiency.
+                Larger samples provide more accurate evaluation metrics but require more manual review time. Choose a size that balances statistical confidence with your available review capacity.
               </div>
             </AlertDescription>
           </Alert>
