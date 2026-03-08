@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-
 from mock_data import ENTITY_MISSES, EVALUATION_RUNS
 from models import EntityMiss, EvaluationRun
 
@@ -144,15 +143,17 @@ async def get_error_patterns():
             {
                 "title": "Expand Pattern Variations",
                 "description": (
-                    "Update SSN and PHONE_NUMBER patterns to handle alternative "
-                    "separators (spaces, periods, no separators). This addresses 8 SSN misses."
+                    "Update SSN and PHONE_NUMBER patterns to handle "
+                    "alternative separators (spaces, periods, no "
+                    "separators). This addresses 8 SSN misses."
                 ),
             },
             {
                 "title": "Strong Areas",
                 "description": (
-                    "EMAIL (98% precision, 95% recall) and PERSON (96% precision, "
-                    "92% recall) recognizers are performing well and don't require tuning."
+                    "EMAIL (98% precision, 95% recall) and PERSON "
+                    "(96% precision, 92% recall) recognizers are "
+                    "performing well and don't require tuning."
                 ),
             },
         ],

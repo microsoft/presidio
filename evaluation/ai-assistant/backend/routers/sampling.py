@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-
 from models import SamplingConfig
 
 router = APIRouter(prefix="/api/sampling", tags=["sampling"])

@@ -9,7 +9,6 @@ import os
 import uuid
 
 from fastapi import APIRouter, HTTPException
-
 from models import DatasetLoadRequest, Entity, Record, UploadedDataset
 
 router = APIRouter(prefix="/api/datasets", tags=["datasets"])
@@ -63,7 +62,11 @@ def _parse_csv(
         text = row.get(text_column, "").strip()
         if not text:
             continue
-        entities = _parse_entities(row.get(entities_column)) if has_entities and entities_column else []
+        entities = (
+            _parse_entities(row.get(entities_column))
+            if has_entities and entities_column
+            else []
+        )
         records.append(
             Record(
                 id=f"rec-{i + 1:04d}",
@@ -130,7 +133,10 @@ def _parse_json(
     if not records:
         raise HTTPException(
             status_code=400,
-            detail=f"No valid records found. Each object must have a '{text_column}' field.",
+            detail=(
+                f"No valid records found. Each object must "
+                f"have a '{text_column}' field."
+            ),
         )
     return records, sorted(columns), has_entities
 
@@ -141,7 +147,10 @@ async def load_dataset(req: DatasetLoadRequest):
     if req.format not in ("csv", "json"):
         raise HTTPException(
             status_code=400,
-            detail=f"Unsupported format '{req.format}'. Only 'csv' and 'json' are supported.",
+            detail=(
+                f"Unsupported format '{req.format}'. "
+                f"Only 'csv' and 'json' are supported."
+            ),
         )
 
     file_path = os.path.expanduser(req.path)
@@ -158,9 +167,13 @@ async def load_dataset(req: DatasetLoadRequest):
         content = f.read()
 
     if req.format == "csv":
-        records, columns, has_entities = _parse_csv(content, req.text_column, req.entities_column)
+        records, columns, has_entities = _parse_csv(
+            content, req.text_column, req.entities_column
+        )
     else:
-        records, columns, has_entities = _parse_json(content, req.text_column, req.entities_column)
+        records, columns, has_entities = _parse_json(
+            content, req.text_column, req.entities_column
+        )
 
     if not records:
         raise HTTPException(status_code=400, detail="No valid records found in file")

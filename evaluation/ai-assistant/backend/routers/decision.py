@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-
 from models import DecisionRequest, DecisionType
 
 router = APIRouter(prefix="/api/decision", tags=["decision"])
@@ -26,7 +25,10 @@ async def save_decision(request: DecisionRequest):
 
     return {
         "status": "iterating",
-        "message": f"Iteration started with {len(request.selected_improvements)} improvements.",
+        "message": (
+            f"Iteration started with "
+            f"{len(request.selected_improvements)} improvements."
+        ),
         "improvements": request.selected_improvements,
         "next_step": "/sampling",
     }

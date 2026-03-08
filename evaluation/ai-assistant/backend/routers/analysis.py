@@ -1,7 +1,6 @@
 import asyncio
 
 from fastapi import APIRouter
-
 from mock_data import RECORDS
 from models import AnalysisStatus, Record
 

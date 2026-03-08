@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-
 from mock_data import RECORDS
 from models import Entity, EntityAction, Record
 
@@ -28,7 +27,11 @@ async def reject_entity(record_id: str, action: EntityAction):
     _golden_set[record_id] = [
         e
         for e in entities
-        if not (e.text == action.entity.text and e.start == action.entity.start and e.end == action.entity.end)
+        if not (
+            e.text == action.entity.text
+            and e.start == action.entity.start
+            and e.end == action.entity.end
+        )
     ]
     _reviewed.add(record_id)
     return {"status": "rejected", "record_id": record_id}
