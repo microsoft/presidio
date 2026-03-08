@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { ArrowRight, Users, CheckCircle, ChevronLeft, ChevronRight, FastForward } from 'lucide-react';
+import { ArrowRight, Users, CheckCircle, ChevronLeft, ChevronRight, CheckCheck } from 'lucide-react';
 import { EntityComparison } from '../components/EntityComparison';
 import { mockRecords } from '../lib/mockData';
 import type { Entity, SetupConfig } from '../types';
@@ -71,8 +71,8 @@ export function HumanReview() {
     navigate('/evaluation');
   };
 
-  const handleSkipTagging = () => {
-    // Auto-accept all entities from all sources for all records
+  const handleAutoConfirmAll = () => {
+    // Auto-confirm all entities from all sources for all records
     const allReviewed = new Set<string>();
     const autoGolden: Record<string, Entity[]> = {};
 
@@ -121,7 +121,20 @@ export function HumanReview() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-medium text-blue-900">Review Progress</span>
-              <span className="text-sm text-blue-800">{reviewedRecords.size} of {totalRecords} records reviewed ({reviewProgress.toFixed(0)}%)</span>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-blue-800">{reviewedRecords.size} of {totalRecords} records reviewed ({reviewProgress.toFixed(0)}%)</span>
+                {!canContinue && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                    onClick={handleAutoConfirmAll}
+                  >
+                    <CheckCheck className="size-4 mr-1" />
+                    Auto Confirm All
+                  </Button>
+                )}
+              </div>
             </div>
             <Progress value={reviewProgress} className="h-2" />
           </div>
@@ -253,10 +266,10 @@ export function HumanReview() {
             <Button
               size="sm"
               variant="outline"
-              onClick={handleSkipTagging}
+              onClick={handleAutoConfirmAll}
             >
-              <FastForward className="size-4 mr-1" />
-              Skip Tagging
+              <CheckCheck className="size-4 mr-1" />
+              Auto Confirm All
             </Button>
           )}
         </div>
