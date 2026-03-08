@@ -109,8 +109,15 @@ class SetupConfig(BaseModel):
     run_llm: bool = True
 
 
+class SamplingMethod(str, Enum):
+    random = "random"
+    length = "length"
+
+
 class SamplingConfig(BaseModel):
+    dataset_id: str
     sample_size: int = 500
+    method: SamplingMethod = SamplingMethod.random
 
 
 class AnalysisStatus(BaseModel):
