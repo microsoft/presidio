@@ -1,18 +1,52 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Slider } from '../components/ui/slider';
-import { ArrowRight, Layers, Info, RefreshCw } from 'lucide-react';
+import { ArrowRight, Layers, Info, RefreshCw, Loader2 } from 'lucide-react';
+import { api } from '../lib/api';
+import type { SetupConfig } from '../types';
 
 export function Sampling() {
   const navigate = useNavigate();
-  const [sampleSize, setSampleSize] = useState(500);
 
-  const handleContinue = () => {
-    navigate('/anonymization');
+  const setupConfig = useMemo<SetupConfig | null>(() => {
+    try {
+      const raw = sessionStorage.getItem('setupConfig');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const datasetRecordCount = useMemo(() => {
+    try {
+      const raw = sessionStorage.getItem('datasetRecordCount');
+      return raw ? parseInt(raw, 10) : 1000;
+    } catch {
+      return 1000;
+    }
+  }, []);
+
+  const maxSampleSize = Math.min(datasetRecordCount, 2000);
+  const defaultSize = Math.min(Math.round(maxSampleSize * 0.5), maxSampleSize);
+
+  const [sampleSize, setSampleSize] = useState(defaultSize);
+  const [loading, setLoading] = useState(false);
+
+  const handleContinue = async () => {
+    if (!setupConfig?.datasetId) return;
+    setLoading(true);
+    try {
+      await api.sampling.configure(setupConfig.datasetId, sampleSize);
+      navigate('/anonymization');
+    } catch {
+      navigate('/anonymization');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,15 +75,15 @@ export function Sampling() {
             <Slider
               value={[sampleSize]}
               onValueChange={(val) => setSampleSize(val[0])}
-              min={100}
-              max={1000}
-              step={50}
+              min={1}
+              max={maxSampleSize}
+              step={Math.max(1, Math.round(maxSampleSize / 100))}
               className="py-4"
             />
 
             <div className="flex justify-between text-sm text-slate-600">
-              <span>100 records</span>
-              <span>1,000 records</span>
+              <span>1 record</span>
+              <span>{maxSampleSize.toLocaleString()} records</span>
             </div>
           </div>
 
@@ -74,10 +108,9 @@ export function Sampling() {
           </div>
 
           <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="font-medium text-blue-900 mb-2">Stratified Random Sampling</div>
+            <div className="font-medium text-blue-900 mb-2">Random Sampling</div>
             <div className="text-sm text-blue-800">
-              Records are randomly selected while maintaining proportional representation across data segments.
-              This ensures statistical validity and repeatability.
+              Records are randomly selected using <code className="px-1 py-0.5 bg-blue-100 rounded text-xs">pandas.DataFrame.sample()</code> with a fixed seed for reproducibility.
             </div>
           </div>
         </div>
@@ -110,12 +143,16 @@ export function Sampling() {
           <div className="font-medium text-blue-900">Sample Summary</div>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
+              <span className="text-blue-700">Dataset:</span>
+              <span className="font-medium text-blue-900 ml-2">{datasetRecordCount.toLocaleString()} total records</span>
+            </div>
+            <div>
               <span className="text-blue-700">Sample Size:</span>
               <span className="font-medium text-blue-900 ml-2">{sampleSize} records</span>
             </div>
             <div>
               <span className="text-blue-700">Method:</span>
-              <span className="font-medium text-blue-900 ml-2">Stratified Random</span>
+              <span className="font-medium text-blue-900 ml-2">Random (pandas)</span>
             </div>
           </div>
         </div>
@@ -123,7 +160,8 @@ export function Sampling() {
 
       {/* Actions */}
       <div className="flex justify-end gap-3 pt-4">
-        <Button size="lg" onClick={handleContinue}>
+        <Button size="lg" onClick={handleContinue} disabled={loading}>
+          {loading && <Loader2 className="size-4 mr-2 animate-spin" />}
           Generate Sample & Continue
           <ArrowRight className="size-4 ml-2" />
         </Button>

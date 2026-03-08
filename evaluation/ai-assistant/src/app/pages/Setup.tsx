@@ -104,6 +104,7 @@ export function Setup() {
         hasDatasetEntities: selectedDataset.has_entities,
       };
       sessionStorage.setItem('setupConfig', JSON.stringify(config));
+      sessionStorage.setItem('datasetRecordCount', String(selectedDataset.record_count));
       navigate('/sampling');
     }
   };

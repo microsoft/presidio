@@ -110,6 +110,7 @@ class SetupConfig(BaseModel):
 
 
 class SamplingConfig(BaseModel):
+    dataset_id: str
     sample_size: int = 500
 
 
