@@ -3,59 +3,107 @@ import { useNavigate } from 'react-router';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
-import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Input } from '../components/ui/input';
 import { Checkbox } from '../components/ui/checkbox';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { Database, Shield, ArrowRight, Cloud, CloudOff } from 'lucide-react';
-import { mockDatasets } from '../lib/mockData';
-import type { ComplianceFramework } from '../types';
-
-const complianceInfo = {
-  hipaa: {
-    label: 'HIPAA',
-    description: 'Health Insurance Portability and Accountability Act - for protected health information (PHI)',
-    requirements: 'Requires strict handling of medical records, patient data, and health-related PII',
-  },
-  gdpr: {
-    label: 'GDPR',
-    description: 'General Data Protection Regulation - European data privacy law',
-    requirements: 'Emphasizes data subject rights, consent, and cross-border data transfers',
-  },
-  ccpa: {
-    label: 'CCPA',
-    description: 'California Consumer Privacy Act - California state privacy law',
-    requirements: 'Focuses on consumer rights to know, delete, and opt-out of data sales',
-  },
-  general: {
-    label: 'General',
-    description: 'Standard data protection practices',
-    requirements: 'Basic PII protection without specific regulatory requirements',
-  },
-};
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Database, Shield, ArrowRight, Cloud, FileText, CheckCircle, Loader2, X, Plus } from 'lucide-react';
+import { api } from '../lib/api';
+import type { ComplianceFramework, UploadedDataset } from '../types';
 
 export function Setup() {
   const navigate = useNavigate();
-  const [selectedDataset, setSelectedDataset] = useState('');
+  const [datasets, setDatasets] = useState<UploadedDataset[]>([
+    // Seed with the example dataset
+    {
+      id: 'ds-001',
+      filename: 'Example - Patient Records',
+      format: 'csv',
+      record_count: 1500,
+      has_entities: false,
+      columns: ['text'],
+    },
+  ]);
+  const [selectedDatasetId, setSelectedDatasetId] = useState('');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [filePath, setFilePath] = useState('');
+  const [fileFormat, setFileFormat] = useState<'csv' | 'json'>('csv');
+  const [textColumn, setTextColumn] = useState('text');
+  const [entitiesColumn, setEntitiesColumn] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [previewRecords, setPreviewRecords] = useState<any[]>([]);
   const [complianceFrameworks, setComplianceFrameworks] = useState<ComplianceFramework[]>(['general']);
   const [cloudRestriction, setCloudRestriction] = useState<'allowed' | 'restricted'>('allowed');
+  const [runPresidio, setRunPresidio] = useState(true);
+  const [runLlm, setRunLlm] = useState(true);
 
-  const canProceed = selectedDataset !== '';
-  const selectedDatasetObj = mockDatasets.find(d => d.id === selectedDataset);
+  const selectedDataset = datasets.find(d => d.id === selectedDatasetId) ?? null;
+  const canProceed = selectedDataset !== null;
 
-  const handleComplianceToggle = (framework: ComplianceFramework) => {
-    setComplianceFrameworks(prev => {
-      if (prev.includes(framework)) {
-        if (prev.length === 1) return prev;
-        return prev.filter(f => f !== framework);
-      } else {
-        return [...prev, framework];
-      }
-    });
+  const handleSelectDataset = async (value: string) => {
+    if (value === '__add_new__') {
+      setShowAddForm(true);
+      return;
+    }
+    setSelectedDatasetId(value);
+    setShowAddForm(false);
+    setPreviewRecords([]);
+
+    // Fetch preview for loaded datasets (skip for the seed example)
+    if (value.startsWith('upload-')) {
+      try {
+        const preview = await api.datasets.preview(value);
+        setPreviewRecords(preview);
+      } catch { /* ignore */ }
+    }
+  };
+
+  const handleLoadDataset = async () => {
+    if (!filePath.trim()) {
+      setLoadError('Please provide an absolute file path.');
+      return;
+    }
+
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const dataset: UploadedDataset = await api.datasets.load({
+        path: filePath.trim(),
+        format: fileFormat,
+        text_column: textColumn.trim() || 'text',
+        entities_column: entitiesColumn.trim() || undefined,
+      });
+
+      setDatasets(prev => [...prev, dataset]);
+      setSelectedDatasetId(dataset.id);
+      setShowAddForm(false);
+
+      const preview = await api.datasets.preview(dataset.id);
+      setPreviewRecords(preview);
+
+      // Reset form fields
+      setFilePath('');
+      setTextColumn('text');
+      setEntitiesColumn('');
+    } catch (err: any) {
+      setLoadError(err.message || 'Failed to load dataset');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleContinue = () => {
-    if (canProceed) {
+    if (canProceed && selectedDataset) {
+      const config = {
+        datasetId: selectedDataset.id,
+        complianceFrameworks,
+        cloudRestriction,
+        runPresidio,
+        runLlm,
+        hasDatasetEntities: selectedDataset.has_entities,
+      };
+      sessionStorage.setItem('setupConfig', JSON.stringify(config));
       navigate('/sampling');
     }
   };
@@ -74,121 +122,229 @@ export function Setup() {
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-4">
             <Database className="size-5 text-blue-600" />
-            <h3 className="font-semibold text-slate-900">Dataset Selection</h3>
+            <h3 className="font-semibold text-slate-900">Dataset</h3>
           </div>
 
-          <div className="space-y-3">
-            <Label>Select Dataset</Label>
-            <Select value={selectedDataset} onValueChange={setSelectedDataset}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose a dataset to evaluate..." />
+          {/* Dataset Dropdown */}
+          <div>
+            <Label htmlFor="dataset-select">Select a dataset</Label>
+            <Select value={showAddForm ? '__add_new__' : selectedDatasetId} onValueChange={handleSelectDataset}>
+              <SelectTrigger className="mt-1" id="dataset-select">
+                <SelectValue placeholder="Choose a dataset…" />
               </SelectTrigger>
               <SelectContent>
-                {mockDatasets.map(dataset => (
-                  <SelectItem key={dataset.id} value={dataset.id}>
-                    <div className="flex items-center gap-2">
-                      <span>{dataset.name}</span>
-                      <span className="text-xs text-slate-500">
-                        ({dataset.recordCount.toLocaleString()} records)
-                      </span>
-                    </div>
+                {datasets.map(ds => (
+                  <SelectItem key={ds.id} value={ds.id}>
+                    {ds.filename} — {ds.record_count.toLocaleString()} records
                   </SelectItem>
                 ))}
+                <SelectItem value="__add_new__">
+                  <span className="flex items-center gap-1">
+                    <Plus className="size-3" />
+                    Add new dataset…
+                  </span>
+                </SelectItem>
               </SelectContent>
             </Select>
-
-            {selectedDatasetObj && (
-              <Alert>
-                <AlertDescription>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Type:</span>
-                      <span className="capitalize">{selectedDatasetObj.type}</span>
-                    </div>
-                    <div className="text-sm text-slate-600">{selectedDatasetObj.description}</div>
-                  </div>
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
-        </div>
-      </Card>
-
-      {/* Compliance Framework */}
-      <Card className="p-6">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Shield className="size-5 text-blue-600" />
-            <h3 className="font-semibold text-slate-900">Compliance Context</h3>
           </div>
 
-          <div className="space-y-3">
-            <Label>Regulatory Frameworks (select one or more)</Label>
-            <div className="space-y-2">
-              {Object.entries(complianceInfo).map(([key, info]) => (
-                <div key={key} className="flex items-start space-x-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
-                  <Checkbox
-                    id={key}
-                    checked={complianceFrameworks.includes(key as ComplianceFramework)}
-                    onCheckedChange={() => handleComplianceToggle(key as ComplianceFramework)}
-                    className="mt-1"
+          {/* Add Dataset Form */}
+          {showAddForm && (
+            <div className="space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <Label className="font-medium text-slate-900">Load Dataset from File</Label>
+                <Button size="sm" variant="ghost" onClick={() => { setShowAddForm(false); setLoadError(null); }}>
+                  <X className="size-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="file-path">Absolute File Path</Label>
+                  <Input
+                    id="file-path"
+                    placeholder="/path/to/dataset.csv"
+                    value={filePath}
+                    onChange={(e) => setFilePath(e.target.value)}
+                    className="mt-1 font-mono text-sm"
                   />
-                  <div className="flex-1">
-                    <Label htmlFor={key} className="cursor-pointer">
-                      <div className="font-medium">{info.label}</div>
-                      <div className="text-sm text-slate-600 mt-1">{info.description}</div>
-                      {complianceFrameworks.includes(key as ComplianceFramework) && (
-                        <div className="text-xs text-slate-500 mt-2 pl-3 border-l-2 border-blue-600">
-                          {info.requirements}
-                        </div>
-                      )}
-                    </Label>
+                </div>
+
+                <div>
+                  <Label htmlFor="file-format">Format</Label>
+                  <Select value={fileFormat} onValueChange={(val) => setFileFormat(val as 'csv' | 'json')}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="csv">CSV</SelectItem>
+                      <SelectItem value="json">JSON</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label htmlFor="text-col">Text Column Name</Label>
+                    <Input
+                      id="text-col"
+                      placeholder="text"
+                      value={textColumn}
+                      onChange={(e) => setTextColumn(e.target.value)}
+                      className="mt-1 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="entities-col">Entities Column Name <span className="text-slate-400">(optional)</span></Label>
+                    <Input
+                      id="entities-col"
+                      placeholder="entities"
+                      value={entitiesColumn}
+                      onChange={(e) => setEntitiesColumn(e.target.value)}
+                      className="mt-1 text-sm"
+                    />
                   </div>
                 </div>
-              ))}
+
+                {loadError && (
+                  <Alert className="border-red-200 bg-red-50">
+                    <AlertDescription className="text-red-800 text-sm">{loadError}</AlertDescription>
+                  </Alert>
+                )}
+
+                <Button onClick={handleLoadDataset} disabled={loading || !filePath.trim()}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="size-4 mr-2 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    'Load Dataset'
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Selected dataset summary */}
+          {selectedDataset && !showAddForm && (
+            <div className="space-y-4">
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="size-5 text-green-600 mt-0.5" />
+                  <div>
+                    <div className="font-medium text-green-900">{selectedDataset.filename}</div>
+                    <div className="text-sm text-green-800 mt-1 space-y-0.5">
+                      <div>{selectedDataset.record_count.toLocaleString()} records • {selectedDataset.format.toUpperCase()} format</div>
+                      <div>Columns: {selectedDataset.columns.join(', ')}</div>
+                      <div>
+                        {selectedDataset.has_entities ? (
+                          <span className="text-green-700 font-medium">✓ Contains pre-identified entities</span>
+                        ) : (
+                          <span className="text-slate-600">Text only — no pre-identified entities</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview Records */}
+              {previewRecords.length > 0 && (
+                <div>
+                  <Label className="mb-2 block">Preview (first {previewRecords.length} records)</Label>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {previewRecords.map((record: any, i: number) => (
+                      <div key={i} className="p-3 bg-slate-50 border border-slate-200 rounded text-sm">
+                        <div className="flex items-start gap-2">
+                          <FileText className="size-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-slate-800 line-clamp-2">{record.text}</p>
+                            {record.dataset_entities?.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {record.dataset_entities.map((e: any, j: number) => (
+                                  <span key={j} className="inline-block px-1.5 py-0.5 bg-blue-100 text-blue-800 text-xs rounded">
+                                    {e.entity_type}: {e.text}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Detection Options — only when dataset has entities */}
+              {selectedDataset.has_entities && (
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
+                  <Label className="text-blue-900 font-medium">Detection Options</Label>
+                  <p className="text-sm text-blue-800">
+                    Your dataset includes pre-identified entities. Choose which additional detection to run:
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="run-presidio"
+                        checked={runPresidio}
+                        onCheckedChange={(checked) => setRunPresidio(checked === true)}
+                      />
+                      <Label htmlFor="run-presidio" className="cursor-pointer">
+                        <span className="font-medium">Run Presidio detection</span>
+                        <span className="text-sm text-blue-700 ml-2">— compare against baseline PII detection</span>
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="run-llm"
+                        checked={runLlm}
+                        onCheckedChange={(checked) => setRunLlm(checked === true)}
+                      />
+                      <Label htmlFor="run-llm" className="cursor-pointer">
+                        <span className="font-medium">Run LLM detection</span>
+                        <span className="text-sm text-blue-700 ml-2">— AI-assisted entity detection</span>
+                      </Label>
+                    </div>
+                  </div>
+                  {!runPresidio && !runLlm && (
+                    <p className="text-xs text-blue-700">
+                      Only dataset-provided entities will be used for tagging.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </Card>
 
-      {/* Cloud Access */}
-      <Card className="p-6">
+      {/* Compliance Framework (disabled) */}
+      <Card className="p-6 opacity-50 pointer-events-none">
         <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Cloud className="size-5 text-blue-600" />
-            <h3 className="font-semibold text-slate-900">Data Access Constraints</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Shield className="size-5 text-slate-400" />
+              <h3 className="font-semibold text-slate-400">Compliance Context</h3>
+            </div>
+            <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Coming soon</span>
           </div>
+          <p className="text-sm text-slate-400">Support for compliance frameworks (HIPAA, GDPR, CCPA) will be added soon.</p>
+        </div>
+      </Card>
 
-          <div className="space-y-3">
-            <Label>Cloud Processing</Label>
-            <RadioGroup value={cloudRestriction} onValueChange={(val) => setCloudRestriction(val as 'allowed' | 'restricted')}>
-              <div className="flex items-start space-x-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
-                <RadioGroupItem value="allowed" id="cloud-allowed" className="mt-1" />
-                <div className="flex-1">
-                  <Label htmlFor="cloud-allowed" className="cursor-pointer flex items-center gap-2">
-                    <Cloud className="size-4" />
-                    <span className="font-medium">Cloud Processing Allowed</span>
-                  </Label>
-                  <div className="text-sm text-slate-600 mt-1">
-                    Data can be processed using cloud-based LLM services (Azure AI Foundry)
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
-                <RadioGroupItem value="restricted" id="cloud-restricted" className="mt-1" />
-                <div className="flex-1">
-                  <Label htmlFor="cloud-restricted" className="cursor-pointer flex items-center gap-2">
-                    <CloudOff className="size-4" />
-                    <span className="font-medium">Cloud Processing Restricted</span>
-                  </Label>
-                  <div className="text-sm text-slate-600 mt-1">
-                    Data must remain on-premises; LLM judging will use local deployment
-                  </div>
-                </div>
-              </div>
-            </RadioGroup>
+      {/* Cloud Access (disabled) */}
+      <Card className="p-6 opacity-50 pointer-events-none">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Cloud className="size-5 text-slate-400" />
+              <h3 className="font-semibold text-slate-400">Data Access Constraints</h3>
+            </div>
+            <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Coming soon</span>
           </div>
+          <p className="text-sm text-slate-400">Currently only cloud-based LLM processing is supported. On-premises / local deployment options will be added soon.</p>
         </div>
       </Card>
 

@@ -1,18 +1,29 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { ArrowRight, Users, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Users, CheckCircle, ChevronLeft, ChevronRight, FastForward } from 'lucide-react';
 import { EntityComparison } from '../components/EntityComparison';
 import { mockRecords } from '../lib/mockData';
-import type { Entity } from '../types';
+import type { Entity, SetupConfig } from '../types';
 
 export function HumanReview() {
   const navigate = useNavigate();
   const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [reviewedRecords, setReviewedRecords] = useState<Set<string>>(new Set());
   const [goldenSet, setGoldenSet] = useState<Record<string, Entity[]>>({});
+
+  const setupConfig = useMemo<SetupConfig | null>(() => {
+    try {
+      const raw = sessionStorage.getItem('setupConfig');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const hasDatasetEntities = setupConfig?.hasDatasetEntities ?? false;
 
   const currentRecord = mockRecords[currentRecordIndex];
   const totalRecords = mockRecords.length;
@@ -58,6 +69,37 @@ export function HumanReview() {
 
   const handleContinue = () => {
     navigate('/evaluation');
+  };
+
+  const handleSkipTagging = () => {
+    // Auto-accept all entities from all sources for all records
+    const allReviewed = new Set<string>();
+    const autoGolden: Record<string, Entity[]> = {};
+
+    mockRecords.forEach(record => {
+      allReviewed.add(record.id);
+      const entities: Entity[] = [];
+      const seen = new Set<string>();
+
+      const addUnique = (e: Entity) => {
+        const key = `${e.text}-${e.start}-${e.end}-${e.entity_type}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          entities.push(e);
+        }
+      };
+
+      record.presidioEntities.forEach(addUnique);
+      record.llmEntities.forEach(addUnique);
+      if ('datasetEntities' in record) {
+        (record as any).datasetEntities?.forEach(addUnique);
+      }
+
+      autoGolden[record.id] = entities;
+    });
+
+    setReviewedRecords(allReviewed);
+    setGoldenSet(autoGolden);
   };
 
   const isReviewed = reviewedRecords.has(currentRecord.id);
@@ -128,6 +170,7 @@ export function HumanReview() {
         recordText={currentRecord.text}
         presidioEntities={currentRecord.presidioEntities}
         llmEntities={currentRecord.llmEntities}
+        datasetEntities={'datasetEntities' in currentRecord ? (currentRecord as any).datasetEntities : []}
         onConfirm={handleConfirm}
         onReject={handleReject}
         onAddManual={handleAddManual}
@@ -194,15 +237,27 @@ export function HumanReview() {
 
       {/* Actions */}
       <div className="flex items-center justify-between pt-4">
-        <div className="text-sm text-slate-600">
-          {canContinue ? (
-            <span className="text-green-700 font-medium">
-              ✓ All records reviewed - ready to proceed
-            </span>
-          ) : (
-            <span>
-              Review all records to continue ({reviewedRecords.size}/{totalRecords} completed)
-            </span>
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-slate-600">
+            {canContinue ? (
+              <span className="text-green-700 font-medium">
+                ✓ All records reviewed - ready to proceed
+              </span>
+            ) : (
+              <span>
+                Review all records to continue ({reviewedRecords.size}/{totalRecords} completed)
+              </span>
+            )}
+          </div>
+          {!canContinue && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSkipTagging}
+            >
+              <FastForward className="size-4 mr-1" />
+              Skip Tagging
+            </Button>
           )}
         </div>
         <Button

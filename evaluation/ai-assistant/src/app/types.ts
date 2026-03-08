@@ -13,7 +13,7 @@ export interface Dataset {
 
 export interface Entity {
   text: string;
-  type: string;
+  entity_type: string;
   start: number;
   end: number;
   score?: number;
@@ -24,7 +24,26 @@ export interface Record {
   text: string;
   presidioEntities: Entity[];
   llmEntities: Entity[];
+  datasetEntities?: Entity[];
   goldenEntities?: Entity[];
+}
+
+export interface UploadedDataset {
+  id: string;
+  filename: string;
+  format: 'csv' | 'json';
+  record_count: number;
+  has_entities: boolean;
+  columns: string[];
+}
+
+export interface SetupConfig {
+  datasetId: string;
+  complianceFrameworks: ComplianceFramework[];
+  cloudRestriction: 'allowed' | 'restricted';
+  runPresidio: boolean;
+  runLlm: boolean;
+  hasDatasetEntities: boolean;
 }
 
 export interface EvaluationMetrics {

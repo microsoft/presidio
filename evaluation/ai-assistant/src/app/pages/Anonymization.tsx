@@ -1,34 +1,57 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { Badge } from '../components/ui/badge';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { ArrowRight, Loader2, CheckCircle, Shield, Sparkles, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Loader2, CheckCircle, Shield, Sparkles, AlertTriangle, Database } from 'lucide-react';
+import type { SetupConfig } from '../types';
 
 export function Anonymization() {
   const navigate = useNavigate();
-  const [presidioProgress, setPresidioProgress] = useState(0);
-  const [llmProgress, setLlmProgress] = useState(0);
-  const [presidioComplete, setPresidioComplete] = useState(false);
-  const [llmComplete, setLlmComplete] = useState(false);
+
+  const setupConfig = useMemo<SetupConfig | null>(() => {
+    try {
+      const raw = sessionStorage.getItem('setupConfig');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const runPresidio = setupConfig?.runPresidio ?? true;
+  const runLlm = setupConfig?.runLlm ?? true;
+  const hasDatasetEntities = setupConfig?.hasDatasetEntities ?? false;
+
+  const [presidioProgress, setPresidioProgress] = useState(runPresidio ? 0 : 100);
+  const [llmProgress, setLlmProgress] = useState(runLlm ? 0 : 100);
+  const [presidioComplete, setPresidioComplete] = useState(!runPresidio);
+  const [llmComplete, setLlmComplete] = useState(!runLlm);
 
   const isComplete = presidioComplete && llmComplete;
 
   useEffect(() => {
-    const presidioInterval = setInterval(() => {
-      setPresidioProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(presidioInterval);
-          setPresidioComplete(true);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 50);
+    if (!runPresidio && !runLlm) return; // nothing to simulate
 
-    setTimeout(() => {
+    if (runPresidio) {
+      const presidioInterval = setInterval(() => {
+        setPresidioProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(presidioInterval);
+            setPresidioComplete(true);
+            return 100;
+          }
+          return prev + 2;
+        });
+      }, 50);
+      return () => clearInterval(presidioInterval);
+    }
+  }, [runPresidio]);
+
+  useEffect(() => {
+    if (!runLlm) return;
+    const timer = setTimeout(() => {
       const llmInterval = setInterval(() => {
         setLlmProgress((prev) => {
           if (prev >= 100) {
@@ -39,12 +62,9 @@ export function Anonymization() {
           return prev + 1.5;
         });
       }, 80);
-    }, 500);
-
-    return () => {
-      clearInterval(presidioInterval);
-    };
-  }, []);
+    }, runPresidio ? 500 : 0);
+    return () => clearTimeout(timer);
+  }, [runLlm, runPresidio]);
 
   const handleContinue = () => {
     navigate('/human-review');
@@ -55,11 +75,33 @@ export function Anonymization() {
       <div>
         <h2 className="text-2xl font-semibold text-slate-900 mb-2">PII Detection Analysis</h2>
         <p className="text-slate-600">
-          Running Presidio and LLM analysis in parallel to detect PII entities across sampled records.
+          {runPresidio && runLlm
+            ? 'Running Presidio and LLM analysis in parallel to detect PII entities across sampled records.'
+            : runPresidio
+              ? 'Running Presidio analysis to detect PII entities across sampled records.'
+              : runLlm
+                ? 'Running LLM analysis to detect PII entities across sampled records.'
+                : 'Using dataset-provided entities. No additional detection selected.'}
         </p>
       </div>
 
+      {/* Dataset entities notice */}
+      {hasDatasetEntities && (
+        <Alert className="border-green-200 bg-green-50">
+          <Database className="size-4 text-green-600" />
+          <AlertDescription>
+            <div className="space-y-1">
+              <div className="font-medium text-green-900">Dataset Entities Available</div>
+              <div className="text-sm text-green-800">
+                Pre-identified entities from the uploaded dataset will be included in the human review step.
+              </div>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Important Notice */}
+      {runLlm && (
       <Alert className="border-amber-200 bg-amber-50">
         <AlertTriangle className="size-4 text-amber-600" />
         <AlertDescription>
@@ -72,10 +114,13 @@ export function Anonymization() {
           </div>
         </AlertDescription>
       </Alert>
+      )}
 
       {/* Side-by-Side Processing */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {(runPresidio || runLlm) ? (
+      <div className={`grid grid-cols-1 ${runPresidio && runLlm ? 'md:grid-cols-2' : ''} gap-6`}>
         {/* Presidio Processing */}
+        {runPresidio && (
         <Card className="p-6">
           <div className="space-y-6">
             <div className="flex items-center gap-2">
@@ -132,8 +177,10 @@ export function Anonymization() {
             )}
           </div>
         </Card>
+        )}
 
         {/* LLM Processing */}
+        {runLlm && (
         <Card className="p-6">
           <div className="space-y-6">
             <div className="flex items-center gap-2">
@@ -190,7 +237,21 @@ export function Anonymization() {
             )}
           </div>
         </Card>
+        )}
       </div>
+      ) : (
+        <Card className="p-6 border-green-200 bg-green-50">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="size-6 text-green-600" />
+            <div>
+              <h3 className="font-semibold text-green-900">No additional detection needed</h3>
+              <p className="text-sm text-green-800 mt-1">
+                Proceeding with dataset-provided entities only. Continue to human review.
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Combined Results */}
       {isComplete && (

@@ -29,7 +29,7 @@ class Dataset(BaseModel):
 
 class Entity(BaseModel):
     text: str
-    type: str
+    entity_type: str
     start: int
     end: int
     score: Optional[float] = None
@@ -38,8 +38,9 @@ class Entity(BaseModel):
 class Record(BaseModel):
     id: str
     text: str
-    presidio_entities: list[Entity]
-    llm_entities: list[Entity]
+    presidio_entities: list[Entity] = []
+    llm_entities: list[Entity] = []
+    dataset_entities: list[Entity] = []
     golden_entities: Optional[list[Entity]] = None
 
 
@@ -84,10 +85,28 @@ class EntityMiss(BaseModel):
 # --- Request / Response models ---
 
 
+class DatasetLoadRequest(BaseModel):
+    path: str
+    format: str  # "csv" | "json"
+    text_column: str = "text"
+    entities_column: str | None = None
+
+
+class UploadedDataset(BaseModel):
+    id: str
+    filename: str
+    format: str  # "csv" | "json"
+    record_count: int
+    has_entities: bool
+    columns: list[str]
+
+
 class SetupConfig(BaseModel):
     dataset_id: str
     compliance_frameworks: list[ComplianceFramework]
     cloud_restriction: str  # "allowed" | "restricted"
+    run_presidio: bool = True
+    run_llm: bool = True
 
 
 class SamplingConfig(BaseModel):
