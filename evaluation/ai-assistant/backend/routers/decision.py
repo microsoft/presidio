@@ -9,6 +9,7 @@ _decision_state: dict = {}
 
 @router.post("")
 async def save_decision(request: DecisionRequest):
+    """Save an approve or iterate decision."""
     _decision_state.update(request.model_dump())
 
     if request.decision == DecisionType.approve:
@@ -36,6 +37,7 @@ async def save_decision(request: DecisionRequest):
 
 @router.get("/improvements")
 async def list_improvements():
+    """List suggested configuration improvements."""
     return [
         {
             "id": "threshold",
@@ -62,6 +64,7 @@ async def list_improvements():
 
 @router.post("/save-artifacts")
 async def save_artifacts():
+    """Persist evaluation artifacts for audit."""
     return {
         "status": "saved",
         "message": "Evaluation artifacts saved for audit and compliance.",

@@ -36,6 +36,7 @@ async def start_analysis():
 
 @router.get("/status", response_model=AnalysisStatus)
 async def get_analysis_status():
+    """Return current analysis progress."""
     presidio_done = _state["presidio_progress"] >= 100
     llm_done = _state["llm_progress"] >= 100
 
@@ -78,6 +79,7 @@ async def get_records():
 
 @router.get("/records/{record_id}", response_model=Record)
 async def get_record(record_id: str):
+    """Return a single record by ID."""
     for rec in RECORDS:
         if rec.id == record_id:
             return rec

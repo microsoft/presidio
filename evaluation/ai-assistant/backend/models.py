@@ -8,6 +8,8 @@ from pydantic import BaseModel
 
 
 class ComplianceFramework(str, Enum):
+    """Supported compliance frameworks."""
+
     hipaa = "hipaa"
     gdpr = "gdpr"
     ccpa = "ccpa"
@@ -15,11 +17,15 @@ class ComplianceFramework(str, Enum):
 
 
 class DatasetType(str, Enum):
+    """Dataset origin type."""
+
     customer = "customer"
     internal = "internal"
 
 
 class Dataset(BaseModel):
+    """Dataset metadata."""
+
     id: str
     name: str
     type: DatasetType
@@ -28,6 +34,8 @@ class Dataset(BaseModel):
 
 
 class Entity(BaseModel):
+    """A detected PII entity span."""
+
     text: str
     entity_type: str
     start: int
@@ -36,6 +44,8 @@ class Entity(BaseModel):
 
 
 class Record(BaseModel):
+    """A text record with detected entities."""
+
     id: str
     text: str
     presidio_entities: list[Entity] = []
@@ -45,6 +55,8 @@ class Record(BaseModel):
 
 
 class EvaluationMetrics(BaseModel):
+    """Precision/recall metrics for an evaluation run."""
+
     precision: float
     recall: float
     f1_score: float
@@ -55,6 +67,8 @@ class EvaluationMetrics(BaseModel):
 
 
 class EvaluationRun(BaseModel):
+    """Snapshot of a single evaluation run."""
+
     id: str
     timestamp: datetime
     sample_size: int
@@ -63,17 +77,23 @@ class EvaluationRun(BaseModel):
 
 
 class MissType(str, Enum):
+    """Classification of an entity miss."""
+
     false_positive = "false-positive"
     false_negative = "false-negative"
 
 
 class RiskLevel(str, Enum):
+    """Risk severity level."""
+
     high = "high"
     medium = "medium"
     low = "low"
 
 
 class EntityMiss(BaseModel):
+    """An entity detection miss (false positive or negative)."""
+
     record_id: str
     record_text: str
     missed_entity: Entity
@@ -86,6 +106,8 @@ class EntityMiss(BaseModel):
 
 
 class DatasetLoadRequest(BaseModel):
+    """Request to load a dataset from a file path."""
+
     path: str
     format: str  # "csv" | "json"
     text_column: str = "text"
@@ -93,6 +115,8 @@ class DatasetLoadRequest(BaseModel):
 
 
 class UploadedDataset(BaseModel):
+    """Metadata for an uploaded dataset."""
+
     id: str
     filename: str
     format: str  # "csv" | "json"
@@ -102,6 +126,8 @@ class UploadedDataset(BaseModel):
 
 
 class SetupConfig(BaseModel):
+    """Initial evaluation setup configuration."""
+
     dataset_id: str
     compliance_frameworks: list[ComplianceFramework]
     cloud_restriction: str  # "allowed" | "restricted"
@@ -110,17 +136,23 @@ class SetupConfig(BaseModel):
 
 
 class SamplingMethod(str, Enum):
+    """Available sampling strategies."""
+
     random = "random"
     length = "length"
 
 
 class SamplingConfig(BaseModel):
+    """Sampling configuration parameters."""
+
     dataset_id: str
     sample_size: int = 500
     method: SamplingMethod = SamplingMethod.random
 
 
 class AnalysisStatus(BaseModel):
+    """Current progress of PII analysis."""
+
     presidio_progress: int
     llm_progress: int
     presidio_complete: bool
@@ -131,16 +163,22 @@ class AnalysisStatus(BaseModel):
 
 
 class EntityAction(BaseModel):
+    """An entity review action (confirm/reject/add)."""
+
     entity: Entity
     source: str  # "presidio" | "llm" | "manual"
 
 
 class DecisionType(str, Enum):
+    """Final evaluation decision."""
+
     approve = "approve"
     iterate = "iterate"
 
 
 class DecisionRequest(BaseModel):
+    """Request to approve or iterate on the evaluation."""
+
     decision: DecisionType
     notes: str = ""
     selected_improvements: list[str] = []

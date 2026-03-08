@@ -22,4 +22,5 @@ app.include_router(decision.router)
 
 @app.get("/api/health")
 async def health():
+    """Return service health status."""
     return {"status": "ok"}

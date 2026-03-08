@@ -7,11 +7,13 @@ router = APIRouter(prefix="/api/evaluation", tags=["evaluation"])
 
 @router.get("/runs", response_model=list[EvaluationRun])
 async def get_evaluation_runs():
+    """List all evaluation runs."""
     return EVALUATION_RUNS
 
 
 @router.get("/latest", response_model=EvaluationRun)
 async def get_latest_run():
+    """Return the most recent evaluation run."""
     return EVALUATION_RUNS[-1]
 
 
@@ -77,6 +79,7 @@ async def get_metrics():
 
 @router.get("/patterns")
 async def get_error_patterns():
+    """Return common error patterns and insights."""
     return {
         "frequent_misses": [
             {

@@ -1,6 +1,7 @@
 import pandas as pd
 from fastapi import APIRouter, HTTPException
 from models import Record, SamplingConfig, SamplingMethod
+
 from routers.upload import _records as uploaded_records
 
 router = APIRouter(prefix="/api/sampling", tags=["sampling"])
@@ -24,7 +25,6 @@ def _sample_length(df: pd.DataFrame, n: int) -> pd.DataFrame:
         labels=["short", "medium", "long"],
     )
     per_bucket = max(1, n // 3)
-    remainder = n - per_bucket * 3
     parts: list[pd.DataFrame] = []
     for bucket in ["short", "medium", "long"]:
         group = df[df["_len_bucket"] == bucket]
