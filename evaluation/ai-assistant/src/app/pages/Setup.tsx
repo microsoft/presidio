@@ -278,42 +278,40 @@ export function Setup() {
                 </div>
               )}
 
-              {/* Detection Options — only when dataset has entities */}
+              {/* Detection Options — not implemented yet */}
               {selectedDataset.has_entities && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
-                  <Label className="text-blue-900 font-medium">Detection Options</Label>
-                  <p className="text-sm text-blue-800">
-                    Your dataset includes pre-identified entities. Choose which additional detection to run:
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3 opacity-50 pointer-events-none">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-slate-400 font-medium">Detection Options</Label>
+                    <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Coming soon</span>
+                  </div>
+                  <p className="text-sm text-slate-400">
+                    Your dataset includes pre-identified entities. Additional detection engines will be available soon:
                   </p>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-3">
                       <Checkbox
                         id="run-presidio"
-                        checked={runPresidio}
-                        onCheckedChange={(checked) => setRunPresidio(checked === true)}
+                        checked={false}
+                        disabled
                       />
-                      <Label htmlFor="run-presidio" className="cursor-pointer">
-                        <span className="font-medium">Run Presidio detection</span>
-                        <span className="text-sm text-blue-700 ml-2">— compare against baseline PII detection</span>
+                      <Label htmlFor="run-presidio" className="cursor-default">
+                        <span className="font-medium text-slate-400">Run Presidio detection</span>
+                        <span className="text-sm text-slate-400 ml-2">— compare against baseline PII detection</span>
                       </Label>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Checkbox
                         id="run-llm"
-                        checked={runLlm}
-                        onCheckedChange={(checked) => setRunLlm(checked === true)}
+                        checked={false}
+                        disabled
                       />
-                      <Label htmlFor="run-llm" className="cursor-pointer">
-                        <span className="font-medium">Run LLM detection</span>
-                        <span className="text-sm text-blue-700 ml-2">— AI-assisted entity detection</span>
+                      <Label htmlFor="run-llm" className="cursor-default">
+                        <span className="font-medium text-slate-400">Run LLM detection</span>
+                        <span className="text-sm text-slate-400 ml-2">— AI-assisted entity detection</span>
                       </Label>
                     </div>
                   </div>
-                  {!runPresidio && !runLlm && (
-                    <p className="text-xs text-blue-700">
-                      Only dataset-provided entities will be used for tagging.
-                    </p>
-                  )}
                 </div>
               )}
             </div>

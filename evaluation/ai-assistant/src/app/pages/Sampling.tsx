@@ -5,9 +5,27 @@ import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Slider } from '../components/ui/slider';
-import { ArrowRight, Layers, Info, RefreshCw, Loader2 } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
+import { ArrowRight, Layers, Info, RefreshCw, Loader2, Shuffle, Ruler, Brain } from 'lucide-react';
 import { api } from '../lib/api';
 import type { SetupConfig } from '../types';
+
+type SamplingMethod = 'random' | 'length' | 'semantic';
+
+const METHODS: { value: SamplingMethod; label: string; description: string; icon: typeof Shuffle }[] = [
+  {
+    value: 'random',
+    label: 'Random Sampling',
+    description: 'Uniformly random selection using pandas with a fixed seed for reproducibility.',
+    icon: Shuffle,
+  },
+  {
+    value: 'length',
+    label: 'Length-Based Sampling',
+    description: 'Stratified by text length (short / medium / long) so every length bucket is represented equally.',
+    icon: Ruler,
+  },
+];
 
 export function Sampling() {
   const navigate = useNavigate();
@@ -34,13 +52,16 @@ export function Sampling() {
   const defaultSize = Math.min(Math.round(maxSampleSize * 0.5), maxSampleSize);
 
   const [sampleSize, setSampleSize] = useState(defaultSize);
+  const [samplingMethod, setSamplingMethod] = useState<SamplingMethod>('random');
   const [loading, setLoading] = useState(false);
 
   const handleContinue = async () => {
     if (!setupConfig?.datasetId) return;
     setLoading(true);
     try {
-      await api.sampling.configure(setupConfig.datasetId, sampleSize);
+      const timeout = setTimeout(() => navigate('/anonymization'), 8000);
+      await api.sampling.configure(setupConfig.datasetId, sampleSize, samplingMethod);
+      clearTimeout(timeout);
       navigate('/anonymization');
     } catch {
       navigate('/anonymization');
@@ -106,10 +127,45 @@ export function Sampling() {
             <h3 className="font-semibold text-slate-900">Sampling Method</h3>
           </div>
 
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="font-medium text-blue-900 mb-2">Random Sampling</div>
-            <div className="text-sm text-blue-800">
-              Records are randomly selected using <code className="px-1 py-0.5 bg-blue-100 rounded text-xs">pandas.DataFrame.sample()</code> with a fixed seed for reproducibility.
+          <RadioGroup
+            value={samplingMethod}
+            onValueChange={(v) => setSamplingMethod(v as SamplingMethod)}
+            className="space-y-3"
+          >
+            {METHODS.map(({ value, label, description, icon: Icon }) => (
+              <label
+                key={value}
+                htmlFor={`method-${value}`}
+                className={`flex items-start gap-4 p-4 rounded-lg border cursor-pointer transition-colors ${
+                  samplingMethod === value
+                    ? 'border-blue-400 bg-blue-50'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <RadioGroupItem value={value} id={`method-${value}`} className="mt-1" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <Icon className={`size-4 ${samplingMethod === value ? 'text-blue-600' : 'text-slate-500'}`} />
+                    <span className="font-medium text-slate-900">{label}</span>
+                  </div>
+                  <p className="text-sm text-slate-600 mt-1">{description}</p>
+                </div>
+              </label>
+            ))}
+          </RadioGroup>
+
+          {/* Semantic — coming soon */}
+          <div className="flex items-start gap-4 p-4 rounded-lg border border-slate-200 opacity-50 pointer-events-none">
+            <div className="size-4 mt-1 rounded-full border border-slate-300" />
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <Brain className="size-4 text-slate-400" />
+                <span className="font-medium text-slate-400">Semantic Diversity Sampling</span>
+                <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Coming soon</span>
+              </div>
+              <p className="text-sm text-slate-400 mt-1">
+                TF-IDF vectorization + greedy max-min distance to maximise topical diversity in the sample.
+              </p>
             </div>
           </div>
         </div>
@@ -151,7 +207,7 @@ export function Sampling() {
             </div>
             <div>
               <span className="text-blue-700">Method:</span>
-              <span className="font-medium text-blue-900 ml-2">Random (pandas)</span>
+              <span className="font-medium text-blue-900 ml-2">{METHODS.find(m => m.value === samplingMethod)?.label}</span>
             </div>
           </div>
         </div>
