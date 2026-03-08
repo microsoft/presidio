@@ -30,8 +30,8 @@ interface AnnotatedEntity extends Entity {
 export function EntityComparison({
   recordId,
   recordText,
-  presidioEntities,
-  llmEntities,
+  presidioEntities = [],
+  llmEntities = [],
   onConfirm,
   onReject,
   onAddManual,
