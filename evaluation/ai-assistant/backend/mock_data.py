@@ -53,32 +53,32 @@ RECORDS: list[Record] = [
             "Contact: john.smith@email.com, Phone: 555-0123. SSN: 123-45-6789."
         ),
         presidio_entities=[
-            Entity(text="John Smith", type="PERSON", start=8, end=18, score=0.95),
-            Entity(text="03/15/1985", type="DATE_OF_BIRTH", start=24, end=34, score=0.92),
-            Entity(text="john.smith@email.com", type="EMAIL", start=77, end=97, score=0.98),
-            Entity(text="555-0123", type="PHONE_NUMBER", start=106, end=114, score=0.89),
-            Entity(text="123-45-6789", type="US_SSN", start=121, end=132, score=0.99),
+            Entity(text="John Smith", entity_type="PERSON", start=8, end=18, score=0.95),
+            Entity(text="03/15/1985", entity_type="DATE_OF_BIRTH", start=24, end=34, score=0.92),
+            Entity(text="john.smith@email.com", entity_type="EMAIL", start=77, end=97, score=0.98),
+            Entity(text="555-0123", entity_type="PHONE_NUMBER", start=106, end=114, score=0.89),
+            Entity(text="123-45-6789", entity_type="US_SSN", start=121, end=132, score=0.99),
         ],
         llm_entities=[
-            Entity(text="John Smith", type="PERSON", start=8, end=18, score=0.96),
-            Entity(text="03/15/1985", type="DATE_OF_BIRTH", start=24, end=34, score=0.94),
-            Entity(text="2025-01-10", type="DATE", start=52, end=62, score=0.88),
-            Entity(text="john.smith@email.com", type="EMAIL", start=77, end=97, score=0.97),
-            Entity(text="555-0123", type="PHONE_NUMBER", start=106, end=114, score=0.91),
-            Entity(text="123-45-6789", type="US_SSN", start=121, end=132, score=0.98),
+            Entity(text="John Smith", entity_type="PERSON", start=8, end=18, score=0.96),
+            Entity(text="03/15/1985", entity_type="DATE_OF_BIRTH", start=24, end=34, score=0.94),
+            Entity(text="2025-01-10", entity_type="DATE", start=52, end=62, score=0.88),
+            Entity(text="john.smith@email.com", entity_type="EMAIL", start=77, end=97, score=0.97),
+            Entity(text="555-0123", entity_type="PHONE_NUMBER", start=106, end=114, score=0.91),
+            Entity(text="123-45-6789", entity_type="US_SSN", start=121, end=132, score=0.98),
         ],
     ),
     Record(
         id="rec-002",
         text="Dr. Sarah Johnson reviewed the case. Medical Record #MR-445521. Insurance Policy: POL-8821-USA.",
         presidio_entities=[
-            Entity(text="Sarah Johnson", type="PERSON", start=4, end=17, score=0.93),
-            Entity(text="MR-445521", type="MEDICAL_RECORD", start=55, end=64, score=0.87),
+            Entity(text="Sarah Johnson", entity_type="PERSON", start=4, end=17, score=0.93),
+            Entity(text="MR-445521", entity_type="MEDICAL_RECORD", start=55, end=64, score=0.87),
         ],
         llm_entities=[
-            Entity(text="Dr. Sarah Johnson", type="PERSON", start=0, end=17, score=0.95),
-            Entity(text="MR-445521", type="MEDICAL_RECORD", start=55, end=64, score=0.89),
-            Entity(text="POL-8821-USA", type="INSURANCE_POLICY", start=84, end=96, score=0.82),
+            Entity(text="Dr. Sarah Johnson", entity_type="PERSON", start=0, end=17, score=0.95),
+            Entity(text="MR-445521", entity_type="MEDICAL_RECORD", start=55, end=64, score=0.89),
+            Entity(text="POL-8821-USA", entity_type="INSURANCE_POLICY", start=84, end=96, score=0.82),
         ],
     ),
     Record(
@@ -88,19 +88,19 @@ RECORDS: list[Record] = [
             "Salary: $85,000. Emergency contact: Mike Doe at 555-9876."
         ),
         presidio_entities=[
-            Entity(text="EMP-8821", type="EMPLOYEE_ID", start=13, end=21, score=0.91),
-            Entity(text="Jane Doe", type="PERSON", start=23, end=31, score=0.94),
-            Entity(text="2023-06-01", type="DATE", start=41, end=51, score=0.96),
-            Entity(text="Mike Doe", type="PERSON", start=89, end=97, score=0.92),
-            Entity(text="555-9876", type="PHONE_NUMBER", start=101, end=109, score=0.88),
+            Entity(text="EMP-8821", entity_type="EMPLOYEE_ID", start=13, end=21, score=0.91),
+            Entity(text="Jane Doe", entity_type="PERSON", start=23, end=31, score=0.94),
+            Entity(text="2023-06-01", entity_type="DATE", start=41, end=51, score=0.96),
+            Entity(text="Mike Doe", entity_type="PERSON", start=89, end=97, score=0.92),
+            Entity(text="555-9876", entity_type="PHONE_NUMBER", start=101, end=109, score=0.88),
         ],
         llm_entities=[
-            Entity(text="EMP-8821", type="EMPLOYEE_ID", start=13, end=21, score=0.90),
-            Entity(text="Jane Doe", type="PERSON", start=23, end=31, score=0.96),
-            Entity(text="2023-06-01", type="DATE", start=41, end=51, score=0.94),
-            Entity(text="$85,000", type="SALARY", start=61, end=68, score=0.79),
-            Entity(text="Mike Doe", type="PERSON", start=89, end=97, score=0.93),
-            Entity(text="555-9876", type="PHONE_NUMBER", start=101, end=109, score=0.90),
+            Entity(text="EMP-8821", entity_type="EMPLOYEE_ID", start=13, end=21, score=0.90),
+            Entity(text="Jane Doe", entity_type="PERSON", start=23, end=31, score=0.96),
+            Entity(text="2023-06-01", entity_type="DATE", start=41, end=51, score=0.94),
+            Entity(text="$85,000", entity_type="SALARY", start=61, end=68, score=0.79),
+            Entity(text="Mike Doe", entity_type="PERSON", start=89, end=97, score=0.93),
+            Entity(text="555-9876", entity_type="PHONE_NUMBER", start=101, end=109, score=0.90),
         ],
     ),
     Record(
@@ -110,13 +110,13 @@ RECORDS: list[Record] = [
             "Customer: alice.wong@company.com. IP: 192.168.1.100"
         ),
         presidio_entities=[
-            Entity(text="4532", type="CREDIT_CARD", start=22, end=26, score=0.65),
-            Entity(text="alice.wong@company.com", type="EMAIL", start=64, end=86, score=0.97),
-            Entity(text="192.168.1.100", type="IP_ADDRESS", start=92, end=105, score=0.99),
+            Entity(text="4532", entity_type="CREDIT_CARD", start=22, end=26, score=0.65),
+            Entity(text="alice.wong@company.com", entity_type="EMAIL", start=64, end=86, score=0.97),
+            Entity(text="192.168.1.100", entity_type="IP_ADDRESS", start=92, end=105, score=0.99),
         ],
         llm_entities=[
-            Entity(text="alice.wong@company.com", type="EMAIL", start=64, end=86, score=0.98),
-            Entity(text="192.168.1.100", type="IP_ADDRESS", start=92, end=105, score=0.97),
+            Entity(text="alice.wong@company.com", entity_type="EMAIL", start=64, end=86, score=0.98),
+            Entity(text="192.168.1.100", entity_type="IP_ADDRESS", start=92, end=105, score=0.97),
         ],
     ),
     Record(
@@ -126,13 +126,13 @@ RECORDS: list[Record] = [
             "Doctor notes indicate history of diabetes."
         ),
         presidio_entities=[
-            Entity(text="Robert Chen", type="PERSON", start=17, end=28, score=0.94),
-            Entity(text="ABC-123", type="MEDICATION_CODE", start=41, end=48, score=0.71),
+            Entity(text="Robert Chen", entity_type="PERSON", start=17, end=28, score=0.94),
+            Entity(text="ABC-123", entity_type="MEDICATION_CODE", start=41, end=48, score=0.71),
         ],
         llm_entities=[
-            Entity(text="Robert Chen", type="PERSON", start=17, end=28, score=0.95),
-            Entity(text="ABC-123", type="MEDICATION_CODE", start=41, end=48, score=0.73),
-            Entity(text="diabetes", type="MEDICAL_CONDITION", start=97, end=105, score=0.86),
+            Entity(text="Robert Chen", entity_type="PERSON", start=17, end=28, score=0.95),
+            Entity(text="ABC-123", entity_type="MEDICATION_CODE", start=41, end=48, score=0.73),
+            Entity(text="diabetes", entity_type="MEDICAL_CONDITION", start=97, end=105, score=0.86),
         ],
     ),
 ]
@@ -189,7 +189,7 @@ ENTITY_MISSES: list[EntityMiss] = [
     EntityMiss(
         record_id="rec-004",
         record_text="Credit card ending in 4532 was used for transaction. Customer: alice.wong@company.com.",
-        missed_entity=Entity(text="4532", type="CREDIT_CARD", start=22, end=26, score=0.65),
+        missed_entity=Entity(text="4532", entity_type="CREDIT_CARD", start=22, end=26, score=0.65),
         miss_type=MissType.false_negative,
         entity_type="CREDIT_CARD",
         risk_level=RiskLevel.high,
@@ -197,7 +197,7 @@ ENTITY_MISSES: list[EntityMiss] = [
     EntityMiss(
         record_id="rec-002",
         record_text="Dr. Sarah Johnson reviewed the case. Insurance Policy: POL-8821-USA.",
-        missed_entity=Entity(text="POL-8821-USA", type="INSURANCE_POLICY", start=56, end=68),
+        missed_entity=Entity(text="POL-8821-USA", entity_type="INSURANCE_POLICY", start=56, end=68),
         miss_type=MissType.false_negative,
         entity_type="INSURANCE_POLICY",
         risk_level=RiskLevel.medium,
@@ -208,7 +208,7 @@ ENTITY_MISSES: list[EntityMiss] = [
             "Prescription for Robert Chen: Medication ABC-123, dosage 50mg. "
             "Doctor notes indicate history of diabetes."
         ),
-        missed_entity=Entity(text="diabetes", type="MEDICAL_CONDITION", start=97, end=105),
+        missed_entity=Entity(text="diabetes", entity_type="MEDICAL_CONDITION", start=97, end=105),
         miss_type=MissType.false_negative,
         entity_type="MEDICAL_CONDITION",
         risk_level=RiskLevel.high,
@@ -216,7 +216,7 @@ ENTITY_MISSES: list[EntityMiss] = [
     EntityMiss(
         record_id="rec-003",
         record_text="Employee ID: EMP-8821, Jane Doe, started 2023-06-01. Salary: $85,000.",
-        missed_entity=Entity(text="$85,000", type="SALARY", start=61, end=68),
+        missed_entity=Entity(text="$85,000", entity_type="SALARY", start=61, end=68),
         miss_type=MissType.false_negative,
         entity_type="SALARY",
         risk_level=RiskLevel.medium,

@@ -14,16 +14,17 @@ interface EntityComparisonProps {
   recordText: string;
   presidioEntities: Entity[];
   llmEntities: Entity[];
-  onConfirm: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'manual') => void;
-  onReject: (recordId: string, entity: Entity, source: 'presidio' | 'llm') => void;
+  datasetEntities?: Entity[];
+  onConfirm: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'manual' | 'dataset') => void;
+  onReject: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'dataset') => void;
   onAddManual: (recordId: string, entity: Entity) => void;
 }
 
-type EntityStatus = 'match' | 'conflict' | 'presidio-only' | 'llm-only' | 'pending';
+type EntityStatus = 'match' | 'conflict' | 'presidio-only' | 'llm-only' | 'dataset-only' | 'pending';
 
 interface AnnotatedEntity extends Entity {
   status: EntityStatus;
-  source: 'presidio' | 'llm' | 'both';
+  source: 'presidio' | 'llm' | 'both' | 'dataset';
   confirmed?: boolean;
 }
 
@@ -32,12 +33,13 @@ export function EntityComparison({
   recordText,
   presidioEntities = [],
   llmEntities = [],
+  datasetEntities = [],
   onConfirm,
   onReject,
   onAddManual,
 }: EntityComparisonProps) {
   const [showAddManual, setShowAddManual] = useState(false);
-  const [manualEntity, setManualEntity] = useState({ text: '', type: '', start: 0, end: 0 });
+  const [manualEntity, setManualEntity] = useState({ text: '', entity_type: '', start: 0, end: 0 });
   const [confirmedEntities, setConfirmedEntities] = useState<Set<string>>(new Set());
   const [rejectedEntities, setRejectedEntities] = useState<Set<string>>(new Set());
   const [expandedContexts, setExpandedContexts] = useState<Set<string>>(new Set());
@@ -51,7 +53,7 @@ export function EntityComparison({
     );
     
     if (matchingLlm) {
-      if (matchingLlm.type === pe.type) {
+      if (matchingLlm.entity_type === pe.entity_type) {
         annotatedEntities.push({ ...pe, status: 'match', source: 'both' });
       } else {
         annotatedEntities.push({ ...pe, status: 'conflict', source: 'both' });
@@ -67,6 +69,15 @@ export function EntityComparison({
     );
     if (!alreadyAdded) {
       annotatedEntities.push({ ...le, status: 'llm-only', source: 'llm' });
+    }
+  });
+
+  datasetEntities.forEach(de => {
+    const alreadyAdded = annotatedEntities.some(
+      ae => ae.text === de.text && ae.start === de.start && ae.end === de.end
+    );
+    if (!alreadyAdded) {
+      annotatedEntities.push({ ...de, status: 'dataset-only', source: 'dataset' });
     }
   });
 
@@ -125,9 +136,9 @@ export function EntityComparison({
   };
 
   const handleAddManualEntity = () => {
-    if (manualEntity.text && manualEntity.type) {
+    if (manualEntity.text && manualEntity.entity_type) {
       onAddManual(recordId, manualEntity);
-      setManualEntity({ text: '', type: '', start: 0, end: 0 });
+      setManualEntity({ text: '', entity_type: '', start: 0, end: 0 });
       setShowAddManual(false);
     }
   };
@@ -149,6 +160,8 @@ export function EntityComparison({
         return <Badge className="bg-purple-100 text-purple-800 border-purple-300">Presidio Only</Badge>;
       case 'llm-only':
         return <Badge className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM Only</Badge>;
+      case 'dataset-only':
+        return <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300">Dataset</Badge>;
       default:
         return <Badge variant="secondary">Pending</Badge>;
     }
@@ -193,7 +206,7 @@ export function EntityComparison({
                 </div>
                 <div>
                   <Label>Entity Type</Label>
-                  <Select value={manualEntity.type} onValueChange={(val) => setManualEntity({ ...manualEntity, type: val })}>
+                  <Select value={manualEntity.entity_type} onValueChange={(val) => setManualEntity({ ...manualEntity, entity_type: val })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type..." />
                     </SelectTrigger>
@@ -234,7 +247,7 @@ export function EntityComparison({
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-slate-900">{entity.text}</span>
-                        <Badge variant="outline">{entity.type}</Badge>
+                        <Badge variant="outline">{entity.entity_type}</Badge>
                         {getStatusBadge(entity.status, isConfirmed, isRejected)}
                       </div>
                       
