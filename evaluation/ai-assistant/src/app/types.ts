@@ -31,10 +31,15 @@ export interface Record {
 export interface UploadedDataset {
   id: string;
   filename: string;
+  name: string;
+  description: string;
+  path: string;
   format: 'csv' | 'json';
   record_count: number;
   has_entities: boolean;
   columns: string[];
+  text_column: string;
+  entities_column?: string | null;
 }
 
 export interface SetupConfig {

@@ -1,15 +1,30 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { ArrowRight, Users, CheckCircle, ChevronLeft, ChevronRight, CheckCheck } from 'lucide-react';
+import { ArrowRight, Users, CheckCircle, ChevronLeft, ChevronRight, CheckCheck, Loader2 } from 'lucide-react';
 import { EntityComparison } from '../components/EntityComparison';
-import { mockRecords } from '../lib/mockData';
-import type { Entity, SetupConfig } from '../types';
+import { api } from '../lib/api';
+import type { Entity, Record as RecordType, SetupConfig } from '../types';
+
+/** Map backend snake_case record to frontend camelCase Record. */
+function toFrontendRecord(raw: any): RecordType {
+  return {
+    id: raw.id,
+    text: raw.text,
+    presidioEntities: raw.presidio_entities ?? raw.presidioEntities ?? [],
+    llmEntities: raw.llm_entities ?? raw.llmEntities ?? [],
+    datasetEntities: raw.dataset_entities ?? raw.datasetEntities ?? [],
+    goldenEntities: raw.golden_entities ?? raw.goldenEntities ?? undefined,
+  };
+}
 
 export function HumanReview() {
   const navigate = useNavigate();
+  const [records, setRecords] = useState<RecordType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [reviewedRecords, setReviewedRecords] = useState<Set<string>>(new Set());
   const [goldenSet, setGoldenSet] = useState<Record<string, Entity[]>>({});
@@ -25,9 +40,39 @@ export function HumanReview() {
 
   const hasDatasetEntities = setupConfig?.hasDatasetEntities ?? false;
 
-  const currentRecord = mockRecords[currentRecordIndex];
-  const totalRecords = mockRecords.length;
-  const reviewProgress = (reviewedRecords.size / totalRecords) * 100;
+  // Fetch sampled records + LLM results on mount
+  useEffect(() => {
+    async function loadRecords() {
+      try {
+        setLoading(true);
+        const [rawRecords, llmResults] = await Promise.all([
+          api.sampling.records(),
+          api.llm.results(),
+        ]);
+
+        const merged = rawRecords.map((raw: any) => {
+          const rec = toFrontendRecord(raw);
+          // Merge in LLM entities from analysis results
+          const llmEntities = llmResults[rec.id];
+          if (llmEntities) {
+            rec.llmEntities = llmEntities;
+          }
+          return rec;
+        });
+
+        setRecords(merged);
+      } catch (err: any) {
+        setLoadError(err.message || 'Failed to load records');
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadRecords();
+  }, []);
+
+  const currentRecord = records[currentRecordIndex] ?? null;
+  const totalRecords = records.length;
+  const reviewProgress = totalRecords > 0 ? (reviewedRecords.size / totalRecords) * 100 : 0;
 
   const handleConfirm = (recordId: string, entity: Entity, _source: string) => {
     setGoldenSet(prev => ({
@@ -41,7 +86,7 @@ export function HumanReview() {
     setGoldenSet(prev => ({
       ...prev,
       [recordId]: (prev[recordId] || []).filter(e => 
-        e.text !== entity.text || e.start !== entity.start || e.end !== entity.end
+        !(e.start < entity.end && entity.start < e.end)
       ),
     }));
     setReviewedRecords(new Set([...reviewedRecords, recordId]));
@@ -72,11 +117,10 @@ export function HumanReview() {
   };
 
   const handleAutoConfirmAll = () => {
-    // Auto-confirm all entities from all sources for all records
     const allReviewed = new Set<string>();
     const autoGolden: Record<string, Entity[]> = {};
 
-    mockRecords.forEach(record => {
+    records.forEach(record => {
       allReviewed.add(record.id);
       const entities: Entity[] = [];
       const seen = new Set<string>();
@@ -91,9 +135,7 @@ export function HumanReview() {
 
       record.presidioEntities.forEach(addUnique);
       record.llmEntities.forEach(addUnique);
-      if ('datasetEntities' in record) {
-        (record as any).datasetEntities?.forEach(addUnique);
-      }
+      record.datasetEntities?.forEach(addUnique);
 
       autoGolden[record.id] = entities;
     });
@@ -102,8 +144,39 @@ export function HumanReview() {
     setGoldenSet(autoGolden);
   };
 
-  const isReviewed = reviewedRecords.has(currentRecord.id);
-  const canContinue = reviewedRecords.size === totalRecords;
+  const isReviewed = currentRecord ? reviewedRecords.has(currentRecord.id) : false;
+  const canContinue = totalRecords > 0 && reviewedRecords.size === totalRecords;
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto flex items-center justify-center py-20">
+        <Loader2 className="size-6 animate-spin text-slate-400 mr-3" />
+        <span className="text-slate-600">Loading records…</span>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="max-w-5xl mx-auto py-10">
+        <Alert className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">{loadError}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  if (!currentRecord) {
+    return (
+      <div className="max-w-5xl mx-auto py-10">
+        <Alert>
+          <AlertDescription>
+            No sampled records found. Go back to <strong>Sampling</strong> to select a sample first.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -183,7 +256,7 @@ export function HumanReview() {
         recordText={currentRecord.text}
         presidioEntities={currentRecord.presidioEntities}
         llmEntities={currentRecord.llmEntities}
-        datasetEntities={'datasetEntities' in currentRecord ? (currentRecord as any).datasetEntities : []}
+        datasetEntities={currentRecord.datasetEntities ?? []}
         onConfirm={handleConfirm}
         onReject={handleReject}
         onAddManual={handleAddManual}
@@ -195,19 +268,19 @@ export function HumanReview() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-blue-500" />
-            <span>✓ Match - Both systems agree</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="size-3 rounded-full bg-amber-500" />
-            <span>⚠ Conflict - Type mismatch</span>
+            <span>✓ Match (all sources agree)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-purple-500" />
-            <span>Presidio only detection</span>
+            <span>Presidio</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="size-3 rounded-full bg-emerald-500" />
+            <span>Predefined</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-cyan-500" />
-            <span>LLM only detection</span>
+            <span>LLM Judge</span>
           </div>
         </div>
       </div>
