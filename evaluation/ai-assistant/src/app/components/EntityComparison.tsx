@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-import { CheckCircle, XCircle, Edit, AlertTriangle, Check, X, ChevronDown, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, Edit, Check, X, ChevronDown, FileText } from 'lucide-react';
 import type { Entity } from '../types';
 
 interface EntityComparisonProps {
@@ -20,7 +20,7 @@ interface EntityComparisonProps {
   onAddManual: (recordId: string, entity: Entity) => void;
 }
 
-type EntityStatus = 'match' | 'conflict' | 'presidio-only' | 'llm-only' | 'predefined-only' | 'pending';
+type EntityStatus = 'match' | 'presidio-only' | 'llm-only' | 'predefined-only' | 'pending';
 
 interface AnnotatedEntity extends Entity {
   status: EntityStatus;
@@ -80,22 +80,26 @@ export function EntityComparison({
     const uniqueTypes = new Set(types.values());
     const allAgree = uniqueTypes.size === 1;
 
-    let status: EntityStatus;
     if (sourceList.length >= 2 && allAgree) {
-      status = 'match';
+      // All active sources agree on type → single "Match" card
+      annotatedEntities.push({ ...entity, status: 'match', sources: sourceList });
     } else if (sourceList.length >= 2 && !allAgree) {
-      status = 'conflict';
+      // Sources disagree on type → separate card per source so user can confirm/reject each
+      for (const src of sourceList) {
+        const srcType = types.get(src) || entity.entity_type;
+        const status: EntityStatus = src === 'presidio' ? 'presidio-only' : src === 'llm' ? 'llm-only' : 'predefined-only';
+        annotatedEntities.push({ ...entity, entity_type: srcType, status, sources: [src] });
+      }
     } else if (sourceList.length === 1) {
       const s = sourceList[0];
-      status = s === 'presidio' ? 'presidio-only' : s === 'llm' ? 'llm-only' : 'predefined-only';
+      const status: EntityStatus = s === 'presidio' ? 'presidio-only' : s === 'llm' ? 'llm-only' : 'predefined-only';
+      annotatedEntities.push({ ...entity, status, sources: sourceList });
     } else {
-      status = 'pending';
+      annotatedEntities.push({ ...entity, status: 'pending', sources: sourceList });
     }
-
-    annotatedEntities.push({ ...entity, status, sources: sourceList });
   });
 
-  const getEntityKey = (entity: Entity) => `${entity.text}-${entity.start}-${entity.end}`;
+  const getEntityKey = (entity: AnnotatedEntity) => `${entity.text}-${entity.start}-${entity.end}-${entity.sources.join(',')}`;
 
   const getContextForEntity = (entity: Entity) => {
     const CONTEXT_CHARS = 150;
@@ -171,8 +175,6 @@ export function EntityComparison({
     switch (status) {
       case 'match':
         return <Badge className="bg-blue-100 text-blue-800 border-blue-300">✓ Match</Badge>;
-      case 'conflict':
-        return <Badge className="bg-amber-100 text-amber-800 border-amber-300">⚠ Type Mismatch</Badge>;
       case 'presidio-only':
         return <Badge className="bg-purple-100 text-purple-800 border-purple-300">Presidio</Badge>;
       case 'llm-only':
@@ -256,7 +258,6 @@ export function EntityComparison({
                   className={`p-4 rounded-lg border ${
                     isConfirmed ? 'bg-green-50 border-green-300' :
                     isRejected ? 'bg-red-50 border-red-300' :
-                    entity.status === 'conflict' ? 'bg-amber-50 border-amber-300' :
                     'bg-white border-slate-200'
                   }`}
                 >
@@ -271,12 +272,6 @@ export function EntityComparison({
                       <div className="flex items-center gap-4 text-sm text-slate-600">
                         <span>Position: {entity.start}-{entity.end}</span>
                         {entity.score && <span>Confidence: {(entity.score * 100).toFixed(0)}%</span>}
-                        {entity.status === 'conflict' && (
-                          <div className="flex items-center gap-1 text-amber-700">
-                            <AlertTriangle className="size-3" />
-                            <span className="text-xs">Type mismatch between Presidio and LLM</span>
-                          </div>
-                        )}
                       </div>
                     </div>
 

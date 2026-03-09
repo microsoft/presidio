@@ -265,14 +265,10 @@ export function HumanReview() {
       {/* Legend */}
       <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
         <div className="text-sm font-medium text-slate-900 mb-3">Entity Status Legend</div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-blue-500" />
-            <span>✓ Match</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="size-3 rounded-full bg-amber-500" />
-            <span>⚠ Type conflict</span>
+            <span>✓ Match (all sources agree)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-purple-500" />
