@@ -19,6 +19,9 @@ backend/.venv/
 backend/__pycache__/
 backend/**/__pycache__/
 
+# Persisted dataset copies
+backend/data/
+
 *.pyc
 *.pyo
 

@@ -52,6 +52,7 @@ class Record(BaseModel):
     llm_entities: list[Entity] = []
     dataset_entities: list[Entity] = []
     golden_entities: Optional[list[Entity]] = None
+    final_entities: Optional[list[Entity]] = None
 
 
 class EvaluationMetrics(BaseModel):
@@ -124,9 +125,11 @@ class UploadedDataset(BaseModel):
     name: str  # user-friendly display name
     description: str = ""  # optional user-provided description
     path: str  # absolute file path
+    stored_path: str = ""  # local copy in backend/data/
     format: str  # "csv" | "json"
     record_count: int
     has_entities: bool
+    has_final_entities: bool = False
     columns: list[str]
     text_column: str = "text"
     entities_column: str | None = None
@@ -201,3 +204,9 @@ class LLMConfig(BaseModel):
     """LLM Judge configuration — only deployment is chosen in the UI."""
 
     deployment_name: str = "gpt-4o"
+
+
+class LLMAnalyzeRequest(BaseModel):
+    """Request body for starting LLM analysis."""
+
+    dataset_id: str

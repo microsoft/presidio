@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { ArrowRight, Shield, Sparkles, Database, CheckCircle, Loader2, AlertTriangle, Unplug } from 'lucide-react';
+import { ArrowRight, Shield, Sparkles, Database, CheckCircle, Loader2, AlertTriangle, Unplug, FastForward } from 'lucide-react';
 import { api } from '../lib/api';
 import type { SetupConfig } from '../types';
 
@@ -37,6 +37,16 @@ export function Anonymization() {
   }, []);
 
   const hasDatasetEntities = setupConfig?.hasDatasetEntities ?? false;
+  const hasFinalEntities = setupConfig?.hasFinalEntities ?? false;
+
+  const datasetRecordCount = useMemo(() => {
+    try {
+      const raw = sessionStorage.getItem('datasetRecordCount');
+      return raw ? parseInt(raw, 10) : null;
+    } catch {
+      return null;
+    }
+  }, []);
 
   // LLM Judge state
   const [llmStep, setLlmStep] = useState<LlmStep>('loading');
@@ -103,8 +113,13 @@ export function Anonymization() {
 
   const handleRunAnalysis = useCallback(async () => {
     setLlmError(null);
+    const datasetId = setupConfig?.datasetId;
+    if (!datasetId) {
+      setLlmError('No dataset selected. Go back to Setup.');
+      return;
+    }
     try {
-      const res = await api.llm.analyze();
+      const res = await api.llm.analyze(datasetId);
       setLlmTotal(res.total);
       setLlmProgress(0);
       setLlmStep('running');
@@ -113,7 +128,7 @@ export function Anonymization() {
       // Stay in configured state so user can retry
       setLlmStep('configured');
     }
-  }, []);
+  }, [setupConfig]);
 
   const handleDisconnect = useCallback(async () => {
     try {
@@ -141,6 +156,31 @@ export function Anonymization() {
           Configure and run PII detection engines. The LLM Judge uses Azure OpenAI via LangExtract to identify entities.
         </p>
       </div>
+
+      {/* Final entities notice — skip LLM + human review */}
+      {hasFinalEntities && (
+        <Alert className="border-purple-200 bg-purple-50">
+          <FastForward className="size-4 text-purple-600" />
+          <AlertDescription>
+            <div className="space-y-2">
+              <div className="font-medium text-purple-900">Final Entities Found in Dataset</div>
+              <div className="text-sm text-purple-800">
+                This dataset already contains human-approved final entities from a previous review.
+                You can skip the LLM analysis and human review steps and go directly to evaluation to compare Presidio results against the final entities.
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-purple-300 text-purple-700 hover:bg-purple-100"
+                onClick={() => navigate('/evaluation')}
+              >
+                <FastForward className="size-4 mr-1" />
+                Skip to Evaluation
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Dataset entities notice */}
       {hasDatasetEntities && (
@@ -279,6 +319,9 @@ PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
               <div className="space-y-3">
                 <p className="text-sm text-slate-600">
                   Connected with <strong>{selectedModel}</strong>.
+                  {datasetRecordCount != null && (
+                    <> Will analyse <strong>{datasetRecordCount.toLocaleString()}</strong> records from the dataset.</>
+                  )}
                 </p>
                 {llmError && (
                   <Alert className="border-red-200 bg-red-50">

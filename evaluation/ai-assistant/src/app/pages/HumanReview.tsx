@@ -38,15 +38,18 @@ export function HumanReview() {
     }
   }, []);
 
-  const hasDatasetEntities = setupConfig?.hasDatasetEntities ?? false;
-
   // Fetch sampled records + LLM results on mount
   useEffect(() => {
     async function loadRecords() {
       try {
         setLoading(true);
+        const datasetId = setupConfig?.datasetId;
+        if (!datasetId) {
+          setLoadError('No dataset selected. Go back to Setup.');
+          return;
+        }
         const [rawRecords, llmResults] = await Promise.all([
-          api.sampling.records(),
+          api.datasets.records(datasetId),
           api.llm.results(),
         ]);
 
@@ -112,7 +115,16 @@ export function HumanReview() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    // Save the golden set as final_entities in the stored dataset
+    const datasetId = setupConfig?.datasetId;
+    if (datasetId && Object.keys(goldenSet).length > 0) {
+      try {
+        await api.review.saveFinalEntities(datasetId, goldenSet);
+      } catch {
+        // Non-blocking — continue even if save fails
+      }
+    }
     navigate('/evaluation');
   };
 
@@ -135,7 +147,6 @@ export function HumanReview() {
 
       record.presidioEntities.forEach(addUnique);
       record.llmEntities.forEach(addUnique);
-      record.datasetEntities?.forEach(addUnique);
 
       autoGolden[record.id] = entities;
     });
@@ -256,7 +267,6 @@ export function HumanReview() {
         recordText={currentRecord.text}
         presidioEntities={currentRecord.presidioEntities}
         llmEntities={currentRecord.llmEntities}
-        datasetEntities={currentRecord.datasetEntities ?? []}
         onConfirm={handleConfirm}
         onReject={handleReject}
         onAddManual={handleAddManual}
@@ -265,7 +275,7 @@ export function HumanReview() {
       {/* Legend */}
       <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
         <div className="text-sm font-medium text-slate-900 mb-3">Entity Status Legend</div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-blue-500" />
             <span>✓ Match (all sources agree)</span>
@@ -273,10 +283,6 @@ export function HumanReview() {
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-purple-500" />
             <span>Presidio</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="size-3 rounded-full bg-emerald-500" />
-            <span>Predefined</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-cyan-500" />

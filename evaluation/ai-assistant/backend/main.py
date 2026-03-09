@@ -5,7 +5,6 @@ from routers import (
     evaluation,
     llm,
     review,
-    sampling,
     upload,
 )
 
@@ -19,7 +18,6 @@ app.add_middleware(
 )
 
 app.include_router(upload.router)
-app.include_router(sampling.router)
 app.include_router(review.router)
 app.include_router(evaluation.router)
 app.include_router(decision.router)

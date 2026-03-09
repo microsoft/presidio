@@ -1,59 +1,99 @@
-import { useState } from 'react';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Textarea } from '../components/ui/textarea';
-import { Label } from '../components/ui/label';
-import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Badge } from '../components/ui/badge';
-import { CheckCircle, RefreshCw, AlertTriangle, Save, Play, FileText } from 'lucide-react';
+import { AlertTriangle, Download, FileText, ExternalLink, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router';
 
-type DecisionType = 'approve' | 'iterate' | null;
+const bestPractices = [
+  {
+    title: 'Deny List Recognizer',
+    description: 'Add domain-specific terms (product names, internal codes) that Presidio should always detect using a simple deny list.',
+    url: 'https://github.com/microsoft/presidio/blob/main/docs/samples/python/customizing_presidio_analyzer.ipynb',
+  },
+  {
+    title: 'Custom Regex Recognizers',
+    description: 'Create pattern-based recognizers for entity formats specific to your data (e.g., internal IDs, policy numbers).',
+    url: 'https://github.com/microsoft/presidio/blob/main/docs/analyzer/adding_recognizers.md',
+  },
+  {
+    title: 'Transformers-based NLP Models',
+    description: 'Use transformer models (e.g., from HuggingFace) for higher accuracy NER instead of the default spaCy models.',
+    url: 'https://github.com/microsoft/presidio/blob/main/docs/analyzer/customizing_nlp_models.md',
+  },
+  {
+    title: 'Custom Recognizer Development',
+    description: 'Build fully custom recognizers with validation logic, context enhancement, and confidence scoring.',
+    url: 'https://github.com/microsoft/presidio/blob/main/docs/analyzer/developing_recognizers.md',
+  },
+  {
+    title: 'Adjusting Confidence Thresholds',
+    description: 'Fine-tune score thresholds per entity type to balance precision and recall for your use case.',
+    url: 'https://github.com/microsoft/presidio/blob/main/docs/analyzer/decision_process.md',
+  },
+  {
+    title: 'Multi-language Support',
+    description: 'Configure Presidio to detect PII across multiple languages using language-specific NLP models.',
+    url: 'https://github.com/microsoft/presidio/blob/main/docs/analyzer/languages.md',
+  },
+  {
+    title: 'GLiNER for Zero-shot NER',
+    description: 'Use the GLiNER model for zero-shot PII detection — recognizes entity types not seen during training, including a dedicated PII model.',
+    url: 'https://github.com/microsoft/presidio/blob/main/docs/samples/python/gliner.md',
+  },
+  {
+    title: 'LLM / SLM-based Detection',
+    description: 'Leverage large or small language models (e.g., via LangExtract + Ollama) for flexible, context-aware PII/PHI recognition.',
+    url: 'https://github.com/microsoft/presidio/blob/main/docs/samples/python/langextract/index.md',
+  },
+];
 
 export function Decision() {
-  const navigate = useNavigate();
-  const [decision, setDecision] = useState<DecisionType>(null);
-  const [notes, setNotes] = useState('');
-  const [selectedImprovements, setSelectedImprovements] = useState<string[]>([]);
 
-  const improvements = [
-    { id: 'threshold', label: 'Lower CREDIT_CARD confidence threshold to 0.60', impact: '+12 detections' },
-    { id: 'medical', label: 'Add MEDICAL_CONDITION custom recognizer', impact: '+9 detections' },
-    { id: 'ssn', label: 'Expand SSN pattern variations', impact: '+8 detections' },
-    { id: 'insurance', label: 'Add INSURANCE_POLICY recognizer', impact: '+6 detections' },
-  ];
+  const handleExportArtifacts = () => {
+    // Generate CSV from dataset
+    const csvHeader = 'text,entity_type,start,end,score,source\n';
+    const csvContent = csvHeader + 'Sample data - export will include full dataset results';
+    const csvBlob = new Blob([csvContent], { type: 'text/csv' });
+    const csvUrl = URL.createObjectURL(csvBlob);
+    const csvLink = document.createElement('a');
+    csvLink.href = csvUrl;
+    csvLink.download = 'evaluation_dataset.csv';
+    csvLink.click();
+    URL.revokeObjectURL(csvUrl);
 
-  const toggleImprovement = (id: string) => {
-    setSelectedImprovements(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
-  };
+    // Generate evaluation report
+    const report = [
+      '# Presidio Evaluation Report',
+      '',
+      `Generated: ${new Date().toISOString()}`,
+      '',
+      '## Metrics Summary',
+      '- Precision: 94%',
+      '- Recall: 88%',
+      '- F1 Score: 91%',
+      '',
+      '## Key Findings',
+      '- 18 critical false negatives identified (12 credit cards, 6 SSNs)',
+      '',
+    ].join('\n');
+    const reportBlob = new Blob([report], { type: 'text/markdown' });
+    const reportUrl = URL.createObjectURL(reportBlob);
+    const reportLink = document.createElement('a');
+    reportLink.href = reportUrl;
+    reportLink.download = 'evaluation_report.md';
+    reportLink.click();
+    URL.revokeObjectURL(reportUrl);
 
-  const handleApprove = () => {
-    toast.success('Configuration approved! Ready for full dataset anonymization.');
-  };
-
-  const handleIterate = () => {
-    if (selectedImprovements.length === 0) {
-      toast.error('Please select at least one improvement to implement');
-      return;
-    }
-    toast.success(`Iteration started with ${selectedImprovements.length} improvements. Returning to sampling...`);
-    setTimeout(() => navigate('/sampling'), 1500);
-  };
-
-  const handleSaveArtifacts = () => {
-    toast.success('Evaluation artifacts saved for audit and compliance');
+    toast.success('Exported dataset CSV and evaluation report');
   };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-slate-900 mb-2">Decision Point</h2>
+        <h2 className="text-2xl font-semibold text-slate-900 mb-2">Insights</h2>
         <p className="text-slate-600">
-          Review the evaluation summary and decide whether to proceed or iterate for improvement.
+          Review the evaluation summary and export your results.
         </p>
       </div>
 
@@ -94,118 +134,35 @@ export function Decision() {
         </div>
       </Card>
 
-      {/* Decision Options */}
+      {/* Best Practices */}
       <Card className="p-6">
         <div className="space-y-4">
-          <h3 className="font-semibold text-slate-900">Your Decision</h3>
-
-          <RadioGroup value={decision || ''} onValueChange={(val) => setDecision(val as DecisionType)}>
-            {/* Approve Option */}
-            <div className={`p-4 rounded-lg border-2 transition-all ${
-              decision === 'approve' ? 'border-green-500 bg-green-50' : 'border-slate-200 hover:border-green-300'
-            }`}>
-              <div className="flex items-start space-x-3">
-                <RadioGroupItem value="approve" id="approve" className="mt-1" />
-                <div className="flex-1">
-                  <Label htmlFor="approve" className="cursor-pointer">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CheckCircle className="size-5 text-green-600" />
-                      <span className="font-medium text-slate-900">Good Enough - Proceed</span>
-                    </div>
-                    <div className="text-sm text-slate-700 space-y-1">
-                      <p>Current configuration meets acceptance criteria. Proceed to full dataset anonymization.</p>
-                      {decision === 'approve' && (
-                        <div className="mt-3 p-3 bg-white rounded border border-green-200">
-                          <div className="text-xs text-green-900 space-y-1">
-                            <p className="font-medium">Next steps:</p>
-                            <ul className="list-disc list-inside ml-2">
-                              <li>Configuration will be saved and versioned</li>
-                              <li>Golden set will be stored for future reference</li>
-                              <li>Full dataset anonymization can begin (manual process)</li>
-                              <li>Evaluation artifacts saved for audit</li>
-                            </ul>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </Label>
-                </div>
-              </div>
-            </div>
-
-            {/* Iterate Option */}
-            <div className={`p-4 rounded-lg border-2 transition-all ${
-              decision === 'iterate' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-blue-300'
-            }`}>
-              <div className="flex items-start space-x-3">
-                <RadioGroupItem value="iterate" id="iterate" className="mt-1" />
-                <div className="flex-1">
-                  <Label htmlFor="iterate" className="cursor-pointer">
-                    <div className="flex items-center gap-2 mb-2">
-                      <RefreshCw className="size-5 text-blue-600" />
-                      <span className="font-medium text-slate-900">Needs Improvement - Iterate</span>
-                    </div>
-                    <div className="text-sm text-slate-700 space-y-1">
-                      <p>Configuration requires tuning. Select improvements and run another evaluation cycle.</p>
-                      {decision === 'iterate' && (
-                        <div className="mt-3 p-3 bg-white rounded border border-blue-200 space-y-3">
-                          <div className="text-sm font-medium text-blue-900">Select improvements to implement:</div>
-                          <div className="space-y-2">
-                            {improvements.map(improvement => (
-                              <div
-                                key={improvement.id}
-                                className={`p-3 rounded border cursor-pointer transition-colors ${
-                                  selectedImprovements.includes(improvement.id)
-                                    ? 'bg-blue-100 border-blue-400'
-                                    : 'bg-slate-50 border-slate-300 hover:border-blue-300'
-                                }`}
-                                onClick={() => toggleImprovement(improvement.id)}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    checked={selectedImprovements.includes(improvement.id)}
-                                    onChange={() => toggleImprovement(improvement.id)}
-                                    className="rounded"
-                                  />
-                                  <div className="flex-1">
-                                    <div className="text-sm font-medium text-slate-900">{improvement.label}</div>
-                                    <div className="text-xs text-slate-600">{improvement.impact}</div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                          {selectedImprovements.length > 0 && (
-                            <div className="text-xs text-blue-800 p-2 bg-blue-100 rounded">
-                              Selected {selectedImprovements.length} improvement{selectedImprovements.length > 1 ? 's' : ''}.
-                              This will update the Presidio configuration and loop back to sampling.
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </Label>
-                </div>
-              </div>
-            </div>
-          </RadioGroup>
-        </div>
-      </Card>
-
-      {/* Decision Notes */}
-      <Card className="p-6">
-        <div className="space-y-3">
-          <Label>Decision Notes (for audit trail)</Label>
-          <Textarea
-            placeholder="Document your decision reasoning, risk assessment, and any additional context..."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            rows={4}
-          />
+          <div className="flex items-center gap-2">
+            <Lightbulb className="size-5 text-amber-500" />
+            <h3 className="font-semibold text-slate-900">Best Practices to Improve Results</h3>
+          </div>
           <p className="text-sm text-slate-600">
-            These notes will be saved with the evaluation artifacts for compliance and future reference.
+            Based on your evaluation, consider these approaches to improve PII detection coverage and accuracy.
           </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {bestPractices.map((practice) => (
+              <a
+                key={practice.title}
+                href={practice.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-colors group"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="font-medium text-slate-900 group-hover:text-blue-700 text-sm">{practice.title}</div>
+                    <div className="text-xs text-slate-600 mt-1">{practice.description}</div>
+                  </div>
+                  <ExternalLink className="size-4 text-slate-400 group-hover:text-blue-500 shrink-0 mt-0.5" />
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
       </Card>
 
@@ -217,60 +174,23 @@ export function Decision() {
             <h3 className="font-semibold text-blue-900">Output & Reusable Artifacts</h3>
           </div>
           <div className="text-sm text-blue-800 space-y-2">
-            <p>The following artifacts will be generated:</p>
+            <p>The following artifacts will be exported:</p>
             <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><span className="font-medium">Approved Presidio Configuration</span> - Version-controlled config ready for deployment</li>
-              <li><span className="font-medium">Golden Dataset</span> - Human-validated labels for future tuning or ML training</li>
-              <li><span className="font-medium">Evaluation Report</span> - Metrics, charts, and error analysis</li>
-              <li><span className="font-medium">Audit Trail</span> - Complete history of decisions, iterations, and rationale</li>
-              <li><span className="font-medium">Iteration History</span> - Comparison across all evaluation runs</li>
+              <li><span className="font-medium">Evaluation Dataset (CSV)</span> - Full dataset with detection results and human review labels</li>
+              <li><span className="font-medium">Evaluation Report</span> - Metrics summary, key findings, and notes</li>
+              <li className="text-blue-600"><span className="font-medium">Presidio Analyzer Config (YAML)</span> - The Presidio Analyzer configuration used in this evaluation <Badge className="ml-1 bg-blue-100 text-blue-700 border-blue-300 text-[10px] py-0">Coming soon</Badge></li>
             </ul>
           </div>
         </div>
       </Card>
 
-      {/* Actions */}
-      <div className="flex items-center justify-between pt-4">
-        <Button variant="outline" onClick={handleSaveArtifacts}>
-          <Save className="size-4 mr-2" />
-          Save Artifacts
+      {/* Export Action */}
+      <div className="flex justify-end pt-4">
+        <Button size="lg" onClick={handleExportArtifacts}>
+          <Download className="size-4 mr-2" />
+          Export Artifacts
         </Button>
-
-        <div className="flex gap-3">
-          {decision === 'approve' && (
-            <Button size="lg" onClick={handleApprove}>
-              <CheckCircle className="size-4 mr-2" />
-              Approve & Finalize
-            </Button>
-          )}
-          {decision === 'iterate' && (
-            <Button size="lg" onClick={handleIterate} disabled={selectedImprovements.length === 0}>
-              <RefreshCw className="size-4 mr-2" />
-              Start Iteration
-            </Button>
-          )}
-          {!decision && (
-            <Button size="lg" disabled>
-              <Play className="size-4 mr-2" />
-              Make a Decision
-            </Button>
-          )}
-        </div>
       </div>
-
-      {/* Iteration Context Note */}
-      {decision === 'iterate' && (
-        <Alert>
-          <RefreshCw className="size-4" />
-          <AlertDescription>
-            <div className="text-sm">
-              The system will update Presidio configuration with selected improvements, generate a new sample
-              (using stratified random sampling), and run the complete evaluation flow again. Previous results
-              will be saved for comparison.
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }

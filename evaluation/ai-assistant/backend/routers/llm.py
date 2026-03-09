@@ -7,16 +7,19 @@ import logging
 
 import llm_service
 from fastapi import APIRouter, HTTPException
-from models import LLMConfig
+from models import LLMAnalyzeRequest, LLMConfig
 from settings import MODEL_CHOICES, load_from_env
 
-from routers import sampling as sampling_router
+from routers.upload import _ensure_records_loaded
 
 router = APIRouter(prefix="/api/llm", tags=["llm"])
 logger = logging.getLogger(__name__)
 
 # Currently selected deployment (persisted across page reloads while server lives)
 _selected_deployment: str | None = None
+
+# Active dataset for current analysis run
+_active_dataset_id: str | None = None
 
 # In-memory state for the current LLM analysis run
 _state: dict = {
@@ -101,9 +104,10 @@ async def configure_llm(config: LLMConfig):
 @router.post("/disconnect")
 async def disconnect_llm():
     """Disconnect the LLM recognizer and reset analysis state."""
-    global _selected_deployment
+    global _selected_deployment, _active_dataset_id
     llm_service.disconnect()
     _selected_deployment = None
+    _active_dataset_id = None
     _state["progress"] = 0
     _state["total"] = 0
     _state["running"] = False
@@ -128,8 +132,10 @@ async def get_llm_status():
 
 
 @router.post("/analyze")
-async def start_llm_analysis():
-    """Run LLM analysis on all sampled records."""
+async def start_llm_analysis(req: LLMAnalyzeRequest):
+    """Run LLM analysis on all records of a dataset."""
+    global _active_dataset_id
+
     if not llm_service.is_configured():
         raise HTTPException(
             status_code=400,
@@ -139,13 +145,14 @@ async def start_llm_analysis():
     if _state["running"]:
         raise HTTPException(status_code=409, detail="Analysis already running.")
 
-    records = sampling_router.sampled_records
+    records = _ensure_records_loaded(req.dataset_id)
     if not records:
         raise HTTPException(
             status_code=400,
-            detail="No sampled records. Run sampling first.",
+            detail=f"No records found for dataset '{req.dataset_id}'.",
         )
 
+    _active_dataset_id = req.dataset_id
     _state["progress"] = 0
     _state["total"] = len(records)
     _state["running"] = True
@@ -157,9 +164,9 @@ async def start_llm_analysis():
 
 
 async def _run_analysis():
-    """Background task: analyse each sampled record via the LLM."""
+    """Background task: analyse each record via the LLM."""
     loop = asyncio.get_event_loop()
-    records = sampling_router.sampled_records
+    records = _ensure_records_loaded(_active_dataset_id) if _active_dataset_id else []
     try:
         for record in records:
             try:

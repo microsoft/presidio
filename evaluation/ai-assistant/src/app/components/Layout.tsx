@@ -5,12 +5,10 @@ import { Progress } from './ui/progress';
 
 const steps = [
   { path: '/', label: 'Setup' },
-  { path: '/sampling', label: 'Sampling' },
   { path: '/anonymization', label: 'Analysis' },
   { path: '/human-review', label: 'Human Review' },
   { path: '/evaluation', label: 'Evaluation' },
-  { path: '/dashboard', label: 'Dashboard' },
-  { path: '/decision', label: 'Decision' },
+  { path: '/decision', label: 'Insights' },
 ];
 
 export function Layout() {

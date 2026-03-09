@@ -105,10 +105,11 @@ export function Setup() {
         runPresidio,
         runLlm,
         hasDatasetEntities: selectedDataset.has_entities,
+        hasFinalEntities: selectedDataset.has_final_entities ?? false,
       };
       sessionStorage.setItem('setupConfig', JSON.stringify(config));
       sessionStorage.setItem('datasetRecordCount', String(selectedDataset.record_count));
-      navigate('/sampling');
+      navigate('/anonymization');
     }
   };
 
@@ -217,16 +218,6 @@ export function Setup() {
                       placeholder="text"
                       value={textColumn}
                       onChange={(e) => setTextColumn(e.target.value)}
-                      className="mt-1 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="entities-col">Entities Column Name <span className="text-slate-400">(optional)</span></Label>
-                    <Input
-                      id="entities-col"
-                      placeholder="entities"
-                      value={entitiesColumn}
-                      onChange={(e) => setEntitiesColumn(e.target.value)}
                       className="mt-1 text-sm"
                     />
                   </div>

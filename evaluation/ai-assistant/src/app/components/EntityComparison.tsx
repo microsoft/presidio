@@ -14,17 +14,16 @@ interface EntityComparisonProps {
   recordText: string;
   presidioEntities: Entity[];
   llmEntities: Entity[];
-  datasetEntities?: Entity[];
-  onConfirm: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'manual' | 'dataset') => void;
-  onReject: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'dataset') => void;
+  onConfirm: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'manual') => void;
+  onReject: (recordId: string, entity: Entity, source: 'presidio' | 'llm') => void;
   onAddManual: (recordId: string, entity: Entity) => void;
 }
 
-type EntityStatus = 'match' | 'presidio-only' | 'llm-only' | 'predefined-only' | 'pending';
+type EntityStatus = 'match' | 'presidio-only' | 'llm-only' | 'pending';
 
 interface AnnotatedEntity extends Entity {
   status: EntityStatus;
-  sources: ('presidio' | 'llm' | 'predefined')[];
+  sources: ('presidio' | 'llm')[];
   confirmed?: boolean;
 }
 
@@ -33,7 +32,6 @@ export function EntityComparison({
   recordText,
   presidioEntities = [],
   llmEntities = [],
-  datasetEntities = [],
   onConfirm,
   onReject,
   onAddManual,
@@ -52,10 +50,10 @@ export function EntityComparison({
     a.start < b.end && b.start < a.end;
 
   // Build a unified list: for each unique span, track which sources detected it
-  interface SpanEntry { entity: Entity; sources: Set<'presidio' | 'llm' | 'predefined'>; types: Map<string, string> }
+  interface SpanEntry { entity: Entity; sources: Set<'presidio' | 'llm'>; types: Map<string, string> }
   const spans: SpanEntry[] = [];
 
-  const addToSpans = (entity: Entity, source: 'presidio' | 'llm' | 'predefined') => {
+  const addToSpans = (entity: Entity, source: 'presidio' | 'llm') => {
     const existing = spans.find(s => spansOverlap(s.entity, entity));
     if (existing) {
       existing.sources.add(source);
@@ -72,11 +70,10 @@ export function EntityComparison({
   };
 
   presidioEntities.forEach(e => addToSpans(e, 'presidio'));
-  datasetEntities.forEach(e => addToSpans(e, 'predefined'));
   llmEntities.forEach(e => addToSpans(e, 'llm'));
 
   spans.forEach(({ entity, sources, types }) => {
-    const sourceList = Array.from(sources) as ('presidio' | 'llm' | 'predefined')[];
+    const sourceList = Array.from(sources) as ('presidio' | 'llm')[];
     const uniqueTypes = new Set(types.values());
     const allAgree = uniqueTypes.size === 1;
 
@@ -87,12 +84,12 @@ export function EntityComparison({
       // Sources disagree on type → separate card per source so user can confirm/reject each
       for (const src of sourceList) {
         const srcType = types.get(src) || entity.entity_type;
-        const status: EntityStatus = src === 'presidio' ? 'presidio-only' : src === 'llm' ? 'llm-only' : 'predefined-only';
+        const status: EntityStatus = src === 'presidio' ? 'presidio-only' : 'llm-only';
         annotatedEntities.push({ ...entity, entity_type: srcType, status, sources: [src] });
       }
     } else if (sourceList.length === 1) {
       const s = sourceList[0];
-      const status: EntityStatus = s === 'presidio' ? 'presidio-only' : s === 'llm' ? 'llm-only' : 'predefined-only';
+      const status: EntityStatus = s === 'presidio' ? 'presidio-only' : 'llm-only';
       annotatedEntities.push({ ...entity, status, sources: sourceList });
     } else {
       annotatedEntities.push({ ...entity, status: 'pending', sources: sourceList });
@@ -142,7 +139,7 @@ export function EntityComparison({
       newSet.delete(key);
       return newSet;
     });
-    onConfirm(recordId, entity, entity.sources[0] === 'predefined' ? 'dataset' : entity.sources[0]);
+    onConfirm(recordId, entity, entity.sources[0]);
   };
 
   const handleRejectEntity = (entity: AnnotatedEntity) => {
@@ -153,7 +150,7 @@ export function EntityComparison({
       newSet.delete(key);
       return newSet;
     });
-    onReject(recordId, entity, entity.sources[0] === 'predefined' ? 'dataset' : entity.sources[0]);
+    onReject(recordId, entity, entity.sources[0]);
   };
 
   const handleAddManualEntity = () => {
@@ -179,8 +176,6 @@ export function EntityComparison({
         return <Badge className="bg-purple-100 text-purple-800 border-purple-300">Presidio</Badge>;
       case 'llm-only':
         return <Badge className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM Judge</Badge>;
-      case 'predefined-only':
-        return <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300">Predefined</Badge>;
       default:
         return <Badge variant="secondary">Pending</Badge>;
     }

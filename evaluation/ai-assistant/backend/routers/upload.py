@@ -6,6 +6,7 @@ import csv
 import io
 import json
 import os
+import shutil
 import uuid
 
 from fastapi import APIRouter, HTTPException
@@ -27,6 +28,10 @@ MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB
 
 # Persistence file for saved datasets (next to this file → backend/datasets.json)
 _DATASETS_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "datasets.json")
+
+# Local copy folder (gitignored)
+_DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+os.makedirs(_DATA_DIR, exist_ok=True)
 
 
 def _save_registry() -> None:
@@ -104,6 +109,7 @@ def _parse_csv(
         )
 
     has_entities = entities_column is not None and entities_column in fieldnames
+    has_final = "final_entities" in fieldnames
     records: list[Record] = []
     for i, row in enumerate(reader):
         text = row.get(text_column, "").strip()
@@ -114,14 +120,20 @@ def _parse_csv(
             if has_entities and entities_column
             else []
         )
+        final_ents = (
+            _parse_entities(row.get("final_entities"))
+            if has_final
+            else None
+        )
         records.append(
             Record(
                 id=f"rec-{i + 1:04d}",
                 text=text,
                 dataset_entities=entities,
+                final_entities=final_ents if final_ents else None,
             )
         )
-    return records, fieldnames, has_entities
+    return records, fieldnames, has_entities, has_final
 
 
 def _parse_json(
@@ -155,6 +167,7 @@ def _parse_json(
     columns: set[str] = set()
     has_entities = False
 
+    has_final = False
     for i, obj in enumerate(data):
         if not isinstance(obj, dict) or text_column not in obj:
             continue
@@ -169,11 +182,17 @@ def _parse_json(
         if entities:
             has_entities = True
 
+        final_raw = obj.get("final_entities")
+        final_ents = _parse_entities(final_raw) if final_raw else None
+        if final_ents:
+            has_final = True
+
         records.append(
             Record(
                 id=f"rec-{i + 1:04d}",
                 text=text,
                 dataset_entities=entities,
+                final_entities=final_ents if final_ents else None,
             )
         )
 
@@ -185,7 +204,7 @@ def _parse_json(
                 f"have a '{text_column}' field."
             ),
         )
-    return records, sorted(columns), has_entities
+    return records, sorted(columns), has_entities, has_final
 
 
 @router.get("/saved")
@@ -220,11 +239,11 @@ async def load_dataset(req: DatasetLoadRequest):
         content = f.read()
 
     if req.format == "csv":
-        records, columns, has_entities = _parse_csv(
+        records, columns, has_entities, has_final = _parse_csv(
             content, req.text_column, req.entities_column
         )
     else:
-        records, columns, has_entities = _parse_json(
+        records, columns, has_entities, has_final = _parse_json(
             content, req.text_column, req.entities_column
         )
 
@@ -233,6 +252,13 @@ async def load_dataset(req: DatasetLoadRequest):
 
     dataset_id = f"upload-{uuid.uuid4().hex[:8]}"
     filename = os.path.basename(file_path)
+
+    # Copy file to local data/ folder for persistence
+    ext = os.path.splitext(filename)[1]
+    stored_filename = f"{dataset_id}{ext}"
+    stored_path = os.path.join(_DATA_DIR, stored_filename)
+    shutil.copy2(file_path, stored_path)
+
     display_name = req.name.strip() if req.name and req.name.strip() else filename
     description = req.description.strip() if req.description else ""
     dataset = UploadedDataset(
@@ -241,9 +267,11 @@ async def load_dataset(req: DatasetLoadRequest):
         name=display_name,
         description=description,
         path=file_path,
+        stored_path=stored_path,
         format=req.format,
         record_count=len(records),
         has_entities=has_entities,
+        has_final_entities=has_final,
         columns=columns,
         text_column=req.text_column,
         entities_column=req.entities_column,
@@ -283,13 +311,14 @@ async def delete_dataset(dataset_id: str):
 
 
 def _ensure_records_loaded(dataset_id: str) -> list[Record]:
-    """Reload records from the original file if not in memory."""
+    """Reload records from the stored copy (or original file) if not in memory."""
     if dataset_id in _records:
         return _records[dataset_id]
     ds = _uploaded.get(dataset_id)
     if ds is None:
         raise HTTPException(status_code=404, detail="Dataset not found")
-    resolved = _resolve_path(ds.path)
+    # Prefer the local stored copy; fall back to original path
+    resolved = ds.stored_path if ds.stored_path and os.path.isfile(ds.stored_path) else _resolve_path(ds.path)
     if not os.path.isfile(resolved):
         raise HTTPException(
             status_code=404,
@@ -298,9 +327,9 @@ def _ensure_records_loaded(dataset_id: str) -> list[Record]:
     with open(resolved, encoding="utf-8") as f:
         content = f.read()
     if ds.format == "csv":
-        records, _, _ = _parse_csv(content, ds.text_column, ds.entities_column)
+        records, _, _, _ = _parse_csv(content, ds.text_column, ds.entities_column)
     else:
-        records, _, _ = _parse_json(content, ds.text_column, ds.entities_column)
+        records, _, _, _ = _parse_json(content, ds.text_column, ds.entities_column)
     _records[dataset_id] = records
     return records
 

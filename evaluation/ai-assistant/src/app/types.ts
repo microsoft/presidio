@@ -37,6 +37,7 @@ export interface UploadedDataset {
   format: 'csv' | 'json';
   record_count: number;
   has_entities: boolean;
+  has_final_entities?: boolean;
   columns: string[];
   text_column: string;
   entities_column?: string | null;
@@ -49,6 +50,7 @@ export interface SetupConfig {
   runPresidio: boolean;
   runLlm: boolean;
   hasDatasetEntities: boolean;
+  hasFinalEntities: boolean;
 }
 
 export interface EvaluationMetrics {
