@@ -1,0 +1,193 @@
+"""LLM Judge router — configure and run LLM-based PII detection."""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+
+import llm_service
+from fastapi import APIRouter, HTTPException
+from models import LLMConfig
+from settings import MODEL_CHOICES, load_from_env
+
+from routers import sampling as sampling_router
+
+router = APIRouter(prefix="/api/llm", tags=["llm"])
+logger = logging.getLogger(__name__)
+
+# Currently selected deployment (persisted across page reloads while server lives)
+_selected_deployment: str | None = None
+
+# In-memory state for the current LLM analysis run
+_state: dict = {
+    "progress": 0,
+    "total": 0,
+    "running": False,
+    "error": None,
+    "results": {},  # record_id -> list[Entity dict]
+}
+
+
+def _env_is_ready() -> bool:
+    """Check if .env has the required Azure endpoint."""
+    env = load_from_env()
+    return bool(env.azure_endpoint)
+
+
+# ── Model catalogue ──────────────────────────────────────
+
+
+@router.get("/models")
+async def list_models():
+    """Return available model choices for the UI dropdown."""
+    return MODEL_CHOICES
+
+
+# ── Settings ─────────────────────────────────────────────
+
+
+@router.get("/settings")
+async def get_settings():
+    """Return current LLM Judge configuration (no secrets)."""
+    env = load_from_env()
+    return {
+        "env_ready": bool(env.azure_endpoint),
+        "has_endpoint": bool(env.azure_endpoint),
+        "has_api_key": bool(env.azure_api_key),
+        "auth_method": "api_key" if env.azure_api_key else "default_credential",
+        "deployment_name": _selected_deployment or env.deployment_name,
+        "configured": llm_service.is_configured(),
+    }
+
+
+@router.post("/configure")
+async def configure_llm(config: LLMConfig):
+    """Configure the LLM recognizer using .env credentials + chosen deployment."""
+    global _selected_deployment
+
+    env = load_from_env()
+    if not env.azure_endpoint:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "PRESIDIO_EVAL_AZURE_ENDPOINT must be set in backend/.env "
+                "before configuring the LLM Judge."
+            ),
+        )
+
+    # Validate the chosen deployment is in our allowed list
+    allowed_ids = {m["id"] for m in MODEL_CHOICES}
+    deployment = config.deployment_name
+    if deployment not in allowed_ids:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Deployment '{deployment}' is not in the allowed list.",
+        )
+
+    try:
+        result = llm_service.configure(
+            azure_endpoint=env.azure_endpoint,
+            api_key=env.azure_api_key,  # None → DefaultAzureCredential
+            deployment_name=deployment,
+            api_version=env.api_version,
+        )
+    except llm_service.LLMServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    _selected_deployment = deployment
+    return result
+
+
+@router.post("/disconnect")
+async def disconnect_llm():
+    """Disconnect the LLM recognizer and reset analysis state."""
+    global _selected_deployment
+    llm_service.disconnect()
+    _selected_deployment = None
+    _state["progress"] = 0
+    _state["total"] = 0
+    _state["running"] = False
+    _state["error"] = None
+    _state["results"] = {}
+    return {"status": "disconnected"}
+
+
+# ── Status / analysis ────────────────────────────────────
+
+
+@router.get("/status")
+async def get_llm_status():
+    """Return LLM configuration and analysis status."""
+    return {
+        "configured": llm_service.is_configured(),
+        "running": _state["running"],
+        "progress": _state["progress"],
+        "total": _state["total"],
+        "error": _state["error"],
+    }
+
+
+@router.post("/analyze")
+async def start_llm_analysis():
+    """Run LLM analysis on all sampled records."""
+    if not llm_service.is_configured():
+        raise HTTPException(
+            status_code=400,
+            detail="LLM not configured. POST /api/llm/configure first.",
+        )
+
+    if _state["running"]:
+        raise HTTPException(status_code=409, detail="Analysis already running.")
+
+    records = sampling_router.sampled_records
+    if not records:
+        raise HTTPException(
+            status_code=400,
+            detail="No sampled records. Run sampling first.",
+        )
+
+    _state["progress"] = 0
+    _state["total"] = len(records)
+    _state["running"] = True
+    _state["error"] = None
+    _state["results"] = {}
+
+    asyncio.create_task(_run_analysis())
+    return {"status": "started", "total": _state["total"]}
+
+
+async def _run_analysis():
+    """Background task: analyse each sampled record via the LLM."""
+    loop = asyncio.get_event_loop()
+    records = sampling_router.sampled_records
+    try:
+        for record in records:
+            try:
+                entities = await loop.run_in_executor(
+                    None, llm_service.analyze_text, record.text
+                )
+                _state["results"][record.id] = [e.model_dump() for e in entities]
+            except Exception:
+                logger.exception("LLM analysis failed for record %s", record.id)
+                _state["results"][record.id] = []
+            _state["progress"] += 1
+    except Exception as exc:
+        logger.exception("LLM analysis task failed")
+        _state["error"] = str(exc)
+    finally:
+        _state["running"] = False
+
+
+@router.get("/results")
+async def get_llm_results():
+    """Return LLM entities for all analysed records."""
+    return _state["results"]
+
+
+@router.get("/results/{record_id}")
+async def get_llm_record_results(record_id: str):
+    """Return LLM entities for a specific record."""
+    entities = _state["results"].get(record_id)
+    if entities is None:
+        raise HTTPException(status_code=404, detail="Record not found in results.")
+    return entities

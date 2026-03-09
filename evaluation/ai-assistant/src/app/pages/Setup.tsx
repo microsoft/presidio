@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -7,27 +7,19 @@ import { Input } from '../components/ui/input';
 import { Checkbox } from '../components/ui/checkbox';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Database, Shield, ArrowRight, Cloud, FileText, CheckCircle, Loader2, X, Plus } from 'lucide-react';
+import { Database, Shield, ArrowRight, Cloud, FileText, CheckCircle, Loader2, X, Plus, Pencil, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
 import type { ComplianceFramework, UploadedDataset } from '../types';
 
 export function Setup() {
   const navigate = useNavigate();
-  const [datasets, setDatasets] = useState<UploadedDataset[]>([
-    // Seed with the example dataset
-    {
-      id: 'ds-001',
-      filename: 'Example - Patient Records',
-      format: 'csv',
-      record_count: 1500,
-      has_entities: false,
-      columns: ['text'],
-    },
-  ]);
+  const [datasets, setDatasets] = useState<UploadedDataset[]>([]);
   const [selectedDatasetId, setSelectedDatasetId] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [filePath, setFilePath] = useState('');
   const [fileFormat, setFileFormat] = useState<'csv' | 'json'>('csv');
+  const [datasetName, setDatasetName] = useState('');
+  const [datasetDescription, setDatasetDescription] = useState('');
   const [textColumn, setTextColumn] = useState('text');
   const [entitiesColumn, setEntitiesColumn] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,6 +29,15 @@ export function Setup() {
   const [cloudRestriction, setCloudRestriction] = useState<'allowed' | 'restricted'>('allowed');
   const [runPresidio, setRunPresidio] = useState(true);
   const [runLlm, setRunLlm] = useState(true);
+  const [editingName, setEditingName] = useState(false);
+  const [editNameValue, setEditNameValue] = useState('');
+
+  // Fetch saved datasets on mount
+  useEffect(() => {
+    api.datasets.saved().then(saved => {
+      if (saved.length > 0) setDatasets(saved);
+    }).catch(() => {});
+  }, []);
 
   const selectedDataset = datasets.find(d => d.id === selectedDatasetId) ?? null;
   const canProceed = selectedDataset !== null;
@@ -49,14 +50,12 @@ export function Setup() {
     setSelectedDatasetId(value);
     setShowAddForm(false);
     setPreviewRecords([]);
+    setEditingName(false);
 
-    // Fetch preview for loaded datasets (skip for the seed example)
-    if (value.startsWith('upload-')) {
-      try {
-        const preview = await api.datasets.preview(value);
-        setPreviewRecords(preview);
-      } catch { /* ignore */ }
-    }
+    try {
+      const preview = await api.datasets.preview(value);
+      setPreviewRecords(preview);
+    } catch { /* ignore */ }
   };
 
   const handleLoadDataset = async () => {
@@ -73,6 +72,8 @@ export function Setup() {
         format: fileFormat,
         text_column: textColumn.trim() || 'text',
         entities_column: entitiesColumn.trim() || undefined,
+        name: datasetName.trim() || undefined,
+        description: datasetDescription.trim() || undefined,
       });
 
       setDatasets(prev => [...prev, dataset]);
@@ -84,6 +85,8 @@ export function Setup() {
 
       // Reset form fields
       setFilePath('');
+      setDatasetName('');
+      setDatasetDescription('');
       setTextColumn('text');
       setEntitiesColumn('');
     } catch (err: any) {
@@ -136,7 +139,7 @@ export function Setup() {
               <SelectContent>
                 {datasets.map(ds => (
                   <SelectItem key={ds.id} value={ds.id}>
-                    {ds.filename} — {ds.record_count.toLocaleString()} records
+                    {ds.name} — {ds.record_count.toLocaleString()} records
                   </SelectItem>
                 ))}
                 <SelectItem value="__add_new__">
@@ -160,6 +163,28 @@ export function Setup() {
               </div>
 
               <div className="space-y-3">
+                <div>
+                  <Label htmlFor="dataset-name">Dataset Name <span className="text-slate-400">(optional)</span></Label>
+                  <Input
+                    id="dataset-name"
+                    placeholder="e.g. Patient Records Q4"
+                    value={datasetName}
+                    onChange={(e) => setDatasetName(e.target.value)}
+                    className="mt-1 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="dataset-description">Description <span className="text-slate-400">(optional)</span></Label>
+                  <Input
+                    id="dataset-description"
+                    placeholder="Brief description of the dataset contents"
+                    value={datasetDescription}
+                    onChange={(e) => setDatasetDescription(e.target.value)}
+                    className="mt-1 text-sm"
+                  />
+                </div>
+
                 <div>
                   <Label htmlFor="file-path">Absolute File Path</Label>
                   <Input
@@ -233,10 +258,69 @@ export function Setup() {
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-start gap-3">
                   <CheckCircle className="size-5 text-green-600 mt-0.5" />
-                  <div>
-                    <div className="font-medium text-green-900">{selectedDataset.filename}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      {editingName ? (
+                        <form
+                          className="flex items-center gap-2"
+                          onSubmit={async (e) => {
+                            e.preventDefault();
+                            if (!editNameValue.trim()) return;
+                            try {
+                              const updated = await api.datasets.rename(selectedDataset.id, editNameValue.trim());
+                              setDatasets(prev => prev.map(d => d.id === updated.id ? updated : d));
+                              setEditingName(false);
+                            } catch { /* ignore */ }
+                          }}
+                        >
+                          <Input
+                            value={editNameValue}
+                            onChange={(e) => setEditNameValue(e.target.value)}
+                            className="h-7 text-sm w-56"
+                            autoFocus
+                          />
+                          <Button type="submit" size="sm" variant="ghost" className="h-7 px-2">
+                            <CheckCircle className="size-3.5" />
+                          </Button>
+                          <Button type="button" size="sm" variant="ghost" className="h-7 px-2" onClick={() => setEditingName(false)}>
+                            <X className="size-3.5" />
+                          </Button>
+                        </form>
+                      ) : (
+                        <>
+                          <span className="font-medium text-green-900">{selectedDataset.name}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 px-1.5 text-green-700 hover:text-green-900"
+                            onClick={() => { setEditingName(true); setEditNameValue(selectedDataset.name); }}
+                          >
+                            <Pencil className="size-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 px-1.5 text-red-500 hover:text-red-700"
+                            onClick={async () => {
+                              try {
+                                await api.datasets.remove(selectedDataset.id);
+                                setDatasets(prev => prev.filter(d => d.id !== selectedDataset.id));
+                                setSelectedDatasetId('');
+                                setPreviewRecords([]);
+                              } catch { /* ignore */ }
+                            }}
+                          >
+                            <Trash2 className="size-3" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
                     <div className="text-sm text-green-800 mt-1 space-y-0.5">
+                      {selectedDataset.description && (
+                        <div className="text-green-700 italic">{selectedDataset.description}</div>
+                      )}
                       <div>{selectedDataset.record_count.toLocaleString()} records • {selectedDataset.format.toUpperCase()} format</div>
+                      <div className="text-xs text-green-700 font-mono truncate">{selectedDataset.path}</div>
                       <div>Columns: {selectedDataset.columns.join(', ')}</div>
                       <div>
                         {selectedDataset.has_entities ? (

@@ -9,7 +9,13 @@ import os
 import uuid
 
 from fastapi import APIRouter, HTTPException
-from models import DatasetLoadRequest, Entity, Record, UploadedDataset
+from models import (
+    DatasetLoadRequest,
+    DatasetRenameRequest,
+    Entity,
+    Record,
+    UploadedDataset,
+)
 
 router = APIRouter(prefix="/api/datasets", tags=["datasets"])
 
@@ -18,6 +24,47 @@ _uploaded: dict[str, UploadedDataset] = {}
 _records: dict[str, list[Record]] = {}
 
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB
+
+# Persistence file for saved datasets (next to this file → backend/datasets.json)
+_DATASETS_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "datasets.json")
+
+
+def _save_registry() -> None:
+    """Persist the dataset registry to disk."""
+    data = [ds.model_dump() for ds in _uploaded.values()]
+    with open(_DATASETS_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+
+def _load_registry() -> None:
+    """Load previously saved datasets from disk on startup."""
+    if not os.path.isfile(_DATASETS_FILE):
+        return
+    try:
+        with open(_DATASETS_FILE, encoding="utf-8") as f:
+            data = json.load(f)
+        for item in data:
+            ds = UploadedDataset(**item)
+            _uploaded[ds.id] = ds
+    except Exception:
+        pass  # ignore corrupt file
+
+
+# Project root (evaluation/ai-assistant/) — used to resolve relative paths
+_PROJECT_ROOT = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "..")
+)
+
+
+def _resolve_path(path: str) -> str:
+    """Resolve a path; relative paths are resolved against the project root."""
+    if os.path.isabs(path):
+        return path
+    return os.path.normpath(os.path.join(_PROJECT_ROOT, path))
+
+
+# Load on import so saved datasets are available immediately
+_load_registry()
 
 
 def _parse_entities(raw: str | list | None) -> list[Entity]:
@@ -141,6 +188,12 @@ def _parse_json(
     return records, sorted(columns), has_entities
 
 
+@router.get("/saved")
+async def list_saved_datasets():
+    """Return all saved datasets (for the dropdown)."""
+    return list(_uploaded.values())
+
+
 @router.post("/load")
 async def load_dataset(req: DatasetLoadRequest):
     """Load a CSV or JSON file from a local absolute path."""
@@ -180,33 +233,86 @@ async def load_dataset(req: DatasetLoadRequest):
 
     dataset_id = f"upload-{uuid.uuid4().hex[:8]}"
     filename = os.path.basename(file_path)
+    display_name = req.name.strip() if req.name and req.name.strip() else filename
+    description = req.description.strip() if req.description else ""
     dataset = UploadedDataset(
         id=dataset_id,
         filename=filename,
+        name=display_name,
+        description=description,
+        path=file_path,
         format=req.format,
         record_count=len(records),
         has_entities=has_entities,
         columns=columns,
+        text_column=req.text_column,
+        entities_column=req.entities_column,
     )
 
     _uploaded[dataset_id] = dataset
     _records[dataset_id] = records
+    _save_registry()
 
     return dataset
+
+
+@router.patch("/{dataset_id}/rename")
+async def rename_dataset(dataset_id: str, req: DatasetRenameRequest):
+    """Rename a saved dataset."""
+    if dataset_id not in _uploaded:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    new_name = req.name.strip()
+    if not new_name:
+        raise HTTPException(status_code=400, detail="Name cannot be empty")
+    _uploaded[dataset_id] = _uploaded[dataset_id].model_copy(
+        update={"name": new_name}
+    )
+    _save_registry()
+    return _uploaded[dataset_id]
+
+
+@router.delete("/{dataset_id}")
+async def delete_dataset(dataset_id: str):
+    """Remove a saved dataset from the registry."""
+    if dataset_id not in _uploaded:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    del _uploaded[dataset_id]
+    _records.pop(dataset_id, None)
+    _save_registry()
+    return {"ok": True}
+
+
+def _ensure_records_loaded(dataset_id: str) -> list[Record]:
+    """Reload records from the original file if not in memory."""
+    if dataset_id in _records:
+        return _records[dataset_id]
+    ds = _uploaded.get(dataset_id)
+    if ds is None:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    resolved = _resolve_path(ds.path)
+    if not os.path.isfile(resolved):
+        raise HTTPException(
+            status_code=404,
+            detail=f"Source file no longer exists: {ds.path}",
+        )
+    with open(resolved, encoding="utf-8") as f:
+        content = f.read()
+    if ds.format == "csv":
+        records, _, _ = _parse_csv(content, ds.text_column, ds.entities_column)
+    else:
+        records, _, _ = _parse_json(content, ds.text_column, ds.entities_column)
+    _records[dataset_id] = records
+    return records
 
 
 @router.get("/{dataset_id}/records")
 async def get_dataset_records(dataset_id: str):
     """Return parsed records for a loaded dataset."""
-    if dataset_id not in _records:
-        raise HTTPException(status_code=404, detail="Dataset not found")
-    return _records[dataset_id]
+    return _ensure_records_loaded(dataset_id)
 
 
 @router.get("/{dataset_id}/preview")
 async def preview_dataset(dataset_id: str, limit: int = 5):
     """Return a small preview of the loaded dataset."""
-    if dataset_id not in _records:
-        raise HTTPException(status_code=404, detail="Dataset not found")
-    records = _records[dataset_id][:limit]
-    return records
+    records = _ensure_records_loaded(dataset_id)
+    return records[:limit]

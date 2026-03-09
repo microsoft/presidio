@@ -1,0 +1,34 @@
+[
+  {
+    "id": "example-dataset",
+    "filename": "example_pii_dataset.csv",
+    "name": "Example Dataset",
+    "description": "10 synthetic PII records spanning healthcare, finance, HR, and customer support scenarios.",
+    "path": "data/example_pii_dataset.csv",
+    "format": "csv",
+    "record_count": 10,
+    "has_entities": true,
+    "columns": [
+      "text",
+      "entities"
+    ],
+    "text_column": "text",
+    "entities_column": "entities"
+  },
+  {
+    "id": "upload-6ff31019",
+    "filename": "sample_medical_records.csv",
+    "name": "manual-dataset",
+    "description": "my custom entiteis",
+    "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/data/sample_medical_records.csv",
+    "format": "csv",
+    "record_count": 10,
+    "has_entities": true,
+    "columns": [
+      "text",
+      "entities"
+    ],
+    "text_column": "text",
+    "entities_column": "entities"
+  }
+]

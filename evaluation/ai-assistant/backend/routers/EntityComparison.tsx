@@ -20,7 +20,8 @@ interface EntityComparisonProps {
   onAddManual: (recordId: string, entity: Entity) => void;
 }
 
-type EntityStatus = 'match' | 'conflict' | 'presidio-only' | 'llm-only' | 'predefined-only' | 'pending';
+type EntityStatus = 'match' | 'conflict' | 'presidio-only' | 'llm-only' | 'predefined-only'
+  | 'presidio+predefined' | 'presidio+llm' | 'predefined+llm' | 'pending';
 
 interface AnnotatedEntity extends Entity {
   status: EntityStatus;
@@ -90,6 +91,14 @@ export function EntityComparison({
       status = s === 'presidio' ? 'presidio-only' : s === 'llm' ? 'llm-only' : 'predefined-only';
     } else {
       status = 'pending';
+    }
+
+    // For two-source non-match conflicts, use specific labels
+    if (sourceList.length === 2 && status !== 'match') {
+      const key = sourceList.sort().join('+');
+      if (key === 'predefined+presidio') status = 'presidio+predefined';
+      else if (key === 'llm+presidio') status = 'presidio+llm';
+      else if (key === 'llm+predefined') status = 'predefined+llm';
     }
 
     annotatedEntities.push({ ...entity, status, sources: sourceList });
@@ -172,13 +181,19 @@ export function EntityComparison({
       case 'match':
         return <Badge className="bg-blue-100 text-blue-800 border-blue-300">✓ Match</Badge>;
       case 'conflict':
-        return <Badge className="bg-amber-100 text-amber-800 border-amber-300">⚠ Type Mismatch</Badge>;
+        return <Badge className="bg-amber-100 text-amber-800 border-amber-300">⚠ Conflict</Badge>;
       case 'presidio-only':
         return <Badge className="bg-purple-100 text-purple-800 border-purple-300">Presidio</Badge>;
       case 'llm-only':
         return <Badge className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM Judge</Badge>;
       case 'predefined-only':
         return <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300">Predefined</Badge>;
+      case 'presidio+predefined':
+        return <Badge className="bg-violet-100 text-violet-800 border-violet-300">Presidio + Predefined</Badge>;
+      case 'presidio+llm':
+        return <Badge className="bg-indigo-100 text-indigo-800 border-indigo-300">Presidio + LLM Judge</Badge>;
+      case 'predefined+llm':
+        return <Badge className="bg-teal-100 text-teal-800 border-teal-300">Predefined + LLM Judge</Badge>;
       default:
         return <Badge variant="secondary">Pending</Badge>;
     }

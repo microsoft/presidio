@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from mock_data import RECORDS
 from models import Entity, EntityAction, Record
+from routers.sampling import sampled_records
 
 router = APIRouter(prefix="/api/review", tags=["review"])
 
@@ -12,7 +12,7 @@ _reviewed: set[str] = set()
 @router.get("/records", response_model=list[Record])
 async def get_review_records():
     """List records for human review."""
-    return RECORDS
+    return sampled_records
 
 
 @router.post("/records/{record_id}/confirm")
@@ -23,6 +23,11 @@ async def confirm_entity(record_id: str, action: EntityAction):
     return {"status": "confirmed", "record_id": record_id}
 
 
+def _spans_overlap(a: Entity, b: Entity) -> bool:
+    """Return True if two entity spans overlap."""
+    return a.start < b.end and b.start < a.end
+
+
 @router.post("/records/{record_id}/reject")
 async def reject_entity(record_id: str, action: EntityAction):
     """Reject an entity and remove it from the golden set."""
@@ -30,11 +35,7 @@ async def reject_entity(record_id: str, action: EntityAction):
     _golden_set[record_id] = [
         e
         for e in entities
-        if not (
-            e.text == action.entity.text
-            and e.start == action.entity.start
-            and e.end == action.entity.end
-        )
+        if not _spans_overlap(e, action.entity)
     ]
     _reviewed.add(record_id)
     return {"status": "rejected", "record_id": record_id}
@@ -52,7 +53,7 @@ async def add_manual_entity(record_id: str, action: EntityAction):
 @router.get("/progress")
 async def get_review_progress():
     """Return review completion progress."""
-    total = len(RECORDS)
+    total = len(sampled_records)
     reviewed = len(_reviewed)
     return {
         "total": total,

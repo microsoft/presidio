@@ -112,6 +112,8 @@ class DatasetLoadRequest(BaseModel):
     format: str  # "csv" | "json"
     text_column: str = "text"
     entities_column: str | None = None
+    name: str | None = None  # user-friendly display name
+    description: str | None = None  # optional description
 
 
 class UploadedDataset(BaseModel):
@@ -119,10 +121,21 @@ class UploadedDataset(BaseModel):
 
     id: str
     filename: str
+    name: str  # user-friendly display name
+    description: str = ""  # optional user-provided description
+    path: str  # absolute file path
     format: str  # "csv" | "json"
     record_count: int
     has_entities: bool
     columns: list[str]
+    text_column: str = "text"
+    entities_column: str | None = None
+
+
+class DatasetRenameRequest(BaseModel):
+    """Request to rename a saved dataset."""
+
+    name: str
 
 
 class SetupConfig(BaseModel):
@@ -182,3 +195,9 @@ class DecisionRequest(BaseModel):
     decision: DecisionType
     notes: str = ""
     selected_improvements: list[str] = []
+
+
+class LLMConfig(BaseModel):
+    """LLM Judge configuration — only deployment is chosen in the UI."""
+
+    deployment_name: str = "gpt-4o"
