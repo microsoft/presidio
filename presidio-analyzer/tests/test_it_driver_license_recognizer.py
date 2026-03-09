@@ -31,6 +31,10 @@ def entities() -> list[str]:
         ("U1H00A000B", 0, (), (),),
         # Test with invalid Driver License
         ("990123456B", 0, (), (),),
+        # Test with JK letters in license (issue #1555)
+        ("U1K711J11M", 1, ((0, 10),), ((0.1, 0.4),),),
+        # Test with JK letters not at start of string
+        ("license U1K711J11M here", 1, ((8, 18),), ((0.1, 0.4),),),
         # fmt: on
     ],
 )
