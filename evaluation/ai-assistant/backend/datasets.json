@@ -17,12 +17,12 @@
     "entities_column": null
   },
   {
-    "id": "upload-dcf5e8ef",
+    "id": "upload-41c4c115",
     "filename": "sample_medical_records.csv",
-    "name": "uk_sample_demo_1",
+    "name": "cph_live_demo",
     "description": "my 5 samples from prod uk",
     "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/data/sample_medical_records.csv",
-    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/upload-dcf5e8ef.csv",
+    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/upload-41c4c115.csv",
     "format": "csv",
     "record_count": 5,
     "has_entities": false,
@@ -35,12 +35,29 @@
     "entities_column": null
   },
   {
-    "id": "upload-84bd7a7f",
+    "id": "upload-363d8cb7",
     "filename": "sample_medical_records.csv",
-    "name": "uk_sample_demo_2",
+    "name": "demo-dataset",
+    "description": "",
+    "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/data/sample_medical_records.csv",
+    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/upload-363d8cb7.csv",
+    "format": "csv",
+    "record_count": 5,
+    "has_entities": false,
+    "has_final_entities": false,
+    "columns": [
+      "text"
+    ],
+    "text_column": "text",
+    "entities_column": null
+  },
+  {
+    "id": "upload-50d5e2c7",
+    "filename": "sample_medical_records.csv",
+    "name": "check_2",
     "description": "my 5 samples from prod uk",
     "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/data/sample_medical_records.csv",
-    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/upload-84bd7a7f.csv",
+    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/upload-50d5e2c7.csv",
     "format": "csv",
     "record_count": 5,
     "has_entities": false,

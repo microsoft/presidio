@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
+import { Input } from '../components/ui/input';
 import { Progress } from '../components/ui/progress';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import {
@@ -17,6 +18,7 @@ import { api } from '../lib/api';
 import type { SetupConfig } from '../types';
 
 type LlmStep = 'loading' | 'env_missing' | 'idle' | 'configuring' | 'configured' | 'running' | 'done' | 'error';
+type PresidioStep = 'loading' | 'idle' | 'configuring' | 'configured' | 'running' | 'done' | 'error';
 
 interface ModelChoice {
   id: string;
@@ -55,6 +57,14 @@ export function Anonymization() {
   const [llmTotal, setLlmTotal] = useState(0);
   const [llmError, setLlmError] = useState<string | null>(null);
 
+  // Presidio state
+  const [presidioStep, setPresidioStep] = useState<PresidioStep>('loading');
+  const [presidioProgress, setPresidioProgress] = useState(0);
+  const [presidioTotal, setPresidioTotal] = useState(0);
+  const [presidioError, setPresidioError] = useState<string | null>(null);
+  const [presidioConfigMode, setPresidioConfigMode] = useState<'default' | 'custom'>('default');
+  const [presidioConfigPath, setPresidioConfigPath] = useState('');
+
   // Load models + env status on mount
   useEffect(() => {
     Promise.all([api.llm.models(), api.llm.settings(), api.llm.status()]).then(
@@ -77,7 +87,7 @@ export function Anonymization() {
     ).catch(() => setLlmStep('env_missing'));
   }, []);
 
-  // Poll progress while running
+  // Poll LLM progress while running
   useEffect(() => {
     if (llmStep !== 'running') return;
     const interval = setInterval(async () => {
@@ -97,6 +107,105 @@ export function Anonymization() {
     }, 1000);
     return () => clearInterval(interval);
   }, [llmStep]);
+
+  // Presidio: check status on mount
+  useEffect(() => {
+    api.presidio.status().then((s) => {
+      if (s.running) {
+        setPresidioStep('running');
+        setPresidioProgress(s.progress);
+        setPresidioTotal(s.total);
+      } else if (s.loading) {
+        setPresidioStep('configuring');
+      } else if (s.configured && s.progress > 0 && s.progress >= s.total && s.total > 0) {
+        setPresidioStep('done');
+        setPresidioProgress(s.progress);
+        setPresidioTotal(s.total);
+      } else if (s.configured) {
+        setPresidioStep('configured');
+      } else if (s.error) {
+        setPresidioError(s.error);
+        setPresidioStep('error');
+      } else {
+        setPresidioStep('idle');
+      }
+    }).catch(() => {
+      setPresidioStep('idle');
+    });
+  }, []);
+
+  // Poll Presidio status while configuring (model loading) or running (analysis)
+  useEffect(() => {
+    if (presidioStep !== 'running' && presidioStep !== 'configuring') return;
+    const interval = setInterval(async () => {
+      try {
+        const s = await api.presidio.status();
+        if (presidioStep === 'configuring') {
+          if (s.configured) {
+            setPresidioStep('configured');
+          } else if (s.error) {
+            setPresidioError(s.error);
+            setPresidioStep('error');
+          }
+        } else {
+          setPresidioProgress(s.progress);
+          setPresidioTotal(s.total);
+          if (s.error) {
+            setPresidioError(s.error);
+            setPresidioStep('error');
+          } else if (!s.running && s.progress >= s.total && s.total > 0) {
+            setPresidioStep('done');
+          }
+        }
+      } catch {
+        // keep polling
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [presidioStep]);
+
+  const handlePresidioConfigure = useCallback(async () => {
+    setPresidioStep('configuring');
+    setPresidioError(null);
+    try {
+      const configPath = presidioConfigMode === 'custom' ? presidioConfigPath.trim() : undefined;
+      await api.presidio.configure(configPath);
+      // Backend returns immediately — polling will detect when model is ready
+    } catch (err: any) {
+      setPresidioError(err.message ?? 'Failed to configure Presidio');
+      setPresidioStep('error');
+    }
+  }, [presidioConfigMode, presidioConfigPath]);
+
+  const handlePresidioRun = useCallback(async () => {
+    setPresidioError(null);
+    const datasetId = setupConfig?.datasetId;
+    if (!datasetId) {
+      setPresidioError('No dataset selected. Go back to Setup.');
+      return;
+    }
+    try {
+      const res = await api.presidio.analyze(datasetId);
+      setPresidioTotal(res.total);
+      setPresidioProgress(0);
+      setPresidioStep('running');
+    } catch (err: any) {
+      setPresidioError(err.message ?? 'Failed to start analysis');
+      setPresidioStep('configured');
+    }
+  }, [setupConfig]);
+
+  const handlePresidioDisconnect = useCallback(async () => {
+    try {
+      await api.presidio.disconnect();
+      setPresidioStep('idle');
+      setPresidioError(null);
+      setPresidioProgress(0);
+      setPresidioTotal(0);
+    } catch (err: any) {
+      setPresidioError(err.message ?? 'Failed to disconnect');
+    }
+  }, []);
 
   const handleConfigure = useCallback(async () => {
     setLlmStep('configuring');
@@ -124,7 +233,6 @@ export function Anonymization() {
       setLlmStep('running');
     } catch (err: any) {
       setLlmError(err.message ?? 'Failed to start analysis');
-      // Stay in configured state so user can retry
       setLlmStep('configured');
     }
   }, [setupConfig]);
@@ -146,38 +254,158 @@ export function Anonymization() {
   };
 
   const progressPct = llmTotal > 0 ? Math.round((llmProgress / llmTotal) * 100) : 0;
+  const presidioProgressPct = presidioTotal > 0 ? Math.round((presidioProgress / presidioTotal) * 100) : 0;
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h2 className="text-2xl font-semibold text-slate-900 mb-2">PII Detection Analysis</h2>
         <p className="text-slate-600">
-          Configure and run PII detection engines. The LLM Judge uses Azure OpenAI via LangExtract to identify entities.
+          Configure and run PII detection engines to identify entities in your dataset.
         </p>
       </div>
 
       {/* Side-by-Side Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Presidio Processing — coming soon */}
-        <Card className="p-6 opacity-50 pointer-events-none">
-          <div className="space-y-6">
+        {/* Presidio Analyzer */}
+        <Card className="p-6 border-blue-200">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Shield className="size-6 text-slate-400" />
+                <Shield className="size-6 text-blue-600" />
                 <div>
-                  <h3 className="font-semibold text-slate-400">Presidio Analysis</h3>
-                  <p className="text-sm text-slate-400">Baseline PII detection</p>
+                  <h3 className="font-semibold text-slate-900">Presidio Analysis</h3>
+                  <p className="text-sm text-slate-500">Rule-based & NLP detection</p>
                 </div>
               </div>
-              <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Coming soon</span>
+              {presidioStep === 'done' && (
+                <span className="flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
+                  <CheckCircle className="size-3" /> Complete
+                </span>
+              )}
+              {presidioStep === 'configured' && (
+                <span className="flex items-center gap-1 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                  Ready
+                </span>
+              )}
             </div>
-            <p className="text-sm text-slate-400">
-              Run Presidio's rule-based and NLP detection to identify PII entities with precise character spans and confidence scores.
-            </p>
+
+            {presidioStep === 'loading' && (
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <Loader2 className="size-4 animate-spin" /> Loading…
+              </div>
+            )}
+
+            {presidioStep === 'configuring' && (
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <Loader2 className="size-4 animate-spin" /> Initializing Presidio analyzer…
+                </div>
+                <p className="text-xs text-slate-400">Loading the NLP model — this might take a while on first run.</p>
+              </div>
+            )}
+
+            {(presidioStep === 'idle' || presidioStep === 'error') && (
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Configuration</Label>
+                  <Select value={presidioConfigMode} onValueChange={(val) => setPresidioConfigMode(val as 'default' | 'custom')}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">Default configuration</SelectItem>
+                      <SelectItem value="custom">Custom config YAML</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {presidioConfigMode === 'custom' && (
+                  <div className="space-y-1.5">
+                    <Label htmlFor="presidio-config-path" className="text-xs font-medium">Config YAML path</Label>
+                    <Input
+                      id="presidio-config-path"
+                      placeholder="/path/to/analyzer_config.yaml"
+                      value={presidioConfigPath}
+                      onChange={(e) => setPresidioConfigPath(e.target.value)}
+                      className="font-mono text-sm"
+                    />
+                  </div>
+                )}
+
+                {presidioError && (
+                  <Alert className="border-red-200 bg-red-50">
+                    <AlertTriangle className="size-4 text-red-600" />
+                    <AlertDescription className="text-sm text-red-800">{presidioError}</AlertDescription>
+                  </Alert>
+                )}
+
+                <Button
+                  size="sm"
+                  onClick={handlePresidioConfigure}
+                  disabled={presidioConfigMode === 'custom' && !presidioConfigPath.trim()}
+                  className="w-full"
+                >
+                  Initialize Presidio
+                </Button>
+              </div>
+            )}
+
+            {presidioStep === 'configured' && (
+              <div className="space-y-3">
+                <p className="text-sm text-slate-600">
+                  Presidio initialized with <strong>{presidioConfigMode === 'custom' ? 'custom config' : 'default config'}</strong>.
+                  {datasetRecordCount != null && (
+                    <> Will analyse <strong>{datasetRecordCount.toLocaleString()}</strong> records.</>
+                  )}
+                </p>
+                {presidioError && (
+                  <Alert className="border-red-200 bg-red-50">
+                    <AlertTriangle className="size-4 text-red-600" />
+                    <AlertDescription className="text-sm text-red-800">{presidioError}</AlertDescription>
+                  </Alert>
+                )}
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={handlePresidioRun} className="flex-1">
+                    <Shield className="size-4 mr-2" />
+                    Run Presidio Analysis
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handlePresidioDisconnect}>
+                    <Unplug className="size-4 mr-1" />
+                    Reset
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {presidioStep === 'running' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm text-slate-600">
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="size-4 animate-spin" />
+                    Analysing records…
+                  </span>
+                  <span>{presidioProgress} / {presidioTotal}</span>
+                </div>
+                <Progress value={presidioProgressPct} className="h-2" />
+              </div>
+            )}
+
+            {presidioStep === 'done' && (
+              <div className="space-y-3">
+                <p className="text-sm text-green-700">
+                  Presidio analysis complete — {presidioTotal} records processed.
+                </p>
+                <Button size="sm" variant="outline" onClick={handlePresidioDisconnect}>
+                  <Unplug className="size-4 mr-1" />
+                  Reset & Reconfigure
+                </Button>
+              </div>
+            )}
           </div>
         </Card>
 
-        {/* LLM Judge — active */}
+        {/* LLM Judge */}
         <Card className="p-6 border-purple-200">
           <div className="space-y-4">
             <div className="flex items-center justify-between">

@@ -4,6 +4,7 @@ from routers import (
     decision,
     evaluation,
     llm,
+    presidio_service,
     review,
     upload,
 )
@@ -22,6 +23,7 @@ app.include_router(review.router)
 app.include_router(evaluation.router)
 app.include_router(decision.router)
 app.include_router(llm.router)
+app.include_router(presidio_service.router)
 
 
 @app.get("/api/health")

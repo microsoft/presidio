@@ -2,11 +2,15 @@
 
 ## Backend
 
+**Important:** Run `poetry run` from the `backend/` directory (not the repo root) so Poetry uses the correct virtualenv with `presidio-analyzer` installed.
+
 ```bash
 cd evaluation/ai-assistant/backend
-poetry install
-poetry run uvicorn main:app --reload --port 8000 --log-level info
+poetry install            # first time only — installs presidio-analyzer + deps
+poetry run uvicorn main:app --reload --reload-dir . --port 8000 --log-level info
 ```
+
+> `--reload-dir .` scopes file watching to the backend directory only, preventing restarts when spaCy downloads models into site-packages.
 
 ## Frontend
 

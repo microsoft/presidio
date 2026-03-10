@@ -50,14 +50,20 @@ export function HumanReview() {
           setLoadError('No dataset selected. Go back to Setup.');
           return;
         }
-        const [rawRecords, llmStatus] = await Promise.all([
+        const [rawRecords, llmStatus, presidioStatus] = await Promise.all([
           api.datasets.records(datasetId),
           api.llm.status(),
+          api.presidio.status(),
         ]);
 
         // Only fetch LLM results if analysis actually ran
         const llmResults = (llmStatus.progress > 0 && llmStatus.total > 0)
           ? await api.llm.results()
+          : {};
+
+        // Only fetch Presidio results if analysis actually ran
+        const presidioResults = (presidioStatus.progress > 0 && presidioStatus.total > 0)
+          ? await api.presidio.results()
           : {};
 
         const merged = rawRecords.map((raw: any) => {
@@ -66,6 +72,11 @@ export function HumanReview() {
           const llmEntities = llmResults[rec.id];
           if (llmEntities) {
             rec.llmEntities = llmEntities;
+          }
+          // Merge in Presidio entities only if Presidio was run
+          const presidioEntities = presidioResults[rec.id];
+          if (presidioEntities) {
+            rec.presidioEntities = presidioEntities;
           }
           return rec;
         });

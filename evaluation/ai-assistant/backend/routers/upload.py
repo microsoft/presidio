@@ -260,6 +260,10 @@ async def load_dataset(req: DatasetLoadRequest):
     shutil.copy2(file_path, stored_path)
 
     display_name = req.name.strip() if req.name and req.name.strip() else filename
+    # Ensure unique name
+    existing_names = {ds.name.lower() for ds in _uploaded.values()}
+    if display_name.lower() in existing_names:
+        raise HTTPException(status_code=409, detail=f"A dataset named '{display_name}' already exists. Please choose a different name.")
     description = req.description.strip() if req.description else ""
     dataset = UploadedDataset(
         id=dataset_id,
@@ -292,6 +296,9 @@ async def rename_dataset(dataset_id: str, req: DatasetRenameRequest):
     new_name = req.name.strip()
     if not new_name:
         raise HTTPException(status_code=400, detail="Name cannot be empty")
+    existing_names = {ds.name.lower() for did, ds in _uploaded.items() if did != dataset_id}
+    if new_name.lower() in existing_names:
+        raise HTTPException(status_code=409, detail=f"A dataset named '{new_name}' already exists. Please choose a different name.")
     _uploaded[dataset_id] = _uploaded[dataset_id].model_copy(
         update={"name": new_name}
     )

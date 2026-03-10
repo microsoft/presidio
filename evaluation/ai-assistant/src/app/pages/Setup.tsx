@@ -63,6 +63,13 @@ export function Setup() {
       return;
     }
 
+    const proposedName = datasetName.trim() || filePath.trim().split('/').pop() || '';
+    const nameExists = datasets.some(ds => ds.name.toLowerCase() === proposedName.toLowerCase());
+    if (nameExists) {
+      setLoadError(`A dataset named "${proposedName}" already exists. Please choose a different name.`);
+      return;
+    }
+
     setLoading(true);
     setLoadError(null);
     try {
@@ -399,7 +406,7 @@ export function Setup() {
           <div className="space-y-1">
             <div className="font-medium">Presidio Configuration</div>
             <div className="text-sm">
-              Using current baseline configuration (v1.2). This evaluation will help determine if tuning is needed for your specific dataset.
+              Presidio analyzer configuration is set up in the Analysis step. You can use the default config or provide a custom YAML.
             </div>
           </div>
         </AlertDescription>
