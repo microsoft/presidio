@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { ArrowRight, Shield, Sparkles, Database, CheckCircle, Loader2, AlertTriangle, Unplug } from 'lucide-react';
+import { ArrowRight, Shield, Sparkles, CheckCircle, Loader2, AlertTriangle, Unplug } from 'lucide-react';
 import { api } from '../lib/api';
 import type { SetupConfig } from '../types';
 
@@ -36,7 +36,6 @@ export function Anonymization() {
     }
   }, []);
 
-  const hasDatasetEntities = setupConfig?.hasDatasetEntities ?? false;
   const hasFinalEntities = setupConfig?.hasFinalEntities ?? false;
 
   const datasetRecordCount = useMemo(() => {
@@ -156,21 +155,6 @@ export function Anonymization() {
           Configure and run PII detection engines. The LLM Judge uses Azure OpenAI via LangExtract to identify entities.
         </p>
       </div>
-
-      {/* Dataset entities notice */}
-      {hasDatasetEntities && (
-        <Alert className="border-green-200 bg-green-50">
-          <Database className="size-4 text-green-600" />
-          <AlertDescription>
-            <div className="space-y-1">
-              <div className="font-medium text-green-900">Dataset Entities Available</div>
-              <div className="text-sm text-green-800">
-                Pre-identified entities from the uploaded dataset will be included in the human review step.
-              </div>
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
 
       {/* Side-by-Side Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

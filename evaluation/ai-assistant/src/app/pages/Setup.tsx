@@ -4,7 +4,6 @@ import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
 import { Input } from '../components/ui/input';
-import { Checkbox } from '../components/ui/checkbox';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Database, Shield, ArrowRight, Cloud, FileText, CheckCircle, Loader2, X, Plus, Pencil, Trash2 } from 'lucide-react';
@@ -314,8 +313,8 @@ export function Setup() {
                       <div className="text-xs text-green-700 font-mono truncate">{selectedDataset.path}</div>
                       <div>Columns: {selectedDataset.columns.join(', ')}</div>
                       <div>
-                        {selectedDataset.has_entities ? (
-                          <span className="text-green-700 font-medium">✓ Contains pre-identified entities</span>
+                        {selectedDataset.has_final_entities ? (
+                          <span className="text-amber-700 font-medium">✓ Contains golden dataset entities (from previous review)</span>
                         ) : (
                           <span className="text-slate-600">Text only — no pre-identified entities</span>
                         )}
@@ -336,15 +335,22 @@ export function Setup() {
                           <FileText className="size-4 text-slate-400 mt-0.5 flex-shrink-0" />
                           <div className="flex-1 min-w-0">
                             <p className="text-slate-800 line-clamp-2">{record.text}</p>
-                            {record.dataset_entities?.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {record.dataset_entities.map((e: any, j: number) => (
-                                  <span key={j} className="inline-block px-1.5 py-0.5 bg-blue-100 text-blue-800 text-xs rounded">
-                                    {e.entity_type}: {e.text}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
+                            {(() => {
+                              const entities = record.dataset_entities?.length > 0
+                                ? record.dataset_entities
+                                : record.final_entities?.length > 0
+                                  ? record.final_entities
+                                  : null;
+                              return entities && (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {entities.map((e: any, j: number) => (
+                                    <span key={j} className="inline-block px-1.5 py-0.5 bg-amber-100 text-amber-800 text-xs rounded">
+                                      {e.entity_type}: {e.text}
+                                    </span>
+                                  ))}
+                                </div>
+                              );
+                            })()}
                           </div>
                         </div>
                       </div>
@@ -353,42 +359,6 @@ export function Setup() {
                 </div>
               )}
 
-              {/* Detection Options — not implemented yet */}
-              {selectedDataset.has_entities && (
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3 opacity-50 pointer-events-none">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-slate-400 font-medium">Detection Options</Label>
-                    <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Coming soon</span>
-                  </div>
-                  <p className="text-sm text-slate-400">
-                    Your dataset includes pre-identified entities. Additional detection engines will be available soon:
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-3">
-                      <Checkbox
-                        id="run-presidio"
-                        checked={false}
-                        disabled
-                      />
-                      <Label htmlFor="run-presidio" className="cursor-default">
-                        <span className="font-medium text-slate-400">Run Presidio detection</span>
-                        <span className="text-sm text-slate-400 ml-2">— compare against baseline PII detection</span>
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Checkbox
-                        id="run-llm"
-                        checked={false}
-                        disabled
-                      />
-                      <Label htmlFor="run-llm" className="cursor-default">
-                        <span className="font-medium text-slate-400">Run LLM detection</span>
-                        <span className="text-sm text-slate-400 ml-2">— AI-assisted entity detection</span>
-                      </Label>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>

@@ -10,12 +10,14 @@ import type { Entity, Record as RecordType, SetupConfig } from '../types';
 
 /** Map backend snake_case record to frontend camelCase Record. */
 function toFrontendRecord(raw: any): RecordType {
+  const datasetEntities = raw.dataset_entities ?? raw.datasetEntities ?? [];
+  const finalEntities = raw.final_entities ?? raw.finalEntities ?? [];
   return {
     id: raw.id,
     text: raw.text,
     presidioEntities: raw.presidio_entities ?? raw.presidioEntities ?? [],
     llmEntities: raw.llm_entities ?? raw.llmEntities ?? [],
-    datasetEntities: raw.dataset_entities ?? raw.datasetEntities ?? [],
+    datasetEntities: datasetEntities.length > 0 ? datasetEntities : finalEntities,
     goldenEntities: raw.golden_entities ?? raw.goldenEntities ?? undefined,
   };
 }
@@ -48,14 +50,19 @@ export function HumanReview() {
           setLoadError('No dataset selected. Go back to Setup.');
           return;
         }
-        const [rawRecords, llmResults] = await Promise.all([
+        const [rawRecords, llmStatus] = await Promise.all([
           api.datasets.records(datasetId),
-          api.llm.results(),
+          api.llm.status(),
         ]);
+
+        // Only fetch LLM results if analysis actually ran
+        const llmResults = (llmStatus.progress > 0 && llmStatus.total > 0)
+          ? await api.llm.results()
+          : {};
 
         const merged = rawRecords.map((raw: any) => {
           const rec = toFrontendRecord(raw);
-          // Merge in LLM entities from analysis results
+          // Merge in LLM entities only if LLM was run
           const llmEntities = llmResults[rec.id];
           if (llmEntities) {
             rec.llmEntities = llmEntities;
