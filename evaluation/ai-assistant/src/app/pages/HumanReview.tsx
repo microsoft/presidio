@@ -29,6 +29,7 @@ export function HumanReview() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [reviewedRecords, setReviewedRecords] = useState<Set<string>>(new Set());
+  const [bulkConfirmedRecords, setBulkConfirmedRecords] = useState<Set<string>>(new Set());
   const [goldenSet, setGoldenSet] = useState<Record<string, Entity[]>>({});
 
   const setupConfig = useMemo<SetupConfig | null>(() => {
@@ -168,6 +169,7 @@ export function HumanReview() {
 
     setGoldenSet(prev => ({ ...prev, [record.id]: entities }));
     setReviewedRecords(new Set([...reviewedRecords, record.id]));
+    setBulkConfirmedRecords(new Set([...bulkConfirmedRecords, record.id]));
   };
 
   const isReviewed = currentRecord ? reviewedRecords.has(currentRecord.id) : false;
@@ -283,7 +285,7 @@ export function HumanReview() {
         presidioEntities={currentRecord.presidioEntities}
         llmEntities={currentRecord.llmEntities}
         datasetEntities={currentRecord.datasetEntities}
-        allConfirmed={isReviewed}
+        allConfirmed={bulkConfirmedRecords.has(currentRecord.id)}
         onConfirm={handleConfirm}
         onReject={handleReject}
         onAddManual={handleAddManual}
@@ -308,7 +310,7 @@ export function HumanReview() {
           {currentRecord.llmEntities.length > 0 && (
             <div className="flex items-center gap-2">
               <div className="size-3 rounded-full bg-cyan-500" />
-              <span>LLM Judge</span>
+              <span>LLM as a Judge</span>
             </div>
           )}
         </div>

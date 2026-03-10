@@ -122,12 +122,14 @@ async def disconnect_llm():
 @router.get("/status")
 async def get_llm_status():
     """Return LLM configuration and analysis status."""
+    entity_count = sum(len(ents) for ents in _state["results"].values())
     return {
         "configured": llm_service.is_configured(),
         "running": _state["running"],
         "progress": _state["progress"],
         "total": _state["total"],
         "error": _state["error"],
+        "entity_count": entity_count,
     }
 
 

@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { ArrowRight, Shield, Sparkles, CheckCircle, Loader2, AlertTriangle, Unplug } from 'lucide-react';
+import { ArrowRight, Shield, Sparkles, CheckCircle, Loader2, AlertTriangle, Unplug, Plus, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
 import type { SetupConfig } from '../types';
 
@@ -56,26 +56,40 @@ export function Anonymization() {
   const [llmProgress, setLlmProgress] = useState(0);
   const [llmTotal, setLlmTotal] = useState(0);
   const [llmError, setLlmError] = useState<string | null>(null);
+  const [llmEntityCount, setLlmEntityCount] = useState(0);
 
   // Presidio state
   const [presidioStep, setPresidioStep] = useState<PresidioStep>('loading');
   const [presidioProgress, setPresidioProgress] = useState(0);
   const [presidioTotal, setPresidioTotal] = useState(0);
   const [presidioError, setPresidioError] = useState<string | null>(null);
-  const [presidioConfigMode, setPresidioConfigMode] = useState<'default' | 'custom'>('default');
-  const [presidioConfigPath, setPresidioConfigPath] = useState('');
+  const [presidioEntityCount, setPresidioEntityCount] = useState(0);
 
-  // Load models + env status on mount
+  // Named configs
+  const [savedConfigs, setSavedConfigs] = useState<{ name: string; path: string | null }[]>([]);
+  const [selectedConfig, setSelectedConfig] = useState('Default (spaCy)');
+  const [showAddConfig, setShowAddConfig] = useState(false);
+  const [newConfigName, setNewConfigName] = useState('');
+  const [newConfigPath, setNewConfigPath] = useState('');
+  const [activeConfigName, setActiveConfigName] = useState<string | null>(null);
+
+  // Load models + env status + saved configs on mount
   useEffect(() => {
-    Promise.all([api.llm.models(), api.llm.settings(), api.llm.status()]).then(
-      ([modelList, settings, status]) => {
+    Promise.all([api.llm.models(), api.llm.settings(), api.llm.status(), api.presidio.configs()]).then(
+      ([modelList, settings, status, configs]) => {
         setModels(modelList);
         setSelectedModel(settings.deployment_name || 'gpt-4o');
+        setSavedConfigs(configs);
 
         if (status.running) {
           setLlmStep('running');
           setLlmProgress(status.progress);
           setLlmTotal(status.total);
+        } else if (status.entity_count > 0) {
+          setLlmEntityCount(status.entity_count);
+          setLlmStep('done');
+          setLlmTotal(status.total);
+          setLlmProgress(status.total);
         } else if (settings.configured) {
           setLlmStep('configured');
         } else if (!settings.env_ready) {
@@ -99,6 +113,7 @@ export function Anonymization() {
           setLlmError(s.error);
           setLlmStep('error');
         } else if (!s.running && s.progress >= s.total && s.total > 0) {
+          setLlmEntityCount(s.entity_count);
           setLlmStep('done');
         }
       } catch {
@@ -111,6 +126,7 @@ export function Anonymization() {
   // Presidio: check status on mount
   useEffect(() => {
     api.presidio.status().then((s) => {
+      if (s.config_name) setActiveConfigName(s.config_name);
       if (s.running) {
         setPresidioStep('running');
         setPresidioProgress(s.progress);
@@ -121,6 +137,7 @@ export function Anonymization() {
         setPresidioStep('done');
         setPresidioProgress(s.progress);
         setPresidioTotal(s.total);
+        setPresidioEntityCount(s.entity_count);
       } else if (s.configured) {
         setPresidioStep('configured');
       } else if (s.error) {
@@ -154,6 +171,7 @@ export function Anonymization() {
             setPresidioError(s.error);
             setPresidioStep('error');
           } else if (!s.running && s.progress >= s.total && s.total > 0) {
+            setPresidioEntityCount(s.entity_count);
             setPresidioStep('done');
           }
         }
@@ -168,14 +186,16 @@ export function Anonymization() {
     setPresidioStep('configuring');
     setPresidioError(null);
     try {
-      const configPath = presidioConfigMode === 'custom' ? presidioConfigPath.trim() : undefined;
-      await api.presidio.configure(configPath);
+      const config = savedConfigs.find((c) => c.name === selectedConfig);
+      const configPath = config?.path || undefined;
+      setActiveConfigName(selectedConfig);
+      await api.presidio.configure(selectedConfig, configPath);
       // Backend returns immediately — polling will detect when model is ready
     } catch (err: any) {
       setPresidioError(err.message ?? 'Failed to configure Presidio');
       setPresidioStep('error');
     }
-  }, [presidioConfigMode, presidioConfigPath]);
+  }, [selectedConfig, savedConfigs]);
 
   const handlePresidioRun = useCallback(async () => {
     setPresidioError(null);
@@ -202,6 +222,8 @@ export function Anonymization() {
       setPresidioError(null);
       setPresidioProgress(0);
       setPresidioTotal(0);
+      setPresidioEntityCount(0);
+      setActiveConfigName(null);
     } catch (err: any) {
       setPresidioError(err.message ?? 'Failed to disconnect');
     }
@@ -244,10 +266,37 @@ export function Anonymization() {
       setLlmError(null);
       setLlmProgress(0);
       setLlmTotal(0);
+      setLlmEntityCount(0);
     } catch (err: any) {
       setLlmError(err.message ?? 'Failed to disconnect');
     }
   }, []);
+
+  const handleSaveConfig = useCallback(async () => {
+    const name = newConfigName.trim();
+    const path = newConfigPath.trim();
+    if (!name || !path) return;
+    try {
+      const res = await api.presidio.saveConfig(name, path);
+      setSavedConfigs(res.configs);
+      setSelectedConfig(name);
+      setNewConfigName('');
+      setNewConfigPath('');
+      setShowAddConfig(false);
+    } catch (err: any) {
+      setPresidioError(err.message ?? 'Failed to save config');
+    }
+  }, [newConfigName, newConfigPath]);
+
+  const handleDeleteConfig = useCallback(async (name: string) => {
+    try {
+      const res = await api.presidio.deleteConfig(name);
+      setSavedConfigs(res.configs);
+      if (selectedConfig === name) setSelectedConfig('Default (spaCy)');
+    } catch (err: any) {
+      setPresidioError(err.message ?? 'Failed to delete config');
+    }
+  }, [selectedConfig]);
 
   const handleContinue = () => {
     navigate('/human-review');
@@ -309,27 +358,53 @@ export function Anonymization() {
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">Configuration</Label>
-                  <Select value={presidioConfigMode} onValueChange={(val) => setPresidioConfigMode(val as 'default' | 'custom')}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="default">Default configuration</SelectItem>
-                      <SelectItem value="custom">Custom config YAML</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select value={selectedConfig} onValueChange={setSelectedConfig}>
+                      <SelectTrigger className="flex-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {savedConfigs.map((c) => (
+                          <SelectItem key={c.name} value={c.name}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button size="icon" variant="outline" onClick={() => setShowAddConfig(!showAddConfig)} title="Add new config">
+                      <Plus className="size-4" />
+                    </Button>
+                    {selectedConfig !== 'Default (spaCy)' && (
+                      <Button size="icon" variant="outline" onClick={() => handleDeleteConfig(selectedConfig)} title="Delete config">
+                        <Trash2 className="size-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
 
-                {presidioConfigMode === 'custom' && (
-                  <div className="space-y-1.5">
-                    <Label htmlFor="presidio-config-path" className="text-xs font-medium">Config YAML path</Label>
+                {showAddConfig && (
+                  <div className="space-y-2 border rounded-md p-3 bg-slate-50">
+                    <Label className="text-xs font-medium">New Configuration</Label>
                     <Input
-                      id="presidio-config-path"
-                      placeholder="/path/to/analyzer_config.yaml"
-                      value={presidioConfigPath}
-                      onChange={(e) => setPresidioConfigPath(e.target.value)}
+                      placeholder="Config name (e.g. transformer-stanford)"
+                      value={newConfigName}
+                      onChange={(e) => setNewConfigName(e.target.value)}
+                      className="text-sm"
+                    />
+                    <Input
+                      placeholder="/absolute/path/to/config.yml"
+                      value={newConfigPath}
+                      onChange={(e) => setNewConfigPath(e.target.value)}
                       className="font-mono text-sm"
                     />
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => { setShowAddConfig(false); setNewConfigName(''); setNewConfigPath(''); }} className="flex-1">
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={handleSaveConfig} disabled={!newConfigName.trim() || !newConfigPath.trim()} className="flex-1">
+                        Save Config
+                      </Button>
+                    </div>
                   </div>
                 )}
 
@@ -343,7 +418,6 @@ export function Anonymization() {
                 <Button
                   size="sm"
                   onClick={handlePresidioConfigure}
-                  disabled={presidioConfigMode === 'custom' && !presidioConfigPath.trim()}
                   className="w-full"
                 >
                   Initialize Presidio
@@ -354,7 +428,7 @@ export function Anonymization() {
             {presidioStep === 'configured' && (
               <div className="space-y-3">
                 <p className="text-sm text-slate-600">
-                  Presidio initialized with <strong>{presidioConfigMode === 'custom' ? 'custom config' : 'default config'}</strong>.
+                  Presidio initialized with <strong>{activeConfigName || 'default config'}</strong>.
                   {datasetRecordCount != null && (
                     <> Will analyse <strong>{datasetRecordCount.toLocaleString()}</strong> records.</>
                   )}
@@ -394,8 +468,11 @@ export function Anonymization() {
             {presidioStep === 'done' && (
               <div className="space-y-3">
                 <p className="text-sm text-green-700">
-                  Presidio analysis complete — {presidioTotal} records processed.
+                  Presidio analysis complete — {presidioTotal} records processed, <strong>{presidioEntityCount.toLocaleString()} entities</strong> detected.
                 </p>
+                {activeConfigName && (
+                  <p className="text-xs text-slate-500">Config: {activeConfigName}</p>
+                )}
                 <Button size="sm" variant="outline" onClick={handlePresidioDisconnect}>
                   <Unplug className="size-4 mr-1" />
                   Reset & Reconfigure
@@ -412,7 +489,7 @@ export function Anonymization() {
               <div className="flex items-center gap-2">
                 <Sparkles className="size-6 text-purple-600" />
                 <div>
-                  <h3 className="font-semibold text-slate-900">LLM Judge</h3>
+                  <h3 className="font-semibold text-slate-900">LLM as a Judge</h3>
                   <p className="text-sm text-slate-500">Azure OpenAI via LangExtract</p>
                 </div>
               </div>
@@ -547,8 +624,9 @@ PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
             {llmStep === 'done' && (
               <div className="space-y-3">
                 <p className="text-sm text-green-700">
-                  LLM analysis complete — {llmTotal} records processed with <strong>{selectedModel}</strong>.
+                  LLM analysis complete — {llmTotal} records processed, <strong>{llmEntityCount.toLocaleString()} entities</strong> detected.
                 </p>
+                <p className="text-xs text-slate-500">Model: {selectedModel}</p>
                 <Button size="sm" variant="outline" onClick={handleDisconnect}>
                   <Unplug className="size-4 mr-1" />
                   Disconnect & Change Model

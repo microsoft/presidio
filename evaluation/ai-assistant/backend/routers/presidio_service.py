@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import os
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -15,6 +17,41 @@ router = APIRouter(prefix="/api/presidio", tags=["presidio"])
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
+# Named configs storage
+# ---------------------------------------------------------------------------
+_CONFIGS_FILE = Path(__file__).resolve().parent.parent / "data" / "presidio_configs.json"
+
+_BUILTIN_CONFIGS: list[dict] = [
+    {"name": "Default (spaCy)", "path": None},
+]
+
+
+def _load_saved_configs() -> list[dict]:
+    """Return list of {name, path} dicts (builtins + user-saved)."""
+    user_configs: list[dict] = []
+    if _CONFIGS_FILE.exists():
+        try:
+            user_configs = json.loads(_CONFIGS_FILE.read_text())
+        except Exception:
+            user_configs = []
+    return _BUILTIN_CONFIGS + user_configs
+
+
+def _save_user_configs(configs: list[dict]) -> None:
+    _CONFIGS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    _CONFIGS_FILE.write_text(json.dumps(configs, indent=2))
+
+
+def _get_user_configs() -> list[dict]:
+    if _CONFIGS_FILE.exists():
+        try:
+            return json.loads(_CONFIGS_FILE.read_text())
+        except Exception:
+            return []
+    return []
+
+
+# ---------------------------------------------------------------------------
 # State
 # ---------------------------------------------------------------------------
 _engine = None  # lazy-loaded AnalyzerEngine singleton
@@ -22,6 +59,7 @@ _engine = None  # lazy-loaded AnalyzerEngine singleton
 _state: dict = {
     "configured": False,
     "loading": False,
+    "config_name": None,
     "config_path": None,
     "running": False,
     "progress": 0,
@@ -35,6 +73,7 @@ _state: dict = {
 # Pydantic models
 # ---------------------------------------------------------------------------
 class PresidioConfigureRequest(BaseModel):
+    config_name: str | None = None
     config_path: str | None = None
 
 
@@ -42,8 +81,56 @@ class PresidioAnalyzeRequest(BaseModel):
     dataset_id: str
 
 
+class PresidioSaveConfigRequest(BaseModel):
+    name: str
+    path: str
+
+
 # ---------------------------------------------------------------------------
 # Routes
+# ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Config CRUD
+# ---------------------------------------------------------------------------
+@router.get("/configs")
+async def list_configs():
+    return _load_saved_configs()
+
+
+@router.post("/configs")
+async def save_config(req: PresidioSaveConfigRequest):
+    name = req.name.strip()
+    path = req.path.strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="Config name is required.")
+    if not path:
+        raise HTTPException(status_code=400, detail="Config path is required.")
+    if not os.path.isabs(path):
+        raise HTTPException(status_code=400, detail="Config path must be absolute.")
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=400, detail=f"Config file not found: {path}")
+
+    user_configs = _get_user_configs()
+    # Replace if same name exists
+    user_configs = [c for c in user_configs if c["name"] != name]
+    user_configs.append({"name": name, "path": path})
+    _save_user_configs(user_configs)
+    return {"status": "saved", "configs": _load_saved_configs()}
+
+
+@router.delete("/configs/{config_name}")
+async def delete_config(config_name: str):
+    user_configs = _get_user_configs()
+    before = len(user_configs)
+    user_configs = [c for c in user_configs if c["name"] != config_name]
+    if len(user_configs) == before:
+        raise HTTPException(status_code=404, detail="Config not found.")
+    _save_user_configs(user_configs)
+    return {"status": "deleted", "configs": _load_saved_configs()}
+
+
+# ---------------------------------------------------------------------------
+# Configure / Load engine
 # ---------------------------------------------------------------------------
 @router.post("/configure")
 async def configure_presidio(req: PresidioConfigureRequest):
@@ -60,6 +147,7 @@ async def configure_presidio(req: PresidioConfigureRequest):
     _state["loading"] = True
     _state["configured"] = False
     _state["error"] = None
+    _state["config_name"] = req.config_name or ("default" if not req.config_path else None)
     _state["config_path"] = req.config_path
 
     # Load the engine in a background thread so we don't block the event loop
@@ -102,14 +190,17 @@ def _create_engine(config_path: str | None):
 
 @router.get("/status")
 async def get_presidio_status():
+    entity_count = sum(len(ents) for ents in _state["results"].values())
     return {
         "configured": _state["configured"],
         "loading": _state["loading"],
+        "config_name": _state["config_name"],
         "config_path": _state["config_path"] or "default",
         "running": _state["running"],
         "progress": _state["progress"],
         "total": _state["total"],
         "error": _state["error"],
+        "entity_count": entity_count,
     }
 
 
@@ -186,6 +277,7 @@ async def disconnect_presidio():
     _engine = None
     _state["configured"] = False
     _state["loading"] = False
+    _state["config_name"] = None
     _state["config_path"] = None
     _state["running"] = False
     _state["progress"] = 0

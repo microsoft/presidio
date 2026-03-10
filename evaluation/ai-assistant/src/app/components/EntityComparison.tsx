@@ -207,7 +207,7 @@ export function EntityComparison({
       badges.push(<Badge key="presidio" className="bg-purple-100 text-purple-800 border-purple-300">Presidio</Badge>);
     }
     if (entity.sources.includes('llm')) {
-      badges.push(<Badge key="llm" className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM Judge</Badge>);
+      badges.push(<Badge key="llm" className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM as a Judge</Badge>);
     }
     if (badges.length === 0) {
       badges.push(<Badge key="pending" variant="secondary">Pending</Badge>);
