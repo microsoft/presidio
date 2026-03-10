@@ -191,7 +191,7 @@ export function EntityComparison({
   const dataTypes = annotatedEntities.map(e => e.entity_type).filter(Boolean);
   const ENTITY_TYPES = Array.from(new Set([...DEFAULT_ENTITY_TYPES, ...dataTypes])).sort();
 
-  const getStatusBadge = (status: EntityStatus, confirmed?: boolean, rejected?: boolean) => {
+  const getStatusBadge = (entity: AnnotatedEntity, confirmed?: boolean, rejected?: boolean) => {
     if (confirmed) {
       return <Badge className="bg-green-100 text-green-800 border-green-300"><Check className="size-3 mr-1" />Confirmed</Badge>;
     }
@@ -199,18 +199,20 @@ export function EntityComparison({
       return <Badge className="bg-red-100 text-red-800 border-red-300"><X className="size-3 mr-1" />Rejected</Badge>;
     }
 
-    switch (status) {
-      case 'match':
-        return <Badge className="bg-blue-100 text-blue-800 border-blue-300">✓ Match</Badge>;
-      case 'presidio-only':
-        return <Badge className="bg-purple-100 text-purple-800 border-purple-300">Presidio</Badge>;
-      case 'llm-only':
-        return <Badge className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM Judge</Badge>;
-      case 'dataset-only':
-        return <Badge className="bg-amber-100 text-amber-800 border-amber-300">Golden Dataset</Badge>;
-      default:
-        return <Badge variant="secondary">Pending</Badge>;
+    const badges: React.ReactNode[] = [];
+    if (entity.sources.includes('dataset')) {
+      badges.push(<Badge key="dataset" className="bg-amber-100 text-amber-800 border-amber-300">Golden Dataset</Badge>);
     }
+    if (entity.sources.includes('presidio')) {
+      badges.push(<Badge key="presidio" className="bg-purple-100 text-purple-800 border-purple-300">Presidio</Badge>);
+    }
+    if (entity.sources.includes('llm')) {
+      badges.push(<Badge key="llm" className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM Judge</Badge>);
+    }
+    if (badges.length === 0) {
+      badges.push(<Badge key="pending" variant="secondary">Pending</Badge>);
+    }
+    return <>{badges}</>;
   };
 
   return (
@@ -291,7 +293,7 @@ export function EntityComparison({
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-slate-900">{entity.text}</span>
-                        {!isConfirmed && !isRejected && entity.sources.includes('dataset') ? (
+                        {!isConfirmed && !isRejected ? (
                           <Select
                             value={editedTypes[key] || entity.entity_type}
                             onValueChange={(val) => setEditedTypes(prev => ({ ...prev, [key]: val }))}
@@ -308,7 +310,7 @@ export function EntityComparison({
                         ) : (
                           <Badge variant="outline">{editedTypes[key] || entity.entity_type}</Badge>
                         )}
-                        {getStatusBadge(entity.status, isConfirmed, isRejected)}
+                        {getStatusBadge(entity, isConfirmed, isRejected)}
                       </div>
                       
                       <div className="flex items-center gap-4 text-sm text-slate-600">

@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { ArrowRight, Shield, Sparkles, Database, CheckCircle, Loader2, AlertTriangle, Unplug, FastForward } from 'lucide-react';
+import { ArrowRight, Shield, Sparkles, Database, CheckCircle, Loader2, AlertTriangle, Unplug } from 'lucide-react';
 import { api } from '../lib/api';
 import type { SetupConfig } from '../types';
 
@@ -156,31 +156,6 @@ export function Anonymization() {
           Configure and run PII detection engines. The LLM Judge uses Azure OpenAI via LangExtract to identify entities.
         </p>
       </div>
-
-      {/* Final entities notice — skip LLM + human review */}
-      {hasFinalEntities && (
-        <Alert className="border-purple-200 bg-purple-50">
-          <FastForward className="size-4 text-purple-600" />
-          <AlertDescription>
-            <div className="space-y-2">
-              <div className="font-medium text-purple-900">Final Entities Found in Dataset</div>
-              <div className="text-sm text-purple-800">
-                This dataset already contains human-approved final entities from a previous review.
-                You can skip the LLM analysis and human review steps and go directly to evaluation to compare Presidio results against the final entities.
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                className="border-purple-300 text-purple-700 hover:bg-purple-100"
-                onClick={() => navigate('/evaluation')}
-              >
-                <FastForward className="size-4 mr-1" />
-                Skip to Evaluation
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
 
       {/* Dataset entities notice */}
       {hasDatasetEntities && (
@@ -373,14 +348,47 @@ PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
       </div>
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-4">
-        <Button
-          size="lg"
-          onClick={handleContinue}
-        >
-          Continue to Human Review
-          <ArrowRight className="size-4 ml-2" />
-        </Button>
+      <div className="flex flex-col items-end gap-3 pt-4">
+        {hasFinalEntities && (
+          <Alert className="border-amber-200 bg-amber-50 w-full">
+            <CheckCircle className="size-4 text-amber-600" />
+            <AlertDescription>
+              <div className="text-sm text-amber-900">
+                <span className="font-medium">Second phase:</span> This dataset already has human-approved golden entities from a previous review.
+                You can go directly to evaluation to test your configuration, or re-review entities in Human Review.
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+        <div className="flex gap-3">
+          {hasFinalEntities && (
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleContinue}
+            >
+              Continue to Human Review
+              <ArrowRight className="size-4 ml-2" />
+            </Button>
+          )}
+          {hasFinalEntities ? (
+            <Button
+              size="lg"
+              onClick={() => navigate('/evaluation')}
+            >
+              Continue to Evaluation
+              <ArrowRight className="size-4 ml-2" />
+            </Button>
+          ) : (
+            <Button
+              size="lg"
+              onClick={handleContinue}
+            >
+              Continue to Human Review
+              <ArrowRight className="size-4 ml-2" />
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
