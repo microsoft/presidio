@@ -3,9 +3,17 @@ from typing import List, Optional
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
-class ItDriverLicenseRecognizer(PatternRecognizer):
+class NgVehicleRegistrationRecognizer(PatternRecognizer):
     """
-    Recognizes IT Driver License using regex.
+    Recognizes Nigerian vehicle registration plate numbers (current format, 2011+).
+
+    The current format is: ABC-123DE
+    - 3 letters: LGA (Local Government Area) code
+    - Hyphen separator (may be omitted or replaced with space)
+    - 3 digits: serial number (001-999)
+    - 2 letters: year code + batch code
+
+    Reference: https://en.wikipedia.org/wiki/Vehicle_registration_plates_of_Nigeria
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -15,22 +23,28 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "Driver License",
-            (
-                r"\b(?i)(([A-Z]{2}\d{7}[A-Z])"
-                r"|(U1[BCDEFGHLJKMNPRSTUWYXZ0-9]{7}[A-Z]))\b"
-            ),
-            0.2,
+            "Nigeria Vehicle Registration",
+            r"\b[A-Z]{3}[- ]?\d{3}[A-Z]{2}\b",
+            0.5,
         ),
     ]
-    CONTEXT = ["patente", "patente di guida", "licenza", "licenza di guida"]
+
+    CONTEXT = [
+        "plate number",
+        "vehicle registration",
+        "license plate",
+        "number plate",
+        "plate",
+        "vehicle",
+        "registration",
+    ]
 
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
-        supported_language: str = "it",
-        supported_entity: str = "IT_DRIVER_LICENSE",
+        supported_language: str = "en",
+        supported_entity: str = "NG_VEHICLE_REGISTRATION",
         name: Optional[str] = None,
     ) -> None:
         patterns = patterns if patterns else self.PATTERNS

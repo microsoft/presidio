@@ -38,14 +38,14 @@ jobs:
       security-events: write
 
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v6.0.0
-    - uses: actions/setup-dotnet@6bd8b7f7774af54e05809fcc5431931b3eb1ddee # v5.0.0
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
+    - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.0.0
       with:
         dotnet-version: |
           5.0.x
           6.0.x
     - name: Run Microsoft Security DevOps
-      uses: microsoft/security-devops-action@cc007d020261b84193ccd49fa298eb8ba2408893 # v1.11.0
+      uses: microsoft/security-devops-action@08976cb623803b1b36d7112d4ff9f59eae704de0 # v1.12.0
       id: msdo
       env:
         GDN_CHECKOV_SKIPPATH: 'docs'
@@ -55,6 +55,6 @@ jobs:
         tools: checkov, templateanalyzer, trivy
 
     - name: Upload results to Security tab
-      uses: github/codeql-action/upload-sarif@f5c2471be782132e47a6e6f9c725e56730d6e9a3 # v3.32.3
+      uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
       with:
         sarif_file: ${{ steps.msdo.outputs.sarifFile }}

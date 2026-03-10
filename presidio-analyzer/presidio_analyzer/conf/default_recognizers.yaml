@@ -65,6 +65,12 @@ recognizers:
     supported_languages: 
     - en
     type: predefined
+    
+  - name: UkDrivingLicenceRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+    enabled: false
 
   - name: UkNinoRecognizer
     supported_languages:
@@ -72,7 +78,13 @@ recognizers:
     type: predefined
     enabled: false
 
-  - name: UkDrivingLicenceRecognizer
+  - name: UkPassportRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: UkPostcodeRecognizer
     supported_languages:
     - en
     type: predefined
@@ -80,6 +92,12 @@ recognizers:
     
   - name: UkPostcodeRecognizer
      supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: UkVehicleRegistrationRecognizer
+    supported_languages:
     - en
     type: predefined
     enabled: false
@@ -110,6 +128,18 @@ recognizers:
 
   - name: AuMedicareRecognizer
     supported_languages: 
+    - en
+    type: predefined
+    enabled: false
+
+  - name: NgNinRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: NgVehicleRegistrationRecognizer
+    supported_languages:
     - en
     type: predefined
     enabled: false
