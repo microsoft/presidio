@@ -129,30 +129,27 @@ export function HumanReview() {
   };
 
   const handleAutoConfirmAll = () => {
-    const allReviewed = new Set<string>();
-    const autoGolden: Record<string, Entity[]> = {};
+    if (!currentRecord) return;
+    const record = currentRecord;
+    const entities: Entity[] = [];
+    const seen = new Set<string>();
 
-    records.forEach(record => {
-      allReviewed.add(record.id);
-      const entities: Entity[] = [];
-      const seen = new Set<string>();
+    const addUnique = (e: Entity) => {
+      const key = `${e.text}-${e.start}-${e.end}-${e.entity_type}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        entities.push(e);
+      }
+    };
 
-      const addUnique = (e: Entity) => {
-        const key = `${e.text}-${e.start}-${e.end}-${e.entity_type}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          entities.push(e);
-        }
-      };
+    record.presidioEntities.forEach(addUnique);
+    record.llmEntities.forEach(addUnique);
+    if (record.datasetEntities) {
+      record.datasetEntities.forEach(addUnique);
+    }
 
-      record.presidioEntities.forEach(addUnique);
-      record.llmEntities.forEach(addUnique);
-
-      autoGolden[record.id] = entities;
-    });
-
-    setReviewedRecords(allReviewed);
-    setGoldenSet(autoGolden);
+    setGoldenSet(prev => ({ ...prev, [record.id]: entities }));
+    setReviewedRecords(new Set([...reviewedRecords, record.id]));
   };
 
   const isReviewed = currentRecord ? reviewedRecords.has(currentRecord.id) : false;
@@ -207,7 +204,7 @@ export function HumanReview() {
               <span className="font-medium text-blue-900">Review Progress</span>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-blue-800">{reviewedRecords.size} of {totalRecords} records reviewed ({reviewProgress.toFixed(0)}%)</span>
-                {!canContinue && (
+                {!isReviewed && (
                   <Button
                     size="sm"
                     variant="outline"
@@ -215,7 +212,7 @@ export function HumanReview() {
                     onClick={handleAutoConfirmAll}
                   >
                     <CheckCheck className="size-4 mr-1" />
-                    Auto Confirm All
+                    Confirm All Entities
                   </Button>
                 )}
               </div>
@@ -267,6 +264,8 @@ export function HumanReview() {
         recordText={currentRecord.text}
         presidioEntities={currentRecord.presidioEntities}
         llmEntities={currentRecord.llmEntities}
+        datasetEntities={currentRecord.datasetEntities}
+        allConfirmed={isReviewed}
         onConfirm={handleConfirm}
         onReject={handleReject}
         onAddManual={handleAddManual}
@@ -287,6 +286,10 @@ export function HumanReview() {
           <div className="flex items-center gap-2">
             <div className="size-3 rounded-full bg-cyan-500" />
             <span>LLM Judge</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="size-3 rounded-full bg-amber-500" />
+            <span>Golden Dataset</span>
           </div>
         </div>
       </div>
@@ -341,14 +344,14 @@ export function HumanReview() {
               </span>
             )}
           </div>
-          {!canContinue && (
+          {!isReviewed && (
             <Button
               size="sm"
               variant="outline"
               onClick={handleAutoConfirmAll}
             >
               <CheckCheck className="size-4 mr-1" />
-              Auto Confirm All
+              Confirm All Entities
             </Button>
           )}
         </div>

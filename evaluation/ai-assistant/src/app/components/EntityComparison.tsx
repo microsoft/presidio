@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -14,16 +14,19 @@ interface EntityComparisonProps {
   recordText: string;
   presidioEntities: Entity[];
   llmEntities: Entity[];
-  onConfirm: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'manual') => void;
-  onReject: (recordId: string, entity: Entity, source: 'presidio' | 'llm') => void;
+  datasetEntities?: Entity[];
+  allConfirmed?: boolean;
+  onConfirm: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'dataset' | 'manual') => void;
+  onReject: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'dataset') => void;
   onAddManual: (recordId: string, entity: Entity) => void;
 }
 
-type EntityStatus = 'match' | 'presidio-only' | 'llm-only' | 'pending';
+type EntitySource = 'presidio' | 'llm' | 'dataset';
+type EntityStatus = 'match' | 'presidio-only' | 'llm-only' | 'dataset-only' | 'pending';
 
 interface AnnotatedEntity extends Entity {
   status: EntityStatus;
-  sources: ('presidio' | 'llm')[];
+  sources: EntitySource[];
   confirmed?: boolean;
 }
 
@@ -32,6 +35,8 @@ export function EntityComparison({
   recordText,
   presidioEntities = [],
   llmEntities = [],
+  datasetEntities = [],
+  allConfirmed = false,
   onConfirm,
   onReject,
   onAddManual,
@@ -41,6 +46,7 @@ export function EntityComparison({
   const [confirmedEntities, setConfirmedEntities] = useState<Set<string>>(new Set());
   const [rejectedEntities, setRejectedEntities] = useState<Set<string>>(new Set());
   const [expandedContexts, setExpandedContexts] = useState<Set<string>>(new Set());
+  const [editedTypes, setEditedTypes] = useState<Record<string, string>>({});
 
   // Combine and classify entities from all three sources
   const annotatedEntities: AnnotatedEntity[] = [];
@@ -50,10 +56,10 @@ export function EntityComparison({
     a.start < b.end && b.start < a.end;
 
   // Build a unified list: for each unique span, track which sources detected it
-  interface SpanEntry { entity: Entity; sources: Set<'presidio' | 'llm'>; types: Map<string, string> }
+  interface SpanEntry { entity: Entity; sources: Set<EntitySource>; types: Map<string, string> }
   const spans: SpanEntry[] = [];
 
-  const addToSpans = (entity: Entity, source: 'presidio' | 'llm') => {
+  const addToSpans = (entity: Entity, source: EntitySource) => {
     const existing = spans.find(s => spansOverlap(s.entity, entity));
     if (existing) {
       existing.sources.add(source);
@@ -71,9 +77,16 @@ export function EntityComparison({
 
   presidioEntities.forEach(e => addToSpans(e, 'presidio'));
   llmEntities.forEach(e => addToSpans(e, 'llm'));
+  datasetEntities.forEach(e => addToSpans(e, 'dataset'));
+
+  const statusForSource = (src: EntitySource): EntityStatus => {
+    if (src === 'presidio') return 'presidio-only';
+    if (src === 'llm') return 'llm-only';
+    return 'dataset-only';
+  };
 
   spans.forEach(({ entity, sources, types }) => {
-    const sourceList = Array.from(sources) as ('presidio' | 'llm')[];
+    const sourceList = Array.from(sources) as EntitySource[];
     const uniqueTypes = new Set(types.values());
     const allAgree = uniqueTypes.size === 1;
 
@@ -84,19 +97,25 @@ export function EntityComparison({
       // Sources disagree on type → separate card per source so user can confirm/reject each
       for (const src of sourceList) {
         const srcType = types.get(src) || entity.entity_type;
-        const status: EntityStatus = src === 'presidio' ? 'presidio-only' : 'llm-only';
-        annotatedEntities.push({ ...entity, entity_type: srcType, status, sources: [src] });
+        annotatedEntities.push({ ...entity, entity_type: srcType, status: statusForSource(src), sources: [src] });
       }
     } else if (sourceList.length === 1) {
       const s = sourceList[0];
-      const status: EntityStatus = s === 'presidio' ? 'presidio-only' : 'llm-only';
-      annotatedEntities.push({ ...entity, status, sources: sourceList });
+      annotatedEntities.push({ ...entity, status: statusForSource(s), sources: sourceList });
     } else {
       annotatedEntities.push({ ...entity, status: 'pending', sources: sourceList });
     }
   });
 
   const getEntityKey = (entity: AnnotatedEntity) => `${entity.text}-${entity.start}-${entity.end}-${entity.sources.join(',')}`;
+
+  // When parent signals all entities are confirmed, mark them all
+  useEffect(() => {
+    if (allConfirmed && annotatedEntities.length > 0) {
+      setConfirmedEntities(new Set(annotatedEntities.map(e => getEntityKey(e))));
+      setRejectedEntities(new Set());
+    }
+  }, [allConfirmed]);
 
   const getContextForEntity = (entity: Entity) => {
     const CONTEXT_CHARS = 150;
@@ -133,13 +152,17 @@ export function EntityComparison({
 
   const handleConfirmEntity = (entity: AnnotatedEntity) => {
     const key = getEntityKey(entity);
+    // Use the edited type if the user adjusted it
+    const finalEntity = editedTypes[key]
+      ? { ...entity, entity_type: editedTypes[key] }
+      : entity;
     setConfirmedEntities(new Set([...confirmedEntities, key]));
     setRejectedEntities(prev => {
       const newSet = new Set(prev);
       newSet.delete(key);
       return newSet;
     });
-    onConfirm(recordId, entity, entity.sources[0]);
+    onConfirm(recordId, finalEntity, entity.sources[0]);
   };
 
   const handleRejectEntity = (entity: AnnotatedEntity) => {
@@ -161,6 +184,13 @@ export function EntityComparison({
     }
   };
 
+  const DEFAULT_ENTITY_TYPES = ['PERSON', 'EMAIL', 'PHONE_NUMBER', 'SSN', 'CREDIT_CARD', 'DATE_OF_BIRTH',
+    'MEDICAL_RECORD', 'IP_ADDRESS', 'ADDRESS', 'MEDICAL_CONDITION'];
+
+  // Include any entity types found in the data that aren't in the default list
+  const dataTypes = annotatedEntities.map(e => e.entity_type).filter(Boolean);
+  const ENTITY_TYPES = Array.from(new Set([...DEFAULT_ENTITY_TYPES, ...dataTypes])).sort();
+
   const getStatusBadge = (status: EntityStatus, confirmed?: boolean, rejected?: boolean) => {
     if (confirmed) {
       return <Badge className="bg-green-100 text-green-800 border-green-300"><Check className="size-3 mr-1" />Confirmed</Badge>;
@@ -176,6 +206,8 @@ export function EntityComparison({
         return <Badge className="bg-purple-100 text-purple-800 border-purple-300">Presidio</Badge>;
       case 'llm-only':
         return <Badge className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM Judge</Badge>;
+      case 'dataset-only':
+        return <Badge className="bg-amber-100 text-amber-800 border-amber-300">Golden Dataset</Badge>;
       default:
         return <Badge variant="secondary">Pending</Badge>;
     }
@@ -225,8 +257,7 @@ export function EntityComparison({
                       <SelectValue placeholder="Select type..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {['PERSON', 'EMAIL', 'PHONE_NUMBER', 'SSN', 'CREDIT_CARD', 'DATE_OF_BIRTH', 
-                        'MEDICAL_RECORD', 'IP_ADDRESS', 'ADDRESS', 'MEDICAL_CONDITION'].map(type => (
+                      {ENTITY_TYPES.map(type => (
                         <SelectItem key={type} value={type}>{type}</SelectItem>
                       ))}
                     </SelectContent>
@@ -260,7 +291,23 @@ export function EntityComparison({
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-slate-900">{entity.text}</span>
-                        <Badge variant="outline">{entity.entity_type}</Badge>
+                        {!isConfirmed && !isRejected && entity.sources.includes('dataset') ? (
+                          <Select
+                            value={editedTypes[key] || entity.entity_type}
+                            onValueChange={(val) => setEditedTypes(prev => ({ ...prev, [key]: val }))}
+                          >
+                            <SelectTrigger className="h-7 w-auto min-w-[140px] text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ENTITY_TYPES.map(type => (
+                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Badge variant="outline">{editedTypes[key] || entity.entity_type}</Badge>
+                        )}
                         {getStatusBadge(entity.status, isConfirmed, isRejected)}
                       </div>
                       

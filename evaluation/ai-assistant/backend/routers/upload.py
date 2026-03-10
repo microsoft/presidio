@@ -129,7 +129,7 @@ def _parse_csv(
             Record(
                 id=f"rec-{i + 1:04d}",
                 text=text,
-                dataset_entities=entities,
+                dataset_entities=entities if entities else (final_ents or []),
                 final_entities=final_ents if final_ents else None,
             )
         )
@@ -191,7 +191,7 @@ def _parse_json(
             Record(
                 id=f"rec-{i + 1:04d}",
                 text=text,
-                dataset_entities=entities,
+                dataset_entities=entities if entities else (final_ents or []),
                 final_entities=final_ents if final_ents else None,
             )
         )

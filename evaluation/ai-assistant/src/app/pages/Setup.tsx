@@ -442,7 +442,7 @@ export function Setup() {
           onClick={handleContinue}
           disabled={!canProceed}
         >
-          Continue to Sampling
+          Continue
           <ArrowRight className="size-4 ml-2" />
         </Button>
       </div>
