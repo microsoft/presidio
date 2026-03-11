@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from models import Entity, EntityAction, Record
 from routers.upload import _records as uploaded_records, _uploaded, _save_registry
+from routers.presidio_service import _state as presidio_state
 
 router = APIRouter(prefix="/api/review", tags=["review"])
 
@@ -118,12 +119,16 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
     if not stored:
         raise HTTPException(status_code=400, detail="No stored file to update")
 
+    # Grab raw Presidio results (if available)
+    presidio_results = presidio_state.get("results", {})
+
     if ds.format == "csv":
         buf = io.StringIO()
-        # Build fieldnames: original columns + final_entities
+        # Build fieldnames: original columns + new columns
         fieldnames = list(ds.columns)
-        if "final_entities" not in fieldnames:
-            fieldnames.append("final_entities")
+        for col in ("presidio_analyzer_entities", "final_entities"):
+            if col not in fieldnames:
+                fieldnames.append(col)
         writer = csv.DictWriter(buf, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -134,6 +139,10 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
 
         for i, row in enumerate(orig_rows):
             rec_id = f"rec-{i + 1:04d}"
+            # Presidio raw analysis entities
+            p_ents = presidio_results.get(rec_id, [])
+            row["presidio_analyzer_entities"] = json.dumps(p_ents)
+            # Human-reviewed final entities
             ents = golden.get(rec_id, [])
             row["final_entities"] = json.dumps([e.model_dump() for e in ents])
             writer.writerow(row)
@@ -147,6 +156,7 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
 
         for i, obj in enumerate(data):
             rec_id = f"rec-{i + 1:04d}"
+            obj["presidio_analyzer_entities"] = presidio_results.get(rec_id, [])
             ents = golden.get(rec_id, [])
             obj["final_entities"] = [e.model_dump() for e in ents]
 
@@ -154,11 +164,13 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
             json.dump(data, f, indent=2, ensure_ascii=False)
 
     # Update dataset metadata
-    _uploaded[req.dataset_id] = ds.model_copy(update={"has_final_entities": True})
-    if "final_entities" not in ds.columns:
-        _uploaded[req.dataset_id] = _uploaded[req.dataset_id].model_copy(
-            update={"columns": ds.columns + ["final_entities"]}
-        )
+    updated_cols = list(ds.columns)
+    for col in ("presidio_analyzer_entities", "final_entities"):
+        if col not in updated_cols:
+            updated_cols.append(col)
+    _uploaded[req.dataset_id] = ds.model_copy(
+        update={"has_final_entities": True, "columns": updated_cols}
+    )
     _save_registry()
 
     return {"status": "saved", "records_updated": len(golden)}
