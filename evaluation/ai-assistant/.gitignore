@@ -1,3 +1,6 @@
+# Override root gitignore's lib/ rule for src/app/lib/
+!src/app/lib/
+
 # Dependencies
 node_modules/
 
