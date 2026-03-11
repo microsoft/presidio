@@ -142,8 +142,7 @@ export const api = {
   },
 
   evaluation: {
-    runs: () => request<any[]>("/evaluation/runs"),
-    latest: () => request<any>("/evaluation/latest"),
+    run: () => request<any>("/evaluation/run", { method: "POST" }),
     misses: (filters?: { miss_type?: string; entity_type?: string; risk_level?: string }) => {
       const params = new URLSearchParams();
       if (filters?.miss_type) params.set("miss_type", filters.miss_type);

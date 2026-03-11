@@ -1,56 +1,92 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Progress } from '../components/ui/progress';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Input } from '../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { ArrowRight, ChevronLeft, Loader2, CheckCircle, TrendingUp, TrendingDown, Search, AlertTriangle, XCircle, Download, Filter } from 'lucide-react';
-import { mockEntityMisses } from '../lib/mockData';
+import { ArrowRight, ChevronLeft, Loader2, CheckCircle, Search, AlertTriangle, XCircle, Download, Filter } from 'lucide-react';
+import { api } from '../lib/api';
+
+interface EvalMetrics {
+  overall: { precision: number; recall: number; f1_score: number; false_negatives: number };
+  by_entity_type: { type: string; precision: number; recall: number; f1: number }[];
+  errors: {
+    false_negatives: { total: number; by_type: { type: string; count: number }[] };
+    false_positives: { total: number; by_type: { type: string; count: number }[] };
+  };
+}
+
+interface EvalMiss {
+  record_id: string;
+  record_text: string;
+  missed_entity: { text: string; entity_type: string; start: number; end: number; score?: number };
+  miss_type: 'false-positive' | 'false-negative';
+  entity_type: string;
+  risk_level: 'high' | 'medium' | 'low';
+}
+
+interface EvalPatterns {
+  frequent_misses: { type: string; count: number; pattern: string }[];
+  common_patterns: { name: string; description: string }[];
+  insights: { title: string; description: string }[];
+}
 
 export function Evaluation() {
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [metrics, setMetrics] = useState<EvalMetrics | null>(null);
+  const [misses, setMisses] = useState<EvalMiss[]>([]);
+  const [patterns, setPatterns] = useState<EvalPatterns | null>(null);
   const [filterType, setFilterType] = useState<'all' | 'false-positive' | 'false-negative'>('all');
   const [filterEntityType, setFilterEntityType] = useState<string>('all');
   const [filterRiskLevel, setFilterRiskLevel] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsComplete(true);
-          return 100;
-        }
-        return prev + 3;
-      });
-    }, 60);
-
-    return () => clearInterval(interval);
+  const runEvaluation = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Trigger backend evaluation then fetch results
+      await api.evaluation.run();
+      const [metricsData, missesData, patternsData] = await Promise.all([
+        api.evaluation.metrics(),
+        api.evaluation.misses(),
+        api.evaluation.patterns(),
+      ]);
+      setMetrics(metricsData);
+      setMisses(missesData);
+      setPatterns(patternsData);
+    } catch (err: any) {
+      setError(err.message || 'Evaluation failed');
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const filteredMisses = mockEntityMisses.filter(miss => {
-    if (filterType !== 'all' && miss.missType !== filterType) return false;
-    if (filterEntityType !== 'all' && miss.entityType !== filterEntityType) return false;
-    if (filterRiskLevel !== 'all' && miss.riskLevel !== filterRiskLevel) return false;
-    if (searchQuery && !miss.recordText.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+  useEffect(() => {
+    runEvaluation();
+  }, [runEvaluation]);
+
+  const filteredMisses = misses.filter(miss => {
+    if (filterType !== 'all' && miss.miss_type !== filterType) return false;
+    if (filterEntityType !== 'all' && miss.entity_type !== filterEntityType) return false;
+    if (filterRiskLevel !== 'all' && miss.risk_level !== filterRiskLevel) return false;
+    if (searchQuery && !miss.record_text.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
-  const entityTypes = ['all', ...new Set(mockEntityMisses.map(m => m.entityType))];
+  const entityTypes = ['all', ...new Set(misses.map(m => m.entity_type))];
 
-  const missesummary = {
-    totalMisses: mockEntityMisses.length,
-    falsePositives: mockEntityMisses.filter(m => m.missType === 'false-positive').length,
-    falseNegatives: mockEntityMisses.filter(m => m.missType === 'false-negative').length,
-    highRisk: mockEntityMisses.filter(m => m.riskLevel === 'high').length,
-    mediumRisk: mockEntityMisses.filter(m => m.riskLevel === 'medium').length,
-    lowRisk: mockEntityMisses.filter(m => m.riskLevel === 'low').length,
+  const misseSummary = {
+    totalMisses: misses.length,
+    falsePositives: misses.filter(m => m.miss_type === 'false-positive').length,
+    falseNegatives: misses.filter(m => m.miss_type === 'false-negative').length,
+    highRisk: misses.filter(m => m.risk_level === 'high').length,
+    mediumRisk: misses.filter(m => m.risk_level === 'medium').length,
+    lowRisk: misses.filter(m => m.risk_level === 'low').length,
   };
 
   const handleContinue = () => {
@@ -60,6 +96,8 @@ export function Evaluation() {
   const handleExport = () => {
     alert('Dashboard data exported successfully!');
   };
+
+  const isComplete = !isLoading && !error && metrics !== null;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -79,29 +117,34 @@ export function Evaluation() {
       </div>
 
       {/* Processing Status */}
-      {!isComplete && (
+      {isLoading && (
         <Card className="p-8">
           <div className="space-y-6">
             <div className="flex items-center justify-center">
               <Loader2 className="size-16 text-blue-600 animate-spin" />
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold text-slate-900">Running Presidio Evaluator...</h3>
-              <p className="text-slate-600">Calculating precision, recall, and identifying error patterns</p>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm text-slate-600">
-                <span>Progress</span>
-                <span>{progress}%</span>
-              </div>
-              <Progress value={progress} className="h-3" />
+              <h3 className="text-xl font-semibold text-slate-900">Running Evaluation...</h3>
+              <p className="text-slate-600">Comparing Presidio results against the golden set — calculating precision, recall, and identifying errors</p>
             </div>
           </div>
         </Card>
       )}
 
+      {/* Error */}
+      {error && (
+        <Card className="p-8 border-red-200 bg-red-50">
+          <div className="text-center space-y-4">
+            <XCircle className="size-12 text-red-500 mx-auto" />
+            <h3 className="text-lg font-semibold text-red-900">Evaluation Failed</h3>
+            <p className="text-sm text-red-700">{error}</p>
+            <Button variant="outline" onClick={runEvaluation}>Retry</Button>
+          </div>
+        </Card>
+      )}
+
       {/* Results */}
-      {isComplete && (
+      {isComplete && metrics && (
         <>
           {/* Overall Metrics */}
           <Card className="p-6 border-green-200 bg-green-50">
@@ -113,64 +156,81 @@ export function Evaluation() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <div className="text-2xl font-semibold text-green-900">94%</div>
+                  <div className="text-2xl font-semibold text-green-900">{metrics.overall.precision}%</div>
                   <div className="text-sm text-green-700">Precision</div>
-                  <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
-                    <TrendingUp className="size-3" />
-                    <span>+3% from last run</span>
-                  </div>
                 </div>
                 <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <div className="text-2xl font-semibold text-green-900">88%</div>
+                  <div className="text-2xl font-semibold text-green-900">{metrics.overall.recall}%</div>
                   <div className="text-sm text-green-700">Recall</div>
-                  <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
-                    <TrendingUp className="size-3" />
-                    <span>+7% from last run</span>
-                  </div>
                 </div>
                 <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <div className="text-2xl font-semibold text-green-900">91%</div>
+                  <div className="text-2xl font-semibold text-green-900">{metrics.overall.f1_score}%</div>
                   <div className="text-sm text-green-700">F1 Score</div>
-                  <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
-                    <TrendingUp className="size-3" />
-                    <span>+5% from last run</span>
-                  </div>
                 </div>
                 <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <div className="text-2xl font-semibold text-green-900">40</div>
+                  <div className="text-2xl font-semibold text-green-900">{metrics.overall.false_negatives}</div>
                   <div className="text-sm text-green-700">False Negatives</div>
-                  <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
-                    <TrendingDown className="size-3" />
-                    <span>-24 from last run</span>
-                  </div>
                 </div>
               </div>
             </div>
           </Card>
+
+          {/* Per-entity-type breakdown */}
+          {metrics.by_entity_type.length > 0 && (
+            <Card className="p-6">
+              <h3 className="font-semibold text-slate-900 mb-4">Performance by Entity Type</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-slate-200">
+                      <th className="text-left py-2 pr-4 font-medium text-slate-600">Entity Type</th>
+                      <th className="text-right py-2 px-4 font-medium text-slate-600">Precision</th>
+                      <th className="text-right py-2 px-4 font-medium text-slate-600">Recall</th>
+                      <th className="text-right py-2 pl-4 font-medium text-slate-600">F1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {metrics.by_entity_type.map(e => (
+                      <tr key={e.type} className="border-b border-slate-100">
+                        <td className="py-2 pr-4 font-medium text-slate-900">{e.type}</td>
+                        <td className="text-right py-2 px-4 text-slate-700">{e.precision}%</td>
+                        <td className="text-right py-2 px-4 text-slate-700">{e.recall}%</td>
+                        <td className={`text-right py-2 pl-4 font-medium ${e.f1 >= 90 ? 'text-green-700' : e.f1 >= 70 ? 'text-amber-700' : 'text-red-700'}`}>{e.f1}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
 
           {/* Error Summary + Risk-Critical */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="p-6">
               <div className="space-y-3">
                 <div className="font-medium text-red-900">False Negatives (Misses)</div>
-                <Badge className="bg-red-200 text-red-900">40 total</Badge>
+                <Badge className="bg-red-200 text-red-900">{metrics.errors.false_negatives.total} total</Badge>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-red-800">CREDIT_CARD</span><span className="font-medium text-red-900">12</span></div>
-                  <div className="flex justify-between"><span className="text-red-800">MEDICAL_CONDITION</span><span className="font-medium text-red-900">9</span></div>
-                  <div className="flex justify-between"><span className="text-red-800">SSN</span><span className="font-medium text-red-900">8</span></div>
-                  <div className="flex justify-between"><span className="text-red-800">Other</span><span className="font-medium text-red-900">11</span></div>
+                  {metrics.errors.false_negatives.by_type.map(item => (
+                    <div key={item.type} className="flex justify-between">
+                      <span className="text-red-800">{item.type}</span>
+                      <span className="font-medium text-red-900">{item.count}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </Card>
             <Card className="p-6">
               <div className="space-y-3">
                 <div className="font-medium text-amber-900">False Positives (Incorrect)</div>
-                <Badge className="bg-amber-200 text-amber-900">19 total</Badge>
+                <Badge className="bg-amber-200 text-amber-900">{metrics.errors.false_positives.total} total</Badge>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-amber-800">DATE patterns</span><span className="font-medium text-amber-900">7</span></div>
-                  <div className="flex justify-between"><span className="text-amber-800">PERSON names</span><span className="font-medium text-amber-900">5</span></div>
-                  <div className="flex justify-between"><span className="text-amber-800">PHONE_NUMBER</span><span className="font-medium text-amber-900">4</span></div>
-                  <div className="flex justify-between"><span className="text-amber-800">Other</span><span className="font-medium text-amber-900">3</span></div>
+                  {metrics.errors.false_positives.by_type.map(item => (
+                    <div key={item.type} className="flex justify-between">
+                      <span className="text-amber-800">{item.type}</span>
+                      <span className="font-medium text-amber-900">{item.count}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </Card>
@@ -181,11 +241,7 @@ export function Evaluation() {
                   <span className="font-semibold text-red-900 text-sm">Risk-Critical</span>
                 </div>
                 <div className="text-sm text-red-800">
-                  <p>18 high-risk false negatives:</p>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>12 Credit card numbers</li>
-                    <li>6 SSN variations</li>
-                  </ul>
+                  <p>{misseSummary.highRisk} high-risk misses detected</p>
                 </div>
               </div>
             </Card>
@@ -204,27 +260,27 @@ export function Evaluation() {
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                 <Card className="p-4">
-                  <div className="text-2xl font-semibold text-slate-900">{missesummary.totalMisses}</div>
+                  <div className="text-2xl font-semibold text-slate-900">{misseSummary.totalMisses}</div>
                   <div className="text-sm text-slate-600">Total Misses</div>
                 </Card>
                 <Card className="p-4 border-amber-200 bg-amber-50">
-                  <div className="text-2xl font-semibold text-amber-900">{missesummary.falsePositives}</div>
+                  <div className="text-2xl font-semibold text-amber-900">{misseSummary.falsePositives}</div>
                   <div className="text-sm text-amber-700">False Positives</div>
                 </Card>
                 <Card className="p-4 border-red-200 bg-red-50">
-                  <div className="text-2xl font-semibold text-red-900">{missesummary.falseNegatives}</div>
+                  <div className="text-2xl font-semibold text-red-900">{misseSummary.falseNegatives}</div>
                   <div className="text-sm text-red-700">False Negatives</div>
                 </Card>
                 <Card className="p-4 border-red-300 bg-red-100">
-                  <div className="text-2xl font-semibold text-red-900">{missesummary.highRisk}</div>
+                  <div className="text-2xl font-semibold text-red-900">{misseSummary.highRisk}</div>
                   <div className="text-sm text-red-700">High Risk</div>
                 </Card>
                 <Card className="p-4 border-amber-300 bg-amber-100">
-                  <div className="text-2xl font-semibold text-amber-900">{missesummary.mediumRisk}</div>
+                  <div className="text-2xl font-semibold text-amber-900">{misseSummary.mediumRisk}</div>
                   <div className="text-sm text-amber-700">Medium Risk</div>
                 </Card>
                 <Card className="p-4 border-slate-200 bg-slate-50">
-                  <div className="text-2xl font-semibold text-slate-700">{missesummary.lowRisk}</div>
+                  <div className="text-2xl font-semibold text-slate-700">{misseSummary.lowRisk}</div>
                   <div className="text-sm text-slate-600">Low Risk</div>
                 </Card>
               </div>
@@ -277,56 +333,56 @@ export function Evaluation() {
               {/* Misses List */}
               <div className="space-y-3">
                 <div className="text-sm text-slate-600">
-                  Showing {filteredMisses.length} of {mockEntityMisses.length} errors
+                  Showing {filteredMisses.length} of {misses.length} errors
                 </div>
                 {filteredMisses.map((miss, index) => (
                   <Card
                     key={index}
                     className={`p-4 ${
-                      miss.riskLevel === 'high' ? 'border-red-300 bg-red-50' :
-                      miss.riskLevel === 'medium' ? 'border-amber-300 bg-amber-50' :
+                      miss.risk_level === 'high' ? 'border-red-300 bg-red-50' :
+                      miss.risk_level === 'medium' ? 'border-amber-300 bg-amber-50' :
                       'border-slate-200'
                     }`}
                   >
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-2">
-                          {miss.missType === 'false-negative' ? (
+                          {miss.miss_type === 'false-negative' ? (
                             <XCircle className="size-5 text-red-600 flex-shrink-0" />
                           ) : (
                             <AlertTriangle className="size-5 text-amber-600 flex-shrink-0" />
                           )}
                           <div>
                             <div className="font-medium text-slate-900">
-                              {miss.missType === 'false-negative' ? 'Missed Entity' : 'Incorrect Detection'}
+                              {miss.miss_type === 'false-negative' ? 'Missed Entity' : 'Incorrect Detection'}
                             </div>
-                            <div className="text-sm text-slate-600">Record ID: {miss.recordId}</div>
+                            <div className="text-sm text-slate-600">Record ID: {miss.record_id}</div>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline">{miss.entityType}</Badge>
+                          <Badge variant="outline">{miss.entity_type}</Badge>
                           <Badge
                             className={
-                              miss.riskLevel === 'high' ? 'bg-red-600 text-white' :
-                              miss.riskLevel === 'medium' ? 'bg-amber-600 text-white' :
+                              miss.risk_level === 'high' ? 'bg-red-600 text-white' :
+                              miss.risk_level === 'medium' ? 'bg-amber-600 text-white' :
                               'bg-slate-600 text-white'
                             }
                           >
-                            {miss.riskLevel} risk
+                            {miss.risk_level} risk
                           </Badge>
                         </div>
                       </div>
                       <div className="p-3 bg-white rounded border border-slate-200">
-                        <div className="text-sm font-mono text-slate-700">{miss.recordText}</div>
+                        <div className="text-sm font-mono text-slate-700">{miss.record_text}</div>
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <div>
                           <span className="text-slate-600">Missed Entity: </span>
-                          <span className="font-medium text-slate-900">{miss.missedEntity.text}</span>
+                          <span className="font-medium text-slate-900">{miss.missed_entity.text}</span>
                         </div>
                         <div>
                           <span className="text-slate-600">Position: </span>
-                          <span className="font-medium text-slate-900">{miss.missedEntity.start}-{miss.missedEntity.end}</span>
+                          <span className="font-medium text-slate-900">{miss.missed_entity.start}-{miss.missed_entity.end}</span>
                         </div>
                       </div>
                     </div>
@@ -337,95 +393,63 @@ export function Evaluation() {
 
             {/* Error Patterns */}
             <TabsContent value="patterns" className="space-y-4">
-              <Card className="p-6">
-                <h3 className="font-semibold text-slate-900 mb-4">Most Frequently Missed Entity Types</h3>
-                <div className="space-y-3">
-                  {[
-                    { type: 'CREDIT_CARD', count: 12, pattern: 'Partial card numbers, low confidence scores' },
-                    { type: 'MEDICAL_CONDITION', count: 9, pattern: 'Medical terminology not in baseline recognizers' },
-                    { type: 'SSN', count: 8, pattern: 'Non-standard formatting (spaces instead of dashes)' },
-                    { type: 'INSURANCE_POLICY', count: 6, pattern: 'Custom format not covered by patterns' },
-                  ].map(item => (
-                    <div key={item.type} className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <Badge variant="outline">{item.type}</Badge>
-                          <span className="text-sm font-medium text-slate-900">{item.count} occurrences</span>
+              {patterns && patterns.frequent_misses.length > 0 && (
+                <Card className="p-6">
+                  <h3 className="font-semibold text-slate-900 mb-4">Most Frequently Missed Entity Types</h3>
+                  <div className="space-y-3">
+                    {patterns.frequent_misses.map(item => (
+                      <div key={item.type} className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <Badge variant="outline">{item.type}</Badge>
+                            <span className="text-sm font-medium text-slate-900">{item.count} occurrences</span>
+                          </div>
                         </div>
+                        <div className="text-sm text-slate-600">{item.pattern}</div>
                       </div>
-                      <div className="text-sm text-slate-600">{item.pattern}</div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+                    ))}
+                  </div>
+                </Card>
+              )}
 
-              <Card className="p-6">
-                <h3 className="font-semibold text-slate-900 mb-4">Common Error Patterns</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="p-3 bg-blue-50 rounded border border-blue-200">
-                    <div className="font-medium text-blue-900 mb-1">Pattern: Low Confidence Threshold</div>
-                    <div className="text-blue-800">Credit card patterns are being detected but filtered out due to confidence scores below threshold (typically 0.65-0.75)</div>
+              {patterns && patterns.common_patterns.length > 0 && (
+                <Card className="p-6">
+                  <h3 className="font-semibold text-slate-900 mb-4">Common Error Patterns</h3>
+                  <div className="space-y-3 text-sm">
+                    {patterns.common_patterns.map(p => (
+                      <div key={p.name} className="p-3 bg-blue-50 rounded border border-blue-200">
+                        <div className="font-medium text-blue-900 mb-1">Pattern: {p.name}</div>
+                        <div className="text-blue-800">{p.description}</div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="p-3 bg-blue-50 rounded border border-blue-200">
-                    <div className="font-medium text-blue-900 mb-1">Pattern: Format Variations</div>
-                    <div className="text-blue-800">SSN and phone numbers with non-standard separators (spaces, periods) are being missed</div>
-                  </div>
-                  <div className="p-3 bg-blue-50 rounded border border-blue-200">
-                    <div className="font-medium text-blue-900 mb-1">Pattern: Domain-Specific Terms</div>
-                    <div className="text-blue-800">Medical conditions and insurance policy numbers require custom recognizers for your domain</div>
-                  </div>
-                </div>
-              </Card>
+                </Card>
+              )}
+
+              {patterns && patterns.frequent_misses.length === 0 && patterns.common_patterns.length === 0 && (
+                <Card className="p-6 text-center text-slate-500">No error patterns detected.</Card>
+              )}
             </TabsContent>
 
             {/* Insights */}
             <TabsContent value="insights" className="space-y-4">
-              <Card className="p-6 border-blue-200 bg-blue-50">
-                <h3 className="font-semibold text-blue-900 mb-4">Key Insights & Recommendations</h3>
-                <div className="space-y-4">
-                  <div>
-                    <div className="font-medium text-blue-900 mb-2">1. Adjust Confidence Thresholds</div>
-                    <div className="text-sm text-blue-800">
-                      Consider lowering the confidence threshold for CREDIT_CARD entities from 0.70 to 0.60.
-                      This would capture 12 additional credit card numbers that are currently being missed.
-                    </div>
+              {patterns && patterns.insights.length > 0 && (
+                <Card className="p-6 border-blue-200 bg-blue-50">
+                  <h3 className="font-semibold text-blue-900 mb-4">Key Insights & Recommendations</h3>
+                  <div className="space-y-4">
+                    {patterns.insights.map((insight, i) => (
+                      <div key={i}>
+                        <div className="font-medium text-blue-900 mb-2">{i + 1}. {insight.title}</div>
+                        <div className="text-sm text-blue-800">{insight.description}</div>
+                      </div>
+                    ))}
                   </div>
-                  <div>
-                    <div className="font-medium text-blue-900 mb-2">2. Add Custom Recognizers</div>
-                    <div className="text-sm text-blue-800">
-                      Create domain-specific recognizers for MEDICAL_CONDITION (9 misses) and INSURANCE_POLICY (6 misses)
-                      to better handle your healthcare dataset.
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-blue-900 mb-2">3. Expand Pattern Variations</div>
-                    <div className="text-sm text-blue-800">
-                      Update SSN and PHONE_NUMBER patterns to handle alternative separators (spaces, periods, no separators).
-                      This addresses 8 SSN misses.
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-blue-900 mb-2">4. Strong Areas</div>
-                    <div className="text-sm text-blue-800">
-                      EMAIL (98% precision, 95% recall) and PERSON (96% precision, 92% recall) recognizers are performing
-                      well and don't require tuning.
-                    </div>
-                  </div>
-                </div>
-              </Card>
+                </Card>
+              )}
 
-              <Card className="p-6">
-                <h3 className="font-semibold text-slate-900 mb-4">Impact Analysis</h3>
-                <div className="text-sm text-slate-700 space-y-3">
-                  <p>Implementing the recommended changes would potentially:</p>
-                  <ul className="list-disc list-inside space-y-2 ml-2">
-                    <li><span className="font-medium">Increase recall from 88% to 94%</span> — capturing 27 additional PII entities</li>
-                    <li><span className="font-medium">Reduce high-risk misses from 18 to 6</span> — better protection for sensitive data</li>
-                    <li><span className="font-medium">Improve F1 score from 91% to 94%</span> — better overall balance</li>
-                    <li><span className="font-medium">Minor precision trade-off</span> — may introduce 3-5 additional false positives</li>
-                  </ul>
-                </div>
-              </Card>
+              {patterns && patterns.insights.length === 0 && (
+                <Card className="p-6 text-center text-slate-500">No specific insights for this evaluation run.</Card>
+              )}
             </TabsContent>
           </Tabs>
         </>
