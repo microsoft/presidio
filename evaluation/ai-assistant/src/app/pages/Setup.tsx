@@ -6,7 +6,7 @@ import { Label } from '../components/ui/label';
 import { Input } from '../components/ui/input';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Database, Shield, ArrowRight, ChevronLeft, FileText, CheckCircle, Loader2, X, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Database, ArrowRight, ChevronLeft, FileText, CheckCircle, Loader2, X, Plus, Pencil, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
 import { FileDropzone } from '../components/FileDropzone';
 import type { ComplianceFramework, UploadedDataset } from '../types';
@@ -141,7 +141,7 @@ export function Setup() {
       <div>
         <h2 className="text-2xl font-semibold text-slate-900 mb-2">Input & Setup</h2>
         <p className="text-slate-600">
-          Select your dataset and configure data access constraints for the evaluation process.
+          Select an existing dataset or load a new input file to start the evaluation workflow.
         </p>
       </div>
 
@@ -393,19 +393,6 @@ export function Setup() {
           )}
         </div>
       </Card>
-
-      {/* Presidio Configuration Notice */}
-      <Alert>
-        <Shield className="size-4" />
-        <AlertDescription>
-          <div className="space-y-1">
-            <div className="font-medium">Presidio Configuration</div>
-            <div className="text-sm">
-              Presidio analyzer configuration is set up in the Analysis step. You can use the default config or provide a custom YAML.
-            </div>
-          </div>
-        </AlertDescription>
-      </Alert>
 
       {/* Actions */}
       <div className="flex justify-between gap-3 pt-4">

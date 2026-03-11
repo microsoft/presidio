@@ -81,6 +81,34 @@ def _resolve_path(path: str) -> str:
     return os.path.normpath(os.path.join(_PROJECT_ROOT, path))
 
 
+def _ensure_stored_copy(dataset_id: str) -> UploadedDataset:
+    """Ensure a dataset has a managed copy under backend/data."""
+    ds = _uploaded.get(dataset_id)
+    if ds is None:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    if ds.stored_path and os.path.isfile(ds.stored_path):
+        return ds
+
+    resolved = _resolve_path(ds.path)
+    if not os.path.isfile(resolved):
+        raise HTTPException(
+            status_code=404,
+            detail=f"Source file no longer exists: {ds.path}",
+        )
+
+    ext = os.path.splitext(resolved)[1] or ".csv"
+    safe_name = ds.name.replace(" ", "_").replace("/", "_")
+    stored_filename = f"{safe_name}_{dataset_id}{ext}"
+    stored_path = os.path.join(_DATA_DIR, stored_filename)
+
+    shutil.copy2(resolved, stored_path)
+    updated = ds.model_copy(update={"stored_path": stored_path})
+    _uploaded[dataset_id] = updated
+    _save_registry()
+    return updated
+
+
 # Load on import so saved datasets are available immediately
 _load_registry()
 
@@ -412,16 +440,8 @@ def _ensure_records_loaded(dataset_id: str) -> list[Record]:
     """Reload records from the stored copy (or original file) if not in memory."""
     if dataset_id in _records:
         return _records[dataset_id]
-    ds = _uploaded.get(dataset_id)
-    if ds is None:
-        raise HTTPException(status_code=404, detail="Dataset not found")
-    # Prefer the local stored copy; fall back to original path
+    ds = _ensure_stored_copy(dataset_id)
     resolved = ds.stored_path if ds.stored_path and os.path.isfile(ds.stored_path) else _resolve_path(ds.path)
-    if not os.path.isfile(resolved):
-        raise HTTPException(
-            status_code=404,
-            detail=f"Source file no longer exists: {ds.path}",
-        )
     with open(resolved, encoding="utf-8") as f:
         content = f.read()
     if ds.format == "csv":
@@ -448,9 +468,7 @@ async def preview_dataset(dataset_id: str, limit: int = 5):
 @router.get("/{dataset_id}/download")
 async def download_dataset(dataset_id: str):
     """Download the raw CSV/JSON file for a dataset."""
-    ds = _uploaded.get(dataset_id)
-    if ds is None:
-        raise HTTPException(status_code=404, detail="Dataset not found")
+    ds = _ensure_stored_copy(dataset_id)
     resolved = ds.stored_path if ds.stored_path else _resolve_path(ds.path)
     if not os.path.isfile(resolved):
         raise HTTPException(status_code=404, detail="Dataset file not found on disk")
