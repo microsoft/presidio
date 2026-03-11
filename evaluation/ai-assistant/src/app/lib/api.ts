@@ -144,6 +144,12 @@ export const api = {
   evaluation: {
     runs: () => request<any[]>("/evaluation/runs"),
     latest: () => request<any>("/evaluation/latest"),
+    summary: (datasetId: string, configNames?: string[]) => {
+      const params = new URLSearchParams();
+      params.set('dataset_id', datasetId);
+      configNames?.forEach((name) => params.append('config_names', name));
+      return request<any>(`/evaluation/summary?${params.toString()}`);
+    },
     misses: (filters?: { miss_type?: string; entity_type?: string; risk_level?: string }) => {
       const params = new URLSearchParams();
       if (filters?.miss_type) params.set("miss_type", filters.miss_type);

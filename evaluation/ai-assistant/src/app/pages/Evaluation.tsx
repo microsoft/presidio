@@ -1,235 +1,360 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Card } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Progress } from '../components/ui/progress';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Alert, AlertDescription } from '../components/ui/alert';
 import { Badge } from '../components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Button } from '../components/ui/button';
+import { Card } from '../components/ui/card';
+import { Checkbox } from '../components/ui/checkbox';
 import { Input } from '../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { ArrowRight, ChevronLeft, Loader2, CheckCircle, TrendingUp, TrendingDown, Search, AlertTriangle, XCircle, Download, Filter } from 'lucide-react';
-import { mockEntityMisses } from '../lib/mockData';
+import { AlertTriangle, ArrowRight, BarChart3, CheckCircle, ChevronLeft, Filter, Loader2, Search, XCircle } from 'lucide-react';
+import { api } from '../lib/api';
+
+type MissType = 'all' | 'false-positive' | 'false-negative';
+
+type Summary = {
+  available_configs: string[];
+  selected_configs: string[];
+  default_config: string | null;
+  per_config: Array<{
+    config_name: string;
+    overall: {
+      precision: number;
+      recall: number;
+      f1_score: number;
+      true_positives: number;
+      false_positives: number;
+      false_negatives: number;
+    };
+    misses: Array<{
+      record_id: string;
+      record_text: string;
+      missed_entity: {
+        text: string;
+        entity_type: string;
+        start: number;
+        end: number;
+      };
+      miss_type: 'false-positive' | 'false-negative';
+      entity_type: string;
+      risk_level: 'high' | 'medium' | 'low';
+    }>;
+    summary: {
+      total_misses: number;
+      false_positives: number;
+      false_negatives: number;
+      high_risk: number;
+      medium_risk: number;
+      low_risk: number;
+    };
+  }>;
+};
+
+const metricColors = ['#2563eb', '#059669', '#7c3aed', '#ea580c', '#dc2626', '#0f172a'];
 
 export function Evaluation() {
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-  const [filterType, setFilterType] = useState<'all' | 'false-positive' | 'false-negative'>('all');
+
+  const setupConfig = useMemo(() => {
+    try {
+      const raw = sessionStorage.getItem('setupConfig');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const datasetId = setupConfig?.datasetId as string | undefined;
+
+  const [summary, setSummary] = useState<Summary | null>(null);
+  const [availableConfigs, setAvailableConfigs] = useState<string[]>([]);
+  const [selectedConfigs, setSelectedConfigs] = useState<string[]>([]);
+  const [bootstrapped, setBootstrapped] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [filterType, setFilterType] = useState<MissType>('all');
   const [filterEntityType, setFilterEntityType] = useState<string>('all');
   const [filterRiskLevel, setFilterRiskLevel] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeErrorConfig, setActiveErrorConfig] = useState<string>('');
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsComplete(true);
-          return 100;
-        }
-        return prev + 3;
+    if (!datasetId) {
+      setError('No dataset selected. Go back to Setup.');
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLoading(true);
+
+    api.evaluation.summary(datasetId)
+      .then((data: Summary) => {
+        if (cancelled) return;
+        setSummary(data);
+        setAvailableConfigs(data.available_configs || []);
+        setSelectedConfigs(data.selected_configs || []);
+        setActiveErrorConfig((current) => current || data.selected_configs?.[0] || data.default_config || '');
+        setBootstrapped(true);
+        setError(null);
+      })
+      .catch((err: Error) => {
+        if (cancelled) return;
+        setError(err.message || 'Failed to load evaluation results');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
-    }, 60);
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [datasetId]);
 
-  const filteredMisses = mockEntityMisses.filter(miss => {
-    if (filterType !== 'all' && miss.missType !== filterType) return false;
-    if (filterEntityType !== 'all' && miss.entityType !== filterEntityType) return false;
-    if (filterRiskLevel !== 'all' && miss.riskLevel !== filterRiskLevel) return false;
-    if (searchQuery && !miss.recordText.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-    return true;
-  });
+  useEffect(() => {
+    if (!datasetId || !bootstrapped) return;
 
-  const entityTypes = ['all', ...new Set(mockEntityMisses.map(m => m.entityType))];
+    let cancelled = false;
+    setLoading(true);
 
-  const missesummary = {
-    totalMisses: mockEntityMisses.length,
-    falsePositives: mockEntityMisses.filter(m => m.missType === 'false-positive').length,
-    falseNegatives: mockEntityMisses.filter(m => m.missType === 'false-negative').length,
-    highRisk: mockEntityMisses.filter(m => m.riskLevel === 'high').length,
-    mediumRisk: mockEntityMisses.filter(m => m.riskLevel === 'medium').length,
-    lowRisk: mockEntityMisses.filter(m => m.riskLevel === 'low').length,
+    api.evaluation.summary(datasetId, selectedConfigs)
+      .then((data: Summary) => {
+        if (cancelled) return;
+        setSummary(data);
+        setAvailableConfigs(data.available_configs || []);
+        setActiveErrorConfig((current) => {
+          if (current && data.selected_configs.includes(current)) return current;
+          return data.selected_configs?.[0] || data.default_config || '';
+        });
+        setError(null);
+      })
+      .catch((err: Error) => {
+        if (cancelled) return;
+        setError(err.message || 'Failed to refresh evaluation results');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [bootstrapped, datasetId, selectedConfigs.join('|')]);
+
+  const activeConfigResult = useMemo(
+    () => summary?.per_config.find((item) => item.config_name === activeErrorConfig) ?? summary?.per_config[0] ?? null,
+    [activeErrorConfig, summary],
+  );
+
+  const filteredMisses = useMemo(() => {
+    const misses = activeConfigResult?.misses || [];
+    return misses.filter((miss) => {
+      if (filterType !== 'all' && miss.miss_type !== filterType) return false;
+      if (filterEntityType !== 'all' && miss.entity_type !== filterEntityType) return false;
+      if (filterRiskLevel !== 'all' && miss.risk_level !== filterRiskLevel) return false;
+      if (searchQuery && !miss.record_text.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      return true;
+    });
+  }, [activeConfigResult, filterEntityType, filterRiskLevel, filterType, searchQuery]);
+
+  const entityTypes = useMemo(() => {
+    const types = new Set((activeConfigResult?.misses || []).map((miss) => miss.entity_type));
+    return ['all', ...Array.from(types).sort()];
+  }, [activeConfigResult]);
+
+  const metricChartData = useMemo(() => {
+    const metrics = [
+      ['Precision', 'precision'],
+      ['Recall', 'recall'],
+      ['F1 Score', 'f1_score'],
+      ['True Positives', 'true_positives'],
+      ['False Positives', 'false_positives'],
+      ['False Negatives', 'false_negatives'],
+    ] as const;
+
+    return metrics.map(([label, key]) => {
+      const row: Record<string, string | number> = { metric: label };
+      summary?.per_config.forEach((config) => {
+        row[config.config_name] = config.overall[key];
+      });
+      return row;
+    });
+  }, [summary]);
+
+  const toggleConfig = (configName: string, checked: boolean) => {
+    setSelectedConfigs((current) => {
+      if (checked) return Array.from(new Set([...current, configName]));
+      return current.filter((name) => name !== configName);
+    });
   };
 
   const handleContinue = () => {
     navigate('/decision');
   };
 
-  const handleExport = () => {
-    alert('Dashboard data exported successfully!');
-  };
+  if (loading && !summary) {
+    return (
+      <div className="max-w-7xl mx-auto py-20 flex items-center justify-center gap-3 text-slate-600">
+        <Loader2 className="size-6 animate-spin text-blue-600" />
+        Loading evaluation results...
+      </div>
+    );
+  }
+
+  if (error && !summary) {
+    return (
+      <div className="max-w-7xl mx-auto space-y-6">
+        <Alert className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">{error}</AlertDescription>
+        </Alert>
+        <div className="flex justify-between gap-3 pt-4">
+          <Button variant="outline" size="lg" onClick={() => navigate('/anonymization')}>
+            <ChevronLeft className="size-4 mr-1" />
+            Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-semibold text-slate-900 mb-2">Evaluation Dashboard</h2>
           <p className="text-slate-600">
-            Comparing detection output against the validated golden set — metrics, error analysis, and recommendations.
+            Compare the selected config outputs against the reviewed final entities from your latest dataset run.
           </p>
         </div>
-        {isComplete && (
-          <Button variant="outline" onClick={handleExport}>
-            <Download className="size-4 mr-2" />
-            Export
-          </Button>
-        )}
       </div>
 
-      {/* Processing Status */}
-      {!isComplete && (
-        <Card className="p-8">
-          <div className="space-y-6">
-            <div className="flex items-center justify-center">
-              <Loader2 className="size-16 text-blue-600 animate-spin" />
-            </div>
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold text-slate-900">Running Presidio Evaluator...</h3>
-              <p className="text-slate-600">Calculating precision, recall, and identifying error patterns</p>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm text-slate-600">
-                <span>Progress</span>
-                <span>{progress}%</span>
-              </div>
-              <Progress value={progress} className="h-3" />
-            </div>
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="size-5 text-blue-600" />
+            <h3 className="font-semibold text-slate-900">Configs Included in This Evaluation</h3>
           </div>
-        </Card>
+          <p className="text-sm text-slate-600">
+            The latest run is selected by default. Enable additional configs to evaluate their combined coverage against the reviewed reference set.
+          </p>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {availableConfigs.map((configName) => {
+              const checked = selectedConfigs.includes(configName);
+              const isDefault = summary?.default_config === configName;
+              return (
+                <label
+                  key={configName}
+                  className={`flex items-start gap-3 rounded-lg border p-4 cursor-pointer transition-colors ${checked ? 'border-blue-300 bg-blue-50' : 'border-slate-200 bg-white'}`}
+                >
+                  <Checkbox checked={checked} onCheckedChange={(value) => toggleConfig(configName, !!value)} className="mt-0.5" />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-slate-900">{configName}</span>
+                      {isDefault && <Badge className="bg-slate-900 text-white">Last run</Badge>}
+                    </div>
+                    <div className="text-xs text-slate-600 mt-1">
+                      {checked ? 'Included in the current evaluation' : 'Excluded from the current evaluation'}
+                    </div>
+                  </div>
+                </label>
+              );
+            })}
+          </div>
+          {availableConfigs.length === 0 && (
+            <Alert className="border-amber-200 bg-amber-50">
+              <AlertDescription className="text-amber-800">
+                No saved Presidio config results were found for this dataset yet.
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      </Card>
+
+      {error && summary && (
+        <Alert className="border-amber-200 bg-amber-50">
+          <AlertDescription className="text-amber-800">{error}</AlertDescription>
+        </Alert>
       )}
 
-      {/* Results */}
-      {isComplete && (
+      {summary && (
         <>
-          {/* Overall Metrics */}
           <Card className="p-6 border-green-200 bg-green-50">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <CheckCircle className="size-5 text-green-700" />
                 <h3 className="font-semibold text-green-900">Evaluation Complete</h3>
               </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <div className="text-2xl font-semibold text-green-900">94%</div>
-                  <div className="text-sm text-green-700">Precision</div>
-                  <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
-                    <TrendingUp className="size-3" />
-                    <span>+3% from last run</span>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <div className="text-2xl font-semibold text-green-900">88%</div>
-                  <div className="text-sm text-green-700">Recall</div>
-                  <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
-                    <TrendingUp className="size-3" />
-                    <span>+7% from last run</span>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <div className="text-2xl font-semibold text-green-900">91%</div>
-                  <div className="text-sm text-green-700">F1 Score</div>
-                  <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
-                    <TrendingUp className="size-3" />
-                    <span>+5% from last run</span>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <div className="text-2xl font-semibold text-green-900">40</div>
-                  <div className="text-sm text-green-700">False Negatives</div>
-                  <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
-                    <TrendingDown className="size-3" />
-                    <span>-24 from last run</span>
-                  </div>
-                </div>
+              <div className="text-sm text-green-800">
+                {summary.per_config.length > 0
+                  ? `Currently comparing ${summary.per_config.length} config${summary.per_config.length > 1 ? 's' : ''}: ${summary.per_config.map((item) => item.config_name).join(', ')}`
+                  : 'No configs selected. Select at least one config to view metrics.'}
               </div>
+
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart data={metricChartData} margin={{ top: 8, right: 8, left: 0, bottom: 24 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="metric" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {summary.per_config.map((config, index) => (
+                    <Bar
+                      key={config.config_name}
+                      dataKey={config.config_name}
+                      fill={metricColors[index % metricColors.length]}
+                      radius={[4, 4, 0, 0]}
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </Card>
 
-          {/* Error Summary + Risk-Critical */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="p-6">
-              <div className="space-y-3">
-                <div className="font-medium text-red-900">False Negatives (Misses)</div>
-                <Badge className="bg-red-200 text-red-900">40 total</Badge>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-red-800">CREDIT_CARD</span><span className="font-medium text-red-900">12</span></div>
-                  <div className="flex justify-between"><span className="text-red-800">MEDICAL_CONDITION</span><span className="font-medium text-red-900">9</span></div>
-                  <div className="flex justify-between"><span className="text-red-800">SSN</span><span className="font-medium text-red-900">8</span></div>
-                  <div className="flex justify-between"><span className="text-red-800">Other</span><span className="font-medium text-red-900">11</span></div>
+          <Card className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="font-semibold text-slate-900">Error Explorer</h3>
+                <div className="w-full max-w-xs">
+                  <Select value={activeErrorConfig} onValueChange={setActiveErrorConfig}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose config" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {summary.per_config.map((config) => (
+                        <SelectItem key={config.config_name} value={config.config_name}>
+                          {config.config_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            </Card>
-            <Card className="p-6">
-              <div className="space-y-3">
-                <div className="font-medium text-amber-900">False Positives (Incorrect)</div>
-                <Badge className="bg-amber-200 text-amber-900">19 total</Badge>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-amber-800">DATE patterns</span><span className="font-medium text-amber-900">7</span></div>
-                  <div className="flex justify-between"><span className="text-amber-800">PERSON names</span><span className="font-medium text-amber-900">5</span></div>
-                  <div className="flex justify-between"><span className="text-amber-800">PHONE_NUMBER</span><span className="font-medium text-amber-900">4</span></div>
-                  <div className="flex justify-between"><span className="text-amber-800">Other</span><span className="font-medium text-amber-900">3</span></div>
-                </div>
-              </div>
-            </Card>
-            <Card className="p-6 border-red-300 bg-red-50">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Badge className="bg-red-600 text-white">High Priority</Badge>
-                  <span className="font-semibold text-red-900 text-sm">Risk-Critical</span>
-                </div>
-                <div className="text-sm text-red-800">
-                  <p>18 high-risk false negatives:</p>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>12 Credit card numbers</li>
-                    <li>6 SSN variations</li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-          </div>
 
-          {/* Dashboard Tabs — Error Explorer, Patterns, Insights */}
-          <Tabs defaultValue="misses" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="misses">Error Explorer</TabsTrigger>
-              <TabsTrigger value="patterns">Error Patterns</TabsTrigger>
-              <TabsTrigger value="insights">Insights</TabsTrigger>
-            </TabsList>
-
-            {/* Error Explorer */}
-            <TabsContent value="misses" className="space-y-4">
-              {/* Summary Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <Card className="p-4">
-                  <div className="text-2xl font-semibold text-slate-900">{missesummary.totalMisses}</div>
+                  <div className="text-2xl font-semibold text-slate-900">{activeConfigResult?.summary.total_misses ?? 0}</div>
                   <div className="text-sm text-slate-600">Total Misses</div>
                 </Card>
                 <Card className="p-4 border-amber-200 bg-amber-50">
-                  <div className="text-2xl font-semibold text-amber-900">{missesummary.falsePositives}</div>
+                  <div className="text-2xl font-semibold text-amber-900">{activeConfigResult?.summary.false_positives ?? 0}</div>
                   <div className="text-sm text-amber-700">False Positives</div>
                 </Card>
                 <Card className="p-4 border-red-200 bg-red-50">
-                  <div className="text-2xl font-semibold text-red-900">{missesummary.falseNegatives}</div>
+                  <div className="text-2xl font-semibold text-red-900">{activeConfigResult?.summary.false_negatives ?? 0}</div>
                   <div className="text-sm text-red-700">False Negatives</div>
                 </Card>
                 <Card className="p-4 border-red-300 bg-red-100">
-                  <div className="text-2xl font-semibold text-red-900">{missesummary.highRisk}</div>
+                  <div className="text-2xl font-semibold text-red-900">{activeConfigResult?.summary.high_risk ?? 0}</div>
                   <div className="text-sm text-red-700">High Risk</div>
                 </Card>
                 <Card className="p-4 border-amber-300 bg-amber-100">
-                  <div className="text-2xl font-semibold text-amber-900">{missesummary.mediumRisk}</div>
+                  <div className="text-2xl font-semibold text-amber-900">{activeConfigResult?.summary.medium_risk ?? 0}</div>
                   <div className="text-sm text-amber-700">Medium Risk</div>
-                </Card>
-                <Card className="p-4 border-slate-200 bg-slate-50">
-                  <div className="text-2xl font-semibold text-slate-700">{missesummary.lowRisk}</div>
-                  <div className="text-sm text-slate-600">Low Risk</div>
                 </Card>
               </div>
 
-              {/* Filters */}
               <Card className="p-4">
                 <div className="flex items-center gap-3">
                   <Filter className="size-4 text-slate-600" />
@@ -243,7 +368,7 @@ export function Evaluation() {
                         className="pl-9"
                       />
                     </div>
-                    <Select value={filterType} onValueChange={(val) => setFilterType(val as any)}>
+                    <Select value={filterType} onValueChange={(val) => setFilterType(val as MissType)}>
                       <SelectTrigger><SelectValue placeholder="Miss Type" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All Types</SelectItem>
@@ -254,7 +379,7 @@ export function Evaluation() {
                     <Select value={filterEntityType} onValueChange={setFilterEntityType}>
                       <SelectTrigger><SelectValue placeholder="Entity Type" /></SelectTrigger>
                       <SelectContent>
-                        {entityTypes.map(type => (
+                        {entityTypes.map((type) => (
                           <SelectItem key={type} value={type}>
                             {type === 'all' ? 'All Entities' : type}
                           </SelectItem>
@@ -274,174 +399,80 @@ export function Evaluation() {
                 </div>
               </Card>
 
-              {/* Misses List */}
+              <div className="text-sm text-slate-600">
+                Showing {filteredMisses.length} of {activeConfigResult?.misses.length ?? 0} errors for {activeConfigResult?.config_name ?? 'the selected config'}
+              </div>
+
               <div className="space-y-3">
-                <div className="text-sm text-slate-600">
-                  Showing {filteredMisses.length} of {mockEntityMisses.length} errors
-                </div>
                 {filteredMisses.map((miss, index) => (
                   <Card
-                    key={index}
+                    key={`${miss.record_id}-${miss.miss_type}-${miss.missed_entity.start}-${index}`}
                     className={`p-4 ${
-                      miss.riskLevel === 'high' ? 'border-red-300 bg-red-50' :
-                      miss.riskLevel === 'medium' ? 'border-amber-300 bg-amber-50' :
+                      miss.risk_level === 'high' ? 'border-red-300 bg-red-50' :
+                      miss.risk_level === 'medium' ? 'border-amber-300 bg-amber-50' :
                       'border-slate-200'
                     }`}
                   >
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-2">
-                          {miss.missType === 'false-negative' ? (
+                          {miss.miss_type === 'false-negative' ? (
                             <XCircle className="size-5 text-red-600 flex-shrink-0" />
                           ) : (
                             <AlertTriangle className="size-5 text-amber-600 flex-shrink-0" />
                           )}
                           <div>
                             <div className="font-medium text-slate-900">
-                              {miss.missType === 'false-negative' ? 'Missed Entity' : 'Incorrect Detection'}
+                              {miss.miss_type === 'false-negative' ? 'Missed Entity' : 'Incorrect Detection'}
                             </div>
-                            <div className="text-sm text-slate-600">Record ID: {miss.recordId}</div>
+                            <div className="text-sm text-slate-600">Record ID: {miss.record_id}</div>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline">{miss.entityType}</Badge>
-                          <Badge
-                            className={
-                              miss.riskLevel === 'high' ? 'bg-red-600 text-white' :
-                              miss.riskLevel === 'medium' ? 'bg-amber-600 text-white' :
-                              'bg-slate-600 text-white'
-                            }
-                          >
-                            {miss.riskLevel} risk
+                          <Badge variant="outline">{miss.entity_type}</Badge>
+                          <Badge className={
+                            miss.risk_level === 'high' ? 'bg-red-600 text-white' :
+                            miss.risk_level === 'medium' ? 'bg-amber-600 text-white' :
+                            'bg-slate-600 text-white'
+                          }>
+                            {miss.risk_level} risk
                           </Badge>
                         </div>
                       </div>
                       <div className="p-3 bg-white rounded border border-slate-200">
-                        <div className="text-sm font-mono text-slate-700">{miss.recordText}</div>
+                        <div className="text-sm font-mono text-slate-700">{miss.record_text}</div>
                       </div>
-                      <div className="flex items-center gap-4 text-sm">
+                      <div className="flex flex-wrap items-center gap-4 text-sm">
                         <div>
-                          <span className="text-slate-600">Missed Entity: </span>
-                          <span className="font-medium text-slate-900">{miss.missedEntity.text}</span>
+                          <span className="text-slate-600">Entity: </span>
+                          <span className="font-medium text-slate-900">{miss.missed_entity.text}</span>
                         </div>
                         <div>
                           <span className="text-slate-600">Position: </span>
-                          <span className="font-medium text-slate-900">{miss.missedEntity.start}-{miss.missedEntity.end}</span>
+                          <span className="font-medium text-slate-900">{miss.missed_entity.start}-{miss.missed_entity.end}</span>
                         </div>
                       </div>
                     </div>
                   </Card>
                 ))}
+
+                {filteredMisses.length === 0 && (
+                  <Card className="p-6 text-sm text-slate-600">
+                    No errors match the current config selection and filters.
+                  </Card>
+                )}
               </div>
-            </TabsContent>
-
-            {/* Error Patterns */}
-            <TabsContent value="patterns" className="space-y-4">
-              <Card className="p-6">
-                <h3 className="font-semibold text-slate-900 mb-4">Most Frequently Missed Entity Types</h3>
-                <div className="space-y-3">
-                  {[
-                    { type: 'CREDIT_CARD', count: 12, pattern: 'Partial card numbers, low confidence scores' },
-                    { type: 'MEDICAL_CONDITION', count: 9, pattern: 'Medical terminology not in baseline recognizers' },
-                    { type: 'SSN', count: 8, pattern: 'Non-standard formatting (spaces instead of dashes)' },
-                    { type: 'INSURANCE_POLICY', count: 6, pattern: 'Custom format not covered by patterns' },
-                  ].map(item => (
-                    <div key={item.type} className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <Badge variant="outline">{item.type}</Badge>
-                          <span className="text-sm font-medium text-slate-900">{item.count} occurrences</span>
-                        </div>
-                      </div>
-                      <div className="text-sm text-slate-600">{item.pattern}</div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="font-semibold text-slate-900 mb-4">Common Error Patterns</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="p-3 bg-blue-50 rounded border border-blue-200">
-                    <div className="font-medium text-blue-900 mb-1">Pattern: Low Confidence Threshold</div>
-                    <div className="text-blue-800">Credit card patterns are being detected but filtered out due to confidence scores below threshold (typically 0.65-0.75)</div>
-                  </div>
-                  <div className="p-3 bg-blue-50 rounded border border-blue-200">
-                    <div className="font-medium text-blue-900 mb-1">Pattern: Format Variations</div>
-                    <div className="text-blue-800">SSN and phone numbers with non-standard separators (spaces, periods) are being missed</div>
-                  </div>
-                  <div className="p-3 bg-blue-50 rounded border border-blue-200">
-                    <div className="font-medium text-blue-900 mb-1">Pattern: Domain-Specific Terms</div>
-                    <div className="text-blue-800">Medical conditions and insurance policy numbers require custom recognizers for your domain</div>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
-
-            {/* Insights */}
-            <TabsContent value="insights" className="space-y-4">
-              <Card className="p-6 border-blue-200 bg-blue-50">
-                <h3 className="font-semibold text-blue-900 mb-4">Key Insights & Recommendations</h3>
-                <div className="space-y-4">
-                  <div>
-                    <div className="font-medium text-blue-900 mb-2">1. Adjust Confidence Thresholds</div>
-                    <div className="text-sm text-blue-800">
-                      Consider lowering the confidence threshold for CREDIT_CARD entities from 0.70 to 0.60.
-                      This would capture 12 additional credit card numbers that are currently being missed.
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-blue-900 mb-2">2. Add Custom Recognizers</div>
-                    <div className="text-sm text-blue-800">
-                      Create domain-specific recognizers for MEDICAL_CONDITION (9 misses) and INSURANCE_POLICY (6 misses)
-                      to better handle your healthcare dataset.
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-blue-900 mb-2">3. Expand Pattern Variations</div>
-                    <div className="text-sm text-blue-800">
-                      Update SSN and PHONE_NUMBER patterns to handle alternative separators (spaces, periods, no separators).
-                      This addresses 8 SSN misses.
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-blue-900 mb-2">4. Strong Areas</div>
-                    <div className="text-sm text-blue-800">
-                      EMAIL (98% precision, 95% recall) and PERSON (96% precision, 92% recall) recognizers are performing
-                      well and don't require tuning.
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="font-semibold text-slate-900 mb-4">Impact Analysis</h3>
-                <div className="text-sm text-slate-700 space-y-3">
-                  <p>Implementing the recommended changes would potentially:</p>
-                  <ul className="list-disc list-inside space-y-2 ml-2">
-                    <li><span className="font-medium">Increase recall from 88% to 94%</span> — capturing 27 additional PII entities</li>
-                    <li><span className="font-medium">Reduce high-risk misses from 18 to 6</span> — better protection for sensitive data</li>
-                    <li><span className="font-medium">Improve F1 score from 91% to 94%</span> — better overall balance</li>
-                    <li><span className="font-medium">Minor precision trade-off</span> — may introduce 3-5 additional false positives</li>
-                  </ul>
-                </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </Card>
         </>
       )}
 
-      {/* Actions */}
       <div className="flex justify-between gap-3 pt-4">
         <Button variant="outline" size="lg" onClick={() => navigate('/anonymization')}>
           <ChevronLeft className="size-4 mr-1" />
           Back
         </Button>
-        <Button
-          size="lg"
-          onClick={handleContinue}
-          disabled={!isComplete}
-        >
+        <Button size="lg" onClick={handleContinue} disabled={!summary}>
           View Insights
           <ArrowRight className="size-4 ml-2" />
         </Button>
