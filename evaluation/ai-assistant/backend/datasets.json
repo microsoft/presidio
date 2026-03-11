@@ -13,23 +13,5 @@
     "ran_configs": [],
     "text_column": "text",
     "entities_column": null
-  },
-  {
-    "id": "upload-416b54e6",
-    "filename": "sample_medical_records.csv",
-    "name": "demo_check",
-    "description": "",
-    "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/demo_check_416b54e6.csv",
-    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/demo_check_416b54e6.csv",
-    "format": "csv",
-    "record_count": 5,
-    "has_entities": false,
-    "has_final_entities": true,
-    "ran_configs": [
-      "default_spacy",
-      "transfomers_standford"
-    ],
-    "text_column": "text",
-    "entities_column": null
   }
 ]

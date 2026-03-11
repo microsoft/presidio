@@ -58,12 +58,6 @@ export function Welcome() {
               </p>
             </div>
           </div>
-          <div className="flex justify-end pt-2">
-            <Button size="lg" onClick={() => navigate('/setup')}>
-              Start Setup
-              <ArrowRight className="size-4 ml-2" />
-            </Button>
-          </div>
         </div>
       </Card>
 
@@ -84,6 +78,13 @@ export function Welcome() {
             </Card>
           );
         })}
+      </div>
+
+      <div className="flex justify-end pt-2">
+        <Button size="lg" onClick={() => navigate('/setup')}>
+          Start Setup
+          <ArrowRight className="size-4 ml-2" />
+        </Button>
       </div>
     </div>
   );
