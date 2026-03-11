@@ -6,10 +6,12 @@ import csv
 import io
 import json
 import os
+import re
 import shutil
 import uuid
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form
+from fastapi.responses import FileResponse
 from models import (
     DatasetLoadRequest,
     DatasetRenameRequest,
@@ -19,6 +21,17 @@ from models import (
 )
 
 router = APIRouter(prefix="/api/datasets", tags=["datasets"])
+
+_NAME_RE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9 _.\-]*$')
+
+
+def _validate_name(name: str) -> None:
+    if not _NAME_RE.match(name):
+        raise HTTPException(
+            status_code=400,
+            detail="Name may only contain letters, numbers, hyphens, underscores, dots, and spaces.",
+        )
+
 
 # In-memory store for loaded datasets
 _uploaded: dict[str, UploadedDataset] = {}
@@ -250,20 +263,23 @@ async def load_dataset(req: DatasetLoadRequest):
     if not records:
         raise HTTPException(status_code=400, detail="No valid records found in file")
 
-    dataset_id = f"upload-{uuid.uuid4().hex[:8]}"
+    uid = uuid.uuid4().hex[:8]
+    dataset_id = f"upload-{uid}"
     filename = os.path.basename(file_path)
 
-    # Copy file to local data/ folder for persistence
-    ext = os.path.splitext(filename)[1]
-    stored_filename = f"{dataset_id}{ext}"
-    stored_path = os.path.join(_DATA_DIR, stored_filename)
-    shutil.copy2(file_path, stored_path)
-
     display_name = req.name.strip() if req.name and req.name.strip() else filename
+    _validate_name(display_name)
     # Ensure unique name
     existing_names = {ds.name.lower() for ds in _uploaded.values()}
     if display_name.lower() in existing_names:
         raise HTTPException(status_code=409, detail=f"A dataset named '{display_name}' already exists. Please choose a different name.")
+    # Copy file to local data/ folder for persistence
+    ext = os.path.splitext(filename)[1]
+    safe_ds_name = display_name.replace(" ", "_").replace("/", "_")
+    stored_filename = f"{safe_ds_name}_{uid}{ext}"
+    stored_path = os.path.join(_DATA_DIR, stored_filename)
+    shutil.copy2(file_path, stored_path)
+
     description = req.description.strip() if req.description else ""
     dataset = UploadedDataset(
         id=dataset_id,
@@ -276,7 +292,6 @@ async def load_dataset(req: DatasetLoadRequest):
         record_count=len(records),
         has_entities=has_entities,
         has_final_entities=has_final,
-        columns=columns,
         text_column=req.text_column,
         entities_column=req.entities_column,
     )
@@ -288,6 +303,15 @@ async def load_dataset(req: DatasetLoadRequest):
     return dataset
 
 
+@router.get("/{dataset_id}")
+async def get_dataset(dataset_id: str):
+    """Return metadata for a single dataset."""
+    ds = _uploaded.get(dataset_id)
+    if not ds:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    return ds
+
+
 @router.patch("/{dataset_id}/rename")
 async def rename_dataset(dataset_id: str, req: DatasetRenameRequest):
     """Rename a saved dataset."""
@@ -296,6 +320,7 @@ async def rename_dataset(dataset_id: str, req: DatasetRenameRequest):
     new_name = req.name.strip()
     if not new_name:
         raise HTTPException(status_code=400, detail="Name cannot be empty")
+    _validate_name(new_name)
     existing_names = {ds.name.lower() for did, ds in _uploaded.items() if did != dataset_id}
     if new_name.lower() in existing_names:
         raise HTTPException(status_code=409, detail=f"A dataset named '{new_name}' already exists. Please choose a different name.")
@@ -304,6 +329,72 @@ async def rename_dataset(dataset_id: str, req: DatasetRenameRequest):
     )
     _save_registry()
     return _uploaded[dataset_id]
+
+
+@router.post("/upload")
+async def upload_dataset(
+    file: UploadFile = File(...),
+    text_column: str = Form("text"),
+    entities_column: str = Form(""),
+    name: str = Form(""),
+    description: str = Form(""),
+):
+    """Upload a CSV file directly and load it as a dataset."""
+    if not file.filename or not file.filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Only .csv files are accepted.")
+
+    content_bytes = await file.read()
+    if len(content_bytes) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="File too large (max 50 MB)")
+
+    content = content_bytes.decode("utf-8")
+    ent_col = entities_column.strip() or None
+    records, columns, has_entities, has_final = _parse_csv(
+        content, text_column.strip() or "text", ent_col
+    )
+    if not records:
+        raise HTTPException(status_code=400, detail="No valid records found in file")
+
+    uid = uuid.uuid4().hex[:8]
+    dataset_id = f"upload-{uid}"
+    filename = file.filename
+
+    display_name = name.strip() if name and name.strip() else filename
+    _validate_name(display_name)
+    existing_names = {ds.name.lower() for ds in _uploaded.values()}
+    if display_name.lower() in existing_names:
+        raise HTTPException(
+            status_code=409,
+            detail=f"A dataset named '{display_name}' already exists. Please choose a different name.",
+        )
+
+    # Save file to data/ folder
+    safe_ds_name = display_name.replace(" ", "_").replace("/", "_")
+    stored_filename = f"{safe_ds_name}_{uid}.csv"
+    stored_path = os.path.join(_DATA_DIR, stored_filename)
+    with open(stored_path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    dataset = UploadedDataset(
+        id=dataset_id,
+        filename=filename,
+        name=display_name,
+        description=description.strip() if description else "",
+        path=stored_path,
+        stored_path=stored_path,
+        format="csv",
+        record_count=len(records),
+        has_entities=has_entities,
+        has_final_entities=has_final,
+        text_column=text_column.strip() or "text",
+        entities_column=ent_col,
+    )
+
+    _uploaded[dataset_id] = dataset
+    _records[dataset_id] = records
+    _save_registry()
+
+    return dataset
 
 
 @router.delete("/{dataset_id}")
@@ -352,3 +443,19 @@ async def preview_dataset(dataset_id: str, limit: int = 5):
     """Return a small preview of the loaded dataset."""
     records = _ensure_records_loaded(dataset_id)
     return records[:limit]
+
+
+@router.get("/{dataset_id}/download")
+async def download_dataset(dataset_id: str):
+    """Download the raw CSV/JSON file for a dataset."""
+    ds = _uploaded.get(dataset_id)
+    if ds is None:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    resolved = ds.stored_path if ds.stored_path else _resolve_path(ds.path)
+    if not os.path.isfile(resolved):
+        raise HTTPException(status_code=404, detail="Dataset file not found on disk")
+    return FileResponse(
+        resolved,
+        media_type="text/csv" if ds.format == "csv" else "application/json",
+        filename=f"{ds.name}.{ds.format}",
+    )

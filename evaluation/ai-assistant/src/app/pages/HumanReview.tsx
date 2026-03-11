@@ -122,6 +122,15 @@ export function HumanReview() {
     setReviewedRecords(new Set([...reviewedRecords, recordId]));
   };
 
+  const handleUndo = (recordId: string, entity: Entity) => {
+    setGoldenSet(prev => ({
+      ...prev,
+      [recordId]: (prev[recordId] || []).filter(e =>
+        !(e.start < entity.end && entity.start < e.end)
+      ),
+    }));
+  };
+
   const handleNext = () => {
     if (currentRecordIndex < totalRecords - 1) {
       setCurrentRecordIndex(currentRecordIndex + 1);
@@ -215,6 +224,24 @@ export function HumanReview() {
         </p>
       </div>
 
+      <Alert className="border-sky-200 bg-sky-50">
+        <Users className="size-4 text-sky-700" />
+        <AlertDescription>
+          <div className="space-y-2 text-sm text-sky-900">
+            <div className="font-medium">What this page is for</div>
+            <div>
+              This page is where you decide which detections should become the final golden set. Each card shows what Presidio, the LLM, or an existing dataset label detected for the current record.
+            </div>
+            <div>
+              Use <span className="font-medium">Confirm</span> for correct detections, <span className="font-medium">Reject</span> for incorrect ones, and <span className="font-medium">Adjust</span> or manual entities when the span or label needs correction.
+            </div>
+            <div>
+              You need to review every record before continuing. The resulting final entities are what the Evaluation step treats as the trusted reference.
+            </div>
+          </div>
+        </AlertDescription>
+      </Alert>
+
       {/* Progress Overview */}
       <Alert className="border-blue-200 bg-blue-50">
         <Users className="size-4 text-blue-600" />
@@ -224,17 +251,15 @@ export function HumanReview() {
               <span className="font-medium text-blue-900">Review Progress</span>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-blue-800">{reviewedRecords.size} of {totalRecords} records reviewed ({reviewProgress.toFixed(0)}%)</span>
-                {!isReviewed && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                    onClick={handleAutoConfirmAll}
-                  >
-                    <CheckCheck className="size-4 mr-1" />
-                    Confirm All Entities
-                  </Button>
-                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                  onClick={handleAutoConfirmAll}
+                >
+                  <CheckCheck className="size-4 mr-1" />
+                  Confirm All Entities
+                </Button>
               </div>
             </div>
             <Progress value={reviewProgress} className="h-2" />
@@ -289,6 +314,7 @@ export function HumanReview() {
         onConfirm={handleConfirm}
         onReject={handleReject}
         onAddManual={handleAddManual}
+        onUndo={handleUndo}
       />
 
       {/* Legend */}
@@ -366,25 +392,33 @@ export function HumanReview() {
               </span>
             )}
           </div>
-          {!isReviewed && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleAutoConfirmAll}
-            >
-              <CheckCheck className="size-4 mr-1" />
-              Confirm All Entities
-            </Button>
-          )}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleAutoConfirmAll}
+          >
+            <CheckCheck className="size-4 mr-1" />
+            Confirm All Entities
+          </Button>
         </div>
-        <Button
-          size="lg"
-          onClick={handleContinue}
-          disabled={!canContinue}
-        >
-          Continue to Evaluation
-          <ArrowRight className="size-4 ml-2" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => navigate('/anonymization')}
+          >
+            <ChevronLeft className="size-4 mr-1" />
+            Back
+          </Button>
+          <Button
+            size="lg"
+            onClick={handleContinue}
+            disabled={!canContinue}
+          >
+            Continue to Evaluation
+            <ArrowRight className="size-4 ml-2" />
+          </Button>
+        </div>
       </div>
     </div>
   );

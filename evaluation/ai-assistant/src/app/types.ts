@@ -17,6 +17,10 @@ export interface Entity {
   start: number;
   end: number;
   score?: number;
+  // Audit fields: original span before human boundary adjustment
+  original_start?: number;
+  original_end?: number;
+  original_text?: string;
 }
 
 export interface Record {

@@ -17,6 +17,23 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
+async function uploadFile<T>(path: string, formData: FormData): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    let detail = body;
+    try {
+      const parsed = JSON.parse(body);
+      if (parsed.detail) detail = parsed.detail;
+    } catch { /* use raw body */ }
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
 // --- Datasets ---
 export const api = {
   datasets: {
@@ -37,6 +54,15 @@ export const api = {
       request<any>(`/datasets/${encodeURIComponent(id)}`, {
         method: "DELETE",
       }),
+    upload: (file: File, opts?: { text_column?: string; entities_column?: string; name?: string; description?: string }) => {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('text_column', opts?.text_column || 'text');
+      fd.append('entities_column', opts?.entities_column || '');
+      fd.append('name', opts?.name || '');
+      fd.append('description', opts?.description || '');
+      return uploadFile<any>('/datasets/upload', fd);
+    },
     preview: (id: string, limit = 5) =>
       request<any>(`/datasets/${encodeURIComponent(id)}/preview?limit=${limit}`),
     records: (id: string) =>
@@ -57,7 +83,7 @@ export const api = {
     settings: () => request<{ env_ready: boolean; has_endpoint: boolean; has_api_key: boolean; auth_method: string; deployment_name: string; configured: boolean }>("/llm/settings"),
     configure: (deploymentName: string) =>
       request<any>("/llm/configure", { method: "POST", body: JSON.stringify({ deployment_name: deploymentName }) }),
-    status: () => request<{ configured: boolean; running: boolean; progress: number; total: number; error: string | null; entity_count: number }>("/llm/status"),
+    status: () => request<{ configured: boolean; running: boolean; progress: number; total: number; error: string | null; entity_count: number; elapsed_ms: number | null }>("/llm/status"),
     analyze: (datasetId: string) => request<any>("/llm/analyze", { method: "POST", body: JSON.stringify({ dataset_id: datasetId }) }),
     disconnect: () => request<any>("/llm/disconnect", { method: "POST" }),
     results: () => request<Record<string, any[]>>("/llm/results"),
@@ -70,9 +96,15 @@ export const api = {
       request<any>("/presidio/configs", { method: "POST", body: JSON.stringify({ name, path }) }),
     deleteConfig: (name: string) =>
       request<any>(`/presidio/configs/${encodeURIComponent(name)}`, { method: "DELETE" }),
+    uploadConfig: (file: File, name: string) => {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('name', name);
+      return uploadFile<any>('/presidio/configs/upload', fd);
+    },
     configure: (configName?: string, configPath?: string) =>
       request<any>("/presidio/configure", { method: "POST", body: JSON.stringify({ config_name: configName || null, config_path: configPath || null }) }),
-    status: () => request<{ configured: boolean; loading: boolean; config_name: string | null; config_path: string; running: boolean; progress: number; total: number; error: string | null; entity_count: number }>("/presidio/status"),
+    status: () => request<{ configured: boolean; loading: boolean; config_name: string | null; config_path: string; running: boolean; progress: number; total: number; error: string | null; entity_count: number; elapsed_ms: number | null }>("/presidio/status"),
     analyze: (datasetId: string) =>
       request<any>("/presidio/analyze", { method: "POST", body: JSON.stringify({ dataset_id: datasetId }) }),
     results: () => request<Record<string, any[]>>("/presidio/results"),
@@ -101,6 +133,11 @@ export const api = {
       request<any>("/review/save-final-entities", {
         method: "POST",
         body: JSON.stringify({ dataset_id: datasetId, golden_set: goldenSet }),
+      }),
+    saveConfigResults: (datasetId: string) =>
+      request<any>("/review/save-config-results", {
+        method: "POST",
+        body: JSON.stringify({ dataset_id: datasetId }),
       }),
   },
 

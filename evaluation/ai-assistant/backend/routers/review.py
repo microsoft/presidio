@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from models import Entity, EntityAction, Record
 from routers.upload import _records as uploaded_records, _uploaded, _save_registry
-from routers.presidio_service import _state as presidio_state
+from routers.presidio_service import _state as presidio_state, _all_config_results
 
 router = APIRouter(prefix="/api/review", tags=["review"])
 
@@ -122,13 +122,29 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
     # Grab raw Presidio results (if available)
     presidio_results = presidio_state.get("results", {})
 
+    # Build per-config results from accumulated in-memory analyses
+    config_results: dict[str, dict[str, list]] = dict(_all_config_results)
+    # Also include the current in-memory analysis (may not be accumulated yet)
+    current_config = presidio_state.get("config_name")
+    if current_config and presidio_results:
+        config_results[current_config] = presidio_results
+    config_names = list(config_results.keys())
+
     if ds.format == "csv":
         buf = io.StringIO()
-        # Build fieldnames: original columns + new columns
-        fieldnames = list(ds.columns)
-        for col in ("presidio_analyzer_entities", "final_entities"):
-            if col not in fieldnames:
-                fieldnames.append(col)
+        # Build fieldnames from the CSV header (minus old presidio_analyzer_entities,
+        # previous config_* columns, and final_entities)
+        # + one column per config (prefixed with config_) + final_entities
+        with open(stored, encoding="utf-8") as hf:
+            header_reader = csv.DictReader(hf)
+            csv_columns = header_reader.fieldnames or []
+        base_cols = [
+            c for c in csv_columns
+            if c not in ("presidio_analyzer_entities", "final_entities")
+            and not c.startswith("config_")
+        ]
+        config_col_names = [f"config_{cname}" for cname in config_names]
+        fieldnames = base_cols + config_col_names + ["final_entities"]
         writer = csv.DictWriter(buf, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -139,9 +155,16 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
 
         for i, row in enumerate(orig_rows):
             rec_id = f"rec-{i + 1:04d}"
-            # Presidio raw analysis entities
-            p_ents = presidio_results.get(rec_id, [])
-            row["presidio_analyzer_entities"] = json.dumps(p_ents)
+            # Remove old columns if present
+            row.pop("presidio_analyzer_entities", None)
+            # Remove old config columns (both prefixed and non-prefixed)
+            for key in list(row.keys()):
+                if key.startswith("config_") or key in config_results:
+                    row.pop(key, None)
+            # Add per-config analyzer results with config_ prefix
+            for cname in config_names:
+                run_results = config_results[cname]
+                row[f"config_{cname}"] = json.dumps(run_results.get(rec_id, []))
             # Human-reviewed final entities
             ents = golden.get(rec_id, [])
             row["final_entities"] = json.dumps([e.model_dump() for e in ents])
@@ -156,7 +179,14 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
 
         for i, obj in enumerate(data):
             rec_id = f"rec-{i + 1:04d}"
-            obj["presidio_analyzer_entities"] = presidio_results.get(rec_id, [])
+            obj.pop("presidio_analyzer_entities", None)
+            # Remove old config columns (both prefixed and non-prefixed)
+            for key in list(obj.keys()):
+                if key.startswith("config_") or key in config_results:
+                    obj.pop(key, None)
+            for cname in config_names:
+                run_results = config_results[cname]
+                obj[f"config_{cname}"] = run_results.get(rec_id, [])
             ents = golden.get(rec_id, [])
             obj["final_entities"] = [e.model_dump() for e in ents]
 
@@ -164,13 +194,99 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
             json.dump(data, f, indent=2, ensure_ascii=False)
 
     # Update dataset metadata
-    updated_cols = list(ds.columns)
-    for col in ("presidio_analyzer_entities", "final_entities"):
-        if col not in updated_cols:
-            updated_cols.append(col)
     _uploaded[req.dataset_id] = ds.model_copy(
-        update={"has_final_entities": True, "columns": updated_cols}
+        update={"has_final_entities": True, "ran_configs": config_names}
     )
     _save_registry()
 
     return {"status": "saved", "records_updated": len(golden)}
+
+
+class SaveConfigResultsRequest(BaseModel):
+    dataset_id: str
+
+
+@router.post("/save-config-results")
+async def save_config_results(req: SaveConfigResultsRequest):
+    """Persist all accumulated config columns into the stored dataset file
+    without touching final_entities.  Used when a second config is run
+    in second-phase mode (skipping Human Review)."""
+    import csv
+    import io
+    import json
+    import os
+
+    ds = _uploaded.get(req.dataset_id)
+    if ds is None:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    stored = ds.stored_path if ds.stored_path and os.path.isfile(ds.stored_path) else None
+    if not stored:
+        raise HTTPException(status_code=400, detail="No stored file to update")
+
+    presidio_results = presidio_state.get("results", {})
+    config_results: dict[str, dict[str, list]] = dict(_all_config_results)
+    current_config = presidio_state.get("config_name")
+    if current_config and presidio_results:
+        config_results[current_config] = presidio_results
+    config_names = list(config_results.keys())
+
+    if not config_names:
+        return {"status": "noop", "message": "No config results to save"}
+
+    if ds.format == "csv":
+        buf = io.StringIO()
+        with open(stored, encoding="utf-8") as hf:
+            csv_columns = csv.DictReader(hf).fieldnames or []
+        base_cols = [
+            c for c in csv_columns
+            if c not in ("presidio_analyzer_entities",)
+            and not c.startswith("config_")
+        ]
+        config_col_names = [f"config_{cname}" for cname in config_names]
+        # Insert config columns before final_entities if it exists
+        if "final_entities" in base_cols:
+            base_cols.remove("final_entities")
+            fieldnames = base_cols + config_col_names + ["final_entities"]
+        else:
+            fieldnames = base_cols + config_col_names
+        writer = csv.DictWriter(buf, fieldnames=fieldnames)
+        writer.writeheader()
+
+        with open(stored, encoding="utf-8") as f:
+            orig_rows = list(csv.DictReader(f))
+
+        for i, row in enumerate(orig_rows):
+            rec_id = f"rec-{i + 1:04d}"
+            row.pop("presidio_analyzer_entities", None)
+            for key in list(row.keys()):
+                if key.startswith("config_") or key in config_results:
+                    row.pop(key, None)
+            for cname in config_names:
+                run_results = config_results[cname]
+                row[f"config_{cname}"] = json.dumps(run_results.get(rec_id, []))
+            writer.writerow(row)
+
+        with open(stored, "w", encoding="utf-8") as f:
+            f.write(buf.getvalue())
+    else:
+        with open(stored, encoding="utf-8") as f:
+            data = json.load(f)
+        for i, obj in enumerate(data):
+            rec_id = f"rec-{i + 1:04d}"
+            obj.pop("presidio_analyzer_entities", None)
+            for key in list(obj.keys()):
+                if key.startswith("config_") or key in config_results:
+                    obj.pop(key, None)
+            for cname in config_names:
+                run_results = config_results[cname]
+                obj[f"config_{cname}"] = run_results.get(rec_id, [])
+        with open(stored, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+    _uploaded[req.dataset_id] = ds.model_copy(
+        update={"ran_configs": config_names}
+    )
+    _save_registry()
+
+    return {"status": "saved", "configs": config_names}

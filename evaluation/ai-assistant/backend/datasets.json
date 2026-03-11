@@ -10,61 +10,24 @@
     "record_count": 10,
     "has_entities": false,
     "has_final_entities": false,
-    "columns": [
-      "text"
-    ],
+    "ran_configs": [],
     "text_column": "text",
     "entities_column": null
   },
   {
-    "id": "upload-41c4c115",
+    "id": "upload-416b54e6",
     "filename": "sample_medical_records.csv",
-    "name": "cph_live_demo",
-    "description": "my 5 samples from prod uk",
-    "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/data/sample_medical_records.csv",
-    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/upload-41c4c115.csv",
-    "format": "csv",
-    "record_count": 5,
-    "has_entities": false,
-    "has_final_entities": true,
-    "columns": [
-      "text",
-      "final_entities"
-    ],
-    "text_column": "text",
-    "entities_column": null
-  },
-  {
-    "id": "upload-363d8cb7",
-    "filename": "sample_medical_records.csv",
-    "name": "demo-dataset",
+    "name": "demo_check",
     "description": "",
-    "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/data/sample_medical_records.csv",
-    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/upload-363d8cb7.csv",
-    "format": "csv",
-    "record_count": 5,
-    "has_entities": false,
-    "has_final_entities": false,
-    "columns": [
-      "text"
-    ],
-    "text_column": "text",
-    "entities_column": null
-  },
-  {
-    "id": "upload-50d5e2c7",
-    "filename": "sample_medical_records.csv",
-    "name": "check_2",
-    "description": "my 5 samples from prod uk",
-    "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/data/sample_medical_records.csv",
-    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/upload-50d5e2c7.csv",
+    "path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/demo_check_416b54e6.csv",
+    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/demo_check_416b54e6.csv",
     "format": "csv",
     "record_count": 5,
     "has_entities": false,
     "has_final_entities": true,
-    "columns": [
-      "text",
-      "final_entities"
+    "ran_configs": [
+      "default_spacy",
+      "transfomers_standford"
     ],
     "text_column": "text",
     "entities_column": null

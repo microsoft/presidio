@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router";
+import { Welcome } from "./pages/Welcome";
 import { Setup } from "./pages/Setup";
 import { Anonymization } from "./pages/Anonymization";
 import { HumanReview } from "./pages/HumanReview";
@@ -11,7 +12,8 @@ export const router = createBrowserRouter([
     path: "/",
     Component: Layout,
     children: [
-      { index: true, Component: Setup },
+      { index: true, Component: Welcome },
+      { path: "setup", Component: Setup },
       { path: "anonymization", Component: Anonymization },
       { path: "human-review", Component: HumanReview },
       { path: "evaluation", Component: Evaluation },

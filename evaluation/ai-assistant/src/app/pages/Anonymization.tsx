@@ -13,8 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { ArrowRight, Shield, Sparkles, CheckCircle, Loader2, AlertTriangle, Unplug, Plus, Trash2 } from 'lucide-react';
+import { ArrowRight, Shield, Sparkles, CheckCircle, Loader2, AlertTriangle, Unplug, Plus, Trash2, ChevronLeft } from 'lucide-react';
 import { api } from '../lib/api';
+import { FileDropzone } from '../components/FileDropzone';
 import type { SetupConfig } from '../types';
 
 type LlmStep = 'loading' | 'env_missing' | 'idle' | 'configuring' | 'configured' | 'running' | 'done' | 'error';
@@ -38,7 +39,22 @@ export function Anonymization() {
     }
   }, []);
 
-  const hasFinalEntities = setupConfig?.hasFinalEntities ?? false;
+  const [hasFinalEntities, setHasFinalEntities] = useState(setupConfig?.hasFinalEntities ?? false);
+
+  // Refresh hasFinalEntities from backend on mount (it may have changed after human review)
+  useEffect(() => {
+    const dsId = setupConfig?.datasetId;
+    if (!dsId) return;
+    api.datasets.get(dsId).then((ds: any) => {
+      const fresh = ds?.has_final_entities ?? false;
+      setHasFinalEntities(fresh);
+      // Update sessionStorage so downstream pages see the latest value
+      if (setupConfig) {
+        const updated = { ...setupConfig, hasFinalEntities: fresh };
+        sessionStorage.setItem('setupConfig', JSON.stringify(updated));
+      }
+    }).catch(() => {});
+  }, [setupConfig?.datasetId]);
 
   const datasetRecordCount = useMemo(() => {
     try {
@@ -57,6 +73,7 @@ export function Anonymization() {
   const [llmTotal, setLlmTotal] = useState(0);
   const [llmError, setLlmError] = useState<string | null>(null);
   const [llmEntityCount, setLlmEntityCount] = useState(0);
+  const [llmElapsedMs, setLlmElapsedMs] = useState<number | null>(null);
 
   // Presidio state
   const [presidioStep, setPresidioStep] = useState<PresidioStep>('loading');
@@ -64,13 +81,16 @@ export function Anonymization() {
   const [presidioTotal, setPresidioTotal] = useState(0);
   const [presidioError, setPresidioError] = useState<string | null>(null);
   const [presidioEntityCount, setPresidioEntityCount] = useState(0);
+  const [presidioElapsedMs, setPresidioElapsedMs] = useState<number | null>(null);
 
   // Named configs
   const [savedConfigs, setSavedConfigs] = useState<{ name: string; path: string | null }[]>([]);
-  const [selectedConfig, setSelectedConfig] = useState('Default (spaCy)');
+  const [selectedConfig, setSelectedConfig] = useState('default_spacy');
   const [showAddConfig, setShowAddConfig] = useState(false);
   const [newConfigName, setNewConfigName] = useState('');
+  const [newConfigFile, setNewConfigFile] = useState<File | null>(null);
   const [newConfigPath, setNewConfigPath] = useState('');
+  const [newConfigInputMode, setNewConfigInputMode] = useState<'file' | 'path'>('file');
   const [activeConfigName, setActiveConfigName] = useState<string | null>(null);
 
   // Load models + env status + saved configs on mount
@@ -87,6 +107,7 @@ export function Anonymization() {
           setLlmTotal(status.total);
         } else if (status.entity_count > 0) {
           setLlmEntityCount(status.entity_count);
+          setLlmElapsedMs(status.elapsed_ms ?? null);
           setLlmStep('done');
           setLlmTotal(status.total);
           setLlmProgress(status.total);
@@ -114,6 +135,7 @@ export function Anonymization() {
           setLlmStep('error');
         } else if (!s.running && s.progress >= s.total && s.total > 0) {
           setLlmEntityCount(s.entity_count);
+          setLlmElapsedMs(s.elapsed_ms ?? null);
           setLlmStep('done');
         }
       } catch {
@@ -138,6 +160,7 @@ export function Anonymization() {
         setPresidioProgress(s.progress);
         setPresidioTotal(s.total);
         setPresidioEntityCount(s.entity_count);
+        setPresidioElapsedMs(s.elapsed_ms ?? null);
       } else if (s.configured) {
         setPresidioStep('configured');
       } else if (s.error) {
@@ -172,7 +195,11 @@ export function Anonymization() {
             setPresidioStep('error');
           } else if (!s.running && s.progress >= s.total && s.total > 0) {
             setPresidioEntityCount(s.entity_count);
+            setPresidioElapsedMs(s.elapsed_ms ?? null);
             setPresidioStep('done');
+            // Persist config columns to CSV
+            const dsId = setupConfig?.datasetId;
+            if (dsId) api.review.saveConfigResults(dsId).catch(() => {});
           }
         }
       } catch {
@@ -223,6 +250,7 @@ export function Anonymization() {
       setPresidioProgress(0);
       setPresidioTotal(0);
       setPresidioEntityCount(0);
+      setPresidioElapsedMs(null);
       setActiveConfigName(null);
     } catch (err: any) {
       setPresidioError(err.message ?? 'Failed to disconnect');
@@ -267,6 +295,7 @@ export function Anonymization() {
       setLlmProgress(0);
       setLlmTotal(0);
       setLlmEntityCount(0);
+      setLlmElapsedMs(null);
     } catch (err: any) {
       setLlmError(err.message ?? 'Failed to disconnect');
     }
@@ -274,25 +303,32 @@ export function Anonymization() {
 
   const handleSaveConfig = useCallback(async () => {
     const name = newConfigName.trim();
-    const path = newConfigPath.trim();
-    if (!name || !path) return;
+    if (!name) return;
+    if (newConfigInputMode === 'file' && !newConfigFile) return;
+    if (newConfigInputMode === 'path' && !newConfigPath.trim()) return;
     try {
-      const res = await api.presidio.saveConfig(name, path);
+      let res;
+      if (newConfigInputMode === 'path') {
+        res = await api.presidio.saveConfig(name, newConfigPath.trim());
+      } else {
+        res = await api.presidio.uploadConfig(newConfigFile!, name);
+      }
       setSavedConfigs(res.configs);
       setSelectedConfig(name);
       setNewConfigName('');
+      setNewConfigFile(null);
       setNewConfigPath('');
       setShowAddConfig(false);
     } catch (err: any) {
       setPresidioError(err.message ?? 'Failed to save config');
     }
-  }, [newConfigName, newConfigPath]);
+  }, [newConfigName, newConfigFile, newConfigInputMode, newConfigPath]);
 
   const handleDeleteConfig = useCallback(async (name: string) => {
     try {
       const res = await api.presidio.deleteConfig(name);
       setSavedConfigs(res.configs);
-      if (selectedConfig === name) setSelectedConfig('Default (spaCy)');
+      if (selectedConfig === name) setSelectedConfig('default_spacy');
     } catch (err: any) {
       setPresidioError(err.message ?? 'Failed to delete config');
     }
@@ -374,7 +410,7 @@ export function Anonymization() {
                     <Button size="icon" variant="outline" onClick={() => setShowAddConfig(!showAddConfig)} title="Add new config">
                       <Plus className="size-4" />
                     </Button>
-                    {selectedConfig !== 'Default (spaCy)' && (
+                    {selectedConfig !== 'default_spacy' && (
                       <Button size="icon" variant="outline" onClick={() => handleDeleteConfig(selectedConfig)} title="Delete config">
                         <Trash2 className="size-4" />
                       </Button>
@@ -388,20 +424,42 @@ export function Anonymization() {
                     <Input
                       placeholder="Config name (e.g. transformer-stanford)"
                       value={newConfigName}
-                      onChange={(e) => setNewConfigName(e.target.value)}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (v === '' || /^[A-Za-z0-9][A-Za-z0-9 _.\-]*$/.test(v)) setNewConfigName(v);
+                      }}
                       className="text-sm"
                     />
-                    <Input
-                      placeholder="/absolute/path/to/config.yml"
-                      value={newConfigPath}
-                      onChange={(e) => setNewConfigPath(e.target.value)}
-                      className="font-mono text-sm"
-                    />
+                    <p className="text-xs text-slate-400">Letters, numbers, hyphens, underscores, and dots only.</p>
+                    <div className="flex items-center justify-between mb-1">
+                      <Label className="text-xs font-medium">YAML File</Label>
+                      <button
+                        type="button"
+                        className="text-xs text-blue-600 hover:underline"
+                        onClick={() => { setNewConfigInputMode(newConfigInputMode === 'file' ? 'path' : 'file'); setNewConfigFile(null); setNewConfigPath(''); }}
+                      >
+                        {newConfigInputMode === 'file' ? 'Enter file path instead' : 'Upload file instead'}
+                      </button>
+                    </div>
+                    {newConfigInputMode === 'file' ? (
+                      <FileDropzone
+                        accept=".yml,.yaml"
+                        label="Drop YAML config file here or click to browse"
+                        onFile={setNewConfigFile}
+                      />
+                    ) : (
+                      <Input
+                        placeholder="/path/to/config.yml"
+                        value={newConfigPath}
+                        onChange={(e) => setNewConfigPath(e.target.value)}
+                        className="text-sm"
+                      />
+                    )}
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => { setShowAddConfig(false); setNewConfigName(''); setNewConfigPath(''); }} className="flex-1">
+                      <Button size="sm" variant="outline" onClick={() => { setShowAddConfig(false); setNewConfigName(''); setNewConfigFile(null); setNewConfigPath(''); }} className="flex-1">
                         Cancel
                       </Button>
-                      <Button size="sm" onClick={handleSaveConfig} disabled={!newConfigName.trim() || !newConfigPath.trim()} className="flex-1">
+                      <Button size="sm" onClick={handleSaveConfig} disabled={!newConfigName.trim() || (newConfigInputMode === 'file' ? !newConfigFile : !newConfigPath.trim())} className="flex-1">
                         Save Config
                       </Button>
                     </div>
@@ -469,6 +527,11 @@ export function Anonymization() {
               <div className="space-y-3">
                 <p className="text-sm text-green-700">
                   Presidio analysis complete — {presidioTotal} records processed, <strong>{presidioEntityCount.toLocaleString()} entities</strong> detected.
+                  {presidioElapsedMs != null && (
+                    <span className="ml-1 text-slate-500">
+                      Detection time: <strong>{(presidioElapsedMs / 1000).toFixed(2)} seconds</strong>
+                    </span>
+                  )}
                 </p>
                 {activeConfigName && (
                   <p className="text-xs text-slate-500">Config: {activeConfigName}</p>
@@ -625,6 +688,11 @@ PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
               <div className="space-y-3">
                 <p className="text-sm text-green-700">
                   LLM analysis complete — {llmTotal} records processed, <strong>{llmEntityCount.toLocaleString()} entities</strong> detected.
+                  {llmElapsedMs != null && (
+                    <span className="ml-1 text-slate-500">
+                      Detection time: <strong>{(llmElapsedMs / 1000).toFixed(2)} seconds</strong>
+                    </span>
+                  )}
                 </p>
                 <p className="text-xs text-slate-500">Model: {selectedModel}</p>
                 <Button size="sm" variant="outline" onClick={handleDisconnect}>
@@ -644,13 +712,21 @@ PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
             <CheckCircle className="size-4 text-amber-600" />
             <AlertDescription>
               <div className="text-sm text-amber-900">
-                <span className="font-medium">Second phase:</span> This dataset already has human-approved golden entities from a previous review.
-                You can go directly to evaluation to test your configuration, or re-review entities in Human Review.
+                <span className="font-medium">Existing reviewed entities found:</span> This dataset already includes human-approved final entities from a previous review.
+                You can go directly to Evaluation to test this configuration against that saved reference set, or go back through Human Review to revise it.
               </div>
             </AlertDescription>
           </Alert>
         )}
         <div className="flex gap-3">
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => navigate('/setup')}
+          >
+            <ChevronLeft className="size-4 mr-1" />
+            Back
+          </Button>
           {hasFinalEntities && (
             <Button
               size="lg"

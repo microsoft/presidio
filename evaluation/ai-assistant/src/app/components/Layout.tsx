@@ -1,10 +1,10 @@
-import { Outlet, useLocation, useNavigate } from 'react-router';
-import { Shield, ChevronLeft } from 'lucide-react';
-import { Button } from './ui/button';
+import { Outlet, useLocation } from 'react-router';
+import { Shield } from 'lucide-react';
 import { Progress } from './ui/progress';
 
 const steps = [
-  { path: '/', label: 'Setup' },
+  { path: '/', label: 'Welcome' },
+  { path: '/setup', label: 'Setup' },
   { path: '/anonymization', label: 'Analysis' },
   { path: '/human-review', label: 'Human Review' },
   { path: '/evaluation', label: 'Evaluation' },
@@ -13,11 +13,9 @@ const steps = [
 
 export function Layout() {
   const location = useLocation();
-  const navigate = useNavigate();
   
   const currentStepIndex = steps.findIndex(step => step.path === location.pathname);
   const progress = currentStepIndex >= 0 ? ((currentStepIndex + 1) / steps.length) * 100 : 0;
-  const canGoBack = currentStepIndex > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -32,16 +30,6 @@ export function Layout() {
                 <p className="text-sm text-slate-600">Human-in-the-loop PII detection evaluation</p>
               </div>
             </div>
-            {canGoBack && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(steps[currentStepIndex - 1].path)}
-              >
-                <ChevronLeft className="size-4 mr-1" />
-                Back
-              </Button>
-            )}
           </div>
         </div>
 

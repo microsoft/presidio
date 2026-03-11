@@ -7,24 +7,8 @@ import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Input } from '../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { ArrowRight, Loader2, CheckCircle, BarChart3, TrendingUp, TrendingDown, Search, AlertTriangle, XCircle, Download, Filter } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { ArrowRight, ChevronLeft, Loader2, CheckCircle, TrendingUp, TrendingDown, Search, AlertTriangle, XCircle, Download, Filter } from 'lucide-react';
 import { mockEntityMisses } from '../lib/mockData';
-
-const metricsData = [
-  { name: 'Precision', value: 94, color: '#3b82f6' },
-  { name: 'Recall', value: 88, color: '#10b981' },
-  { name: 'F1 Score', value: 91, color: '#8b5cf6' },
-];
-
-const entityTypeData = [
-  { type: 'PERSON', precision: 96, recall: 92, f1: 94 },
-  { type: 'EMAIL', precision: 98, recall: 95, f1: 96 },
-  { type: 'PHONE', precision: 93, recall: 89, f1: 91 },
-  { type: 'SSN', precision: 97, recall: 84, f1: 90 },
-  { type: 'CREDIT_CARD', precision: 71, recall: 65, f1: 68 },
-  { type: 'MEDICAL_RECORD', precision: 89, recall: 81, f1: 85 },
-];
 
 export function Evaluation() {
   const navigate = useNavigate();
@@ -163,45 +147,6 @@ export function Evaluation() {
               </div>
             </div>
           </Card>
-
-          {/* Charts */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <BarChart3 className="size-5 text-blue-600" />
-                  <h3 className="font-semibold text-slate-900">Overall Metrics</h3>
-                </div>
-                <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={metricsData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="space-y-4">
-                <h3 className="font-semibold text-slate-900">Performance by Entity Type</h3>
-                <ResponsiveContainer width="100%" height={260}>
-                  <LineChart data={entityTypeData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="precision" stroke="#3b82f6" strokeWidth={2} />
-                    <Line type="monotone" dataKey="recall" stroke="#10b981" strokeWidth={2} />
-                    <Line type="monotone" dataKey="f1" stroke="#8b5cf6" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-          </div>
 
           {/* Error Summary + Risk-Critical */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -487,7 +432,11 @@ export function Evaluation() {
       )}
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-4">
+      <div className="flex justify-between gap-3 pt-4">
+        <Button variant="outline" size="lg" onClick={() => navigate('/anonymization')}>
+          <ChevronLeft className="size-4 mr-1" />
+          Back
+        </Button>
         <Button
           size="lg"
           onClick={handleContinue}

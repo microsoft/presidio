@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 
 import llm_service
 from fastapi import APIRouter, HTTPException
@@ -28,6 +29,8 @@ _state: dict = {
     "running": False,
     "error": None,
     "results": {},  # record_id -> list[Entity dict]
+    "start_time": None,
+    "elapsed_ms": None,
 }
 
 
@@ -113,6 +116,8 @@ async def disconnect_llm():
     _state["running"] = False
     _state["error"] = None
     _state["results"] = {}
+    _state["start_time"] = None
+    _state["elapsed_ms"] = None
     return {"status": "disconnected"}
 
 
@@ -130,6 +135,7 @@ async def get_llm_status():
         "total": _state["total"],
         "error": _state["error"],
         "entity_count": entity_count,
+        "elapsed_ms": _state["elapsed_ms"],
     }
 
 
@@ -160,6 +166,8 @@ async def start_llm_analysis(req: LLMAnalyzeRequest):
     _state["running"] = True
     _state["error"] = None
     _state["results"] = {}
+    _state["start_time"] = time.time()
+    _state["elapsed_ms"] = None
 
     asyncio.create_task(_run_analysis())
     return {"status": "started", "total": _state["total"]}
@@ -175,7 +183,16 @@ async def _run_analysis():
                 entities = await loop.run_in_executor(
                     None, llm_service.analyze_text, record.text
                 )
-                _state["results"][record.id] = [e.model_dump() for e in entities]
+                entity_dicts = [e.model_dump() for e in entities]
+                _state["results"][record.id] = entity_dicts
+                if entity_dicts:
+                    summary = "; ".join(
+                        f"{e['entity_type']}('{e['text']}' @{e['start']}-{e['end']})"
+                        for e in entity_dicts
+                    )
+                    logger.info("[LLM] %s: %s", record.id, summary)
+                else:
+                    logger.info("[LLM] %s: no entities", record.id)
             except Exception:
                 logger.exception("LLM analysis failed for record %s", record.id)
                 _state["results"][record.id] = []
@@ -185,6 +202,8 @@ async def _run_analysis():
         _state["error"] = str(exc)
     finally:
         _state["running"] = False
+        if _state["start_time"]:
+            _state["elapsed_ms"] = round((time.time() - _state["start_time"]) * 1000)
 
 
 @router.get("/results")

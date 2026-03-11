@@ -6,8 +6,9 @@ import { Label } from '../components/ui/label';
 import { Input } from '../components/ui/input';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Database, Shield, ArrowRight, Cloud, FileText, CheckCircle, Loader2, X, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Database, Shield, ArrowRight, ChevronLeft, FileText, CheckCircle, Loader2, X, Plus, Pencil, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
+import { FileDropzone } from '../components/FileDropzone';
 import type { ComplianceFramework, UploadedDataset } from '../types';
 
 export function Setup() {
@@ -15,8 +16,9 @@ export function Setup() {
   const [datasets, setDatasets] = useState<UploadedDataset[]>([]);
   const [selectedDatasetId, setSelectedDatasetId] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [filePath, setFilePath] = useState('');
-  const [fileFormat, setFileFormat] = useState<'csv' | 'json'>('csv');
+  const [datasetFile, setDatasetFile] = useState<File | null>(null);
+  const [datasetPath, setDatasetPath] = useState('');
+  const [datasetInputMode, setDatasetInputMode] = useState<'file' | 'path'>('file');
   const [datasetName, setDatasetName] = useState('');
   const [datasetDescription, setDatasetDescription] = useState('');
   const [textColumn, setTextColumn] = useState('text');
@@ -58,12 +60,16 @@ export function Setup() {
   };
 
   const handleLoadDataset = async () => {
-    if (!filePath.trim()) {
-      setLoadError('Please provide an absolute file path.');
+    if (datasetInputMode === 'file' && !datasetFile) {
+      setLoadError('Please select a CSV file.');
+      return;
+    }
+    if (datasetInputMode === 'path' && !datasetPath.trim()) {
+      setLoadError('Please enter a file path.');
       return;
     }
 
-    const proposedName = datasetName.trim() || filePath.trim().split('/').pop() || '';
+    const proposedName = datasetName.trim() || (datasetInputMode === 'file' ? datasetFile!.name.replace(/\.csv$/i, '') : datasetPath.trim().split('/').pop()?.replace(/\.csv$/i, '') || 'dataset');
     const nameExists = datasets.some(ds => ds.name.toLowerCase() === proposedName.toLowerCase());
     if (nameExists) {
       setLoadError(`A dataset named "${proposedName}" already exists. Please choose a different name.`);
@@ -73,14 +79,24 @@ export function Setup() {
     setLoading(true);
     setLoadError(null);
     try {
-      const dataset: UploadedDataset = await api.datasets.load({
-        path: filePath.trim(),
-        format: fileFormat,
-        text_column: textColumn.trim() || 'text',
-        entities_column: entitiesColumn.trim() || undefined,
-        name: datasetName.trim() || undefined,
-        description: datasetDescription.trim() || undefined,
-      });
+      let dataset: UploadedDataset;
+      if (datasetInputMode === 'path') {
+        dataset = await api.datasets.load({
+          path: datasetPath.trim(),
+          format: 'csv',
+          text_column: textColumn.trim() || 'text',
+          entities_column: entitiesColumn.trim() || undefined,
+          name: datasetName.trim() || undefined,
+          description: datasetDescription.trim() || undefined,
+        });
+      } else {
+        dataset = await api.datasets.upload(datasetFile!, {
+          text_column: textColumn.trim() || 'text',
+          entities_column: entitiesColumn.trim() || undefined,
+          name: datasetName.trim() || undefined,
+          description: datasetDescription.trim() || undefined,
+        });
+      }
 
       setDatasets(prev => [...prev, dataset]);
       setSelectedDatasetId(dataset.id);
@@ -90,7 +106,8 @@ export function Setup() {
       setPreviewRecords(preview);
 
       // Reset form fields
-      setFilePath('');
+      setDatasetFile(null);
+      setDatasetPath('');
       setDatasetName('');
       setDatasetDescription('');
       setTextColumn('text');
@@ -174,11 +191,15 @@ export function Setup() {
                   <Label htmlFor="dataset-name">Dataset Name <span className="text-slate-400">(optional)</span></Label>
                   <Input
                     id="dataset-name"
-                    placeholder="e.g. Patient Records Q4"
+                    placeholder="e.g. Patient-Records-Q4"
                     value={datasetName}
-                    onChange={(e) => setDatasetName(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === '' || /^[A-Za-z0-9][A-Za-z0-9 _.\-]*$/.test(v)) setDatasetName(v);
+                    }}
                     className="mt-1 text-sm"
                   />
+                  <p className="text-xs text-slate-400 mt-1">Letters, numbers, hyphens, underscores, and dots only.</p>
                 </div>
 
                 <div>
@@ -193,27 +214,30 @@ export function Setup() {
                 </div>
 
                 <div>
-                  <Label htmlFor="file-path">Absolute File Path</Label>
-                  <Input
-                    id="file-path"
-                    placeholder="/path/to/dataset.csv"
-                    value={filePath}
-                    onChange={(e) => setFilePath(e.target.value)}
-                    className="mt-1 font-mono text-sm"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="file-format">Format</Label>
-                  <Select value={fileFormat} onValueChange={(val) => setFileFormat(val as 'csv' | 'json')}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="csv">CSV</SelectItem>
-                      <SelectItem value="json">JSON</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label>CSV File</Label>
+                    <button
+                      type="button"
+                      className="text-xs text-blue-600 hover:underline"
+                      onClick={() => { setDatasetInputMode(datasetInputMode === 'file' ? 'path' : 'file'); setDatasetFile(null); setDatasetPath(''); }}
+                    >
+                      {datasetInputMode === 'file' ? 'Enter file path instead' : 'Upload file instead'}
+                    </button>
+                  </div>
+                  {datasetInputMode === 'file' ? (
+                    <FileDropzone
+                      accept=".csv"
+                      label="Drop CSV dataset file here or click to browse"
+                      onFile={setDatasetFile}
+                    />
+                  ) : (
+                    <Input
+                      placeholder="/path/to/dataset.csv"
+                      value={datasetPath}
+                      onChange={(e) => setDatasetPath(e.target.value)}
+                      className="text-sm"
+                    />
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -235,7 +259,7 @@ export function Setup() {
                   </Alert>
                 )}
 
-                <Button onClick={handleLoadDataset} disabled={loading || !filePath.trim()}>
+                <Button onClick={handleLoadDataset} disabled={loading || (datasetInputMode === 'file' ? !datasetFile : !datasetPath.trim())}>
                   {loading ? (
                     <>
                       <Loader2 className="size-4 mr-2 animate-spin" />
@@ -318,7 +342,6 @@ export function Setup() {
                       )}
                       <div>{selectedDataset.record_count.toLocaleString()} records • {selectedDataset.format.toUpperCase()} format</div>
                       <div className="text-xs text-green-700 font-mono truncate">{selectedDataset.path}</div>
-                      <div>Columns: {selectedDataset.columns.join(', ')}</div>
                       <div>
                         {selectedDataset.has_final_entities ? (
                           <span className="text-amber-700 font-medium">✓ Contains golden dataset entities (from previous review)</span>
@@ -371,34 +394,6 @@ export function Setup() {
         </div>
       </Card>
 
-      {/* Compliance Framework (disabled) */}
-      <Card className="p-6 opacity-50 pointer-events-none">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Shield className="size-5 text-slate-400" />
-              <h3 className="font-semibold text-slate-400">Compliance Context</h3>
-            </div>
-            <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Coming soon</span>
-          </div>
-          <p className="text-sm text-slate-400">Support for compliance frameworks (HIPAA, GDPR, CCPA) will be added soon.</p>
-        </div>
-      </Card>
-
-      {/* Cloud Access (disabled) */}
-      <Card className="p-6 opacity-50 pointer-events-none">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Cloud className="size-5 text-slate-400" />
-              <h3 className="font-semibold text-slate-400">Data Access Constraints</h3>
-            </div>
-            <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Coming soon</span>
-          </div>
-          <p className="text-sm text-slate-400">Currently only cloud-based LLM processing is supported. On-premises / local deployment options will be added soon.</p>
-        </div>
-      </Card>
-
       {/* Presidio Configuration Notice */}
       <Alert>
         <Shield className="size-4" />
@@ -413,7 +408,15 @@ export function Setup() {
       </Alert>
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-4">
+      <div className="flex justify-between gap-3 pt-4">
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={() => navigate('/')}
+        >
+          <ChevronLeft className="size-4 mr-2" />
+          Back
+        </Button>
         <Button
           size="lg"
           onClick={handleContinue}

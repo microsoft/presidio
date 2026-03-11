@@ -41,6 +41,10 @@ class Entity(BaseModel):
     start: int
     end: int
     score: Optional[float] = None
+    # Audit fields: original span before human boundary adjustment
+    original_start: Optional[int] = None
+    original_end: Optional[int] = None
+    original_text: Optional[str] = None
 
 
 class Record(BaseModel):
@@ -130,7 +134,7 @@ class UploadedDataset(BaseModel):
     record_count: int
     has_entities: bool
     has_final_entities: bool = False
-    columns: list[str]
+    ran_configs: list[str] = []
     text_column: str = "text"
     entities_column: str | None = None
 
