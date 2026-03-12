@@ -142,8 +142,7 @@ export const api = {
   },
 
   evaluation: {
-    runs: () => request<any[]>("/evaluation/runs"),
-    latest: () => request<any>("/evaluation/latest"),
+    run: () => request<any>("/evaluation/run", { method: "POST" }),
     summary: (datasetId: string, configNames?: string[]) => {
       const params = new URLSearchParams();
       params.set('dataset_id', datasetId);

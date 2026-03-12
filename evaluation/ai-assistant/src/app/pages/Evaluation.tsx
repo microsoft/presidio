@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -27,6 +26,28 @@ type Summary = {
       false_positives: number;
       false_negatives: number;
     };
+    by_entity_type: Array<{
+      type: string;
+      precision: number;
+      recall: number;
+      f1: number;
+    }>;
+    most_common_fn_tokens: Array<{
+      token: string;
+      count: number;
+      entity_type: string | null;
+      example_text: string | null;
+    }>;
+    most_common_fp_tokens: Array<{
+      token: string;
+      count: number;
+      predicted_as: string | null;
+      example_text: string | null;
+    }>;
+    confusion_matrix: {
+      labels: string[];
+      matrix: number[][];
+    };
     misses: Array<{
       record_id: string;
       record_text: string;
@@ -51,7 +72,7 @@ type Summary = {
   }>;
 };
 
-const metricColors = ['#2563eb', '#059669', '#7c3aed', '#ea580c', '#dc2626', '#0f172a'];
+const metricColors = ['#2563eb', '#059669', '#7c3aed', '#ea580c', '#dc2626', '#0f172a'] as const;
 
 export function Evaluation() {
   const navigate = useNavigate();
@@ -164,23 +185,12 @@ export function Evaluation() {
     return ['all', ...Array.from(types).sort()];
   }, [activeConfigResult]);
 
-  const metricChartData = useMemo(() => {
-    const metrics = [
-      ['Precision', 'precision'],
-      ['Recall', 'recall'],
-      ['F1 Score', 'f1_score'],
-      ['True Positives', 'true_positives'],
-      ['False Positives', 'false_positives'],
-      ['False Negatives', 'false_negatives'],
-    ] as const;
-
-    return metrics.map(([label, key]) => {
-      const row: Record<string, string | number> = { metric: label };
-      summary?.per_config.forEach((config) => {
-        row[config.config_name] = config.overall[key];
-      });
-      return row;
+  const allEntityTypes = useMemo(() => {
+    const types = new Set<string>();
+    summary?.per_config.forEach((config) => {
+      config.by_entity_type?.forEach((e) => types.add(e.type));
     });
+    return Array.from(types).sort();
   }, [summary]);
 
   const toggleConfig = (configName: string, checked: boolean) => {
@@ -291,26 +301,203 @@ export function Evaluation() {
                   ? `Currently comparing ${summary.per_config.length} config${summary.per_config.length > 1 ? 's' : ''}: ${summary.per_config.map((item) => item.config_name).join(', ')}`
                   : 'No configs selected. Select at least one config to view metrics.'}
               </div>
-
-              <ResponsiveContainer width="100%" height={360}>
-                <BarChart data={metricChartData} margin={{ top: 8, right: 8, left: 0, bottom: 24 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="metric" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  {summary.per_config.map((config, index) => (
-                    <Bar
-                      key={config.config_name}
-                      dataKey={config.config_name}
-                      fill={metricColors[index % metricColors.length]}
-                      radius={[4, 4, 0, 0]}
-                    />
-                  ))}
-                </BarChart>
-              </ResponsiveContainer>
             </div>
           </Card>
+
+          {/* Overall Metrics Per Config */}
+          {summary.per_config.map((config) => (
+            <Card key={config.config_name} className="p-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-slate-900">Overall Metrics — {config.config_name}</h3>
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.precision}%</div>
+                    <div className="text-xs text-slate-500 mt-1">Precision</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.recall}%</div>
+                    <div className="text-xs text-slate-500 mt-1">Recall</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.f1_score}%</div>
+                    <div className="text-xs text-slate-500 mt-1">F Score</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.true_positives}</div>
+                    <div className="text-xs text-slate-500 mt-1">True Positives</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.false_positives}</div>
+                    <div className="text-xs text-slate-500 mt-1">False Positives</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.false_negatives}</div>
+                    <div className="text-xs text-slate-500 mt-1">False Negatives</div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {/* Per-Entity Metrics Table */}
+          {allEntityTypes.length > 0 && (
+            <Card className="p-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-slate-900">Metrics Per Entity Type</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-200">
+                        <th className="text-left py-2 pr-4 font-medium text-slate-600">Entity Type</th>
+                        {summary.per_config.map((config, index) => (
+                          <th key={config.config_name} colSpan={3} className="text-center py-2 px-2 font-medium" style={{ color: metricColors[index % metricColors.length] }}>
+                            {config.config_name}
+                          </th>
+                        ))}
+                      </tr>
+                      <tr className="border-b border-slate-100">
+                        <th />
+                        {summary.per_config.map((config) => (
+                          <>
+                            <th key={`${config.config_name}-p`} className="text-center py-1 px-2 text-xs font-medium text-slate-500">Prec</th>
+                            <th key={`${config.config_name}-r`} className="text-center py-1 px-2 text-xs font-medium text-slate-500">Rec</th>
+                            <th key={`${config.config_name}-f`} className="text-center py-1 px-2 text-xs font-medium text-slate-500">F</th>
+                          </>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allEntityTypes.map((entityType) => (
+                        <tr key={entityType} className="border-b border-slate-100 hover:bg-slate-50">
+                          <td className="py-2 pr-4 font-medium text-slate-800">{entityType}</td>
+                          {summary.per_config.map((config) => {
+                            const entity = config.by_entity_type?.find((e) => e.type === entityType);
+                            return (
+                              <>
+                                <td key={`${config.config_name}-${entityType}-p`} className="text-center py-2 px-2 tabular-nums">
+                                  {entity ? `${entity.precision}%` : <span className="text-slate-300">—</span>}
+                                </td>
+                                <td key={`${config.config_name}-${entityType}-r`} className="text-center py-2 px-2 tabular-nums">
+                                  {entity ? `${entity.recall}%` : <span className="text-slate-300">—</span>}
+                                </td>
+                                <td key={`${config.config_name}-${entityType}-f`} className="text-center py-2 px-2 tabular-nums font-medium">
+                                  {entity ? `${entity.f1}%` : <span className="text-slate-300">—</span>}
+                                </td>
+                              </>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* What Did It Miss? (FN tokens) */}
+          {activeConfigResult && (activeConfigResult.most_common_fn_tokens?.length ?? 0) > 0 && (
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-slate-900">What Did It Miss?</h3>
+                  <p className="text-sm text-slate-500 mt-1">Most common tokens the model failed to detect, based on {activeConfigResult.config_name}.</p>
+                </div>
+                <div className="space-y-2">
+                  {activeConfigResult.most_common_fn_tokens.map((item) => (
+                    <div key={item.token} className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-100">
+                      <Badge className="bg-red-600 text-white shrink-0">{item.count}×</Badge>
+                      <div className="min-w-0">
+                        <div className="text-sm">
+                          <span className="font-semibold text-slate-900">"{item.token}"</span>
+                          {item.entity_type && <span className="text-slate-500"> — annotated as <span className="font-medium text-slate-700">{item.entity_type}</span></span>}
+                        </div>
+                        {item.example_text && (
+                          <div className="text-xs text-slate-500 mt-1 truncate">Example: "{item.example_text}"</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* What Did It Flag Incorrectly? (FP tokens) */}
+          {activeConfigResult && (activeConfigResult.most_common_fp_tokens?.length ?? 0) > 0 && (
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-slate-900">What Did It Flag Incorrectly?</h3>
+                  <p className="text-sm text-slate-500 mt-1">Most common tokens the model incorrectly flagged as PII, based on {activeConfigResult.config_name}.</p>
+                </div>
+                <div className="space-y-2">
+                  {activeConfigResult.most_common_fp_tokens.map((item) => (
+                    <div key={item.token} className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 border border-amber-100">
+                      <Badge className="bg-amber-600 text-white shrink-0">{item.count}×</Badge>
+                      <div className="min-w-0">
+                        <div className="text-sm">
+                          <span className="font-semibold text-slate-900">"{item.token}"</span>
+                          {item.predicted_as && <span className="text-slate-500"> — incorrectly flagged as <span className="font-medium text-slate-700">{item.predicted_as}</span></span>}
+                        </div>
+                        {item.example_text && (
+                          <div className="text-xs text-slate-500 mt-1 truncate">Example: "{item.example_text}"</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* Confusion Matrix */}
+          {activeConfigResult && (activeConfigResult.confusion_matrix?.labels?.length ?? 0) > 1 && (
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-slate-900">Confusion Matrix — {activeConfigResult.config_name}</h3>
+                  <p className="text-sm text-slate-500 mt-1">Shows which entity types get confused with each other. Rows are ground truth, columns are predictions.</p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="text-xs">
+                    <thead>
+                      <tr>
+                        <th className="p-1.5 text-left font-medium text-slate-600 sticky left-0 bg-white">Actual \ Predicted</th>
+                        {activeConfigResult.confusion_matrix.labels.map((label) => (
+                          <th key={label} className="p-1.5 text-center font-medium text-slate-600 min-w-[60px]">{label}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeConfigResult.confusion_matrix.labels.map((rowLabel, i) => (
+                        <tr key={rowLabel}>
+                          <td className="p-1.5 font-medium text-slate-800 sticky left-0 bg-white">{rowLabel}</td>
+                          {activeConfigResult!.confusion_matrix.matrix[i].map((value, j) => {
+                            const isCorrect = i === j;
+                            const hasValue = value > 0;
+                            const isOffDiag = !isCorrect && hasValue;
+                            return (
+                              <td
+                                key={j}
+                                className={`p-1.5 text-center tabular-nums ${
+                                  isCorrect && hasValue ? 'bg-green-50 text-green-700 font-medium' :
+                                  isOffDiag ? 'bg-red-50 text-red-700 font-medium' :
+                                  'text-slate-300'
+                                }`}
+                              >
+                                {value}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Card>
+          )}
 
           <Card className="p-6">
             <div className="space-y-4">

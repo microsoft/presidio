@@ -1,13 +1,13 @@
 [
   {
-    "id": "example-dataset",
-    "filename": "example_pii_dataset.csv",
-    "name": "Example Dataset",
-    "description": "3 synthetic PII records covering healthcare, finance, and lab-result scenarios.",
-    "path": "data/example_pii_dataset.csv",
-    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/Example_Dataset_example-dataset.csv",
+    "id": "upload-dab42e87",
+    "filename": "sample_medical_records (1).csv",
+    "name": "sample_medical_record_1",
+    "description": "",
+    "path": "backend/data/sample_medical_record_1_dab42e87.csv",
+    "stored_path": "sample_medical_record_1_dab42e87.csv",
     "format": "csv",
-    "record_count": 3,
+    "record_count": 5,
     "has_entities": false,
     "has_final_entities": true,
     "ran_configs": [

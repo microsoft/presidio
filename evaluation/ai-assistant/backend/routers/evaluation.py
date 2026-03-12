@@ -1,62 +1,48 @@
+from __future__ import annotations
+
 import csv
+import contextlib
+import io
 import json
+import logging
 import os
 from collections import Counter
 
 from fastapi import APIRouter, HTTPException, Query
-from mock_data import ENTITY_MISSES, EVALUATION_RUNS
-from models import Entity, EntityMiss, EvaluationRun, MissType, RiskLevel
+from models import Entity, EntityMiss, MissType, RiskLevel
+from presidio_evaluator import InputSample, Span, span_to_tag
+from presidio_evaluator.evaluation import EvaluationResult, SpanEvaluator
+from presidio_evaluator.evaluation.model_error import ModelError
+
 from routers.upload import _resolve_path, _uploaded
 
 router = APIRouter(prefix="/api/evaluation", tags=["evaluation"])
 
+logger = logging.getLogger(__name__)
 
-def _parse_entities(raw: str | list | None) -> list[Entity]:
+def _parse_entities_raw(raw: str | list | None) -> list[dict]:
+    """Parse entity column into a list of dicts."""
     if not raw:
         return []
     if isinstance(raw, str):
         try:
-            raw = json.loads(raw)
+            return json.loads(raw)
         except json.JSONDecodeError:
             return []
-    if not isinstance(raw, list):
-        return []
-    entities: list[Entity] = []
-    for item in raw:
-        if isinstance(item, dict):
-            try:
-                entities.append(Entity(**item))
-            except Exception:
-                continue
-    return entities
-
-
-def _entity_key(entity: Entity) -> tuple[str, int, int, str]:
-    return (entity.entity_type, entity.start, entity.end, entity.text)
+    if isinstance(raw, list):
+        return raw
+    return []
 
 
 def _risk_level(entity_type: str) -> RiskLevel:
     high = {
-        "CREDIT_CARD",
-        "CRYPTO",
-        "IBAN_CODE",
-        "MEDICAL_RECORD",
-        "PASSPORT",
-        "SSN",
-        "US_BANK_NUMBER",
-        "US_DRIVER_LICENSE",
-        "US_ITIN",
-        "US_PASSPORT",
+        "CREDIT_CARD", "CRYPTO", "IBAN_CODE", "MEDICAL_RECORD", "PASSPORT",
+        "SSN", "US_BANK_NUMBER", "US_DRIVER_LICENSE", "US_ITIN", "US_PASSPORT",
         "US_SSN",
     }
     medium = {
-        "DATE_TIME",
-        "EMAIL_ADDRESS",
-        "LOCATION",
-        "ORGANIZATION",
-        "PERSON",
-        "PHONE_NUMBER",
-        "URL",
+        "DATE_TIME", "EMAIL_ADDRESS", "LOCATION", "ORGANIZATION", "PERSON",
+        "PHONE_NUMBER", "URL",
     }
     if entity_type in high:
         return RiskLevel.high
@@ -65,86 +51,182 @@ def _risk_level(entity_type: str) -> RiskLevel:
     return RiskLevel.low
 
 
-def _pct(numerator: int, denominator: int) -> float:
-    if denominator == 0:
-        return 0.0
-    return round((numerator / denominator) * 100, 1)
-
-
 def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> dict:
-    misses: list[dict] = []
-    per_type = Counter()
-    predicted_per_type = Counter()
-    tp_per_type = Counter()
-    tp_total = 0
-    fp_total = 0
-    fn_total = 0
+    """Evaluate a single config using presidio-evaluator's SpanEvaluator."""
+    pred_column = f"config_{config_name}"
 
-    for index, row in enumerate(rows):
-        record_id = f"rec-{index + 1:04d}"
-        record_text = (row.get(text_column) or "").strip()
-        gold_entities = _parse_entities(row.get("final_entities"))
-        predicted_entities = _parse_entities(row.get(f"config_{config_name}"))
+    # Build InputSamples and prediction tags
+    dataset: list[InputSample] = []
+    all_predictions: list[list[str]] = []
+    row_indices: list[int] = []
 
-        gold_map = {_entity_key(entity): entity for entity in gold_entities}
-        predicted_map = {_entity_key(entity): entity for entity in predicted_entities}
+    for idx, row in enumerate(rows):
+        text = (row.get(text_column) or "").strip()
+        if not text:
+            continue
 
-        for entity in gold_map.values():
-            per_type[entity.entity_type] += 1
-        for entity in predicted_map.values():
-            predicted_per_type[entity.entity_type] += 1
+        gt_entities = _parse_entities_raw(row.get("final_entities"))
+        pred_entities = _parse_entities_raw(row.get(pred_column))
 
-        for key, entity in predicted_map.items():
-            if key in gold_map:
-                tp_total += 1
-                tp_per_type[entity.entity_type] += 1
-            else:
-                fp_total += 1
-                misses.append(
-                    EntityMiss(
-                        record_id=record_id,
-                        record_text=record_text,
-                        missed_entity=entity,
-                        miss_type=MissType.false_positive,
-                        entity_type=entity.entity_type,
-                        risk_level=_risk_level(entity.entity_type),
-                    ).model_dump()
-                )
+        spans = [
+            Span(
+                entity_type=ent["entity_type"],
+                entity_value=ent.get("text", text[ent["start"]:ent["end"]]),
+                start_position=ent["start"],
+                end_position=ent["end"],
+            )
+            for ent in gt_entities
+        ]
 
-        for key, entity in gold_map.items():
-            if key not in predicted_map:
-                fn_total += 1
-                misses.append(
-                    EntityMiss(
-                        record_id=record_id,
-                        record_text=record_text,
-                        missed_entity=entity,
-                        miss_type=MissType.false_negative,
-                        entity_type=entity.entity_type,
-                        risk_level=_risk_level(entity.entity_type),
-                    ).model_dump()
-                )
+        sample = InputSample(
+            full_text=text,
+            spans=spans,
+            create_tags_from_span=True,
+            sample_id=idx,
+        )
 
-    entity_types = sorted(set(per_type.keys()) | set(predicted_per_type.keys()))
+        pred_tags = span_to_tag(
+            scheme="IO",
+            text=text,
+            starts=[ent["start"] for ent in pred_entities],
+            ends=[ent["end"] for ent in pred_entities],
+            tags=[ent["entity_type"] for ent in pred_entities],
+            scores=[ent.get("score", 0.5) for ent in pred_entities],
+            tokens=sample.tokens,
+        )
+
+        dataset.append(sample)
+        all_predictions.append(pred_tags)
+        row_indices.append(idx)
+
+    # Collect all entity types
+    all_entity_types: set[str] = set()
+    for sample in dataset:
+        for span in sample.spans:
+            all_entity_types.add(span.entity_type)
+    for pred_tags in all_predictions:
+        for tag in pred_tags:
+            if tag != "O":
+                all_entity_types.add(tag)
+
+    # Run SpanEvaluator
+    evaluator = SpanEvaluator(
+        model=None,
+        entities_to_keep=list(all_entity_types) if all_entity_types else None,
+        iou_threshold=0.5,
+    )
+
+    evaluation_results: list[EvaluationResult] = []
+    for sample, pred_tags in zip(dataset, all_predictions):
+        results, model_errors = evaluator.compare(
+            input_sample=sample, prediction=pred_tags
+        )
+        evaluation_results.append(
+            EvaluationResult(
+                results=results,
+                model_errors=model_errors,
+                text=sample.full_text,
+                tokens=[str(t) for t in sample.tokens],
+                actual_tags=sample.tags,
+                predicted_tags=pred_tags,
+                start_indices=sample.start_indices,
+            )
+        )
+
+    scores = evaluator.calculate_score(evaluation_results)
+
+    # Overall metrics from SpanEvaluator
+    overall_precision = round((scores.pii_precision or 0) * 100, 1)
+    overall_recall = round((scores.pii_recall or 0) * 100, 1)
+    overall_f1 = round((scores.pii_f or 0) * 100, 1)
+    tp_total = scores.pii_true_positives or 0
+    fp_total = scores.pii_false_positives or 0
+    fn_total = scores.pii_false_negatives or 0
+
+    # Per-entity breakdown from SpanEvaluator
     by_entity_type = []
-    for entity_type in entity_types:
-        tp = tp_per_type[entity_type]
-        pred = predicted_per_type[entity_type]
-        gold = per_type[entity_type]
-        precision = _pct(tp, pred)
-        recall = _pct(tp, gold)
-        f1 = round((2 * precision * recall / (precision + recall)), 1) if precision + recall else 0.0
+    for etype in sorted(scores.per_type):
+        metrics = scores.per_type[etype]
         by_entity_type.append({
-            "type": entity_type,
-            "precision": precision,
-            "recall": recall,
-            "f1": f1,
+            "type": etype,
+            "precision": round((metrics.precision or 0) * 100, 1),
+            "recall": round((metrics.recall or 0) * 100, 1),
+            "f1": round((metrics.f_beta or 0) * 100, 1),
         })
 
-    overall_precision = _pct(tp_total, tp_total + fp_total)
-    overall_recall = _pct(tp_total, tp_total + fn_total)
-    overall_f1 = round((2 * overall_precision * overall_recall / (overall_precision + overall_recall)), 1) if overall_precision + overall_recall else 0.0
-    risk_counts = Counter(miss["risk_level"] for miss in misses)
+    # Build entity-level misses for the Error Explorer UI
+    misses: list[dict] = []
+    for orig_idx, eval_result in zip(row_indices, evaluation_results):
+        row = rows[orig_idx]
+        record_id = f"rec-{orig_idx + 1:04d}"
+        record_text = (row.get(text_column) or "").strip()
+
+        for error in eval_result.model_errors:
+            if error.error_type in ("FN", "FP"):
+                entity_type = error.annotation if error.error_type == "FN" else error.prediction
+                if entity_type == "O":
+                    continue
+                miss_type = MissType.false_negative if error.error_type == "FN" else MissType.false_positive
+                misses.append(
+                    EntityMiss(
+                        record_id=record_id,
+                        record_text=record_text,
+                        missed_entity=Entity(
+                            text=str(error.token),
+                            entity_type=entity_type,
+                            start=0,
+                            end=len(str(error.token)),
+                            score=None,
+                        ),
+                        miss_type=miss_type,
+                        entity_type=entity_type,
+                        risk_level=_risk_level(entity_type),
+                    ).model_dump()
+                )
+
+    risk_counts = Counter(m["risk_level"] for m in misses)
+
+    # Collect all model_errors across samples for the built-in helpers
+    all_model_errors = [
+        err
+        for eval_result in evaluation_results
+        for err in eval_result.model_errors
+    ]
+
+    # Most common missed tokens (FN) via evaluator
+    with contextlib.redirect_stdout(io.StringIO()):
+        common_fn = ModelError.most_common_fn_tokens(all_model_errors, n=10)
+    fn_errors = ModelError.get_false_negatives(all_model_errors)
+    fn_examples = []
+    for token, count in common_fn:
+        example = next((e for e in fn_errors if e.token == token), None)
+        fn_examples.append({
+            "token": str(token),
+            "count": count,
+            "entity_type": example.annotation if example else None,
+            "example_text": example.full_text if example else None,
+        })
+
+    # Most common incorrectly flagged tokens (FP) via evaluator
+    with contextlib.redirect_stdout(io.StringIO()):
+        common_fp = ModelError.most_common_fp_tokens(all_model_errors, n=10)
+    fp_errors = ModelError.get_false_positives(all_model_errors)
+    fp_examples = []
+    for token, count in common_fp:
+        example = next((e for e in fp_errors if e.token == token), None)
+        fp_examples.append({
+            "token": str(token),
+            "count": count,
+            "predicted_as": example.prediction if example else None,
+            "example_text": example.full_text if example else None,
+        })
+
+    # Confusion matrix via evaluator
+    entities_list, matrix = scores.to_confusion_matrix()
+    confusion_matrix = {
+        "labels": entities_list,
+        "matrix": matrix,
+    }
 
     return {
         "config_name": config_name,
@@ -158,13 +240,16 @@ def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> di
         },
         "by_entity_type": by_entity_type,
         "misses": misses,
+        "most_common_fn_tokens": fn_examples,
+        "most_common_fp_tokens": fp_examples,
+        "confusion_matrix": confusion_matrix,
         "summary": {
             "total_misses": len(misses),
             "false_positives": fp_total,
             "false_negatives": fn_total,
-            "high_risk": risk_counts[RiskLevel.high],
-            "medium_risk": risk_counts[RiskLevel.medium],
-            "low_risk": risk_counts[RiskLevel.low],
+            "high_risk": risk_counts.get(RiskLevel.high, 0),
+            "medium_risk": risk_counts.get(RiskLevel.medium, 0),
+            "low_risk": risk_counts.get(RiskLevel.low, 0),
         },
     }
 
@@ -202,7 +287,7 @@ async def get_evaluation_summary(
     has_final_entities = False
 
     for row in rows:
-        gold_entities = _parse_entities(row.get("final_entities"))
+        gold_entities = _parse_entities_raw(row.get("final_entities"))
         if gold_entities:
             has_final_entities = True
 
@@ -217,162 +302,4 @@ async def get_evaluation_summary(
         "selected_configs": selected_configs,
         "default_config": default_config,
         "per_config": per_config,
-    }
-
-
-@router.get("/runs", response_model=list[EvaluationRun])
-async def get_evaluation_runs():
-    """List all evaluation runs."""
-    return EVALUATION_RUNS
-
-
-@router.get("/latest", response_model=EvaluationRun)
-async def get_latest_run():
-    """Return the most recent evaluation run."""
-    return EVALUATION_RUNS[-1]
-
-
-@router.get("/misses", response_model=list[EntityMiss])
-async def get_entity_misses(
-    miss_type: str | None = None,
-    entity_type: str | None = None,
-    risk_level: str | None = None,
-):
-    """Return entity misses with optional filtering."""
-    results = ENTITY_MISSES
-    if miss_type and miss_type != "all":
-        results = [m for m in results if m.miss_type == miss_type]
-    if entity_type and entity_type != "all":
-        results = [m for m in results if m.entity_type == entity_type]
-    if risk_level and risk_level != "all":
-        results = [m for m in results if m.risk_level == risk_level]
-    return results
-
-
-@router.get("/metrics")
-async def get_metrics():
-    """Return overall and per-entity-type metrics for the latest run."""
-    latest = EVALUATION_RUNS[-1]
-    return {
-        "overall": {
-            "precision": 94,
-            "recall": 88,
-            "f1_score": 91,
-            "false_negatives": 40,
-        },
-        "by_entity_type": [
-            {"type": "PERSON", "precision": 96, "recall": 92, "f1": 94},
-            {"type": "EMAIL", "precision": 98, "recall": 95, "f1": 96},
-            {"type": "PHONE", "precision": 93, "recall": 89, "f1": 91},
-            {"type": "SSN", "precision": 97, "recall": 84, "f1": 90},
-            {"type": "CREDIT_CARD", "precision": 71, "recall": 65, "f1": 68},
-            {"type": "MEDICAL_RECORD", "precision": 89, "recall": 81, "f1": 85},
-        ],
-        "errors": {
-            "false_negatives": {
-                "total": 40,
-                "by_type": [
-                    {"type": "CREDIT_CARD", "count": 12},
-                    {"type": "MEDICAL_CONDITION", "count": 9},
-                    {"type": "SSN", "count": 8},
-                    {"type": "Other", "count": 11},
-                ],
-            },
-            "false_positives": {
-                "total": 19,
-                "by_type": [
-                    {"type": "DATE", "count": 7},
-                    {"type": "PERSON", "count": 5},
-                    {"type": "PHONE_NUMBER", "count": 4},
-                    {"type": "Other", "count": 3},
-                ],
-            },
-        },
-        "run": latest.model_dump(),
-    }
-
-
-@router.get("/patterns")
-async def get_error_patterns():
-    """Return common error patterns and insights."""
-    return {
-        "frequent_misses": [
-            {
-                "type": "CREDIT_CARD",
-                "count": 12,
-                "pattern": "Partial card numbers, low confidence scores",
-            },
-            {
-                "type": "MEDICAL_CONDITION",
-                "count": 9,
-                "pattern": "Medical terminology not in baseline recognizers",
-            },
-            {
-                "type": "SSN",
-                "count": 8,
-                "pattern": "Non-standard formatting (spaces instead of dashes)",
-            },
-            {
-                "type": "INSURANCE_POLICY",
-                "count": 6,
-                "pattern": "Custom format not covered by patterns",
-            },
-        ],
-        "common_patterns": [
-            {
-                "name": "Low Confidence Threshold",
-                "description": (
-                    "Credit card patterns are being detected but filtered out "
-                    "due to confidence scores below threshold (typically 0.65-0.75)"
-                ),
-            },
-            {
-                "name": "Format Variations",
-                "description": (
-                    "SSN and phone numbers with non-standard separators "
-                    "(spaces, periods) are being missed"
-                ),
-            },
-            {
-                "name": "Domain-Specific Terms",
-                "description": (
-                    "Medical conditions and insurance policy numbers "
-                    "require custom recognizers for your domain"
-                ),
-            },
-        ],
-        "insights": [
-            {
-                "title": "Adjust Confidence Thresholds",
-                "description": (
-                    "Consider lowering the confidence threshold for CREDIT_CARD "
-                    "entities from 0.70 to 0.60. This would capture 12 additional "
-                    "credit card numbers that are currently being missed."
-                ),
-            },
-            {
-                "title": "Add Custom Recognizers",
-                "description": (
-                    "Create domain-specific recognizers for MEDICAL_CONDITION "
-                    "(9 misses) and INSURANCE_POLICY (6 misses) to better handle "
-                    "your healthcare dataset."
-                ),
-            },
-            {
-                "title": "Expand Pattern Variations",
-                "description": (
-                    "Update SSN and PHONE_NUMBER patterns to handle "
-                    "alternative separators (spaces, periods, no "
-                    "separators). This addresses 8 SSN misses."
-                ),
-            },
-            {
-                "title": "Strong Areas",
-                "description": (
-                    "EMAIL (98% precision, 95% recall) and PERSON "
-                    "(96% precision, 92% recall) recognizers are "
-                    "performing well and don't require tuning."
-                ),
-            },
-        ],
     }

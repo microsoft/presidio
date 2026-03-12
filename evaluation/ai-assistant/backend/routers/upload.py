@@ -48,14 +48,39 @@ os.makedirs(_DATA_DIR, exist_ok=True)
 
 
 def _save_registry() -> None:
-    """Persist the dataset registry to disk."""
-    data = [ds.model_dump() for ds in _uploaded.values()]
+    """Persist the dataset registry to disk.
+
+    ``stored_path`` values are saved **relative** to ``_DATA_DIR`` so that
+    the registry file is portable across machines.
+    """
+    data = []
+    for ds in _uploaded.values():
+        d = ds.model_dump()
+        sp = d.get("stored_path")
+        if sp and os.path.isabs(sp):
+            try:
+                d["stored_path"] = os.path.relpath(sp, _DATA_DIR)
+            except ValueError:
+                pass  # different drive on Windows – keep absolute
+        p = d.get("path")
+        if p and os.path.isabs(p):
+            try:
+                d["path"] = os.path.relpath(p, _PROJECT_ROOT)
+            except ValueError:
+                pass
+        data.append(d)
     with open(_DATASETS_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
 
 def _load_registry() -> None:
-    """Load previously saved datasets from disk on startup."""
+    """Load previously saved datasets from disk on startup.
+
+    ``stored_path`` is expected to be relative to ``_DATA_DIR`` (written by
+    ``_save_registry``).  Legacy absolute paths (from older registries) are
+    handled gracefully: if the file doesn't exist at the absolute location we
+    try to locate it by basename inside ``_DATA_DIR``.
+    """
     if not os.path.isfile(_DATASETS_FILE):
         return
     try:
@@ -63,6 +88,24 @@ def _load_registry() -> None:
             data = json.load(f)
         for item in data:
             ds = UploadedDataset(**item)
+            if ds.stored_path:
+                # Resolve relative paths against _DATA_DIR
+                resolved = (
+                    ds.stored_path
+                    if os.path.isabs(ds.stored_path)
+                    else os.path.join(_DATA_DIR, ds.stored_path)
+                )
+                if os.path.isfile(resolved):
+                    ds = ds.model_copy(update={"stored_path": resolved})
+                else:
+                    # Legacy absolute path from another machine – try basename
+                    candidate = os.path.join(
+                        _DATA_DIR, os.path.basename(ds.stored_path)
+                    )
+                    if os.path.isfile(candidate):
+                        ds = ds.model_copy(update={"stored_path": candidate})
+                    else:
+                        ds = ds.model_copy(update={"stored_path": None})
             _uploaded[ds.id] = ds
     except Exception:
         pass  # ignore corrupt file

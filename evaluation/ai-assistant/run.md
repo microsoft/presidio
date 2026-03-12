@@ -7,6 +7,7 @@
 ```bash
 cd evaluation/ai-assistant/backend
 poetry install            # first time only — installs presidio-analyzer + deps
+poetry run python -m spacy download en_core_web_sm  # required by presidio-evaluator
 poetry run uvicorn main:app --reload --reload-dir . --port 8000 --log-level info
 ```
 
