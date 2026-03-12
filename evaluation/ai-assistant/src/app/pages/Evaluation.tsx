@@ -289,37 +289,34 @@ export function Evaluation() {
           </Card>
 
           {/* Overall Metrics Per Config */}
-          {summary.per_config.map((config, index) => (
+          {summary.per_config.map((config) => (
             <Card key={config.config_name} className="p-6">
               <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <div className="size-3 rounded-full" style={{ background: metricColors[index % metricColors.length] }} />
-                  <h3 className="font-semibold text-slate-900">{config.config_name}</h3>
-                </div>
+                <h3 className="font-semibold text-slate-900">Overall Metrics — {config.config_name}</h3>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                  <div className="text-center p-3 rounded-lg bg-blue-50">
-                    <div className="text-2xl font-semibold text-blue-700">{config.overall.precision}%</div>
-                    <div className="text-xs text-blue-600 mt-1">Precision</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-emerald-50">
-                    <div className="text-2xl font-semibold text-emerald-700">{config.overall.recall}%</div>
-                    <div className="text-xs text-emerald-600 mt-1">Recall</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-violet-50">
-                    <div className="text-2xl font-semibold text-violet-700">{config.overall.f1_score}%</div>
-                    <div className="text-xs text-violet-600 mt-1">F Score</div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.precision}%</div>
+                    <div className="text-xs text-slate-500 mt-1">Precision</div>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-slate-50">
-                    <div className="text-2xl font-semibold text-slate-700">{config.overall.true_positives}</div>
-                    <div className="text-xs text-slate-600 mt-1">True Positives</div>
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.recall}%</div>
+                    <div className="text-xs text-slate-500 mt-1">Recall</div>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-amber-50">
-                    <div className="text-2xl font-semibold text-amber-700">{config.overall.false_positives}</div>
-                    <div className="text-xs text-amber-600 mt-1">False Positives</div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.f1_score}%</div>
+                    <div className="text-xs text-slate-500 mt-1">F Score</div>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-red-50">
-                    <div className="text-2xl font-semibold text-red-700">{config.overall.false_negatives}</div>
-                    <div className="text-xs text-red-600 mt-1">False Negatives</div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.true_positives}</div>
+                    <div className="text-xs text-slate-500 mt-1">True Positives</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.false_positives}</div>
+                    <div className="text-xs text-slate-500 mt-1">False Positives</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-slate-50">
+                    <div className="text-2xl font-semibold text-slate-900">{config.overall.false_negatives}</div>
+                    <div className="text-xs text-slate-500 mt-1">False Negatives</div>
                   </div>
                 </div>
               </div>
