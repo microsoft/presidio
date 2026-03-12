@@ -134,6 +134,9 @@ In addition to Presidio, we maintain a repo focused on evaluation of models and 
 
 The main Presidio modules (analyzer, anonymizer, image-redactor) can be used both as a Python package and as a dockerized REST API. See the [different deployment samples](https://microsoft.github.io/presidio/samples/) for example deployments.
 
+!!! warning "Authentication and Authorization"
+    Presidio API endpoints do not include built-in authentication by design. The containers are intentionally kept lean to allow flexibility for different deployment scenarios. Authentication and authorization should be implemented at a separate infrastructure layer (e.g., an API gateway, reverse proxy, or service mesh) according to your specific use case and security requirements. It is strongly recommended not to expose Presidio services directly to untrusted networks without an authentication layer in front of them.
+
 ## Contributing
 
 ### How can I contribute to Presidio?
