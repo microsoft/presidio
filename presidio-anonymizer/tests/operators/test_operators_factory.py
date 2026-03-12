@@ -6,7 +6,7 @@ from presidio_anonymizer.operators import OperatorsFactory, OperatorType, AHDS_A
 
 def test_given_anonymizers_list_then_all_classes_are_there():
     anonymizers = OperatorsFactory().get_anonymizers()
-    expected_length = 8 if AHDS_AVAILABLE else 7
+    expected_length = 9 if AHDS_AVAILABLE else 8
     assert len(anonymizers) == expected_length
     expected_classes = [
         "hash",
@@ -16,6 +16,7 @@ def test_given_anonymizers_list_then_all_classes_are_there():
         "encrypt",
         "custom",
         "keep",
+        "pseudonymize",
     ]
     if AHDS_AVAILABLE:
         expected_classes.append("surrogate_ahds")
@@ -32,7 +33,7 @@ def test_given_decryptors_list_then_all_classes_are_there():
 
 
 def test_given_anonymize_operators_class_then_we_get_the_correct_class():
-    for operator_name in ["hash", "mask", "redact", "replace", "encrypt", "custom", "surrogate_ahds"]:
+    for operator_name in ["hash", "mask", "redact", "replace", "encrypt", "custom", "pseudonymize", "surrogate_ahds"]:
         operator = OperatorsFactory().create_operator_class(
             operator_name, OperatorType.Anonymize
         )
