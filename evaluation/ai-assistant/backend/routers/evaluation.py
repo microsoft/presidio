@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from __future__ import annotations
 
 import json
@@ -12,11 +13,23 @@ from presidio_evaluator import InputSample, Span, span_to_tag
 from presidio_evaluator.evaluation import EvaluationResult, SpanEvaluator
 
 from routers.upload import _uploaded
+=======
+import csv
+import json
+import os
+from collections import Counter
+
+from fastapi import APIRouter, HTTPException, Query
+from mock_data import ENTITY_MISSES, EVALUATION_RUNS
+from models import Entity, EntityMiss, EvaluationRun, MissType, RiskLevel
+from routers.upload import _resolve_path, _uploaded
+>>>>>>> ronshakutai/presidio-evaluation-repo
 
 router = APIRouter(prefix="/api/evaluation", tags=["evaluation"])
 
 logger = logging.getLogger(__name__)
 
+<<<<<<< HEAD
 # High-risk entity types whose misses are flagged as "high" risk.
 _HIGH_RISK_TYPES: set[str] = {
     "CREDIT_CARD",
@@ -26,6 +39,221 @@ _HIGH_RISK_TYPES: set[str] = {
     "IBAN_CODE",
     "MEDICAL_LICENSE",
 }
+=======
+def _parse_entities(raw: str | list | None) -> list[Entity]:
+    if not raw:
+        return []
+    if isinstance(raw, str):
+        try:
+            raw = json.loads(raw)
+        except json.JSONDecodeError:
+            return []
+    if not isinstance(raw, list):
+        return []
+    entities: list[Entity] = []
+    for item in raw:
+        if isinstance(item, dict):
+            try:
+                entities.append(Entity(**item))
+            except Exception:
+                continue
+    return entities
+
+
+def _entity_key(entity: Entity) -> tuple[str, int, int, str]:
+    return (entity.entity_type, entity.start, entity.end, entity.text)
+
+
+def _risk_level(entity_type: str) -> RiskLevel:
+    high = {
+        "CREDIT_CARD",
+        "CRYPTO",
+        "IBAN_CODE",
+        "MEDICAL_RECORD",
+        "PASSPORT",
+        "SSN",
+        "US_BANK_NUMBER",
+        "US_DRIVER_LICENSE",
+        "US_ITIN",
+        "US_PASSPORT",
+        "US_SSN",
+    }
+    medium = {
+        "DATE_TIME",
+        "EMAIL_ADDRESS",
+        "LOCATION",
+        "ORGANIZATION",
+        "PERSON",
+        "PHONE_NUMBER",
+        "URL",
+    }
+    if entity_type in high:
+        return RiskLevel.high
+    if entity_type in medium:
+        return RiskLevel.medium
+    return RiskLevel.low
+
+
+def _pct(numerator: int, denominator: int) -> float:
+    if denominator == 0:
+        return 0.0
+    return round((numerator / denominator) * 100, 1)
+
+
+def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> dict:
+    misses: list[dict] = []
+    per_type = Counter()
+    predicted_per_type = Counter()
+    tp_per_type = Counter()
+    tp_total = 0
+    fp_total = 0
+    fn_total = 0
+
+    for index, row in enumerate(rows):
+        record_id = f"rec-{index + 1:04d}"
+        record_text = (row.get(text_column) or "").strip()
+        gold_entities = _parse_entities(row.get("final_entities"))
+        predicted_entities = _parse_entities(row.get(f"config_{config_name}"))
+
+        gold_map = {_entity_key(entity): entity for entity in gold_entities}
+        predicted_map = {_entity_key(entity): entity for entity in predicted_entities}
+
+        for entity in gold_map.values():
+            per_type[entity.entity_type] += 1
+        for entity in predicted_map.values():
+            predicted_per_type[entity.entity_type] += 1
+
+        for key, entity in predicted_map.items():
+            if key in gold_map:
+                tp_total += 1
+                tp_per_type[entity.entity_type] += 1
+            else:
+                fp_total += 1
+                misses.append(
+                    EntityMiss(
+                        record_id=record_id,
+                        record_text=record_text,
+                        missed_entity=entity,
+                        miss_type=MissType.false_positive,
+                        entity_type=entity.entity_type,
+                        risk_level=_risk_level(entity.entity_type),
+                    ).model_dump()
+                )
+
+        for key, entity in gold_map.items():
+            if key not in predicted_map:
+                fn_total += 1
+                misses.append(
+                    EntityMiss(
+                        record_id=record_id,
+                        record_text=record_text,
+                        missed_entity=entity,
+                        miss_type=MissType.false_negative,
+                        entity_type=entity.entity_type,
+                        risk_level=_risk_level(entity.entity_type),
+                    ).model_dump()
+                )
+
+    entity_types = sorted(set(per_type.keys()) | set(predicted_per_type.keys()))
+    by_entity_type = []
+    for entity_type in entity_types:
+        tp = tp_per_type[entity_type]
+        pred = predicted_per_type[entity_type]
+        gold = per_type[entity_type]
+        precision = _pct(tp, pred)
+        recall = _pct(tp, gold)
+        f1 = round((2 * precision * recall / (precision + recall)), 1) if precision + recall else 0.0
+        by_entity_type.append({
+            "type": entity_type,
+            "precision": precision,
+            "recall": recall,
+            "f1": f1,
+        })
+
+    overall_precision = _pct(tp_total, tp_total + fp_total)
+    overall_recall = _pct(tp_total, tp_total + fn_total)
+    overall_f1 = round((2 * overall_precision * overall_recall / (overall_precision + overall_recall)), 1) if overall_precision + overall_recall else 0.0
+    risk_counts = Counter(miss["risk_level"] for miss in misses)
+
+    return {
+        "config_name": config_name,
+        "overall": {
+            "precision": overall_precision,
+            "recall": overall_recall,
+            "f1_score": overall_f1,
+            "true_positives": tp_total,
+            "false_positives": fp_total,
+            "false_negatives": fn_total,
+        },
+        "by_entity_type": by_entity_type,
+        "misses": misses,
+        "summary": {
+            "total_misses": len(misses),
+            "false_positives": fp_total,
+            "false_negatives": fn_total,
+            "high_risk": risk_counts[RiskLevel.high],
+            "medium_risk": risk_counts[RiskLevel.medium],
+            "low_risk": risk_counts[RiskLevel.low],
+        },
+    }
+
+
+@router.get("/summary")
+async def get_evaluation_summary(
+    dataset_id: str,
+    config_names: list[str] | None = Query(default=None),
+):
+    ds = _uploaded.get(dataset_id)
+    if ds is None:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    resolved = ds.stored_path if ds.stored_path and os.path.isfile(ds.stored_path) else _resolve_path(ds.path)
+    if not os.path.isfile(resolved):
+        raise HTTPException(status_code=404, detail="Dataset file not found on disk")
+
+    if ds.format != "csv":
+        raise HTTPException(status_code=400, detail="Only CSV evaluation is currently supported")
+
+    with open(resolved, encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+
+    available_configs = list(ds.ran_configs or [])
+    if not available_configs and rows:
+        available_configs = [
+            key.replace("config_", "")
+            for key in rows[0].keys()
+            if key.startswith("config_")
+        ]
+
+    default_config = available_configs[-1] if available_configs else None
+    selected_configs = [c for c in (config_names or ([default_config] if default_config else [])) if c in available_configs]
+
+    has_final_entities = False
+
+    for row in rows:
+        gold_entities = _parse_entities(row.get("final_entities"))
+        if gold_entities:
+            has_final_entities = True
+
+    if not has_final_entities:
+        raise HTTPException(status_code=400, detail="No reviewed final entities found for this dataset")
+
+    per_config = [_evaluate_config(rows, ds.text_column, config_name) for config_name in selected_configs]
+
+    return {
+        "dataset_id": dataset_id,
+        "available_configs": available_configs,
+        "selected_configs": selected_configs,
+        "default_config": default_config,
+        "per_config": per_config,
+    }
+
+
+@router.get("/runs", response_model=list[EvaluationRun])
+async def get_evaluation_runs():
+    """List all evaluation runs."""
+    return EVALUATION_RUNS
+>>>>>>> ronshakutai/presidio-evaluation-repo
 
 
 # ---------------------------------------------------------------------------

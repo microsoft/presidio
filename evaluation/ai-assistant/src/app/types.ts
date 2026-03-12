@@ -42,7 +42,7 @@ export interface UploadedDataset {
   record_count: number;
   has_entities: boolean;
   has_final_entities?: boolean;
-  columns: string[];
+  ran_configs?: string[];
   text_column: string;
   entities_column?: string | null;
 }
