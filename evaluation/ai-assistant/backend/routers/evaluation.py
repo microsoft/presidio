@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from __future__ import annotations
 
 import json
@@ -13,33 +12,11 @@ from presidio_evaluator import InputSample, Span, span_to_tag
 from presidio_evaluator.evaluation import EvaluationResult, SpanEvaluator
 
 from routers.upload import _uploaded
-=======
-import csv
-import json
-import os
-from collections import Counter
-
-from fastapi import APIRouter, HTTPException, Query
-from mock_data import ENTITY_MISSES, EVALUATION_RUNS
-from models import Entity, EntityMiss, EvaluationRun, MissType, RiskLevel
-from routers.upload import _resolve_path, _uploaded
->>>>>>> ronshakutai/presidio-evaluation-repo
 
 router = APIRouter(prefix="/api/evaluation", tags=["evaluation"])
 
 logger = logging.getLogger(__name__)
 
-<<<<<<< HEAD
-# High-risk entity types whose misses are flagged as "high" risk.
-_HIGH_RISK_TYPES: set[str] = {
-    "CREDIT_CARD",
-    "US_SSN",
-    "SSN",
-    "US_BANK_NUMBER",
-    "IBAN_CODE",
-    "MEDICAL_LICENSE",
-}
-=======
 def _parse_entities(raw: str | list | None) -> list[Entity]:
     if not raw:
         return []
@@ -253,7 +230,6 @@ async def get_evaluation_summary(
 async def get_evaluation_runs():
     """List all evaluation runs."""
     return EVALUATION_RUNS
->>>>>>> ronshakutai/presidio-evaluation-repo
 
 
 # ---------------------------------------------------------------------------
