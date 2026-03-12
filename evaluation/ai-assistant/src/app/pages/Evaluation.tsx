@@ -32,6 +32,22 @@ type Summary = {
       recall: number;
       f1: number;
     }>;
+    most_common_fn_tokens: Array<{
+      token: string;
+      count: number;
+      entity_type: string | null;
+      example_text: string | null;
+    }>;
+    most_common_fp_tokens: Array<{
+      token: string;
+      count: number;
+      predicted_as: string | null;
+      example_text: string | null;
+    }>;
+    confusion_matrix: {
+      labels: string[];
+      matrix: number[][];
+    };
     misses: Array<{
       record_id: string;
       record_text: string;
@@ -368,6 +384,110 @@ export function Evaluation() {
                                   {entity ? `${entity.f1}%` : <span className="text-slate-300">—</span>}
                                 </td>
                               </>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* What Did It Miss? (FN tokens) */}
+          {activeConfigResult && (activeConfigResult.most_common_fn_tokens?.length ?? 0) > 0 && (
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-slate-900">What Did It Miss?</h3>
+                  <p className="text-sm text-slate-500 mt-1">Most common tokens the model failed to detect, based on {activeConfigResult.config_name}.</p>
+                </div>
+                <div className="space-y-2">
+                  {activeConfigResult.most_common_fn_tokens.map((item) => (
+                    <div key={item.token} className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-100">
+                      <Badge className="bg-red-600 text-white shrink-0">{item.count}×</Badge>
+                      <div className="min-w-0">
+                        <div className="text-sm">
+                          <span className="font-semibold text-slate-900">"{item.token}"</span>
+                          {item.entity_type && <span className="text-slate-500"> — annotated as <span className="font-medium text-slate-700">{item.entity_type}</span></span>}
+                        </div>
+                        {item.example_text && (
+                          <div className="text-xs text-slate-500 mt-1 truncate">Example: "{item.example_text}"</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* What Did It Flag Incorrectly? (FP tokens) */}
+          {activeConfigResult && (activeConfigResult.most_common_fp_tokens?.length ?? 0) > 0 && (
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-slate-900">What Did It Flag Incorrectly?</h3>
+                  <p className="text-sm text-slate-500 mt-1">Most common tokens the model incorrectly flagged as PII, based on {activeConfigResult.config_name}.</p>
+                </div>
+                <div className="space-y-2">
+                  {activeConfigResult.most_common_fp_tokens.map((item) => (
+                    <div key={item.token} className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 border border-amber-100">
+                      <Badge className="bg-amber-600 text-white shrink-0">{item.count}×</Badge>
+                      <div className="min-w-0">
+                        <div className="text-sm">
+                          <span className="font-semibold text-slate-900">"{item.token}"</span>
+                          {item.predicted_as && <span className="text-slate-500"> — incorrectly flagged as <span className="font-medium text-slate-700">{item.predicted_as}</span></span>}
+                        </div>
+                        {item.example_text && (
+                          <div className="text-xs text-slate-500 mt-1 truncate">Example: "{item.example_text}"</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* Confusion Matrix */}
+          {activeConfigResult && (activeConfigResult.confusion_matrix?.labels?.length ?? 0) > 1 && (
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-slate-900">Confusion Matrix — {activeConfigResult.config_name}</h3>
+                  <p className="text-sm text-slate-500 mt-1">Shows which entity types get confused with each other. Rows are ground truth, columns are predictions.</p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="text-xs">
+                    <thead>
+                      <tr>
+                        <th className="p-1.5 text-left font-medium text-slate-600 sticky left-0 bg-white">Actual \ Predicted</th>
+                        {activeConfigResult.confusion_matrix.labels.map((label) => (
+                          <th key={label} className="p-1.5 text-center font-medium text-slate-600 min-w-[60px]">{label}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeConfigResult.confusion_matrix.labels.map((rowLabel, i) => (
+                        <tr key={rowLabel}>
+                          <td className="p-1.5 font-medium text-slate-800 sticky left-0 bg-white">{rowLabel}</td>
+                          {activeConfigResult!.confusion_matrix.matrix[i].map((value, j) => {
+                            const isCorrect = i === j;
+                            const hasValue = value > 0;
+                            const isOffDiag = !isCorrect && hasValue;
+                            return (
+                              <td
+                                key={j}
+                                className={`p-1.5 text-center tabular-nums ${
+                                  isCorrect && hasValue ? 'bg-green-50 text-green-700 font-medium' :
+                                  isOffDiag ? 'bg-red-50 text-red-700 font-medium' :
+                                  'text-slate-300'
+                                }`}
+                              >
+                                {value}
+                              </td>
                             );
                           })}
                         </tr>

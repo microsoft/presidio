@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import csv
+import contextlib
+import io
 import json
 import logging
 import os
@@ -10,6 +12,7 @@ from fastapi import APIRouter, HTTPException, Query
 from models import Entity, EntityMiss, MissType, RiskLevel
 from presidio_evaluator import InputSample, Span, span_to_tag
 from presidio_evaluator.evaluation import EvaluationResult, SpanEvaluator
+from presidio_evaluator.evaluation.model_error import ModelError
 
 from routers.upload import _resolve_path, _uploaded
 
@@ -183,6 +186,48 @@ def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> di
 
     risk_counts = Counter(m["risk_level"] for m in misses)
 
+    # Collect all model_errors across samples for the built-in helpers
+    all_model_errors = [
+        err
+        for eval_result in evaluation_results
+        for err in eval_result.model_errors
+    ]
+
+    # Most common missed tokens (FN) via evaluator
+    with contextlib.redirect_stdout(io.StringIO()):
+        common_fn = ModelError.most_common_fn_tokens(all_model_errors, n=10)
+    fn_errors = ModelError.get_false_negatives(all_model_errors)
+    fn_examples = []
+    for token, count in common_fn:
+        example = next((e for e in fn_errors if e.token == token), None)
+        fn_examples.append({
+            "token": str(token),
+            "count": count,
+            "entity_type": example.annotation if example else None,
+            "example_text": example.full_text if example else None,
+        })
+
+    # Most common incorrectly flagged tokens (FP) via evaluator
+    with contextlib.redirect_stdout(io.StringIO()):
+        common_fp = ModelError.most_common_fp_tokens(all_model_errors, n=10)
+    fp_errors = ModelError.get_false_positives(all_model_errors)
+    fp_examples = []
+    for token, count in common_fp:
+        example = next((e for e in fp_errors if e.token == token), None)
+        fp_examples.append({
+            "token": str(token),
+            "count": count,
+            "predicted_as": example.prediction if example else None,
+            "example_text": example.full_text if example else None,
+        })
+
+    # Confusion matrix via evaluator
+    entities_list, matrix = scores.to_confusion_matrix()
+    confusion_matrix = {
+        "labels": entities_list,
+        "matrix": matrix,
+    }
+
     return {
         "config_name": config_name,
         "overall": {
@@ -195,6 +240,9 @@ def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> di
         },
         "by_entity_type": by_entity_type,
         "misses": misses,
+        "most_common_fn_tokens": fn_examples,
+        "most_common_fp_tokens": fp_examples,
+        "confusion_matrix": confusion_matrix,
         "summary": {
             "total_misses": len(misses),
             "false_positives": fp_total,
