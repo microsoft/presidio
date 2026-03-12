@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
 - Nigerian Vehicle Registration (NG_VEHICLE_REGISTRATION) recognizer for current format plates (2011+)
 - US_NPI recognizer for National Provider Identifier with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
+- UK Driving Licence Number (UK_DRIVING_LICENCE) recognizer with pattern matching and context support
 - UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
 - UK Passport Number (UK_PASSPORT) recognizer for 2-letter + 7-digit format passports issued from 2015 onwards
 - UK Vehicle Registration Number (UK_VEHICLE_REGISTRATION) recognizer for current (2001+), prefix (1983-2001), and suffix (1963-1983) plate formats
@@ -746,3 +747,4 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
 - Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
 - Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).
+
