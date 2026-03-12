@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("presidio-analyzer")
 
+REGEX_TIMEOUT_SECONDS = 60
+
 
 class PatternRecognizer(LocalRecognizer):
     """
@@ -195,60 +197,69 @@ class PatternRecognizer(LocalRecognizer):
                 pattern.compiled_with_flags = flags
                 pattern.compiled_regex = re.compile(pattern.regex, flags=flags)
 
-            matches = pattern.compiled_regex.finditer(text)
-            match_time = datetime.datetime.now() - match_start_time
-            logger.debug(
-                "--- match_time[%s]: %.6f seconds",
-                pattern.name,
-                match_time.total_seconds(),
-            )
-
-            for match in matches:
-                start, end = match.span()
-                current_match = text[start:end]
-
-                # Skip empty results
-                if current_match == "":
-                    continue
-
-                score = pattern.score
-
-                validation_result = self.validate_result(current_match)
-                description = self.build_regex_explanation(
-                    self.name,
+            try:
+                matches = pattern.compiled_regex.finditer(
+                    text, timeout=REGEX_TIMEOUT_SECONDS
+                )
+                match_time = datetime.datetime.now() - match_start_time
+                logger.debug(
+                    "--- match_time[%s]: %.6f seconds",
                     pattern.name,
-                    pattern.regex,
-                    score,
-                    validation_result,
-                    flags,
-                )
-                pattern_result = RecognizerResult(
-                    entity_type=self.supported_entities[0],
-                    start=start,
-                    end=end,
-                    score=score,
-                    analysis_explanation=description,
-                    recognition_metadata={
-                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name,
-                        RecognizerResult.RECOGNIZER_IDENTIFIER_KEY: self.id,
-                    },
+                    match_time.total_seconds(),
                 )
 
-                if validation_result is not None:
-                    if validation_result:
-                        pattern_result.score = EntityRecognizer.MAX_SCORE
-                    else:
+                for match in matches:
+                    start, end = match.span()
+                    current_match = text[start:end]
+
+                    # Skip empty results
+                    if current_match == "":
+                        continue
+
+                    score = pattern.score
+
+                    validation_result = self.validate_result(current_match)
+                    description = self.build_regex_explanation(
+                        self.name,
+                        pattern.name,
+                        pattern.regex,
+                        score,
+                        validation_result,
+                        flags,
+                    )
+                    pattern_result = RecognizerResult(
+                        entity_type=self.supported_entities[0],
+                        start=start,
+                        end=end,
+                        score=score,
+                        analysis_explanation=description,
+                        recognition_metadata={
+                            RecognizerResult.RECOGNIZER_NAME_KEY: self.name,
+                            RecognizerResult.RECOGNIZER_IDENTIFIER_KEY: self.id,
+                        },
+                    )
+
+                    if validation_result is not None:
+                        if validation_result:
+                            pattern_result.score = EntityRecognizer.MAX_SCORE
+                        else:
+                            pattern_result.score = EntityRecognizer.MIN_SCORE
+
+                    invalidation_result = self.invalidate_result(current_match)
+                    if invalidation_result is not None and invalidation_result:
                         pattern_result.score = EntityRecognizer.MIN_SCORE
 
-                invalidation_result = self.invalidate_result(current_match)
-                if invalidation_result is not None and invalidation_result:
-                    pattern_result.score = EntityRecognizer.MIN_SCORE
+                    if pattern_result.score > EntityRecognizer.MIN_SCORE:
+                        results.append(pattern_result)
 
-                if pattern_result.score > EntityRecognizer.MIN_SCORE:
-                    results.append(pattern_result)
-
-                # Update analysis explanation score following validation or invalidation
-                description.score = pattern_result.score
+                    # Update analysis explanation score after validation or invalidation
+                    description.score = pattern_result.score
+            except TimeoutError:
+                logger.warning(
+                    "Regex pattern '%s' timed out after %s seconds, skipping.",
+                    pattern.name,
+                    REGEX_TIMEOUT_SECONDS,
+                )
 
         results = EntityRecognizer.remove_duplicates(results)
         return results
