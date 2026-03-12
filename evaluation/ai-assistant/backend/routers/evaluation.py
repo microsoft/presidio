@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+import csv
 import json
 import logging
+import os
 from collections import Counter
 from pathlib import Path
 
 import pandas as pd
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from models import Entity, EntityMiss, MissType, RiskLevel
 from presidio_evaluator import InputSample, Span, span_to_tag
 from presidio_evaluator.evaluation import EvaluationResult, SpanEvaluator
 
-from routers.upload import _uploaded
+from routers.upload import _resolve_path, _uploaded
 
 router = APIRouter(prefix="/api/evaluation", tags=["evaluation"])
 
@@ -224,12 +226,6 @@ async def get_evaluation_summary(
         "default_config": default_config,
         "per_config": per_config,
     }
-
-
-@router.get("/runs", response_model=list[EvaluationRun])
-async def get_evaluation_runs():
-    """List all evaluation runs."""
-    return EVALUATION_RUNS
 
 
 # ---------------------------------------------------------------------------
