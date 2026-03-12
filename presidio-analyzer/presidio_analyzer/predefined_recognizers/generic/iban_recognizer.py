@@ -146,62 +146,66 @@ class IbanRecognizer(PatternRecognizer):
         results = []
         for pattern in self.patterns:
             try:
-                matches = re.finditer(
-                    pattern.regex, text, flags=flags, timeout=REGEX_TIMEOUT_SECONDS
+                matches = list(
+                    re.finditer(
+                        pattern.regex, text, flags=flags, timeout=REGEX_TIMEOUT_SECONDS
+                    )
                 )
-
-                for match in matches:
-                    for grp_num in reversed(range(1, len(match.groups()) + 1)):
-                        start = match.span(0)[0]
-                        end = (
-                            match.span(grp_num)[1]
-                            if match.span(grp_num)[1] > 0
-                            else match.span(0)[1]
-                        )
-                        current_match = text[start:end]
-
-                        # Skip empty results
-                        if current_match == "":
-                            continue
-
-                        score = pattern.score
-
-                        validation_result = self.validate_result(current_match)
-                        description = PatternRecognizer.build_regex_explanation(
-                            self.name,
-                            pattern.name,
-                            pattern.regex,
-                            score,
-                            validation_result,
-                            flags,
-                        )
-                        pattern_result = RecognizerResult(
-                            entity_type=self.supported_entities[0],
-                            start=start,
-                            end=end,
-                            score=score,
-                            analysis_explanation=description,
-                            recognition_metadata={
-                                RecognizerResult.RECOGNIZER_NAME_KEY: self.name,
-                                RecognizerResult.RECOGNIZER_IDENTIFIER_KEY: self.id,
-                            },
-                        )
-
-                        if validation_result is not None:
-                            if validation_result:
-                                pattern_result.score = EntityRecognizer.MAX_SCORE
-                            else:
-                                pattern_result.score = EntityRecognizer.MIN_SCORE
-
-                        if pattern_result.score > EntityRecognizer.MIN_SCORE:
-                            results.append(pattern_result)
-                            break
             except TimeoutError:
                 logger.warning(
                     "Regex pattern '%s' timed out after %s seconds, skipping.",
                     pattern.name,
                     REGEX_TIMEOUT_SECONDS,
+                    exc_info=True,
                 )
+                continue
+
+            for match in matches:
+                for grp_num in reversed(range(1, len(match.groups()) + 1)):
+                    start = match.span(0)[0]
+                    end = (
+                        match.span(grp_num)[1]
+                        if match.span(grp_num)[1] > 0
+                        else match.span(0)[1]
+                    )
+                    current_match = text[start:end]
+
+                    # Skip empty results
+                    if current_match == "":
+                        continue
+
+                    score = pattern.score
+
+                    validation_result = self.validate_result(current_match)
+                    description = PatternRecognizer.build_regex_explanation(
+                        self.name,
+                        pattern.name,
+                        pattern.regex,
+                        score,
+                        validation_result,
+                        flags,
+                    )
+                    pattern_result = RecognizerResult(
+                        entity_type=self.supported_entities[0],
+                        start=start,
+                        end=end,
+                        score=score,
+                        analysis_explanation=description,
+                        recognition_metadata={
+                            RecognizerResult.RECOGNIZER_NAME_KEY: self.name,
+                            RecognizerResult.RECOGNIZER_IDENTIFIER_KEY: self.id,
+                        },
+                    )
+
+                    if validation_result is not None:
+                        if validation_result:
+                            pattern_result.score = EntityRecognizer.MAX_SCORE
+                        else:
+                            pattern_result.score = EntityRecognizer.MIN_SCORE
+
+                    if pattern_result.score > EntityRecognizer.MIN_SCORE:
+                        results.append(pattern_result)
+                        break
 
         return results
 
@@ -234,6 +238,7 @@ class IbanRecognizer(PatternRecognizer):
                 logger.warning(
                     "IBAN format validation regex timed out after %s seconds.",
                     REGEX_TIMEOUT_SECONDS,
+                    exc_info=True,
                 )
                 return False
 

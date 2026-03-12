@@ -381,6 +381,7 @@ class AnalyzerEngine:
                         " (word length: %d), keeping result.",
                         REGEX_TIMEOUT_SECONDS,
                         len(word),
+                        exc_info=True,
                     )
                     new_results.append(result)
         elif allow_list_match == "exact":
