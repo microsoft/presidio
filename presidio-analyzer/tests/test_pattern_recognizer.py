@@ -1,3 +1,5 @@
+import importlib
+import os
 import re
 from typing import List
 from unittest.mock import MagicMock, patch
@@ -550,4 +552,16 @@ def test_when_regex_times_out_then_other_patterns_still_run():
 def test_regex_timeout_seconds_value():
     """Test that REGEX_TIMEOUT_SECONDS is set to 60 seconds."""
     assert REGEX_TIMEOUT_SECONDS == 60
+
+
+def test_regex_timeout_seconds_env_var_override():
+    """Test that REGEX_TIMEOUT_SECONDS can be overridden via environment variable."""
+    import presidio_analyzer.pattern_recognizer as pr_module
+
+    with patch.dict(os.environ, {"REGEX_TIMEOUT_SECONDS": "30"}):
+        importlib.reload(pr_module)
+        assert pr_module.REGEX_TIMEOUT_SECONDS == 30
+
+    # Restore the module to default state
+    importlib.reload(pr_module)
 

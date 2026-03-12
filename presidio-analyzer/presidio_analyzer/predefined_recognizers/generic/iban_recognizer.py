@@ -1,4 +1,5 @@
 import logging
+import os
 import string
 from typing import Dict, List, Optional, Tuple
 
@@ -19,7 +20,7 @@ from presidio_analyzer.predefined_recognizers.generic.iban_patterns import (
 
 logger = logging.getLogger("presidio-analyzer")
 
-REGEX_TIMEOUT_SECONDS = 60
+REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
 
 class IbanRecognizer(PatternRecognizer):
     """

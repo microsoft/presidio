@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 import regex as re
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("presidio-analyzer")
 
-REGEX_TIMEOUT_SECONDS = 60
+REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
 
 
 class PatternRecognizer(LocalRecognizer):

@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from collections import Counter
 from typing import List, Optional
 
@@ -22,7 +23,7 @@ from presidio_analyzer.recognizer_registry import (
 
 logger = logging.getLogger("presidio-analyzer")
 
-REGEX_TIMEOUT_SECONDS = 60
+REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
 
 class AnalyzerEngine:
     """
