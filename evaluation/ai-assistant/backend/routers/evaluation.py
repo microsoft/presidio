@@ -165,13 +165,10 @@ def _run_evaluation() -> dict:
             if tag != "O":
                 all_entity_types.add(tag)
 
-    # Identity mapping (dataset and model use the same entity names)
-    entity_mapping = {e: e for e in all_entity_types}
-
     # Create the evaluator without a model (we already have predictions)
     evaluator = SpanEvaluator(
         model=None,
-        entity_mapping=entity_mapping,
+        entities_to_keep=list(all_entity_types) if all_entity_types else None,
         iou_threshold=0.5,
     )
 
