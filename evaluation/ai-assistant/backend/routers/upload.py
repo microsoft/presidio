@@ -248,6 +248,37 @@ def _parse_json(
     return records, sorted(columns), has_entities, has_final
 
 
+@router.post("/columns")
+async def get_csv_columns(file: UploadFile = File(...)):
+    """Read the header row of a CSV file and return the column names."""
+    if not file.filename or not file.filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Only .csv files are accepted.")
+    # Read just enough to get the header (first 64 KB)
+    head = (await file.read(65_536)).decode("utf-8", errors="replace")
+    reader = csv.DictReader(io.StringIO(head))
+    columns = list(reader.fieldnames or [])
+    if not columns:
+        raise HTTPException(status_code=400, detail="Could not detect columns in the CSV file.")
+    return {"columns": columns}
+
+
+@router.post("/columns-from-path")
+async def get_csv_columns_from_path(req: dict):
+    """Read the header row of a CSV at the given absolute path."""
+    file_path = os.path.expanduser(req.get("path", ""))
+    if not file_path or not os.path.isabs(file_path):
+        raise HTTPException(status_code=400, detail="Path must be absolute.")
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=400, detail=f"File not found: {file_path}")
+    with open(file_path, encoding="utf-8") as f:
+        head = f.read(65_536)
+    reader = csv.DictReader(io.StringIO(head))
+    columns = list(reader.fieldnames or [])
+    if not columns:
+        raise HTTPException(status_code=400, detail="Could not detect columns in the CSV file.")
+    return {"columns": columns}
+
+
 @router.get("/saved")
 async def list_saved_datasets():
     """Return all saved datasets (for the dropdown)."""

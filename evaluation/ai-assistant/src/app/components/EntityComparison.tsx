@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-import { CheckCircle, XCircle, Edit, Check, X, ChevronDown, FileText, Move, MousePointerClick, Undo2 } from 'lucide-react';
+import { CheckCircle, XCircle, Edit, Check, X, ChevronDown, FileText, Move, Undo2, Plus } from 'lucide-react';
 import type { Entity } from '../types';
 
 interface EntityComparisonProps {
@@ -16,6 +16,7 @@ interface EntityComparisonProps {
   llmEntities: Entity[];
   datasetEntities?: Entity[];
   allConfirmed?: boolean;
+  autoConfirmDataset?: boolean;
   onConfirm: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'dataset' | 'manual') => void;
   onReject: (recordId: string, entity: Entity, source: 'presidio' | 'llm' | 'dataset' | 'manual') => void;
   onAddManual: (recordId: string, entity: Entity) => void;
@@ -38,6 +39,7 @@ export function EntityComparison({
   llmEntities = [],
   datasetEntities = [],
   allConfirmed = false,
+  autoConfirmDataset = false,
   onConfirm,
   onReject,
   onAddManual,
@@ -54,47 +56,57 @@ export function EntityComparison({
   const [adjustedBounds, setAdjustedBounds] = useState<Record<string, { start: number; end: number }>>({});
   // Manually added entities (tracked locally for rendering)
   const [manualEntities, setManualEntities] = useState<Entity[]>([]);
-  // Text selection mode
-  const [selectionMode, setSelectionMode] = useState(false);
-  const recordTextRef = useRef<HTMLDivElement>(null);
+  const [customTypes, setCustomTypes] = useState<string[]>([]);
+  const [newTypeName, setNewTypeName] = useState('');
+  const [showNewTypeInput, setShowNewTypeInput] = useState<string | null>(null); // tracks which dropdown: 'manual' | 'edit' | null
 
-  // Handle text selection from the record text element
-  const handleTextSelection = useCallback(() => {
-    if (!selectionMode || !recordTextRef.current) return;
-    const sel = window.getSelection();
-    if (!sel || sel.isCollapsed || !sel.rangeCount) return;
+  // Drag state for boundary adjustment handles
+  const dragRef = useRef<{ side: 'start' | 'end'; entityKey: string; entity: Entity } | null>(null);
+  // Drag state for manual entity text selection
+  const manualDragRef = useRef<{ active: boolean; anchorIdx: number } | null>(null);
 
-    const range = sel.getRangeAt(0);
-    // Ensure selection is within the record text element
-    if (!recordTextRef.current.contains(range.startContainer) || !recordTextRef.current.contains(range.endContainer)) return;
+  // Reset per-record state when navigating to a different record
+  useEffect(() => {
+    setManualEntities([]);
+    setConfirmedEntities(new Set());
+    setRejectedEntities(new Set());
+    setExpandedContexts(new Set());
+    setEditedTypes({});
+    setAdjustingKeys(new Set());
+    setAdjustedBounds({});
+    setShowAddManual(false);
+    setManualEntity({ text: '', entity_type: '', start: 0, end: 0 });
+  }, [recordId]);
 
-    const selectedText = sel.toString().trim();
-    if (!selectedText) return;
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      dragRef.current = null;
+      manualDragRef.current = null;
+    };
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+    return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
+  }, []);
 
-    // Find the start position in the full record text
-    const fullText = recordText;
-    // Use the text node offset approach: walk through the container to compute absolute offset
-    const textContent = recordTextRef.current.textContent || '';
-    const preRange = document.createRange();
-    preRange.selectNodeContents(recordTextRef.current);
-    preRange.setEnd(range.startContainer, range.startOffset);
-    const preText = preRange.toString();
-
-    // Map DOM offset to recordText offset — the DOM textContent should match recordText
-    const startIdx = fullText.indexOf(selectedText, preText.length > 0 ? fullText.indexOf(preText.slice(-20)) : 0);
-    const fallbackStart = fullText.indexOf(selectedText);
-    const actualStart = startIdx >= 0 ? startIdx : (fallbackStart >= 0 ? fallbackStart : 0);
-    const actualEnd = actualStart + selectedText.length;
-
-    setManualEntity({
-      text: selectedText,
-      entity_type: '',
-      start: actualStart,
-      end: actualEnd,
+  const handleDragMove = useCallback((e: React.MouseEvent) => {
+    if (!dragRef.current) return;
+    e.preventDefault();
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if (!target) return;
+    const charIdx = target.getAttribute('data-char-idx');
+    if (charIdx === null) return;
+    const idx = Number(charIdx);
+    const { side, entityKey, entity } = dragRef.current;
+    setAdjustedBounds(prev => {
+      const cur = prev[entityKey] || { start: entity.start, end: entity.end };
+      if (side === 'start') {
+        const newStart = Math.max(0, Math.min(idx, cur.end));
+        return { ...prev, [entityKey]: { ...cur, start: newStart } };
+      } else {
+        const newEnd = Math.max(cur.start, Math.min(idx + 1, recordText.length));
+        return { ...prev, [entityKey]: { ...cur, end: newEnd } };
+      }
     });
-    setShowAddManual(true);
-    sel.removeAllRanges();
-  }, [selectionMode, recordText]);
+  }, [recordText.length]);
 
   // Combine and classify entities from all three sources
   const annotatedEntities: AnnotatedEntity[] = [];
@@ -126,7 +138,12 @@ export function EntityComparison({
   presidioEntities.forEach(e => addToSpans(e, 'presidio'));
   llmEntities.forEach(e => addToSpans(e, 'llm'));
   datasetEntities.forEach(e => addToSpans(e, 'dataset'));
-  manualEntities.forEach(e => addToSpans(e, 'manual'));
+  // Manual entities are always added as separate entries (never merged with existing spans)
+  manualEntities.forEach(e => {
+    const types = new Map<string, string>();
+    types.set('manual', e.entity_type);
+    spans.push({ entity: { ...e }, sources: new Set<EntitySource>(['manual']), types });
+  });
 
   const statusForSource = (src: EntitySource): EntityStatus => {
     if (src === 'presidio') return 'presidio-only';
@@ -144,10 +161,16 @@ export function EntityComparison({
       // All active sources agree on type → single "Match" card
       annotatedEntities.push({ ...entity, status: 'match', sources: sourceList });
     } else if (sourceList.length >= 2 && !allAgree) {
-      // Sources disagree on type → separate card per source so user can confirm/reject each
+      // Sources disagree on type → group by type so sources that agree are merged
+      const typeToSources = new Map<string, EntitySource[]>();
       for (const src of sourceList) {
         const srcType = types.get(src) || entity.entity_type;
-        annotatedEntities.push({ ...entity, entity_type: srcType, status: statusForSource(src), sources: [src] });
+        if (!typeToSources.has(srcType)) typeToSources.set(srcType, []);
+        typeToSources.get(srcType)!.push(src);
+      }
+      for (const [type, srcs] of typeToSources) {
+        const status = srcs.length >= 2 ? 'match' as EntityStatus : statusForSource(srcs[0]);
+        annotatedEntities.push({ ...entity, entity_type: type, status, sources: srcs });
       }
     } else if (sourceList.length === 1) {
       const s = sourceList[0];
@@ -157,7 +180,9 @@ export function EntityComparison({
     }
   });
 
-  const getEntityKey = (entity: AnnotatedEntity) => `${entity.text}-${entity.start}-${entity.end}-${entity.sources.join(',')}`;
+  const getEntityKey = (entity: AnnotatedEntity) => `${entity.entity_type}-${entity.text}-${entity.start}-${entity.end}-${entity.sources.join(',')}`;
+
+
 
   // When parent signals all entities are confirmed, mark them all
   useEffect(() => {
@@ -165,7 +190,18 @@ export function EntityComparison({
       setConfirmedEntities(new Set(annotatedEntities.map(e => getEntityKey(e))));
       setRejectedEntities(new Set());
     }
-  }, [allConfirmed]);
+  }, [allConfirmed, recordId]);
+
+  // Auto-confirm only golden-dataset entities on second-config runs
+  useEffect(() => {
+    if (!autoConfirmDataset || annotatedEntities.length === 0) return;
+    const datasetKeys = annotatedEntities
+      .filter(e => e.sources.includes('dataset'))
+      .map(e => getEntityKey(e));
+    if (datasetKeys.length > 0) {
+      setConfirmedEntities(prev => new Set([...prev, ...datasetKeys]));
+    }
+  }, [autoConfirmDataset, recordId]);
 
   const getContextForEntity = (entity: Entity, adjustedKey?: string) => {
     const CONTEXT_CHARS = 150;
@@ -274,7 +310,6 @@ export function EntityComparison({
       onAddManual(recordId, entity);
       setManualEntity({ text: '', entity_type: '', start: 0, end: 0 });
       setShowAddManual(false);
-      setSelectionMode(false);
     }
   };
 
@@ -283,7 +318,22 @@ export function EntityComparison({
 
   // Include any entity types found in the data that aren't in the default list
   const dataTypes = annotatedEntities.map(e => e.entity_type).filter(Boolean);
-  const ENTITY_TYPES = Array.from(new Set([...DEFAULT_ENTITY_TYPES, ...dataTypes])).sort();
+  const ENTITY_TYPES = Array.from(new Set([...DEFAULT_ENTITY_TYPES, ...dataTypes, ...customTypes])).sort();
+
+  const addCustomType = (target: string) => {
+    const name = newTypeName.trim().toUpperCase().replace(/\s+/g, '_');
+    if (name && !ENTITY_TYPES.includes(name)) {
+      setCustomTypes(prev => [...prev, name]);
+    }
+    if (name) {
+      if (target === 'manual') {
+        setManualEntity(prev => ({ ...prev, entity_type: name }));
+      }
+    }
+    setNewTypeName('');
+    setShowNewTypeInput(null);
+    return name;
+  };
 
   const getStatusBadge = (entity: AnnotatedEntity, confirmed?: boolean, rejected?: boolean) => {
     if (confirmed) {
@@ -301,10 +351,10 @@ export function EntityComparison({
       badges.push(<Badge key="dataset" className="bg-amber-100 text-amber-800 border-amber-300">Golden Dataset</Badge>);
     }
     if (entity.sources.includes('presidio')) {
-      badges.push(<Badge key="presidio" className="bg-purple-100 text-purple-800 border-purple-300">Presidio</Badge>);
+      badges.push(<Badge key="presidio" className="bg-purple-100 text-purple-800 border-purple-300">Presidio Analyzer</Badge>);
     }
     if (entity.sources.includes('llm')) {
-      badges.push(<Badge key="llm" className="bg-cyan-100 text-cyan-800 border-cyan-300">LLM as a Judge</Badge>);
+      badges.push(<Badge key="llm" className="bg-cyan-100 text-cyan-800 border-cyan-300">Presidio LLM Recognizer</Badge>);
     }
     if (badges.length === 0) {
       badges.push(<Badge key="pending" variant="secondary">Pending</Badge>);
@@ -315,34 +365,14 @@ export function EntityComparison({
   return (
     <Card className="p-6">
       <div className="space-y-6">
-        {/* Record Text — selectable for manual annotation */}
+        {/* Record Text */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label>Record Text</Label>
-            <Button
-              size="sm"
-              variant={selectionMode ? 'default' : 'outline'}
-              onClick={() => setSelectionMode(!selectionMode)}
-              className={selectionMode ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
-            >
-              <MousePointerClick className="size-3 mr-1" />
-              {selectionMode ? 'Selection Mode On' : 'Select Text to Annotate'}
-            </Button>
-          </div>
+          <Label>Record Text</Label>
           <div
-            ref={recordTextRef}
-            onMouseUp={handleTextSelection}
-            className={`p-4 rounded-lg border text-sm font-mono transition-colors ${
-              selectionMode
-                ? 'bg-emerald-50 border-emerald-300 cursor-text select-text'
-                : 'bg-slate-50 border-slate-200'
-            }`}
+            className="p-4 rounded-lg border text-sm font-mono bg-slate-50 border-slate-200"
           >
             {recordText}
           </div>
-          {selectionMode && (
-            <p className="text-xs text-emerald-700">Highlight text above to create a manual entity annotation.</p>
-          )}
         </div>
 
         {/* Entities List */}
@@ -366,6 +396,61 @@ export function EntityComparison({
                 <Edit className="size-3" />
                 Manual Entity Annotation
               </div>
+
+              {/* Interactive text marker */}
+              <div>
+                <Label className="text-xs text-emerald-700">Click and drag to mark the entity in the text</Label>
+                <div
+                  className="mt-1 p-2 bg-white rounded border border-emerald-200 text-sm font-mono leading-relaxed select-none max-h-40 overflow-y-auto"
+                  onMouseMove={(e) => {
+                    if (!manualDragRef.current?.active) return;
+                    e.preventDefault();
+                    const target = document.elementFromPoint(e.clientX, e.clientY);
+                    if (!target) return;
+                    const charIdx = target.getAttribute('data-manual-char-idx');
+                    if (charIdx === null) return;
+                    const idx = Number(charIdx);
+                    const anchor = manualDragRef.current.anchorIdx;
+                    const newStart = Math.min(anchor, idx);
+                    const newEnd = Math.max(anchor, idx) + 1;
+                    setManualEntity(prev => ({
+                      ...prev,
+                      text: recordText.substring(newStart, newEnd),
+                      start: newStart,
+                      end: newEnd,
+                    }));
+                  }}
+                  onMouseUp={() => { manualDragRef.current = null; }}
+                  style={{ cursor: manualDragRef.current?.active ? 'text' : undefined }}
+                >
+                  {recordText.split('').map((ch, i) => {
+                    const isHighlighted = manualEntity.text && i >= manualEntity.start && i < manualEntity.end;
+                    return (
+                      <span
+                        key={i}
+                        data-manual-char-idx={i}
+                        className={isHighlighted
+                          ? 'bg-emerald-200 text-emerald-900 font-semibold'
+                          : 'text-slate-700 hover:bg-emerald-100'}
+                        style={{ cursor: 'text' }}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          manualDragRef.current = { active: true, anchorIdx: i };
+                          setManualEntity(prev => ({
+                            ...prev,
+                            text: recordText[i],
+                            start: i,
+                            end: i + 1,
+                          }));
+                        }}
+                      >
+                        {ch}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="text-xs">Entity Text</Label>
@@ -387,16 +472,44 @@ export function EntityComparison({
                 </div>
                 <div>
                   <Label className="text-xs">Entity Type</Label>
-                  <Select value={manualEntity.entity_type} onValueChange={(val) => setManualEntity({ ...manualEntity, entity_type: val })}>
-                    <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Select type..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ENTITY_TYPES.map(type => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {showNewTypeInput === 'manual' ? (
+                    <div className="flex gap-1">
+                      <Input
+                        autoFocus
+                        placeholder="NEW_TYPE_NAME"
+                        value={newTypeName}
+                        onChange={(e) => setNewTypeName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') addCustomType('manual');
+                          if (e.key === 'Escape') { setNewTypeName(''); setShowNewTypeInput(null); }
+                        }}
+                        className="text-sm h-8 uppercase"
+                      />
+                      <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => addCustomType('manual')}>
+                        <Check className="size-3" />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => { setNewTypeName(''); setShowNewTypeInput(null); }}>
+                        <X className="size-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Select value={manualEntity.entity_type} onValueChange={(val) => {
+                      if (val === '__add_new__') { setShowNewTypeInput('manual'); return; }
+                      setManualEntity({ ...manualEntity, entity_type: val });
+                    }}>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Select type..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ENTITY_TYPES.map(type => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                        <SelectItem value="__add_new__" className="text-blue-600 font-medium">
+                          <span className="flex items-center gap-1"><Plus className="size-3" /> Add new type...</span>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
               </div>
               {manualEntity.text && (
@@ -440,19 +553,57 @@ export function EntityComparison({
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-slate-900">{entity.text}</span>
                         {!isConfirmed && !isRejected ? (
-                          <Select
-                            value={editedTypes[key] || entity.entity_type}
-                            onValueChange={(val) => setEditedTypes(prev => ({ ...prev, [key]: val }))}
-                          >
-                            <SelectTrigger className="h-7 w-auto min-w-[140px] text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ENTITY_TYPES.map(type => (
-                                <SelectItem key={type} value={type}>{type}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          showNewTypeInput === `edit-${key}` ? (
+                            <div className="flex gap-1">
+                              <Input
+                                autoFocus
+                                placeholder="NEW_TYPE_NAME"
+                                value={newTypeName}
+                                onChange={(e) => setNewTypeName(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    const name = newTypeName.trim().toUpperCase().replace(/\s+/g, '_');
+                                    if (name && !ENTITY_TYPES.includes(name)) setCustomTypes(prev => [...prev, name]);
+                                    if (name) setEditedTypes(prev => ({ ...prev, [key]: name }));
+                                    setNewTypeName(''); setShowNewTypeInput(null);
+                                  }
+                                  if (e.key === 'Escape') { setNewTypeName(''); setShowNewTypeInput(null); }
+                                }}
+                                className="text-xs h-7 w-[140px] uppercase"
+                              />
+                              <Button size="sm" variant="ghost" className="h-7 px-1" onClick={() => {
+                                const name = newTypeName.trim().toUpperCase().replace(/\s+/g, '_');
+                                if (name && !ENTITY_TYPES.includes(name)) setCustomTypes(prev => [...prev, name]);
+                                if (name) setEditedTypes(prev => ({ ...prev, [key]: name }));
+                                setNewTypeName(''); setShowNewTypeInput(null);
+                              }}>
+                                <Check className="size-3" />
+                              </Button>
+                              <Button size="sm" variant="ghost" className="h-7 px-1" onClick={() => { setNewTypeName(''); setShowNewTypeInput(null); }}>
+                                <X className="size-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <Select
+                              value={editedTypes[key] || entity.entity_type}
+                              onValueChange={(val) => {
+                                if (val === '__add_new__') { setShowNewTypeInput(`edit-${key}`); return; }
+                                setEditedTypes(prev => ({ ...prev, [key]: val }));
+                              }}
+                            >
+                              <SelectTrigger className="h-7 w-auto min-w-[140px] text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ENTITY_TYPES.map(type => (
+                                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                                ))}
+                                <SelectItem value="__add_new__" className="text-blue-600 font-medium">
+                                  <span className="flex items-center gap-1"><Plus className="size-3" /> Add new type...</span>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )
                         ) : (
                           <Badge variant="outline">{editedTypes[key] || entity.entity_type}</Badge>
                         )}
@@ -466,6 +617,7 @@ export function EntityComparison({
                           <span className="text-amber-600 text-xs">(original: {entity.start}-{entity.end})</span>
                         )}
                       </div>
+
                     </div>
 
                     {!isConfirmed && !isRejected ? (
@@ -499,6 +651,7 @@ export function EntityComparison({
                           variant="ghost"
                           className="text-green-700 hover:text-green-800 hover:bg-green-100"
                           onClick={() => handleConfirmEntity(entity)}
+
                         >
                           <CheckCircle className="size-4 mr-1" />
                           Confirm
@@ -533,8 +686,6 @@ export function EntityComparison({
                     const clampedEnd = Math.max(clampedStart, Math.min(bounds.end, recordText.length));
                     const previewText = recordText.substring(clampedStart, clampedEnd);
                     const PREVIEW_CTX = 80;
-                    const ctxBefore = recordText.substring(Math.max(0, clampedStart - PREVIEW_CTX), clampedStart);
-                    const ctxAfter = recordText.substring(clampedEnd, Math.min(recordText.length, clampedEnd + PREVIEW_CTX));
                     const hasChanged = bounds.start !== entity.start || bounds.end !== entity.end;
                     return (
                       <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg space-y-3">
@@ -578,15 +729,69 @@ export function EntityComparison({
                             />
                           </div>
                         </div>
-                        {/* Live preview */}
+                        {/* Live preview with draggable boundaries */}
                         <div>
-                          <Label className="text-xs text-amber-700">Live Preview</Label>
-                          <div className="mt-1 p-2 bg-white rounded border border-amber-200 text-sm font-mono leading-relaxed">
-                            <span className="text-slate-400">{clampedStart > PREVIEW_CTX ? '...' : ''}{ctxBefore}</span>
-                            <span className={`px-0.5 rounded font-semibold ${hasChanged ? 'bg-amber-200 text-amber-900' : 'bg-yellow-200 text-slate-900'}`}>
-                              {previewText || <span className="text-slate-400 italic">empty</span>}
-                            </span>
-                            <span className="text-slate-400">{ctxAfter}{clampedEnd + PREVIEW_CTX < recordText.length ? '...' : ''}</span>
+                          <Label className="text-xs text-amber-700">Live Preview <span className="text-amber-500 font-normal">(drag the handles to adjust)</span></Label>
+                          <div
+                            className="mt-1 p-2 bg-white rounded border border-amber-200 text-sm font-mono leading-relaxed select-none"
+                            onMouseMove={handleDragMove}
+                            onMouseUp={() => { dragRef.current = null; }}
+                            style={{ cursor: dragRef.current ? 'col-resize' : undefined }}
+                          >
+                            {(() => {
+                              const previewStartIdx = Math.max(0, clampedStart - PREVIEW_CTX);
+                              const previewEndIdx = Math.min(recordText.length, clampedEnd + PREVIEW_CTX);
+                              const chars: React.ReactNode[] = [];
+                              if (previewStartIdx > 0) {
+                                chars.push(<span key="ellipsis-before" className="text-slate-400">…</span>);
+                              }
+                              for (let i = previewStartIdx; i < previewEndIdx; i++) {
+                                const ch = recordText[i];
+                                const isHighlighted = i >= clampedStart && i < clampedEnd;
+                                const isLeftEdge = i === clampedStart;
+                                const isRightEdge = i === clampedEnd - 1;
+                                chars.push(
+                                  <span
+                                    key={i}
+                                    data-char-idx={i}
+                                    className={isHighlighted
+                                      ? `px-0 ${hasChanged ? 'bg-amber-200 text-amber-900' : 'bg-yellow-200 text-slate-900'} font-semibold`
+                                      : 'text-slate-400'}
+                                    style={{ position: 'relative' }}
+                                  >
+                                    {isLeftEdge && (
+                                      <span
+                                        className="absolute left-0 top-0 bottom-0 w-[3px] bg-amber-500 rounded-full cursor-col-resize hover:bg-amber-600 hover:w-[5px] z-10"
+                                        style={{ transform: 'translateX(-1px)' }}
+                                        onMouseDown={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          dragRef.current = { side: 'start', entityKey: key, entity };
+                                        }}
+                                        title="Drag to adjust start"
+                                      />
+                                    )}
+                                    {ch}
+                                    {isRightEdge && (
+                                      <span
+                                        className="absolute right-0 top-0 bottom-0 w-[3px] bg-amber-500 rounded-full cursor-col-resize hover:bg-amber-600 hover:w-[5px] z-10"
+                                        style={{ transform: 'translateX(1px)' }}
+                                        onMouseDown={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          dragRef.current = { side: 'end', entityKey: key, entity };
+                                        }}
+                                        title="Drag to adjust end"
+                                      />
+                                    )}
+                                  </span>
+                                );
+                              }
+                              if (previewEndIdx < recordText.length) {
+                                chars.push(<span key="ellipsis-after" className="text-slate-400">…</span>);
+                              }
+                              return chars;
+                            })()}
                           </div>
                         </div>
                         {/* Adjusted entity text */}

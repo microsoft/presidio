@@ -2,7 +2,7 @@ import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Checkbox } from '../components/ui/checkbox';
-import { ChevronLeft, Download, FileText, ExternalLink, Lightbulb } from 'lucide-react';
+import { ChevronLeft, Download, FileText, ExternalLink, Lightbulb, RotateCcw } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
@@ -238,16 +238,22 @@ export function Decision() {
         </div>
       </Card>
 
-      {/* Export Action */}
+      {/* Actions */}
       <div className="flex justify-between pt-4">
         <Button variant="outline" onClick={() => navigate('/evaluation')}>
           <ChevronLeft className="size-4 mr-1" />
           Back
         </Button>
-        <Button size="lg" onClick={handleExportArtifacts} disabled={!canExport}>
-          <Download className="size-4 mr-2" />
-          Export Artifacts
-        </Button>
+        <div className="flex gap-3">
+          <Button size="lg" onClick={handleExportArtifacts} disabled={!canExport}>
+            <Download className="size-4 mr-2" />
+            Export Artifacts
+          </Button>
+          <Button size="lg" variant="outline" onClick={() => navigate('/')}>
+            <RotateCcw className="size-4 mr-2" />
+            Start New Iteration
+          </Button>
+        </div>
       </div>
     </div>
   );

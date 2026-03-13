@@ -55,6 +55,9 @@ export interface SetupConfig {
   runLlm: boolean;
   hasDatasetEntities: boolean;
   hasFinalEntities: boolean;
+  presidioConfigName?: string;
+  presidioConfigPath?: string | null;
+  llmModel?: string;
 }
 
 export interface EvaluationMetrics {

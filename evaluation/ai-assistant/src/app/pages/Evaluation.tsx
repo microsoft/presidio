@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -8,10 +7,10 @@ import { Card } from '../components/ui/card';
 import { Checkbox } from '../components/ui/checkbox';
 import { Input } from '../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { AlertTriangle, ArrowRight, BarChart3, CheckCircle, ChevronLeft, Filter, Loader2, Search, XCircle } from 'lucide-react';
+import { AlertTriangle, ArrowRight, BarChart3, CheckCircle2, ChevronLeft, ChevronRight, Filter, Grid3X3, List, Loader2, Search, XCircle } from 'lucide-react';
 import { api } from '../lib/api';
 
-type MissType = 'all' | 'false-positive' | 'false-negative';
+type MissType = 'all' | 'true-positive' | 'false-positive' | 'false-negative';
 
 type Summary = {
   available_configs: string[];
@@ -36,9 +35,18 @@ type Summary = {
         start: number;
         end: number;
       };
-      miss_type: 'false-positive' | 'false-negative';
+      miss_type: 'true-positive' | 'false-positive' | 'false-negative';
       entity_type: string;
       risk_level: 'high' | 'medium' | 'low';
+    }>;
+    by_entity_type: Array<{
+      type: string;
+      precision: number;
+      recall: number;
+      f1: number;
+      true_positives: number;
+      false_positives: number;
+      false_negatives: number;
     }>;
     summary: {
       total_misses: number;
@@ -50,8 +58,6 @@ type Summary = {
     };
   }>;
 };
-
-const metricColors = ['#2563eb', '#059669', '#7c3aed', '#ea580c', '#dc2626', '#0f172a'];
 
 export function Evaluation() {
   const navigate = useNavigate();
@@ -76,9 +82,11 @@ export function Evaluation() {
 
   const [filterType, setFilterType] = useState<MissType>('all');
   const [filterEntityType, setFilterEntityType] = useState<string>('all');
-  const [filterRiskLevel, setFilterRiskLevel] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeErrorConfig, setActiveErrorConfig] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [showTruePositives, setShowTruePositives] = useState(false);
 
   useEffect(() => {
     if (!datasetId) {
@@ -151,37 +159,33 @@ export function Evaluation() {
   const filteredMisses = useMemo(() => {
     const misses = activeConfigResult?.misses || [];
     return misses.filter((miss) => {
+      if (!showTruePositives && miss.miss_type === 'true-positive') return false;
       if (filterType !== 'all' && miss.miss_type !== filterType) return false;
       if (filterEntityType !== 'all' && miss.entity_type !== filterEntityType) return false;
-      if (filterRiskLevel !== 'all' && miss.risk_level !== filterRiskLevel) return false;
       if (searchQuery && !miss.record_text.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
-  }, [activeConfigResult, filterEntityType, filterRiskLevel, filterType, searchQuery]);
+  }, [activeConfigResult, filterEntityType, filterType, searchQuery, showTruePositives]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterType, filterEntityType, searchQuery, activeErrorConfig, showTruePositives]);
+
+  // Reset filterType if TP is selected but toggle is turned off
+  useEffect(() => {
+    if (!showTruePositives && filterType === 'true-positive') {
+      setFilterType('all');
+    }
+  }, [showTruePositives]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredMisses.length / pageSize));
+  const pagedMisses = filteredMisses.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const entityTypes = useMemo(() => {
     const types = new Set((activeConfigResult?.misses || []).map((miss) => miss.entity_type));
     return ['all', ...Array.from(types).sort()];
   }, [activeConfigResult]);
-
-  const metricChartData = useMemo(() => {
-    const metrics = [
-      ['Precision', 'precision'],
-      ['Recall', 'recall'],
-      ['F1 Score', 'f1_score'],
-      ['True Positives', 'true_positives'],
-      ['False Positives', 'false_positives'],
-      ['False Negatives', 'false_negatives'],
-    ] as const;
-
-    return metrics.map(([label, key]) => {
-      const row: Record<string, string | number> = { metric: label };
-      summary?.per_config.forEach((config) => {
-        row[config.config_name] = config.overall[key];
-      });
-      return row;
-    });
-  }, [summary]);
 
   const toggleConfig = (configName: string, checked: boolean) => {
     setSelectedConfigs((current) => {
@@ -210,7 +214,7 @@ export function Evaluation() {
           <AlertDescription className="text-red-800">{error}</AlertDescription>
         </Alert>
         <div className="flex justify-between gap-3 pt-4">
-          <Button variant="outline" size="lg" onClick={() => navigate('/anonymization')}>
+          <Button variant="outline" size="lg" onClick={() => navigate('/human-review')}>
             <ChevronLeft className="size-4 mr-1" />
             Back
           </Button>
@@ -280,37 +284,124 @@ export function Evaluation() {
 
       {summary && (
         <>
-          <Card className="p-6 border-green-200 bg-green-50">
+          <Card className="p-6">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <CheckCircle className="size-5 text-green-700" />
-                <h3 className="font-semibold text-green-900">Evaluation Complete</h3>
+                <List className="size-5 text-blue-600" />
+                <h3 className="font-semibold text-slate-900">Metrics Comparison</h3>
               </div>
-              <div className="text-sm text-green-800">
+              <div className="text-sm text-slate-600">
                 {summary.per_config.length > 0
-                  ? `Currently comparing ${summary.per_config.length} config${summary.per_config.length > 1 ? 's' : ''}: ${summary.per_config.map((item) => item.config_name).join(', ')}`
+                  ? `Comparing ${summary.per_config.length} config${summary.per_config.length > 1 ? 's' : ''}`
                   : 'No configs selected. Select at least one config to view metrics.'}
               </div>
 
-              <ResponsiveContainer width="100%" height={360}>
-                <BarChart data={metricChartData} margin={{ top: 8, right: 8, left: 0, bottom: 24 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="metric" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  {summary.per_config.map((config, index) => (
-                    <Bar
-                      key={config.config_name}
-                      dataKey={config.config_name}
-                      fill={metricColors[index % metricColors.length]}
-                      radius={[4, 4, 0, 0]}
-                    />
-                  ))}
-                </BarChart>
-              </ResponsiveContainer>
+              {summary.per_config.length > 0 && (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-200">
+                        <th className="text-left py-3 pr-4 font-medium text-slate-600">Config</th>
+                        <th className="text-right py-3 px-4 font-medium text-slate-600">Precision</th>
+                        <th className="text-right py-3 px-4 font-medium text-slate-600">Recall</th>
+                        <th className="text-right py-3 px-4 font-medium text-slate-600">F1 Score</th>
+                        <th className="text-right py-3 px-4 font-medium text-slate-600">TP</th>
+                        <th className="text-right py-3 px-4 font-medium text-slate-600">FP</th>
+                        <th className="text-right py-3 pl-4 font-medium text-slate-600">FN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {summary.per_config.map((config) => (
+                        <tr key={config.config_name} className="border-b border-slate-100 last:border-0">
+                          <td className="py-3 pr-4 font-medium text-slate-900">{config.config_name}</td>
+                          <td className="text-right py-3 px-4 text-slate-700">{config.overall.precision.toFixed(1)}%</td>
+                          <td className="text-right py-3 px-4 text-slate-700">{config.overall.recall.toFixed(1)}%</td>
+                          <td className="text-right py-3 px-4">
+                            <span className={`font-semibold ${
+                              config.overall.f1_score >= 80 ? 'text-green-700' :
+                              config.overall.f1_score >= 50 ? 'text-amber-700' : 'text-red-700'
+                            }`}>
+                              {config.overall.f1_score.toFixed(1)}%
+                            </span>
+                          </td>
+                          <td className="text-right py-3 px-4 text-slate-700">{config.overall.true_positives}</td>
+                          <td className="text-right py-3 px-4 text-amber-700">{config.overall.false_positives}</td>
+                          <td className="text-right py-3 pl-4 text-red-700">{config.overall.false_negatives}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </Card>
+
+          {/* Entity Performance Matrix */}
+          {summary.per_config.length > 0 && (() => {
+            const allEntityTypes = Array.from(
+              new Set(summary.per_config.flatMap(c => c.by_entity_type?.map(e => e.type) ?? []))
+            ).sort();
+            if (allEntityTypes.length === 0) return null;
+            const metricKey = 'f1' as const;
+            return (
+              <Card className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Grid3X3 className="size-5 text-purple-600" />
+                    <h3 className="font-semibold text-slate-900">Entity Performance Matrix</h3>
+                  </div>
+                  <div className="text-sm text-slate-600">
+                    F1 score per entity type across configs. Hover for details.
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-slate-200">
+                          <th className="text-left py-3 pr-4 font-medium text-slate-600">Entity Type</th>
+                          {summary.per_config.map(c => (
+                            <th key={c.config_name} className="text-center py-3 px-3 font-medium text-slate-600">
+                              {c.config_name}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allEntityTypes.map(entityType => (
+                          <tr key={entityType} className="border-b border-slate-100 last:border-0">
+                            <td className="py-3 pr-4 font-medium text-slate-900 whitespace-nowrap">{entityType}</td>
+                            {summary.per_config.map(config => {
+                              const entry = config.by_entity_type?.find(e => e.type === entityType);
+                              if (!entry) {
+                                return (
+                                  <td key={config.config_name} className="text-center py-3 px-3">
+                                    <span className="text-slate-300">—</span>
+                                  </td>
+                                );
+                              }
+                              const f1 = entry[metricKey];
+                              const bg = f1 >= 80 ? 'bg-green-100 text-green-800'
+                                : f1 >= 50 ? 'bg-amber-100 text-amber-800'
+                                : 'bg-red-100 text-red-800';
+                              return (
+                                <td key={config.config_name} className="text-center py-3 px-3">
+                                  <span
+                                    className={`inline-block rounded-md px-2.5 py-1.5 text-xs font-semibold cursor-default ${bg}`}
+                                    title={`Precision: ${entry.precision.toFixed(1)}%\nRecall: ${entry.recall.toFixed(1)}%\nF1: ${f1.toFixed(1)}%\nTP: ${entry.true_positives}  FP: ${entry.false_positives}  FN: ${entry.false_negatives}`}
+                                  >
+                                    {f1.toFixed(1)}%
+                                  </span>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </Card>
+            );
+          })()}
 
           <Card className="p-6">
             <div className="space-y-4">
@@ -332,7 +423,7 @@ export function Evaluation() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <Card className="p-4">
                   <div className="text-2xl font-semibold text-slate-900">{activeConfigResult?.summary.total_misses ?? 0}</div>
                   <div className="text-sm text-slate-600">Total Misses</div>
@@ -345,20 +436,12 @@ export function Evaluation() {
                   <div className="text-2xl font-semibold text-red-900">{activeConfigResult?.summary.false_negatives ?? 0}</div>
                   <div className="text-sm text-red-700">False Negatives</div>
                 </Card>
-                <Card className="p-4 border-red-300 bg-red-100">
-                  <div className="text-2xl font-semibold text-red-900">{activeConfigResult?.summary.high_risk ?? 0}</div>
-                  <div className="text-sm text-red-700">High Risk</div>
-                </Card>
-                <Card className="p-4 border-amber-300 bg-amber-100">
-                  <div className="text-2xl font-semibold text-amber-900">{activeConfigResult?.summary.medium_risk ?? 0}</div>
-                  <div className="text-sm text-amber-700">Medium Risk</div>
-                </Card>
               </div>
 
               <Card className="p-4">
                 <div className="flex items-center gap-3">
                   <Filter className="size-4 text-slate-600" />
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div className="relative">
                       <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                       <Input
@@ -372,10 +455,15 @@ export function Evaluation() {
                       <SelectTrigger><SelectValue placeholder="Miss Type" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All Types</SelectItem>
+                        {showTruePositives && <SelectItem value="true-positive">True Positives</SelectItem>}
                         <SelectItem value="false-positive">False Positives</SelectItem>
                         <SelectItem value="false-negative">False Negatives</SelectItem>
                       </SelectContent>
                     </Select>
+                    <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                      <Checkbox checked={showTruePositives} onCheckedChange={(v) => setShowTruePositives(!!v)} />
+                      <span className="text-sm text-slate-600">Show True Positives</span>
+                    </label>
                     <Select value={filterEntityType} onValueChange={setFilterEntityType}>
                       <SelectTrigger><SelectValue placeholder="Entity Type" /></SelectTrigger>
                       <SelectContent>
@@ -386,61 +474,51 @@ export function Evaluation() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Select value={filterRiskLevel} onValueChange={setFilterRiskLevel}>
-                      <SelectTrigger><SelectValue placeholder="Risk Level" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Risk Levels</SelectItem>
-                        <SelectItem value="high">High Risk</SelectItem>
-                        <SelectItem value="medium">Medium Risk</SelectItem>
-                        <SelectItem value="low">Low Risk</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
                 </div>
               </Card>
 
               <div className="text-sm text-slate-600">
-                Showing {filteredMisses.length} of {activeConfigResult?.misses.length ?? 0} errors for {activeConfigResult?.config_name ?? 'the selected config'}
+                Showing {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredMisses.length)} of {filteredMisses.length} results for {activeConfigResult?.config_name ?? 'the selected config'}
               </div>
 
               <div className="space-y-3">
-                {filteredMisses.map((miss, index) => (
+                {pagedMisses.map((miss, index) => (
                   <Card
                     key={`${miss.record_id}-${miss.miss_type}-${miss.missed_entity.start}-${index}`}
-                    className={`p-4 ${
-                      miss.risk_level === 'high' ? 'border-red-300 bg-red-50' :
-                      miss.risk_level === 'medium' ? 'border-amber-300 bg-amber-50' :
-                      'border-slate-200'
-                    }`}
+                    className="p-4 border-slate-200"
                   >
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-2">
                           {miss.miss_type === 'false-negative' ? (
                             <XCircle className="size-5 text-red-600 flex-shrink-0" />
+                          ) : miss.miss_type === 'true-positive' ? (
+                            <CheckCircle2 className="size-5 text-green-600 flex-shrink-0" />
                           ) : (
                             <AlertTriangle className="size-5 text-amber-600 flex-shrink-0" />
                           )}
                           <div>
                             <div className="font-medium text-slate-900">
-                              {miss.miss_type === 'false-negative' ? 'Missed Entity' : 'Incorrect Detection'}
+                              {miss.miss_type === 'false-negative' ? 'Missed Entity' : miss.miss_type === 'true-positive' ? 'Correct Detection' : 'Incorrect Detection'}
                             </div>
                             <div className="text-sm text-slate-600">Record ID: {miss.record_id}</div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline">{miss.entity_type}</Badge>
-                          <Badge className={
-                            miss.risk_level === 'high' ? 'bg-red-600 text-white' :
-                            miss.risk_level === 'medium' ? 'bg-amber-600 text-white' :
-                            'bg-slate-600 text-white'
-                          }>
-                            {miss.risk_level} risk
-                          </Badge>
-                        </div>
+                        <Badge variant="outline">{miss.entity_type}</Badge>
                       </div>
                       <div className="p-3 bg-white rounded border border-slate-200">
-                        <div className="text-sm font-mono text-slate-700">{miss.record_text}</div>
+                        <div className="text-sm font-mono text-slate-700">
+                          {miss.record_text.substring(0, miss.missed_entity.start)}
+                          <mark className={`px-0.5 rounded ${
+                            miss.miss_type === 'false-negative'
+                              ? 'bg-red-200 text-red-900'
+                              : miss.miss_type === 'true-positive'
+                              ? 'bg-green-200 text-green-900'
+                              : 'bg-amber-200 text-amber-900'
+                          }`}>{miss.record_text.substring(miss.missed_entity.start, miss.missed_entity.end)}</mark>
+                          {miss.record_text.substring(miss.missed_entity.end)}
+                        </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         <div>
@@ -456,9 +534,33 @@ export function Evaluation() {
                   </Card>
                 ))}
 
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentPage <= 1}
+                      onClick={() => setCurrentPage((p) => p - 1)}
+                    >
+                      <ChevronLeft className="size-4" />
+                    </Button>
+                    <span className="text-sm text-slate-600">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentPage >= totalPages}
+                      onClick={() => setCurrentPage((p) => p + 1)}
+                    >
+                      <ChevronRight className="size-4" />
+                    </Button>
+                  </div>
+                )}
+
                 {filteredMisses.length === 0 && (
                   <Card className="p-6 text-sm text-slate-600">
-                    No errors match the current config selection and filters.
+                    No results match the current config selection and filters.
                   </Card>
                 )}
               </div>
@@ -468,7 +570,7 @@ export function Evaluation() {
       )}
 
       <div className="flex justify-between gap-3 pt-4">
-        <Button variant="outline" size="lg" onClick={() => navigate('/anonymization')}>
+        <Button variant="outline" size="lg" onClick={() => navigate('/human-review')}>
           <ChevronLeft className="size-4 mr-1" />
           Back
         </Button>

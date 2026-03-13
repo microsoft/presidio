@@ -1,34 +1,23 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Label } from '../components/ui/label';
-import { Input } from '../components/ui/input';
 import { Progress } from '../components/ui/progress';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../components/ui/select';
-import { ArrowRight, Shield, Sparkles, CheckCircle, Loader2, AlertTriangle, Unplug, Plus, Trash2, ChevronLeft } from 'lucide-react';
+import { ArrowRight, Shield, Brain, CheckCircle, Loader2, AlertTriangle, ChevronLeft, Clock, Hash, Tag, Zap } from 'lucide-react';
 import { api } from '../lib/api';
-import { FileDropzone } from '../components/FileDropzone';
 import type { SetupConfig } from '../types';
 
-type LlmStep = 'loading' | 'env_missing' | 'idle' | 'configuring' | 'configured' | 'running' | 'done' | 'error';
-type PresidioStep = 'loading' | 'idle' | 'configuring' | 'configured' | 'running' | 'done' | 'error';
+type EnginePhase = 'waiting' | 'configuring' | 'running' | 'done' | 'error' | 'skipped';
 
-interface ModelChoice {
-  id: string;
-  label: string;
-  provider: string;
+interface EntityTypeSummary {
+  type: string;
+  count: number;
 }
 
 export function Anonymization() {
   const navigate = useNavigate();
+  const startedRef = useRef(false);
 
   const setupConfig = useMemo<SetupConfig | null>(() => {
     try {
@@ -41,14 +30,12 @@ export function Anonymization() {
 
   const [hasFinalEntities, setHasFinalEntities] = useState(setupConfig?.hasFinalEntities ?? false);
 
-  // Refresh hasFinalEntities from backend on mount (it may have changed after human review)
   useEffect(() => {
     const dsId = setupConfig?.datasetId;
     if (!dsId) return;
     api.datasets.get(dsId).then((ds: any) => {
       const fresh = ds?.has_final_entities ?? false;
       setHasFinalEntities(fresh);
-      // Update sessionStorage so downstream pages see the latest value
       if (setupConfig) {
         const updated = { ...setupConfig, hasFinalEntities: fresh };
         sessionStorage.setItem('setupConfig', JSON.stringify(updated));
@@ -56,75 +43,98 @@ export function Anonymization() {
     }).catch(() => {});
   }, [setupConfig?.datasetId]);
 
-  const datasetRecordCount = useMemo(() => {
-    try {
-      const raw = sessionStorage.getItem('datasetRecordCount');
-      return raw ? parseInt(raw, 10) : null;
-    } catch {
-      return null;
-    }
-  }, []);
-
-  // LLM Judge state
-  const [llmStep, setLlmStep] = useState<LlmStep>('loading');
-  const [models, setModels] = useState<ModelChoice[]>([]);
-  const [selectedModel, setSelectedModel] = useState('gpt-5.4');
-  const [llmProgress, setLlmProgress] = useState(0);
-  const [llmTotal, setLlmTotal] = useState(0);
-  const [llmError, setLlmError] = useState<string | null>(null);
-  const [llmEntityCount, setLlmEntityCount] = useState(0);
-  const [llmElapsedMs, setLlmElapsedMs] = useState<number | null>(null);
+  const runPresidio = setupConfig?.runPresidio ?? false;
+  const runLlm = setupConfig?.runLlm ?? false;
+  const selectedConfig = setupConfig?.presidioConfigName ?? 'default_spacy';
+  const selectedModel = setupConfig?.llmModel ?? 'gpt-5.4';
 
   // Presidio state
-  const [presidioStep, setPresidioStep] = useState<PresidioStep>('loading');
+  const [presidioPhase, setPresidioPhase] = useState<EnginePhase>(runPresidio ? 'waiting' : 'skipped');
   const [presidioProgress, setPresidioProgress] = useState(0);
   const [presidioTotal, setPresidioTotal] = useState(0);
   const [presidioError, setPresidioError] = useState<string | null>(null);
   const [presidioEntityCount, setPresidioEntityCount] = useState(0);
   const [presidioElapsedMs, setPresidioElapsedMs] = useState<number | null>(null);
+  const [presidioEntityTypes, setPresidioEntityTypes] = useState<EntityTypeSummary[]>([]);
 
-  // Named configs
-  const [savedConfigs, setSavedConfigs] = useState<{ name: string; path: string | null }[]>([]);
-  const [selectedConfig, setSelectedConfig] = useState('default_spacy');
-  const [showAddConfig, setShowAddConfig] = useState(false);
-  const [newConfigName, setNewConfigName] = useState('');
-  const [newConfigFile, setNewConfigFile] = useState<File | null>(null);
-  const [newConfigPath, setNewConfigPath] = useState('');
-  const [newConfigInputMode, setNewConfigInputMode] = useState<'file' | 'path'>('file');
-  const [activeConfigName, setActiveConfigName] = useState<string | null>(null);
+  // LLM state
+  const [llmPhase, setLlmPhase] = useState<EnginePhase>(runLlm ? 'waiting' : 'skipped');
+  const [llmProgress, setLlmProgress] = useState(0);
+  const [llmTotal, setLlmTotal] = useState(0);
+  const [llmError, setLlmError] = useState<string | null>(null);
+  const [llmEntityCount, setLlmEntityCount] = useState(0);
+  const [llmElapsedMs, setLlmElapsedMs] = useState<number | null>(null);
+  const [llmEntityTypes, setLlmEntityTypes] = useState<EntityTypeSummary[]>([]);
 
-  // Load models + env status + saved configs on mount
+  // New entity types not in golden set (detected on second config)
+  const [newEntityTypes, setNewEntityTypes] = useState<string[]>([]);
+
+  const computeEntityTypes = (results: Record<string, any[]>): EntityTypeSummary[] => {
+    const counts: Record<string, number> = {};
+    for (const entities of Object.values(results)) {
+      for (const ent of entities) {
+        const t = ent.entity_type || 'UNKNOWN';
+        counts[t] = (counts[t] || 0) + 1;
+      }
+    }
+    return Object.entries(counts)
+      .map(([type, count]) => ({ type, count }))
+      .sort((a, b) => b.count - a.count);
+  };
+
+  // Poll Presidio while configuring or running
   useEffect(() => {
-    Promise.all([api.llm.models(), api.llm.settings(), api.llm.status(), api.presidio.configs()]).then(
-      ([modelList, settings, status, configs]) => {
-        setModels(modelList);
-        setSelectedModel(settings.deployment_name || 'gpt-4o');
-        setSavedConfigs(configs);
-
-        if (status.running) {
-          setLlmStep('running');
-          setLlmProgress(status.progress);
-          setLlmTotal(status.total);
-        } else if (status.entity_count > 0) {
-          setLlmEntityCount(status.entity_count);
-          setLlmElapsedMs(status.elapsed_ms ?? null);
-          setLlmStep('done');
-          setLlmTotal(status.total);
-          setLlmProgress(status.total);
-        } else if (settings.configured) {
-          setLlmStep('configured');
-        } else if (!settings.env_ready) {
-          setLlmStep('env_missing');
+    if (presidioPhase !== 'configuring' && presidioPhase !== 'running') return;
+    const interval = setInterval(async () => {
+      try {
+        const s = await api.presidio.status();
+        if (presidioPhase === 'configuring') {
+          if (s.configured) {
+            const datasetId = setupConfig?.datasetId;
+            if (!datasetId) {
+              setPresidioError('No dataset selected.');
+              setPresidioPhase('error');
+              return;
+            }
+            try {
+              const res = await api.presidio.analyze(datasetId);
+              setPresidioTotal(res.total);
+              setPresidioProgress(0);
+              setPresidioPhase('running');
+            } catch (err: any) {
+              setPresidioError(err.message ?? 'Failed to start Presidio analysis');
+              setPresidioPhase('error');
+            }
+          } else if (s.error) {
+            setPresidioError(s.error);
+            setPresidioPhase('error');
+          }
         } else {
-          setLlmStep('idle');
+          setPresidioProgress(s.progress);
+          setPresidioTotal(s.total);
+          if (s.error) {
+            setPresidioError(s.error);
+            setPresidioPhase('error');
+          } else if (!s.running && s.progress >= s.total && s.total > 0) {
+            setPresidioEntityCount(s.entity_count);
+            setPresidioElapsedMs(s.elapsed_ms ?? null);
+            setPresidioPhase('done');
+            const dsId = setupConfig?.datasetId;
+            if (dsId) api.review.saveConfigResults(dsId).catch(() => {});
+            try {
+              const results = await api.presidio.results();
+              setPresidioEntityTypes(computeEntityTypes(results));
+            } catch { /* ignore */ }
+          }
         }
-      },
-    ).catch(() => setLlmStep('env_missing'));
-  }, []);
+      } catch { /* keep polling */ }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [presidioPhase]);
 
-  // Poll LLM progress while running
+  // Poll LLM while running
   useEffect(() => {
-    if (llmStep !== 'running') return;
+    if (llmPhase !== 'running') return;
     const interval = setInterval(async () => {
       try {
         const s = await api.llm.status();
@@ -132,385 +142,164 @@ export function Anonymization() {
         setLlmTotal(s.total);
         if (s.error) {
           setLlmError(s.error);
-          setLlmStep('error');
+          setLlmPhase('error');
         } else if (!s.running && s.progress >= s.total && s.total > 0) {
           setLlmEntityCount(s.entity_count);
           setLlmElapsedMs(s.elapsed_ms ?? null);
-          setLlmStep('done');
+          setLlmPhase('done');
+          try {
+            const results = await api.llm.results();
+            setLlmEntityTypes(computeEntityTypes(results));
+          } catch { /* ignore */ }
         }
-      } catch {
-        // keep polling
-      }
-    }, 1000);
+      } catch { /* keep polling */ }
+    }, 3000);
     return () => clearInterval(interval);
-  }, [llmStep]);
+  }, [llmPhase]);
 
-  // Presidio: check status on mount
-  useEffect(() => {
-    api.presidio.status().then((s) => {
-      if (s.config_name) setActiveConfigName(s.config_name);
-      if (s.running) {
-        setPresidioStep('running');
-        setPresidioProgress(s.progress);
-        setPresidioTotal(s.total);
-      } else if (s.loading) {
-        setPresidioStep('configuring');
-      } else if (s.configured && s.progress > 0 && s.progress >= s.total && s.total > 0) {
-        setPresidioStep('done');
-        setPresidioProgress(s.progress);
-        setPresidioTotal(s.total);
-        setPresidioEntityCount(s.entity_count);
-        setPresidioElapsedMs(s.elapsed_ms ?? null);
-      } else if (s.configured) {
-        setPresidioStep('configured');
-      } else if (s.error) {
-        setPresidioError(s.error);
-        setPresidioStep('error');
-      } else {
-        setPresidioStep('idle');
-      }
-    }).catch(() => {
-      setPresidioStep('idle');
-    });
-  }, []);
+  // Auto-start both engines on mount
+  const startEngines = useCallback(async () => {
+    if (startedRef.current) return;
+    startedRef.current = true;
 
-  // Poll Presidio status while configuring (model loading) or running (analysis)
-  useEffect(() => {
-    if (presidioStep !== 'running' && presidioStep !== 'configuring') return;
-    const interval = setInterval(async () => {
+    if (runPresidio) {
       try {
-        const s = await api.presidio.status();
-        if (presidioStep === 'configuring') {
-          if (s.configured) {
-            setPresidioStep('configured');
-          } else if (s.error) {
-            setPresidioError(s.error);
-            setPresidioStep('error');
-          }
+        // Always start fresh: disconnect any previous session
+        await api.presidio.disconnect().catch(() => {});
+        setPresidioPhase('configuring');
+        const configPath = setupConfig?.presidioConfigPath || undefined;
+        await api.presidio.configure(selectedConfig, configPath);
+      } catch (err: any) {
+        setPresidioError(err.message ?? 'Failed to start Presidio');
+        setPresidioPhase('error');
+      }
+    }
+
+    if (runLlm) {
+      try {
+        const settings = await api.llm.settings();
+        if (!settings.env_ready) {
+          setLlmError('Azure OpenAI is not configured. Go back to Setup.');
+          setLlmPhase('error');
         } else {
-          setPresidioProgress(s.progress);
-          setPresidioTotal(s.total);
-          if (s.error) {
-            setPresidioError(s.error);
-            setPresidioStep('error');
-          } else if (!s.running && s.progress >= s.total && s.total > 0) {
-            setPresidioEntityCount(s.entity_count);
-            setPresidioElapsedMs(s.elapsed_ms ?? null);
-            setPresidioStep('done');
-            // Persist config columns to CSV
-            const dsId = setupConfig?.datasetId;
-            if (dsId) api.review.saveConfigResults(dsId).catch(() => {});
+          // Always start fresh: disconnect any previous session
+          await api.llm.disconnect().catch(() => {});
+          setLlmPhase('configuring');
+          try {
+            await api.llm.configure(selectedModel);
+            const datasetId = setupConfig?.datasetId;
+            if (!datasetId) {
+              setLlmError('No dataset selected.');
+              setLlmPhase('error');
+              return;
+            }
+            const res = await api.llm.analyze(datasetId);
+            setLlmTotal(res.total);
+            setLlmProgress(0);
+            setLlmPhase('running');
+          } catch (err: any) {
+            setLlmError(err.message ?? 'Failed to start LLM analysis');
+            setLlmPhase('error');
           }
         }
-      } catch {
-        // keep polling
+      } catch (err: any) {
+        setLlmError(err.message ?? 'Failed to connect to LLM');
+        setLlmPhase('error');
       }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [presidioStep]);
+    }
+  }, [runPresidio, runLlm, setupConfig, selectedConfig, selectedModel]);
 
-  const handlePresidioConfigure = useCallback(async () => {
-    setPresidioStep('configuring');
-    setPresidioError(null);
-    try {
-      const config = savedConfigs.find((c) => c.name === selectedConfig);
-      const configPath = config?.path || undefined;
-      setActiveConfigName(selectedConfig);
-      await api.presidio.configure(selectedConfig, configPath);
-      // Backend returns immediately — polling will detect when model is ready
-    } catch (err: any) {
-      setPresidioError(err.message ?? 'Failed to configure Presidio');
-      setPresidioStep('error');
-    }
-  }, [selectedConfig, savedConfigs]);
+  useEffect(() => {
+    startEngines();
+  }, [startEngines]);
 
-  const handlePresidioRun = useCallback(async () => {
-    setPresidioError(null);
-    const datasetId = setupConfig?.datasetId;
-    if (!datasetId) {
-      setPresidioError('No dataset selected. Go back to Setup.');
-      return;
-    }
-    try {
-      const res = await api.presidio.analyze(datasetId);
-      setPresidioTotal(res.total);
-      setPresidioProgress(0);
-      setPresidioStep('running');
-    } catch (err: any) {
-      setPresidioError(err.message ?? 'Failed to start analysis');
-      setPresidioStep('configured');
-    }
-  }, [setupConfig]);
+  const presidioProgressPct = presidioTotal > 0 ? Math.round((presidioProgress / presidioTotal) * 100) : 0;
+  const llmProgressPct = llmTotal > 0 ? Math.round((llmProgress / llmTotal) * 100) : 0;
 
-  const handlePresidioDisconnect = useCallback(async () => {
-    try {
-      await api.presidio.disconnect();
-      setPresidioStep('idle');
-      setPresidioError(null);
-      setPresidioProgress(0);
-      setPresidioTotal(0);
-      setPresidioEntityCount(0);
-      setPresidioElapsedMs(null);
-      setActiveConfigName(null);
-    } catch (err: any) {
-      setPresidioError(err.message ?? 'Failed to disconnect');
-    }
-  }, []);
+  const allDone =
+    (presidioPhase === 'done' || presidioPhase === 'skipped') &&
+    (llmPhase === 'done' || llmPhase === 'skipped');
 
-  const handleConfigure = useCallback(async () => {
-    setLlmStep('configuring');
-    setLlmError(null);
-    try {
-      await api.llm.configure(selectedModel);
-      setLlmStep('configured');
-    } catch (err: any) {
-      setLlmError(err.message ?? 'Configuration failed');
-      setLlmStep('error');
-    }
-  }, [selectedModel]);
+  const anyRunning =
+    presidioPhase === 'waiting' || presidioPhase === 'configuring' || presidioPhase === 'running' ||
+    llmPhase === 'waiting' || llmPhase === 'configuring' || llmPhase === 'running';
 
-  const handleRunAnalysis = useCallback(async () => {
-    setLlmError(null);
-    const datasetId = setupConfig?.datasetId;
-    if (!datasetId) {
-      setLlmError('No dataset selected. Go back to Setup.');
-      return;
-    }
-    try {
-      const res = await api.llm.analyze(datasetId);
-      setLlmTotal(res.total);
-      setLlmProgress(0);
-      setLlmStep('running');
-    } catch (err: any) {
-      setLlmError(err.message ?? 'Failed to start analysis');
-      setLlmStep('configured');
-    }
-  }, [setupConfig]);
+  // Detect new entity types not present in golden set (second config flow)
+  useEffect(() => {
+    if (!allDone || !hasFinalEntities) return;
+    const dsId = setupConfig?.datasetId;
+    if (!dsId) return;
+    const analysisTypes = new Set([
+      ...presidioEntityTypes.map(e => e.type),
+      ...llmEntityTypes.map(e => e.type),
+    ]);
+    if (analysisTypes.size === 0) return;
 
-  const handleDisconnect = useCallback(async () => {
-    try {
-      await api.llm.disconnect();
-      setLlmStep('idle');
-      setLlmError(null);
-      setLlmProgress(0);
-      setLlmTotal(0);
-      setLlmEntityCount(0);
-      setLlmElapsedMs(null);
-    } catch (err: any) {
-      setLlmError(err.message ?? 'Failed to disconnect');
-    }
-  }, []);
-
-  const handleSaveConfig = useCallback(async () => {
-    const name = newConfigName.trim();
-    if (!name) return;
-    if (newConfigInputMode === 'file' && !newConfigFile) return;
-    if (newConfigInputMode === 'path' && !newConfigPath.trim()) return;
-    try {
-      let res;
-      if (newConfigInputMode === 'path') {
-        res = await api.presidio.saveConfig(name, newConfigPath.trim());
-      } else {
-        res = await api.presidio.uploadConfig(newConfigFile!, name);
+    api.datasets.records(dsId).then((records: any[]) => {
+      const goldenTypes = new Set<string>();
+      for (const rec of records) {
+        const finals = rec.final_entities ?? rec.finalEntities ?? [];
+        for (const ent of finals) {
+          goldenTypes.add(ent.entity_type || ent.type || 'UNKNOWN');
+        }
       }
-      setSavedConfigs(res.configs);
-      setSelectedConfig(name);
-      setNewConfigName('');
-      setNewConfigFile(null);
-      setNewConfigPath('');
-      setShowAddConfig(false);
-    } catch (err: any) {
-      setPresidioError(err.message ?? 'Failed to save config');
-    }
-  }, [newConfigName, newConfigFile, newConfigInputMode, newConfigPath]);
-
-  const handleDeleteConfig = useCallback(async (name: string) => {
-    try {
-      const res = await api.presidio.deleteConfig(name);
-      setSavedConfigs(res.configs);
-      if (selectedConfig === name) setSelectedConfig('default_spacy');
-    } catch (err: any) {
-      setPresidioError(err.message ?? 'Failed to delete config');
-    }
-  }, [selectedConfig]);
+      const newTypes = [...analysisTypes].filter(t => !goldenTypes.has(t));
+      setNewEntityTypes(newTypes);
+    }).catch(() => {});
+  }, [allDone, hasFinalEntities, presidioEntityTypes, llmEntityTypes, setupConfig?.datasetId]);
 
   const handleContinue = () => {
     navigate('/human-review');
   };
 
-  const progressPct = llmTotal > 0 ? Math.round((llmProgress / llmTotal) * 100) : 0;
-  const presidioProgressPct = presidioTotal > 0 ? Math.round((presidioProgress / presidioTotal) * 100) : 0;
-
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       <div>
         <h2 className="text-2xl font-semibold text-slate-900 mb-2">PII Detection Analysis</h2>
         <p className="text-slate-600">
-          Configure and run PII detection engines to identify entities in your dataset.
+          {anyRunning
+            ? 'Running PII detection engines on your dataset…'
+            : allDone
+              ? 'Analysis complete. Review the results below.'
+              : 'Preparing analysis…'}
         </p>
       </div>
 
-      {/* Side-by-Side Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Presidio Analyzer */}
+      {/* Presidio Card */}
+      {runPresidio && (
         <Card className="p-6 border-blue-200">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Shield className="size-6 text-blue-600" />
                 <div>
-                  <h3 className="font-semibold text-slate-900">Presidio Analysis</h3>
-                  <p className="text-sm text-slate-500">Rule-based & NLP detection</p>
+                  <h3 className="font-semibold text-slate-900">Presidio Analyzer</h3>
+                  <p className="text-sm text-slate-500">Config: {selectedConfig}</p>
                 </div>
               </div>
-              {presidioStep === 'done' && (
+              {presidioPhase === 'done' && (
                 <span className="flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
                   <CheckCircle className="size-3" /> Complete
                 </span>
               )}
-              {presidioStep === 'configured' && (
-                <span className="flex items-center gap-1 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">
-                  Ready
+              {presidioPhase === 'error' && (
+                <span className="flex items-center gap-1 text-xs text-red-700 bg-red-50 px-2 py-1 rounded">
+                  <AlertTriangle className="size-3" /> Error
                 </span>
               )}
             </div>
 
-            {presidioStep === 'loading' && (
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Loader2 className="size-4 animate-spin" /> Loading…
-              </div>
-            )}
-
-            {presidioStep === 'configuring' && (
-              <div className="space-y-1">
+            {(presidioPhase === 'waiting' || presidioPhase === 'configuring') && (
+              <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <Loader2 className="size-4 animate-spin" /> Initializing Presidio analyzer…
+                  <Loader2 className="size-4 animate-spin" />
+                  {presidioPhase === 'waiting' ? 'Starting…' : 'Initializing Presidio analyzer…'}
                 </div>
                 <p className="text-xs text-slate-400">Loading the NLP model — this might take a while on first run.</p>
               </div>
             )}
 
-            {(presidioStep === 'idle' || presidioStep === 'error') && (
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Configuration</Label>
-                  <div className="flex gap-2">
-                    <Select value={selectedConfig} onValueChange={setSelectedConfig}>
-                      <SelectTrigger className="flex-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {savedConfigs.map((c) => (
-                          <SelectItem key={c.name} value={c.name}>
-                            {c.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button size="icon" variant="outline" onClick={() => setShowAddConfig(!showAddConfig)} title="Add new config">
-                      <Plus className="size-4" />
-                    </Button>
-                    {selectedConfig !== 'default_spacy' && (
-                      <Button size="icon" variant="outline" onClick={() => handleDeleteConfig(selectedConfig)} title="Delete config">
-                        <Trash2 className="size-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                {showAddConfig && (
-                  <div className="space-y-2 border rounded-md p-3 bg-slate-50">
-                    <Label className="text-xs font-medium">New Configuration</Label>
-                    <Input
-                      placeholder="Config name (e.g. transformer-stanford)"
-                      value={newConfigName}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        if (v === '' || /^[A-Za-z0-9][A-Za-z0-9 _.\-]*$/.test(v)) setNewConfigName(v);
-                      }}
-                      className="text-sm"
-                    />
-                    <p className="text-xs text-slate-400">Letters, numbers, hyphens, underscores, and dots only.</p>
-                    <div className="flex items-center justify-between mb-1">
-                      <Label className="text-xs font-medium">YAML File</Label>
-                      <button
-                        type="button"
-                        className="text-xs text-blue-600 hover:underline"
-                        onClick={() => { setNewConfigInputMode(newConfigInputMode === 'file' ? 'path' : 'file'); setNewConfigFile(null); setNewConfigPath(''); }}
-                      >
-                        {newConfigInputMode === 'file' ? 'Enter file path instead' : 'Upload file instead'}
-                      </button>
-                    </div>
-                    {newConfigInputMode === 'file' ? (
-                      <FileDropzone
-                        accept=".yml,.yaml"
-                        label="Drop YAML config file here or click to browse"
-                        onFile={setNewConfigFile}
-                      />
-                    ) : (
-                      <Input
-                        placeholder="/path/to/config.yml"
-                        value={newConfigPath}
-                        onChange={(e) => setNewConfigPath(e.target.value)}
-                        className="text-sm"
-                      />
-                    )}
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => { setShowAddConfig(false); setNewConfigName(''); setNewConfigFile(null); setNewConfigPath(''); }} className="flex-1">
-                        Cancel
-                      </Button>
-                      <Button size="sm" onClick={handleSaveConfig} disabled={!newConfigName.trim() || (newConfigInputMode === 'file' ? !newConfigFile : !newConfigPath.trim())} className="flex-1">
-                        Save Config
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {presidioError && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertTriangle className="size-4 text-red-600" />
-                    <AlertDescription className="text-sm text-red-800">{presidioError}</AlertDescription>
-                  </Alert>
-                )}
-
-                <Button
-                  size="sm"
-                  onClick={handlePresidioConfigure}
-                  className="w-full"
-                >
-                  Initialize Presidio
-                </Button>
-              </div>
-            )}
-
-            {presidioStep === 'configured' && (
-              <div className="space-y-3">
-                <p className="text-sm text-slate-600">
-                  Presidio initialized with <strong>{activeConfigName || 'default config'}</strong>.
-                  {datasetRecordCount != null && (
-                    <> Will analyse <strong>{datasetRecordCount.toLocaleString()}</strong> records.</>
-                  )}
-                </p>
-                {presidioError && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertTriangle className="size-4 text-red-600" />
-                    <AlertDescription className="text-sm text-red-800">{presidioError}</AlertDescription>
-                  </Alert>
-                )}
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={handlePresidioRun} className="flex-1">
-                    <Shield className="size-4 mr-2" />
-                    Run Presidio Analysis
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={handlePresidioDisconnect}>
-                    <Unplug className="size-4 mr-1" />
-                    Reset
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {presidioStep === 'running' && (
+            {presidioPhase === 'running' && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm text-slate-600">
                   <span className="flex items-center gap-2">
@@ -523,154 +312,97 @@ export function Anonymization() {
               </div>
             )}
 
-            {presidioStep === 'done' && (
-              <div className="space-y-3">
-                <p className="text-sm text-green-700">
-                  Presidio analysis complete — {presidioTotal} records processed, <strong>{presidioEntityCount.toLocaleString()} entities</strong> detected.
-                  {presidioElapsedMs != null && (
-                    <span className="ml-1 text-slate-500">
-                      Detection time: <strong>{(presidioElapsedMs / 1000).toFixed(2)} seconds</strong>
-                    </span>
-                  )}
-                </p>
-                {activeConfigName && (
-                  <p className="text-xs text-slate-500">Config: {activeConfigName}</p>
-                )}
-                <Button size="sm" variant="outline" onClick={handlePresidioDisconnect}>
-                  <Unplug className="size-4 mr-1" />
-                  Reset & Reconfigure
-                </Button>
-              </div>
+            {presidioPhase === 'error' && presidioError && (
+              <Alert className="border-red-200 bg-red-50">
+                <AlertTriangle className="size-4 text-red-600" />
+                <AlertDescription className="text-sm text-red-800">{presidioError}</AlertDescription>
+              </Alert>
             )}
+
+            {presidioPhase === 'done' && (() => {
+              const maxTypeCount = presidioEntityTypes.length > 0 ? presidioEntityTypes[0].count : 1;
+              const rps = presidioElapsedMs && presidioElapsedMs > 0 ? (presidioTotal / (presidioElapsedMs / 1000)).toFixed(1) : null;
+              return (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-4 gap-3">
+                    <div className="bg-blue-50 rounded-lg p-3 text-center">
+                      <Hash className="size-4 text-blue-400 mx-auto mb-1" />
+                      <p className="text-2xl font-bold text-blue-700">{presidioTotal.toLocaleString()}</p>
+                      <p className="text-xs text-blue-500">Records</p>
+                    </div>
+                    <div className="bg-blue-50 rounded-lg p-3 text-center">
+                      <Tag className="size-4 text-blue-400 mx-auto mb-1" />
+                      <p className="text-2xl font-bold text-blue-700">{presidioEntityCount.toLocaleString()}</p>
+                      <p className="text-xs text-blue-500">Entities</p>
+                    </div>
+                    <div className="bg-blue-50 rounded-lg p-3 text-center">
+                      <Clock className="size-4 text-blue-400 mx-auto mb-1" />
+                      <p className="text-2xl font-bold text-blue-700">
+                        {presidioElapsedMs != null ? `${(presidioElapsedMs / 1000).toFixed(1)}s` : '—'}
+                      </p>
+                      <p className="text-xs text-blue-500">Duration</p>
+                    </div>
+                    <div className="bg-blue-50 rounded-lg p-3 text-center">
+                      <Zap className="size-4 text-blue-400 mx-auto mb-1" />
+                      <p className="text-2xl font-bold text-blue-700">{rps ?? '—'}</p>
+                      <p className="text-xs text-blue-500">Rec / sec</p>
+                    </div>
+                  </div>
+                  {presidioEntityTypes.length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-slate-500 mb-2">Entity breakdown</p>
+                      <div className="space-y-1.5">
+                        {presidioEntityTypes.map(({ type, count }) => (
+                          <div key={type} className="flex items-center gap-2 text-xs">
+                            <span className="w-28 truncate text-slate-600 font-medium">{type}</span>
+                            <div className="flex-1 bg-blue-100 rounded-full h-2 overflow-hidden">
+                              <div className="bg-blue-500 h-full rounded-full transition-all" style={{ width: `${(count / maxTypeCount) * 100}%` }} />
+                            </div>
+                            <span className="w-8 text-right text-slate-500 tabular-nums">{count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </Card>
+      )}
 
-        {/* LLM Judge */}
+      {/* LLM Card */}
+      {runLlm && (
         <Card className="p-6 border-purple-200">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="size-6 text-purple-600" />
+                <Brain className="size-6 text-purple-600" />
                 <div>
-                  <h3 className="font-semibold text-slate-900">LLM as a Judge</h3>
-                  <p className="text-sm text-slate-500">Azure OpenAI via LangExtract</p>
+                  <h3 className="font-semibold text-slate-900">Presidio LLM Recognizer</h3>
+                  <p className="text-sm text-slate-500">Model: {selectedModel}</p>
                 </div>
               </div>
-              {llmStep === 'done' && (
+              {llmPhase === 'done' && (
                 <span className="flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
                   <CheckCircle className="size-3" /> Complete
                 </span>
               )}
-              {llmStep === 'configured' && (
-                <span className="flex items-center gap-1 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">
-                  Ready
+              {llmPhase === 'error' && (
+                <span className="flex items-center gap-1 text-xs text-red-700 bg-red-50 px-2 py-1 rounded">
+                  <AlertTriangle className="size-3" /> Error
                 </span>
               )}
             </div>
 
-            {/* Step: loading */}
-            {llmStep === 'loading' && (
+            {(llmPhase === 'waiting' || llmPhase === 'configuring') && (
               <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Loader2 className="size-4 animate-spin" /> Loading configuration…
+                <Loader2 className="size-4 animate-spin" />
+                {llmPhase === 'waiting' ? 'Starting…' : 'Connecting to Azure OpenAI…'}
               </div>
             )}
 
-            {/* Step: .env not configured */}
-            {llmStep === 'env_missing' && (
-              <Alert className="border-amber-200 bg-amber-50">
-                <AlertTriangle className="size-4 text-amber-600" />
-                <AlertDescription>
-                  <p className="text-sm text-amber-900">
-                    <strong>Azure OpenAI endpoint is required.</strong>{' '}
-                    Add it to the <code className="bg-amber-100 px-1 rounded text-xs">backend/.env</code> file:
-                  </p>
-                  <pre className="mt-2 text-xs bg-amber-100/60 rounded p-2 text-amber-900 font-mono">
-{`PRESIDIO_EVAL_AZURE_ENDPOINT=https://your-resource.openai.azure.com
-
-# Option A — API key auth:
-PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
-
-# Option B — leave API key empty to use
-# DefaultAzureCredential (managed identity / az login)`}
-                  </pre>
-                  <p className="text-xs text-amber-700 mt-2">
-                    Then restart the backend server. See <code className="bg-amber-100 px-1 rounded">.env.example</code> for reference.
-                  </p>
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Step: idle / error — choose deployment and connect */}
-            {(llmStep === 'idle' || llmStep === 'error' || llmStep === 'configuring') && (
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="deployment-select" className="text-xs font-medium">Model Deployment</Label>
-                  <Select value={selectedModel} onValueChange={setSelectedModel} disabled={llmStep === 'configuring'}>
-                    <SelectTrigger id="deployment-select">
-                      <SelectValue placeholder="Select a model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {models.map((m) => (
-                        <SelectItem key={m.id} value={m.id}>
-                          {m.label} <span className="text-slate-400 ml-1">— {m.provider}</span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {llmError && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertTriangle className="size-4 text-red-600" />
-                    <AlertDescription className="text-sm text-red-800">{llmError}</AlertDescription>
-                  </Alert>
-                )}
-
-                <Button
-                  size="sm"
-                  onClick={handleConfigure}
-                  disabled={llmStep === 'configuring'}
-                  className="w-full"
-                >
-                  {llmStep === 'configuring' ? (
-                    <><Loader2 className="size-4 mr-2 animate-spin" /> Connecting…</>
-                  ) : (
-                    'Connect to Azure OpenAI'
-                  )}
-                </Button>
-              </div>
-            )}
-
-            {/* Step: configured — ready to run */}
-            {llmStep === 'configured' && (
-              <div className="space-y-3">
-                <p className="text-sm text-slate-600">
-                  Connected with <strong>{selectedModel}</strong>.
-                  {datasetRecordCount != null && (
-                    <> Will analyse <strong>{datasetRecordCount.toLocaleString()}</strong> records from the dataset.</>
-                  )}
-                </p>
-                {llmError && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertTriangle className="size-4 text-red-600" />
-                    <AlertDescription className="text-sm text-red-800">{llmError}</AlertDescription>
-                  </Alert>
-                )}
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={handleRunAnalysis} className="flex-1">
-                    <Sparkles className="size-4 mr-2" />
-                    Run LLM Analysis
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={handleDisconnect}>
-                    <Unplug className="size-4 mr-1" />
-                    Disconnect
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step: running */}
-            {llmStep === 'running' && (
+            {llmPhase === 'running' && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm text-slate-600">
                   <span className="flex items-center gap-2">
@@ -679,41 +411,93 @@ PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
                   </span>
                   <span>{llmProgress} / {llmTotal}</span>
                 </div>
-                <Progress value={progressPct} className="h-2" />
+                <Progress value={llmProgressPct} className="h-2" />
               </div>
             )}
 
-            {/* Step: complete */}
-            {llmStep === 'done' && (
-              <div className="space-y-3">
-                <p className="text-sm text-green-700">
-                  LLM analysis complete — {llmTotal} records processed, <strong>{llmEntityCount.toLocaleString()} entities</strong> detected.
-                  {llmElapsedMs != null && (
-                    <span className="ml-1 text-slate-500">
-                      Detection time: <strong>{(llmElapsedMs / 1000).toFixed(2)} seconds</strong>
-                    </span>
-                  )}
-                </p>
-                <p className="text-xs text-slate-500">Model: {selectedModel}</p>
-                <Button size="sm" variant="outline" onClick={handleDisconnect}>
-                  <Unplug className="size-4 mr-1" />
-                  Disconnect & Change Model
-                </Button>
-              </div>
+            {llmPhase === 'error' && llmError && (
+              <Alert className="border-red-200 bg-red-50">
+                <AlertTriangle className="size-4 text-red-600" />
+                <AlertDescription className="text-sm text-red-800">{llmError}</AlertDescription>
+              </Alert>
             )}
+
+            {llmPhase === 'done' && (() => {
+              const maxTypeCount = llmEntityTypes.length > 0 ? llmEntityTypes[0].count : 1;
+              const rps = llmElapsedMs && llmElapsedMs > 0 ? (llmTotal / (llmElapsedMs / 1000)).toFixed(1) : null;
+              return (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-4 gap-3">
+                    <div className="bg-purple-50 rounded-lg p-3 text-center">
+                      <Hash className="size-4 text-purple-400 mx-auto mb-1" />
+                      <p className="text-2xl font-bold text-purple-700">{llmTotal.toLocaleString()}</p>
+                      <p className="text-xs text-purple-500">Records</p>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-3 text-center">
+                      <Tag className="size-4 text-purple-400 mx-auto mb-1" />
+                      <p className="text-2xl font-bold text-purple-700">{llmEntityCount.toLocaleString()}</p>
+                      <p className="text-xs text-purple-500">Entities</p>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-3 text-center">
+                      <Clock className="size-4 text-purple-400 mx-auto mb-1" />
+                      <p className="text-2xl font-bold text-purple-700">
+                        {llmElapsedMs != null ? `${(llmElapsedMs / 1000).toFixed(1)}s` : '—'}
+                      </p>
+                      <p className="text-xs text-purple-500">Duration</p>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-3 text-center">
+                      <Zap className="size-4 text-purple-400 mx-auto mb-1" />
+                      <p className="text-2xl font-bold text-purple-700">{rps ?? '—'}</p>
+                      <p className="text-xs text-purple-500">Rec / sec</p>
+                    </div>
+                  </div>
+                  {llmEntityTypes.length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-slate-500 mb-2">Entity breakdown</p>
+                      <div className="space-y-1.5">
+                        {llmEntityTypes.map(({ type, count }) => (
+                          <div key={type} className="flex items-center gap-2 text-xs">
+                            <span className="w-28 truncate text-slate-600 font-medium">{type}</span>
+                            <div className="flex-1 bg-purple-100 rounded-full h-2 overflow-hidden">
+                              <div className="bg-purple-500 h-full rounded-full transition-all" style={{ width: `${(count / maxTypeCount) * 100}%` }} />
+                            </div>
+                            <span className="w-8 text-right text-slate-500 tabular-nums">{count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </Card>
-      </div>
+      )}
 
       {/* Actions */}
       <div className="flex flex-col items-end gap-3 pt-4">
-        {hasFinalEntities && (
-          <Alert className="border-amber-200 bg-amber-50 w-full">
-            <CheckCircle className="size-4 text-amber-600" />
+        {allDone && hasFinalEntities && (
+          <Alert className={`w-full ${newEntityTypes.length > 0 ? 'border-orange-300 bg-orange-50' : 'border-amber-200 bg-amber-50'}`}>
+            {newEntityTypes.length > 0 ? (
+              <AlertTriangle className="size-4 text-orange-600" />
+            ) : (
+              <CheckCircle className="size-4 text-amber-600" />
+            )}
             <AlertDescription>
               <div className="text-sm text-amber-900">
-                <span className="font-medium">Existing reviewed entities found:</span> This dataset already includes human-approved final entities from a previous review.
-                You can go directly to Evaluation to test this configuration against that saved reference set, or go back through Human Review to revise it.
+                {newEntityTypes.length > 0 ? (
+                  <>
+                    <span className="font-medium">New entity types detected:</span>{' '}
+                    <span className="font-mono">{newEntityTypes.join(', ')}</span>.
+                    <br />
+                    These types were not in your previous golden set. Go to Human Review to resolve them before running evaluation.
+                  </>
+                ) : (
+                  <>
+                    <span className="font-medium">Existing reviewed entities found:</span> This dataset already includes human-approved final entities from a previous review.
+                    You can go directly to Evaluation to test this configuration against that saved reference set, or go back through Human Review to revise it.
+                  </>
+                )}
               </div>
             </AlertDescription>
           </Alert>
@@ -722,24 +506,25 @@ PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
           <Button
             size="lg"
             variant="outline"
-            onClick={() => navigate('/setup')}
+            onClick={() => navigate('/')}
           >
             <ChevronLeft className="size-4 mr-1" />
             Back
           </Button>
-          {hasFinalEntities && (
+          {allDone && hasFinalEntities && (
             <Button
               size="lg"
-              variant="outline"
+              variant={newEntityTypes.length > 0 ? 'default' : 'outline'}
               onClick={handleContinue}
             >
               Continue to Human Review
               <ArrowRight className="size-4 ml-2" />
             </Button>
           )}
-          {hasFinalEntities ? (
+          {allDone && hasFinalEntities ? (
             <Button
               size="lg"
+              variant={newEntityTypes.length > 0 ? 'outline' : 'default'}
               onClick={() => navigate('/evaluation')}
             >
               Continue to Evaluation
@@ -749,6 +534,7 @@ PRESIDIO_EVAL_AZURE_API_KEY=your-api-key-here
             <Button
               size="lg"
               onClick={handleContinue}
+              disabled={!allDone}
             >
               Continue to Human Review
               <ArrowRight className="size-4 ml-2" />

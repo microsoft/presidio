@@ -3,8 +3,7 @@ import { Shield } from 'lucide-react';
 import { Progress } from './ui/progress';
 
 const steps = [
-  { path: '/', label: 'Welcome' },
-  { path: '/setup', label: 'Setup' },
+  { path: '/', label: 'Setup' },
   { path: '/anonymization', label: 'Analysis' },
   { path: '/human-review', label: 'Human Review' },
   { path: '/evaluation', label: 'Evaluation' },

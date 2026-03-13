@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { ArrowRight, Users, CheckCircle, ChevronLeft, ChevronRight, CheckCheck, Loader2 } from 'lucide-react';
+import { ArrowRight, CheckCircle, ChevronLeft, ChevronRight, CheckCheck, Loader2, BookOpen, List } from 'lucide-react';
 import { EntityComparison } from '../components/EntityComparison';
+import { ReadingView } from '../components/ReadingView';
 import { api } from '../lib/api';
 import type { Entity, Record as RecordType, SetupConfig } from '../types';
 
@@ -31,6 +32,7 @@ export function HumanReview() {
   const [reviewedRecords, setReviewedRecords] = useState<Set<string>>(new Set());
   const [bulkConfirmedRecords, setBulkConfirmedRecords] = useState<Set<string>>(new Set());
   const [goldenSet, setGoldenSet] = useState<Record<string, Entity[]>>({});
+  const [viewMode, setViewMode] = useState<'entity' | 'reading'>('entity');
 
   const setupConfig = useMemo<SetupConfig | null>(() => {
     try {
@@ -92,6 +94,29 @@ export function HumanReview() {
     loadRecords();
   }, []);
 
+  const hasFinalEntities = setupConfig?.hasFinalEntities ?? false;
+
+  // Auto-confirm golden (final_entities) on second-config runs
+  // Only golden/dataset entities are auto-confirmed; new entities from the
+  // current config run are left unconfirmed for the user to review.
+  useEffect(() => {
+    if (!records.length || !hasFinalEntities) return;
+    const autoGolden: Record<string, Entity[]> = {};
+    const autoReviewed = new Set<string>();
+
+    for (const rec of records) {
+      if (rec.datasetEntities && rec.datasetEntities.length > 0) {
+        autoGolden[rec.id] = [...rec.datasetEntities];
+        autoReviewed.add(rec.id);
+      }
+    }
+
+    if (Object.keys(autoGolden).length > 0) {
+      setGoldenSet(autoGolden);
+      setReviewedRecords(autoReviewed);
+    }
+  }, [records, hasFinalEntities]);
+
   const currentRecord = records[currentRecordIndex] ?? null;
   const totalRecords = records.length;
   const reviewProgress = totalRecords > 0 ? (reviewedRecords.size / totalRecords) * 100 : 0;
@@ -108,7 +133,7 @@ export function HumanReview() {
     setGoldenSet(prev => ({
       ...prev,
       [recordId]: (prev[recordId] || []).filter(e => 
-        !(e.start < entity.end && entity.start < e.end)
+        !(e.start === entity.start && e.end === entity.end && e.entity_type === entity.entity_type)
       ),
     }));
     setReviewedRecords(new Set([...reviewedRecords, recordId]));
@@ -126,7 +151,7 @@ export function HumanReview() {
     setGoldenSet(prev => ({
       ...prev,
       [recordId]: (prev[recordId] || []).filter(e =>
-        !(e.start < entity.end && entity.start < e.end)
+        !(e.start === entity.start && e.end === entity.end && e.entity_type === entity.entity_type)
       ),
     }));
   };
@@ -218,54 +243,36 @@ export function HumanReview() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-slate-900 mb-2">Human Review & Golden Set Creation</h2>
-        <p className="text-slate-600">
-          Review entity detections from Presidio and LLM to create a validated golden set for evaluation.
+        <h2 className="text-2xl font-semibold text-slate-900 mb-1">Human Review</h2>
+        <p className="text-sm text-slate-500">
+          Confirm, reject, or adjust entity detections to build the golden reference set.
         </p>
       </div>
 
-      <Alert className="border-sky-200 bg-sky-50">
-        <Users className="size-4 text-sky-700" />
-        <AlertDescription>
-          <div className="space-y-2 text-sm text-sky-900">
-            <div className="font-medium">What this page is for</div>
-            <div>
-              This page is where you decide which detections should become the final golden set. Each card shows what Presidio, the LLM, or an existing dataset label detected for the current record.
+      {/* Entity Status Legend */}
+      <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+        <div className="flex items-center gap-6 text-sm">
+          <span className="text-xs font-medium text-slate-500 mr-1">Sources:</span>
+          {currentRecord.datasetEntities && currentRecord.datasetEntities.length > 0 && (
+            <div className="flex items-center gap-1.5">
+              <div className="size-2.5 rounded-full bg-amber-500" />
+              <span className="text-slate-600">Golden Dataset</span>
             </div>
-            <div>
-              Use <span className="font-medium">Confirm</span> for correct detections, <span className="font-medium">Reject</span> for incorrect ones, and <span className="font-medium">Adjust</span> or manual entities when the span or label needs correction.
+          )}
+          {currentRecord.presidioEntities.length > 0 && (
+            <div className="flex items-center gap-1.5">
+              <div className="size-2.5 rounded-full bg-purple-500" />
+              <span className="text-slate-600">Presidio Analyzer</span>
             </div>
-            <div>
-              You need to review every record before continuing. The resulting final entities are what the Evaluation step treats as the trusted reference.
+          )}
+          {currentRecord.llmEntities.length > 0 && (
+            <div className="flex items-center gap-1.5">
+              <div className="size-2.5 rounded-full bg-cyan-500" />
+              <span className="text-slate-600">Presidio LLM Recognizer</span>
             </div>
-          </div>
-        </AlertDescription>
-      </Alert>
-
-      {/* Progress Overview */}
-      <Alert className="border-blue-200 bg-blue-50">
-        <Users className="size-4 text-blue-600" />
-        <AlertDescription>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-medium text-blue-900">Review Progress</span>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-blue-800">{reviewedRecords.size} of {totalRecords} records reviewed ({reviewProgress.toFixed(0)}%)</span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                  onClick={handleAutoConfirmAll}
-                >
-                  <CheckCheck className="size-4 mr-1" />
-                  Confirm All Entities
-                </Button>
-              </div>
-            </div>
-            <Progress value={reviewProgress} className="h-2" />
-          </div>
-        </AlertDescription>
-      </Alert>
+          )}
+        </div>
+      </div>
 
       {/* Record Navigation */}
       <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200">
@@ -303,44 +310,62 @@ export function HumanReview() {
         </div>
       </div>
 
-      {/* Entity Comparison */}
-      <EntityComparison
-        recordId={currentRecord.id}
-        recordText={currentRecord.text}
-        presidioEntities={currentRecord.presidioEntities}
-        llmEntities={currentRecord.llmEntities}
-        datasetEntities={currentRecord.datasetEntities}
-        allConfirmed={bulkConfirmedRecords.has(currentRecord.id)}
-        onConfirm={handleConfirm}
-        onReject={handleReject}
-        onAddManual={handleAddManual}
-        onUndo={handleUndo}
-      />
-
-      {/* Legend */}
-      <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-        <div className="text-sm font-medium text-slate-900 mb-3">Entity Status Legend</div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-          {currentRecord.datasetEntities && currentRecord.datasetEntities.length > 0 && (
-            <div className="flex items-center gap-2">
-              <div className="size-3 rounded-full bg-amber-500" />
-              <span>Golden Dataset</span>
-            </div>
-          )}
-          {currentRecord.presidioEntities.length > 0 && (
-            <div className="flex items-center gap-2">
-              <div className="size-3 rounded-full bg-purple-500" />
-              <span>Presidio</span>
-            </div>
-          )}
-          {currentRecord.llmEntities.length > 0 && (
-            <div className="flex items-center gap-2">
-              <div className="size-3 rounded-full bg-cyan-500" />
-              <span>LLM as a Judge</span>
-            </div>
-          )}
-        </div>
+      {/* View Mode Toggle */}
+      <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg w-fit">
+        <button
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+            viewMode === 'entity'
+              ? 'bg-white text-slate-900 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+          onClick={() => setViewMode('entity')}
+        >
+          <List className="size-4" />
+          Entity View
+        </button>
+        <button
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+            viewMode === 'reading'
+              ? 'bg-white text-slate-900 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+          onClick={() => setViewMode('reading')}
+        >
+          <BookOpen className="size-4" />
+          Reading View
+        </button>
       </div>
+
+      {/* Entity Comparison / Reading View */}
+      {viewMode === 'entity' ? (
+        <EntityComparison
+          recordId={currentRecord.id}
+          recordText={currentRecord.text}
+          presidioEntities={currentRecord.presidioEntities}
+          llmEntities={currentRecord.llmEntities}
+          datasetEntities={currentRecord.datasetEntities}
+          allConfirmed={bulkConfirmedRecords.has(currentRecord.id)}
+          autoConfirmDataset={hasFinalEntities}
+          onConfirm={handleConfirm}
+          onReject={handleReject}
+          onAddManual={handleAddManual}
+          onUndo={handleUndo}
+        />
+      ) : (
+        <ReadingView
+          recordId={currentRecord.id}
+          recordText={currentRecord.text}
+          presidioEntities={currentRecord.presidioEntities}
+          llmEntities={currentRecord.llmEntities}
+          datasetEntities={currentRecord.datasetEntities}
+          allConfirmed={bulkConfirmedRecords.has(currentRecord.id)}
+          autoConfirmDataset={hasFinalEntities}
+          onConfirm={handleConfirm}
+          onReject={handleReject}
+          onAddManual={handleAddManual}
+          onUndo={handleUndo}
+        />
+      )}
 
       {/* Bottom Record Navigation */}
       <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200">
@@ -378,34 +403,43 @@ export function HumanReview() {
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center justify-between pt-4">
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-slate-600">
-            {canContinue ? (
-              <span className="text-green-700 font-medium">
-                ✓ All records reviewed - ready to proceed
-              </span>
-            ) : (
-              <span>
-                Review all records to continue ({reviewedRecords.size}/{totalRecords} completed)
-              </span>
-            )}
-          </div>
+      {/* Review Progress */}
+      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-blue-900">
+            {reviewedRecords.size} of {totalRecords} records reviewed
+          </span>
           <Button
             size="sm"
             variant="outline"
+            className="border-blue-300 text-blue-700 hover:bg-blue-100"
             onClick={handleAutoConfirmAll}
           >
             <CheckCheck className="size-4 mr-1" />
             Confirm All Entities
           </Button>
         </div>
+        <Progress value={reviewProgress} className="h-2" />
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center justify-between pt-2">
+        <div className="text-sm text-slate-600">
+          {canContinue ? (
+            <span className="text-green-700 font-medium">
+              All records reviewed — ready to proceed
+            </span>
+          ) : (
+            <span>
+              {reviewedRecords.size}/{totalRecords} completed
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <Button
             size="lg"
             variant="outline"
-            onClick={() => navigate('/anonymization')}
+            onClick={() => navigate('/setup')}
           >
             <ChevronLeft className="size-4 mr-1" />
             Back

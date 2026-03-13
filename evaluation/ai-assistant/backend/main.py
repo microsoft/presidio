@@ -2,6 +2,14 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
+# Eagerly import presidio_analyzer so the module is fully initialised before
+# concurrent requests trigger lazy imports from different threads (which would
+# hit a circular-import race in the presidio_analyzer package).
+try:
+    import presidio_analyzer  # noqa: F401
+except ImportError:
+    pass  # Optional dependency – endpoints will return clear errors if missing
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import (

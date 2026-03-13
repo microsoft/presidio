@@ -370,6 +370,7 @@ async def disconnect_presidio():
     _state["results"] = {}
     _state["start_time"] = None
     _state["elapsed_ms"] = None
+    _all_config_results.clear()
     return {"status": "disconnected"}
 
 

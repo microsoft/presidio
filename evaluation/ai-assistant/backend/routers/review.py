@@ -128,6 +128,40 @@ async def save_final_entities(req: SaveFinalEntitiesRequest):
     current_config = presidio_state.get("config_name")
     if current_config and presidio_results:
         config_results[current_config] = presidio_results
+
+    # Recover any existing config columns from the file that are missing
+    # from in-memory (e.g. first config cleared by disconnect())
+    if ds.format == "csv":
+        with open(stored, encoding="utf-8") as hf:
+            existing_reader = csv.DictReader(hf)
+            existing_cols = existing_reader.fieldnames or []
+            existing_config_cols = [c for c in existing_cols if c.startswith("config_")]
+            if existing_config_cols:
+                existing_rows = list(existing_reader)
+                for col in existing_config_cols:
+                    cname = col[len("config_"):]
+                    if cname not in config_results:
+                        config_results[cname] = {}
+                        for i, row in enumerate(existing_rows):
+                            rec_id = f"rec-{i + 1:04d}"
+                            val = row.get(col, "[]")
+                            try:
+                                config_results[cname][rec_id] = json.loads(val) if val else []
+                            except (json.JSONDecodeError, TypeError):
+                                config_results[cname][rec_id] = []
+    elif ds.format == "json":
+        with open(stored, encoding="utf-8") as hf:
+            existing_data = json.load(hf)
+        if existing_data:
+            for key in list(existing_data[0].keys()):
+                if key.startswith("config_"):
+                    cname = key[len("config_"):]
+                    if cname not in config_results:
+                        config_results[cname] = {}
+                        for i, obj in enumerate(existing_data):
+                            rec_id = f"rec-{i + 1:04d}"
+                            config_results[cname][rec_id] = obj.get(key, [])
+
     config_names = list(config_results.keys())
 
     if ds.format == "csv":
@@ -229,6 +263,40 @@ async def save_config_results(req: SaveConfigResultsRequest):
     current_config = presidio_state.get("config_name")
     if current_config and presidio_results:
         config_results[current_config] = presidio_results
+
+    # Also load any existing config columns already saved in the file
+    # so that a second-config run preserves the first config's results
+    if ds.format == "csv":
+        with open(stored, encoding="utf-8") as hf:
+            existing_reader = csv.DictReader(hf)
+            existing_cols = existing_reader.fieldnames or []
+            existing_config_cols = [c for c in existing_cols if c.startswith("config_")]
+            if existing_config_cols:
+                existing_rows = list(existing_reader)
+                for col in existing_config_cols:
+                    cname = col[len("config_"):]
+                    if cname not in config_results:
+                        config_results[cname] = {}
+                        for i, row in enumerate(existing_rows):
+                            rec_id = f"rec-{i + 1:04d}"
+                            val = row.get(col, "[]")
+                            try:
+                                config_results[cname][rec_id] = json.loads(val) if val else []
+                            except (json.JSONDecodeError, TypeError):
+                                config_results[cname][rec_id] = []
+    elif ds.format == "json":
+        with open(stored, encoding="utf-8") as hf:
+            existing_data = json.load(hf)
+        if existing_data:
+            for key in list(existing_data[0].keys()):
+                if key.startswith("config_"):
+                    cname = key[len("config_"):]
+                    if cname not in config_results:
+                        config_results[cname] = {}
+                        for i, obj in enumerate(existing_data):
+                            rec_id = f"rec-{i + 1:04d}"
+                            config_results[cname][rec_id] = obj.get(key, [])
+
     config_names = list(config_results.keys())
 
     if not config_names:

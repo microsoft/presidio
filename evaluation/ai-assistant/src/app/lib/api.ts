@@ -67,6 +67,16 @@ export const api = {
       request<any>(`/datasets/${encodeURIComponent(id)}/preview?limit=${limit}`),
     records: (id: string) =>
       request<any[]>(`/datasets/${encodeURIComponent(id)}/records`),
+    columns: (file: File) => {
+      const fd = new FormData();
+      fd.append('file', file);
+      return uploadFile<{ columns: string[] }>('/datasets/columns', fd);
+    },
+    columnsFromPath: (path: string) =>
+      request<{ columns: string[] }>('/datasets/columns-from-path', {
+        method: 'POST',
+        body: JSON.stringify({ path }),
+      }),
   },
 
 

@@ -94,11 +94,30 @@ def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> di
         for entity in predicted_map.values():
             predicted_per_type[entity.entity_type] += 1
 
+        # Find positions (start, end) that have at least one TP match
+        tp_positions: set[tuple[int, int]] = set()
+        for key, entity in predicted_map.items():
+            if key in gold_map:
+                tp_positions.add((entity.start, entity.end))
+
         for key, entity in predicted_map.items():
             if key in gold_map:
                 tp_total += 1
                 tp_per_type[entity.entity_type] += 1
+                misses.append(
+                    EntityMiss(
+                        record_id=record_id,
+                        record_text=record_text,
+                        missed_entity=entity,
+                        miss_type=MissType.true_positive,
+                        entity_type=entity.entity_type,
+                        risk_level=_risk_level(entity.entity_type),
+                    ).model_dump()
+                )
             else:
+                # Skip FP if another entity at the same position is a TP
+                if (entity.start, entity.end) in tp_positions:
+                    continue
                 fp_total += 1
                 misses.append(
                     EntityMiss(
@@ -113,6 +132,9 @@ def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> di
 
         for key, entity in gold_map.items():
             if key not in predicted_map:
+                # Skip FN if another entity at the same position is a TP
+                if (entity.start, entity.end) in tp_positions:
+                    continue
                 fn_total += 1
                 misses.append(
                     EntityMiss(
@@ -131,6 +153,8 @@ def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> di
         tp = tp_per_type[entity_type]
         pred = predicted_per_type[entity_type]
         gold = per_type[entity_type]
+        fp = pred - tp
+        fn = gold - tp
         precision = _pct(tp, pred)
         recall = _pct(tp, gold)
         f1 = round((2 * precision * recall / (precision + recall)), 1) if precision + recall else 0.0
@@ -139,6 +163,9 @@ def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> di
             "precision": precision,
             "recall": recall,
             "f1": f1,
+            "true_positives": tp,
+            "false_positives": fp,
+            "false_negatives": fn,
         })
 
     overall_precision = _pct(tp_total, tp_total + fp_total)
@@ -159,7 +186,7 @@ def _evaluate_config(rows: list[dict], text_column: str, config_name: str) -> di
         "by_entity_type": by_entity_type,
         "misses": misses,
         "summary": {
-            "total_misses": len(misses),
+            "total_misses": sum(1 for m in misses if m["miss_type"] != "true-positive"),
             "false_positives": fp_total,
             "false_negatives": fn_total,
             "high_risk": risk_counts[RiskLevel.high],

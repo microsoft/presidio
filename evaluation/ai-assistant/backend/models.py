@@ -84,6 +84,7 @@ class EvaluationRun(BaseModel):
 class MissType(str, Enum):
     """Classification of an entity miss."""
 
+    true_positive = "true-positive"
     false_positive = "false-positive"
     false_negative = "false-negative"
 
@@ -97,7 +98,7 @@ class RiskLevel(str, Enum):
 
 
 class EntityMiss(BaseModel):
-    """An entity detection miss (false positive or negative)."""
+    """An entity detection result (true positive, false positive, or false negative)."""
 
     record_id: str
     record_text: str
