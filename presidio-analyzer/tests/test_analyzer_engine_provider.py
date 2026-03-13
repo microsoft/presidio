@@ -350,19 +350,16 @@ def test_analyzer_engine_provider_invalid_registry_conf_file():
 
 
 def test_analyzer_engine_provider_get_configuration_with_nonexistent_file():
-    """Test get_configuration falls back to default when file doesn't exist."""
+    """Test get_configuration raises error when file doesn't exist."""
     provider = AnalyzerEngineProvider()
 
-    # Test with nonexistent file - should fall back to default
-    config = provider.get_configuration("/tmp/nonexistent_config_file_12345.yaml")
-
-    # Should return a valid configuration (the default one)
-    assert config is not None
-    assert isinstance(config, dict)
+    # Test with nonexistent file - should raise ValueError
+    with pytest.raises(ValueError, match="not found or cannot be read"):
+        provider.get_configuration("/tmp/nonexistent_config_file_12345.yaml")
 
 
 def test_analyzer_engine_provider_get_configuration_with_invalid_yaml():
-    """Test get_configuration handles invalid YAML gracefully."""
+    """Test get_configuration raises error for invalid YAML."""
     import tempfile
     import os
 
@@ -373,11 +370,10 @@ def test_analyzer_engine_provider_get_configuration_with_invalid_yaml():
 
     try:
         provider = AnalyzerEngineProvider()
-        config = provider.get_configuration(temp_file)
 
-        # Should fall back to default configuration
-        assert config is not None
-        assert isinstance(config, dict)
+        # Should raise ValueError for invalid YAML
+        with pytest.raises(ValueError, match="Failed to parse configuration file"):
+            provider.get_configuration(temp_file)
     finally:
         os.unlink(temp_file)
 
