@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
-## [2.3.0] - 2026-03-15
+## [2.2.362] - 2026-03-15
 ### General
 #### Added
 - Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected. Inspired by and thanks to Sakthi Santhosh Anumand and Harsha Vardhan for the original idea.
@@ -711,8 +711,8 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.  
 
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.3.0...HEAD
-[2.3.0]: https://github.com/microsoft/presidio/compare/2.2.361...2.3.0
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.362...HEAD
+[2.2.362]: https://github.com/microsoft/presidio/compare/2.2.361...2.2.362
 [2.2.361]: https://github.com/microsoft/presidio/compare/2.2.360...2.2.361
 [2.2.360]: https://github.com/microsoft/presidio/compare/2.2.359...2.2.360
 [2.2.359]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
