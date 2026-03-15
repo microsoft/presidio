@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+
+## [2.3.0] - 2026-03-15
 ### General
 #### Added
 - Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected. Inspired by and thanks to Sakthi Santhosh Anumand and Harsha Vardhan for the original idea.
@@ -16,7 +18,6 @@ All notable changes to this project will be documented in this file.
 - UK Passport Number (UK_PASSPORT) recognizer for 2-letter + 7-digit format passports issued from 2015 onwards
 - UK Vehicle Registration Number (UK_VEHICLE_REGISTRATION) recognizer for current (2001+), prefix (1983-2001), and suffix (1963-1983) plate formats
 
-### Analyzer
 #### Changed
 - Refactored MedicalNERRecognizer to subclass HuggingFaceNerRecognizer, using HuggingFace pipeline directly without spaCy (#1853) (Thanks @stevenelliottjr)
 
@@ -710,7 +711,8 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.  
 
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.361...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.3.0...HEAD
+[2.3.0]: https://github.com/microsoft/presidio/compare/2.2.361...2.3.0
 [2.2.361]: https://github.com/microsoft/presidio/compare/2.2.360...2.2.361
 [2.2.360]: https://github.com/microsoft/presidio/compare/2.2.359...2.2.360
 [2.2.359]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
@@ -738,11 +740,3 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 [2.2.23]: https://github.com/microsoft/presidio/compare/2.2.2...2.2.23
 [2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
 [2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
-
-## Unreleased
-
-### Fixed
-- Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
-- Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
-- Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
-- Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).
