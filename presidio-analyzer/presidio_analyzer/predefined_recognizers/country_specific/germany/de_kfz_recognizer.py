@@ -5,7 +5,7 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 class DeKfzRecognizer(PatternRecognizer):
     """
-    Recognizes German vehicle registration plates (Kraftfahrzeugkennzeichen, KFZ-Kennzeichen).
+    Recognizes German vehicle registration plates (KFZ-Kennzeichen).
 
     German license plates are issued by local Zulassungsbehörden (vehicle registration
     authorities). While not exclusively personal (vehicles can be owned by companies),
@@ -25,7 +25,7 @@ class DeKfzRecognizer(PatternRecognizer):
         Ziffern:               1–4 digits
         Suffix (optional):     E (electric vehicle) or H (Oldtimer/historic, ≥30 years)
 
-        Examples:
+    Examples
             B AB 1234      (Berlin)
             M XY 999       (München)
             HH AB 1234     (Hamburg)

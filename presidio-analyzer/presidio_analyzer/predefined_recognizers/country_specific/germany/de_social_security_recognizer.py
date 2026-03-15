@@ -118,7 +118,8 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
         letter = pattern_text[8]
         letter_val = str(ord(letter) - ord("A") + 1).zfill(2)
 
-        # Effective 12-digit string (positions 1-8 + letter as 2 digits + positions 10-11)
+        # Effective 12-digit string:
+        # positions 1-8 + letter as 2 digits + positions 10-11
         effective = pattern_text[:8] + letter_val + pattern_text[9:11]
 
         check_digit = int(pattern_text[11])

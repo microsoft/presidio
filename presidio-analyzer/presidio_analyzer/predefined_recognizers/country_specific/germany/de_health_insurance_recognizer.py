@@ -6,11 +6,13 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 class DeHealthInsuranceRecognizer(PatternRecognizer):
     """
-    Recognizes German statutory health insurance numbers (Krankenversicherungsnummer,
-    also called KVNR – Krankenversichertennummer or Versichertennummer).
+    Recognizes German statutory health insurance numbers (KVNR).
 
-    The KVNR is assigned to every person insured under the German statutory health
-    insurance system (gesetzliche Krankenversicherung, GKV). It is printed on the
+    Also called Krankenversicherungsnummer, Krankenversichertennummer, or
+    Versichertennummer.
+
+    The KVNR is assigned to every person insured under the German statutory
+    health insurance system (gesetzliche Krankenversicherung, GKV). It is printed on the
     Gesundheitskarte (eGK – elektronische Gesundheitskarte).
 
     Legal basis: § 290 SGB V (Sozialgesetzbuch Fünftes Buch – Gesetzliche

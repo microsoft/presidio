@@ -5,7 +5,7 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 class DeTaxIdRecognizer(PatternRecognizer):
     """
-    Recognizes German Steueridentifikationsnummer (Steuer-IdNr.) using regex and checksum.
+    Recognizes German Steueridentifikationsnummer (Steuer-IdNr.).
 
     The Steueridentifikationsnummer is a unique 11-digit personal tax identification
     number issued by the Bundeszentralamt für Steuern to every person registered in
