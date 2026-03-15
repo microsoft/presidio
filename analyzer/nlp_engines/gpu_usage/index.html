@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -1795,6 +1795,17 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#environment-variable-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variable Override
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
@@ -4530,6 +4541,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#environment-variable-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variable Override
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4673,6 +4695,25 @@
 
 <h1 id="gpu-acceleration">GPU Acceleration</h1>
 <p>Presidio supports GPU acceleration for NLP models, which can significantly improve performance when processing large volumes of text. GPU is automatically detected and used when available—no code changes required.</p>
+<h2 id="environment-variable-override">Environment Variable Override</h2>
+<p>You can explicitly control device selection using the <code>PRESIDIO_DEVICE</code> environment variable. Any valid PyTorch device string is accepted:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Force CPU usage</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PRESIDIO_DEVICE</span><span class="o">=</span>cpu
+
+<span class="c1"># Force GPU usage</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PRESIDIO_DEVICE</span><span class="o">=</span>cuda
+
+<span class="c1"># Use a specific GPU</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PRESIDIO_DEVICE</span><span class="o">=</span>cuda:0
+<span class="nb">export</span><span class="w"> </span><span class="nv">PRESIDIO_DEVICE</span><span class="o">=</span>cuda:1
+
+<span class="c1"># Or when running Docker containers</span>
+docker<span class="w"> </span>run<span class="w"> </span>-e<span class="w"> </span><span class="nv">PRESIDIO_DEVICE</span><span class="o">=</span>cuda<span class="w"> </span>mcr.microsoft.com/presidio-analyzer:latest
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Priority</p>
+<p>When <code>PRESIDIO_DEVICE</code> is set, it takes priority over automatic detection. If not set (or empty), Presidio will auto-detect available hardware.</p>
+</div>
 <h2 id="prerequisites">Prerequisites</h2>
 <h3 id="hardware-requirements">Hardware Requirements</h3>
 <table>

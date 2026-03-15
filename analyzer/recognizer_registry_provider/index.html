@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -4587,6 +4587,16 @@
 <span class="w">    </span><span class="nt">supported_entity</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TITLE&quot;</span>
 <span class="w">    </span><span class="nt">deny_list</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Mr.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Mrs.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Ms.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Miss</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Dr.</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Prof.</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">deny_list_score</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HuggingFace</span><span class="nv"> </span><span class="s">NER&quot;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;predefined&quot;</span>
+<span class="w">    </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HuggingFaceNerRecognizer&quot;</span>
+<span class="w">    </span><span class="nt">model_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dslim/bert-base-NER&quot;</span>
+<span class="w">    </span><span class="nt">supported_languages</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">en</span>
+<span class="w">    </span><span class="nt">supported_entities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;PERSON&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;LOCATION&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;ORGANIZATION&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">aggregation_strategy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;simple&quot;</span>
+<span class="w">    </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cpu&quot;</span>
 </code></pre></div>
 <h3 id="the-recognizer-parameters">The recognizer parameters</h3>
 <ul>
@@ -4600,6 +4610,16 @@
 <li><code>deny_list</code>: A list of words to detect, in case the recognizer uses a predefined list of words.</li>
 <li><code>deny_list_score</code>: confidence score for a term identified using a deny-list.</li>
 </ul>
+<div class="admonition tip">
+<p class="admonition-title">Configuration Tip: Agglutinative languages (e.g., Korean)</p>
+<p>If spaCy-based NER produces noisy or redundant results, you can disable <code>SpacyRecognizer</code> and use <code>HuggingFaceNerRecognizer</code> as an alternative. Note that <code>HuggingFaceNerRecognizer</code> bypasses the spaCy tokenizer alignment mechanism.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SpacyRecognizer&quot;</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;predefined&quot;</span>
+<span class="w">  </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SpacyRecognizer&quot;</span>
+<span class="w">  </span><span class="nt">supported_languages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;ko&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+</div>
 
 
 

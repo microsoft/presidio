@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -2459,10 +2459,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#nigeria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nigeria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#thai" class="md-nav__link">
     <span class="md-ellipsis">
       
         Thai
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#medical-clinical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Medical / Clinical
       
     </span>
   </a>
@@ -4734,10 +4756,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#nigeria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nigeria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#thai" class="md-nav__link">
     <span class="md-ellipsis">
       
         Thai
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#medical-clinical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Medical / Clinical
       
     </span>
   </a>
@@ -4933,6 +4977,11 @@ For more information, refer to the <a href="../analyzer/adding_recognizers/">add
 <td>Pattern match and context</td>
 </tr>
 <tr>
+<td>US_NPI</td>
+<td>A US National Provider Identifier (NPI) is a 10-digit number issued to healthcare providers by CMS under HIPAA.</td>
+<td>Pattern match, context and checksum</td>
+</tr>
+<tr>
 <td>US_PASSPORT</td>
 <td>A US passport number with 9 digits.</td>
 <td>Pattern match and context</td>
@@ -4963,6 +5012,21 @@ For more information, refer to the <a href="../analyzer/adding_recognizers/">add
 <td>UK_NINO</td>
 <td>UK <a href="https://en.wikipedia.org/wiki/National_Insurance_number">National Insurance Number</a> is a unique identifier used in the administration of National Insurance and tax.</td>
 <td>Pattern match and context</td>
+</tr>
+<tr>
+<td>UK_PASSPORT</td>
+<td>A UK passport number consists of 2 letters followed by 7 digits (e.g., AB1234567), used in passports issued from 2015 onwards.</td>
+<td>Pattern match and context</td>
+</tr>
+<tr>
+<td>UK_POSTCODE</td>
+<td>A UK <a href="https://en.wikipedia.org/wiki/Postcodes_in_the_United_Kingdom">postcode</a> is a 5-8 character alphanumeric code used by the Royal Mail for mail sorting.</td>
+<td>Pattern match and context</td>
+</tr>
+<tr>
+<td>UK_VEHICLE_REGISTRATION</td>
+<td>A UK vehicle registration number (number plate) in current (2001+), prefix (1983-2001), or suffix (1963-1983) format.</td>
+<td>Pattern match, context and validation</td>
 </tr>
 </tbody>
 </table>
@@ -5192,6 +5256,28 @@ For more information, refer to the <a href="../analyzer/adding_recognizers/">add
 </tr>
 </tbody>
 </table>
+<h3 id="nigeria">Nigeria</h3>
+<table>
+<thead>
+<tr>
+<th>FieldType</th>
+<th>Description</th>
+<th>Detection Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NG_NIN</td>
+<td>The Nigerian National Identification Number (NIN) is a unique 11-digit number issued by the National Identity Management Commission (NIMC).</td>
+<td>Pattern match, context, and checksum</td>
+</tr>
+<tr>
+<td>NG_VEHICLE_REGISTRATION</td>
+<td>Nigerian vehicle registration plate number in the current format (2011+): 3 letters (LGA code), 3 digits (serial), 2 letters (year/batch).</td>
+<td>Pattern match and context</td>
+</tr>
+</tbody>
+</table>
 <h3 id="thai">Thai</h3>
 <table>
 <thead>
@@ -5206,6 +5292,59 @@ For more information, refer to the <a href="../analyzer/adding_recognizers/">add
 <td>TH_TNIN</td>
 <td>The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents.</td>
 <td>Pattern match, context and custom logic.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="medical-clinical">Medical / Clinical</h3>
+<p>Detected using the <code>MedicalNERRecognizer</code> (requires the <code>transformers</code> extra). Uses the <a href="https://huggingface.co/blaze999/Medical-NER">blaze999/Medical-NER</a> model by default.</p>
+<table>
+<thead>
+<tr>
+<th>Entity Type</th>
+<th>Description</th>
+<th>Detection Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MEDICAL_DISEASE_DISORDER</td>
+<td>A disease or disorder (e.g. diabetes, hypertension).</td>
+<td>NER model (HuggingFace transformers)</td>
+</tr>
+<tr>
+<td>MEDICAL_MEDICATION</td>
+<td>A medication or drug name (e.g. metformin, aspirin).</td>
+<td>NER model (HuggingFace transformers)</td>
+</tr>
+<tr>
+<td>MEDICAL_THERAPEUTIC_PROCEDURE</td>
+<td>A therapeutic or diagnostic procedure (e.g. surgery, MRI).</td>
+<td>NER model (HuggingFace transformers)</td>
+</tr>
+<tr>
+<td>MEDICAL_CLINICAL_EVENT</td>
+<td>A clinical event (e.g. admission, discharge).</td>
+<td>NER model (HuggingFace transformers)</td>
+</tr>
+<tr>
+<td>MEDICAL_BIOLOGICAL_ATTRIBUTE</td>
+<td>A biological attribute or measurement (e.g. blood pressure, BMI).</td>
+<td>NER model (HuggingFace transformers)</td>
+</tr>
+<tr>
+<td>MEDICAL_BIOLOGICAL_STRUCTURE</td>
+<td>A biological or anatomical structure (e.g. liver, left ventricle).</td>
+<td>NER model (HuggingFace transformers)</td>
+</tr>
+<tr>
+<td>MEDICAL_FAMILY_HISTORY</td>
+<td>A family medical history reference.</td>
+<td>NER model (HuggingFace transformers)</td>
+</tr>
+<tr>
+<td>MEDICAL_HISTORY</td>
+<td>A patient medical history reference.</td>
+<td>NER model (HuggingFace transformers)</td>
 </tr>
 </tbody>
 </table>

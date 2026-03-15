@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -5084,6 +5084,10 @@ it could still falsely detect non-entity values as PII entities.</p>
 <h2 id="deployment">Deployment</h2>
 <h3 id="how-can-i-deploy-presidio-into-my-environment">How can I deploy Presidio into my environment?</h3>
 <p>The main Presidio modules (analyzer, anonymizer, image-redactor) can be used both as a Python package and as a dockerized REST API. See the <a href="https://microsoft.github.io/presidio/samples/">different deployment samples</a> for example deployments.</p>
+<div class="admonition warning">
+<p class="admonition-title">Authentication and Authorization</p>
+<p>Presidio API endpoints do not include built-in authentication by design. The containers are intentionally kept lean to allow flexibility for different deployment scenarios. Authentication and authorization should be implemented at a separate infrastructure layer (e.g., an API gateway, reverse proxy, or service mesh) according to your specific use case and security requirements. It is strongly recommended not to expose Presidio services directly to untrusted networks without an authentication layer in front of them.</p>
+</div>
 <h2 id="contributing">Contributing</h2>
 <h3 id="how-can-i-contribute-to-presidio">How can I contribute to Presidio?</h3>
 <p>First, review the <a href="https://github.com/microsoft/presidio/blob/main/CONTRIBUTING.md">contribution guidelines</a>, and feel free to reach out by opening an issue, posting a discussion or emailing us at <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#112;&#114;&#101;&#115;&#105;&#100;&#105;&#111;&#64;&#109;&#105;&#99;&#114;&#111;&#115;&#111;&#102;&#116;&#46;&#99;&#111;&#109;">&#112;&#114;&#101;&#115;&#105;&#100;&#105;&#111;&#64;&#109;&#105;&#99;&#114;&#111;&#115;&#111;&#102;&#116;&#46;&#99;&#111;&#109;</a></p>

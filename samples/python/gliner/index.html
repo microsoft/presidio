@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -3450,6 +3450,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#onnx-runtime-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ONNX Runtime Support
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONNX Runtime Support">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-onnx-runtime-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using ONNX Runtime Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4525,6 +4553,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#onnx-runtime-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ONNX Runtime Support
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONNX Runtime Support">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-onnx-runtime-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using ONNX Runtime Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4605,6 +4661,25 @@
 
 <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 </code></pre></div>
+<h2 id="onnx-runtime-support">ONNX Runtime Support</h2>
+<p>GLiNERRecognizer supports using ONNX Runtime as a backend, which provides better CPU compatibility and can prevent crashes on older CPUs without AVX2 instruction set support (e.g., Intel Sandy Bridge).</p>
+<h3 id="using-onnx-runtime-backend">Using ONNX Runtime Backend</h3>
+<p>To use ONNX Runtime with GLiNER:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">presidio_analyzer.predefined_recognizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">GLiNERRecognizer</span>
+
+<span class="c1"># Enable ONNX Runtime backend</span>
+<span class="n">gliner_recognizer</span> <span class="o">=</span> <span class="n">GLiNERRecognizer</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;urchade/gliner_multi_pii-v1&quot;</span><span class="p">,</span>
+    <span class="n">entity_mapping</span><span class="o">=</span><span class="n">entity_mapping</span><span class="p">,</span>
+    <span class="n">load_onnx_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable ONNX Runtime</span>
+    <span class="n">map_location</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Benefits of using ONNX Runtime:</strong>
+- Works on older CPUs without AVX2 support
+- Prevents "Illegal instruction (core dumped)" crashes on incompatible hardware
+- Can provide better performance on certain CPU architectures</p>
+<p><strong>Note:</strong> Make sure <code>onnxruntime</code> is installed when using this feature. It's included in the <code>gliner</code> extra dependencies.</p>
 
 
 

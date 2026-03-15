@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -4649,7 +4649,7 @@ The id can be retrieved from each API response header: <code>x-correlation-id</c
 </code></pre></div>
 <h2 id="writing-custom-decision-process-for-a-recognizer">Writing custom decision process for a recognizer</h2>
 <p>When creating new PII recognizers, it is possible to add information about the recognizer's decision process. This information will be traced or returned to the user, depending on the configuration.</p>
-<p>For example, the <a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/spacy_recognizer.py">spacy_recognizer.py</a> implements a custom trace as follows:</p>
+<p>For example, the <a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/nlp_engine_recognizers/spacy_recognizer.py">spacy_recognizer.py</a> implements a custom trace as follows:</p>
 <div class="highlight"><pre><span></span><code><span class="n">SPACY_DEFAULT_EXPLANATION</span> <span class="o">=</span> <span class="s2">&quot;Identified as </span><span class="si">{}</span><span class="s2"> by Spacy&#39;s Named Entity Recognition&quot;</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">build_spacy_explanation</span><span class="p">(</span><span class="n">recognizer_name</span><span class="p">,</span> <span class="n">original_score</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
