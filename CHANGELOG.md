@@ -5,20 +5,45 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 ### General
 #### Added
-- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected. Inspired by and thanks to Sakthi Santhosh Anumand and Harsha Vardhan for the original idea.
+- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected (#1889) (Thanks @Copilot)
+
+#### Changed
+- Pinned all CI/CD GitHub Actions and Docker base images to commit SHAs to mitigate supply chain attacks (#1861) (Thanks @Copilot)
+- Pinned `ruff` and `build` pip installs with SHA256 hashes for OSSF scorecard compliance (#1864) (Thanks @Copilot)
+- Updated GitHub Actions dependencies (`actions/checkout`, `actions/setup-python`, `actions/setup-dotnet`, `actions/cache`, `actions/github-script`, `actions/dependency-review-action`, `azure/login`, `docker/setup-buildx-action`, `github/codeql-action`, `microsoft/security-devops-action`) and base Python Docker images (#1870, #1871, #1872, #1873, #1874, #1875, #1876, #1877, #1878, #1879, #1885, #1886, #1887, #1895, #1896, #1897, #1898) (Thanks @dependabot)
+- Updated README to clarify Presidio's no-authentication-by-design stance with security guidance (#1903) (Thanks @Copilot)
+
+#### Fixed
+- Broken documentation links (#1856) (Thanks @andyjessen)
+
+#### Security
+- Fixed CVE-2024-47874 and CVE-2025-54121 (Starlette vulnerabilities) (#1860) (Thanks @SharonHart)
+- Fixed CVE-2025-2953 and CVE-2025-3730 (#1859) (Thanks @SharonHart)
 
 ### Analyzer
 #### Added
-- Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation
-- Nigerian Vehicle Registration (NG_VEHICLE_REGISTRATION) recognizer for current format plates (2011+)
-- US_NPI recognizer for National Provider Identifier with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
-- UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support
-- UK Passport Number (UK_PASSPORT) recognizer for 2-letter + 7-digit format passports issued from 2015 onwards
-- UK Vehicle Registration Number (UK_VEHICLE_REGISTRATION) recognizer for current (2001+), prefix (1983-2001), and suffix (1963-1983) plate formats
+- `HuggingFaceNerRecognizer` for direct NER model inference using HuggingFace pipelines without requiring spaCy (#1834) (Thanks @ultramancode)
+- Transformer-based `MedicalNERRecognizer` as a subclass of `HuggingFaceNerRecognizer` for clinical entity detection (#1853) (Thanks @stevenelliottjr)
+- US NPI (National Provider Identifier) recognizer with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
+- UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support (#1858) (Thanks @tee-jagz)
+- UK Passport (UK_PASSPORT) and Vehicle Registration (UK_VEHICLE_REGISTRATION) recognizers (#1862) (Thanks @tee-jagz)
+- Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation and Nigerian Vehicle Registration (NG_VEHICLE_REGISTRATION) recognizer (#1863) (Thanks @tee-jagz)
+- ONNX Runtime backend support for `GLiNERRecognizer` via `load_onnx_model=True` parameter, resolving crashes on CPUs without AVX2 support (#1884) (Thanks @Copilot)
+- Configurable regex execution timeout (default 60 seconds) via `REGEX_TIMEOUT_SECONDS` environment variable to prevent catastrophic backtracking (#1904) (Thanks @Copilot)
+- GPU device control via environment variable for explicit GPU/CPU selection (#1844) (Thanks @RonShakutai)
+- LLM-as-a-judge evaluation integration for assessing PII detection quality (#1900) (Thanks @RonShakutai)
+- Sampling support for the evaluation framework (#1894) (Thanks @RonShakutai)
+- Dataset interface for the evaluation framework (#1893) (Thanks @RonShakutai)
 
-### Analyzer
-#### Changed
-- Refactored MedicalNERRecognizer to subclass HuggingFaceNerRecognizer, using HuggingFace pipeline directly without spaCy (#1853) (Thanks @stevenelliottjr)
+#### Fixed
+- Erroneous anchor in Italian driver license regex that caused missed matches (#1899) (Thanks @Br1an67)
+- `validation_result` type annotation in API docs and type hints (#1869) (Thanks @akios-ai)
+- Bare `except` clauses replaced with `except Exception` for proper exception handling (#1881) (Thanks @haosenwang1018)
+- Context enhancement substring matching bug where context words were incorrectly matched as substrings (#1827) (Thanks @ravi-jindal)
+
+### Image Redactor
+#### Fixed
+- `_process_names` unconditionally treating all DICOM metadata as PHI; now correctly filters using both `is_patient` and `is_name` checks (#1855) (Thanks @Mr-Neutr0n)
 
 ## [2.2.361] - 2026-02-12
 ### Analyzer
