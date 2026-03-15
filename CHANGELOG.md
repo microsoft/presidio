@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ## [2.2.362] - 2026-03-15
 ### General
 #### Added
-- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected (#1889) (Thanks @Copilot)
+- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected. Inspired by and thanks to Sakthi Santhosh Anumand and Harsha Vardhan for the original idea. (#1889) (Thanks @Copilot)
 
 #### Changed
 - Pinned all CI/CD GitHub Actions and Docker base images to commit SHAs to mitigate supply chain attacks (#1861) (Thanks @Copilot)
