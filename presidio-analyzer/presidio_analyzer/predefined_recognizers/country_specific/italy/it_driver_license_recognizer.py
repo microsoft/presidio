@@ -18,7 +18,7 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
             "Driver License",
             (
                 r"\b(?i)(([A-Z]{2}\d{7}[A-Z])"
-                r"|(^[U]1[BCDEFGHLJKMNPRSTUWYXZ0-9]{7}[A-Z]))\b"
+                r"|(U1[BCDEFGHLJKMNPRSTUWYXZ0-9]{7}[A-Z]))\b"
             ),
             0.2,
         ),
