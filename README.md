@@ -6,7 +6,7 @@
 |----------------------------------------------------------------------------------------------------------------- | -------: | -------: | ------: | --------: |
 | presidio\_analyzer/\_\_init\_\_.py                                                                               |       25 |        0 |    100% |           |
 | presidio\_analyzer/analysis\_explanation.py                                                                      |       26 |        4 |     85% | 54-57, 65 |
-| presidio\_analyzer/analyzer\_engine.py                                                                           |      130 |        4 |     97% |74, 232-233, 384 |
+| presidio\_analyzer/analyzer\_engine.py                                                                           |      136 |        4 |     97% |76, 234-235, 396 |
 | presidio\_analyzer/analyzer\_engine\_provider.py                                                                 |       73 |        0 |    100% |           |
 | presidio\_analyzer/analyzer\_request.py                                                                          |       19 |        0 |    100% |           |
 | presidio\_analyzer/app\_tracer.py                                                                                |        8 |        2 |     75% |     26-27 |
@@ -43,7 +43,7 @@
 | presidio\_analyzer/nlp\_engine/stanza\_nlp\_engine.py                                                            |      218 |       20 |     91% |12-13, 292, 294, 325-329, 394, 416-417, 449, 459-460, 486-487, 491, 514, 517 |
 | presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       49 |        3 |     94% |     10-12 |
 | presidio\_analyzer/pattern.py                                                                                    |       32 |        2 |     94% |    62, 66 |
-| presidio\_analyzer/pattern\_recognizer.py                                                                        |      100 |        0 |    100% |           |
+| presidio\_analyzer/pattern\_recognizer.py                                                                        |      105 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       66 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/\_\_init\_\_.py                           |        5 |        0 |    100% |           |
@@ -107,7 +107,7 @@
 | presidio\_analyzer/predefined\_recognizers/generic/date\_recognizer.py                                           |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/email\_recognizer.py                                          |       13 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/generic/iban\_patterns.py                                             |       17 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/generic/iban\_recognizer.py                                           |       80 |        8 |     90% |107-108, 110-112, 161, 218, 221 |
+| presidio\_analyzer/predefined\_recognizers/generic/iban\_recognizer.py                                           |       89 |        6 |     93% |110, 112-114, 230, 243 |
 | presidio\_analyzer/predefined\_recognizers/generic/ip\_recognizer.py                                             |       15 |        2 |     87% |     64-65 |
 | presidio\_analyzer/predefined\_recognizers/generic/mac\_recognizer.py                                            |       17 |        1 |     94% |        66 |
 | presidio\_analyzer/predefined\_recognizers/generic/phone\_recognizer.py                                          |       34 |        0 |    100% |           |
@@ -133,7 +133,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      186 |        5 |     97% |44, 60, 149, 152, 516 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **4225** |  **217** | **95%** |           |
+| **TOTAL**                                                                                                        | **4245** |  **215** | **95%** |           |
 
 
 ## Setup coverage badge
