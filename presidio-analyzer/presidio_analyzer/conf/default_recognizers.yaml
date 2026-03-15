@@ -273,6 +273,61 @@ recognizers:
     type: predefined
     enabled: false
 
+  # Germany recognizers (disabled by default, enable for German-language pipelines)
+  - name: DeTaxIdRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeTaxNumberRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePassportRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeIdCardRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeSocialSecurityRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeHealthInsuranceRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeKfzRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeHandelsregisterRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePlzRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
   - name: BasicLangExtractRecognizer
     supported_languages:
       - en

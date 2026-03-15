@@ -1,5 +1,22 @@
 """Predefined recognizers package. Holds all the default recognizers."""
 
+# Germany recognizers
+from .country_specific.germany.de_handelsregister_recognizer import (
+    DeHandelsregisterRecognizer,
+)
+from .country_specific.germany.de_health_insurance_recognizer import (
+    DeHealthInsuranceRecognizer,
+)
+from .country_specific.germany.de_id_card_recognizer import DeIdCardRecognizer
+from .country_specific.germany.de_kfz_recognizer import DeKfzRecognizer
+from .country_specific.germany.de_passport_recognizer import DePassportRecognizer
+from .country_specific.germany.de_plz_recognizer import DePlzRecognizer
+from .country_specific.germany.de_social_security_recognizer import (
+    DeSocialSecurityRecognizer,
+)
+from .country_specific.germany.de_tax_id_recognizer import DeTaxIdRecognizer
+from .country_specific.germany.de_tax_number_recognizer import DeTaxNumberRecognizer
+
 # Australia recognizers
 from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  # noqa: E501
     TransformersRecognizer,
@@ -195,4 +212,14 @@ __all__ = [
     "NgNinRecognizer",
     "NgVehicleRegistrationRecognizer",
     "MedicalNERRecognizer",
+    # Germany recognizers
+    "DeTaxIdRecognizer",
+    "DeTaxNumberRecognizer",
+    "DePassportRecognizer",
+    "DeIdCardRecognizer",
+    "DeSocialSecurityRecognizer",
+    "DeHealthInsuranceRecognizer",
+    "DeKfzRecognizer",
+    "DeHandelsregisterRecognizer",
+    "DePlzRecognizer",
 ]
