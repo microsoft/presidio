@@ -55,12 +55,129 @@
     
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
+<!-- Microsoft Clarity with Consent Mode -->
 <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "5pd40fk720");
+    (function () {
+        // Determine the current consent state before loading Clarity
+        var storedConsent = null;
+        try {
+            storedConsent = window.localStorage && window.localStorage.getItem("clarity_consent");
+        } catch (e) {
+            // If localStorage is unavailable (e.g., privacy mode), fall back to denied
+            storedConsent = null;
+        }
+
+        // Default to "denied" when there is no prior explicit "granted" choice
+        var defaultConsent = storedConsent === "granted" ? "granted" : "denied";
+
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () {
+                (c[a].q = c[a].q || []).push(arguments);
+            };
+
+            // Set consentv2 state before loading the Clarity script so it honors consent immediately
+            c[a]("consentv2", {
+                ad_Storage: defaultConsent,
+                analytics_Storage: defaultConsent
+            });
+
+            t = l.createElement(r);
+            t.async = 1;
+            t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0];
+            y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "5pd40fk720");
+    })();
+</script>
+
+<!-- Cookie consent banner -->
+<style>
+    #cookie-consent-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--md-default-bg-color, #fff);
+        border-top: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
+        padding: 1rem 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        z-index: 9999;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+        font-size: 0.82rem;
+    }
+    #cookie-consent-banner p {
+        margin: 0;
+        flex: 1 1 300px;
+        color: var(--md-default-fg-color, #333);
+    }
+    #cookie-consent-banner a {
+        color: var(--md-accent-fg-color, #448aff);
+    }
+    #cookie-consent-banner .consent-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+    #cookie-consent-banner button {
+        padding: 0.4rem 1.2rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 500;
+    }
+    #cookie-consent-accept {
+        background: var(--md-primary-fg-color, #4051b5);
+        color: var(--md-primary-bg-color, #fff);
+    }
+    #cookie-consent-decline {
+        background: var(--md-default-fg-color--lightest, #e0e0e0);
+        color: var(--md-default-fg-color, #333);
+    }
+</style>
+<script type="text/javascript">
+    (function() {
+        if (localStorage.getItem("clarity_consent")) return;
+
+        var banner = document.createElement("div");
+        banner.id = "cookie-consent-banner";
+        banner.setAttribute("role", "dialog");
+        banner.setAttribute("aria-label", "Cookie consent");
+        banner.innerHTML =
+            '<p>This site uses cookies via Microsoft Clarity to understand how you use our documentation. ' +
+            '<a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-cookies" ' +
+            'target="_blank" rel="noopener">Learn more</a></p>' +
+            '<div class="consent-buttons">' +
+            '<button id="cookie-consent-decline">Decline</button>' +
+            '<button id="cookie-consent-accept">Accept</button>' +
+            '</div>';
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.body.appendChild(banner);
+
+            document.getElementById("cookie-consent-accept").addEventListener("click", function() {
+                localStorage.setItem("clarity_consent", "granted");
+                window.clarity("consentv2", {
+                    ad_Storage: "granted",
+                    analytics_Storage: "granted"
+                });
+                banner.remove();
+            });
+
+            document.getElementById("cookie-consent-decline").addEventListener("click", function() {
+                localStorage.setItem("clarity_consent", "denied");
+                window.clarity("consentv2", {
+                    ad_Storage: "denied",
+                    analytics_Storage: "denied"
+                });
+                banner.remove();
+            });
+        });
+    })();
 </script>
 
     
@@ -5077,7 +5194,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3f4d29df">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=99667ce6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -5104,7 +5221,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=321bd883">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5abe9144">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
