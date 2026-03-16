@@ -1,5 +1,20 @@
 """Predefined recognizers package. Holds all the default recognizers."""
 
+# Australia recognizers
+from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  # noqa: E501
+    TransformersRecognizer,
+)
+
+from .country_specific.australia.au_abn_recognizer import AuAbnRecognizer
+from .country_specific.australia.au_acn_recognizer import AuAcnRecognizer
+from .country_specific.australia.au_medicare_recognizer import AuMedicareRecognizer
+from .country_specific.australia.au_tfn_recognizer import AuTfnRecognizer
+
+# Finland recognizers
+from .country_specific.finland.fi_personal_identity_code_recognizer import (
+    FiPersonalIdentityCodeRecognizer,
+)
+
 # Germany recognizers
 from .country_specific.germany.de_handelsregister_recognizer import (
     DeHandelsregisterRecognizer,
@@ -16,21 +31,6 @@ from .country_specific.germany.de_social_security_recognizer import (
 )
 from .country_specific.germany.de_tax_id_recognizer import DeTaxIdRecognizer
 from .country_specific.germany.de_tax_number_recognizer import DeTaxNumberRecognizer
-
-# Australia recognizers
-from presidio_analyzer.predefined_recognizers.nlp_engine_recognizers.transformers_recognizer import (  # noqa: E501
-    TransformersRecognizer,
-)
-
-from .country_specific.australia.au_abn_recognizer import AuAbnRecognizer
-from .country_specific.australia.au_acn_recognizer import AuAcnRecognizer
-from .country_specific.australia.au_medicare_recognizer import AuMedicareRecognizer
-from .country_specific.australia.au_tfn_recognizer import AuTfnRecognizer
-
-# Finland recognizers
-from .country_specific.finland.fi_personal_identity_code_recognizer import (
-    FiPersonalIdentityCodeRecognizer,
-)
 from .country_specific.india import (
     InVehicleRegistrationRecognizer,
 )
