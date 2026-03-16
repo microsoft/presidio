@@ -41,18 +41,14 @@ class DeTaxNumberRecognizer(PatternRecognizer):
             r"\b(0[1-9]|1[0-6])\d{11}\b",
             0.5,
         ),
-        # Accuracy note: slash-separated patterns are generic digit/slash sequences
-        # that can produce false positives (e.g., date strings, reference numbers).
-        # Confidence is kept low; context words are essential for reliable detection.
-        # Formal accuracy evaluation has not been performed on a labelled dataset.
         Pattern(
             "Steuernummer mit Schrägstrich (Bayern/BW: 3/3/5)",
-            r"\b\d{3}/\d{3}/\d{5}\b",
-            0.3,
+            r"(?<!\w)\d{3}/\d{3}/\d{5}(?!\w)",
+            0.4,
         ),
         Pattern(
             "Steuernummer mit Schrägstrich (NW: 3/4/4 oder allgemein 2-3/3-4/4-5)",
-            r"\b\d{2,3}/\d{3,4}/\d{4,5}\b",
+            r"(?<!\w)\d{2,3}/\d{3,4}/\d{4,5}(?!\w)",
             0.2,
         ),
     ]

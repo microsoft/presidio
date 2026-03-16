@@ -45,17 +45,27 @@ class DeKfzRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "KFZ-Kennzeichen (mit Leerzeichen)",
-            r"\b[A-ZÄÖÜ]{1,3}\s[A-Z]{1,2}\s\d{1,4}[EH]?\b",
+            r"(?<![\w-])[A-ZÄÖÜ]{1,3}\s[A-Z]{1,2}\s\d{1,4}[EH]?(?!\w)",
             0.3,
         ),
         Pattern(
             "KFZ-Kennzeichen (mit Bindestrich)",
-            r"\b[A-ZÄÖÜ]{1,3}-[A-Z]{1,2}-\d{1,4}[EH]?\b",
+            r"(?<![\w-])[A-ZÄÖÜ]{1,3}-[A-Z]{1,2}-\d{1,4}[EH]?(?!\w)",
+            0.3,
+        ),
+        Pattern(
+            "KFZ-Kennzeichen (Bindestrich + Leerzeichen)",
+            r"(?<![\w-])[A-ZÄÖÜ]{1,3}-[A-Z]{1,2}\s\d{1,4}[EH]?(?!\w)",
             0.3,
         ),
         Pattern(
             "KFZ-Kennzeichen (ASCII only, mit Leerzeichen)",
-            r"\b[A-Z]{1,3}\s[A-Z]{1,2}\s\d{1,4}[EH]?\b",
+            r"(?<![\w-])[A-Z]{1,3}\s[A-Z]{1,2}\s\d{1,4}[EH]?(?!\w)",
+            0.2,
+        ),
+        Pattern(
+            "KFZ-Kennzeichen (ASCII only, Bindestrich + Leerzeichen)",
+            r"(?<![\w-])[A-Z]{1,3}-[A-Z]{1,2}\s\d{1,4}[EH]?(?!\w)",
             0.2,
         ),
     ]
