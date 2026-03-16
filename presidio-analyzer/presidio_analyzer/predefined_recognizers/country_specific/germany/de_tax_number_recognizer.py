@@ -23,7 +23,6 @@ class DeTaxNumberRecognizer(PatternRecognizer):
             BY:  123/456/78901  (3/3/5 digits)
             BE:  12/345/67890   (2/3/5 digits)
             HH:  12/345/67890   (2/3/5 digits)
-        - 10-digit plain format (older): XXXXXXXXXX
 
     Bundesland codes (ELSTER):
         01=SH, 02=HH, 03=NI, 04=HB, 05=NW, 06=HE, 07=RP,

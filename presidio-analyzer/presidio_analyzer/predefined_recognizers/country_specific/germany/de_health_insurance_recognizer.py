@@ -25,7 +25,7 @@ class DeHealthInsuranceRecognizer(PatternRecognizer):
         Pos 2–9:  8 digits (birth date encoded + serial)
         Pos 10:   Prüfziffer (check digit, 0–9)
 
-    Example (fictitious): A123456780
+    Example (fictitious): A123456787
 
     Check digit algorithm (GKV-Spitzenverband specification):
         1. Convert the letter at position 1 to its 2-digit ordinal value

@@ -19,7 +19,7 @@ class DePassportRecognizer(PatternRecognizer):
           C, F, G, H, J, K, L, M, N, P, R, T, V, W, X, Y, Z and digits 0–9)
         - First character: typically a letter from the series identifier
         - Followed by 8 alphanumeric characters
-        - Example: C01X00T47, F204004812
+        - Example: C01X00T47, F20400481
 
     The character set excludes visually ambiguous characters (I, O, Q, S, U)
     as per ICAO Doc 9303 (Machine Readable Travel Documents) specifications.
@@ -29,9 +29,6 @@ class DePassportRecognizer(PatternRecognizer):
     :param supported_language: Language this recognizer supports
     :param supported_entity: The entity this recognizer can detect
     """
-
-    # ICAO-compliant character set for German passports (excludes I, O, Q, S, U)
-    _ICAO_CHARS = r"[CFGHJKLMNPRTVWXYZ0-9]"
 
     PATTERNS = [
         Pattern(

@@ -8,8 +8,8 @@ recognizer to produce actionable (high-confidence) results.
 """
 import pytest
 
-from tests import assert_result_within_score_range
 from presidio_analyzer.predefined_recognizers import DePlzRecognizer
+from tests import assert_result_within_score_range
 
 
 @pytest.fixture(scope="module")
@@ -38,6 +38,9 @@ def entities():
         # --- Should NOT match ---
         # 00000 is not a valid PLZ (excluded by regex)
         ("00000", 0),
+        # 01000 and 99999 are boundary values outside the valid range
+        ("01000", 0),
+        ("99999", 0),
         # 6 digits → no match (word boundary)
         ("101150", 0),
         # 4 digits

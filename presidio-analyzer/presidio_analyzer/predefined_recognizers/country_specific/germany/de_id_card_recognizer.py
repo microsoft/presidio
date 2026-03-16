@@ -18,7 +18,7 @@ class DeIdCardRecognizer(PatternRecognizer):
         - 9 alphanumeric characters (uppercase letters and digits)
         - Character set: letters A–Z (excluding ambiguous chars I, O, Q, S, U)
           and digits 0–9, per ICAO Doc 9303 / BSI TR-03110
-        - Example: L01X00T47, T220001292
+        - Example: L01X00T47, T22000129
 
     Format (old Personalausweis, before November 2010):
         - Letter T followed by 8 digits

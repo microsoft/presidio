@@ -17,10 +17,9 @@ class DeTaxIdRecognizer(PatternRecognizer):
     Format:
         - 11 digits
         - First digit: 1–9 (never 0)
-        - Digits 2–10: no digit may appear more than 3 times
         - Digit 11: check digit (ISO 7064 Mod 11, 10 variant)
 
-    Examples (fictitious): 02476291358, 86095742719
+    Examples (fictitious): 86095742719, 12345678903
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection

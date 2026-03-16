@@ -48,8 +48,8 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
         Pattern(
             "Rentenversicherungsnummer (Strict, with birth date structure)",
             r"\b\d{2}"
-            r"(0[1-9]|[12]\d|3[01]|[4-7]\d|8[01])"  # day (01-31 or 41-81 women)
-            r"(0[1-9]|1[0-2])"                        # month 01-12
+            r"(0[1-9]|[12]\d|3[01]|5[1-9]|[67]\d|8[01])"  # day: 01-31 or 51-81
+            r"(0[1-9]|1[0-2])"                              # month 01-12
             r"\d{2}"                                  # year
             r"[A-Z]"                                  # surname initial
             r"\d{2}"                                  # serial
