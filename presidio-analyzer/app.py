@@ -27,8 +27,15 @@ LOGGING_CONF_FILE = "logging.ini"
 # per-section defaults must not be forwarded to AnalyzerEngineProvider so
 # that the nlp_configuration / recognizer_registry sections inside
 # ANALYZER_CONF_FILE take effect instead of being silently overridden.
+# Note: model downloading happens at build time via install_nlp_models.py and
+# is independent of these runtime configuration values.
 _DEFAULT_ANALYZER_CONF_FILE = "presidio_analyzer/conf/default_analyzer.yaml"
-_DEFAULT_NLP_CONF_FILE = "presidio_analyzer/conf/default.yaml"
+# Each Dockerfile variant has its own NLP default (spacy vs. transformers).
+# All of them share the same recognizer-registry default.
+_KNOWN_DEFAULT_NLP_CONF_FILES = {
+    "presidio_analyzer/conf/default.yaml",      # Dockerfile, Dockerfile.stanza
+    "presidio_analyzer/conf/transformers.yaml",  # Dockerfile.transformers
+}
 _DEFAULT_RECOGNIZER_REGISTRY_CONF_FILE = (
     "presidio_analyzer/conf/default_recognizers.yaml"
 )
@@ -63,8 +70,10 @@ class Server:
         # If a custom ANALYZER_CONF_FILE is provided, do not let the
         # Dockerfile-baked-in default per-section conf files override the
         # nlp_configuration / recognizer_registry sections inside it.
+        # Explicitly customized per-section files (non-default paths) are
+        # still respected.
         if analyzer_conf_file and analyzer_conf_file != _DEFAULT_ANALYZER_CONF_FILE:
-            if nlp_engine_conf_file == _DEFAULT_NLP_CONF_FILE:
+            if nlp_engine_conf_file in _KNOWN_DEFAULT_NLP_CONF_FILES:
                 nlp_engine_conf_file = None
             if recognizer_registry_conf_file == _DEFAULT_RECOGNIZER_REGISTRY_CONF_FILE:
                 recognizer_registry_conf_file = None
