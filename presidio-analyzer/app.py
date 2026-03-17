@@ -22,6 +22,17 @@ DEFAULT_N_PROCESS = "1"
 
 LOGGING_CONF_FILE = "logging.ini"
 
+# Default values baked into the Dockerfiles via ARG/ENV.
+# When ANALYZER_CONF_FILE is set to a custom (non-default) file, these
+# per-section defaults must not be forwarded to AnalyzerEngineProvider so
+# that the nlp_configuration / recognizer_registry sections inside
+# ANALYZER_CONF_FILE take effect instead of being silently overridden.
+_DEFAULT_ANALYZER_CONF_FILE = "presidio_analyzer/conf/default_analyzer.yaml"
+_DEFAULT_NLP_CONF_FILE = "presidio_analyzer/conf/default.yaml"
+_DEFAULT_RECOGNIZER_REGISTRY_CONF_FILE = (
+    "presidio_analyzer/conf/default_recognizers.yaml"
+)
+
 WELCOME_MESSAGE = r"""
  _______  _______  _______  _______ _________ ______  _________ _______
 (  ____ )(  ____ )(  ____ \(  ____ \\__   __/(  __  \ \__   __/(  ___  )
@@ -43,9 +54,20 @@ class Server:
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
 
-        analyzer_conf_file = os.environ.get("ANALYZER_CONF_FILE")
-        nlp_engine_conf_file = os.environ.get("NLP_CONF_FILE")
-        recognizer_registry_conf_file = os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE")
+        analyzer_conf_file = os.environ.get("ANALYZER_CONF_FILE") or None
+        nlp_engine_conf_file = os.environ.get("NLP_CONF_FILE") or None
+        recognizer_registry_conf_file = (
+            os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE") or None
+        )
+
+        # If a custom ANALYZER_CONF_FILE is provided, do not let the
+        # Dockerfile-baked-in default per-section conf files override the
+        # nlp_configuration / recognizer_registry sections inside it.
+        if analyzer_conf_file and analyzer_conf_file != _DEFAULT_ANALYZER_CONF_FILE:
+            if nlp_engine_conf_file == _DEFAULT_NLP_CONF_FILE:
+                nlp_engine_conf_file = None
+            if recognizer_registry_conf_file == _DEFAULT_RECOGNIZER_REGISTRY_CONF_FILE:
+                recognizer_registry_conf_file = None
 
         self.logger.info("Starting analyzer engine")
         self.engine: AnalyzerEngine = AnalyzerEngineProvider(
