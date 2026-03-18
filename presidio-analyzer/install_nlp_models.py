@@ -2,7 +2,7 @@
 
 import argparse
 import logging
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 import yaml
 from spacy.cli import download as spacy_download
@@ -26,15 +26,58 @@ logger.setLevel("INFO")
 logger.addHandler(logging.StreamHandler())
 
 
-def install_models(conf_file: str) -> None:
-    """Installs models in conf/default.yaml.
+def install_models(
+    conf_file: str, analyzer_conf_file: Optional[str] = None
+) -> None:
+    """Installs NLP models based on the provided configuration files.
 
-    :param conf_file: Path to the yaml file containing the models to install.
-    See examples in the conf directory.
+    When *analyzer_conf_file* is given and contains an ``nlp_configuration``
+    section (unified analyzer conf format), the models defined there are
+    downloaded and *conf_file* is ignored.  This ensures that a single unified
+    ``ANALYZER_CONF_FILE`` can drive both build-time model downloads and
+    runtime configuration without requiring a separate ``NLP_CONF_FILE``.
+
+    When *analyzer_conf_file* is not provided or does not contain an
+    ``nlp_configuration`` section, *conf_file* is used as before (plain NLP
+    conf format with a top-level ``nlp_engine_name`` and ``models`` field).
+
+    :param conf_file: Path to a plain NLP configuration yaml file.
+    :param analyzer_conf_file: Optional path to a unified analyzer conf file
+        that may contain an ``nlp_configuration`` section.
     """
+    # Prefer nlp_configuration embedded inside a unified ANALYZER_CONF_FILE.
+    if analyzer_conf_file:
+        try:
+            with open(analyzer_conf_file) as fh:
+                analyzer_config = yaml.safe_load(fh)
+        except OSError as e:
+            raise OSError(
+                f"Could not read analyzer conf file '{analyzer_conf_file}'"
+            ) from e
+        if analyzer_config and "nlp_configuration" in analyzer_config:
+            logger.info(
+                "Using nlp_configuration from analyzer conf file: %s",
+                analyzer_conf_file,
+            )
+            _install_models_from_nlp_config(analyzer_config["nlp_configuration"])
+            return
 
-    nlp_configuration = yaml.safe_load(open(conf_file))
+    # Fall back to the plain NLP conf file (backward-compatible path).
+    try:
+        with open(conf_file) as fh:
+            nlp_configuration = yaml.safe_load(fh)
+    except OSError as e:
+        raise OSError(f"Could not read NLP conf file '{conf_file}'") from e
+    _install_models_from_nlp_config(nlp_configuration)
 
+
+def _install_models_from_nlp_config(nlp_configuration: dict) -> None:
+    """Download all models described in an nlp_configuration dict.
+
+    :param nlp_configuration: Dict with at least ``nlp_engine_name`` and
+        ``models`` keys (i.e. the content of a plain NLP conf file, or the
+        value of the ``nlp_configuration`` key in a unified analyzer conf).
+    """
     logger.info(f"Installing models from configuration: {nlp_configuration}")
 
     if "nlp_engine_name" not in nlp_configuration:
@@ -105,6 +148,21 @@ if __name__ == "__main__":
         default="presidio_analyzer/conf/default.yaml",
         help="Location of nlp configuration yaml file. Default: conf/default.yaml",
     )
+    parser.add_argument(
+        "--analyzer_conf_file",
+        required=False,
+        default=None,
+        help=(
+            "Optional path to a unified analyzer conf file (ANALYZER_CONF_FILE). "
+            "When this file contains an nlp_configuration section, models from "
+            "that section are downloaded and --conf_file is ignored. "
+            "Use this when ANALYZER_CONF_FILE is the single source of truth for "
+            "both NLP and recognizer-registry configuration."
+        ),
+    )
     args = parser.parse_args()
 
-    install_models(conf_file=args.conf_file)
+    install_models(
+        conf_file=args.conf_file,
+        analyzer_conf_file=args.analyzer_conf_file,
+    )
