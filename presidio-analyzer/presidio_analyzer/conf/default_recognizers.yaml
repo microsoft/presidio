@@ -218,17 +218,16 @@ recognizers:
     enabled: false
 
   - name: KrFrnRecognizer
-    supported_languages: 
-    - ko
-    - kr
+    supported_languages:
+      - ko
+      - kr
     type: predefined
     enabled: false
 
-  - name: ThTninRecognizer
+  - name: SePersonnummerRecognizer
     supported_languages:
-    - th
+      - sv
     type: predefined
-    enabled: false
 
   - name: HuggingFaceNerRecognizer
     supported_languages:
