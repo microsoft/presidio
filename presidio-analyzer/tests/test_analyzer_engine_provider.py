@@ -514,6 +514,41 @@ def test_analyzer_engine_provider_create_engine_with_all_params():
     assert len(engine.supported_languages) > 0
 
 
+def test_analyzer_engine_provider_inline_sections_take_priority_over_per_section_files():
+    """Test that nlp_configuration / recognizer_registry sections embedded in the
+    analyzer conf file take priority over separately provided per-section files.
+
+    This is the key behaviour that lets a single unified ANALYZER_CONF_FILE drive
+    both NLP and registry configuration without being silently overridden by
+    Dockerfile-baked-in default values for NLP_CONF_FILE and
+    RECOGNIZER_REGISTRY_CONF_FILE.
+    """
+    # test_analyzer_engine.yaml contains both nlp_configuration and
+    # recognizer_registry sections.
+    analyzer_yaml, nlp_yaml, registry_yaml = get_full_paths(
+        "conf/test_analyzer_engine.yaml",
+        "conf/default.yaml",
+        "conf/test_recognizer_registry.yaml",
+    )
+
+    provider = AnalyzerEngineProvider(
+        analyzer_engine_conf_file=analyzer_yaml,
+        nlp_engine_conf_file=nlp_yaml,
+        recognizer_registry_conf_file=registry_yaml,
+    )
+    engine = provider.create_engine()
+
+    # The analyzer yaml's supported_languages + recognizer_registry should prevail.
+    # test_analyzer_engine.yaml lists de, en, es — not the registry-only en.
+    assert "de" in engine.supported_languages
+    assert "en" in engine.supported_languages
+    assert "es" in engine.supported_languages
+
+    # The registry from the inline section has more than the 6 recognizers
+    # in test_recognizer_registry.yaml, confirming the inline section won.
+    assert len(engine.registry.recognizers) > 6
+
+
 def test_analyzer_engine_provider_multiple_languages_support():
     """Test analyzer engine with multiple language support."""
     analyzer_yaml, _, _ = get_full_paths("conf/test_analyzer_engine.yaml")
