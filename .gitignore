@@ -25,15 +25,6 @@ wheels/
 *.egg
 MANIFEST
 
-# OpenCode
-/.opencode
-AGENTS.md
-
-# Local utillities
-swedish.Dockerfile
-app_sv.py
-languages-config.yml
-
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
