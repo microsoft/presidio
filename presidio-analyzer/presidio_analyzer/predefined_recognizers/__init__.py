@@ -16,6 +16,10 @@ from .country_specific.finland.fi_personal_identity_code_recognizer import (
 )
 
 # Germany recognizers
+from .country_specific.germany.de_bsnr_recognizer import DeBsnrRecognizer
+from .country_specific.germany.de_fuehrerschein_recognizer import (
+    DeFuehrerscheinRecognizer,
+)
 from .country_specific.germany.de_handelsregister_recognizer import (
     DeHandelsregisterRecognizer,
 )
@@ -24,6 +28,7 @@ from .country_specific.germany.de_health_insurance_recognizer import (
 )
 from .country_specific.germany.de_id_card_recognizer import DeIdCardRecognizer
 from .country_specific.germany.de_kfz_recognizer import DeKfzRecognizer
+from .country_specific.germany.de_lanr_recognizer import DeLanrRecognizer
 from .country_specific.germany.de_passport_recognizer import DePassportRecognizer
 from .country_specific.germany.de_plz_recognizer import DePlzRecognizer
 from .country_specific.germany.de_social_security_recognizer import (
@@ -31,6 +36,7 @@ from .country_specific.germany.de_social_security_recognizer import (
 )
 from .country_specific.germany.de_tax_id_recognizer import DeTaxIdRecognizer
 from .country_specific.germany.de_tax_number_recognizer import DeTaxNumberRecognizer
+from .country_specific.germany.de_vat_id_recognizer import DeVatIdRecognizer
 from .country_specific.india import (
     InVehicleRegistrationRecognizer,
 )
@@ -222,4 +228,8 @@ __all__ = [
     "DeKfzRecognizer",
     "DeHandelsregisterRecognizer",
     "DePlzRecognizer",
+    "DeLanrRecognizer",
+    "DeBsnrRecognizer",
+    "DeVatIdRecognizer",
+    "DeFuehrerscheinRecognizer",
 ]
