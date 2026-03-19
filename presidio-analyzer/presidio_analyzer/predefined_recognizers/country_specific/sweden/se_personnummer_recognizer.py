@@ -6,32 +6,13 @@ This recognizer mirrors the guard‑rail implementation used in LiteLLM:
 * Handles optional separator "-" or "+" and samordningsnummer (day >= 61).
 * Validates the date component.
 * Performs Luhn checksum verification.
-* Excludes known fake numbers from ``fake_pnr.json`` located in the same
-  directory as this file.
 """
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-from typing import List, Optional, Set
+from typing import List, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
-
-# ---------------------------------------------------------------------------
-# Load fake person‑nummer values (if the JSON file exists).
-# ---------------------------------------------------------------------------
-_FAKE_PNR: Set[str] = set()
-try:
-    _p = Path(__file__).with_name("fake_pnr.json")
-    if _p.is_file():
-        with _p.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-            lst = data.get("fake_personnummer", []) if isinstance(data, dict) else data
-            _FAKE_PNR = {"".join(filter(str.isdigit, str(x)))[-10:] for x in lst}
-except Exception:
-    # Silently ignore any errors – recogniser will still work.
-    pass
 
 
 class SePersonnummerRecognizer(PatternRecognizer):
@@ -65,6 +46,7 @@ class SePersonnummerRecognizer(PatternRecognizer):
         "svensk id",
         "ssn",
         "personal identity number",
+        "samordningsnummer",
     ]
 
     # ---------------------------------------------------------------------
@@ -138,17 +120,12 @@ class SePersonnummerRecognizer(PatternRecognizer):
         """Validate a candidate Personnummer.
 
         The validation pipeline:
-        1️⃣ Normalise to the last 10 digits.
-        2️⃣ Reject if the number is listed in ``fake_pnr.json``.
-        3️⃣ Verify the date component (including samordningsnummer handling).
-        4️⃣ Apply the Luhn checksum.
+        1 Normalise to the last 10 digits.
+        2 Verify the date component (including samordningsnummer handling).
+        3 Apply the Luhn checksum.
         """
         num = self._numeric_part(pattern_text)
         if len(num) != 10:
-            return False
-
-        # Guard‑rail: exclude known fake identifiers.
-        if num in _FAKE_PNR:
             return False
 
         if not self._has_valid_date(num):

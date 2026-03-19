@@ -86,11 +86,11 @@ def entities():
             ((21, 33),),
         ),
         # invalid Personal Identity Codes scores
-        ("199003092393", 0, ()),
-        ("19900309-2393", 0, ()),
-        ("200504142381", 0, ()),
-        ("189709179809", 0, ()),
-        ("18970917-9809", 0, ()),],
+        ("19000309-3393", 0, ()),
+        ("19001309-2393", 0, ()),
+        ("200504422381", 0, ()),
+        ("189x09179809", 0, ()),
+        ("18970c17-9809", 0, ()),],
 )
 def test_when_all_swedish_personnummer_then_succeed(
     text, expected_len, expected_positions, recognizer, entities, max_score
