@@ -230,6 +230,12 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: ThTninRecognizer
+    supported_languages:
+    - th
+    type: predefined
+    enabled: false
+
   - name: HuggingFaceNerRecognizer
     supported_languages:
     - en
