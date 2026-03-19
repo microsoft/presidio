@@ -44,7 +44,7 @@
 | presidio\_analyzer/nlp\_engine/transformers\_nlp\_engine.py                                                      |       49 |        3 |     94% |     10-12 |
 | presidio\_analyzer/pattern.py                                                                                    |       32 |        2 |     94% |    62, 66 |
 | presidio\_analyzer/pattern\_recognizer.py                                                                        |      105 |        0 |    100% |           |
-| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       66 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/\_\_init\_\_.py                                                       |       79 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/\_\_init\_\_.py                           |        5 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/au\_abn\_recognizer.py                    |       20 |        0 |    100% |           |
@@ -53,6 +53,20 @@
 | presidio\_analyzer/predefined\_recognizers/country\_specific/australia/au\_tfn\_recognizer.py                    |       19 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/finland/\_\_init\_\_.py                             |        2 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/finland/fi\_personal\_identity\_code\_recognizer.py |       23 |        1 |     96% |        56 |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_bsnr\_recognizer.py                     |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_fuehrerschein\_recognizer.py            |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_handelsregister\_recognizer.py          |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_health\_insurance\_recognizer.py        |       28 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_id\_card\_recognizer.py                 |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_kfz\_recognizer.py                      |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_lanr\_recognizer.py                     |       22 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_passport\_recognizer.py                 |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_plz\_recognizer.py                      |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_social\_security\_recognizer.py         |       28 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_tax\_id\_recognizer.py                  |       27 |        1 |     96% |       101 |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_tax\_number\_recognizer.py              |        9 |        0 |    100% |           |
+| presidio\_analyzer/predefined\_recognizers/country\_specific/germany/de\_vat\_id\_recognizer.py                  |        9 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/india/\_\_init\_\_.py                               |        7 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/india/in\_aadhaar\_recognizer.py                    |       35 |        0 |    100% |           |
 | presidio\_analyzer/predefined\_recognizers/country\_specific/india/in\_gstin\_recognizer.py                      |       54 |        5 |     91% |126, 131, 140, 166, 170 |
@@ -133,7 +147,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      186 |        5 |     97% |44, 60, 149, 152, 516 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **4245** |  **215** | **95%** |           |
+| **TOTAL**                                                                                                        | **4444** |  **216** | **95%** |           |
 
 
 ## Setup coverage badge
