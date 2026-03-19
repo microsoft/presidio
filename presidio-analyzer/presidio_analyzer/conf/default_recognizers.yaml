@@ -228,6 +228,7 @@ recognizers:
     supported_languages:
       - sv
     type: predefined
+    enabled: false
 
   - name: HuggingFaceNerRecognizer
     supported_languages:

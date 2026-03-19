@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### Analyzer
+#### Added
+- Swedish PII recognizers for `SE_PERSONNUMMER` to identify Swedish Personal ID Numbers using pattern match and checksum. The recognizer also supports Samordningsnummer which is Personal ID Number for immigrants living in Sweden. All disabled by default.
+
+
 ## [2.2.362] - 2026-03-15
 ### General
 #### Added
