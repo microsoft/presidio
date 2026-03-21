@@ -1,0 +1,19 @@
+[
+  {
+    "id": "example-dataset",
+    "filename": "example_pii_dataset.csv",
+    "name": "Example Dataset",
+    "description": "3 synthetic PII records covering healthcare, finance, and lab-result scenarios.",
+    "path": "data/example_pii_dataset.csv",
+    "stored_path": "/Users/ronshakutai/projects_folder/presidio/evaluation/ai-assistant/backend/data/Example_Dataset_example-dataset.csv",
+    "format": "csv",
+    "record_count": 3,
+    "has_entities": false,
+    "has_final_entities": true,
+    "ran_configs": [
+      "default_spacy"
+    ],
+    "text_column": "text",
+    "entities_column": null
+  }
+]

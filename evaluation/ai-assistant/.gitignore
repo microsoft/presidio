@@ -1,0 +1,32 @@
+# Override root gitignore's lib/ rule for src/app/lib/
+!src/app/lib/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment / IDE
+.env
+.env.*
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+
+# Persisted dataset copies
+backend/data/
+
+*.pyc
+*.pyo
+
+# Vite
+*.local
