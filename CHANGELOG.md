@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 
 ### Analyzer
 #### Added
+- UK Driving Licence Number (UK_DRIVING_LICENCE) recognizer with pattern matching and context support
 - `HuggingFaceNerRecognizer` for direct NER model inference using HuggingFace pipelines without requiring spaCy (#1834) (Thanks @ultramancode)
 - Transformer-based `MedicalNERRecognizer` as a subclass of `HuggingFaceNerRecognizer` for clinical entity detection (#1853) (Thanks @stevenelliottjr)
 - US NPI (National Provider Identifier) recognizer with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
@@ -778,3 +779,4 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
 - Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
 - Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).
+
