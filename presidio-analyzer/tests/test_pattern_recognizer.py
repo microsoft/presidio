@@ -1,10 +1,13 @@
+import importlib
+import os
 import re
 from typing import List
+from unittest.mock import MagicMock, patch
 
 import pytest
-
-from presidio_analyzer import Pattern, RecognizerResult
-from presidio_analyzer import PatternRecognizer
+import regex as regex_module
+from presidio_analyzer import Pattern, PatternRecognizer, RecognizerResult
+from presidio_analyzer.pattern_recognizer import REGEX_TIMEOUT_SECONDS
 
 from tests import assert_result
 
@@ -497,4 +500,68 @@ def test_pattern_recognizer_recognizer_metadata():
     assert metadata["recognizer_name"] == "MetadataTest"
     assert "recognizer_identifier" in metadata
 
+
+def test_when_regex_times_out_then_pattern_is_skipped():
+    """Test that a timed-out regex pattern is skipped and returns no results."""
+    patterns = [Pattern(name="slow", regex=r"\d+", score=0.5)]
+    recognizer = PatternRecognizer(supported_entity="TEST", patterns=patterns)
+
+    mock_compiled = MagicMock()
+    mock_compiled.finditer.side_effect = TimeoutError("regex timed out")
+
+    with patch(
+        "presidio_analyzer.pattern_recognizer.re.compile",
+        return_value=mock_compiled,
+    ):
+        results = recognizer.analyze("Test 123", ["TEST"])
+
+    assert results == []
+
+
+def test_when_regex_times_out_then_other_patterns_still_run():
+    """Test that a timed-out pattern doesn't prevent other patterns from running."""
+    slow_pattern = Pattern(name="slow", regex=r"\d+", score=0.5)
+    fast_pattern = Pattern(name="fast", regex=r"[a-z]+", score=0.6)
+    recognizer = PatternRecognizer(
+        supported_entity="TEST", patterns=[slow_pattern, fast_pattern]
+    )
+
+    original_compile = regex_module.compile
+    call_count = 0
+
+    def compile_side_effect(pattern_str, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        compiled = original_compile(pattern_str, **kwargs)
+        if call_count == 1:
+            mock_compiled = MagicMock()
+            mock_compiled.finditer.side_effect = TimeoutError("regex timed out")
+            return mock_compiled
+        return compiled
+
+    with patch(
+        "presidio_analyzer.pattern_recognizer.re.compile",
+        side_effect=compile_side_effect,
+    ):
+        results = recognizer.analyze("test123", ["TEST"])
+
+    # fast_pattern (letters) should still have produced results even if slow timed out
+    assert len(results) >= 1
+
+
+def test_regex_timeout_seconds_value():
+    """Test that REGEX_TIMEOUT_SECONDS is set to 60 seconds."""
+    assert REGEX_TIMEOUT_SECONDS == 60
+
+
+def test_regex_timeout_seconds_env_var_override():
+    """Test that REGEX_TIMEOUT_SECONDS can be overridden via environment variable."""
+    import presidio_analyzer.pattern_recognizer as pr_module
+
+    with patch.dict(os.environ, {"REGEX_TIMEOUT_SECONDS": "30"}):
+        importlib.reload(pr_module)
+        assert pr_module.REGEX_TIMEOUT_SECONDS == 30
+
+    # Restore the module to default state
+    importlib.reload(pr_module)
 

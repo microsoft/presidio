@@ -4,7 +4,7 @@ requires = ["poetry-core"]
 
 [project]
 name = "presidio"
-version = "2.2.361"
+version = "2.2.362"
 description = "Presidio - Data Protection and De-identification SDK"
 authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
 license = "MIT"
