@@ -389,7 +389,7 @@ def test_analyzer_engine_provider_get_full_conf_path():
     path = AnalyzerEngineProvider._get_full_conf_path()
 
     assert isinstance(path, Path)
-    assert path.name == "slim.yaml"
+    assert path.name == "default_analyzer.yaml"
     assert path.exists()
 
 
