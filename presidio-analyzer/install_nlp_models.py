@@ -52,7 +52,7 @@ def install_models(conf_file: str) -> None:
 
 
 def _download_model(engine_name: str, model_name: Union[str, Dict[str, str]]) -> None:
-    if engine_name == "spacy":
+    if engine_name == "spacy" or engine_name == "slim":
         spacy_download(model_name)
     elif engine_name == "stanza":
         if stanza:
@@ -102,8 +102,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--conf_file",
         required=False,
-        default="presidio_analyzer/conf/default.yaml",
-        help="Location of nlp configuration yaml file. Default: conf/default.yaml",
+        default="presidio_analyzer/conf/slim_nlp.yaml",
+        help="Location of nlp configuration yaml file. Default: conf/slim_nlp.yaml",
     )
     args = parser.parse_args()
 
