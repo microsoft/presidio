@@ -314,3 +314,31 @@ class TestResolveConfigPath:
             f"resolve_config_path failed for prompt path: {result}"
         )
         assert result.name == "default_pii_phi_prompt.j2"
+
+    def test_when_pypi_install_path_with_conf_then_resolves_to_package(self):
+        """Test that paths with 'conf/' resolve via package root
+        when the repo root resolution fails (PyPI install scenario)."""
+        # Simulate a path that won't resolve from repo root
+        # but contains 'conf/' so the fallback strips to conf-relative
+        pypi_path = (
+            "nonexistent/prefix/conf/"
+            "langextract_prompts/default_pii_phi_examples.yaml"
+        )
+        result = resolve_config_path(pypi_path)
+
+        assert result.exists(), (
+            f"resolve_config_path failed for PyPI-style path: {result}"
+        )
+        assert result.name == "default_pii_phi_examples.yaml"
+
+    def test_when_path_has_no_conf_and_repo_missing_then_returns_repo_resolved(
+        self,
+    ):
+        """Test that paths without 'conf/' fall through to repo_resolved
+        when neither repo root nor package fallback applies."""
+        no_conf_path = "nonexistent/some/other/file.yaml"
+        result = resolve_config_path(no_conf_path)
+
+        # Should return the repo_resolved path (even though it doesn't exist)
+        assert not result.exists()
+        assert result.name == "file.yaml"
