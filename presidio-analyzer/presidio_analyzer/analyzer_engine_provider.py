@@ -159,7 +159,7 @@ class AnalyzerEngineProvider:
 
     @staticmethod
     def _get_full_conf_path(
-        default_conf_file: Union[Path, str] = "default_analyzer.yaml",
+        default_conf_file: Union[Path, str] = "slim.yaml",
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent, "conf", default_conf_file)
