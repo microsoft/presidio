@@ -33,7 +33,6 @@ def resolve_config_path(config_path: Union[str, Path]) -> Path:
     1. Absolute paths: returned as-is
     2. Relative paths that exist from CWD: returned as-is
     3. Relative paths resolved from repository root
-    4. Package-relative paths (for installed packages from PyPI)
 
     :param config_path: Configuration file path (string or Path object).
     :return: Resolved absolute path.
@@ -47,26 +46,8 @@ def resolve_config_path(config_path: Union[str, Path]) -> Path:
         return config_path_obj
 
     presidio_analyzer_root = Path(__file__).parent.parent
-
-    # Try resolving from repo root (development mode)
     repo_root = presidio_analyzer_root.parent.parent
     repo_resolved = repo_root / config_path
-    if repo_resolved.exists():
-        return repo_resolved
-
-    # Fallback: resolve relative to the presidio_analyzer package root,
-    # using the same Path(__file__) / "conf" pattern used across presidio
-    # (analyzer_engine_provider, nlp_engine_provider, recognizers_loader_utils).
-    # This handles PyPI-installed packages where the repo root doesn't exist.
-    path_parts = config_path_obj.parts
-    try:
-        conf_index = path_parts.index("conf")
-        conf_relative = Path(*path_parts[conf_index:])
-        package_resolved = presidio_analyzer_root / conf_relative
-        if package_resolved.exists():
-            return package_resolved
-    except ValueError:
-        pass
 
     return repo_resolved
 
