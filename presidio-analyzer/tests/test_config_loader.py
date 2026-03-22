@@ -5,6 +5,7 @@ from pathlib import Path
 from presidio_analyzer.llm_utils.config_loader import (
     load_yaml_file,
     get_model_config,
+    resolve_config_path,
 )
 from presidio_analyzer.llm_utils.langextract_helper import extract_lm_config
 
@@ -272,3 +273,44 @@ langextract:
             
         finally:
             Path(config_path).unlink()
+
+
+class TestResolveConfigPath:
+    """Tests for resolve_config_path function."""
+
+    def test_when_absolute_path_then_returns_as_is(self):
+        """Test that absolute paths are returned unchanged."""
+        abs_path = "/some/absolute/path/config.yaml"
+        result = resolve_config_path(abs_path)
+        assert result == Path(abs_path)
+
+    def test_when_repo_relative_path_with_conf_then_resolves_to_package(
+        self,
+    ):
+        """Test that repo-relative paths containing 'conf/' resolve to
+        the package conf directory (PyPI install scenario)."""
+        # This is the path format stored in YAML configs
+        repo_relative = (
+            "presidio-analyzer/presidio_analyzer/conf/"
+            "langextract_prompts/default_pii_phi_examples.yaml"
+        )
+        result = resolve_config_path(repo_relative)
+
+        # Should resolve to the actual file inside the package
+        assert result.exists(), (
+            f"resolve_config_path failed for repo-relative path: {result}"
+        )
+        assert result.name == "default_pii_phi_examples.yaml"
+
+    def test_when_repo_relative_prompt_path_then_resolves_to_package(self):
+        """Test prompt file path also resolves correctly."""
+        repo_relative = (
+            "presidio-analyzer/presidio_analyzer/conf/"
+            "langextract_prompts/default_pii_phi_prompt.j2"
+        )
+        result = resolve_config_path(repo_relative)
+
+        assert result.exists(), (
+            f"resolve_config_path failed for prompt path: {result}"
+        )
+        assert result.name == "default_pii_phi_prompt.j2"
