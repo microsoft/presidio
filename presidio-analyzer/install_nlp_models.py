@@ -102,8 +102,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--conf_file",
         required=False,
-        default="presidio_analyzer/conf/slim_nlp.yaml",
-        help="Location of nlp configuration yaml file. Default: conf/slim_nlp.yaml",
+        default="presidio_analyzer/conf/default.yaml",
+        help="Location of nlp configuration yaml file. Default: conf/default.yaml",
     )
     args = parser.parse_args()
 

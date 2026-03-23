@@ -1,6 +1,4 @@
-from pathlib import Path
 from typing import Iterator
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -48,6 +46,30 @@ class TestSlimSpacyNlpEngineInit:
         with pytest.raises(ValueError, match="No default slim model"):
             SlimSpacyNlpEngine(supported_languages=["xx_unsupported"])
 
+    def test_when_init_with_unsupported_language_and_blank_fallback(self):
+        engine = SlimSpacyNlpEngine(
+            supported_languages=["sw"], generic_tokenizer="blank"
+        )
+        assert len(engine.models) == 0
+        assert "sw" in engine._blank_languages
+
+    def test_when_init_with_unsupported_language_and_model_fallback(self):
+        engine = SlimSpacyNlpEngine(
+            supported_languages=["sw"], generic_tokenizer="xx_ent_wiki_sm"
+        )
+        assert engine.models[0] == {
+            "lang_code": "sw",
+            "model_name": "xx_ent_wiki_sm",
+        }
+
+    def test_when_init_with_mixed_languages_and_fallback(self):
+        engine = SlimSpacyNlpEngine(
+            supported_languages=["en", "sw"], generic_tokenizer="blank"
+        )
+        assert len(engine.models) == 1
+        assert engine.models[0]["model_name"] == "en_core_web_sm"
+        assert "sw" in engine._blank_languages
+
     def test_when_models_and_languages_both_given_then_models_takes_precedence(self):
         models = [{"lang_code": "en", "model_name": "en_core_web_lg"}]
         engine = SlimSpacyNlpEngine(
@@ -87,6 +109,16 @@ class TestSlimSpacyNlpEngineLoad:
         nlp = slim_nlp_engine.nlp["en"]
         pipe_names = nlp.pipe_names
         assert "parser" not in pipe_names
+
+    def test_when_load_blank_model_then_tokenization_works(self):
+        engine = SlimSpacyNlpEngine(
+            supported_languages=["fi"], generic_tokenizer="blank"
+        )
+        engine.load()
+        assert engine.is_loaded()
+        artifacts = engine.process_text("hello world", language="fi")
+        assert len(artifacts.tokens) == 2
+        assert artifacts.entities == []
 
     def test_when_is_loaded_before_load_then_false(self):
         engine = SlimSpacyNlpEngine()
@@ -276,46 +308,6 @@ class TestSlimSpacyNlpEngineProvider:
     def test_when_slim_engine_in_available_engines(self):
         provider = NlpEngineProvider()
         assert "slim" in provider.nlp_engines
-
-
-class TestSlimSpacyNlpEngineGpu:
-    """Tests for GPU handling."""
-
-    def test_when_gpu_available_then_spacy_gpu_configured(self):
-        with patch(
-            "presidio_analyzer.nlp_engine.slim_spacy_nlp_engine.device_detector"
-        ) as mock_detector:
-            mock_detector.get_device.return_value = "cuda"
-
-            with patch(
-                "presidio_analyzer.nlp_engine.slim_spacy_nlp_engine.spacy"
-            ) as mock_spacy:
-                mock_spacy.load.return_value = MagicMock()
-                mock_spacy.util.is_package.return_value = True
-
-                engine = SlimSpacyNlpEngine(
-                    models=[{"lang_code": "en", "model_name": "en_core_web_sm"}]
-                )
-                engine.load()
-                mock_spacy.require_gpu.assert_called_once()
-
-    def test_when_cpu_device_then_gpu_not_configured(self):
-        with patch(
-            "presidio_analyzer.nlp_engine.slim_spacy_nlp_engine.device_detector"
-        ) as mock_detector:
-            mock_detector.get_device.return_value = "cpu"
-
-            with patch(
-                "presidio_analyzer.nlp_engine.slim_spacy_nlp_engine.spacy"
-            ) as mock_spacy:
-                mock_spacy.load.return_value = MagicMock()
-                mock_spacy.util.is_package.return_value = True
-
-                engine = SlimSpacyNlpEngine(
-                    models=[{"lang_code": "en", "model_name": "en_core_web_sm"}]
-                )
-                engine.load()
-                mock_spacy.require_gpu.assert_not_called()
 
 
 class TestDefaultSlimModels:

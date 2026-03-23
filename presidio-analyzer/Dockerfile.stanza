@@ -1,7 +1,7 @@
 FROM python:3.12-slim@sha256:f3fa41d74a768c2fce8016b98c191ae8c1bacd8f1152870a3f9f87d350920b7c
 
-ARG NLP_CONF_FILE=presidio_analyzer/conf/slim_nlp.yaml
-ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/slim.yaml
+ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
 ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
 ENV PIP_NO_CACHE_DIR=1
 ENV POETRY_VIRTUALENVS_CREATE=false

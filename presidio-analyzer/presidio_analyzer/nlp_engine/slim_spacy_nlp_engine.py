@@ -1,11 +1,11 @@
 import logging
 from pathlib import Path
-from typing import Any, Dict, Generator, List, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import spacy
 from spacy.tokens import Doc
 
-from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, device_detector
+from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -46,6 +46,7 @@ class SlimSpacyNlpEngine(NlpEngine):
     - Does NOT extract named entities (returns empty entity lists).
     - Uses small spaCy models by default for fast loading and low memory.
     - Supports auto-downloading spaCy models when they are missing.
+    - Falls back to a generic tokenizer for unsupported languages.
 
     :param models: List of model configurations per language.
         Example: [{"lang_code": "en", "model_name": "en_core_web_sm"}]
@@ -53,6 +54,11 @@ class SlimSpacyNlpEngine(NlpEngine):
     :param supported_languages: List of language codes to support.
         Used only when models is not provided, to select default models.
     :param auto_download: Whether to automatically download missing spaCy models.
+    :param generic_tokenizer: Model name to use as a fallback for languages
+        without a default model. Set to "blank" to use spacy.blank(lang)
+        (basic tokenization, no lemmatization). Set to a spaCy model name
+        (e.g. "xx_ent_wiki_sm") to use that model for all fallback languages.
+        If None, a ValueError is raised for unsupported languages.
     """
 
     engine_name = "slim"
@@ -63,50 +69,71 @@ class SlimSpacyNlpEngine(NlpEngine):
         models: Optional[List[Dict[str, str]]] = None,
         supported_languages: Optional[List[str]] = None,
         auto_download: bool = True,
+        generic_tokenizer: Optional[str] = None,
     ):
+        self.generic_tokenizer = generic_tokenizer
+        self._blank_languages: Set[str] = set()
+
         if models:
             self.models = models
         elif supported_languages:
-            self.models = self._models_from_languages(supported_languages)
+            self.models = self._models_from_languages(
+                supported_languages, generic_tokenizer
+            )
         else:
             self.models = [{"lang_code": "en", "model_name": "en_core_web_sm"}]
 
         self.auto_download = auto_download
         self.nlp = None
 
-    @staticmethod
-    def _models_from_languages(languages: List[str]) -> List[Dict[str, str]]:
-        """Build model configs from language codes using default small models."""
+    def _models_from_languages(
+        self,
+        languages: List[str],
+        generic_tokenizer: Optional[str] = None,
+    ) -> List[Dict[str, str]]:
+        """Build model configs from language codes using default small models.
+
+        If a language has no default model and generic_tokenizer is set,
+        uses the generic tokenizer as a fallback. If generic_tokenizer is
+        "blank", creates a bare spacy.blank() pipeline for that language.
+        """
         models = []
         for lang in languages:
             model_name = DEFAULT_SLIM_MODELS.get(lang)
             if not model_name:
-                raise ValueError(
-                    f"No default slim model for language '{lang}'. "
-                    f"Provide an explicit model via the 'models' parameter. "
-                    f"Supported defaults: {sorted(DEFAULT_SLIM_MODELS.keys())}"
-                )
+                if generic_tokenizer:
+                    if generic_tokenizer == "blank":
+                        self._blank_languages.add(lang)
+                        continue
+                    else:
+                        model_name = generic_tokenizer
+                    logger.info(
+                        f"No default slim model for language '{lang}', "
+                        f"using generic tokenizer: {model_name}"
+                    )
+                else:
+                    raise ValueError(
+                        f"No default slim model for language '{lang}'. "
+                        f"Provide an explicit model via the 'models' parameter, "
+                        f"or set 'generic_tokenizer' to 'blank' or a spaCy model "
+                        f"name for a fallback. "
+                        f"Supported defaults: {sorted(DEFAULT_SLIM_MODELS.keys())}"
+                    )
             models.append({"lang_code": lang, "model_name": model_name})
         return models
-
-    def _enable_gpu(self) -> None:
-        """Enable GPU support for spaCy if available."""
-        device = device_detector.get_device()
-        if device != "cpu":
-            try:
-                spacy.require_gpu()
-            except Exception as e:
-                logger.warning(
-                    f"Failed to enable GPU ({device}), falling back to CPU: {e}"
-                )
 
     def load(self) -> None:
         """Load spaCy models with NER disabled."""
         logger.debug(f"Loading slim SpaCy models: {self.models}")
 
-        self._enable_gpu()
-
         self.nlp = {}
+
+        # Load blank pipelines for languages that have no trained model
+        for lang in self._blank_languages:
+            self.nlp[lang] = spacy.blank(lang)
+            logger.info(f"Created blank spaCy pipeline for '{lang}'")
+
+        # Load trained models with NER/parser disabled
         for model in self.models:
             self._validate_model_params(model)
             model_name = model["model_name"]
@@ -114,7 +141,6 @@ class SlimSpacyNlpEngine(NlpEngine):
             if self.auto_download:
                 self._download_spacy_model_if_needed(model_name)
 
-            # Disable NER and parser to keep processing slim
             self.nlp[model["lang_code"]] = spacy.load(
                 model_name, disable=["ner", "parser"]
             )

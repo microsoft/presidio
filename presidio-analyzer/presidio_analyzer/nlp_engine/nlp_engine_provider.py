@@ -84,7 +84,7 @@ class NlpEngineProvider:
 
     @staticmethod
     def _get_full_conf_path(
-        default_conf_file: Union[Path, str] = "slim_nlp.yaml",
+        default_conf_file: Union[Path, str] = "default.yaml",
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent, "../conf", default_conf_file)
@@ -103,7 +103,10 @@ class NlpEngineProvider:
         nlp_models = self.nlp_configuration["models"]
 
         if nlp_engine_name == SlimSpacyNlpEngine.engine_name:
-            engine = nlp_engine_class(models=nlp_models)
+            generic_tokenizer = self.nlp_configuration.get("generic_tokenizer")
+            engine = nlp_engine_class(
+                models=nlp_models, generic_tokenizer=generic_tokenizer
+            )
         else:
             ner_model_configuration = self.nlp_configuration.get(
                 "ner_model_configuration"
