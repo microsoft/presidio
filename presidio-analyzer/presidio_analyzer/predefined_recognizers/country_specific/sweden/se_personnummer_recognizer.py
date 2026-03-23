@@ -67,7 +67,7 @@ class SePersonnummerRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
-            name=name if name is not None else "",
+            name=name,
         )
 
     # ---------------------------------------------------------------------
