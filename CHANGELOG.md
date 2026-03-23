@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
-Added recognizer for Swedish Organisationsnummer, ID number for all Swedish oragnisations.
+
+### Analyzer
+#### Added
+- German PII recognizers for `DE_TAX_ID` (Steueridentifikationsnummer, §§ 139a–139e AO, ISO 7064 Mod 11,10 checksum), `DE_TAX_NUMBER` (Steuernummer, § 139a AO, ELSTER and slash formats), `DE_PASSPORT` (Reisepassnummer, PassG § 4, ICAO Doc 9303), `DE_ID_CARD` (Personalausweisnummer, PAuswG), `DE_SOCIAL_SECURITY` (Rentenversicherungsnummer, § 147 SGB VI, DRV checksum), `DE_HEALTH_INSURANCE` (Krankenversicherungsnummer/KVNR, § 290 SGB V, GKV checksum), `DE_KFZ` (KFZ-Kennzeichen, FZV § 8), `DE_HANDELSREGISTER` (Handelsregisternummer HRA/HRB, §§ 9/14 HGB), and `DE_PLZ` (Postleitzahl, very low base confidence, context-only). All disabled by default.
+
+- Added recognizer for Swedish Organisationsnummer, ID number for all Swedish oragnisations.
 
 ## [2.2.362] - 2026-03-15
 ### General

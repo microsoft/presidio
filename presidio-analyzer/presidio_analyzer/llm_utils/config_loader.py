@@ -32,7 +32,8 @@ def resolve_config_path(config_path: Union[str, Path]) -> Path:
     Handles paths in multiple formats (checked in order):
     1. Absolute paths: returned as-is
     2. Relative paths that exist from CWD: returned as-is
-    3. Relative paths resolved from repository root
+    3. Paths resolved from the package conf/ directory
+    4. Relative paths resolved from repository root
 
     :param config_path: Configuration file path (string or Path object).
     :return: Resolved absolute path.
@@ -44,6 +45,10 @@ def resolve_config_path(config_path: Union[str, Path]) -> Path:
 
     if config_path_obj.exists():
         return config_path_obj
+
+    conf_resolved = get_conf_path(str(config_path))
+    if conf_resolved.exists():
+        return conf_resolved
 
     presidio_analyzer_root = Path(__file__).parent.parent
     repo_root = presidio_analyzer_root.parent.parent
