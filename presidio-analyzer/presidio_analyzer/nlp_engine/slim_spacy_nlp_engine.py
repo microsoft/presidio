@@ -130,7 +130,14 @@ class SlimSpacyNlpEngine(NlpEngine):
 
         # Load blank pipelines for languages that have no trained model
         for lang in self._blank_languages:
-            self.nlp[lang] = spacy.blank(lang)
+            try:
+                self.nlp[lang] = spacy.blank(lang)
+            except ImportError:
+                logger.warning(
+                    f"spaCy has no language module for '{lang}', "
+                    f"falling back to multilingual tokenizer (xx)"
+                )
+                self.nlp[lang] = spacy.blank("xx")
             logger.info(f"Created blank spaCy pipeline for '{lang}'")
 
         # Load trained models with NER/parser disabled

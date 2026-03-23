@@ -120,6 +120,16 @@ class TestSlimSpacyNlpEngineLoad:
         assert len(artifacts.tokens) == 2
         assert artifacts.entities == []
 
+    def test_when_load_blank_unknown_language_then_falls_back_to_xx(self):
+        engine = SlimSpacyNlpEngine(
+            supported_languages=["sw"], generic_tokenizer="blank"
+        )
+        engine.load()
+        assert engine.is_loaded()
+        artifacts = engine.process_text("hello world", language="sw")
+        assert len(artifacts.tokens) == 2
+        assert artifacts.entities == []
+
     def test_when_is_loaded_before_load_then_false(self):
         engine = SlimSpacyNlpEngine()
         assert engine.is_loaded() is False
