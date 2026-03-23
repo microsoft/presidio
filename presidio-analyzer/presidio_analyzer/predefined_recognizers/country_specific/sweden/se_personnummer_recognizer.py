@@ -22,7 +22,6 @@ class SePersonnummerRecognizer(PatternRecognizer):
     * Regex covers ``YYMMDD[-+]XXXX`` and ``YYYYMMDD[-+]XXXX``.
     * Date validation accommodates samordningsnummer (day ≥ 61).
     * Luhn checksum is applied to the last 10 digits.
-    * Numbers present in ``fake_pnr.json`` are rejected.
     """
 
     # ---------------------------------------------------------------------
