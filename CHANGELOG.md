@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+Added recognizer for Swedish Organisationsnummer, ID number for all Swedish oragnisations.
+
 ## [2.2.362] - 2026-03-15
 ### General
 #### Added

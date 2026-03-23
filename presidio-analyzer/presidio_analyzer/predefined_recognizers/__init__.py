@@ -60,6 +60,11 @@ from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
 from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
 
+# Sweden recognizers
+from .country_specific.sweden.se_organisationsnummer_recognizer import (
+    SeOrganisationsnummerRecognizer,
+)
+
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
@@ -187,6 +192,7 @@ __all__ = [
     "KrRrnRecognizer",
     "KrDriverLicenseRecognizer",
     "KrFrnRecognizer",
+    "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",

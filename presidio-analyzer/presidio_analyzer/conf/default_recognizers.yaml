@@ -224,6 +224,12 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: SeOrganisationsnummerRecognizer
+    supported_languages:
+    - sv
+    type: predefined
+    enabled: false
+
   - name: ThTninRecognizer
     supported_languages:
     - th
