@@ -219,14 +219,14 @@ recognizers:
 
   - name: KrFrnRecognizer
     supported_languages:
-      - ko
-      - kr
+    - ko
+    - kr
     type: predefined
     enabled: false
 
   - name: SePersonnummerRecognizer
     supported_languages:
-      - sv
+    - sv
     type: predefined
     enabled: false
 
