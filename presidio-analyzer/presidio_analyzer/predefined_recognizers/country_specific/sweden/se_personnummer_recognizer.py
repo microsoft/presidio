@@ -110,7 +110,7 @@ class SePersonnummerRecognizer(PatternRecognizer):
             if day >= 61:
                 day -= 60
             return 1 <= month <= 12 and 1 <= day <= 31
-        except Exception:
+        except (ValueError, IndexError):
             return False
 
     # ---------------------------------------------------------------------
