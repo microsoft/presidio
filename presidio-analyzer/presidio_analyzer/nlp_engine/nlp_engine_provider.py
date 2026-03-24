@@ -20,7 +20,7 @@ logger = logging.getLogger("presidio-analyzer")
 class NlpEngineProvider:
     """Create different NLP engines from configuration.
 
-    :param nlp_engines: List of available NLP engines.
+    :param nlp_engines: List of available NLP engines
     Default: (SpacyNlpEngine, StanzaNlpEngine)
     :param nlp_configuration: Dict containing nlp configuration
     :example: configuration:
