@@ -26,7 +26,7 @@
 | presidio\_analyzer/input\_validation/yaml\_recognizer\_models.py                                                 |      198 |       10 |     95% |246, 250, 300, 353, 374, 407, 413, 421, 451, 454 |
 | presidio\_analyzer/llm\_utils/\_\_init\_\_.py                                                                    |        6 |        0 |    100% |           |
 | presidio\_analyzer/llm\_utils/azure\_auth\_helper.py                                                             |       24 |        2 |     92% |    51, 88 |
-| presidio\_analyzer/llm\_utils/config\_loader.py                                                                  |       45 |        4 |     91% |26, 46, 121-122 |
+| presidio\_analyzer/llm\_utils/config\_loader.py                                                                  |       48 |        3 |     94% |47, 126-127 |
 | presidio\_analyzer/llm\_utils/entity\_mapper.py                                                                  |       71 |        0 |    100% |           |
 | presidio\_analyzer/llm\_utils/examples\_loader.py                                                                |       18 |        0 |    100% |           |
 | presidio\_analyzer/llm\_utils/langextract\_helper.py                                                             |       65 |        7 |     89% |18-20, 144, 152, 174-175 |
@@ -147,7 +147,7 @@
 | presidio\_analyzer/recognizer\_registry/recognizers\_loader\_utils.py                                            |      186 |        5 |     97% |44, 60, 149, 152, 516 |
 | presidio\_analyzer/recognizer\_result.py                                                                         |       57 |        5 |     91% |59-60, 102-106 |
 | presidio\_analyzer/remote\_recognizer.py                                                                         |       14 |        2 |     86% |    52, 56 |
-| **TOTAL**                                                                                                        | **4444** |  **216** | **95%** |           |
+| **TOTAL**                                                                                                        | **4447** |  **215** | **95%** |           |
 
 
 ## Setup coverage badge
