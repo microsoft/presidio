@@ -295,3 +295,94 @@ def _operate(
     return EngineResult(
         "Number: I am your new text!", [OperatorResult(0, 35, "type", "text", "hash")]
     )
+
+
+# Tests for issue #1925 - merge_whitespace_entities parameter
+
+
+def test_given_three_space_separated_same_type_entities_then_all_are_anonymized_when_merge_disabled():
+    """Regression test for #1925.
+
+    When merge_whitespace_entities=False, each detected entity should be
+    anonymized independently, even if separated only by whitespace.
+    """
+    engine = AnonymizerEngine()
+    # Three space-separated emails
+    text = "contact@example.com support@example.org admin@example.net"
+    analyzer_results = [
+        RecognizerResult(start=0, end=19, entity_type="EMAIL_ADDRESS", score=0.85),
+        RecognizerResult(start=20, end=38, entity_type="EMAIL_ADDRESS", score=0.85),
+        RecognizerResult(start=39, end=55, entity_type="EMAIL_ADDRESS", score=0.85),
+    ]
+    result = engine.anonymize(
+        text,
+        analyzer_results,
+        operators={"EMAIL_ADDRESS": OperatorConfig("replace", {"new_value": "<EMAIL>"})},
+        merge_whitespace_entities=False,
+    )
+    assert result.text == "<EMAIL> <EMAIL> <EMAIL>"
+    assert len(result.items) == 3
+
+
+def test_given_three_space_separated_same_type_entities_then_merged_by_default():
+    """Default behavior (merge_whitespace_entities=True) should merge adjacent
+    same-type space-separated entities into one, preserving existing behavior.
+    """
+    engine = AnonymizerEngine()
+    text = "My name is David John Jones"
+    analyzer_results = [
+        RecognizerResult(start=11, end=16, entity_type="PERSON", score=0.8),
+        RecognizerResult(start=17, end=21, entity_type="PERSON", score=0.8),
+        RecognizerResult(start=22, end=27, entity_type="PERSON", score=0.8),
+    ]
+    result = engine.anonymize(
+        text,
+        analyzer_results,
+        operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})},
+    )
+    # Default: all three space-separated PERSON entities merged into one replacement
+    assert result.text == "My name is BIP"
+    assert len(result.items) == 1
+
+
+def test_given_two_space_separated_same_type_entities_then_each_anonymized_when_merge_disabled():
+    """Two space-separated entities of same type should each be anonymized
+    when merge_whitespace_entities=False.
+    """
+    engine = AnonymizerEngine()
+    text = "My name is Jones Smith"
+    analyzer_results = [
+        RecognizerResult(start=11, end=16, entity_type="PERSON", score=0.8),
+        RecognizerResult(start=17, end=22, entity_type="PERSON", score=0.8),
+    ]
+    result = engine.anonymize(
+        text,
+        analyzer_results,
+        operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})},
+        merge_whitespace_entities=False,
+    )
+    assert result.text == "My name is BIP BIP"
+    assert len(result.items) == 2
+
+
+def test_given_mixed_entity_types_space_separated_not_merged_regardless_of_flag():
+    """Different entity types separated by space should never be merged,
+    regardless of the merge_whitespace_entities flag.
+    """
+    engine = AnonymizerEngine()
+    text = "Call Jones at 212-555-5555"
+    analyzer_results = [
+        RecognizerResult(start=5, end=10, entity_type="PERSON", score=0.8),
+        RecognizerResult(start=14, end=26, entity_type="PHONE_NUMBER", score=0.8),
+    ]
+    result = engine.anonymize(
+        text,
+        analyzer_results,
+        operators={
+            "PERSON": OperatorConfig("replace", {"new_value": "BIP"}),
+            "PHONE_NUMBER": OperatorConfig("replace", {"new_value": "BEEP"}),
+        },
+        merge_whitespace_entities=False,
+    )
+    assert result.text == "Call BIP at BEEP"
+    assert len(result.items) == 2
