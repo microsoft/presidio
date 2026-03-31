@@ -1,5 +1,4 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
-
 import logging
 import re
 from typing import Dict, List, Optional, Type
@@ -34,6 +33,7 @@ class AnonymizerEngine(EngineBase):
         conflict_resolution: ConflictResolutionStrategy = (
             ConflictResolutionStrategy.MERGE_SIMILAR_OR_CONTAINED
         ),
+        merge_whitespace_entities: bool = True,
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -45,17 +45,18 @@ class AnonymizerEngine(EngineBase):
         received from the analyzer
         :param conflict_resolution: The configuration designed to handle conflicts
         among entities
+        :param merge_whitespace_entities: Whether to merge adjacent entities of the
+        same type that are separated only by whitespace. Default is True (existing
+        behavior). Set to False to anonymize each detected entity independently,
+        which is useful when space-separated entities of the same type should each
+        be anonymized individually (e.g. multiple emails in a row).
         :return: the anonymized text and a list of information about the
         anonymized entities.
-
         :example:
-
         >>> from presidio_anonymizer import AnonymizerEngine
         >>> from presidio_anonymizer.entities import RecognizerResult, OperatorConfig
-
         >>> # Initialize the engine with logger.
         >>> engine = AnonymizerEngine()
-
         >>> # Invoke the anonymize function with the text, analyzer results and
         >>> # Operators to define the anonymization type.
         >>> result = engine.anonymize(
@@ -64,13 +65,12 @@ class AnonymizerEngine(EngineBase):
         >>>                                        start=11,
         >>>                                        end=15,
         >>>                                        score=0.8),
-        >>>                       RecognizerResult(entity_type="PERSON",
+        >>>                        RecognizerResult(entity_type="PERSON",
         >>>                                        start=17,
         >>>                                        end=27,
         >>>                                        score=0.8)],
         >>>     operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})}
         >>> )
-
         >>> print(result)
         text: My name is BIP, BIP.
         items:
@@ -80,8 +80,6 @@ class AnonymizerEngine(EngineBase):
             {'start': 11, 'end': 14, 'entity_type': 'PERSON',
              'text': 'BIP', 'operator': 'replace'}
         ]
-
-
         """
         # We do this to make sure the original analyzer_results object is not
         # modified
@@ -95,15 +93,16 @@ class AnonymizerEngine(EngineBase):
             analyzer_results, conflict_resolution
         )
 
-        merged_results = self._merge_entities_with_whitespace_between(
-            text, analyzer_results
-        )
+        if merge_whitespace_entities:
+            analyzer_results = self._merge_entities_with_whitespace_between(
+                text, analyzer_results
+            )
 
         operators = self.__check_or_add_default_operator(operators)
 
         return self._operate(
             text=text,
-            pii_entities=merged_results,
+            pii_entities=analyzer_results,
             operators_metadata=operators,
             operator_type=OperatorType.Anonymize,
         )
@@ -146,14 +145,12 @@ class AnonymizerEngine(EngineBase):
         other_elements = analyzer_results.copy()
         for result in analyzer_results:
             other_elements.remove(result)
-
             is_merge_same_entity_type = False
             for other_element in other_elements:
                 if other_element.entity_type != result.entity_type:
                     continue
                 if result.intersects(other_element) == 0:
                     continue
-
                 other_element.start = min(result.start, other_element.start)
                 other_element.end = max(result.end, other_element.end)
                 other_element.score = max(result.score, other_element.score)
@@ -164,7 +161,8 @@ class AnonymizerEngine(EngineBase):
                 tmp_analyzer_results.append(result)
             else:
                 self.logger.debug(
-                    f"removing element {result} from " f"results list due to merge"
+                    f"removing element {result} from "
+                    f"results list due to merge"
                 )
 
         unique_text_metadata_elements = []
@@ -206,11 +204,11 @@ class AnonymizerEngine(EngineBase):
                     unique_text_metadata_elements.sort(
                         key=lambda element: element.start
                     )
-            unique_text_metadata_elements = [
-                element
-                for element in unique_text_metadata_elements
-                if element.start <= element.end
-            ]
+                    unique_text_metadata_elements = [
+                        element
+                        for element in unique_text_metadata_elements
+                        if element.start <= element.end
+                    ]
         return unique_text_metadata_elements
 
     def _merge_entities_with_whitespace_between(
@@ -225,6 +223,9 @@ class AnonymizerEngine(EngineBase):
                     if re.search(r"^( )+$", text[prev_result.end : result.start]):
                         merged_results.remove(prev_result)
                         result.start = prev_result.start
+                        merged_results.append(result)
+                        prev_result = result
+                        continue
             merged_results.append(result)
             prev_result = result
         return merged_results
