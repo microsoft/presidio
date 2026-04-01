@@ -1,4 +1,4 @@
-FROM python:3.12-slim@sha256:f3fa41d74a768c2fce8016b98c191ae8c1bacd8f1152870a3f9f87d350920b7c
+FROM python:3.14-slim@sha256:fb83750094b46fd6b8adaa80f66e2302ecbe45d513f6cece637a841e1025b4ca
 
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
