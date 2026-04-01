@@ -87,6 +87,7 @@ from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
 from .country_specific.sweden.se_organisationsnummer_recognizer import (
     SeOrganisationsnummerRecognizer,
 )
+from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRecognizer
 
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
@@ -217,6 +218,7 @@ __all__ = [
     "KrFrnRecognizer",
     "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
+    "SePersonnummerRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
