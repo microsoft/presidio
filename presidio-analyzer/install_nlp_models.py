@@ -29,10 +29,11 @@ logger.addHandler(logging.StreamHandler())
 def install_models(
     nlp_conf_file: Optional[str] = None, analyzer_conf_file: Optional[str] = None
 ) -> None:
-    """Install NLP models based on the provided configuration files.
+    """
+    Install NLP models based on configuration files.
 
-    :param nlp_conf_file: Path to a plain NLP configuration yaml file.
-    :param analyzer_conf_file: Path to a unified analyzer conf file that may contain an ``nlp_configuration`` section.
+    :param nlp_conf_file: Path to NLP configuration YAML file.
+    :param analyzer_conf_file: Optional analyzer configuration file which may include NLP configuration.
     """
     # Prefer nlp_configuration embedded inside a unified ANALYZER_CONF_FILE.
     if analyzer_conf_file:
@@ -141,13 +142,7 @@ if __name__ == "__main__":
         "--analyzer_conf_file",
         required=False,
         default=None,
-        help=(
-            "Optional path to a unified analyzer conf file (ANALYZER_CONF_FILE). "
-            "When this file contains an nlp_configuration section, models from "
-            "that section are downloaded and --conf_file is ignored. "
-            "Use this when ANALYZER_CONF_FILE is the single source of truth for "
-            "both NLP and recognizer-registry configuration."
-        ),
+        help="Optional path to an analyzer conf file which may include NLP configuration. When provided, --nlp_conf_file is ignored.",
     )
     args = parser.parse_args()
 
