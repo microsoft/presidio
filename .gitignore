@@ -140,4 +140,4 @@ mkdocs/
 
 # Visual Studio
 /.vs
-/TestResults
+/TestResultsvenv312/
