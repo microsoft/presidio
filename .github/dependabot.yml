@@ -55,9 +55,9 @@ updates:
       - "dependencies"
       - "docker"
     ignore:
-      # Stay on Python 3.12; allow digest-only updates but block version bumps to 3.13+
+      # Allow only patch/micro and digest updates for python; block major and minor version bumps
       - dependency-name: "python"
-        versions: [">= 3.13"]
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       
   - package-ecosystem: "docker"
     directory: "/presidio-anonymizer"
@@ -68,9 +68,9 @@ updates:
       - "dependencies"
       - "docker"
     ignore:
-      # Stay on Python 3.12; allow digest-only updates but block version bumps to 3.13+
+      # Allow only patch/micro and digest updates for python; block major and minor version bumps
       - dependency-name: "python"
-        versions: [">= 3.13"]
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       
   - package-ecosystem: "docker"
     directory: "/presidio-image-redactor"
@@ -81,9 +81,9 @@ updates:
       - "dependencies"
       - "docker"
     ignore:
-      # Stay on Python 3.12; allow digest-only updates but block version bumps to 3.13+
+      # Allow only patch/micro and digest updates for python; block major and minor version bumps
       - dependency-name: "python"
-        versions: [">= 3.13"]
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       
   - package-ecosystem: "docker-compose"
     directory: "/"
