@@ -27,23 +27,12 @@ logger.addHandler(logging.StreamHandler())
 
 
 def install_models(
-    conf_file: str, analyzer_conf_file: Optional[str] = None
+    nlp_conf_file: Optional[str] = None, analyzer_conf_file: Optional[str] = None
 ) -> None:
-    """Installs NLP models based on the provided configuration files.
+    """Install NLP models based on the provided configuration files.
 
-    When *analyzer_conf_file* is given and contains an ``nlp_configuration``
-    section (unified analyzer conf format), the models defined there are
-    downloaded and *conf_file* is ignored.  This ensures that a single unified
-    ``ANALYZER_CONF_FILE`` can drive both build-time model downloads and
-    runtime configuration without requiring a separate ``NLP_CONF_FILE``.
-
-    When *analyzer_conf_file* is not provided or does not contain an
-    ``nlp_configuration`` section, *conf_file* is used as before (plain NLP
-    conf format with a top-level ``nlp_engine_name`` and ``models`` field).
-
-    :param conf_file: Path to a plain NLP configuration yaml file.
-    :param analyzer_conf_file: Optional path to a unified analyzer conf file
-        that may contain an ``nlp_configuration`` section.
+    :param nlp_conf_file: Path to a plain NLP configuration yaml file.
+    :param analyzer_conf_file: Path to a unified analyzer conf file that may contain an ``nlp_configuration`` section.
     """
     # Prefer nlp_configuration embedded inside a unified ANALYZER_CONF_FILE.
     if analyzer_conf_file:
@@ -64,10 +53,10 @@ def install_models(
 
     # Fall back to the plain NLP conf file (backward-compatible path).
     try:
-        with open(conf_file) as fh:
+        with open(nlp_conf_file) as fh:
             nlp_configuration = yaml.safe_load(fh)
     except OSError as e:
-        raise OSError(f"Could not read NLP conf file '{conf_file}'") from e
+        raise OSError(f"Could not read NLP conf file '{nlp_conf_file}'") from e
     _install_models_from_nlp_config(nlp_configuration)
 
 
@@ -143,7 +132,7 @@ if __name__ == "__main__":
         description="Install NLP models into the presidio-analyzer Docker container"
     )
     parser.add_argument(
-        "--conf_file",
+        "--nlp_conf_file",
         required=False,
         default="presidio_analyzer/conf/default.yaml",
         help="Location of nlp configuration yaml file. Default: conf/default.yaml",
@@ -163,6 +152,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     install_models(
-        conf_file=args.conf_file,
+        nlp_conf_file=args.nlp_conf_file,
         analyzer_conf_file=args.analyzer_conf_file,
     )
