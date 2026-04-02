@@ -45,6 +45,15 @@ updates:
       - "dependencies"
       - "python"
 
+  - package-ecosystem: "pip"
+    directory: "/presidio"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "python"
+
   # Monitor Docker dependencies
   - package-ecosystem: "docker"
     directory: "/presidio-analyzer"
