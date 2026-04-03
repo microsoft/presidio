@@ -129,13 +129,21 @@ def _install_transformers_spacy_models(model_name: Dict[str, str]) -> None:
 
 
 if __name__ == "__main__":
+    import warnings
+
     parser = argparse.ArgumentParser(
         description="Install NLP models into the presidio-analyzer Docker container"
     )
     parser.add_argument(
+        "--conf_file",
+        required=False,
+        default=None,
+        help="Deprecated. Use --nlp_conf_file instead.",
+    )
+    parser.add_argument(
         "--nlp_conf_file",
         required=False,
-        default="presidio_analyzer/conf/default.yaml",
+        default=None,
         help="Location of nlp configuration yaml file. Default: conf/default.yaml",
     )
     parser.add_argument(
@@ -146,7 +154,18 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    if args.conf_file and args.nlp_conf_file:
+        parser.error("--conf_file and --nlp_conf_file cannot be used together. Use --nlp_conf_file only.")
+
+    if args.conf_file:
+        warnings.warn(
+            "--conf_file is deprecated and will be removed in a future version. Use --nlp_conf_file instead.",
+            DeprecationWarning,
+            stacklevel=1,
+        )
+        args.nlp_conf_file = args.conf_file
+
     install_models(
-        nlp_conf_file=args.nlp_conf_file,
+        nlp_conf_file=args.nlp_conf_file or "presidio_analyzer/conf/default.yaml",
         analyzer_conf_file=args.analyzer_conf_file,
     )
