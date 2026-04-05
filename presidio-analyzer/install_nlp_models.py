@@ -33,7 +33,8 @@ def install_models(
     Install NLP models based on configuration files.
 
     :param nlp_conf_file: Path to NLP configuration YAML file.
-    :param analyzer_conf_file: Optional analyzer configuration file which may include NLP configuration.
+    :param analyzer_conf_file: Optional analyzer configuration file
+        which may include NLP configuration.
     """
     # Prefer nlp_configuration embedded inside a unified ANALYZER_CONF_FILE.
     if analyzer_conf_file:
@@ -150,16 +151,23 @@ if __name__ == "__main__":
         "--analyzer_conf_file",
         required=False,
         default=None,
-        help="Optional path to an analyzer conf file which may include NLP configuration. When provided, --nlp_conf_file is ignored.",
+        help=(
+            "Optional path to an analyzer conf file which may include "
+            "NLP configuration. When provided, --nlp_conf_file is ignored."
+        ),
     )
     args = parser.parse_args()
 
     if args.conf_file and args.nlp_conf_file:
-        parser.error("--conf_file and --nlp_conf_file cannot be used together. Use --nlp_conf_file only.")
+        parser.error(
+            "--conf_file and --nlp_conf_file cannot be used together. "
+            "Use --nlp_conf_file only."
+        )
 
     if args.conf_file:
         warnings.warn(
-            "--conf_file is deprecated and will be removed in a future version. Use --nlp_conf_file instead.",
+            "--conf_file is deprecated and will be removed in a future version. "
+            "Use --nlp_conf_file instead.",
             DeprecationWarning,
             stacklevel=1,
         )
