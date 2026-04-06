@@ -218,9 +218,21 @@ recognizers:
     enabled: false
 
   - name: KrFrnRecognizer
-    supported_languages: 
+    supported_languages:
     - ko
     - kr
+    type: predefined
+    enabled: false
+
+  - name: SeOrganisationsnummerRecognizer
+    supported_languages:
+    - sv
+    type: predefined
+    enabled: false
+  
+  - name: SePersonnummerRecognizer
+    supported_languages:
+    - sv
     type: predefined
     enabled: false
 
