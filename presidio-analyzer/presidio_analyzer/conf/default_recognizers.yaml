@@ -1,4 +1,4 @@
-supported_languages: 
+supported_languages:
   - en
 global_regex_flags: 26
 
@@ -218,9 +218,21 @@ recognizers:
     enabled: false
 
   - name: KrFrnRecognizer
-    supported_languages: 
+    supported_languages:
     - ko
     - kr
+    type: predefined
+    enabled: false
+
+  - name: SeOrganisationsnummerRecognizer
+    supported_languages:
+    - sv
+    type: predefined
+    enabled: false
+  
+  - name: SePersonnummerRecognizer
+    supported_languages:
+    - sv
     type: predefined
     enabled: false
 
@@ -270,6 +282,61 @@ recognizers:
   - name: InGstinRecognizer
     supported_languages: 
     - en
+    type: predefined
+    enabled: false
+
+  # Germany recognizers (disabled by default, enable for German-language pipelines)
+  - name: DeTaxIdRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeTaxNumberRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePassportRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeIdCardRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeSocialSecurityRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeHealthInsuranceRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeKfzRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeHandelsregisterRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePlzRecognizer
+    supported_languages:
+    - de
     type: predefined
     enabled: false
 

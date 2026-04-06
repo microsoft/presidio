@@ -14,6 +14,29 @@ from .country_specific.australia.au_tfn_recognizer import AuTfnRecognizer
 from .country_specific.finland.fi_personal_identity_code_recognizer import (
     FiPersonalIdentityCodeRecognizer,
 )
+
+# Germany recognizers
+from .country_specific.germany.de_bsnr_recognizer import DeBsnrRecognizer
+from .country_specific.germany.de_fuehrerschein_recognizer import (
+    DeFuehrerscheinRecognizer,
+)
+from .country_specific.germany.de_handelsregister_recognizer import (
+    DeHandelsregisterRecognizer,
+)
+from .country_specific.germany.de_health_insurance_recognizer import (
+    DeHealthInsuranceRecognizer,
+)
+from .country_specific.germany.de_id_card_recognizer import DeIdCardRecognizer
+from .country_specific.germany.de_kfz_recognizer import DeKfzRecognizer
+from .country_specific.germany.de_lanr_recognizer import DeLanrRecognizer
+from .country_specific.germany.de_passport_recognizer import DePassportRecognizer
+from .country_specific.germany.de_plz_recognizer import DePlzRecognizer
+from .country_specific.germany.de_social_security_recognizer import (
+    DeSocialSecurityRecognizer,
+)
+from .country_specific.germany.de_tax_id_recognizer import DeTaxIdRecognizer
+from .country_specific.germany.de_tax_number_recognizer import DeTaxNumberRecognizer
+from .country_specific.germany.de_vat_id_recognizer import DeVatIdRecognizer
 from .country_specific.india import (
     InVehicleRegistrationRecognizer,
 )
@@ -59,6 +82,12 @@ from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
 # Spain recognizers
 from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
+
+# Sweden recognizers
+from .country_specific.sweden.se_organisationsnummer_recognizer import (
+    SeOrganisationsnummerRecognizer,
+)
+from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRecognizer
 
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
@@ -187,7 +216,9 @@ __all__ = [
     "KrRrnRecognizer",
     "KrDriverLicenseRecognizer",
     "KrFrnRecognizer",
+    "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
+    "SePersonnummerRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
@@ -195,4 +226,18 @@ __all__ = [
     "NgNinRecognizer",
     "NgVehicleRegistrationRecognizer",
     "MedicalNERRecognizer",
+    # Germany recognizers
+    "DeTaxIdRecognizer",
+    "DeTaxNumberRecognizer",
+    "DePassportRecognizer",
+    "DeIdCardRecognizer",
+    "DeSocialSecurityRecognizer",
+    "DeHealthInsuranceRecognizer",
+    "DeKfzRecognizer",
+    "DeHandelsregisterRecognizer",
+    "DePlzRecognizer",
+    "DeLanrRecognizer",
+    "DeBsnrRecognizer",
+    "DeVatIdRecognizer",
+    "DeFuehrerscheinRecognizer",
 ]
