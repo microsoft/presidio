@@ -24,10 +24,12 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 COPY ./pyproject.toml /app/
 RUN pip install poetry==2.3.2 && poetry install --no-root --only=main -E server -E transformers
 
-# install nlp models specified in NLP_CONF_FILE
+# install nlp models specified in NLP_CONF_FILE or via nlp_configuration in ANALYZER_CONF_FILE
 COPY ./install_nlp_models.py /app/
 
-RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
+RUN poetry run python install_nlp_models.py \
+    --conf_file ${NLP_CONF_FILE} \
+    --analyzer_conf_file ${ANALYZER_CONF_FILE}
 
 COPY . /app/
 
