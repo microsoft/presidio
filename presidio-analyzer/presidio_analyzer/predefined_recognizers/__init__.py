@@ -84,6 +84,9 @@ from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
 
 # Sweden recognizers
+from .country_specific.sweden.se_organisationsnummer_recognizer import (
+    SeOrganisationsnummerRecognizer,
+)
 from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRecognizer
 
 # Thai recognizers
@@ -213,6 +216,7 @@ __all__ = [
     "KrRrnRecognizer",
     "KrDriverLicenseRecognizer",
     "KrFrnRecognizer",
+    "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
     "SePersonnummerRecognizer",
     "LangExtractRecognizer",

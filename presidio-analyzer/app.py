@@ -43,9 +43,11 @@ class Server:
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
 
-        analyzer_conf_file = os.environ.get("ANALYZER_CONF_FILE")
-        nlp_engine_conf_file = os.environ.get("NLP_CONF_FILE")
-        recognizer_registry_conf_file = os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE")
+        analyzer_conf_file = os.environ.get("ANALYZER_CONF_FILE") or None
+        nlp_engine_conf_file = os.environ.get("NLP_CONF_FILE") or None
+        recognizer_registry_conf_file = (
+            os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE") or None
+        )
 
         self.logger.info("Starting analyzer engine")
         self.engine: AnalyzerEngine = AnalyzerEngineProvider(
