@@ -63,6 +63,10 @@ updates:
     labels:
       - "dependencies"
       - "docker"
+    ignore:
+      # Allow only patch/micro and digest updates for python; block major and minor version bumps
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       
   - package-ecosystem: "docker"
     directory: "/presidio-anonymizer"
@@ -72,6 +76,10 @@ updates:
     labels:
       - "dependencies"
       - "docker"
+    ignore:
+      # Allow only patch/micro and digest updates for python; block major and minor version bumps
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       
   - package-ecosystem: "docker"
     directory: "/presidio-image-redactor"
@@ -81,6 +89,10 @@ updates:
     labels:
       - "dependencies"
       - "docker"
+    ignore:
+      # Allow only patch/micro and digest updates for python; block major and minor version bumps
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       
   - package-ecosystem: "docker-compose"
     directory: "/"
