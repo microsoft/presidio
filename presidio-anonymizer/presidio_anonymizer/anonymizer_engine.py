@@ -95,7 +95,7 @@ class AnonymizerEngine(EngineBase):
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results, conflict_resolution
         )
-        
+
         if merge_entities_with_spaces:
             merged_results = self._merge_entities_with_spaces_between(
                 text, analyzer_results
@@ -226,7 +226,7 @@ class AnonymizerEngine(EngineBase):
         for result in analyzer_results:
             if prev_result is not None:
                 if prev_result.entity_type == result.entity_type:
-                    if re.search(r"^( )+$", text[prev_result.end : result.start]):
+                    if re.search(r"^( )+$", text[prev_result.end:result.start]):
                         merged_results.remove(prev_result)
                         result.start = prev_result.start
             merged_results.append(result)

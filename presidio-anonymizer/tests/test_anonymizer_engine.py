@@ -238,6 +238,7 @@ def test_given_sorted_analyzer_results_merge_entities_separated_by_white_space(
     assert result.text == expected.text
     assert sorted(result.items) == sorted(expected.items)
 
+
 def test_given_analyzer_result_input_then_it_is_not_mutated():
     engine = AnonymizerEngine()
     text = "Jane Doe is a person"
@@ -256,6 +257,7 @@ def test_given_analyzer_result_input_then_it_is_not_mutated():
         original_analyzer_results, copy_analyzer_results
     ):
         assert original_result == copy_result
+
 
 def test_given_unsorted_input_then_merged_correctly():
     engine = AnonymizerEngine()
@@ -299,6 +301,7 @@ def _operate(
 # ---------------------------------------------------------------------------
 # Tests for merge_entities_with_spaces parameter (issue #1932)
 # ---------------------------------------------------------------------------
+
 
 def test_when_merge_spaces_is_default_then_adjacent_entities_are_merged():
     """Default (True) still merges adjacent same-type entities separated by spaces."""
@@ -361,6 +364,18 @@ def test_when_merge_spaces_is_false_then_different_entity_types_are_unaffected()
     )
     assert result.text == "Call <PHONE_NUMBER> or email <EMAIL_ADDRESS>"
     assert len(result.items) == 2
+
+    # Two space-separated entities of the same type should NOT be merged
+    text2 = "555-1234 555-5678"
+    analyzer_results2 = [
+        RecognizerResult(start=0, end=8, entity_type="PHONE_NUMBER", score=1.0),
+        RecognizerResult(start=9, end=17, entity_type="PHONE_NUMBER", score=1.0),
+    ]
+    result2 = engine.anonymize(
+        text2, analyzer_results2, merge_entities_with_spaces=False
+    )
+    assert result2.text == "<PHONE_NUMBER> <PHONE_NUMBER>"
+    assert len(result2.items) == 2
 
 
 def test_when_merge_spaces_is_true_then_tabs_and_newlines_are_not_merged():
