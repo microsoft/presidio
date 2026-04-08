@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-slim@sha256:f3fa41d74a768c2fce8016b98c191ae8c1bacd8f1152870a3f9f87d350920b7c
 
 ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
 ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
@@ -26,14 +26,16 @@ RUN apt-get update \
 
 COPY ./pyproject.toml /app/
 
-RUN pip install poetry \
+RUN pip install poetry==2.3.2 \
     && poetry install --no-root --only=main -E server \
     && rm -rf $(poetry config cache-dir)
     
-# install nlp models specified in NLP_CONF_FILE
+# install nlp models specified in NLP_CONF_FILE or via nlp_configuration in ANALYZER_CONF_FILE
 COPY ./install_nlp_models.py /app/
 
-RUN poetry run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
+RUN poetry run python install_nlp_models.py \
+    --conf_file ${NLP_CONF_FILE} \
+    --analyzer_conf_file ${ANALYZER_CONF_FILE}
 
 COPY . /app/
 

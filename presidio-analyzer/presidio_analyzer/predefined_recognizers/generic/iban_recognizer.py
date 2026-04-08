@@ -1,4 +1,5 @@
 import logging
+import os
 import string
 from typing import Dict, List, Optional, Tuple
 
@@ -19,6 +20,7 @@ from presidio_analyzer.predefined_recognizers.generic.iban_patterns import (
 
 logger = logging.getLogger("presidio-analyzer")
 
+REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
 
 class IbanRecognizer(PatternRecognizer):
     """
@@ -37,12 +39,23 @@ class IbanRecognizer(PatternRecognizer):
     This can allow a greater variety in input, for example by removing dashes or spaces.
     """
 
+    # Pattern explanation:
+    # - (?<![A-Z0-9]): Negative lookbehind - ensures we don't start mid-IBAN
+    # - ([A-Z]{2}[0-9]{2}(?:[ -]?[A-Z0-9]{4}){2,6}): First capture group with
+    #   country code, check digits, and 2-6 groups of 4 alphanumerics
+    # - ((?:[ -]?[A-Z0-9]{4})?): Second optional capture group for 1 more group of 4
+    # - ((?:[ -]?[A-Z0-9]{1,3})?): Third optional capture group for trailing 1-3 chars
+    # - (?![A-Z0-9]): Negative lookahead - ensures we don't end mid-IBAN
+    #
+    # Multiple capture groups enable validation fallback: the __analyze_patterns method
+    # iterates through groups in reverse order (3→2→1), trying progressively shorter
+    # matches. Example: for "IBAN123456 X", tries "IBAN123456 X" (fails validation),
+    # then "IBAN123456" (passes), avoiding false positives from trailing characters.
     PATTERNS = [
         Pattern(
             "IBAN Generic",
-            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2})"  # noqa: E501
-            r"([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?"  # noqa: E501
-            r"([ \-]?[A-Z0-9]{1,3})?\b",
+            r"(?<![A-Z0-9])([A-Z]{2}[0-9]{2}(?:[ -]?[A-Z0-9]{4}){2,6})"
+            r"((?:[ -]?[A-Z0-9]{4})?)((?:[ -]?[A-Z0-9]{1,3})?)(?![A-Z0-9])",
             0.5,
         ),
     ]
@@ -63,6 +76,7 @@ class IbanRecognizer(PatternRecognizer):
         bos_eos: Tuple[str, str] = (BOS, EOS),
         regex_flags: int = re.DOTALL | re.MULTILINE,
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
+        name: Optional[str] = None,
     ):
         self.replacement_pairs = replacement_pairs or [("-", ""), (" ", "")]
         self.exact_match = exact_match
@@ -75,6 +89,7 @@ class IbanRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
             global_regex_flags=regex_flags,
+            name=name,
         )
 
     def validate_result(self, pattern_text: str):  # noqa: D102
@@ -131,54 +146,64 @@ class IbanRecognizer(PatternRecognizer):
         flags = flags if flags else self.global_regex_flags
         results = []
         for pattern in self.patterns:
-            matches = re.finditer(pattern.regex, text, flags=flags)
+            try:
+                matches = re.finditer(
+                    pattern.regex, text, flags=flags, timeout=REGEX_TIMEOUT_SECONDS
+                )
 
-            for match in matches:
-                for grp_num in reversed(range(1, len(match.groups()) + 1)):
-                    start = match.span(0)[0]
-                    end = (
-                        match.span(grp_num)[1]
-                        if match.span(grp_num)[1] > 0
-                        else match.span(0)[1]
-                    )
-                    current_match = text[start:end]
+                for match in matches:
+                    for grp_num in reversed(range(1, len(match.groups()) + 1)):
+                        start = match.span(0)[0]
+                        end = (
+                            match.span(grp_num)[1]
+                            if match.span(grp_num)[1] > 0
+                            else match.span(0)[1]
+                        )
+                        current_match = text[start:end]
 
-                    # Skip empty results
-                    if current_match == "":
-                        continue
+                        # Skip empty results
+                        if current_match == "":
+                            continue
 
-                    score = pattern.score
+                        score = pattern.score
 
-                    validation_result = self.validate_result(current_match)
-                    description = PatternRecognizer.build_regex_explanation(
-                        self.name,
-                        pattern.name,
-                        pattern.regex,
-                        score,
-                        validation_result,
-                        flags,
-                    )
-                    pattern_result = RecognizerResult(
-                        entity_type=self.supported_entities[0],
-                        start=start,
-                        end=end,
-                        score=score,
-                        analysis_explanation=description,
-                        recognition_metadata={
-                            RecognizerResult.RECOGNIZER_NAME_KEY: self.name,
-                            RecognizerResult.RECOGNIZER_IDENTIFIER_KEY: self.id,
-                        },
-                    )
+                        validation_result = self.validate_result(current_match)
+                        description = PatternRecognizer.build_regex_explanation(
+                            self.name,
+                            pattern.name,
+                            pattern.regex,
+                            score,
+                            validation_result,
+                            flags,
+                        )
+                        pattern_result = RecognizerResult(
+                            entity_type=self.supported_entities[0],
+                            start=start,
+                            end=end,
+                            score=score,
+                            analysis_explanation=description,
+                            recognition_metadata={
+                                RecognizerResult.RECOGNIZER_NAME_KEY: self.name,
+                                RecognizerResult.RECOGNIZER_IDENTIFIER_KEY: self.id,
+                            },
+                        )
 
-                    if validation_result is not None:
-                        if validation_result:
-                            pattern_result.score = EntityRecognizer.MAX_SCORE
-                        else:
-                            pattern_result.score = EntityRecognizer.MIN_SCORE
+                        if validation_result is not None:
+                            if validation_result:
+                                pattern_result.score = EntityRecognizer.MAX_SCORE
+                            else:
+                                pattern_result.score = EntityRecognizer.MIN_SCORE
 
-                    if pattern_result.score > EntityRecognizer.MIN_SCORE:
-                        results.append(pattern_result)
-                        break
+                        if pattern_result.score > EntityRecognizer.MIN_SCORE:
+                            results.append(pattern_result)
+                            break
+            except TimeoutError:
+                logger.warning(
+                    "Regex pattern '%s' timed out after %s seconds, skipping.",
+                    pattern.name,
+                    REGEX_TIMEOUT_SECONDS,
+                    exc_info=True,
+                )
 
         return results
 
@@ -203,6 +228,16 @@ class IbanRecognizer(PatternRecognizer):
             country_regex = regex_per_country.get(country_code, "")
             if bos_eos and country_regex:
                 country_regex = bos_eos[0] + country_regex + bos_eos[1]
-            return country_regex and re.match(country_regex, iban, flags=flags)
+            try:
+                return country_regex and re.match(
+                    country_regex, iban, flags=flags, timeout=REGEX_TIMEOUT_SECONDS
+                )
+            except TimeoutError:
+                logger.warning(
+                    "IBAN format validation regex timed out after %s seconds.",
+                    REGEX_TIMEOUT_SECONDS,
+                    exc_info=True,
+                )
+                return False
 
         return False

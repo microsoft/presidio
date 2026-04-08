@@ -42,6 +42,7 @@ class SpacyRecognizer(LocalRecognizer):
         default_explanation: Optional[str] = None,
         check_label_groups: Optional[List[Tuple[Set, Set]]] = None,
         context: Optional[List[str]] = None,
+        name: Optional[str] = None,
     ):
         """Initialize the SpaCy recognizer.
 
@@ -69,6 +70,7 @@ class SpacyRecognizer(LocalRecognizer):
             supported_entities=supported_entities,
             supported_language=supported_language,
             context=context,
+            name=name,
         )
 
     def load(self) -> None:  # noqa: D102

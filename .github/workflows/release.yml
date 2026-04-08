@@ -12,13 +12,13 @@ env:
 jobs:
   get-version:
     name: Get Version Numbers
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       version: ${{ steps.set-version.outputs.version }}
       image-version: ${{ steps.set-image-version.outputs.image-version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
         with:
           persist-credentials: false
 
@@ -40,14 +40,14 @@ jobs:
 
   github-release:
     name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     needs: get-version
     permissions:
       contents: write
     continue-on-error: true
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
         with:
           persist-credentials: false
 
@@ -71,6 +71,8 @@ jobs:
       fail-fast: false
       matrix:
         package:
+          - name: "Presidio"
+            path: "presidio"
           - name: "Analyzer"
             path: "presidio-analyzer"
           - name: "Anonymizer"
@@ -81,24 +83,23 @@ jobs:
             path: "presidio-structured"
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: '3.10'
 
       - name: Install build dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install build
+          pip install build==1.2.2.post1
 
-      - name: Build wheel package
+      - name: Build wheel and sdist packages
         working-directory: ${{ matrix.package.path }}
         run: |
-          python -m build --wheel
+          python -m build
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e  # release/v1.13.0
@@ -120,12 +121,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
         with:
           persist-credentials: false
 
       - name: Azure Login using OIDC
-        uses: azure/login@v2
+        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -135,7 +136,7 @@ jobs:
         run: az acr login --name ${{ secrets.ACR_NAME }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
 
       - name: Build and Push ${{ matrix.image }}
         run: |

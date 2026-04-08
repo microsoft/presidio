@@ -26,6 +26,7 @@ from .langextract_helper import (
     extract_lm_config,
     get_supported_entities,
     lx,
+    lx_factory,
 )
 from .prompt_loader import load_file_from_conf, load_prompt_file, render_jinja_template
 
@@ -52,6 +53,7 @@ __all__ = [
     "extract_lm_config",
     "get_supported_entities",
     "lx",
+    "lx_factory",
     "load_file_from_conf",
     "load_prompt_file",
     "render_jinja_template",

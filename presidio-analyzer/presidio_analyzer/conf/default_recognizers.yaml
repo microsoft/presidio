@@ -1,4 +1,4 @@
-supported_languages: 
+supported_languages:
   - en
 global_regex_flags: 26
 
@@ -8,6 +8,7 @@ recognizers:
   # For predefined:
   # - If only a recognizer name is provided, a predefined recognizer with this name and default parameters will be loaded.
   # - If a parameter isn't provided, the default one would be loaded.
+  # - Use 'class_name' to specify the Python class when using a custom 'name' for display/metadata
   # For custom:
   # - See an example configuration here: https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml
   # - Custom pattern recognizers with this configuration can be added to this file, with type: custom
@@ -44,9 +45,21 @@ recognizers:
     type: predefined
   
   - name: UsSsnRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
+
+  - name: UsMbiRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: UsNpiRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
 
   - name: NhsRecognizer
     supported_languages: 
@@ -54,6 +67,24 @@ recognizers:
     type: predefined
 
   - name: UkNinoRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: UkPassportRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: UkPostcodeRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: UkVehicleRegistrationRecognizer
     supported_languages:
     - en
     type: predefined
@@ -85,6 +116,18 @@ recognizers:
 
   - name: AuMedicareRecognizer
     supported_languages: 
+    - en
+    type: predefined
+    enabled: false
+
+  - name: NgNinRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
+  - name: NgVehicleRegistrationRecognizer
+    supported_languages:
     - en
     type: predefined
     enabled: false
@@ -153,6 +196,13 @@ recognizers:
     - pl
     type: predefined
 
+  - name: KrBrnRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
   - name: KrRrnRecognizer
     supported_languages: 
     - ko
@@ -160,9 +210,41 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: KrDriverLicenseRecognizer
+    supported_languages: 
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
+  - name: KrFrnRecognizer
+    supported_languages:
+    - ko
+    - kr
+    type: predefined
+    enabled: false
+
+  - name: SeOrganisationsnummerRecognizer
+    supported_languages:
+    - sv
+    type: predefined
+    enabled: false
+  
+  - name: SePersonnummerRecognizer
+    supported_languages:
+    - sv
+    type: predefined
+    enabled: false
+
   - name: ThTninRecognizer
     supported_languages:
     - th
+    type: predefined
+    enabled: false
+
+  - name: HuggingFaceNerRecognizer
+    supported_languages:
+    - en
     type: predefined
     enabled: false
 
@@ -184,6 +266,9 @@ recognizers:
   - name: MedicalLicenseRecognizer
     type: predefined
 
+  - name: MacAddressRecognizer
+    type: predefined
+
   - name: PhoneRecognizer
     type: predefined
 
@@ -200,9 +285,64 @@ recognizers:
     type: predefined
     enabled: false
 
-  - name: OllamaLangExtractRecognizer
+  # Germany recognizers (disabled by default, enable for German-language pipelines)
+  - name: DeTaxIdRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeTaxNumberRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePassportRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeIdCardRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeSocialSecurityRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeHealthInsuranceRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeKfzRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DeHandelsregisterRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: DePlzRecognizer
+    supported_languages:
+    - de
+    type: predefined
+    enabled: false
+
+  - name: BasicLangExtractRecognizer
     supported_languages:
       - en
     type: predefined
     enabled: false
-    config_path: presidio-analyzer/presidio_analyzer/conf/langextract_config_ollama.yaml
+    config_path: presidio_analyzer/conf/langextract_config_basic.yaml

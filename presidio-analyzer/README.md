@@ -28,8 +28,8 @@ pip install presidio-analyzer[langextract]
 **Ollama** (local models):
 
 ```python
-from presidio_analyzer.predefined_recognizers import OllamaLangExtractRecognizer
-recognizer = OllamaLangExtractRecognizer()  # Uses default config
+from presidio_analyzer.predefined_recognizers import BasicLangExtractRecognizer
+recognizer = BasicLangExtractRecognizer()  # Uses default config
 ```
 
 **Azure OpenAI** (cloud models):
@@ -83,6 +83,13 @@ results = analyzer.analyze(text="My phone number is 212-555-5555",
 print(results)
 
 ```
+
+## GPU Acceleration
+
+For GPU acceleration, install the appropriate dependencies for your hardware:
+
+- **Linux with NVIDIA GPU**: cupy-cuda12x (or the version matching your CUDA installation)
+- **macOS with Apple Silicon**: MPS (Metal Performance Shaders) is currently not supported. The analyzer will use CPU for PyTorch operations.
 
 ## Documentation
 

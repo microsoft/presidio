@@ -1,0 +1,99 @@
+services:
+  # Presidio Analyzer - detects PII in text
+  presidio-analyzer:
+    image: mcr.microsoft.com/presidio-analyzer:latest
+    ports:
+      - "5002:3000"
+    networks:
+      - telemetry
+
+  # Presidio Anonymizer - masks/redacts PII
+  presidio-anonymizer:
+    image: mcr.microsoft.com/presidio-anonymizer:latest
+    ports:
+      - "5001:3000"
+    networks:
+      - telemetry
+
+  # OpenTelemetry Collector - receives traces and logs
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.97.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+    networks:
+      - telemetry
+    depends_on:
+      - loki
+      - tempo
+
+  # Loki - log aggregation
+  loki:
+    image: grafana/loki:2.9.3
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - telemetry
+
+  # Tempo - distributed tracing
+  tempo:
+    image: grafana/tempo:2.3.1
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo-config.yaml:/etc/tempo.yaml
+      - tempo-data:/tmp/tempo
+    ports:
+      - "3200:3200"   # tempo
+      - "4317"        # otlp grpc
+    networks:
+      - telemetry
+
+  # Grafana - visualization
+  grafana:
+    image: grafana/grafana:10.2.3
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana
+    networks:
+      - telemetry
+    depends_on:
+      - loki
+      - tempo
+
+  # Demo application generating PII logs
+  pii-demo-app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - PRESIDIO_ANALYZER_URL=http://presidio-analyzer:3000
+      - PRESIDIO_ANONYMIZER_URL=http://presidio-anonymizer:3000
+    ports:
+      - "8000:8000"
+    networks:
+      - telemetry
+    depends_on:
+      - presidio-analyzer
+      - presidio-anonymizer
+      - otel-collector
+
+networks:
+  telemetry:
+    driver: bridge
+
+volumes:
+  tempo-data:
+  grafana-data:

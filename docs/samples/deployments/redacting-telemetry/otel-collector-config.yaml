@@ -1,0 +1,44 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 10s
+  
+  attributes:
+    actions:
+      - action: insert
+        key: service_name
+        from_attribute: service.name
+      - action: insert
+        key: loki.attribute.labels
+        value: service_name
+
+exporters:
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+  
+  otlp:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  
+  logging:
+    loglevel: info
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp, logging]
+    
+    logs:
+      receivers: [otlp]
+      processors: [attributes, batch]
+      exporters: [loki, logging]

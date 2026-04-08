@@ -116,6 +116,7 @@ class AHDSSurrogate(Operator):
         'PASSWORD': 'USERNAME',  # No specific password category, use username
         'DEVICE': 'DEVICE',
         'DEVICE_ID': 'DEVICE',
+        'MAC_ADDRESS': 'MAC_ADDRESS',
 
         # Organization/Institution/Profession
         'ORGANIZATION': 'ORGANIZATION',
@@ -178,6 +179,7 @@ class AHDSSurrogate(Operator):
 
         # === KOREA-SPECIFIC PRESIDIO ENTITIES ===
         'KR_RRN': 'ID_NUM',  # Korean Resident Registration Number
+        'KR_PASSPORT': 'ID_NUM',  # Korean Passport Number
 
         # === GENERIC CATEGORIES ===
         'ID_NUMBER': 'ID_NUM',

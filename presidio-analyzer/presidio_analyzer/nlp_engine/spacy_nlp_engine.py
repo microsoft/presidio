@@ -10,6 +10,7 @@ from presidio_analyzer.nlp_engine import (
     NerModelConfiguration,
     NlpArtifacts,
     NlpEngine,
+    device_detector,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -50,12 +51,24 @@ class SpacyNlpEngine(NlpEngine):
 
         self.nlp = None
 
+    def _enable_gpu(self) -> None:
+        """Enable GPU support for spaCy/transformers if available."""
+        device = device_detector.get_device()
+        if device != "cpu":
+            try:
+                spacy.require_gpu()
+            except Exception as e:
+                logger.warning(
+                    f"Failed to enable GPU ({device}), falling back to CPU: {e}"
+                )
+
     def load(self) -> None:
         """Load the spaCy NLP model."""
         logger.debug(f"Loading SpaCy models: {self.models}")
 
+        self._enable_gpu()
+
         self.nlp = {}
-        # Download spaCy model if missing
         for model in self.models:
             self._validate_model_params(model)
             self._download_spacy_model_if_needed(model["model_name"])

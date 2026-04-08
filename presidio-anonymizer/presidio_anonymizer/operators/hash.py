@@ -1,8 +1,10 @@
 """Hashes the PII text entity."""
 
+import os
 from hashlib import sha256, sha512
 from typing import Dict
 
+from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.services.validators import validate_parameter_in_range
 
@@ -11,21 +13,54 @@ class Hash(Operator):
     """Hash given text with sha256/sha512 algorithm."""
 
     HASH_TYPE = "hash_type"
+    SALT = "salt"
     SHA256 = "sha256"
     SHA512 = "sha512"
 
     def operate(self, text: str = None, params: Dict = None) -> str:
         """
-        Hash given value using sha256.
+        Hash given value using sha256 or sha512 with salt.
 
-        :return: hashed original text
+        :param text: The text to hash
+        :param params: Dictionary containing:
+            - hash_type: The hash algorithm to use (sha256 or sha512)
+            - salt: Optional user-provided salt for reproducible hashing.
+                    If not provided, a random salt is generated per entity.
+                    Must be at least 16 bytes (128 bits) if provided.
+        :return: hashed original text with salt
         """
         hash_type = self._get_hash_type_or_default(params)
+
+        # Use user-provided salt if available, otherwise generate random salt
+        if self.SALT in params:
+            salt = params[self.SALT]
+            # Ensure salt is bytes
+            if isinstance(salt, str):
+                salt = salt.encode()
+            # Validate salt is not empty and meets minimum length (16 bytes / 128 bits)
+            if len(salt) == 0:
+                raise InvalidParamError(
+                    "Salt parameter cannot be empty. Either omit the salt parameter "
+                    "to auto-generate a random salt, or provide a salt of at least "
+                    "16 bytes (128 bits)."
+                )
+            if len(salt) < 16:
+                raise InvalidParamError(
+                    f"Salt must be at least 16 bytes (128 bits). "
+                    f"Provided salt is {len(salt)} bytes."
+                )
+        else:
+            # Generate random salt for this entity (prevents brute-force attacks)
+            salt = os.urandom(32)
+
+        # Concatenate text and salt before hashing
+        salted_text = text.encode() + salt
+
         hash_switcher = {
             self.SHA256: lambda s: sha256(s),
             self.SHA512: lambda s: sha512(s),
         }
-        return hash_switcher.get(hash_type)(text.encode()).hexdigest()
+        return hash_switcher.get(hash_type)(salted_text).hexdigest()
 
     def validate(self, params: Dict = None) -> None:
         """Validate the hash type is string and in range of allowed hash types."""

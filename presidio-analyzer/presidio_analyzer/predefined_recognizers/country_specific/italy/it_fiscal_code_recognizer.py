@@ -36,6 +36,7 @@ class ItFiscalCodeRecognizer(PatternRecognizer):
         context: Optional[List[str]] = None,
         supported_language: str = "it",
         supported_entity: str = "IT_FISCAL_CODE",
+        name: Optional[str] = None,
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -44,6 +45,7 @@ class ItFiscalCodeRecognizer(PatternRecognizer):
             patterns=patterns,
             context=context,
             supported_language=supported_language,
+            name=name,
         )
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:

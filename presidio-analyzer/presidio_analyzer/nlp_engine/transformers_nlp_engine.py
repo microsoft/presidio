@@ -74,6 +74,9 @@ class TransformersNlpEngine(SpacyNlpEngine):
         """Load the spaCy and transformers models."""
 
         logger.debug(f"Loading SpaCy and transformers models: {self.models}")
+
+        super()._enable_gpu()
+
         self.nlp = {}
 
         for model in self.models:
@@ -83,17 +86,17 @@ class TransformersNlpEngine(SpacyNlpEngine):
             self._download_spacy_model_if_needed(spacy_model)
 
             nlp = spacy.load(spacy_model, disable=["parser", "ner"])
-            nlp.add_pipe(
-                "hf_token_pipe",
-                config={
-                    "model": transformers_model,
-                    "annotate": "spans",
-                    "stride": self.ner_model_configuration.stride,
-                    "alignment_mode": self.ner_model_configuration.alignment_mode,
-                    "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa: E501
-                    "annotate_spans_key": self.entity_key,
-                },
-            )
+
+            pipe_config = {
+                "model": transformers_model,
+                "annotate": "spans",
+                "stride": self.ner_model_configuration.stride,
+                "alignment_mode": self.ner_model_configuration.alignment_mode,
+                "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa: E501
+                "annotate_spans_key": self.entity_key,
+            }
+
+            nlp.add_pipe("hf_token_pipe", config=pipe_config)
             self.nlp[model["lang_code"]] = nlp
 
     @staticmethod

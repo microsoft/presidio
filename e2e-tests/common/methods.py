@@ -5,8 +5,8 @@ import os
 import requests
 
 from common.constants import (
-    ANONYMIZER_BASE_URL,
     ANALYZER_BASE_URL,
+    ANONYMIZER_BASE_URL,
     IMAGE_REDACTOR_BASE_URL,
 )
 

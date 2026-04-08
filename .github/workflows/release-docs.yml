@@ -9,20 +9,20 @@ permissions:
 jobs:
   github-pages-release:
     name: Push to github pages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     
     permissions:
       contents: write  # Required for pushing to gh-pages branch
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
         with:
           fetch-depth: 0  # Fetch all history for proper gh-pages deployment
           persist-credentials: true  # So that the token is available for pushing
       
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: '3.x'
 

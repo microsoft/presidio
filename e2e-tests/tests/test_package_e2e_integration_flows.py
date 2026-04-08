@@ -6,11 +6,11 @@ from presidio_anonymizer.entities import EngineResult, OperatorResult
 
 try:
     from presidio_analyzer.predefined_recognizers.third_party.\
-        ollama_langextract_recognizer import OllamaLangExtractRecognizer
-    OLLAMA_RECOGNIZER_AVAILABLE = True
+        basic_langextract_recognizer import BasicLangExtractRecognizer
+    LANGEXTRACT_RECOGNIZER_AVAILABLE = True
 except ImportError:
-    OLLAMA_RECOGNIZER_AVAILABLE = False
-    OllamaLangExtractRecognizer = None
+    LANGEXTRACT_RECOGNIZER_AVAILABLE = False
+    BasicLangExtractRecognizer = None
 
 
 @pytest.mark.package
@@ -67,20 +67,22 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_successful
 @pytest.mark.package
 def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_path):
     """Test Ollama LangExtract recognizer detects entities when explicitly added to analyzer."""
-    assert OLLAMA_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
+    assert LANGEXTRACT_RECOGNIZER_AVAILABLE, "LangExtract must be installed for e2e tests"
 
     text_to_test = "Patient John Smith, SSN 123-45-6789, email john@example.com, phone 555-123-4567, lives at 123 Main St, works at Acme Corp"
 
-    # Use pre-configured config file with small model (qwen2.5:1.5b)
     import os
     config_path = os.path.join(
         os.path.dirname(__file__), "..", "resources", "ollama_test_config.yaml"
     )
 
-    # Create Ollama recognizer with custom config
-    ollama_recognizer = OllamaLangExtractRecognizer(config_path=config_path)
+    ollama_recognizer = BasicLangExtractRecognizer(
+        config_path=config_path, name="e2eollama"
+    )
 
-    # Create analyzer with ONLY Ollama recognizer (no NLP engine, no default recognizers)
+    assert ollama_recognizer.name == "e2eollama", \
+        f"Expected recognizer name to be 'e2eollama', got '{ollama_recognizer.name}'"
+
     from presidio_analyzer.recognizer_registry import RecognizerRegistry
     registry = RecognizerRegistry()
     registry.add_recognizer(ollama_recognizer)
@@ -90,13 +92,10 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
         supported_languages=["en"]
     )
 
-    # Analyze text
     results = analyzer.analyze(text_to_test, language="en")
 
-    # Verify at least some entities were detected
     assert len(results) > 0, "Expected to detect at least one PII entity"
 
-    # Check which recognizers participated in detection
     recognizers_used = set()
     langextract_detected_at_least_one = False
     
@@ -108,12 +107,11 @@ def test_given_text_with_pii_using_ollama_recognizer_then_detects_entities(tmp_p
             recognizers_used.add(recognizer_name)
             
             langextract_detected_at_least_one |= (
-                recognizer_name == "Ollama LangExtract PII"
+                recognizer_name == "e2eollama"
             )
     
-    # Verify that Ollama LangExtract recognizer participated in detection
     assert langextract_detected_at_least_one, \
-        f"Expected 'Ollama LangExtract PII' recognizer to detect at least one entity. Recognizers used: {recognizers_used}"
+        f"Expected 'e2eollama' recognizer to detect at least one entity. Recognizers used: {recognizers_used}"
 
 
 @pytest.mark.package
@@ -130,10 +128,9 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     - Ollama service running with qwen2.5:1.5b model
     - LangExtract library installed
     """
-    if not OLLAMA_RECOGNIZER_AVAILABLE:
+    if not LANGEXTRACT_RECOGNIZER_AVAILABLE:
         pytest.skip("LangExtract not installed")
     
-    # Check if Ollama is available
     import os
     try:
         import requests
@@ -144,44 +141,34 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     except Exception:
         pytest.skip("Ollama service not available")
     
-    # Load recognizer registry from YAML config with Ollama enabled
     from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
     
     config_path = os.path.join(
         os.path.dirname(__file__), "..", "resources", "test_ollama_enabled_recognizers.yaml"
     )
-    
-    
+
     provider = RecognizerRegistryProvider(conf_file=config_path)
     registry = provider.create_recognizer_registry()
     
-    # Verify Ollama recognizer was loaded
-    ollama_recognizers = [r for r in registry.recognizers if "Ollama" in r.name]
+    ollama_recognizers = [r for r in registry.recognizers if r.name == "e2eollama"]
     assert len(ollama_recognizers) == 1, \
-        f"Expected exactly 1 Ollama recognizer, found {len(ollama_recognizers)}"
+        f"Expected exactly 1 recognizer with name 'e2eollama', found {len(ollama_recognizers)}"
     
-    ollama_rec = ollama_recognizers[0]
-    assert ollama_rec.name == "Ollama LangExtract PII"
-    assert ollama_rec.supported_language == "en"
-    assert len(ollama_rec.supported_entities) > 0
+    ollama_recognizer = ollama_recognizers[0]
     
-    # Test functionality: analyze text with the loaded recognizer
+    assert ollama_recognizer.__class__.__name__ == "BasicLangExtractRecognizer", \
+        f"Expected class BasicLangExtractRecognizer, got {ollama_recognizer.__class__.__name__}"
+    
+    assert ollama_recognizer.supported_language == "en"
+    assert len(ollama_recognizer.supported_entities) > 0
+    
     analyzer = AnalyzerEngine(registry=registry, supported_languages=["en"])
     
     text_to_test = "Patient John Smith, SSN 123-45-6789, email john@example.com, phone 555-123-4567, lives at 123 Main St, works at Acme Corp"
     results = analyzer.analyze(text_to_test, language="en")
     
-    # Should detect entities
     assert len(results) > 0, "Expected to detect at least one PII entity"
     
-    # Check if Ollama recognizer detected anything
-    ollama_detected = any(
-        r.recognition_metadata and 
-        "Ollama" in r.recognition_metadata.get(RecognizerResult.RECOGNIZER_NAME_KEY, "")
-        for r in results
-    )
-    
-    # At minimum, other recognizers should detect common entities
     entity_types = {r.entity_type for r in results}
     expected_entities = {"EMAIL_ADDRESS", "PERSON", "PHONE_NUMBER", "US_SSN"}
     detected_expected = entity_types & expected_entities
@@ -189,6 +176,6 @@ def test_ollama_recognizer_loads_from_yaml_configuration_when_enabled():
     assert len(detected_expected) >= 2, \
         f"Expected at least 2 entities from {expected_entities}, detected: {entity_types}"
     
-    print(f"\n✓ Ollama recognizer loaded successfully from YAML config")
+    print(f"\n✓ Ollama recognizer 'e2eollama' loaded successfully from YAML config")
+    print(f"  Class: {ollama_recognizer.__class__.__name__}")
     print(f"  Detected entities: {entity_types}")
-    print(f"  Ollama participated: {ollama_detected}")

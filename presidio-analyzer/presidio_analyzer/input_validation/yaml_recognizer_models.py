@@ -1,6 +1,6 @@
 """Pydantic models for YAML recognizer configurations."""
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -34,7 +34,8 @@ class LanguageContextConfig(BaseModel):
 class BaseRecognizerConfig(BaseModel):
     """Base validation for all recognizer configuration types.
 
-    :param name: Name of the recognizer
+    :param name: Instance name used in analysis results. Defaults to class name.
+    :param class_name: Python class name for lookup. If not provided, uses 'name'.
     :param enabled: Whether the recognizer is enabled
     :param type: Type of recognizer (predefined/custom)
     :param supported_language: Single supported language (legacy)
@@ -50,7 +51,14 @@ class BaseRecognizerConfig(BaseModel):
     :param supported_entities: List of supported entities for this recognizer.
     """
 
-    name: str = Field(..., description="Name of the recognizer")
+    name: str = Field(..., description="Instance name for the recognizer")
+    class_name: Optional[str] = Field(
+        default=None,
+        description=(
+            "Python class name for predefined recognizers "
+            "(if different from instance name)"
+        ),
+    )
     enabled: bool = Field(default=True, description="Whether the recognizer is enabled")
     type: Optional[str] = Field(
         default="predefined", description="Type of recognizer (predefined/custom)"
@@ -71,7 +79,7 @@ class BaseRecognizerConfig(BaseModel):
         default=None, description="Supported entity for this recognizer"
     )
     supported_entities: Optional[List[str]] = Field(
-        default=None, description="List of supported entities " "for this recognizer"
+        default=None, description="List of supported entities for this recognizer"
     )
 
     @field_validator("supported_language")
@@ -136,13 +144,36 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
     @model_validator(mode="after")
     def validate_predefined_recognizer_exists(self):
         """Validate that the predefined recognizer class actually exists."""
+        recognizer_class_name = self.class_name if self.class_name else self.name
         try:
-            RecognizerListLoader.get_existing_recognizer_cls(self.name)
+            RecognizerListLoader.get_existing_recognizer_cls(recognizer_class_name)
         except PredefinedRecognizerNotFoundError as e:
             raise ValueError(
-                f"Predefined recognizer '{self.name}' not found: {str(e)}"
+                f"Predefined recognizer '{recognizer_class_name}' not found: {str(e)}"
             ) from e
         return self
+
+
+class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
+    """Configuration specifically for HuggingFace NER models."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    model_name: Optional[str] = Field(None, description="HuggingFace model name")
+    tokenizer_name: Optional[str] = Field(
+        None, description="HuggingFace tokenizer name"
+    )
+    label_mapping: Optional[Dict[str, str]] = Field(None, description="Label mapping")
+    threshold: Optional[float] = Field(None, description="Confidence threshold")
+    aggregation_strategy: Optional[str] = Field(
+        None, description="Aggregation strategy"
+    )
+    chunk_overlap: Optional[int] = Field(None, description="Chunk overlap")
+    chunk_size: Optional[int] = Field(None, description="Chunk size")
+    device: Optional[Union[str, int]] = Field(None, description="Device (cpu/gpu)")
+    label_prefixes: Optional[List[str]] = Field(
+        default=None, description="Prefixes to strip from labels (e.g. B-, I-)"
+    )
 
 
 class CustomRecognizerConfig(BaseRecognizerConfig):
@@ -201,8 +232,6 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
                         f"for your custom recognizer."
                     )
                 except PredefinedRecognizerNotFoundError:
-                    # Name is not a predefined recognizer,
-                    # which is fine for custom recognizers
                     pass
         return data
 
@@ -236,8 +265,7 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
         """Ensure custom recognizer has at least patterns or deny_list."""
         if not self.patterns and not self.deny_list:
             raise ValueError(
-                "Custom recognizer must have at least one "
-                "of 'patterns' or 'deny_list'"
+                "Custom recognizer must have at least one of 'patterns' or 'deny_list'"
             )
         return self
 
@@ -250,7 +278,12 @@ class RecognizerRegistryConfig(BaseModel):
     )
     global_regex_flags: int = Field(default=26, description="Global regex flags")
     recognizers: List[
-        Union[PredefinedRecognizerConfig, CustomRecognizerConfig, str]
+        Union[
+            HuggingFaceRecognizerConfig,
+            PredefinedRecognizerConfig,
+            CustomRecognizerConfig,
+            str,
+        ]
     ] = Field(default_factory=list, description="List of recognizer configurations")
 
     model_config = ConfigDict(extra="forbid")
@@ -328,7 +361,6 @@ class RecognizerRegistryConfig(BaseModel):
         parsed_recognizers = []
         for recognizer in recognizers:
             if isinstance(recognizer, str):
-                # Simple string recognizer name - treat as predefined
                 parsed_recognizers.append(recognizer)
                 continue
 
@@ -346,7 +378,6 @@ class RecognizerRegistryConfig(BaseModel):
                         f"Either use type: 'custom' or remove these fields."
                     )
 
-                # Auto-detect type if not provided
                 if not recognizer_type:
                     if "patterns" in recognizer or "deny_list" in recognizer:
                         recognizer_type = "custom"
@@ -357,9 +388,19 @@ class RecognizerRegistryConfig(BaseModel):
                         recognizer_type = "predefined"
                     recognizer["type"] = recognizer_type
 
-                # Final append based on resolved type (only once)
                 if recognizer_type == "predefined":
-                    parsed_recognizers.append(PredefinedRecognizerConfig(**recognizer))
+                    # Determine config model based on recognizer class_name or name.
+                    recognizer_class_name = recognizer.get("class_name")
+                    recognizer_name = recognizer.get("name")
+                    # Prioritize class_name for lookup
+                    # (e.g., custom instance of HuggingFaceNerRecognizer)
+                    config_model_key = recognizer_class_name or recognizer_name
+
+                    config_model = CONFIG_MODEL_MAP.get(
+                        config_model_key, PredefinedRecognizerConfig
+                    )
+
+                    parsed_recognizers.append(config_model(**recognizer))
                 elif recognizer_type == "custom":
                     parsed_recognizers.append(CustomRecognizerConfig(**recognizer))
                 else:
@@ -369,7 +410,6 @@ class RecognizerRegistryConfig(BaseModel):
                     )
                 continue
 
-            # Fallback: unrecognized structure, keep as-is
             parsed_recognizers.append(recognizer)
 
         return parsed_recognizers
@@ -378,7 +418,6 @@ class RecognizerRegistryConfig(BaseModel):
     def __check_if_predefined(cls, recognizer_name: Optional[Any]) -> None:
         try:
             RecognizerListLoader.get_existing_recognizer_cls(recognizer_name)
-            # If we reach here, it IS a predefined recognizer, so raise an error
             raise ValueError(
                 f"Recognizer '{recognizer_name}' conflicts with a predefined "
                 f"recognizer. "
@@ -388,7 +427,6 @@ class RecognizerRegistryConfig(BaseModel):
                 f"for your custom recognizer."
             )
         except PredefinedRecognizerNotFoundError:
-            # Name is not a predefined recognizer, which is fine for custom recognizers
             pass
 
     @model_validator(mode="after")
@@ -401,12 +439,10 @@ class RecognizerRegistryConfig(BaseModel):
             custom_without_language_present = False
             for r in self.recognizers:
                 if isinstance(r, (PredefinedRecognizerConfig, CustomRecognizerConfig)):
-                    # Track if any language is defined
                     if (r.supported_language and r.supported_language.strip()) or (
                         r.supported_languages and len(r.supported_languages) > 0
                     ):
                         any_language_defined = True
-                    # Track custom recognizers lacking language info
                     if (
                         isinstance(r, CustomRecognizerConfig)
                         and not r.supported_language
@@ -421,3 +457,10 @@ class RecognizerRegistryConfig(BaseModel):
                     "or specify languages for each custom recognizer."
                 )
         return self
+
+
+# Map specific recognizer classes to their dedicated config models
+# This allows for modular expansion without polluting the base config
+CONFIG_MODEL_MAP: Dict[str, Type[BaseModel]] = {
+    "HuggingFaceNerRecognizer": HuggingFaceRecognizerConfig,
+}

@@ -56,8 +56,6 @@ Please help us improve by taking [this short anonymous survey](https://forms.off
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-
-
 ## Installing Presidio
 
 1. [Using pip](https://microsoft.github.io/presidio/installation/#using-pip)
@@ -109,3 +107,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 <a href="https://github.com/microsoft/presidio/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=microsoft/presidio" />
 </a>
+

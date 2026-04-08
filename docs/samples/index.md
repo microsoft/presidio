@@ -35,6 +35,7 @@
 | Deployment | | App Service                                 | [Presidio with App Service](deployments/app-service/index.md)|
 | Deployment | | Kubernetes                                  | [Presidio with Kubernetes](deployments/k8s/index.md)|
 | Deployment | | Spark/Azure Databricks                      | [Presidio with Spark](deployments/spark/index.md)|
+| Deployment | | OpenTelemetry/Grafana                       | [Redacting Telemetry with Presidio](deployments/redacting-telemetry/index.md)|
 | Deployment | | Data Protection toolkit for OpenAI          | [Data Protection toolkit for OpenAI](deployments/openai-anonymaztion-and-deanonymaztion-best-practices/index.md)|
 | Deployment | | Spark with Microsoft Fabric                 | [Presidio with Fabric](fabric/index.md)|
 | Deployment | | Azure Data Factory with App Service         | [ETL for small dataset](deployments/data-factory/presidio-data-factory.md#option-1-presidio-as-an-http-rest-endpoint) |

@@ -3,6 +3,109 @@
 All notable changes to this project will be documented in this file.
 
 ## [unreleased]
+
+
+### Analyzer
+#### Added
+- Swedish PII recognizers for `SE_PERSONNUMMER` to identify Swedish Personal ID Numbers using pattern match and checksum. The recognizer also supports Swedish coordination numbers (samordningsnummer), issued to individuals who are not registered residents in Sweden but require identification. All disabled by default.
+
+- German PII recognizers for `DE_TAX_ID` (Steueridentifikationsnummer, §§ 139a–139e AO, ISO 7064 Mod 11,10 checksum), `DE_TAX_NUMBER` (Steuernummer, § 139a AO, ELSTER and slash formats), `DE_PASSPORT` (Reisepassnummer, PassG § 4, ICAO Doc 9303), `DE_ID_CARD` (Personalausweisnummer, PAuswG), `DE_SOCIAL_SECURITY` (Rentenversicherungsnummer, § 147 SGB VI, DRV checksum), `DE_HEALTH_INSURANCE` (Krankenversicherungsnummer/KVNR, § 290 SGB V, GKV checksum), `DE_KFZ` (KFZ-Kennzeichen, FZV § 8), `DE_HANDELSREGISTER` (Handelsregisternummer HRA/HRB, §§ 9/14 HGB), and `DE_PLZ` (Postleitzahl, very low base confidence, context-only). All disabled by default.
+
+- Added recognizer for Swedish Organisationsnummer, ID number for all Swedish oragnisations.
+
+## [2.2.362] - 2026-03-15
+### General
+#### Added
+- Published `presidio` as a PyPI meta-package that installs `presidio-analyzer` and `presidio-anonymizer`, making `pip install presidio` work as expected. Inspired by and thanks to Sakthi Santhosh Anumand and Harsha Vardhan for the original idea. (#1889) (Thanks @Copilot)
+
+#### Changed
+- Pinned all CI/CD GitHub Actions and Docker base images to commit SHAs to mitigate supply chain attacks (#1861) (Thanks @Copilot)
+- Pinned `ruff` and `build` pip installs with SHA256 hashes for OSSF scorecard compliance (#1864) (Thanks @Copilot)
+- Updated GitHub Actions dependencies (`actions/checkout`, `actions/setup-python`, `actions/setup-dotnet`, `actions/cache`, `actions/github-script`, `actions/dependency-review-action`, `azure/login`, `docker/setup-buildx-action`, `github/codeql-action`, `microsoft/security-devops-action`) and base Python Docker images (#1870, #1871, #1872, #1873, #1874, #1875, #1876, #1877, #1878, #1879, #1885, #1886, #1887, #1895, #1896, #1897, #1898) (Thanks @dependabot)
+- Updated README to clarify Presidio's no-authentication-by-design stance with security guidance (#1903) (Thanks @Copilot)
+
+#### Fixed
+- Broken documentation links (#1856) (Thanks @andyjessen)
+
+#### Security
+- Fixed CVE-2024-47874 and CVE-2025-54121 (Starlette vulnerabilities) (#1860) (Thanks @SharonHart)
+- Fixed CVE-2025-2953 and CVE-2025-3730 (#1859) (Thanks @SharonHart)
+
+### Analyzer
+#### Added
+- `HuggingFaceNerRecognizer` for direct NER model inference using HuggingFace pipelines without requiring spaCy (#1834) (Thanks @ultramancode)
+- Transformer-based `MedicalNERRecognizer` as a subclass of `HuggingFaceNerRecognizer` for clinical entity detection (#1853) (Thanks @stevenelliottjr)
+- US NPI (National Provider Identifier) recognizer with Luhn checksum validation and context support (#1847) (Thanks @stevenelliottjr)
+- UK Postcode (UK_POSTCODE) recognizer with pattern matching and context support (#1858) (Thanks @tee-jagz)
+- UK Passport (UK_PASSPORT) and Vehicle Registration (UK_VEHICLE_REGISTRATION) recognizers (#1862) (Thanks @tee-jagz)
+- Nigerian National Identification Number (NG_NIN) recognizer with Verhoeff checksum validation and Nigerian Vehicle Registration (NG_VEHICLE_REGISTRATION) recognizer (#1863) (Thanks @tee-jagz)
+- ONNX Runtime backend support for `GLiNERRecognizer` via `load_onnx_model=True` parameter, resolving crashes on CPUs without AVX2 support (#1884) (Thanks @Copilot)
+- Configurable regex execution timeout (default 60 seconds) via `REGEX_TIMEOUT_SECONDS` environment variable to prevent catastrophic backtracking (#1904) (Thanks @Copilot)
+- GPU device control via environment variable for explicit GPU/CPU selection (#1844) (Thanks @RonShakutai)
+- LLM-as-a-judge evaluation integration for assessing PII detection quality (#1900) (Thanks @RonShakutai)
+- Sampling support for the evaluation framework (#1894) (Thanks @RonShakutai)
+- Dataset interface for the evaluation framework (#1893) (Thanks @RonShakutai)
+
+#### Fixed
+- Erroneous anchor in Italian driver license regex that caused missed matches (#1899) (Thanks @Br1an67)
+- `validation_result` type annotation in API docs and type hints (#1869) (Thanks @akios-ai)
+- Bare `except` clauses replaced with `except Exception` for proper exception handling (#1881) (Thanks @haosenwang1018)
+- Context enhancement substring matching bug where context words were incorrectly matched as substrings (#1827) (Thanks @ravi-jindal)
+
+### Image Redactor
+#### Fixed
+- `_process_names` unconditionally treating all DICOM metadata as PHI; now correctly filters using both `is_patient` and `is_name` checks (#1855) (Thanks @Mr-Neutr0n)
+
+## [2.2.361] - 2026-02-12
+### Analyzer
+#### Changed
+- Fixed context enhancement substring matching bug where context words were incorrectly matched as substrings (e.g., 'lic' matching 'duplicate'). Added configurable `context_matching_mode` parameter to `LemmaContextAwareEnhancer` with two options: "substring" (default, maintains backward compatibility for compound words like "creditcard"), and "whole_word" (prevents false positives like 'lic' matching 'duplicate') (#1061)
+
+#### Added
+- US_MBI recognizer for Medicare Beneficiary Identifier with pattern matching and context support (#1821) (Thanks @chrisvoncsefalvay)
+- MAC address recognizer for detecting MAC addresses in various formats (#1829) (Thanks @kyoungbinkim)
+- Korean Business Registration Number (KR_BRN) recognizer (#1822) (Thanks @RektPunk)
+- Korean Foreigner Registration Number (KR_FRN) recognizer (#1825) (Thanks @RektPunk)
+- Korean Driver License (KR_DRIVER_LICENSE) recognizer (#1820) (Thanks @RektPunk)
+- Korean Passport (KR_PASSPORT) recognizer (#1814) (Thanks @kyoungbinkim)
+- Thai National ID Number (TH_TNIN) recognizer with format and checksum validation (#1713) (Thanks @pangchewe)
+- Configurable LangExtract recognizer supporting any LLM provider with custom YAML configurations (#1815) (Thanks @telackey)
+- Azure OpenAI support for LangExtract recognizer with managed identity authentication for GPT-4o, GPT-4, etc. (#1801) (Thanks @dorlugasigal)
+- Batch processing support in REST API - accepts arrays of texts and returns arrays of results with backward compatibility (#1806) (Thanks @telackey)
+- GPU device control via `PRESIDIO_DEVICE` environment variable for explicit GPU/CPU selection (#1843) (Thanks @RonShakutai)
+- Support for multiple recognizer instances from same class via `class_name` parameter (#1819) (Thanks @RonShakutai)
+- Pydantic-based YAML configuration validation with ConfigurationValidator class for improved reliability and error reporting (#1780) (Thanks @omri374)
+- Japanese and Chinese mobile number test cases for PhoneRecognizer (#1808) (Thanks @WenwenHLF)
+
+#### Changed
+- GPU optimizations with DeviceDetector singleton providing 4-10x performance improvements for GLiNER, Transformers, and Stanza engines (#1812) (Thanks @RonShakutai)
+- Configurable extraction parameters for LangExtract recognizers via YAML (max_char_buffer, timeout, num_ctx, fence_output, use_schema_constraints) (#1811) (Thanks @RonShakutai)
+- Lazy initialization for device detector singleton (#1831) (Thanks @RonShakutai)
+- Simplified IBAN regex pattern from 8 to 3 capture groups for better performance (#1818) (Thanks @Copilot)
+- Improved Korean RRN regex pattern with negative lookahead/lookbehind and gender digit validation (#1807) (Thanks @kyoungbinkim)
+
+#### Fixed
+- GLiNER GPU inference by properly passing map_location parameter (#1813) (Thanks @eveningcafe)
+- GLiNER text truncation issue during processing (#1805) (Thanks @jedheaj314)
+- IBAN regex trailing character handling to prevent false matches (#1818) (Thanks @Copilot)
+- Python 3.10 build compatibility by pinning onnxruntime <1.24.1 for Python 3.10 (#1848) (Thanks @SharonHart)
+- TypeError in third-party recognizers by removing invalid **kwargs from __init__ methods (#1800) (Thanks @RonShakutai)
+- Pattern recognizer example language specification (#1835) (Thanks @andyjessen)
+
+### Anonymizer
+#### Changed
+- **BREAKING CHANGE**: Hash operator now uses random salt by default to prevent brute-force and dictionary attacks. Same PII values will produce different hashes unless a `salt` parameter is explicitly provided. Users requiring referential integrity must provide their own salt. Minimum salt length: 16 bytes. See documentation for migration guide. (#1846) (Thanks @Copilot)
+- Updated cryptography dependency to >=46.0.4 to address CVE-2025-15467 security vulnerability (#1841) (Thanks @Copilot)
+
+### General
+#### Added
+- GPU acceleration documentation guide with setup and usage instructions (#1826) (Thanks @dilshad-aee)
+- Telemetry redaction sample demonstrating PII removal from telemetry data (#1824) (Thanks @Jakob-98)
+
+#### Changed
+- Migrated CI workflows (lint, dependency review, release) to ubuntu-slim runners for improved efficiency (#1840) (Thanks @Copilot)
+- Updated actions/cache from v4 to v5 with Node.js 24 runtime support (#1817) (Thanks @dependabot)
+
 ### Image Redactor
 #### Changed
 - DICOM: use_metadata will now use both is_patient and is_name to generate the PHI list of words via change to _make_phi_list.
@@ -643,7 +746,9 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.  
 
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.360...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.362...HEAD
+[2.2.362]: https://github.com/microsoft/presidio/compare/2.2.361...2.2.362
+[2.2.361]: https://github.com/microsoft/presidio/compare/2.2.360...2.2.361
 [2.2.360]: https://github.com/microsoft/presidio/compare/2.2.359...2.2.360
 [2.2.359]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
 [2.2.358]: https://github.com/microsoft/presidio/compare/2.2.357...2.2.358
