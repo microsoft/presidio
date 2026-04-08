@@ -354,28 +354,18 @@ def test_when_merge_spaces_is_false_then_space_separated_emails_are_all_anonymiz
 def test_when_merge_spaces_is_false_then_different_entity_types_are_unaffected():
     """Disabling merge must not change behavior for different entity types."""
     engine = AnonymizerEngine()
-    text = "Call 555-1234 or email user@example.com"
+
+    # Two different entity types separated only by a space should both be anonymized
+    text = "5551234567 user@example.com"
     analyzer_results = [
-        RecognizerResult(start=5, end=13, entity_type="PHONE_NUMBER", score=1.0),
-        RecognizerResult(start=23, end=39, entity_type="EMAIL_ADDRESS", score=1.0),
+        RecognizerResult(start=0, end=10, entity_type="PHONE_NUMBER", score=1.0),
+        RecognizerResult(start=11, end=27, entity_type="EMAIL_ADDRESS", score=1.0),
     ]
     result = engine.anonymize(
         text, analyzer_results, merge_entities_with_spaces=False
     )
-    assert result.text == "Call <PHONE_NUMBER> or email <EMAIL_ADDRESS>"
+    assert result.text == "<PHONE_NUMBER> <EMAIL_ADDRESS>"
     assert len(result.items) == 2
-
-    # Two space-separated entities of the same type should NOT be merged
-    text2 = "555-1234 555-5678"
-    analyzer_results2 = [
-        RecognizerResult(start=0, end=8, entity_type="PHONE_NUMBER", score=1.0),
-        RecognizerResult(start=9, end=17, entity_type="PHONE_NUMBER", score=1.0),
-    ]
-    result2 = engine.anonymize(
-        text2, analyzer_results2, merge_entities_with_spaces=False
-    )
-    assert result2.text == "<PHONE_NUMBER> <PHONE_NUMBER>"
-    assert len(result2.items) == 2
 
 
 def test_when_merge_spaces_is_true_then_tabs_and_newlines_are_not_merged():
