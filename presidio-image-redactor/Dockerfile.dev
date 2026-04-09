@@ -1,5 +1,5 @@
 # Dockerfile
-FROM python:3.13-slim@sha256:f50f56f1471fc430b394ee75fc826be2d212e35d85ed1171ac79abbba485dce9
+FROM python:3.13-slim@sha256:f1927c75e81efd1e091dbd64b6c0ecaa5630b38635a3d1c04034ac636e1f94c8
 
 RUN apt-get update \
   && apt-get install -y build-essential
