@@ -118,6 +118,12 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | NG_NIN     | The Nigerian National Identification Number (NIN) is a unique 11-digit number issued by the National Identity Management Commission (NIMC). | Pattern match, context, and checksum |
 | NG_VEHICLE_REGISTRATION | Nigerian vehicle registration plate number in the current format (2011+): 3 letters (LGA code), 3 digits (serial), 2 letters (year/batch). | Pattern match and context |
 
+### Canada
+
+|FieldType|Description|Detection Method|
+|--- |--- |--- |
+|CA_SIN|A Canadian Social Insurance Number (SIN) is a 9-digit number issued by Employment and Social Development Canada (ESDC) to administer government programs. The last digit is a Luhn check digit. SINs starting with 0 or 8 are reserved and not issued.|Pattern match, context, and checksum|
+
 ### Sweden
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
