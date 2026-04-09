@@ -36,7 +36,7 @@ class IpRecognizer(PatternRecognizer):
             0.6,
         ),
         Pattern(
-            "IPv6_loopback",
+            "IPv6_unspecified",
             r"(?<![0-9A-Fa-f:])::(?![0-9A-Fa-f:])",
             0.1,
         ),
