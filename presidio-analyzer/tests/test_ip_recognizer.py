@@ -254,6 +254,10 @@ def test_when_multiple_ips_then_all_found(
         ("abc:def:ghi", 0, (), (),),
         ("123:abc", 0, (), (),),
         ("file:///path/to/file", 0, (), (),),
+        # C++ :: scope resolution should not match
+        ("std::cout", 0, (), (),),
+        ("boost::asio::ip", 0, (), (),),
+        ("MyClass::toString", 0, (), (),),
         # fmt: on
     ],
 )
@@ -321,7 +325,7 @@ def test_when_ip_at_boundary_then_correct_span(
         # Should be rejected by validation
         ("256.256.256.256", 0, (), (),),
         ("192.168.1.256", 0, (), (),),
-        ("gggg:hhhh::1234", 1, ((9, 15),), ((0.6, 0.81),),),
+        ("gggg:hhhh::1234", 0, (), (),),
         ("192.168.1", 0, (), (),),
         ("300.168.1.1", 0, (), (),),
         ("192.168.1.1.1", 1, ((0, 11),), ((0.6, 0.81),),),
