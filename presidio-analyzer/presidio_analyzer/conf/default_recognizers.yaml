@@ -346,3 +346,10 @@ recognizers:
     type: predefined
     enabled: false
     config_path: presidio_analyzer/conf/langextract_config_basic.yaml
+
+  - name: CaSinRecognizer
+    supported_languages:
+    - en
+    - fr
+    type: predefined
+    enabled: false
