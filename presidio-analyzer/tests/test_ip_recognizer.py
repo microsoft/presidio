@@ -256,6 +256,7 @@ def test_when_multiple_ips_then_all_found(
         ("file:///path/to/file", 0, (), (),),
         ("std::cout", 0, (), (),),
         ("MyClass::toString", 0, (), (),),
+        (":::", 0, (), (),),
         # fmt: on
     ],
 )

@@ -37,7 +37,7 @@ class IpRecognizer(PatternRecognizer):
         ),
         Pattern(
             "IPv6_unspecified",
-            r"(?<!\w)::(?!\w)",
+            r"(?<![\w:])::(?![\w:])",
             0.1,
         ),
     ]
