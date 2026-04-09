@@ -292,8 +292,13 @@ def test_when_non_ip_pattern_then_no_match(
         ("IP: 192.168.1.1.", 1, ((4, 15),), ((0.6, 0.81),),),
         ("192.168.1.1,", 1, ((0, 11),), ((0.6, 0.81),),),
         ("[2001:db8::1]", 1, ((1, 12),), ((0.6, 0.81),),),
+        ("Server IP: 2400:c401::5054:ff:fe1b:b031.", 1, ((11, 39),), ((0.6, 0.81),),),
+        ("2001:db8::1.", 1, ((0, 11),), ((0.6, 0.81),),),
+        # IPv6 should not match when glued to surrounding text
         ("fe80::1text", 0, (), (),),
         ("text2001:db8::1", 0, (), (),),
+        # 192.168.1.1 is matched, but the trailing .1 should not be included
+        ("192.168.1.1.1", 1, ((0, 11),), ((0.6, 0.81),),),
         # fmt: on
     ],
 )
@@ -328,9 +333,12 @@ def test_when_ip_at_boundary_then_correct_span(
         ("gggg:hhhh::1234", 0, (), (),),
         ("192.168.1", 0, (), (),),
         ("300.168.1.1", 0, (), (),),
-        ("192.168.1.1.1", 1, ((0, 11),), ((0.6, 0.81),),),
         ("12345:db8::1", 0, (), (),),
         ("2001::db8::1", 0, (), (),),
+        # Word-adjacent IPv4-mapped/embedded should not match full span
+        # Plain IPv4 portion will still match independently
+        ("text::ffff:192.0.2.1", 1, ((11, 20),), ((0.6, 0.81),),),
+        ("foo2001:db8::10.0.0.1", 1, ((13, 21),), ((0.6, 0.81),),),
         # fmt: on
     ],
 )
