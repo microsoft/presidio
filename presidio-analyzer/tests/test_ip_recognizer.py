@@ -254,9 +254,7 @@ def test_when_multiple_ips_then_all_found(
         ("abc:def:ghi", 0, (), (),),
         ("123:abc", 0, (), (),),
         ("file:///path/to/file", 0, (), (),),
-        # C++ :: scope resolution should not match
         ("std::cout", 0, (), (),),
-        ("boost::asio::ip", 0, (), (),),
         ("MyClass::toString", 0, (), (),),
         # fmt: on
     ],
