@@ -408,3 +408,57 @@ def test_when_special_ip_variants_then_succeed(
         assert_result_within_score_range(
             res, entities[0], st_pos, fn_pos, st_score, fn_score
         )
+
+
+@pytest.mark.parametrize(
+    "text, expected_len, expected_positions, expected_score_ranges",
+    [
+        # fmt: off
+        # IPv4 CIDR
+        ("192.168.1.0/24", 1, ((0, 14),), ((0.6, 0.81),),),
+        ("10.0.0.0/8", 1, ((0, 10),), ((0.6, 0.81),),),
+        ("0.0.0.0/0", 1, ((0, 9),), ((0.6, 0.81),),),
+        ("192.168.1.1/32", 1, ((0, 14),), ((0.6, 0.81),),),
+        # IPv6 CIDR
+        ("2001:db8::/32", 1, ((0, 13),), ((0.6, 0.81),),),
+        ("fe80::/10", 1, ((0, 9),), ((0.6, 0.81),),),
+        ("::1/128", 1, ((0, 7),), ((0.6, 0.81),),),
+        # IPv6 CIDR with zone index
+        (f"fe80::1%eth0/64", 1, ((0, 15),), ((0.6, 0.81),),),
+        (f"2001:db8::%eth0/128", 1, ((0, 19),), ((0.6, 0.81),),),
+        # Unspecified with CIDR
+        ("::/0", 1, ((0, 4),), ((0.05, 0.15),),),
+        ("::/128", 1, ((0, 6),), ((0.05, 0.15),),),
+        # IPv4-mapped and embedded with CIDR
+        ("::ffff:192.168.1.0/96", 1, ((0, 21),), ((0.6, 0.81),),),
+        ("64:ff9b::192.0.2.0/96", 1, ((0, 21),), ((0.6, 0.81),),),
+        # CIDR in context
+        ("Subnet: 192.168.1.0/24", 1, ((8, 22),), ((0.6, 0.81),),),
+        ("Prefix: 2001:db8::/32", 1, ((8, 21),), ((0.6, 0.81),),),
+        ("Route is 10.0.0.0/8.", 1, ((9, 19),), ((0.6, 0.81),),),
+        ("Use 2001:db8::/32.", 1, ((4, 17),), ((0.6, 0.81),),),
+        # Invalid CIDR suffix, base IP still redacted
+        ("10.0.0.0/123", 1, ((0, 8),), ((0.6, 0.81),),),
+        ("2001:db8::/9999", 1, ((0, 10),), ((0.6, 0.81),),),
+        # fmt: on
+    ],
+)
+def test_when_cidr_notation_then_largest_span_redacted(
+    text,
+    expected_len,
+    expected_positions,
+    expected_score_ranges,
+    recognizer,
+    entities,
+    max_score,
+):
+    results = recognizer.analyze(text, entities)
+    assert len(results) == expected_len
+    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
+        results, expected_positions, expected_score_ranges
+    ):
+        if fn_score == "max":
+            fn_score = max_score
+        assert_result_within_score_range(
+            res, entities[0], st_pos, fn_pos, st_score, fn_score
+        )
