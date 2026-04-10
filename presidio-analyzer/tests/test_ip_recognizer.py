@@ -176,13 +176,16 @@ def test_when_ipv4_mapped_then_full_span_redacted(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        # IPv4-embedded addresses (hex:...:x.x.x.x) — RFC 4291 §2.5.5
-        # These embed an IPv4 address after 1-4 hex groups and :: or :.
+        # IPv4-embedded addresses (hex:...:x.x.x.x) — RFC 4291 §2.2 form 3
+        # These embed an IPv4 address after hex groups with :: compression.
         # The full address must be redacted as a single span.
         ("2001:db8::192.168.1.1", 1, ((0, 21),), ((0.6, 0.81),),),
         ("2001:db8:1::192.0.2.1", 1, ((0, 21),), ((0.6, 0.81),),),
         ("64:ff9b::192.0.2.1", 1, ((0, 18),), ((0.6, 0.81),),),
         ("2001:db8:85a3::8a2e:192.168.0.1", 1, ((0, 31),), ((0.6, 0.81),),),
+        # Should recognize expanded IPv6 before :: — RFC 4291 §2.2 form 3
+        ("0:0:0:0:0:FFFF:129.144.52.38", 1, ((0, 28),), ((0.6, 0.81),),),
+        ("2001:db8:0:0:0:0:192.168.1.1", 1, ((0, 28),), ((0.6, 0.81),),),
         # In context
         ("NAT64: 64:ff9b::198.51.100.1", 1, ((7, 28),), ((0.6, 0.81),),),
         ("Tunnel to 2001:db8::10.0.0.1", 1, ((10, 28),), ((0.6, 0.81),),),
