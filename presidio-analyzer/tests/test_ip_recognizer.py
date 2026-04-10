@@ -343,6 +343,9 @@ def test_when_ip_at_boundary_then_correct_span(
         ("300.168.1.1", 0, (), (),),
         ("12345:db8::1", 0, (), (),),
         ("2001::db8::1", 0, (), (),),
+        # Zone suffixes are not valid for IPv4
+        # IPv4 address substring is valid and should still be matched
+        ("192.168.2.1@eth0", 1, ((0, 11),), ((0.6, 0.81),),),
         # Word-adjacent IPv4-mapped/embedded should not match full span
         # Plain IPv4 portion will still match independently
         ("text::ffff:192.0.2.1", 1, ((11, 20),), ((0.6, 0.81),),),
