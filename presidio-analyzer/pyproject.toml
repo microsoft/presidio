@@ -34,14 +34,14 @@ dependencies = [
 [project.optional-dependencies]
 server = [
     "flask (>=1.1,<4.0.0)",
-    "gunicorn (>=20.0.0,<24.0.0); platform_system != 'Windows'",
+    "gunicorn (>=20.0.0,<26.0.0); platform_system != 'Windows'",
     "waitress (>=2.0.0,<4.0.0); platform_system == 'Windows'"
 ]
 transformers = [
-    "transformers (>=4.0.0,<5.0.0)",
+    "transformers (>=4.0.0,<6.0.0)",
     "accelerate (>=0.20.0,<2.0.0)",
     "huggingface_hub (>=0.20.0,<2.0.0)",
-    "spacy_huggingface_pipelines (>=0.0.7,<1.0.0)"]
+    "spacy_huggingface_pipelines (>=0.0.1,<1.0.0)"]
 
 stanza = [
     "stanza (>=1.10.1,<2.0.0)",
@@ -63,9 +63,9 @@ gliner = [
 ]
 langextract = [
     "langextract (>=1.0.0,<2.0.0)",
-    "openai (>=1.50.0,<2.0.0)",
+    "openai (>=1.50.0,<3.0.0)",
     "azure-identity (>=1.18.0,<2.0.0)",
-    "more-itertools (>=10.0.0,<11.0.0)",
+    "more-itertools (>=10.0.0,<12.0.0)",
     "jinja2 (>=3.0.0,<4.0.0)",
 ]
 

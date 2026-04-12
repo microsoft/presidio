@@ -28,7 +28,7 @@ dependencies = [
 [project.optional-dependencies]
 server = [
     "flask (>=1.1,<4.0.0)",
-    "gunicorn (>=20.0.0,<24.0.0); platform_system != 'Windows'",
+    "gunicorn (>=20.0.0,<26.0.0); platform_system != 'Windows'",
     "waitress (>=2.0.0,<4.0.0); platform_system == 'Windows'"
 ]
 ahds = [
