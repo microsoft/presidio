@@ -29,6 +29,8 @@ class EntityRecognizer:
     :param version: the recognizer current version
     :param context: a list of words which can help boost confidence score
     when they appear in context of the matched entity
+    :param negative_context: a list of words which can reduce confidence score
+    when they appear in context of the matched entity
     """
 
     MIN_SCORE = 0
@@ -41,6 +43,7 @@ class EntityRecognizer:
         supported_language: str = "en",
         version: str = "0.0.1",
         context: Optional[List[str]] = None,
+        negative_context: Optional[List[str]] = None,
     ):
         self.supported_entities = supported_entities
 
@@ -55,6 +58,7 @@ class EntityRecognizer:
         self.version = version
         self.is_loaded = False
         self.context = context if context else []
+        self.negative_context = negative_context if negative_context is not None else []
 
         self.load()
         logger.info("Loaded recognizer: %s", self.name)
