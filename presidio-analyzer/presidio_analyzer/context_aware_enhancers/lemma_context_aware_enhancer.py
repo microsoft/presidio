@@ -126,19 +126,12 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                 continue
 
             # skip recognizer result if the recognizer doesn't support
-            # context enhancement
-            if not recognizer.context:
+            # context enhancement (either positive or negative)
+            if not (recognizer.context or recognizer.negative_context):
                 logger.debug(
                     "recognizer '%s' does not support context enhancement",
                     recognizer.name,
                 )
-                continue
-
-            # skip context enhancement if already boosted by recognizer level
-            if result.recognition_metadata.get(
-                RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
-            ):
-                logger.debug("result score already boosted, skipping")
                 continue
 
             # extract lemmatized context from the surrounding of the match
