@@ -62,7 +62,7 @@ gliner = [
     "onnxruntime (>=1.19) ; python_version > '3.10'"
 ]
 langextract = [
-    "langextract (>=1.0.0)",
+    "langextract (>=1.2.1)",
     "openai (>=1.50.0)",
     "azure-identity (>=1.18.0)",
     "more-itertools (>=10.0.0)",
