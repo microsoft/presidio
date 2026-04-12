@@ -1,49 +1,137 @@
+# Security rationale for pip ecosystem settings:
+#
+# cooldown (default-days: 7):
+#   Waits 7 days after a package release before Dependabot opens a PR.
+#   This provides a window for the community to detect and report malicious
+#   or compromised packages before they are automatically proposed for adoption
+#   (a common supply-chain attack vector known as "zero-day injection").
+#
+# versioning-strategy: lockfile-only:
+#   Only updates the lock file (poetry.lock / uv.lock) without widening version
+#   bounds in pyproject.toml. This keeps the manifest clean and prevents silent
+#   upper-bound drift that would allow untested future versions to be installed.
+#
+# ignore (semver-major / semver-minor):
+#   Belt-and-suspenders complement to lockfile-only. Blocks Dependabot from
+#   proposing major or minor version bumps; only patch releases are proposed.
+#   NOTE: Dependabot security updates bypass ignore rules — known CVEs will
+#   still generate PRs regardless of these settings.
+#
+# groups + open-pull-requests-limit: 3:
+#   Batches all minor/patch updates into a single PR and caps open PRs at 3
+#   to prevent "security fatigue" from too many simultaneous update PRs.
+
 version: 2
 updates:
   - package-ecosystem: "pip"
     directory: "/presidio-analyzer"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 3
     labels:
       - "dependencies"
       - "python"
-    
+    versioning-strategy: lockfile-only
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
   - package-ecosystem: "pip"
     directory: "/presidio-anonymizer"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 3
     labels:
       - "dependencies"
       - "python"
-    
+    versioning-strategy: lockfile-only
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
   - package-ecosystem: "pip"
     directory: "/presidio-image-redactor"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 3
     labels:
       - "dependencies"
       - "python"
-      
+    versioning-strategy: lockfile-only
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
   - package-ecosystem: "pip"
     directory: "/presidio-cli"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 3
     labels:
       - "dependencies"
       - "python"
-      
+    versioning-strategy: lockfile-only
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
   - package-ecosystem: "pip"
     directory: "/presidio-structured"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 3
     labels:
       - "dependencies"
       - "python"
+    versioning-strategy: lockfile-only
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
   # Monitor Docker dependencies
   - package-ecosystem: "docker"
