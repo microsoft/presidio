@@ -24,7 +24,7 @@ requires-python = ">=3.10,<3.14"
 dependencies = [
     "pillow (>=9.0)",
     "pytesseract (>=0.3.7,<0.4)",
-    "presidio-analyzer (>=1.9.0)",
+    "presidio-analyzer (>=2.2.362)",
     "matplotlib (>=3.6)",
     "pydicom (>=2.3.0)",
     "pypng (>=0.20220715.0)",
