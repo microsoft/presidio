@@ -23,15 +23,12 @@
 #   Batches all minor/patch updates into a single PR and caps open PRs at 3
 #   to prevent "security fatigue" from too many simultaneous update PRs.
 #
-# DRY: The shared pip settings are defined once on the first entry via the YAML
-# anchor &pip-defaults. Subsequent pip entries merge those defaults with
-# <<: *pip-defaults and only override the `directory` field.
+# Note: Dependabot's config parser does not support YAML anchors/merge keys,
+# so the shared settings below are repeated explicitly for each pip directory.
 
 version: 2
 updates:
-  # --- pip entries (all share the same security settings via YAML anchor) ---
-  - &pip-defaults
-    package-ecosystem: "pip"
+  - package-ecosystem: "pip"
     directory: "/presidio-analyzer"
     schedule:
       interval: "weekly"
@@ -53,17 +50,93 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
-  - <<: *pip-defaults
+  - package-ecosystem: "pip"
     directory: "/presidio-anonymizer"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "python"
+    versioning-strategy: increase
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
-  - <<: *pip-defaults
+  - package-ecosystem: "pip"
     directory: "/presidio-image-redactor"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "python"
+    versioning-strategy: increase
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
-  - <<: *pip-defaults
+  - package-ecosystem: "pip"
     directory: "/presidio-cli"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "python"
+    versioning-strategy: increase
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
-  - <<: *pip-defaults
+  - package-ecosystem: "pip"
     directory: "/presidio-structured"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "python"
+    versioning-strategy: increase
+    cooldown:
+      default-days: 7
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
   # Monitor Docker dependencies
   - package-ecosystem: "docker"
