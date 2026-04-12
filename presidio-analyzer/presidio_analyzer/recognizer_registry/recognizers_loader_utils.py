@@ -368,6 +368,12 @@ class RecognizerListLoader:
         if not accepts_supported_entity:
             kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
 
+        # 3. Filter: Remove 'negative_context' if not supported by recognizer
+        # Predefined recognizers may not accept negative_context parameter
+        accepts_negative_context = "negative_context" in params
+        if not accepts_negative_context and not has_var_kw:
+            kwargs.pop("negative_context", None)
+
         return kwargs
 
     @staticmethod
