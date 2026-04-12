@@ -53,6 +53,10 @@ def nlp_engines(request, nlp_engine_provider) -> Dict[str, NlpEngine]:
                     }
                 ]
             )
+        elif name == "slim":
+            available_engines[f"{name}_en"] = engine_cls(
+                models=[{"lang_code": "en", "model_name": "en_core_web_sm"}]
+            )
         else:
             raise ValueError("Unsupported engine for tests")
 
