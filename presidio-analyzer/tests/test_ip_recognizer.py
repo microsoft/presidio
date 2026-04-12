@@ -29,6 +29,11 @@ def entities():
         ("2345:0425:2CA1::0567:5673:23b5", 1, (), (),),
         ("2400:c401::5054:ff:fe1b:b031", 1, (), (),),
         ("Use local ipv6 ::", 1, ((15, 17),), ((0.05, 0.15),),),
+        # IPv6 loopback (::1) should match at high confidence
+        ("my ip: ::1", 1, ((7, 10),), ((0.6, 0.81),),),
+        ("connecting from ::1", 1, ((16, 19),), ((0.6, 0.81),),),
+        # bare :: and ::1 in same string should each match once
+        ("src=:: dst=::1", 2, ((4, 6), (11, 14)), ((0.05, 0.15), (0.6, 0.81)),),
         # fmt: on
     ],
 )
