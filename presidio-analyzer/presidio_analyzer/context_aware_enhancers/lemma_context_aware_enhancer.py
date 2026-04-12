@@ -13,7 +13,10 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
     """
     A class representing a lemma based context aware enhancer logic.
 
-    Context words might enhance confidence score of a recognized entity,
+    Context words might enhance or reduce confidence score of a recognized entity:
+    - Positive context: boosts confidence (e.g., "social" for SSN)
+    - Negative context: reduces confidence (e.g., "test" for SSN)
+    
     LemmaContextAwareEnhancer is an implementation of Lemma based context aware logic,
     it compares spacy lemmas of each word in context of the matched entity to given
     context and the recognizer context words,
@@ -30,6 +33,8 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         - "whole_word": Match context words only as whole words
           (e.g., 'lic' matches 'lic' but not 'duplicate').
           Prevents false positives.
+    :param negative_context_penalty: How much to reduce confidence when negative
+      context words are found. Default 0.3. Applied after positive context boost.
     """
 
     def __init__(
@@ -39,6 +44,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         context_prefix_count: int = 5,
         context_suffix_count: int = 0,
         context_matching_mode: str = "substring",
+        negative_context_penalty: float = 0.3,
     ):
         super().__init__(
             context_similarity_factor=context_similarity_factor,
@@ -52,6 +58,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                 f"Got: {context_matching_mode}"
             )
         self.context_matching_mode = context_matching_mode
+        self.negative_context_penalty = negative_context_penalty
 
     def enhance_using_context(
         self,
@@ -158,6 +165,16 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                     supportive_context_word
                 )
                 result.analysis_explanation.set_improved_score(result.score)
+
+            # Apply negative context penalty if recognizer has negative_context defined
+            if recognizer.negative_context:
+                negative_context_word = self._find_supportive_word_in_context(
+                    surrounding_words, recognizer.negative_context, self.context_matching_mode
+                )
+                if negative_context_word != "":
+                    result.score -= self.negative_context_penalty
+                    result.score = max(result.score, ContextAwareEnhancer.MIN_SCORE)
+                    logger.debug("Applied negative context penalty for word '%s'", negative_context_word)
         return results
 
     @staticmethod
