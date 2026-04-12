@@ -15,9 +15,12 @@ version: 2
 #   than silently permitting any future version via an unbounded upper bound.
 #
 # ignore: semver-major + semver-minor
-#   Only patch-level updates are auto-proposed. Major and minor releases (which
-#   are the most likely vector for supply-chain attacks) require a deliberate
-#   manual review before being adopted.
+#   Only patch-level updates are auto-proposed. Major and minor version bumps
+#   (the most common supply-chain attack vector) are blocked here and require a
+#   deliberate manual review before being adopted.  The `groups` block below
+#   lists both "minor" and "patch" so that batching kicks in automatically if
+#   these ignore rules are ever relaxed; under the current rules only patch
+#   updates will reach the batched PR.
 
 updates:
   - package-ecosystem: "pip"
