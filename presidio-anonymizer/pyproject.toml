@@ -22,14 +22,14 @@ readme = "README.md"
 
 requires-python = ">=3.10,<4.0"
 dependencies = [
-    "cryptography (>=46.0.4)"
+    "cryptography (>=46.0.4,<47.0.0)"
 ]
 
 [project.optional-dependencies]
 server = [
-    "flask (>=1.1)",
-    "gunicorn; platform_system != 'Windows'",
-    "waitress; platform_system == 'Windows'"
+    "flask (>=1.1,<4.0.0)",
+    "gunicorn (>=20.0.0,<24.0.0); platform_system != 'Windows'",
+    "waitress (>=2.0.0,<4.0.0); platform_system == 'Windows'"
 ]
 ahds = [
     "azure-identity (>=1.23.0,<2.0.0)",
