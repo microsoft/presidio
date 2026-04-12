@@ -23,32 +23,32 @@ include = ["conf/*",]
 
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "spacy (>=3.8.14, !=3.7.0)",
-    "regex",
-    "tldextract",
-    "pyyaml",
+    "spacy (>=3.8.14,!=3.7.0,<4.0.0)",
+    "regex (>=2023.0.0)",
+    "tldextract (>=3.0.0,<6.0.0)",
+    "pyyaml (>=6.0.0,<7.0.0)",
     "phonenumbers (>=8.12,<10.0.0)",
     "pydantic (>=2.0.0,<3.0.0)",
 ]
 
 [project.optional-dependencies]
 server = [
-    "flask (>=1.1)",
-    "gunicorn; platform_system != 'Windows'",
-    "waitress; platform_system == 'Windows'"
+    "flask (>=1.1,<4.0.0)",
+    "gunicorn (>=20.0.0,<26.0.0); platform_system != 'Windows'",
+    "waitress (>=2.0.0,<4.0.0); platform_system == 'Windows'"
 ]
 transformers = [
-    "transformers",
-    "accelerate",
-    "huggingface_hub",
-    "spacy_huggingface_pipelines"]
+    "transformers (>=4.0.0,<6.0.0)",
+    "accelerate (>=0.20.0,<2.0.0)",
+    "huggingface_hub (>=0.20.0,<2.0.0)",
+    "spacy_huggingface_pipelines (>=0.0.1,<1.0.0)"]
 
 stanza = [
     "stanza (>=1.10.1,<2.0.0)",
 ]
 azure-ai-language = [
-    "azure-ai-textanalytics",
-    "azure-core",
+    "azure-ai-textanalytics (>=5.3.0,<6.0.0)",
+    "azure-core (>=1.20.0,<2.0.0)",
 ]
 ahds = [
     "azure-identity (>=1.23.0,<2.0.0)",
@@ -62,11 +62,11 @@ gliner = [
     "onnxruntime (>=1.19) ; python_version > '3.10'"
 ]
 langextract = [
-    "langextract (>=1.0.0)",
-    "openai (>=1.50.0)",
-    "azure-identity (>=1.18.0)",
-    "more-itertools (>=10.0.0)",
-    "jinja2 (>=3.0.0)",
+    "langextract (>=1.0.0,<2.0.0)",
+    "openai (>=1.50.0,<3.0.0)",
+    "azure-identity (>=1.18.0,<2.0.0)",
+    "more-itertools (>=10.0.0,<12.0.0)",
+    "jinja2 (>=3.0.0,<4.0.0)",
 ]
 
 [tool.poetry.group.dev.dependencies]
