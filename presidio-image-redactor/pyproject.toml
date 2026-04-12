@@ -22,21 +22,21 @@ readme = "README.md"
 requires-python = ">=3.10,<3.14"
 
 dependencies = [
-    "pillow (>=9.0)",
+    "pillow (>=9.0.0,<13.0.0)",
     "pytesseract (>=0.3.7,<0.4)",
-    "presidio-analyzer (>=1.9.0)",
-    "matplotlib (>=3.6)",
-    "pydicom (>=2.3.0)",
-    "pypng (>=0.20220715.0)",
+    "presidio-analyzer (>=2.2.0,<3.0.0)",
+    "matplotlib (>=3.6.0,<4.0.0)",
+    "pydicom (>=2.3.0,<4.0.0)",
+    "pypng (>=0.20220715.0,<1.0.0)",
     "azure-ai-formrecognizer (>=3.3.0,<4.0.0)",
     "opencv-python (>=4.0.0,<5.0.0)",
-    "python-gdcm (>=3.0.24.1)",
+    "python-gdcm (>=3.0.24.1,<4.0.0)",
     "spacy >=3.8.7,<4.0.0 ; python_version >= '3.13'"]
 
 [project.optional-dependencies]
 server = [
-    "flask (>=1.1)",
-    "gunicorn"
+    "flask (>=1.1,<4.0.0)",
+    "gunicorn (>=20.0.0,<26.0.0)"
 ]
 
 [tool.poetry.group.dev.dependencies]
