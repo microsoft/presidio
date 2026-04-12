@@ -57,7 +57,7 @@ class EntityRecognizer:
         self.supported_language = supported_language
         self.version = version
         self.is_loaded = False
-        self.context = context if context else []
+        self.context = context if context is not None else []
         self.negative_context = negative_context if negative_context is not None else []
 
         self.load()
