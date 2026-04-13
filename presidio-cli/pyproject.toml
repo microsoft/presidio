@@ -23,9 +23,9 @@ include = ["conf/*", ".presidiocli"]
 requires-python = ">=3.10,<3.14"
 
 dependencies = [
-    "presidio-analyzer (>= 2.2)",
-    "pyyaml",
-    "pathspec"
+    "presidio-analyzer (>=2.2.0,<3.0.0)",
+    "pyyaml (>=6.0.0,<7.0.0)",
+    "pathspec (>=0.9.0,<2.0.0)"
 ]
 
 [project.scripts]

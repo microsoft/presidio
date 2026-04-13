@@ -1,6 +1,7 @@
 import re
 from pathlib import Path
 from typing import List
+from unittest.mock import patch
 
 from presidio_analyzer import AnalyzerEngineProvider, RecognizerResult, PatternRecognizer
 from presidio_analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
@@ -14,6 +15,8 @@ from presidio_analyzer.predefined_recognizers import (
 )
 
 import pytest
+
+from install_nlp_models import install_models, _install_models_from_nlp_config
 
 
 def get_full_paths(analyzer_yaml, nlp_engine_yaml=None, recognizer_registry_yaml=None):
@@ -514,6 +517,41 @@ def test_analyzer_engine_provider_create_engine_with_all_params():
     assert len(engine.supported_languages) > 0
 
 
+def test_analyzer_engine_provider_inline_sections_take_priority_over_per_section_files():
+    """Test that nlp_configuration / recognizer_registry sections embedded in the
+    analyzer conf file take priority over separately provided per-section files.
+
+    This is the key behaviour that lets a single unified ANALYZER_CONF_FILE drive
+    both NLP and registry configuration without being silently overridden by
+    Dockerfile-baked-in default values for NLP_CONF_FILE and
+    RECOGNIZER_REGISTRY_CONF_FILE.
+    """
+    # test_analyzer_engine.yaml contains both nlp_configuration and
+    # recognizer_registry sections.
+    analyzer_yaml, nlp_yaml, registry_yaml = get_full_paths(
+        "conf/test_analyzer_engine.yaml",
+        "conf/default.yaml",
+        "conf/test_recognizer_registry.yaml",
+    )
+
+    provider = AnalyzerEngineProvider(
+        analyzer_engine_conf_file=analyzer_yaml,
+        nlp_engine_conf_file=nlp_yaml,
+        recognizer_registry_conf_file=registry_yaml,
+    )
+    engine = provider.create_engine()
+
+    # The analyzer yaml's supported_languages + recognizer_registry should prevail.
+    # test_analyzer_engine.yaml lists de, en, es — not the registry-only en.
+    assert "de" in engine.supported_languages
+    assert "en" in engine.supported_languages
+    assert "es" in engine.supported_languages
+
+    # The registry from the inline section has more than the 6 recognizers
+    # in test_recognizer_registry.yaml, confirming the inline section won.
+    assert len(engine.registry.recognizers) > 6
+
+
 def test_analyzer_engine_provider_multiple_languages_support():
     """Test analyzer engine with multiple language support."""
     analyzer_yaml, _, _ = get_full_paths("conf/test_analyzer_engine.yaml")
@@ -561,3 +599,95 @@ def test_analyzer_engine_provider_configuration_logging(caplog):
     assert len(caplog.records) > 0
 
 
+
+
+# --- install_models / _install_models_from_nlp_config tests ---
+
+_NLP_CONF_CONTENT = (
+    "nlp_engine_name: spacy\n"
+    "models:\n"
+    "  - lang_code: en\n"
+    "    model_name: en_core_web_sm\n"
+)
+
+_ANALYZER_CONF_WITH_NLP = (
+    "nlp_configuration:\n"
+    "  nlp_engine_name: spacy\n"
+    "  models:\n"
+    "    - lang_code: en\n"
+    "      model_name: en_core_web_lg\n"
+)
+
+_ANALYZER_CONF_WITHOUT_NLP = "supported_languages:\n  - en\n"
+
+
+def test_install_models_only_analyzer_conf_with_nlp_configuration(tmp_path):
+    """analyzer_conf_file with nlp_configuration — uses analyzer's NLP config."""
+    analyzer_yaml = tmp_path / "analyzer.yaml"
+    analyzer_yaml.write_text(_ANALYZER_CONF_WITH_NLP)
+
+    with patch("install_nlp_models._download_model") as mock_dl:
+        install_models(analyzer_conf_file=str(analyzer_yaml))
+
+    mock_dl.assert_called_once_with("spacy", "en_core_web_lg")
+
+
+def test_install_models_analyzer_conf_without_nlp_falls_back_to_nlp_conf(tmp_path):
+    """analyzer_conf_file without nlp_configuration — falls back to nlp_conf_file."""
+    analyzer_yaml = tmp_path / "analyzer.yaml"
+    analyzer_yaml.write_text(_ANALYZER_CONF_WITHOUT_NLP)
+    nlp_yaml = tmp_path / "nlp.yaml"
+    nlp_yaml.write_text(_NLP_CONF_CONTENT)
+
+    with patch("install_nlp_models._download_model") as mock_dl:
+        install_models(nlp_conf_file=str(nlp_yaml), analyzer_conf_file=str(analyzer_yaml))
+
+    mock_dl.assert_called_once_with("spacy", "en_core_web_sm")
+
+
+def test_install_models_only_nlp_conf_file(tmp_path):
+    """Only nlp_conf_file provided — reads and installs from it directly."""
+    nlp_yaml = tmp_path / "nlp.yaml"
+    nlp_yaml.write_text(_NLP_CONF_CONTENT)
+
+    with patch("install_nlp_models._download_model") as mock_dl:
+        install_models(nlp_conf_file=str(nlp_yaml))
+
+    mock_dl.assert_called_once_with("spacy", "en_core_web_sm")
+
+
+def test_install_models_analyzer_conf_takes_priority_over_nlp_conf(tmp_path):
+    """Both files provided and analyzer_conf_file has nlp_configuration — analyzer wins."""
+    analyzer_yaml = tmp_path / "analyzer.yaml"
+    analyzer_yaml.write_text(_ANALYZER_CONF_WITH_NLP)
+    nlp_yaml = tmp_path / "nlp.yaml"
+    nlp_yaml.write_text(_NLP_CONF_CONTENT)
+
+    with patch("install_nlp_models._download_model") as mock_dl:
+        install_models(nlp_conf_file=str(nlp_yaml), analyzer_conf_file=str(analyzer_yaml))
+
+    mock_dl.assert_called_once_with("spacy", "en_core_web_lg")
+
+
+def test_install_models_nonexistent_analyzer_conf_raises_os_error(tmp_path):
+    """Nonexistent analyzer_conf_file raises OSError."""
+    with pytest.raises(OSError):
+        install_models(analyzer_conf_file=str(tmp_path / "missing.yaml"))
+
+
+def test_install_models_nonexistent_nlp_conf_raises_os_error(tmp_path):
+    """Nonexistent nlp_conf_file raises OSError."""
+    with pytest.raises(OSError):
+        install_models(nlp_conf_file=str(tmp_path / "missing.yaml"))
+
+
+def test_install_models_from_nlp_config_missing_engine_name_raises_value_error():
+    """nlp_configuration without nlp_engine_name raises ValueError."""
+    with pytest.raises(ValueError, match="nlp_engine_name"):
+        _install_models_from_nlp_config({"models": [{"model_name": "en_core_web_sm"}]})
+
+
+def test_install_models_from_nlp_config_missing_models_raises_value_error():
+    """nlp_configuration without models raises ValueError."""
+    with pytest.raises(ValueError, match="models"):
+        _install_models_from_nlp_config({"nlp_engine_name": "spacy"})

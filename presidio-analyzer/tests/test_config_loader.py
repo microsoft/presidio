@@ -5,6 +5,7 @@ from pathlib import Path
 from presidio_analyzer.llm_utils.config_loader import (
     load_yaml_file,
     get_model_config,
+    resolve_config_path,
 )
 from presidio_analyzer.llm_utils.langextract_helper import extract_lm_config
 
@@ -272,3 +273,22 @@ langextract:
             
         finally:
             Path(config_path).unlink()
+
+
+class TestResolveConfigPath:
+    """Tests for resolve_config_path function."""
+
+    def test_when_conf_relative_path_then_resolves_to_package_conf(self):
+        """Test that paths relative to conf/ resolve via the package directory."""
+        resolved = resolve_config_path(
+            "langextract_prompts/default_pii_phi_prompt.j2"
+        )
+        assert resolved.exists()
+        assert "conf" in str(resolved)
+        assert resolved.name == "default_pii_phi_prompt.j2"
+
+    def test_when_path_not_in_conf_then_falls_back_to_repo_root(self):
+        """Test that nonexistent conf paths fall back to repo root resolution."""
+        resolved = resolve_config_path("nonexistent/some_file.yaml")
+        assert not resolved.exists()
+        assert str(resolved).endswith("nonexistent/some_file.yaml")

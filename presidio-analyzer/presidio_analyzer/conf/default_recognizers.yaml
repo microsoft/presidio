@@ -230,9 +230,21 @@ recognizers:
     enabled: false
 
   - name: KrFrnRecognizer
-    supported_languages: 
+    supported_languages:
     - ko
     - kr
+    type: predefined
+    enabled: false
+
+  - name: SeOrganisationsnummerRecognizer
+    supported_languages:
+    - sv
+    type: predefined
+    enabled: false
+  
+  - name: SePersonnummerRecognizer
+    supported_languages:
+    - sv
     type: predefined
     enabled: false
 
@@ -346,3 +358,10 @@ recognizers:
     type: predefined
     enabled: false
     config_path: presidio_analyzer/conf/langextract_config_basic.yaml
+
+  - name: CaSinRecognizer
+    supported_languages:
+    - en
+    - fr
+    type: predefined
+    enabled: false

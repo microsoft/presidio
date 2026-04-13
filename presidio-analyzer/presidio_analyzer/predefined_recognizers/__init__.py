@@ -10,6 +10,9 @@ from .country_specific.australia.au_acn_recognizer import AuAcnRecognizer
 from .country_specific.australia.au_medicare_recognizer import AuMedicareRecognizer
 from .country_specific.australia.au_tfn_recognizer import AuTfnRecognizer
 
+# Canada recognizers
+from .country_specific.canada.ca_sin_recognizer import CaSinRecognizer
+
 # Finland recognizers
 from .country_specific.finland.fi_personal_identity_code_recognizer import (
     FiPersonalIdentityCodeRecognizer,
@@ -82,6 +85,12 @@ from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
 # Spain recognizers
 from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
+
+# Sweden recognizers
+from .country_specific.sweden.se_organisationsnummer_recognizer import (
+    SeOrganisationsnummerRecognizer,
+)
+from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRecognizer
 
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
@@ -158,6 +167,7 @@ NLP_RECOGNIZERS = {
 
 __all__ = [
     "AbaRoutingRecognizer",
+    "CaSinRecognizer",
     "CreditCardRecognizer",
     "CryptoRecognizer",
     "DateRecognizer",
@@ -214,7 +224,9 @@ __all__ = [
     "KrRrnRecognizer",
     "KrDriverLicenseRecognizer",
     "KrFrnRecognizer",
+    "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
+    "SePersonnummerRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",

@@ -107,15 +107,15 @@ class AnalyzerEngineProvider:
         supported_languages: List[str],
         nlp_engine: NlpEngine,
     ) -> RecognizerRegistry:
-        if self.recognizer_registry_conf_file:
-            logger.info(
-                f"Reading recognizer registry "
-                f"configuration from {self.recognizer_registry_conf_file}"
-            )
-            provider = RecognizerRegistryProvider(
-                conf_file=self.recognizer_registry_conf_file, nlp_engine=nlp_engine
-            )
-        elif "recognizer_registry" in self.configuration:
+        """Load recognizer registry.
+
+        Inline ``recognizer_registry`` section in the analyzer conf takes
+        priority over a separately provided per-section file so that a unified
+        ANALYZER_CONF_FILE is self-contained and is not silently overridden by
+        a per-section file that was baked into the image as a Dockerfile default.
+        A per-section file is only used when no inline section is present.
+        """
+        if "recognizer_registry" in self.configuration:
             registry_configuration = self.configuration["recognizer_registry"]
             provider = RecognizerRegistryProvider(
                 registry_configuration={
@@ -123,6 +123,14 @@ class AnalyzerEngineProvider:
                     "supported_languages": supported_languages,
                 },
                 nlp_engine=nlp_engine,
+            )
+        elif self.recognizer_registry_conf_file:
+            logger.info(
+                f"Reading recognizer registry "
+                f"configuration from {self.recognizer_registry_conf_file}"
+            )
+            provider = RecognizerRegistryProvider(
+                conf_file=self.recognizer_registry_conf_file, nlp_engine=nlp_engine
             )
         else:
             logger.warning(
@@ -142,12 +150,20 @@ class AnalyzerEngineProvider:
         return registry
 
     def _load_nlp_engine(self) -> NlpEngine:
-        if self.nlp_engine_conf_file:
-            logger.info(f"Reading nlp configuration from {self.nlp_engine_conf_file}")
-            provider = NlpEngineProvider(conf_file=self.nlp_engine_conf_file)
-        elif "nlp_configuration" in self.configuration:
+        """Load NLP engine.
+
+        Inline ``nlp_configuration`` section in the analyzer conf takes
+        priority over a separately provided per-section file so that a unified
+        ANALYZER_CONF_FILE is self-contained and is not silently overridden by
+        a per-section file that was baked into the image as a Dockerfile default.
+        A per-section file is only used when no inline section is present.
+        """
+        if "nlp_configuration" in self.configuration:
             nlp_configuration = self.configuration["nlp_configuration"]
             provider = NlpEngineProvider(nlp_configuration=nlp_configuration)
+        elif self.nlp_engine_conf_file:
+            logger.info(f"Reading nlp configuration from {self.nlp_engine_conf_file}")
+            provider = NlpEngineProvider(conf_file=self.nlp_engine_conf_file)
         else:
             logger.warning(
                 "configuration file is missing for 'nlp_configuration'."
