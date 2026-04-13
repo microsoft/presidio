@@ -1,3 +1,14 @@
+# ---------------------------------------------------------
+# DEPRECATED – Use conf/analyzer.yaml instead.
+#
+# This is an older unified configuration file kept for
+# backward compatibility only. The canonical unified
+# configuration is now conf/analyzer.yaml, which contains
+# the complete and up-to-date set of recognizers.
+#
+# See: https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/
+# ---------------------------------------------------------
+
 supported_languages: 
   - en
 default_score_threshold: 0

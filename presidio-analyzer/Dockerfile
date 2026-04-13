@@ -1,8 +1,12 @@
 FROM python:3.12-slim@sha256:804ddf3251a60bbf9c92e73b7566c40428d54d0e79d3428194edf40da6521286
 
-ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
-ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
-ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
+# Analyzer configuration file (recommended).
+# The separate NLP_CONF_FILE and RECOGNIZER_REGISTRY_CONF_FILE are
+# deprecated; use the nlp_configuration and recognizer_registry
+# sections in ANALYZER_CONF_FILE instead.
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/analyzer.yaml
+ARG NLP_CONF_FILE=
+ARG RECOGNIZER_REGISTRY_CONF_FILE=
 ENV PIP_NO_CACHE_DIR=1
 ENV POETRY_VIRTUALENVS_CREATE=false
 
@@ -30,11 +34,10 @@ RUN pip install poetry==2.3.2 \
     && poetry install --no-root --only=main -E server \
     && rm -rf $(poetry config cache-dir)
     
-# install nlp models specified in NLP_CONF_FILE or via nlp_configuration in ANALYZER_CONF_FILE
+# install nlp models from the unified analyzer configuration
 COPY ./install_nlp_models.py /app/
 
 RUN poetry run python install_nlp_models.py \
-    --conf_file ${NLP_CONF_FILE} \
     --analyzer_conf_file ${ANALYZER_CONF_FILE}
 
 COPY . /app/

@@ -1,3 +1,14 @@
+# ---------------------------------------------------------
+# DEPRECATED – Use the nlp_configuration section in
+# conf/analyzer.yaml instead.
+#
+# This standalone NLP configuration file is kept for
+# backward compatibility only.
+# It will be removed in a future version of Presidio.
+#
+# See: https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/
+# ---------------------------------------------------------
+
 nlp_engine_name: spacy
 models:
   -

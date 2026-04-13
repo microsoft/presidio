@@ -1,8 +1,10 @@
 FROM python:3.12-windowsservercore@sha256:f2ab91b547b695c40a69cb1931cf382cb4019f56e1df5a83c86372d0cc8fb5a4
 
-ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
-ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
-ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
+# Unified configuration file (recommended).
+# Separate NLP_CONF_FILE and RECOGNIZER_REGISTRY_CONF_FILE are deprecated.
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/analyzer.yaml
+ARG NLP_CONF_FILE=
+ARG RECOGNIZER_REGISTRY_CONF_FILE=
 ENV PIP_NO_CACHE_DIR=1
 ENV POETRY_VIRTUALENVS_CREATE=false
 ENV PORT=3000
@@ -27,10 +29,10 @@ COPY ${NLP_CONF_FILE} /app/${NLP_CONF_FILE}
 COPY ./pyproject.toml /app/
 RUN pip install poetry==2.3.2; poetry install --no-root --only=main -E server -E transformers
 
-# install nlp models specified in NLP_CONF_FILE
+# install nlp models specified in the analyzer config
 COPY ./install_nlp_models.py .
-COPY ${NLP_CONF_FILE} ${NLP_CONF_FILE}
-RUN poetry run python install_nlp_models.py --conf_file $Env:NLP_CONF_FILE
+COPY ${ANALYZER_CONF_FILE} ${ANALYZER_CONF_FILE}
+RUN poetry run python install_nlp_models.py --conf_file $Env:ANALYZER_CONF_FILE
 
 COPY . .
 

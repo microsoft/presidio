@@ -1,4 +1,5 @@
 import logging
+import warnings
 from pathlib import Path
 from typing import Dict, Optional, Tuple, Union
 
@@ -68,6 +69,15 @@ class NlpEngineProvider:
             if conf_file == "":
                 raise ValueError("conf_file is empty")
             ConfigurationValidator.validate_file_path(conf_file)
+            warnings.warn(
+                "Loading NLP configuration from a standalone file is deprecated. "
+                "Use the 'nlp_configuration' section inside the unified analyzer "
+                "configuration file (analyzer.yaml) instead. "
+                "See: https://microsoft.github.io/presidio/analyzer/"
+                "analyzer_engine_provider/",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
         if conf_file is None and nlp_configuration is None:

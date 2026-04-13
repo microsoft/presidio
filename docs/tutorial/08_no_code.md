@@ -7,14 +7,16 @@ No-code configuration can be helpful in three scenarios:
 3. For team members interested in changing the configuration without writing code.
 
 In this example, we'll show how to create a no-code configuration in Presidio.
-We start by creating YAML configuration files that are based on the default ones.
-The default configuration files for Presidio can be found here:
+We start by creating a YAML configuration file based on the default one.
+The default unified configuration file for Presidio Analyzer can be found here:
 
-- [Analyzer configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml)
-- [Recognizer registry configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml)
-- [NLP engine configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default.yaml)
+- [analyzer configuration](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml)
 
-Alternatively, one can create one configuration file for all three components.
+!!! warning "Deprecated separate files"
+
+    The previous approach of using three separate configuration files
+    (`default_analyzer.yaml`, `default_recognizers.yaml`, `default.yaml`)
+    is deprecated. Use the unified `analyzer.yaml` file instead.
 In this example, we'll tweak the configuration to reduce the number of predefinedrecognizers to only a few, and add a new custom one. We'll also adjust the context words to support the detection of a different language (Spanish).
 
 ```python
@@ -31,7 +33,7 @@ In this example we're going to create the yaml as a string for illustration purp
 
 ### General Analyzer parameters
 
-([default file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml))
+([default file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml))
 
 ```python
 analyzer_config_yaml = """
@@ -44,7 +46,7 @@ default_score_threshold: 0.4
 
 ### Recognizer Registry parameters
 
-([default file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml))
+([default file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml))
 
 ```python
 
@@ -121,7 +123,7 @@ recognizer_registry:
 
 ### NLP Engine parameters
 
-([default file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default.yaml))
+([default file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml))
 
 ```python
 nlp_engine_yaml = """

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 import logging
+import warnings
 from collections.abc import ItemsView
 from pathlib import Path
 from typing import (
@@ -484,6 +485,15 @@ class RecognizerConfigurationLoader:
                 use_defaults = False
 
         if conf_file:
+            warnings.warn(
+                "Loading recognizer registry from a standalone file is deprecated. "
+                "Use the 'recognizer_registry' section inside the unified analyzer "
+                "configuration file (analyzer.yaml) instead. "
+                "See: https://microsoft.github.io/presidio/analyzer/"
+                "analyzer_engine_provider/",
+                DeprecationWarning,
+                stacklevel=3,
+            )
             try:
                 with open(conf_file) as file:
                     config_from_file = yaml.safe_load(file)

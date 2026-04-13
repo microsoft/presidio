@@ -113,7 +113,7 @@ You have two options to set up Ollama:
 
 **Option 1: Enable in configuration file**
 
-Enable the recognizer in [`default_recognizers.yaml`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml):
+Enable the recognizer in [`analyzer.yaml`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml):
 ```yaml
 - name: BasicLangExtractRecognizer
   enabled: true  # Change from false to true
@@ -122,17 +122,13 @@ Enable the recognizer in [`default_recognizers.yaml`](https://github.com/microso
 Then load the analyzer using this modified configuration file:
 
 ```python
-from presidio_analyzer import AnalyzerEngine
-from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
+from presidio_analyzer import AnalyzerEngineProvider
 
-# Point to your modified default_recognizers.yaml with Ollama enabled
-provider = RecognizerRegistryProvider(
-    conf_file="/path/to/your/modified/default_recognizers.yaml"
+# Point to your modified analyzer.yaml with the recognizer enabled
+provider = AnalyzerEngineProvider(
+    analyzer_engine_conf_file="/path/to/your/modified/analyzer.yaml"
 )
-registry = provider.create_recognizer_registry()
-
-# Create analyzer with the registry that includes Ollama recognizer
-analyzer = AnalyzerEngine(registry=registry, supported_languages=["en"])
+analyzer = provider.create_engine()
 
 # Analyze text - Ollama recognizer will participate in detection
 results = analyzer.analyze(text="My email is john.doe@example.com", language="en")
@@ -151,7 +147,7 @@ results = analyzer.analyze(text="My email is john.doe@example.com", language="en
 ```
 
 !!! note "Note"
-    The recognizer is disabled by default in `default_recognizers.yaml` to avoid requiring Ollama for basic Presidio usage. Enable it when you have Ollama set up and running.
+    The recognizer is disabled by default in the configuration to avoid requiring Ollama for basic Presidio usage. Enable it when you have Ollama set up and running.
 
 ### Custom Configuration
 

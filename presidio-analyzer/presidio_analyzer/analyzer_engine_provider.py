@@ -1,4 +1,5 @@
 import logging
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -16,12 +17,23 @@ class AnalyzerEngineProvider:
     """
     Utility function for loading Presidio Analyzer.
 
-    Use this class to load presidio analyzer engine from a yaml file
+    Use this class to load presidio analyzer engine from a yaml file.
 
-    :param analyzer_engine_conf_file: the path to the analyzer configuration file
-    :param nlp_engine_conf_file: the path to the nlp engine configuration file
-    :param recognizer_registry_conf_file: the path to the recognizer
-    registry configuration file
+    The recommended approach is to use a single unified configuration file
+    (``analyzer.yaml``) that contains all settings: supported languages,
+    NLP engine, and recognizer registry.
+
+    The separate ``nlp_engine_conf_file`` and ``recognizer_registry_conf_file``
+    parameters are deprecated and will be removed in a future version.
+
+    :param analyzer_engine_conf_file: the path to the analyzer configuration file.
+        Defaults to the built-in ``conf/analyzer.yaml``.
+    :param nlp_engine_conf_file: (deprecated) the path to the nlp engine
+        configuration file. Use the ``nlp_configuration`` section inside the
+        unified analyzer configuration file instead.
+    :param recognizer_registry_conf_file: (deprecated) the path to the recognizer
+        registry configuration file. Use the ``recognizer_registry`` section inside
+        the unified analyzer configuration file instead.
     """
 
     def __init__(
@@ -34,8 +46,26 @@ class AnalyzerEngineProvider:
             ConfigurationValidator.validate_file_path(analyzer_engine_conf_file)
         if nlp_engine_conf_file:
             ConfigurationValidator.validate_file_path(nlp_engine_conf_file)
+            warnings.warn(
+                "The 'nlp_engine_conf_file' parameter is deprecated and will be "
+                "removed in a future version. Use the 'nlp_configuration' section "
+                "inside the unified analyzer configuration file instead. "
+                "See: https://microsoft.github.io/presidio/analyzer/"
+                "analyzer_engine_provider/",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         if recognizer_registry_conf_file:
             ConfigurationValidator.validate_file_path(recognizer_registry_conf_file)
+            warnings.warn(
+                "The 'recognizer_registry_conf_file' parameter is deprecated and "
+                "will be removed in a future version. Use the 'recognizer_registry' "
+                "section inside the unified analyzer configuration file instead. "
+                "See: https://microsoft.github.io/presidio/analyzer/"
+                "analyzer_engine_provider/",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
         self.configuration = self.get_configuration(conf_file=analyzer_engine_conf_file)
         self.nlp_engine_conf_file = nlp_engine_conf_file
@@ -75,6 +105,25 @@ class AnalyzerEngineProvider:
 
         ConfigurationValidator.validate_analyzer_configuration(configuration)
         logger.debug("Analyzer configuration validation passed")
+
+        # Detect deprecated partial configuration format
+        # (only supported_languages & default_score_threshold, no nlp/registry)
+        if (
+            conf_file
+            and "nlp_configuration" not in configuration
+            and "recognizer_registry" not in configuration
+        ):
+            warnings.warn(
+                f"Configuration file '{conf_file}' uses the deprecated "
+                f"partial-configuration format (only supported_languages and "
+                f"default_score_threshold). Migrate to the unified analyzer "
+                f"configuration format that includes nlp_configuration and "
+                f"recognizer_registry sections. "
+                f"See: https://microsoft.github.io/presidio/analyzer/"
+                f"analyzer_engine_provider/",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
         return configuration
 
@@ -175,7 +224,7 @@ class AnalyzerEngineProvider:
 
     @staticmethod
     def _get_full_conf_path(
-        default_conf_file: Union[Path, str] = "default_analyzer.yaml",
+        default_conf_file: Union[Path, str] = "analyzer.yaml",
     ) -> Path:
         """Return a Path to the default conf file."""
         return Path(Path(__file__).parent, "conf", default_conf_file)

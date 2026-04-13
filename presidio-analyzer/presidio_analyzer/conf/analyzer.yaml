@@ -1,0 +1,448 @@
+# ---------------------------------------------------------
+# Presidio Analyzer – Unified Configuration
+# ---------------------------------------------------------
+#
+# This is the single configuration file for Presidio Analyzer.
+# It replaces three previously separate configuration files:
+#
+#   default_analyzer.yaml      → supported_languages, default_score_threshold
+#   default.yaml               → nlp_configuration
+#   default_recognizers.yaml   → recognizer_registry
+#
+# Those files are now deprecated; use this file instead.
+#
+# Load with:
+#   from presidio_analyzer import AnalyzerEngineProvider
+#   provider = AnalyzerEngineProvider(analyzer_engine_conf_file="analyzer.yaml")
+#   engine   = provider.create_engine()
+#
+# Or via Pydantic model:
+#   from presidio_analyzer.configuration import AnalyzerConfiguration
+#   config = AnalyzerConfiguration.from_yaml("analyzer.yaml")
+# ---------------------------------------------------------
+
+supported_languages:
+  - en
+
+default_score_threshold: 0.0
+
+# ---------------------------------------------------------
+# NLP Engine Configuration
+# ---------------------------------------------------------
+# Defines the NLP engine used for tokenization, lemmatization,
+# and (optionally) named-entity recognition.
+# Supported engines: spacy, stanza, transformers.
+nlp_configuration:
+  nlp_engine_name: spacy
+  models:
+    - lang_code: en
+      model_name: en_core_web_lg
+
+  ner_model_configuration:
+    model_to_presidio_entity_mapping:
+      PER: PERSON
+      PERSON: PERSON
+      NORP: NRP
+      FAC: LOCATION
+      LOC: LOCATION
+      GPE: LOCATION
+      LOCATION: LOCATION
+      ORG: ORGANIZATION
+      ORGANIZATION: ORGANIZATION
+      DATE: DATE_TIME
+      TIME: DATE_TIME
+    low_confidence_score_multiplier: 0.4
+    low_score_entity_names: []
+    labels_to_ignore:
+      - ORGANIZATION
+      - CARDINAL
+      - EVENT
+      - LANGUAGE
+      - LAW
+      - MONEY
+      - ORDINAL
+      - PERCENT
+      - PRODUCT
+      - QUANTITY
+      - WORK_OF_ART
+
+# ---------------------------------------------------------
+# Recognizer Registry
+# ---------------------------------------------------------
+recognizer_registry:
+  global_regex_flags: 26
+
+  recognizers:
+    # -------------------------------------------------------------------
+    # Recognizers listed here can be:
+    #   - predefined: loaded from code-defined recognizer classes
+    #   - custom: pattern/deny-list recognizers defined entirely in YAML
+    #
+    # For predefined recognizers:
+    #   - Provide the recognizer 'name' matching the class name
+    #   - Use 'class_name' when the display name differs from the class
+    #   - Omitted parameters use the class defaults
+    #   - Set enabled: false to disable a recognizer
+    #
+    # For custom recognizers:
+    #   - Provide 'patterns' and/or 'deny_list'
+    #   - Must specify 'supported_entity'
+    #
+    # Multi-language recognizers create one instance per language.
+    # -------------------------------------------------------------------
+
+    # ----- Global recognizers (language-independent) -----
+    - name: CreditCardRecognizer
+      type: predefined
+      supported_languages:
+        - language: en
+          context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
+        - language: es
+          context: [tarjeta, credito, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
+        - language: it
+        - language: pl
+
+    - name: CryptoRecognizer
+      type: predefined
+
+    - name: DateRecognizer
+      type: predefined
+
+    - name: EmailRecognizer
+      type: predefined
+
+    - name: IbanRecognizer
+      type: predefined
+
+    - name: IpRecognizer
+      type: predefined
+
+    - name: MedicalLicenseRecognizer
+      type: predefined
+
+    - name: MacAddressRecognizer
+      type: predefined
+
+    - name: PhoneRecognizer
+      type: predefined
+
+    - name: UrlRecognizer
+      type: predefined
+
+    # ----- US recognizers -----
+    - name: UsBankRecognizer
+      type: predefined
+      supported_languages:
+        - en
+
+    - name: UsLicenseRecognizer
+      type: predefined
+      supported_languages:
+        - en
+
+    - name: UsItinRecognizer
+      type: predefined
+      supported_languages:
+        - en
+
+    - name: UsPassportRecognizer
+      type: predefined
+      supported_languages:
+        - en
+
+    - name: UsSsnRecognizer
+      type: predefined
+      supported_languages:
+        - en
+
+    - name: UsMbiRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: UsNpiRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    # ----- UK recognizers -----
+    - name: NhsRecognizer
+      type: predefined
+      supported_languages:
+        - en
+
+    - name: UkNinoRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: UkPassportRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: UkPostcodeRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: UkVehicleRegistrationRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    # ----- Singapore recognizers -----
+    - name: SgFinRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    # ----- Australia recognizers -----
+    - name: AuAbnRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: AuAcnRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: AuTfnRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: AuMedicareRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    # ----- Nigeria recognizers -----
+    - name: NgNinRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: NgVehicleRegistrationRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    # ----- India recognizers -----
+    - name: InPanRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: InAadhaarRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: InVehicleRegistrationRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: InPassportRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    - name: InVoterRecognizer
+      type: predefined
+      enabled: false
+
+    - name: InGstinRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    # ----- Spain recognizers -----
+    - name: EsNifRecognizer
+      type: predefined
+      supported_languages:
+        - es
+
+    - name: EsNieRecognizer
+      type: predefined
+      supported_languages:
+        - es
+
+    # ----- Italy recognizers -----
+    - name: ItDriverLicenseRecognizer
+      type: predefined
+      supported_languages:
+        - it
+
+    - name: ItFiscalCodeRecognizer
+      type: predefined
+      supported_languages:
+        - it
+
+    - name: ItVatCodeRecognizer
+      type: predefined
+      supported_languages:
+        - it
+
+    - name: ItIdentityCardRecognizer
+      type: predefined
+      supported_languages:
+        - it
+
+    - name: ItPassportRecognizer
+      type: predefined
+      supported_languages:
+        - it
+
+    # ----- Poland recognizers -----
+    - name: PlPeselRecognizer
+      type: predefined
+      supported_languages:
+        - pl
+
+    # ----- South Korea recognizers -----
+    - name: KrBrnRecognizer
+      type: predefined
+      supported_languages:
+        - ko
+        - kr
+      enabled: false
+
+    - name: KrRrnRecognizer
+      type: predefined
+      supported_languages:
+        - ko
+        - kr
+      enabled: false
+
+    - name: KrDriverLicenseRecognizer
+      type: predefined
+      supported_languages:
+        - ko
+        - kr
+      enabled: false
+
+    - name: KrFrnRecognizer
+      type: predefined
+      supported_languages:
+        - ko
+        - kr
+      enabled: false
+
+    # ----- Sweden recognizers -----
+    - name: SeOrganisationsnummerRecognizer
+      type: predefined
+      supported_languages:
+        - sv
+      enabled: false
+
+    - name: SePersonnummerRecognizer
+      type: predefined
+      supported_languages:
+        - sv
+      enabled: false
+
+    # ----- Thailand recognizers -----
+    - name: ThTninRecognizer
+      type: predefined
+      supported_languages:
+        - th
+      enabled: false
+
+    # ----- Germany recognizers -----
+    - name: DeTaxIdRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    - name: DeTaxNumberRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    - name: DePassportRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    - name: DeIdCardRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    - name: DeSocialSecurityRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    - name: DeHealthInsuranceRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    - name: DeKfzRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    - name: DeHandelsregisterRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    - name: DePlzRecognizer
+      type: predefined
+      supported_languages:
+        - de
+      enabled: false
+
+    # ----- HuggingFace NER (disabled by default) -----
+    - name: HuggingFaceNerRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+
+    # ----- LangExtract (disabled by default) -----
+    - name: BasicLangExtractRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      enabled: false
+      config_path: presidio_analyzer/conf/langextract_config_basic.yaml
+
+    # ----- Canada recognizers -----
+    - name: CaSinRecognizer
+      type: predefined
+      supported_languages:
+        - en
+        - fr
+      enabled: false

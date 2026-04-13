@@ -150,7 +150,7 @@ To add a recognizer to the list of pre-defined recognizers:
 
 1. Clone the repo.
 2. Create a file containing the new recognizer Python class.
-3. Add the recognizer to the `recognizers` in the [`default_recognizers`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) config. Details of recognizer parameters are given [Here](./recognizer_registry_provider.md#the-recognizer-parameters).
+3. Add the recognizer to the `recognizers` section in the [`analyzer.yaml`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml) configuration file. Details of recognizer parameters are given [Here](./recognizer_registry_provider.md#the-recognizer-parameters).
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
 ### Azure AI Language recognizer
@@ -231,7 +231,7 @@ Additional examples can be found in the [OpenAPI spec](../api-docs/api-docs.html
 ### Reading pattern recognizers from YAML
 
 Recognizers can be loaded from a YAML file, which allows users to add recognition logic without writing code.
-An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml).
+An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml).
 
 Once the YAML file is created, it can be loaded into the `RecognizerRegistry` instance.
 

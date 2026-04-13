@@ -174,6 +174,7 @@ if __name__ == "__main__":
         args.nlp_conf_file = args.conf_file
 
     install_models(
-        nlp_conf_file=args.nlp_conf_file or "presidio_analyzer/conf/default.yaml",
-        analyzer_conf_file=args.analyzer_conf_file,
+        nlp_conf_file=args.nlp_conf_file,
+        analyzer_conf_file=args.analyzer_conf_file
+        or "presidio_analyzer/conf/analyzer.yaml",
     )
