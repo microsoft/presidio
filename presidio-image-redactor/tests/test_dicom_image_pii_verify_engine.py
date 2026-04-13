@@ -48,7 +48,7 @@ def test_init_happy_path(ocr_engine: TesseractOCR, image_analyzer_engine: ImageA
     """
     try:
         test_engine = DicomImagePiiVerifyEngine(ocr_engine, image_analyzer_engine)
-    except:
+    except Exception:
         raise TypeError("Invalid input into initializing")
 
 

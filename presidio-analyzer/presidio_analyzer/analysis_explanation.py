@@ -21,7 +21,7 @@ class AnalysisExplanation:
         original_score: float,
         pattern_name: str = None,
         pattern: str = None,
-        validation_result: float = None,
+        validation_result: bool = None,
         textual_explanation: str = None,
         regex_flags: int = None,
     ):

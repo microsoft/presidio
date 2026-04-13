@@ -34,6 +34,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |US_DRIVER_LICENSE|A US driver license according to <https://ntsi.com/drivers-license-format/>|Pattern match and context|
 |US_ITIN | US Individual Taxpayer Identification Number (ITIN). Nine digits that start with a "9" and contain a "7" or "8" as the 4 digit.|Pattern match and context|
 |US_MBI|A US Medicare Beneficiary Identifier (MBI) with 11 alphanumeric characters.|Pattern match and context|
+|US_NPI|A US National Provider Identifier (NPI) is a 10-digit number issued to healthcare providers by CMS under HIPAA.|Pattern match, context and checksum|
 |US_PASSPORT |A US passport number with 9 digits.|Pattern match and context|
 |US_SSN|A US Social Security Number (SSN) with 9 digits.|Pattern match and context|
 
@@ -43,7 +44,9 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |--- |--- |--- |
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
 |UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
+|UK_PASSPORT|A UK passport number consists of 2 letters followed by 7 digits (e.g., AB1234567), used in passports issued from 2015 onwards.|Pattern match and context|
 |UK_POSTCODE|A UK [postcode](https://en.wikipedia.org/wiki/Postcodes_in_the_United_Kingdom) is a 5-8 character alphanumeric code used by the Royal Mail for mail sorting.|Pattern match and context|
+|UK_VEHICLE_REGISTRATION|A UK vehicle registration number (number plate) in current (2001+), prefix (1983-2001), or suffix (1963-1983) format.|Pattern match, context and validation|
 
 ### Spain
 
@@ -109,10 +112,57 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | KR_RRN     | The Korean Resident Registration Number (RRN) is a 13-digit number issued to all Korean residents. | Pattern match, context and custom logic. |
 
 
+### Nigeria
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| NG_NIN     | The Nigerian National Identification Number (NIN) is a unique 11-digit number issued by the National Identity Management Commission (NIMC). | Pattern match, context, and checksum |
+| NG_VEHICLE_REGISTRATION | Nigerian vehicle registration plate number in the current format (2011+): 3 letters (LGA code), 3 digits (serial), 2 letters (year/batch). | Pattern match and context |
+
+### Canada
+
+|FieldType|Description|Detection Method|
+|--- |--- |--- |
+|CA_SIN|A Canadian Social Insurance Number (SIN) is a 9-digit number issued by Employment and Social Development Canada (ESDC) to administer government programs. The last digit is a Luhn check digit. SINs starting with 0 or 8 are reserved and not issued.|Pattern match, context, and checksum|
+
+### Sweden
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| SE_ORGANISATIONSNUMMER    | The Swedish Organisations ID Number is a unique 10-digit number issued to all Swedish organisations. | Pattern match, context, and checksum. |
+| SE_PERSONNUMMER    | The Swedish Personal ID Number is a unique 10/12-digit number issued to all Swedish residents. The recognizer also supports Samordningsnummer (coordination numbers) issued to individuals who are not (yet) registered residents but need a Swedish identifier (e.g., temporary workers, students). | Pattern match, context, and checksum. |
+
 ### Thai
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | TH_TNIN    | The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents. | Pattern match, context and custom logic. |
+
+### Germany
+
+| Entity Type | Description | Detection Method |
+| --- | --- | --- |
+| DE_TAX_ID | German Steueridentifikationsnummer (Steuer-IdNr.): unique 11-digit personal tax identification number issued by the Bundeszentralamt für Steuern. Legal basis: §§ 139a–139e AO. | Pattern match, context and checksum (ISO 7064 Mod 11, 10) |
+| DE_TAX_NUMBER | German Steuernummer: tax number assigned by the local Finanzamt, in ELSTER unified 13-digit format or state-specific slash-separated formats. Legal basis: § 139a AO. | Pattern match and context |
+| DE_PASSPORT | German Reisepassnummer: 9-character alphanumeric document number using ICAO Doc 9303 character set. Legal basis: Passgesetz (PassG) § 4. | Pattern match and context |
+| DE_ID_CARD | German Personalausweisnummer: 9-character alphanumeric document number (nPA since Nov 2010) or legacy T+8-digit format. Legal basis: Personalausweisgesetz (PAuswG). | Pattern match and context |
+| DE_SOCIAL_SECURITY | German Rentenversicherungsnummer (RVNR): 12-character identifier encoding birth date, surname initial, serial and check digit. Legal basis: § 147 SGB VI. | Pattern match, context and checksum (DRV algorithm) |
+| DE_HEALTH_INSURANCE | German Krankenversicherungsnummer (KVNR): 10-character identifier (1 letter + 9 digits) printed on the elektronische Gesundheitskarte (eGK). Legal basis: § 290 SGB V. Special category: health data (DSGVO Art. 9). | Pattern match, context and checksum (GKV-Spitzenverband algorithm) |
+| DE_KFZ | German KFZ-Kennzeichen (vehicle registration plate): district code (1–3 letters), identifier (1–2 letters), and 1–4 digits, optionally with E (electric) or H (historic) suffix. Legal basis: Fahrzeug-Zulassungsverordnung (FZV) § 8. | Pattern match and context |
+| DE_HANDELSREGISTER | German Handelsregisternummer: commercial register number with HRA (sole traders / partnerships) or HRB (corporations) prefix followed by 1–6 digits. HRA entries directly identify natural persons (sole traders). Legal basis: §§ 9, 14 HGB, HRV. | Pattern match and context |
+| DE_PLZ | German Postleitzahl (postal code): 5-digit code in the range 01001–99998. Constitutes personal data in combination with other address fields (DSGVO Art. 4 Nr. 1). **High false-positive risk** – only reliable with address-context words present; base confidence is 0.05. Legal basis: DSGVO Art. 4 Nr. 1. | Pattern match and context (context required for actionable results) |
+
+### Medical / Clinical
+
+Detected using the `MedicalNERRecognizer` (requires the `transformers` extra). Uses the [blaze999/Medical-NER](https://huggingface.co/blaze999/Medical-NER) model by default.
+
+|Entity Type | Description | Detection Method |
+| --- | --- | --- |
+|MEDICAL_DISEASE_DISORDER | A disease or disorder (e.g. diabetes, hypertension). | NER model (HuggingFace transformers) |
+|MEDICAL_MEDICATION | A medication or drug name (e.g. metformin, aspirin). | NER model (HuggingFace transformers) |
+|MEDICAL_THERAPEUTIC_PROCEDURE | A therapeutic or diagnostic procedure (e.g. surgery, MRI). | NER model (HuggingFace transformers) |
+|MEDICAL_CLINICAL_EVENT | A clinical event (e.g. admission, discharge). | NER model (HuggingFace transformers) |
+|MEDICAL_BIOLOGICAL_ATTRIBUTE | A biological attribute or measurement (e.g. blood pressure, BMI). | NER model (HuggingFace transformers) |
+|MEDICAL_BIOLOGICAL_STRUCTURE | A biological or anatomical structure (e.g. liver, left ventricle). | NER model (HuggingFace transformers) |
+|MEDICAL_FAMILY_HISTORY | A family medical history reference. | NER model (HuggingFace transformers) |
+|MEDICAL_HISTORY | A patient medical history reference. | NER model (HuggingFace transformers) |
 
 ## Adding a custom PII entity
 
