@@ -86,7 +86,7 @@ Configuration can be done in two ways:
   - `low_confidence_score_multiplier`: A multiplier to apply to the score of entities with low confidence.
   - `low_score_entity_names`: A list of entity types to apply the low confidence score multiplier to.
 
-    The `nlp_configuration` section of the [analyzer configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml) is read during the default initialization of the `AnalyzerEngine`. Alternatively, NLP configuration can be passed directly:
+    To load NLP settings from a configuration file, use `NlpEngineProvider` with a config file such as the [analyzer configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml). Alternatively, NLP configuration can be passed directly:
 
     ```python
     from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
