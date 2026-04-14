@@ -91,7 +91,7 @@ recognizers:
     enabled: false
     
   - name: UkPostcodeRecognizer
-     supported_languages:
+    supported_languages:
     - en
     type: predefined
     enabled: false
