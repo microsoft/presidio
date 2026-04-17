@@ -238,6 +238,7 @@ def test_given_sorted_analyzer_results_merge_entities_separated_by_white_space(
     assert result.text == expected.text
     assert sorted(result.items) == sorted(expected.items)
 
+
 def test_given_analyzer_result_input_then_it_is_not_mutated():
     engine = AnonymizerEngine()
     text = "Jane Doe is a person"
@@ -256,6 +257,7 @@ def test_given_analyzer_result_input_then_it_is_not_mutated():
         original_analyzer_results, copy_analyzer_results
     ):
         assert original_result == copy_result
+
 
 def test_given_unsorted_input_then_merged_correctly():
     engine = AnonymizerEngine()
@@ -295,3 +297,86 @@ def _operate(
     return EngineResult(
         "Number: I am your new text!", [OperatorResult(0, 35, "type", "text", "hash")]
     )
+
+# ---------------------------------------------------------------------------
+# Tests for merge_entities_with_spaces parameter (issue #1932)
+# ---------------------------------------------------------------------------
+
+
+def test_when_merge_spaces_is_default_then_adjacent_entities_are_merged():
+    """Default (True) still merges adjacent same-type entities separated by spaces."""
+    engine = AnonymizerEngine()
+    text = "Jane Doe is a person"
+    analyzer_results = [
+        RecognizerResult(start=0, end=4, entity_type="PERSON", score=1.0),
+        RecognizerResult(start=5, end=8, entity_type="PERSON", score=1.0),
+    ]
+    result = engine.anonymize(text, analyzer_results)
+    assert result.text == "<PERSON> is a person"
+    assert len(result.items) == 1
+
+
+def test_when_merge_spaces_is_false_then_each_entity_is_anonymized_separately():
+    """With merge_entities_with_spaces=False, each entity is anonymized on its own."""
+    engine = AnonymizerEngine()
+    text = "Jane Doe is a person"
+    analyzer_results = [
+        RecognizerResult(start=0, end=4, entity_type="PERSON", score=1.0),
+        RecognizerResult(start=5, end=8, entity_type="PERSON", score=1.0),
+    ]
+    result = engine.anonymize(
+        text, analyzer_results, merge_entities_with_spaces=False
+    )
+    assert result.text == "<PERSON> <PERSON> is a person"
+    assert len(result.items) == 2
+
+
+def test_when_merge_spaces_is_false_then_space_separated_emails_are_all_anonymized():
+    """Reproduces issue #1925: space-separated emails must all be anonymized."""
+    engine = AnonymizerEngine()
+    text = "a@x.com b@y.com c@z.com"
+    analyzer_results = [
+        RecognizerResult(start=0, end=7, entity_type="EMAIL_ADDRESS", score=1.0),
+        RecognizerResult(start=8, end=15, entity_type="EMAIL_ADDRESS", score=1.0),
+        RecognizerResult(start=16, end=23, entity_type="EMAIL_ADDRESS", score=1.0),
+    ]
+    merged_result = engine.anonymize(text, analyzer_results)
+    assert merged_result.text == "<EMAIL_ADDRESS>"
+    assert len(merged_result.items) == 1
+
+    separate_result = engine.anonymize(
+        text, analyzer_results, merge_entities_with_spaces=False
+    )
+    assert separate_result.text == "<EMAIL_ADDRESS> <EMAIL_ADDRESS> <EMAIL_ADDRESS>"
+    assert len(separate_result.items) == 3
+
+
+def test_when_merge_spaces_is_false_then_different_entity_types_are_unaffected():
+    """Disabling merge must not change behavior for different entity types."""
+    engine = AnonymizerEngine()
+
+    # Two different entity types separated only by a space should both be anonymized
+    text = "5551234567 user@example.com"
+    analyzer_results = [
+        RecognizerResult(start=0, end=10, entity_type="PHONE_NUMBER", score=1.0),
+        RecognizerResult(start=11, end=27, entity_type="EMAIL_ADDRESS", score=1.0),
+    ]
+    result = engine.anonymize(
+        text, analyzer_results, merge_entities_with_spaces=False
+    )
+    assert result.text == "<PHONE_NUMBER> <EMAIL_ADDRESS>"
+    assert len(result.items) == 2
+
+
+def test_when_merge_spaces_is_true_then_tabs_and_newlines_are_not_merged():
+    """Merging only applies to spaces, not tabs or newlines."""
+    engine = AnonymizerEngine()
+    text = "a@x.com\tb@y.com\nc@z.com"
+    analyzer_results = [
+        RecognizerResult(start=0, end=7, entity_type="EMAIL_ADDRESS", score=1.0),
+        RecognizerResult(start=8, end=15, entity_type="EMAIL_ADDRESS", score=1.0),
+        RecognizerResult(start=16, end=23, entity_type="EMAIL_ADDRESS", score=1.0),
+    ]
+    result = engine.anonymize(text, analyzer_results)
+    assert result.text == "<EMAIL_ADDRESS>\t<EMAIL_ADDRESS>\n<EMAIL_ADDRESS>"
+    assert len(result.items) == 3
