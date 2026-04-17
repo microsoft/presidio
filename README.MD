@@ -34,11 +34,6 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ---
 
-## Are you using Presidio? We'd love to know how
-
-Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u).
-
----
 
 ### Goals
 
