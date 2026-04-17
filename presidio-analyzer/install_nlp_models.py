@@ -86,7 +86,7 @@ def _install_models_from_nlp_config(nlp_configuration: dict) -> None:
 
 
 def _download_model(engine_name: str, model_name: Union[str, Dict[str, str]]) -> None:
-    if engine_name == "spacy":
+    if engine_name == "spacy" or engine_name == "slim":
         spacy_download(model_name)
     elif engine_name == "stanza":
         if stanza:
