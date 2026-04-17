@@ -96,6 +96,9 @@ from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRe
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
 # UK recognizers
+from .country_specific.uk.uk_driving_licence_recognizer import (
+    UkDrivingLicenceRecognizer,
+)
 from .country_specific.uk.uk_nhs_recognizer import NhsRecognizer
 from .country_specific.uk.uk_nino_recognizer import UkNinoRecognizer
 from .country_specific.uk.uk_passport_recognizer import UkPassportRecognizer
@@ -211,6 +214,7 @@ __all__ = [
     "InPassportRecognizer",
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
+    "UkDrivingLicenceRecognizer",
     "UkNinoRecognizer",
     "UkPassportRecognizer",
     "UkPostcodeRecognizer",
