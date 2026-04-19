@@ -19,14 +19,18 @@ class DeVatIdRecognizer(PatternRecognizer):
     Data protection: DSGVO Art. 4 Nr. 1 (if linked to a natural person), BDSG.
 
     Format (11 characters):
-        "DE" + 9 digits
+        "DE" + 9 digits, where the 9th digit is a check digit.
 
-    Examples (fictitious): DE123456789, DE987654321
+    Examples: DE136695976, DE129273398 (both verify against the checksum)
 
-    Accuracy note: The fixed ``DE`` prefix makes this pattern very specific
-    with a very low false-positive rate.  Formal legal validity is confirmed
-    via the BZSt/EU VAT verification service, not by local format checks.
-    No formal accuracy evaluation has been performed on a labelled dataset.
+    Check digit algorithm (ISO 7064 Mod 11,10):
+        The BZSt does not publish the Prüfziffer algorithm in an official
+        Merkblatt, but the algorithm used for the USt-IdNr. is identical to
+        the one for the Steuer-IdNr. (ISO 7064 Mod 11,10). It is widely
+        adopted in community implementations such as ``python-stdnum`` and
+        VIES-adjacent validators. Returning True here means only that the
+        structural check digit is consistent — formal legal validity must
+        still be confirmed via BZSt/VIES.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -78,3 +82,35 @@ class DeVatIdRecognizer(PatternRecognizer):
             supported_language=supported_language,
             name=name,
         )
+
+    def validate_result(self, pattern_text: str) -> Optional[bool]:
+        """
+        Validate the USt-IdNr. structural check digit (ISO 7064 Mod 11,10).
+
+        Not an authoritative existence check — only confirms the 9-digit
+        body has a consistent Prüfziffer. For legal validity use BZSt/VIES.
+
+        :param pattern_text: the text to validate ("DE" + 9 digits)
+        :return: True if check digit is valid, False otherwise
+        """
+        pattern_text = pattern_text.upper().strip()
+
+        if len(pattern_text) != 11 or not pattern_text.startswith("DE"):
+            return False
+
+        digits = pattern_text[2:]
+        if not digits.isdigit():
+            return False
+
+        product = 10
+        for i in range(8):
+            total = (int(digits[i]) + product) % 10
+            if total == 0:
+                total = 10
+            product = (total * 2) % 11
+
+        check = 11 - product
+        if check == 10:
+            check = 0
+
+        return check == int(digits[8])
