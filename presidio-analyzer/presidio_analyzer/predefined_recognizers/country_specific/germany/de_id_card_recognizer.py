@@ -15,14 +15,19 @@ class DeIdCardRecognizer(PatternRecognizer):
     Data protection: DSGVO Art. 4 Nr. 1 (personenbezogene Daten), BDSG.
 
     Format (nPA, since November 2010):
-        - 9 alphanumeric characters (uppercase letters and digits)
-        - Character set: letters A–Z (excluding ambiguous chars I, O, Q, S, U)
-          and digits 0–9, per ICAO Doc 9303 / BSI TR-03110
-        - Example: L01X00T47, T22000129
+        - 9 characters: first 8 from the ICAO restricted uppercase charset
+          (excludes A, B, D, E, I, O, Q, S, U) plus 1 digit at position 9
+          (the ICAO Doc 9303 check digit).
+        - Example: L01X00T44 (verifies against ICAO)
 
     Format (old Personalausweis, before November 2010):
-        - Letter T followed by 8 digits
-        - Example: T22000129
+        - Letter T followed by 8 digits (legacy 9-char format; no ICAO
+          check digit — the trailing digit is part of the serial).
+        - Example: T22000124
+
+    Check digit algorithm (ICAO Doc 9303, nPA only):
+        Weights 7, 3, 1 repeating on positions 1–8 with letters mapped
+        A=10 … Z=35; the sum modulo 10 must equal the digit at position 9.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -32,19 +37,14 @@ class DeIdCardRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "Personalausweisnummer nPA (Strict ICAO charset, 9 chars)",
-            r"\b[CFGHJKLMNPRTVWXYZ][CFGHJKLMNPRTVWXYZ0-9]{7}[CFGHJKLMNPRTVWXYZ0-9]\b",
+            "Personalausweisnummer nPA (ICAO charset + check digit)",
+            r"\b[CFGHJKLMNPRTVWXYZ][CFGHJKLMNPRTVWXYZ0-9]{7}[0-9]\b",
             0.4,
         ),
         Pattern(
             "Personalausweisnummer alt (T + 8 Ziffern)",
             r"\bT\d{8}\b",
             0.5,
-        ),
-        Pattern(
-            "Personalausweisnummer (Relaxed, 9 alphanumeric)",
-            r"\b[A-Z][A-Z0-9]{8}\b",
-            0.15,
         ),
     ]
 
@@ -82,3 +82,40 @@ class DeIdCardRecognizer(PatternRecognizer):
             supported_language=supported_language,
             name=name,
         )
+
+    def validate_result(self, pattern_text: str) -> Optional[bool]:
+        """
+        Validate the nPA ICAO Doc 9303 check digit.
+
+        Legacy "T + 8 digits" numbers (pre-2010) are accepted at pattern
+        confidence (return ``None``) because they predate ICAO and do not
+        carry a check digit.
+
+        :param pattern_text: the text to validate (9 characters)
+        :return: True if the ICAO check matches; False if the nPA-shaped
+                 value fails the check; None for the legacy T-format which
+                 cannot be structurally validated here.
+        """
+        pattern_text = pattern_text.upper().strip()
+
+        if len(pattern_text) != 9:
+            return False
+
+        if pattern_text[0] == "T" and pattern_text[1:].isdigit():
+            return None
+
+        if not pattern_text[-1].isdigit():
+            return False
+
+        weights = [7, 3, 1]
+        total = 0
+        for i, c in enumerate(pattern_text[:-1]):
+            if c.isdigit():
+                value = int(c)
+            elif "A" <= c <= "Z":
+                value = ord(c) - ord("A") + 10
+            else:
+                return False
+            total += value * weights[i % 3]
+
+        return (total % 10) == int(pattern_text[-1])
