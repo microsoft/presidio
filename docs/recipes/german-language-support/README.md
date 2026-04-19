@@ -31,7 +31,7 @@ python -m spacy download de_core_news_md
 sample_text = """
 Sehr geehrter Herr Müller,
 
-Ihre Krankenversicherungsnummer (KVNR): A123456787
+Ihre Krankenversicherungsnummer (KVNR): A123456780
 Steuer-IdNr.: 86095742719
 Arztnummer (LANR): 123456901
 Betriebsstättennummer (BSNR): 021234568

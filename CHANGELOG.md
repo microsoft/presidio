@@ -15,6 +15,9 @@ All notable changes to this project will be documented in this file.
 
 - Added recognizer for Swedish Organisationsnummer, ID number for all Swedish oragnisations.
 
+#### Fixed
+- Fixed incorrect Prüfziffer algorithm in `DeHealthInsuranceRecognizer` (KVNR); now uses alternating factors [1,2,…,1,2] per § 290 SGB V Anlage 1 (#1972).
+
 ## [2.2.362] - 2026-03-15
 ### General
 #### Added
