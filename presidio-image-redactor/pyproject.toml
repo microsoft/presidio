@@ -36,7 +36,7 @@ dependencies = [
 [project.optional-dependencies]
 server = [
     "flask (>=1.1,<4.0.0)",
-    "gunicorn (>=20.0.0,<26.0.0)"
+    "gunicorn (>=25.3.0,<26.0.0)"
 ]
 
 [tool.poetry.group.dev.dependencies]
