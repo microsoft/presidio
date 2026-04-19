@@ -14,6 +14,24 @@ def entities():
     return ["IP_ADDRESS"]
 
 
+def assert_results_match(
+    results,
+    expected_positions,
+    expected_score_ranges,
+    entities,
+    max_score,
+):
+    ordered_results = sorted(results, key=lambda result: (result.start, result.end))
+    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
+        ordered_results, expected_positions, expected_score_ranges
+    ):
+        if fn_score == "max":
+            fn_score = max_score
+        assert_result_within_score_range(
+            res, entities[0], st_pos, fn_pos, st_score, fn_score
+        )
+
+
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
@@ -48,14 +66,9 @@ def test_when_all_ips_then_succeed(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -82,14 +95,9 @@ def test_when_ipv6_compression_then_succeed(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -117,14 +125,9 @@ def test_when_ipv6_in_context_then_succeed(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -167,14 +170,9 @@ def test_when_ipv4_mapped_then_full_span_redacted(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -210,14 +208,9 @@ def test_when_ipv4_embedded_then_full_span_redacted(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -242,14 +235,9 @@ def test_when_multiple_ips_then_all_found(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -283,14 +271,9 @@ def test_when_non_ip_pattern_then_no_match(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -326,14 +309,9 @@ def test_when_ip_at_boundary_then_correct_span(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -369,14 +347,9 @@ def test_when_invalid_ip_then_no_match(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -408,14 +381,9 @@ def test_when_special_ip_variants_then_succeed(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
 
 
 @pytest.mark.parametrize(
@@ -462,11 +430,6 @@ def test_when_cidr_notation_then_largest_span_redacted(
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
-        results, expected_positions, expected_score_ranges
-    ):
-        if fn_score == "max":
-            fn_score = max_score
-        assert_result_within_score_range(
-            res, entities[0], st_pos, fn_pos, st_score, fn_score
-        )
+    assert_results_match(
+        results, expected_positions, expected_score_ranges, entities, max_score
+    )
