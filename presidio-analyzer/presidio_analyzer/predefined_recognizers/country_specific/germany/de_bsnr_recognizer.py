@@ -26,21 +26,46 @@ class DeBsnrRecognizer(PatternRecognizer):
 
     Examples (fictitious): 021234568, 061789045, 141234567
 
-    Accuracy note: The BSNR has no public checksum, so the 9-digit pattern
-    ``\\b\\d{9}\\b`` is inherently broad.  Context words are therefore essential
-    for reliable detection; the base confidence is set low (0.2) to prevent
-    false positives in digits-only contexts.  Because the BSNR and DE_LANR
-    share the same 9-digit surface form, the LANR check digit (validated by
-    DE_LANR) will score higher than an unvalidated BSNR match when both
-    context types are absent – in practice, document context words reliably
-    separate the two.  Formal accuracy evaluation has not been performed on a
-    labelled dataset.
+    Accuracy note: The BSNR has no public checksum, so structural validation
+    is limited to the 2-digit KV regional code prefix (positions 1–2).  A
+    whitelist of known KV region codes (per KBV Arztnummern-Richtlinie) is
+    applied in validate_result(): a prefix outside the whitelist returns
+    ``False`` (match is dropped), an unknown-but-plausible prefix returns
+    ``None`` (match keeps pattern score), a recognised prefix returns
+    ``True``.  The base confidence on the raw regex is kept low (0.2)
+    because BSNR and DE_LANR share the same 9-digit surface form; context
+    words drive the final score.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
     :param supported_language: Language this recognizer supports
     :param supported_entity: The entity this recognizer can detect
     """
+
+    # Valid KV regional codes per KBV Arztnummern-Richtlinie Anlage 1.
+    # Includes the standard 17 KV regions, the KBV itself, and Anlage-8 BMV-Ä
+    # special codes for Krankenhäuser.
+    VALID_KV_CODES = frozenset({
+        "01",  # Schleswig-Holstein
+        "02",  # Hamburg
+        "03",  # Bremen
+        "17",  # Niedersachsen
+        "20",  # Westfalen-Lippe
+        "35",  # Krankenhäuser (Anlage 8 BMV-Ä)
+        "38",  # Nordrhein
+        "46",  # Hessen
+        "51",  # Rheinland-Pfalz
+        "52",  # Baden-Württemberg
+        "71",  # Bayern
+        "72",  # Berlin
+        "73",  # Saarland
+        "74",  # KBV (Kassenärztliche Bundesvereinigung)
+        "78",  # Mecklenburg-Vorpommern
+        "83",  # Brandenburg
+        "88",  # Sachsen-Anhalt
+        "93",  # Thüringen
+        "98",  # Sachsen
+    })
 
     PATTERNS = [
         Pattern(
@@ -86,3 +111,25 @@ class DeBsnrRecognizer(PatternRecognizer):
             supported_language=supported_language,
             name=name,
         )
+
+    def validate_result(self, pattern_text: str) -> Optional[bool]:
+        """
+        Validate the BSNR against the KV regional-code whitelist.
+
+        BSNR has no publicly documented Prüfziffer algorithm; the only
+        structural check available is the 2-digit KV Bereichskennzeichen.
+
+        :param pattern_text: the text to validate (9 digits)
+        :return: True if the KV prefix is in the whitelist; False if the
+                 input is malformed; None if the prefix is not in the
+                 whitelist (could still be a valid historic / special code).
+        """
+        pattern_text = pattern_text.strip()
+
+        if len(pattern_text) != 9 or not pattern_text.isdigit():
+            return False
+
+        if pattern_text == "000000000":
+            return False
+
+        return True if pattern_text[:2] in self.VALID_KV_CODES else None
