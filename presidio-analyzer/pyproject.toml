@@ -44,7 +44,7 @@ transformers = [
     "spacy_huggingface_pipelines (>=0.0.1,<1.0.0)"]
 
 stanza = [
-    "stanza (>=1.10.1,<2.0.0)",
+    "stanza (>=1.11.1,<2.0.0)",
 ]
 azure-ai-language = [
     "azure-ai-textanalytics (>=5.3.0,<6.0.0)",
