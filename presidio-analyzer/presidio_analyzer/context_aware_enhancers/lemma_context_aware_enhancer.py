@@ -16,7 +16,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
     Context words might enhance or reduce confidence score of a recognized entity:
     - Positive context: boosts confidence (e.g., "social" for SSN)
     - Negative context: reduces confidence (e.g., "test" for SSN)
-    
+
     LemmaContextAwareEnhancer is an implementation of Lemma based context aware logic,
     it compares spacy lemmas of each word in context of the matched entity to given
     context and the recognizer context words,
@@ -51,6 +51,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             min_score_with_context_similarity=min_score_with_context_similarity,
             context_prefix_count=context_prefix_count,
             context_suffix_count=context_suffix_count,
+            negative_context_penalty=negative_context_penalty,
         )
         if context_matching_mode not in ["whole_word", "substring"]:
             raise ValueError(
@@ -58,7 +59,6 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                 f"Got: {context_matching_mode}"
             )
         self.context_matching_mode = context_matching_mode
-        self.negative_context_penalty = negative_context_penalty
 
     def enhance_using_context(
         self,
@@ -67,6 +67,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         nlp_artifacts: NlpArtifacts,
         recognizers: List[EntityRecognizer],
         context: Optional[List[str]] = None,
+        negative_context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
         """
         Update results in case the lemmas of surrounding words or input context
@@ -85,6 +86,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                               accuracy of the context enhancement process
         :param recognizers: the list of recognizers
         :param context: list of context words
+        :param negative_context: list of negative context words to reduce confidence
         """  # noqa: D205,D400
 
         # create a deep copy of the results object, so we can manipulate it
@@ -98,6 +100,12 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             context = []
         else:
             context = [word.lower() for word in context]
+
+        # Create empty list in None or lowercase all negative context words in the list
+        if not negative_context:
+            negative_context = []
+        else:
+            negative_context = [word.lower() for word in negative_context]
 
         # Sanity
         if nlp_artifacts is None:
@@ -144,30 +152,55 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             # combine other sources of context with surrounding words
             surrounding_words.extend(context)
 
-            supportive_context_word = self._find_supportive_word_in_context(
-                surrounding_words, recognizer.context, self.context_matching_mode
+            # Check if result was already boosted by recognizer to avoid double boost
+            already_boosted = result.recognition_metadata.get(
+                RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
             )
-            if supportive_context_word != "":
-                result.score += self.context_similarity_factor
-                result.score = max(result.score, self.min_score_with_context_similarity)
-                result.score = min(result.score, ContextAwareEnhancer.MAX_SCORE)
 
-                # Update the explainability object with context information
-                # helped to improve the score
-                result.analysis_explanation.set_supportive_context_word(
-                    supportive_context_word
+            # Apply positive context only if not already boosted
+            if not already_boosted:
+                supportive_context_word = self._find_supportive_word_in_context(
+                    surrounding_words, recognizer.context, self.context_matching_mode
                 )
-                result.analysis_explanation.set_improved_score(result.score)
+                if supportive_context_word != "":
+                    result.score += self.context_similarity_factor
+                    result.score = max(
+                        result.score, self.min_score_with_context_similarity
+                    )
+                    result.score = min(result.score, ContextAwareEnhancer.MAX_SCORE)
+
+                    # Update the explainability object with context information
+                    # helped to improve the score
+                    result.analysis_explanation.set_supportive_context_word(
+                        supportive_context_word
+                    )
+                    result.analysis_explanation.set_improved_score(result.score)
 
             # Apply negative context penalty if recognizer has negative_context defined
+            # or if negative_context is provided at runtime
+            # This is independent of positive boost to always catch negative context
+            effective_negative_context = []
             if recognizer.negative_context:
+                effective_negative_context.extend(recognizer.negative_context)
+            if negative_context:
+                effective_negative_context.extend(negative_context)
+
+            if effective_negative_context:
                 negative_context_word = self._find_supportive_word_in_context(
-                    surrounding_words, recognizer.negative_context, self.context_matching_mode
+                    surrounding_words,
+                    effective_negative_context,
+                    self.context_matching_mode,
                 )
                 if negative_context_word != "":
                     result.score -= self.negative_context_penalty
                     result.score = max(result.score, ContextAwareEnhancer.MIN_SCORE)
-                    logger.debug("Applied negative context penalty for word '%s'", negative_context_word)
+                    logger.debug(
+                        "Applied negative context penalty for word '%s'",
+                        negative_context_word,
+                    )
+                    # Update explanation to reflect the final score
+                    # after negative penalty
+                    result.analysis_explanation.set_improved_score(result.score)
         return results
 
     @staticmethod

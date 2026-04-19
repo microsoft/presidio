@@ -123,29 +123,35 @@ class RecognizerListLoader:
             or "supported_languages" not in recognizer_conf
             or recognizer_conf["supported_languages"] is None
         ):
+            negative_context_list = (
+                RecognizerListLoader._get_recognizer_negative_context(
+                    recognizer=recognizer_conf
+                )
+            )
             return [
                 {
                     "supported_language": language,
                     "context": RecognizerListLoader._get_recognizer_context(
                         recognizer=recognizer_conf
                     ),
-                    "negative_context": RecognizerListLoader._get_recognizer_negative_context(
-                        recognizer=recognizer_conf
-                    ),
+                    "negative_context": negative_context_list,
                 }
                 for language in supported_languages
             ]
 
         if isinstance(recognizer_conf["supported_languages"][0], str):
+            negative_context_list = (
+                RecognizerListLoader._get_recognizer_negative_context(
+                    recognizer=recognizer_conf
+                )
+            )
             return [
                 {
                     "supported_language": language,
                     "context": RecognizerListLoader._get_recognizer_context(
                         recognizer=recognizer_conf
                     ),
-                    "negative_context": RecognizerListLoader._get_recognizer_negative_context(
-                        recognizer=recognizer_conf
-                    ),
+                    "negative_context": negative_context_list,
                 }
                 for language in recognizer_conf["supported_languages"]
             ]
