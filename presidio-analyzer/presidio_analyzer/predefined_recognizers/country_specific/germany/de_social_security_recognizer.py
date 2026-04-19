@@ -28,15 +28,23 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
                    Ergänzungsmerkmal)
         Pos 12:    Prüfziffer (check digit)
 
-    Example (fictitious): 65070803A012
+    Example: 15070649C103 (canonical example, DRV technical documentation)
 
-    Check digit algorithm (Deutsche Rentenversicherung):
+    Check digit algorithm (VKVV § 4 / Deutsche Rentenversicherung):
         1. Replace the letter at position 9 with its 2-digit ordinal value
            (A=01, B=02, …, Z=26), yielding an effective 13-digit string.
-        2. Apply weights [2,1,2,1,2,1,2,1,2,1,2,1] to the first 12 effective digits.
-        3. For each product ≥ 10, replace it with the sum of its digits.
-        4. Sum all 12 values, compute sum mod 10.
-        5. The result must equal the check digit at position 12 (pos 13 in effective).
+        2. Apply weights [2, 1, 2, 5, 7, 1, 2, 1, 2, 1, 2, 1] to the first 12
+           effective digits.
+        3. For each product, take the cross-sum (Quersumme) of its digits
+           (products < 10 remain unchanged; e.g. 35 → 3+5 = 8).
+        4. Sum all 12 cross-sums, compute sum mod 10.
+        5. The result must equal the check digit at position 12.
+
+    Worked example for 15070649C103:
+        effective = '15070649' + '03' (C=03) + '10' = '150706490310'
+        × weights = 2,5,0,35,0,6,8,9,0,3,2,0
+        cross-sums = 2,5,0, 8,0,6,8,9,0,3,2,0 = 43
+        43 mod 10 = 3 → matches check digit '3'
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -99,10 +107,10 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
-        Validate the Rentenversicherungsnummer using the official checksum.
+        Validate the Rentenversicherungsnummer using the VKVV § 4 checksum.
 
-        Algorithm source: Deutsche Rentenversicherung Bund, technical specification
-        for RVNR validation.
+        Algorithm source: Verordnung über die Vergabe der Versicherungsnummer
+        (VKVV) § 4, Deutsche Rentenversicherung technical specification.
 
         :param pattern_text: the text to validate (12 characters)
         :return: True if valid, False if invalid
@@ -118,18 +126,14 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
         letter = pattern_text[8]
         letter_val = str(ord(letter) - ord("A") + 1).zfill(2)
 
-        # Effective 12-digit string:
-        # positions 1-8 + letter as 2 digits + positions 10-11
         effective = pattern_text[:8] + letter_val + pattern_text[9:11]
 
         check_digit = int(pattern_text[11])
-        weights = [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1]
+        weights = [2, 1, 2, 5, 7, 1, 2, 1, 2, 1, 2, 1]
 
         total = 0
         for digit_char, weight in zip(effective, weights):
             product = int(digit_char) * weight
-            if product >= 10:
-                product = (product // 10) + (product % 10)
-            total += product
+            total += (product // 10) + (product % 10)
 
         return (total % 10) == check_digit
