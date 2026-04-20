@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 
 - Added recognizer for Swedish Organisationsnummer, ID number for all Swedish oragnisations.
 
+- Turkish PII recognizer for `TR_NATIONAL_ID` (TCKN) to identify Turkish National Identification Numbers using pattern match, context, and NVI checksum validation. Disabled by default.
+
 ## [2.2.362] - 2026-03-15
 ### General
 #### Added

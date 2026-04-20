@@ -136,6 +136,12 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | TH_TNIN    | The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents. | Pattern match, context and custom logic. |
 
+### Turkey
+
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| TR_NATIONAL_ID    | The Turkish National Identification Number (TCKN) is a unique 11-digit number issued to all Turkish citizens. | Pattern match, context and checksum. |
+
 ### Germany
 
 | Entity Type | Description | Detection Method |
