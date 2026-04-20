@@ -26,9 +26,9 @@ dependencies = [
     "spacy (>=3.4.4,!=3.7.0,<4.0.0)",
     "regex (>=2023.0.0)",
     "tldextract (>=3.0.0,<6.0.0)",
-    "pyyaml (>=6.0.0,<7.0.0)",
+    "pyyaml (>=6.0.3,<7.0.0)",
     "phonenumbers (>=8.12,<10.0.0)",
-    "pydantic (>=2.0.0,<3.0.0)",
+    "pydantic (>=2.12.5,<3.0.0)",
 ]
 
 [project.optional-dependencies]
@@ -41,13 +41,13 @@ transformers = [
     "transformers (>=4.0.0,<6.0.0)",
     "accelerate (>=0.20.0,<2.0.0)",
     "huggingface_hub (>=0.20.0,<2.0.0)",
-    "spacy_huggingface_pipelines (>=0.0.1,<1.0.0)"]
+    "spacy_huggingface_pipelines (>=0.0.4,<1.0.0)"]
 
 stanza = [
-    "stanza (>=1.10.1,<2.0.0)",
+    "stanza (>=1.11.1,<2.0.0)",
 ]
 azure-ai-language = [
-    "azure-ai-textanalytics (>=5.3.0,<6.0.0)",
+    "azure-ai-textanalytics (>=5.4.0,<6.0.0)",
     "azure-core (>=1.20.0,<2.0.0)",
 ]
 ahds = [
@@ -57,7 +57,7 @@ ahds = [
 gliner = [
     "transformers",
     "huggingface_hub",
-    "gliner (>=0.2.13,<1.0.0)",
+    "gliner (>=0.2.26,<1.0.0)",
     "onnxruntime (>=1.19, <1.24.1) ; python_version == '3.10'",
     "onnxruntime (>=1.19) ; python_version > '3.10'"
 ]
