@@ -28,7 +28,7 @@ dependencies = [
     "matplotlib (>=3.6.0,<4.0.0)",
     "pydicom (>=2.3.0,<4.0.0)",
     "pypng (>=0.20220715.0,<1.0.0)",
-    "azure-ai-formrecognizer (>=3.3.0,<4.0.0)",
+    "azure-ai-formrecognizer (>=3.3.3,<4.0.0)",
     "opencv-python (>=4.13.0.92,<5.0.0)",
     "python-gdcm (>=3.0.24.1,<4.0.0)",
     "spacy >=3.8.7,<4.0.0 ; python_version >= '3.13'"]
