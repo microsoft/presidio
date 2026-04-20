@@ -42,6 +42,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 
 |Entity Type|Description|Detection Method|
 |--- |--- |--- |
+|UK_DRIVING_LICENCE|UK driving licence number issued by the DVLA. A 16-character alphanumeric string encoding surname, date of birth, and initials.|Pattern match, context and validation|
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
 |UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
 |UK_PASSPORT|A UK passport number consists of 2 letters followed by 7 digits (e.g., AB1234567), used in passports issued from 2015 onwards.|Pattern match and context|
