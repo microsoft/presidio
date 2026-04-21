@@ -32,7 +32,9 @@ class DePassportRecognizer(PatternRecognizer):
 
     Worked example for C01X00T41:
         values = 12, 0, 1, 33, 0, 0, 29, 4
-        products = 84, 0, 1, 99, 0, 0, 29, 12 → sum = 225 + … (see test)
+        weights = 7, 3, 1, 7, 3, 1, 7, 3
+        products = 84, 0, 1, 231, 0, 0, 203, 12 → sum = 531
+        531 mod 10 = 1 → matches check digit '1'
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection

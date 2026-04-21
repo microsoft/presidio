@@ -19,13 +19,14 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
 
     Format (12 characters):
         Pos 1–2:   Bereichsnummer (2 digits, issuing regional office code, 01–99)
-        Pos 3–4:   Geburtstag (birth day, 01–31; or 51–81 for women with
-                   Ergänzungsmerkmal)
+        Pos 3–4:   Geburtstag (birth day, 01–31; or 51–81 with +50
+                   Ergänzungsmerkmal to disambiguate otherwise identical
+                   numbers — gender-agnostic)
         Pos 5–6:   Geburtsmonat (birth month, 01–12)
         Pos 7–8:   Geburtsjahr (last 2 digits of birth year)
         Pos 9:     Buchstabenkennung (first letter of birth surname, A–Z)
-        Pos 10–11: Seriennummer (2-digit ordinal, 01–49 male / 50–99 female as
-                   Ergänzungsmerkmal)
+        Pos 10–11: Seriennummer / Geschlechtskennung (00–49 male,
+                   50–99 female)
         Pos 12:    Prüfziffer (check digit)
 
     Example: 15070649C103 (canonical example, DRV technical documentation)

@@ -21,10 +21,11 @@ class DeBsnrRecognizer(PatternRecognizer):
 
     Format (9 digits):
         Pos 1–2:  KV-Bereichskennzeichen (regional KV code, e.g. 02 Hamburg,
-                  06 Nordrhein, 14 Berlin)
+                  38 Nordrhein, 72 Berlin; see VALID_KV_CODES below for the
+                  full whitelist per KBV Arztnummern-Richtlinie Anlage 1)
         Pos 3–9:  Laufende Nummer (sequential number assigned by KV)
 
-    Examples (fictitious): 021234568, 061789045, 141234567
+    Examples (fictitious): 021234568, 381789045, 721234567
 
     Accuracy note: The BSNR has no public checksum, so structural validation
     is limited to the 2-digit KV regional code prefix (positions 1–2).  A
