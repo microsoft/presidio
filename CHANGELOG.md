@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Fixed incorrect check-digit weights in `DeSocialSecurityRecognizer` (RVNR); now uses VKVV § 4 weights [2,1,2,5,7,1,2,1,2,1,2,1]. Previous weights diverged from the Deutsche Rentenversicherung specification and rejected the canonical DRV example 15070649C103.
 - Fixed incorrect check-digit algorithm in `DeLanrRecognizer`; now uses KBV Arztnummern-Richtlinie weights [4,9,4,9,4,9] without the spurious Quersumme step, and the complement-to-10 formula `(10 − sum mod 10) mod 10`. Previous weights and formula were internally self-consistent only.
 - Enforced post-2016 BZSt repetition rule in `DeTaxIdRecognizer` (no digit may appear more than three times in positions 1–10).
+- Registered `DeLanrRecognizer`, `DeBsnrRecognizer`, `DeVatIdRecognizer` and `DeFuehrerscheinRecognizer` in the default registry (previously imported but missing from `conf/default_recognizers.yaml`, so they were unreachable via the default registry).
 
 #### Added
 - ISO 7064 Mod 11,10 structural checksum in `DeVatIdRecognizer`. Algorithm identical to `DeTaxIdRecognizer`; widely used by community validators (python-stdnum, VIES-adjacent).
