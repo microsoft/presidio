@@ -14,6 +14,8 @@ Pre-calculated valid examples:
   L01X00T44  – computed from prefix L01X00T4 (check 4)
   CZ6311T03  – computed from prefix CZ6311T0 (check 3)
   G00000002  – all-zero stress test, check 2
+  C01X00T41  – matches the worked example in the recognizer docstring
+               (products 84+0+1+231+0+0+203+12 = 531 → check 1)
 """
 import pytest
 
@@ -41,6 +43,8 @@ def entities():
         ("L01X00T44", 1, ((0, 9),)),
         ("CZ6311T03", 1, ((0, 9),)),
         ("G00000002", 1, ((0, 9),)),
+        # Mirrors the worked example in the recognizer docstring
+        ("C01X00T41", 1, ((0, 9),)),
         # In running text
         ("Reisepass C01234565 ausgestellt am 01.01.2020.", 1, ((10, 19),)),
         ("Pass-Nr.: F12345671", 1, ((10, 19),)),
@@ -76,6 +80,8 @@ def test_when_all_de_passports_then_succeed(
         ("L01X00T44", True),
         ("CZ6311T03", True),
         ("G00000002", True),
+        # Mirrors the worked example in the recognizer docstring
+        ("C01X00T41", True),
         # Lowercase — upper() path
         ("c01234565", True),
         # Invalid check digits
