@@ -14,6 +14,7 @@ class TrNationalIdRecognizer(PatternRecognizer):
 
     Checksum validation based on the official Nüfus ve Vatandaşlık İşleri
     Genel Müdürlüğü (NVI) algorithm, referenced in KVKK compliance guidelines.
+    See: https://tckimlik.nvi.gov.tr/ (NVİ official service portal)
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
