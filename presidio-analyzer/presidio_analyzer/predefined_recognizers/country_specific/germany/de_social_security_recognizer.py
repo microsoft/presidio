@@ -33,9 +33,12 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
 
     Check digit algorithm (VKVV § 4 / Deutsche Rentenversicherung):
         1. Replace the letter at position 9 with its 2-digit ordinal value
-           (A=01, B=02, …, Z=26), yielding an effective 13-digit string.
-        2. Apply weights [2, 1, 2, 5, 7, 1, 2, 1, 2, 1, 2, 1] to the first 12
-           effective digits.
+           (A=01, B=02, …, Z=26). This yields 12 data digits (positions
+           1–8 of the original, plus 2 letter-ordinal digits, plus
+           positions 10–11) followed by the check digit at position 12.
+        2. Apply weights [2, 1, 2, 5, 7, 1, 2, 1, 2, 1, 2, 1] to the 12
+           data digits (the check digit itself is not part of the
+           weighted sum).
         3. For each product, take the cross-sum (Quersumme) of its digits
            (products < 10 remain unchanged; e.g. 35 → 3+5 = 8).
         4. Sum all 12 cross-sums, compute sum mod 10.
