@@ -119,12 +119,12 @@ class DeBsnrRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:
-        """
+        r"""
         Validate the BSNR structurally.
 
         BSNR has no publicly documented Prüfziffer algorithm, so this
         method can only drop clearly invalid inputs. It does NOT promote
-        structurally-valid matches to MAX_SCORE — the `\\b\\d{9}\\b`
+        structurally-valid matches to MAX_SCORE — the ``\b\d{9}\b``
         base pattern is too broad for that to be safe on a 2-digit
         prefix check alone. Final confidence on valid-shaped BSNRs is
         driven by context words via the ContextAwareEnhancer.
