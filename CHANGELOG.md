@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 #### Added
 - ISO 7064 Mod 11,10 structural checksum in `DeVatIdRecognizer`. Algorithm identical to `DeTaxIdRecognizer`; widely used by community validators (python-stdnum, VIES-adjacent).
 - ICAO Doc 9303 MRZ checksum validation in `DePassportRecognizer` and `DeIdCardRecognizer` (weights 7, 3, 1 repeating; letters A=10…Z=35; sum mod 10).
-- KV regional-code whitelist defense-in-depth check in `DeBsnrRecognizer` per KBV Arztnummern-Richtlinie Anlage 1 (no public checksum exists for BSNR).
+- Structural validation improvements in `DeBsnrRecognizer` per KBV Arztnummern-Richtlinie Anlage 1; valid KV regional codes are defined for defense-in-depth/documentation purposes, but unknown prefixes are not currently rejected (no public checksum exists for BSNR).
 
 ## [2.2.362] - 2026-03-15
 ### General
