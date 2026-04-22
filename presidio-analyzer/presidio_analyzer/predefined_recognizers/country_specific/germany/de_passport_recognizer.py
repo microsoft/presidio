@@ -42,16 +42,18 @@ class DePassportRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    # Only the ICAO-restricted charset is used. A previous relaxed
+    # pattern allowing any [A-Z] first character was removed: it would
+    # accept forbidden letters (A, B, D, E, I, O, Q, S, U) and
+    # validate_result would still compute a MRZ check digit for them,
+    # occasionally upgrading non-German or obviously-invalid strings to
+    # MAX_SCORE. The strict pattern already covers every legitimate
+    # German passport number.
     PATTERNS = [
         Pattern(
             "Reisepassnummer (Strict ICAO charset)",
             r"\b[CFGHJKLMNPRTVWXYZ][CFGHJKLMNPRTVWXYZ0-9]{7}[0-9]\b",
             0.4,
-        ),
-        Pattern(
-            "Reisepassnummer (Relaxed)",
-            r"\b[A-Z][A-Z0-9]{7}[0-9]\b",
-            0.2,
         ),
     ]
 
@@ -102,6 +104,13 @@ class DePassportRecognizer(PatternRecognizer):
         pattern_text = pattern_text.upper().strip()
 
         if len(pattern_text) != 9 or not pattern_text[-1].isdigit():
+            return False
+
+        # ICAO Doc 9303 excludes these visually-ambiguous letters from
+        # travel-document serial numbers. Reject outright so the weighted
+        # checksum cannot accidentally mark a non-ICAO string as valid.
+        forbidden = set("ABDEIOQSU")
+        if any(c in forbidden for c in pattern_text[:-1]):
             return False
 
         weights = [7, 3, 1]

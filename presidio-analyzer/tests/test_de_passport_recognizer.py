@@ -92,6 +92,10 @@ def test_when_all_de_passports_then_succeed(
         ("C012345678", False),
         # Last char must be digit
         ("C0123456A", False),
+        # ICAO-forbidden letters in the first 8 positions must never
+        # be accepted even if the check digit happens to be correct
+        ("A01234567", False),
+        ("IOQSUBDE1", False),
     ],
 )
 def test_when_de_passport_validated_then_checksum_result_is_correct(
