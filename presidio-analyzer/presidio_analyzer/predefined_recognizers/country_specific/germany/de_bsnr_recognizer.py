@@ -27,15 +27,20 @@ class DeBsnrRecognizer(PatternRecognizer):
 
     Examples (fictitious): 021234568, 381789045, 721234567
 
-    Accuracy note: The BSNR has no public checksum, so structural validation
-    is limited to the 2-digit KV regional code prefix (positions 1–2).  A
-    whitelist of known KV region codes (per KBV Arztnummern-Richtlinie) is
-    applied in validate_result(): a prefix outside the whitelist returns
-    ``False`` (match is dropped), an unknown-but-plausible prefix returns
-    ``None`` (match keeps pattern score), a recognised prefix returns
-    ``True``.  The base confidence on the raw regex is kept low (0.2)
-    because BSNR and DE_LANR share the same 9-digit surface form; context
-    words drive the final score.
+    Accuracy note: The BSNR has no public Prüfziffer algorithm, so
+    validate_result cannot give positive evidence of a real BSNR; it can
+    only drop clearly invalid inputs (wrong length, non-digit, all-zero).
+    All structurally-plausible 9-digit inputs therefore return ``None``
+    from validate_result: the match keeps its base pattern score (0.2)
+    and the ContextAwareEnhancer drives final confidence via context
+    words ("Betriebsstättennummer", "BSNR", "Praxis", …).
+
+    VALID_KV_CODES below lists the 2-digit regional codes documented in
+    KBV Arztnummern-Richtlinie Anlage 1. It is retained for reference
+    and future opt-in strict validation but is intentionally NOT used
+    to upgrade whitelisted-prefix matches to MAX_SCORE — the `\b\d{9}\b`
+    pattern is too broad to justify that upgrade on a 2-digit-prefix
+    check alone.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -115,15 +120,19 @@ class DeBsnrRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
-        Validate the BSNR against the KV regional-code whitelist.
+        Validate the BSNR structurally.
 
-        BSNR has no publicly documented Prüfziffer algorithm; the only
-        structural check available is the 2-digit KV Bereichskennzeichen.
+        BSNR has no publicly documented Prüfziffer algorithm, so this
+        method can only drop clearly invalid inputs. It does NOT promote
+        structurally-valid matches to MAX_SCORE — the `\\b\\d{9}\\b`
+        base pattern is too broad for that to be safe on a 2-digit
+        prefix check alone. Final confidence on valid-shaped BSNRs is
+        driven by context words via the ContextAwareEnhancer.
 
         :param pattern_text: the text to validate (9 digits)
-        :return: True if the KV prefix is in the whitelist; False if the
-                 input is malformed; None if the prefix is not in the
-                 whitelist (could still be a valid historic / special code).
+        :return: False if the input is malformed (wrong length,
+                 non-digit, or all-zero); None otherwise (keep pattern
+                 score, let context drive confidence).
         """
         pattern_text = pattern_text.strip()
 
@@ -133,4 +142,4 @@ class DeBsnrRecognizer(PatternRecognizer):
         if pattern_text == "000000000":
             return False
 
-        return True if pattern_text[:2] in self.VALID_KV_CODES else None
+        return None
