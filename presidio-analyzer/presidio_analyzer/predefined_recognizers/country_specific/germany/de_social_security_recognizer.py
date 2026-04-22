@@ -116,6 +116,11 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
         Algorithm source: Verordnung über die Vergabe der Versicherungsnummer
         (VKVV) § 4, Deutsche Rentenversicherung technical specification.
 
+        Additionally enforces the birth-day (01–31 or 51–81 with +50
+        Ergänzungsmerkmal) and birth-month (01–12) ranges from the spec
+        so that a relaxed-pattern match with an impossible date cannot
+        be promoted to MAX_SCORE by a lucky checksum collision.
+
         :param pattern_text: the text to validate (12 characters)
         :return: True if valid, False if invalid
         """
@@ -125,6 +130,18 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
             return False
 
         if not re.match(r"^\d{8}[A-Z]\d{3}$", pattern_text):
+            return False
+
+        # VKVV § 4: Pos 3–4 encodes the birth day (01–31, or 51–81 with
+        # +50 Ergänzungsmerkmal); Pos 5–6 the birth month (01–12). These
+        # are structural invariants of a real RVNR — enforce them here so
+        # that a relaxed-pattern match with an impossible date cannot be
+        # promoted to MAX_SCORE by a lucky checksum.
+        day = int(pattern_text[2:4])
+        month = int(pattern_text[4:6])
+        if not (1 <= day <= 31 or 51 <= day <= 81):
+            return False
+        if not 1 <= month <= 12:
             return False
 
         letter = pattern_text[8]

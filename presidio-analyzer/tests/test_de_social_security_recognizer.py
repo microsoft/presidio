@@ -83,6 +83,14 @@ def test_when_all_de_social_security_numbers_then_succeed(
         # Wrong length
         ("15070649C10",  False),
         ("15070649C1030", False),
+        # Impossible day (42 is between 31 and 51, both excluded)
+        ("15420649C103", False),
+        # Impossible day (85 > 81)
+        ("15850649C103", False),
+        # Impossible month (00)
+        ("15070049C103", False),
+        # Impossible month (13)
+        ("15071349C103", False),
     ],
 )
 def test_when_de_social_security_validated_then_checksum_result_is_correct(
