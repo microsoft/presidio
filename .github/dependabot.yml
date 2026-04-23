@@ -138,6 +138,15 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
+  - package-ecosystem: "pip"
+    directory: "/presidio"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "python"
+
   # Monitor Docker dependencies
   - package-ecosystem: "docker"
     directory: "/presidio-analyzer"
@@ -151,7 +160,10 @@ updates:
       # Allow only patch/micro and digest updates for python; block major and minor version bumps
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
-      
+    groups:
+      docker-deps:
+        patterns: ["*"]
+
   - package-ecosystem: "docker"
     directory: "/presidio-anonymizer"
     schedule:
@@ -164,7 +176,10 @@ updates:
       # Allow only patch/micro and digest updates for python; block major and minor version bumps
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
-      
+    groups:
+      docker-deps:
+        patterns: ["*"]
+
   - package-ecosystem: "docker"
     directory: "/presidio-image-redactor"
     schedule:
@@ -177,7 +192,10 @@ updates:
       # Allow only patch/micro and digest updates for python; block major and minor version bumps
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
-      
+    groups:
+      docker-deps:
+        patterns: ["*"]
+
   - package-ecosystem: "docker-compose"
     directory: "/"
     schedule:
@@ -195,3 +213,6 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+    groups:
+      actions-deps:
+        patterns: ["*"]
