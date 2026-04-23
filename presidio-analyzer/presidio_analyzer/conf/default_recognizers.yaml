@@ -254,6 +254,12 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: TrNationalIdRecognizer
+    supported_languages:
+    - tr
+    type: predefined
+    enabled: false
+
   - name: HuggingFaceNerRecognizer
     supported_languages:
     - en
