@@ -14,15 +14,27 @@ class DePassportRecognizer(PatternRecognizer):
     Legal basis: Passgesetz (PassG) § 4, Passverordnung (PassV).
     Data protection: DSGVO Art. 4 Nr. 1 (personenbezogene Daten), BDSG.
 
-    Format:
-        - 9 alphanumeric characters (uppercase letters from the limited set
+    Format (9 characters total):
+        - 8 alphanumeric characters (uppercase letters from the limited set
           C, F, G, H, J, K, L, M, N, P, R, T, V, W, X, Y, Z and digits 0–9)
-        - First character: typically a letter from the series identifier
-        - Followed by 8 alphanumeric characters
-        - Example: C01X00T47, F20400481
+          followed by
+        - 1 digit at position 9 — the ICAO Doc 9303 check digit over the
+          first 8 characters.
+        - Example: C01X00T41 (F20400481 verifies against ICAO)
 
-    The character set excludes visually ambiguous characters (I, O, Q, S, U)
-    as per ICAO Doc 9303 (Machine Readable Travel Documents) specifications.
+    Character set excludes visually ambiguous letters (A, B, D, E, I, O, Q,
+    S, U) per ICAO Doc 9303 Machine Readable Travel Documents.
+
+    Check digit algorithm (ICAO Doc 9303):
+        - Letters A=10, B=11, …, Z=35; digits keep their face value.
+        - Apply weights 7, 3, 1 repeating to the first 8 characters.
+        - Sum the products, take sum mod 10 — that is the 9th digit.
+
+    Worked example for C01X00T41:
+        values = 12, 0, 1, 33, 0, 0, 29, 4
+        weights = 7, 3, 1, 7, 3, 1, 7, 3
+        products = 84, 0, 1, 231, 0, 0, 203, 12 → sum = 531
+        531 mod 10 = 1 → matches check digit '1'
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -30,16 +42,18 @@ class DePassportRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    # Only the ICAO-restricted charset is used. A previous relaxed
+    # pattern allowing any [A-Z] first character was removed: it would
+    # accept forbidden letters (A, B, D, E, I, O, Q, S, U) and
+    # validate_result would still compute a MRZ check digit for them,
+    # occasionally upgrading non-German or obviously-invalid strings to
+    # MAX_SCORE. The strict pattern already covers every legitimate
+    # German passport number.
     PATTERNS = [
         Pattern(
             "Reisepassnummer (Strict ICAO charset)",
             r"\b[CFGHJKLMNPRTVWXYZ][CFGHJKLMNPRTVWXYZ0-9]{7}[0-9]\b",
             0.4,
-        ),
-        Pattern(
-            "Reisepassnummer (Relaxed)",
-            r"\b[A-Z][A-Z0-9]{7}[0-9]\b",
-            0.2,
         ),
     ]
 
@@ -74,3 +88,40 @@ class DePassportRecognizer(PatternRecognizer):
             supported_language=supported_language,
             name=name,
         )
+
+    def validate_result(self, pattern_text: str) -> Optional[bool]:
+        """
+        Validate the ICAO Doc 9303 check digit at position 9.
+
+        Algorithm source: ICAO Doc 9303 Part 3 — Machine Readable Travel
+        Documents. Weights 7, 3, 1 repeating applied to positions 1–8 with
+        letters mapped A=10 … Z=35; the sum modulo 10 must equal the digit
+        at position 9.
+
+        :param pattern_text: the text to validate (9 characters)
+        :return: True if check digit is valid, False otherwise
+        """
+        pattern_text = pattern_text.upper().strip()
+
+        if len(pattern_text) != 9 or not pattern_text[-1].isdigit():
+            return False
+
+        # ICAO Doc 9303 excludes these visually-ambiguous letters from
+        # travel-document serial numbers. Reject outright so the weighted
+        # checksum cannot accidentally mark a non-ICAO string as valid.
+        forbidden = set("ABDEIOQSU")
+        if any(c in forbidden for c in pattern_text[:-1]):
+            return False
+
+        weights = [7, 3, 1]
+        total = 0
+        for i, c in enumerate(pattern_text[:-1]):
+            if c.isdigit():
+                value = int(c)
+            elif "A" <= c <= "Z":
+                value = ord(c) - ord("A") + 10
+            else:
+                return False
+            total += value * weights[i % 3]
+
+        return (total % 10) == int(pattern_text[-1])
