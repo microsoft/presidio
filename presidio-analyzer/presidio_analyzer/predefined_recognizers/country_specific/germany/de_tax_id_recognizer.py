@@ -1,3 +1,4 @@
+from collections import Counter
 from typing import List, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
@@ -17,6 +18,10 @@ class DeTaxIdRecognizer(PatternRecognizer):
     Format:
         - 11 digits
         - First digit: 1–9 (never 0)
+        - Digits 1–10: each digit may appear at most three times (BZSt rule
+          in force since the 2016 format revision; previously exactly one
+          digit repeated twice or three times and all others appeared
+          exactly once).
         - Digit 11: check digit (ISO 7064 Mod 11, 10 variant)
 
     Examples (fictitious): 86095742719, 12345678903
@@ -84,8 +89,10 @@ class DeTaxIdRecognizer(PatternRecognizer):
 
         digits = [int(d) for d in pattern_text]
 
-        # Check that the first 10 digits do not consist of the same digit repeated
-        if len(set(digits[:10])) == 1:
+        # Post-2016 BZSt rule: no digit may appear more than three times in
+        # positions 1-10. Also rejects the all-identical case that the
+        # pre-2016 rule forbade.
+        if max(Counter(digits[:10]).values()) > 3:
             return False
 
         # ISO 7064 Mod 11, 10 checksum
