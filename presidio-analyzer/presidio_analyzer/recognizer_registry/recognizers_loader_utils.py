@@ -30,6 +30,13 @@ class PredefinedRecognizerNotFoundError(Exception):
     pass
 
 
+# Module path segment that identifies country-specific recognizers. Matches
+# the ``predefined_recognizers/country_specific/<country>/...`` directory
+# layout used for the bundled predefined recognizers. Kept as a module-level
+# constant so country detection stays in lockstep with the directory tree.
+_COUNTRY_SPECIFIC_MODULE_SEGMENT = "country_specific"
+
+
 class RecognizerListLoader:
     """A utility class that initializes recognizers based on configuration."""
 
@@ -418,6 +425,53 @@ class RecognizerListLoader:
             if k not in to_exclude
         }
         return copied_recognizer_conf
+
+    @staticmethod
+    def _get_recognizer_country(recognizer: EntityRecognizer) -> Optional[str]:
+        """Return the country code for a recognizer, or ``None`` if not country-specific.
+
+        The country is inferred from the module path. Predefined recognizers
+        live under ``predefined_recognizers/country_specific/<country>/...``
+        so we take the segment immediately following ``country_specific`` as
+        the country code. Recognizers outside ``country_specific`` (generic,
+        NER, NLP engine, third-party, and user-supplied) return ``None``.
+
+        :param recognizer: The recognizer instance whose country to resolve.
+        """
+        module_name = type(recognizer).__module__ or ""
+        parts = module_name.split(".")
+        try:
+            idx = parts.index(_COUNTRY_SPECIFIC_MODULE_SEGMENT)
+        except ValueError:
+            return None
+        if idx + 1 >= len(parts):
+            return None
+        return parts[idx + 1].lower()
+
+    @staticmethod
+    def filter_by_countries(
+        recognizers: Iterable[EntityRecognizer],
+        countries: Iterable[str],
+    ) -> List[EntityRecognizer]:
+        """Filter a list of recognizers to the requested countries.
+
+        Country-agnostic recognizers (anything not under
+        ``predefined_recognizers/country_specific/``) are always retained.
+        Country-specific recognizers are kept only when their directory's
+        country code appears in ``countries`` (case-insensitive).
+
+        :param recognizers: The recognizers to filter.
+        :param countries: Country codes to keep (e.g. ``["us", "uk"]``). An
+            empty iterable keeps only country-agnostic recognizers.
+        :return: A new list preserving the original order.
+        """
+        allowed = {c.lower() for c in countries}
+        filtered: List[EntityRecognizer] = []
+        for recognizer in recognizers:
+            country = RecognizerListLoader._get_recognizer_country(recognizer)
+            if country is None or country in allowed:
+                filtered.append(recognizer)
+        return filtered
 
 
 class RecognizerConfigurationLoader:

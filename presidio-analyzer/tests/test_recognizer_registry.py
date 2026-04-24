@@ -245,3 +245,78 @@ def test_remove_recognizer_when_multiple_instances_exist():
     assert len([rec for rec in registry.recognizers
                 if rec.name == "SpacyRecognizer"]) == 1
 
+
+
+# ---------------------------------------------------------------------------
+# Country filter (load_predefined_recognizers(countries=...)) — fixes #1328
+# ---------------------------------------------------------------------------
+
+
+def _recognizer_class_names(registry):
+    return {type(rec).__name__ for rec in registry.recognizers}
+
+
+def test_load_predefined_recognizers_without_country_filter_loads_all():
+    """Default behavior must be unchanged when `countries` is omitted."""
+    baseline = RecognizerRegistry()
+    baseline.load_predefined_recognizers()
+
+    explicit_none = RecognizerRegistry()
+    explicit_none.load_predefined_recognizers(countries=None)
+
+    assert _recognizer_class_names(baseline) == _recognizer_class_names(explicit_none)
+
+
+def test_load_predefined_recognizers_filters_to_requested_countries():
+    """Only recognizers from the requested countries plus country-agnostic
+    recognizers (generic, NER, NLP engine, third-party) should be loaded."""
+    registry = RecognizerRegistry()
+    registry.load_predefined_recognizers(countries=["us"])
+    names = _recognizer_class_names(registry)
+
+    # A US recognizer is present.
+    assert "UsSsnRecognizer" in names
+    # A non-US country recognizer is absent.
+    assert "UkNinoRecognizer" not in names
+    assert "NhsRecognizer" not in names
+    # Country-agnostic recognizers are still present.
+    assert "CreditCardRecognizer" in names
+    assert "EmailRecognizer" in names
+
+
+def test_load_predefined_recognizers_country_filter_is_case_insensitive():
+    registry_lower = RecognizerRegistry()
+    registry_lower.load_predefined_recognizers(countries=["us"])
+
+    registry_upper = RecognizerRegistry()
+    registry_upper.load_predefined_recognizers(countries=["US"])
+
+    assert _recognizer_class_names(registry_lower) == _recognizer_class_names(
+        registry_upper
+    )
+
+
+def test_load_predefined_recognizers_empty_countries_keeps_only_agnostic():
+    """Passing an empty list drops every country-specific recognizer but keeps
+    generic ones."""
+    registry = RecognizerRegistry()
+    registry.load_predefined_recognizers(countries=[])
+    names = _recognizer_class_names(registry)
+
+    assert "UsSsnRecognizer" not in names
+    assert "UkNinoRecognizer" not in names
+    assert "NhsRecognizer" not in names
+    # Country-agnostic recognizers remain.
+    assert "CreditCardRecognizer" in names
+    assert "EmailRecognizer" in names
+
+
+def test_load_predefined_recognizers_multiple_countries():
+    registry = RecognizerRegistry()
+    registry.load_predefined_recognizers(countries=["us", "uk"])
+    names = _recognizer_class_names(registry)
+
+    assert "UsSsnRecognizer" in names
+    assert "NhsRecognizer" in names  # UK National Health Service
+    # Germany should be excluded.
+    assert not any(n.startswith("De") for n in names if n != "DateRecognizer")

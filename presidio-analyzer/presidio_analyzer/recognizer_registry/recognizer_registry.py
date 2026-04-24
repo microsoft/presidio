@@ -91,13 +91,25 @@ class RecognizerRegistry:
         )
 
     def load_predefined_recognizers(
-        self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = None
+        self,
+        languages: Optional[List[str]] = None,
+        nlp_engine: NlpEngine = None,
+        countries: Optional[List[str]] = None,
     ) -> None:
         """
         Load the existing recognizers into memory.
 
         :param languages: List of languages for which to load recognizers
         :param nlp_engine: The NLP engine to use.
+        :param countries: Optional list of country codes (case-insensitive)
+            matching directory names under
+            ``predefined_recognizers/country_specific/`` (e.g. ``["us", "uk"]``).
+            When provided, only country-specific recognizers for these countries
+            are loaded; country-agnostic recognizers (generic, NER, NLP engine,
+            third-party) are always loaded. Passing an empty list
+            (``countries=[]``) loads only country-agnostic recognizers. Passing
+            ``None`` (the default) preserves the previous behavior of loading
+            all predefined recognizers.
         :return: None
         """
 
@@ -109,6 +121,11 @@ class RecognizerRegistry:
             registry_configuration=registry_configuration
         )
         recognizers = RecognizerListLoader.get(**configuration)
+
+        if countries is not None:
+            recognizers = RecognizerListLoader.filter_by_countries(
+                recognizers, countries
+            )
 
         self.recognizers.extend(recognizers)
         self.add_nlp_recognizer(nlp_engine=nlp_engine)
