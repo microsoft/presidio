@@ -54,6 +54,8 @@ updates:
     schedule:
       interval: "weekly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -76,6 +78,8 @@ updates:
     schedule:
       interval: "weekly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -98,6 +102,8 @@ updates:
     schedule:
       interval: "weekly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -120,6 +126,8 @@ updates:
     schedule:
       interval: "weekly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -142,6 +150,8 @@ updates:
     schedule:
       interval: "weekly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -164,6 +174,8 @@ updates:
     schedule:
       interval: "weekly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -187,6 +199,8 @@ updates:
     schedule:
       interval: "monthly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -208,6 +222,8 @@ updates:
     schedule:
       interval: "monthly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -229,6 +245,8 @@ updates:
     schedule:
       interval: "monthly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -250,6 +268,8 @@ updates:
     schedule:
       interval: "monthly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
@@ -270,6 +290,8 @@ updates:
     schedule:
       interval: "weekly"
     multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     open-pull-requests-limit: 1
     labels:
       - "dependencies"
