@@ -19,9 +19,13 @@
 #   releases. NOTE: Dependabot security updates bypass ignore rules — known CVEs
 #   will still generate PRs regardless of these settings.
 #
-# groups + open-pull-requests-limit: 3:
-#   Batches all minor/patch updates into a single PR and caps open PRs at 3
-#   to prevent "security fatigue" from too many simultaneous update PRs.
+# groups (all-dependencies) + open-pull-requests-limit: 1:
+#   All entries share the group name "all-dependencies" across every ecosystem
+#   (pip, docker, docker-compose, github-actions). This triggers Dependabot's
+#   multi-ecosystem-group feature, batching every minor/patch update — Python
+#   packages, Docker base images, docker-compose images, and GitHub Actions —
+#   into a single PR. The limit of 1 prevents "security fatigue" from too many
+#   simultaneous update PRs.
 #
 # Note: Dependabot's config parser does not support YAML anchors/merge keys,
 # so the shared settings below are repeated explicitly for each pip directory.
@@ -32,7 +36,7 @@ updates:
     directory: "/presidio-analyzer"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -40,7 +44,7 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      python-dependencies:
+      all-dependencies:
         patterns:
           - "*"
         update-types:
@@ -54,7 +58,7 @@ updates:
     directory: "/presidio-anonymizer"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -62,7 +66,7 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      python-dependencies:
+      all-dependencies:
         patterns:
           - "*"
         update-types:
@@ -76,7 +80,7 @@ updates:
     directory: "/presidio-image-redactor"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -84,7 +88,7 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      python-dependencies:
+      all-dependencies:
         patterns:
           - "*"
         update-types:
@@ -98,7 +102,7 @@ updates:
     directory: "/presidio-cli"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -106,7 +110,7 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      python-dependencies:
+      all-dependencies:
         patterns:
           - "*"
         update-types:
@@ -120,7 +124,7 @@ updates:
     directory: "/presidio-structured"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -128,7 +132,7 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      python-dependencies:
+      all-dependencies:
         patterns:
           - "*"
         update-types:
@@ -142,17 +146,30 @@ updates:
     directory: "/presidio"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
+    versioning-strategy: increase
+    cooldown:
+      default-days: 7
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
   # Monitor Docker dependencies
   - package-ecosystem: "docker"
     directory: "/presidio-analyzer"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "docker"
@@ -161,14 +178,14 @@ updates:
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
-      docker-deps:
+      all-dependencies:
         patterns: ["*"]
 
   - package-ecosystem: "docker"
     directory: "/presidio-anonymizer"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "docker"
@@ -177,14 +194,14 @@ updates:
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
-      docker-deps:
+      all-dependencies:
         patterns: ["*"]
 
   - package-ecosystem: "docker"
     directory: "/presidio-image-redactor"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "docker"
@@ -193,26 +210,29 @@ updates:
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
-      docker-deps:
+      all-dependencies:
         patterns: ["*"]
 
   - package-ecosystem: "docker-compose"
     directory: "/"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "docker-compose"
-      
+    groups:
+      all-dependencies:
+        patterns: ["*"]
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "github-actions"
     groups:
-      actions-deps:
+      all-dependencies:
         patterns: ["*"]
