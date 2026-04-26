@@ -1,4 +1,4 @@
-# Security rationale for pip ecosystem settings:
+# Security rationale for all ecosystem settings:
 #
 # cooldown (default-days: 7):
 #   Waits 7 days after a package release before Dependabot opens a PR.
@@ -19,200 +19,281 @@
 #   releases. NOTE: Dependabot security updates bypass ignore rules — known CVEs
 #   will still generate PRs regardless of these settings.
 #
-# groups + open-pull-requests-limit: 3:
-#   Batches all minor/patch updates into a single PR and caps open PRs at 3
-#   to prevent "security fatigue" from too many simultaneous update PRs.
+# groups (all-dependencies) per entry — update-types: [patch]:
+#   Restricts in-group batching to patch releases only, consistent with the
+#   ignore rules above. Within each individual updates entry, the groups block
+#   batches all matching packages into one set.
+#
+# multi-ecosystem-groups (all-dependencies):
+#   Top-level grouping that spans every updates entry (pip, docker,
+#   docker-compose, github-actions). Each entry opts in via
+#   "multi-ecosystem-group: all-dependencies". Dependabot will then combine
+#   all matching updates across all ecosystems and directories into a single
+#   pull request, reducing review noise.
+#   Reference: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#multi-ecosystem-groups
+#   NOTE: multi-ecosystem-groups only supports schedule, assignees, and labels.
+#   cooldown and ignore cannot be hoisted here and must be repeated per entry.
+#
+# open-pull-requests-limit: 1:
+#   Caps the number of open version-update PRs to 1, preventing
+#   "security fatigue" from many simultaneous update PRs. Must be set on
+#   the multi-ecosystem-groups block, not on individual updates entries.
 #
 # Note: Dependabot's config parser does not support YAML anchors/merge keys,
-# so the shared settings below are repeated explicitly for each pip directory.
+# so the shared settings below are repeated explicitly for each entry.
 
 version: 2
+
+multi-ecosystem-groups:
+  all-dependencies:
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 1
+
 updates:
   - package-ecosystem: "pip"
     directory: "/presidio-analyzer"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "python"
     versioning-strategy: increase
     cooldown:
       default-days: 7
-    groups:
-      python-dependencies:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/presidio-anonymizer"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "python"
     versioning-strategy: increase
     cooldown:
       default-days: 7
-    groups:
-      python-dependencies:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/presidio-image-redactor"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "python"
     versioning-strategy: increase
     cooldown:
       default-days: 7
-    groups:
-      python-dependencies:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/presidio-cli"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "python"
     versioning-strategy: increase
     cooldown:
       default-days: 7
-    groups:
-      python-dependencies:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/presidio-structured"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 3
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "python"
     versioning-strategy: increase
     cooldown:
       default-days: 7
-    groups:
-      python-dependencies:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/presidio"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "python"
+    versioning-strategy: increase
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
 
   # Monitor Docker dependencies
   - package-ecosystem: "docker"
     directory: "/presidio-analyzer"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "docker"
+    cooldown:
+      default-days: 7
     ignore:
-      # Allow only patch/micro and digest updates for python; block major and minor version bumps
-      - dependency-name: "python"
+      # Block major and minor version bumps for all images; allow only patch updates
+      - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
-      docker-deps:
+      all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/presidio-anonymizer"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "docker"
+    cooldown:
+      default-days: 7
     ignore:
-      # Allow only patch/micro and digest updates for python; block major and minor version bumps
-      - dependency-name: "python"
+      # Block major and minor version bumps for all images; allow only patch updates
+      - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
-      docker-deps:
+      all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/presidio-image-redactor"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "docker"
+    cooldown:
+      default-days: 7
     ignore:
-      # Allow only patch/micro and digest updates for python; block major and minor version bumps
-      - dependency-name: "python"
+      # Block major and minor version bumps for all images; allow only patch updates
+      - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
-      docker-deps:
+      all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "patch"
 
   - package-ecosystem: "docker-compose"
     directory: "/"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "docker-compose"
-      
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      all-dependencies:
+        patterns: ["*"]
+        update-types:
+          - "patch"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    multi-ecosystem-group: "all-dependencies"
+    patterns:
+      - "*"
     labels:
       - "dependencies"
       - "github-actions"
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
-      actions-deps:
+      all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "patch"
