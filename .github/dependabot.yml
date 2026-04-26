@@ -1,4 +1,4 @@
-# Security rationale for pip ecosystem settings:
+# Security rationale for all ecosystem settings:
 #
 # cooldown (default-days: 7):
 #   Waits 7 days after a package release before Dependabot opens a PR.
@@ -28,7 +28,7 @@
 #   simultaneous update PRs.
 #
 # Note: Dependabot's config parser does not support YAML anchors/merge keys,
-# so the shared settings below are repeated explicitly for each pip directory.
+# so the shared settings below are repeated explicitly for each entry.
 
 version: 2
 updates:
@@ -173,13 +173,18 @@ updates:
     labels:
       - "dependencies"
       - "docker"
+    cooldown:
+      default-days: 7
     ignore:
-      # Allow only patch/micro and digest updates for python; block major and minor version bumps
-      - dependency-name: "python"
+      # Block major and minor version bumps for all images; allow only patch/digest updates
+      - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/presidio-anonymizer"
@@ -189,13 +194,18 @@ updates:
     labels:
       - "dependencies"
       - "docker"
+    cooldown:
+      default-days: 7
     ignore:
-      # Allow only patch/micro and digest updates for python; block major and minor version bumps
-      - dependency-name: "python"
+      # Block major and minor version bumps for all images; allow only patch/digest updates
+      - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/presidio-image-redactor"
@@ -205,13 +215,18 @@ updates:
     labels:
       - "dependencies"
       - "docker"
+    cooldown:
+      default-days: 7
     ignore:
-      # Allow only patch/micro and digest updates for python; block major and minor version bumps
-      - dependency-name: "python"
+      # Block major and minor version bumps for all images; allow only patch/digest updates
+      - dependency-name: "*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "docker-compose"
     directory: "/"
@@ -221,9 +236,17 @@ updates:
     labels:
       - "dependencies"
       - "docker-compose"
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -233,6 +256,14 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       all-dependencies:
         patterns: ["*"]
+        update-types:
+          - "minor"
+          - "patch"
