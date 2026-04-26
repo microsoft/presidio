@@ -19,18 +19,33 @@
 #   releases. NOTE: Dependabot security updates bypass ignore rules — known CVEs
 #   will still generate PRs regardless of these settings.
 #
-# groups (all-dependencies) + open-pull-requests-limit: 1:
-#   All entries share the group name "all-dependencies" across every ecosystem
-#   (pip, docker, docker-compose, github-actions). This triggers Dependabot's
-#   multi-ecosystem-group feature, batching every minor/patch update — Python
-#   packages, Docker base images, docker-compose images, and GitHub Actions —
-#   into a single PR. The limit of 1 prevents "security fatigue" from too many
-#   simultaneous update PRs.
+# multi-ecosystem-groups (all-dependencies):
+#   Top-level grouping that spans every updates entry (pip, docker,
+#   docker-compose, github-actions). Each entry opts in via
+#   "multi-ecosystem-group: all-dependencies". Dependabot will then combine
+#   all matching updates across all ecosystems and directories into a single
+#   pull request, reducing review noise.
+#   Reference: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#multi-ecosystem-groups
+#
+# groups (all-dependencies) per entry:
+#   Within each individual updates entry, the groups block batches all packages
+#   in that entry into one set. This works alongside multi-ecosystem-groups:
+#   within-entry batching and cross-entry batching are orthogonal features.
+#
+# open-pull-requests-limit: 1:
+#   Caps the number of open version-update PRs per entry to 1, preventing
+#   "security fatigue" from many simultaneous update PRs.
 #
 # Note: Dependabot's config parser does not support YAML anchors/merge keys,
 # so the shared settings below are repeated explicitly for each entry.
 
 version: 2
+
+multi-ecosystem-groups:
+  all-dependencies:
+    schedule:
+      interval: "weekly"
+
 updates:
   - package-ecosystem: "pip"
     directory: "/presidio-analyzer"
