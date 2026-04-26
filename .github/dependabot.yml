@@ -35,8 +35,9 @@
 #   cooldown and ignore cannot be hoisted here and must be repeated per entry.
 #
 # open-pull-requests-limit: 1:
-#   Caps the number of open version-update PRs per entry to 1, preventing
-#   "security fatigue" from many simultaneous update PRs.
+#   Caps the number of open version-update PRs to 1, preventing
+#   "security fatigue" from many simultaneous update PRs. Must be set on
+#   the multi-ecosystem-groups block, not on individual updates entries.
 #
 # Note: Dependabot's config parser does not support YAML anchors/merge keys,
 # so the shared settings below are repeated explicitly for each entry.
@@ -47,6 +48,7 @@ multi-ecosystem-groups:
   all-dependencies:
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 1
 
 updates:
   - package-ecosystem: "pip"
@@ -56,7 +58,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -80,7 +81,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -104,7 +104,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -128,7 +127,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -152,7 +150,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -176,7 +173,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "python"
@@ -201,7 +197,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "docker"
@@ -224,7 +219,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "docker"
@@ -247,7 +241,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "docker"
@@ -270,7 +263,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "docker-compose"
@@ -292,7 +284,6 @@ updates:
     multi-ecosystem-group: "all-dependencies"
     patterns:
       - "*"
-    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "github-actions"
