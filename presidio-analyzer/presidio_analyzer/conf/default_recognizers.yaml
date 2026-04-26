@@ -260,6 +260,12 @@ recognizers:
     type: predefined
     enabled: false
 
+  - name: TrPhoneNumberRecognizer
+    supported_languages:
+    - tr
+    type: predefined
+    enabled: false
+
   - name: HuggingFaceNerRecognizer
     supported_languages:
     - en
