@@ -102,6 +102,9 @@ from .country_specific.turkey.tr_license_plate_recognizer import (
 from .country_specific.turkey.tr_national_id_recognizer import (
     TrNationalIdRecognizer,
 )
+from .country_specific.turkey.tr_phone_number_recognizer import (
+    TrPhoneNumberRecognizer,
+)
 
 # UK recognizers
 from .country_specific.uk.uk_driving_licence_recognizer import (
@@ -236,6 +239,7 @@ __all__ = [
     "ThTninRecognizer",
     "TrLicensePlateRecognizer",
     "TrNationalIdRecognizer",
+    "TrPhoneNumberRecognizer",
     "SePersonnummerRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
