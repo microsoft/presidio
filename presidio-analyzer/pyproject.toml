@@ -51,7 +51,7 @@ azure-ai-language = [
     "azure-core (>=1.39.0,<2.0.0)",
 ]
 ahds = [
-    "azure-identity (>=1.23.0,<2.0.0)",
+    "azure-identity (>=1.25.3,<2.0.0)",
     "azure-health-deidentification (>=1.1.0b1,<2.0.0)"
 ]
 gliner = [
