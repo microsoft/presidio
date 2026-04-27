@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - ICAO Doc 9303 MRZ checksum validation in `DePassportRecognizer` and `DeIdCardRecognizer` (weights 7, 3, 1 repeating; letters A=10…Z=35; sum mod 10).
 - Structural validation improvements in `DeBsnrRecognizer` per KBV Arztnummern-Richtlinie Anlage 1; valid KV regional codes are defined for defense-in-depth/documentation purposes, but unknown prefixes are not currently rejected (no public checksum exists for BSNR).
 - Turkish PII recognizer for `TR_NATIONAL_ID` (TCKN) to identify Turkish National Identification Numbers using pattern match, context, and NVI checksum validation. Disabled by default.
+- Turkish PII recognizer for `TR_LICENSE_PLATE` (plaka) to identify Turkish vehicle license plates using pattern match, context, and province code validation (01-81). Disabled by default.
 
 ## [2.2.362] - 2026-03-15
 ### General
