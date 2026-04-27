@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Analyzer
 #### Added
+- Optional `countries` filter on `RecognizerRegistry.load_predefined_recognizers()` to scope predefined country-specific recognizers to a subset of locales (e.g. `countries=["us", "uk"]`). `country_code` is now a first-class attribute on `EntityRecognizer` (with a class-level `COUNTRY_CODE` shortcut for predefined recognizers). Locale-agnostic recognizers and untagged custom recognizers are always loaded regardless of the filter, preserving backwards compatibility. Adds `RecognizerRegistry.get_country_codes()` for introspection and a `WARNING` log when a requested country has no matching recognizer. See `docs/analyzer/filtering_by_country.md`. Fixes #1328.
 - Canadian SIN (`CA_SIN`) recognizer for the Canadian Social Insurance Number, using regex pattern matching, context words (English and French), and Luhn checksum validation. Disabled by default.
 
 - Swedish PII recognizers for `SE_PERSONNUMMER` to identify Swedish Personal ID Numbers using pattern match and checksum. The recognizer also supports Swedish coordination numbers (samordningsnummer), issued to individuals who are not registered residents in Sweden but require identification. All disabled by default.

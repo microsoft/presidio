@@ -18,6 +18,8 @@ class InPassportRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "in"
+
     PATTERNS = [
         Pattern(
             "PASSPORT",

@@ -42,6 +42,8 @@ class DeKfzRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     PATTERNS = [
         Pattern(
             "KFZ-Kennzeichen (mit Leerzeichen)",

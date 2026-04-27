@@ -33,6 +33,10 @@ class PatternRecognizer(LocalRecognizer):
     identified using a deny-list
     :param global_regex_flags: regex flags to be used in regex matching,
     including deny-lists.
+    :param country_code: optional country tag for filtering recognizers via
+    ``RecognizerRegistry.load_predefined_recognizers(countries=[...])``. See
+    :class:`EntityRecognizer` for details. ``None`` means locale-agnostic and
+    is the recommended default for generic recognizers.
     """
 
     def __init__(
@@ -46,6 +50,7 @@ class PatternRecognizer(LocalRecognizer):
         deny_list_score: float = 1.0,
         global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
         version: str = "0.0.1",
+        country_code: Optional[str] = None,
     ):
         if not supported_entity:
             raise ValueError("Pattern recognizer should be initialized with entity")
@@ -61,6 +66,7 @@ class PatternRecognizer(LocalRecognizer):
             supported_language=supported_language,
             name=name,
             version=version,
+            country_code=country_code,
         )
         if patterns is None:
             self.patterns = []
@@ -162,7 +168,7 @@ class PatternRecognizer(LocalRecognizer):
         :return: Analysis explanation
         """
         textual_explanation = (
-            f"Detected by `{recognizer_name}` " f"using pattern `{pattern_name}`"
+            f"Detected by `{recognizer_name}` using pattern `{pattern_name}`"
         )
 
         explanation = AnalysisExplanation(
@@ -275,6 +281,8 @@ class PatternRecognizer(LocalRecognizer):
         return_dict["context"] = self.context
         return_dict["supported_entity"] = return_dict["supported_entities"][0]
         del return_dict["supported_entities"]
+        # ``country_code`` is added by EntityRecognizer.to_dict only when set,
+        # so we don't need to special-case it here.
 
         return return_dict
 

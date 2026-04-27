@@ -1,6 +1,6 @@
 import logging
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, ClassVar, Dict, List, Optional, Tuple
 
 from presidio_analyzer import RecognizerResult
 
@@ -29,10 +29,22 @@ class EntityRecognizer:
     :param version: the recognizer current version
     :param context: a list of words which can help boost confidence score
     when they appear in context of the matched entity
+    :param country_code: optional country tag for this recognizer, used by
+    ``RecognizerRegistry.load_predefined_recognizers(countries=[...])`` to
+    include or exclude country-specific recognizers. ``None`` (the default)
+    means the recognizer is locale-agnostic and is always included regardless
+    of the country filter. For predefined country-specific recognizers the
+    canonical way to declare the country is to set the class-level
+    ``COUNTRY_CODE`` attribute (e.g. ``COUNTRY_CODE = "us"``); the constructor
+    argument exists for ad-hoc / custom recognizers and overrides the class
+    attribute when both are provided. Codes are compared case-insensitively
+    and should follow ISO 3166-1 alpha-2 (with ``"uk"`` accepted as a synonym
+    of ``"gb"`` for historical consistency with the directory layout).
     """
 
     MIN_SCORE = 0
     MAX_SCORE = 1.0
+    COUNTRY_CODE: ClassVar[Optional[str]] = None
 
     def __init__(
         self,
@@ -41,6 +53,7 @@ class EntityRecognizer:
         supported_language: str = "en",
         version: str = "0.0.1",
         context: Optional[List[str]] = None,
+        country_code: Optional[str] = None,
     ):
         self.supported_entities = supported_entities
 
@@ -55,6 +68,18 @@ class EntityRecognizer:
         self.version = version
         self.is_loaded = False
         self.context = context if context else []
+
+        # Resolve country_code: explicit constructor arg wins, otherwise fall
+        # back to the class-level COUNTRY_CODE attribute (used by predefined
+        # country-specific recognizers). ``None`` means locale-agnostic.
+        resolved_country_code = (
+            country_code if country_code is not None else self.COUNTRY_CODE
+        )
+        self.country_code = (
+            resolved_country_code.lower()
+            if isinstance(resolved_country_code, str)
+            else resolved_country_code
+        )
 
         self.load()
         logger.info("Loaded recognizer: %s", self.name)
@@ -154,6 +179,8 @@ class EntityRecognizer:
             "name": self.name,
             "version": self.version,
         }
+        if self.country_code is not None:
+            return_dict["country_code"] = self.country_code
         return return_dict
 
     @classmethod

@@ -320,3 +320,200 @@ def test_load_predefined_recognizers_multiple_countries():
     assert "NhsRecognizer" in names  # UK National Health Service
     # Germany should be excluded.
     assert not any(n.startswith("De") for n in names if n != "DateRecognizer")
+
+
+# ---------------------------------------------------------------------------
+# country_code attribute on EntityRecognizer + filter integration — #1328
+# ---------------------------------------------------------------------------
+
+
+def test_entity_recognizer_country_code_default_is_none():
+    """An ``EntityRecognizer`` with no class- or constructor-level country
+    declaration is locale-agnostic."""
+    rec = create_mock_pattern_recognizer("en", "FOO", "rec")
+    assert rec.country_code is None
+
+
+def test_entity_recognizer_country_code_constructor_arg():
+    """Passing ``country_code`` to the constructor stores it on the instance."""
+    rec = PatternRecognizer(
+        supported_entity="BR_CPF",
+        name="BR CPF Recognizer",
+        patterns=[Pattern("p", regex="REGEX", score=1.0)],
+        country_code="br",
+    )
+    assert rec.country_code == "br"
+
+
+def test_entity_recognizer_country_code_normalized_to_lowercase():
+    """Constructor input is normalized so the filter's case-insensitive
+    contract holds at the attribute level too."""
+    rec = PatternRecognizer(
+        supported_entity="DE_TAX",
+        patterns=[Pattern("p", regex="REGEX", score=1.0)],
+        country_code="DE",
+    )
+    assert rec.country_code == "de"
+
+
+def test_predefined_country_specific_recognizer_carries_class_country_code():
+    """Predefined country-specific recognizers expose ``country_code`` via
+    their class-level ``COUNTRY_CODE`` attribute, automatically applied by
+    ``EntityRecognizer.__init__``."""
+    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
+
+    rec = UsSsnRecognizer()
+    assert rec.country_code == "us"
+
+
+def test_constructor_country_code_overrides_class_attribute():
+    """Explicit constructor argument wins over the class-level default."""
+    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
+
+    rec = UsSsnRecognizer()
+    assert rec.country_code == "us"
+
+    class _MyUsLikeRec(PatternRecognizer):
+        COUNTRY_CODE = "us"
+
+        def __init__(self, **kwargs):
+            super().__init__(
+                supported_entity="X",
+                patterns=[Pattern("p", "REGEX", 1.0)],
+                **kwargs,
+            )
+
+    rec_overridden = _MyUsLikeRec(country_code="ca")
+    assert rec_overridden.country_code == "ca"
+
+
+def test_country_filter_keeps_untagged_custom_recognizer():
+    """An untagged custom recognizer (``country_code is None``) is the
+    "I haven't opted in" case and must always be kept regardless of the
+    requested countries — this is what makes the migration backwards
+    compatible."""
+    custom = create_mock_pattern_recognizer("en", "MY_THING", "Custom")
+    assert custom.country_code is None
+
+    registry = RecognizerRegistry()
+    registry.load_predefined_recognizers(countries=["us"])
+    registry.add_recognizer(custom)
+
+    assert custom in registry.recognizers
+
+
+def test_country_filter_includes_tagged_custom_recognizer():
+    """A custom recognizer that opts in via ``country_code`` is included
+    when the filter is loaded with the matching country."""
+    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
+        RecognizerListLoader,
+    )
+
+    br_recognizer = PatternRecognizer(
+        supported_entity="BR_CPF",
+        name="BR CPF Recognizer",
+        patterns=[Pattern("p", regex="REGEX", score=1.0)],
+        country_code="br",
+    )
+    us_recognizer = PatternRecognizer(
+        supported_entity="X_US_THING",
+        name="X US Recognizer",
+        patterns=[Pattern("p", regex="REGEX", score=1.0)],
+        country_code="us",
+    )
+    agnostic = create_mock_pattern_recognizer("en", "AGNOSTIC", "Agnostic")
+
+    filtered = RecognizerListLoader.filter_by_countries(
+        [br_recognizer, us_recognizer, agnostic], ["br"]
+    )
+
+    assert br_recognizer in filtered
+    assert us_recognizer not in filtered
+    # Locale-agnostic recognizers always survive the filter.
+    assert agnostic in filtered
+
+
+def test_country_filter_warns_on_unknown_country(caplog):
+    """When a requested country has no matching recognizer in the input
+    list, a WARNING is logged so silent zero-result filters are easier to
+    debug."""
+    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
+        RecognizerListLoader,
+    )
+
+    us_recognizer = PatternRecognizer(
+        supported_entity="X_US_THING",
+        patterns=[Pattern("p", regex="REGEX", score=1.0)],
+        country_code="us",
+    )
+
+    with caplog.at_level("WARNING", logger="presidio-analyzer"):
+        RecognizerListLoader.filter_by_countries([us_recognizer], ["br"])
+
+    warning_messages = [r.getMessage() for r in caplog.records if r.levelname == "WARNING"]
+    assert any("'br'" in m and "country_code" in m for m in warning_messages), (
+        f"expected a country-filter WARNING mentioning 'br' and country_code, "
+        f"got {warning_messages!r}"
+    )
+
+
+def test_get_country_codes_returns_loaded_countries():
+    """``RecognizerRegistry.get_country_codes()`` aggregates the
+    ``country_code`` attribute across all loaded recognizers.
+
+    The default registry is English-only and many predefined country
+    recognizers are either disabled by default or scoped to
+    non-English languages, so we assert the subset that actually loads:
+    US and UK recognizers are enabled-by-default and English-language.
+    """
+    registry = RecognizerRegistry()
+    registry.load_predefined_recognizers()
+
+    codes = registry.get_country_codes()
+    assert isinstance(codes, list)
+    assert codes == sorted(codes), "country codes should be returned sorted"
+    assert "us" in codes
+    assert "uk" in codes
+    # Every code returned is non-empty and lowercased (the contract).
+    assert all(isinstance(c, str) and c == c.lower() and c for c in codes)
+
+
+def test_get_country_codes_after_country_filter():
+    """``get_country_codes()`` reflects the country filter applied at load."""
+    registry = RecognizerRegistry()
+    registry.load_predefined_recognizers(countries=["us"])
+
+    assert registry.get_country_codes() == ["us"]
+
+
+def test_get_country_codes_excludes_locale_agnostic_recognizers():
+    """``country_code is None`` recognizers are never reported by
+    ``get_country_codes`` even though they are present in the registry."""
+    agnostic = create_mock_pattern_recognizer("en", "FOO", "Agnostic")
+    assert agnostic.country_code is None
+
+    registry = RecognizerRegistry()
+    registry.add_recognizer(agnostic)
+
+    assert registry.get_country_codes() == []
+
+
+def test_to_dict_round_trips_country_code():
+    """``country_code`` is included in ``to_dict`` output when set, so that
+    serialized recognizers preserve the country tag."""
+    rec = PatternRecognizer(
+        supported_entity="BR_CPF",
+        name="BR CPF Recognizer",
+        patterns=[Pattern("p", regex="REGEX", score=1.0)],
+        country_code="br",
+    )
+    serialized = rec.to_dict()
+    assert serialized["country_code"] == "br"
+
+
+def test_to_dict_omits_country_code_when_none():
+    """Locale-agnostic recognizers omit ``country_code`` from their dict
+    serialization to keep round-trips clean for legacy registries."""
+    rec = create_mock_pattern_recognizer("en", "FOO", "rec")
+    serialized = rec.to_dict()
+    assert "country_code" not in serialized

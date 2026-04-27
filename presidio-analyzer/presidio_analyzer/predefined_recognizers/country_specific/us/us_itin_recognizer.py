@@ -13,6 +13,8 @@ class UsItinRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "us"
+
     PATTERNS = [
         Pattern(
             "Itin (very weak)",

@@ -24,6 +24,8 @@ class TrNationalIdRecognizer(PatternRecognizer):
     for different strings to be used during pattern matching.
     """
 
+    COUNTRY_CODE = "tr"
+
     PATTERNS = [
         Pattern(
             "TR_NATIONAL_ID",

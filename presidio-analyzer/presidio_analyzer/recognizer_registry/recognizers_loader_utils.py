@@ -347,6 +347,15 @@ class RecognizerListLoader:
         if not accepts_supported_entity:
             kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
 
+        # ``country_code`` is opt-in metadata. Most predefined recognizer
+        # classes don't list it explicitly in their ``__init__`` (they rely
+        # on the class-level ``COUNTRY_CODE`` attribute instead). If the
+        # YAML happens to provide ``country_code`` for such a class, drop it
+        # to avoid a TypeError; the class attribute remains authoritative.
+        accepts_country_code = "country_code" in params
+        if not accepts_country_code and not has_var_kw:
+            kwargs.pop("country_code", None)
+
         return kwargs
 
     @staticmethod
@@ -428,16 +437,31 @@ class RecognizerListLoader:
 
     @staticmethod
     def _get_recognizer_country(recognizer: EntityRecognizer) -> Optional[str]:
-        """Return the country code for a recognizer, or ``None`` if not country-specific.
+        """Return the country code for a recognizer, or ``None`` if generic.
 
-        The country is inferred from the module path. Predefined recognizers
-        live under ``predefined_recognizers/country_specific/<country>/...``
-        so we take the segment immediately following ``country_specific`` as
-        the country code. Recognizers outside ``country_specific`` (generic,
-        NER, NLP engine, third-party, and user-supplied) return ``None``.
+        Resolution order:
+
+        1. ``recognizer.country_code`` — the canonical first-class attribute,
+           set either via the constructor or via the class-level
+           ``COUNTRY_CODE`` attribute on predefined country-specific
+           recognizers.
+        2. **Transitional fallback**: if no attribute is set, infer from the
+           module path. Predefined recognizers live under
+           ``predefined_recognizers/country_specific/<country>/...`` so we
+           take the segment immediately following ``country_specific`` as
+           the country code. This fallback is kept so that any custom
+           recognizer happening to live under a ``country_specific/<iso>/``
+           tree still works without explicitly setting ``country_code``.
+
+        Recognizers outside both paths (generic, NER, NLP engine, third-party,
+        and locale-agnostic user-supplied recognizers) return ``None``.
 
         :param recognizer: The recognizer instance whose country to resolve.
         """
+        attr_country = getattr(recognizer, "country_code", None)
+        if isinstance(attr_country, str) and attr_country:
+            return attr_country.lower()
+
         module_name = type(recognizer).__module__ or ""
         parts = module_name.split(".")
         try:
@@ -455,22 +479,58 @@ class RecognizerListLoader:
     ) -> List[EntityRecognizer]:
         """Filter a list of recognizers to the requested countries.
 
-        Country-agnostic recognizers (anything not under
-        ``predefined_recognizers/country_specific/``) are always retained.
-        Country-specific recognizers are kept only when their directory's
-        country code appears in ``countries`` (case-insensitive).
+        Filtering rule (single invariant):
+
+        - ``country_code is None`` → **always kept**. Locale-agnostic
+          recognizers (generic built-ins like ``CreditCardRecognizer``, NER /
+          NLP engine recognizers, and any custom recognizer that has not
+          opted into the country tag) are unaffected by the filter.
+        - ``country_code is not None`` → kept iff the code appears in
+          ``countries`` (case-insensitive).
+
+        The "untagged = always included" rule is what keeps the migration
+        backwards compatible: custom recognizers built before ``country_code``
+        existed continue to fire regardless of the requested country set, and
+        users opt into stricter filtering simply by setting ``country_code``
+        on their custom recognizers.
+
+        When ``countries`` contains a code that does not match any recognizer
+        in the input list, a ``WARNING`` is logged with the country and a
+        hint about ``country_code`` so silent zero-result filters are easier
+        to debug.
 
         :param recognizers: The recognizers to filter.
         :param countries: Country codes to keep (e.g. ``["us", "uk"]``). An
-            empty iterable keeps only country-agnostic recognizers.
+            empty iterable keeps only locale-agnostic recognizers.
         :return: A new list preserving the original order.
         """
+        # Materialize once so we can iterate twice (filter + warning probe)
+        # without consuming a generator.
+        recognizer_list = list(recognizers)
         allowed = {c.lower() for c in countries}
+
         filtered: List[EntityRecognizer] = []
-        for recognizer in recognizers:
+        seen_countries: Set[str] = set()
+        for recognizer in recognizer_list:
             country = RecognizerListLoader._get_recognizer_country(recognizer)
-            if country is None or country in allowed:
+            if country is None:
                 filtered.append(recognizer)
+                continue
+            seen_countries.add(country)
+            if country in allowed:
+                filtered.append(recognizer)
+
+        missing = sorted(allowed - seen_countries)
+        for code in missing:
+            logger.warning(
+                "Country filter: no recognizer matched country_code=%r. "
+                "If you have custom recognizers for %r, set country_code=%r "
+                "on them to include them in country-filtered loads.",
+                code,
+                code,
+                code,
+            )
+
         return filtered
 
 

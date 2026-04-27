@@ -101,15 +101,22 @@ class RecognizerRegistry:
 
         :param languages: List of languages for which to load recognizers
         :param nlp_engine: The NLP engine to use.
-        :param countries: Optional list of country codes (case-insensitive)
-            matching directory names under
-            ``predefined_recognizers/country_specific/`` (e.g. ``["us", "uk"]``).
-            When provided, only country-specific recognizers for these countries
-            are loaded; country-agnostic recognizers (generic, NER, NLP engine,
-            third-party) are always loaded. Passing an empty list
-            (``countries=[]``) loads only country-agnostic recognizers. Passing
-            ``None`` (the default) preserves the previous behavior of loading
-            all predefined recognizers.
+        :param countries: Optional list of country codes (case-insensitive,
+            ISO 3166-1 alpha-2 — e.g. ``["us", "uk"]``).
+            When provided, the loaded recognizers are limited per the
+            ``country_code`` attribute on each recognizer:
+
+            - recognizers with ``country_code is None`` (locale-agnostic
+              built-ins, NER, NLP engine, third-party recognizers, and any
+              custom recognizer that hasn't opted into the country tag) are
+              **always loaded**;
+            - recognizers with ``country_code`` set are loaded only when
+              their code is in ``countries``.
+
+            Passing an empty list (``countries=[]``) keeps only
+            locale-agnostic recognizers. Passing ``None`` (the default)
+            preserves the previous behavior of loading every predefined
+            recognizer.
         :return: None
         """
 
@@ -214,6 +221,29 @@ class RecognizerRegistry:
             raise ValueError("No matching recognizers were found to serve the request.")
 
         return list(to_return)
+
+    def get_country_codes(self) -> List[str]:
+        """Return the set of country codes currently represented in the registry.
+
+        Aggregates the ``country_code`` attribute across all loaded recognizers
+        (excluding ``None``, which represents locale-agnostic recognizers).
+        Useful for debugging country-filter behavior:
+
+        >>> registry = RecognizerRegistry()
+        >>> registry.load_predefined_recognizers()
+        >>> sorted(registry.get_country_codes())  # doctest: +SKIP
+        ['au', 'ca', 'de', 'es', 'fi', 'in', 'it', 'kr', 'ng', 'pl', 'se',
+         'sg', 'th', 'tr', 'uk', 'us']
+
+        :return: A sorted list of unique country codes (lowercased) seen on
+            the loaded recognizers.
+        """
+        codes = {
+            rec.country_code
+            for rec in self.recognizers
+            if getattr(rec, "country_code", None)
+        }
+        return sorted(codes)
 
     def add_recognizer(self, recognizer: EntityRecognizer) -> None:
         """

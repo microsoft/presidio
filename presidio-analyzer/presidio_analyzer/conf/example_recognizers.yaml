@@ -1,5 +1,15 @@
+# Optional per-recognizer fields:
+#
+#   country_code: "<iso-3166-1-alpha-2>"
+#     Tags this recognizer as country-specific so it is included or excluded
+#     by ``RecognizerRegistry.load_predefined_recognizers(countries=[...])``.
+#     Recognizers without ``country_code`` (or with ``country_code: null``)
+#     are treated as locale-agnostic and are always loaded regardless of the
+#     country filter. See docs/analyzer/filtering_by_country.md for the full
+#     filter semantics.
 recognizers:
   -
+    # Locale-agnostic example: no country_code, always loaded.
     name: "Zip code Recognizer"
     supported_language: "de"
     patterns:
@@ -12,6 +22,7 @@ recognizers:
      - code
     supported_entity: "ZIP"
   -
+    # Locale-agnostic example: no country_code, always loaded.
     name: "Titles recognizer"
     supported_language: "en"
     supported_entity: "TITLE"
@@ -22,3 +33,20 @@ recognizers:
       - Miss
       - Dr.
       - Prof.
+  -
+    # Country-specific example: declares country_code so that
+    # ``load_predefined_recognizers(countries=["br"])`` includes it and
+    # ``countries=["us"]`` excludes it.
+    name: "BR CPF Recognizer"
+    supported_language: "pt"
+    supported_entity: "BR_CPF"
+    country_code: "br"
+    patterns:
+      -
+         name: "br_cpf (weak)"
+         regex: "\\b\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}\\b"
+         score: 0.3
+    context:
+     - cpf
+     - cadastro
+     - pessoa
