@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - Structural validation improvements in `DeBsnrRecognizer` per KBV Arztnummern-Richtlinie Anlage 1; valid KV regional codes are defined for defense-in-depth/documentation purposes, but unknown prefixes are not currently rejected (no public checksum exists for BSNR).
 - Turkish PII recognizer for `TR_NATIONAL_ID` (TCKN) to identify Turkish National Identification Numbers using pattern match, context, and NVI checksum validation. Disabled by default.
 - Turkish PII recognizer for `TR_PHONE_NUMBER` to identify Turkish mobile phone numbers in international (+90), national (0), and local formats using pattern match and format validation. Disabled by default.
+- Turkish PII recognizer for `TR_LICENSE_PLATE` (plaka) to identify Turkish vehicle license plates using pattern match, context, and province code validation (01-81). Disabled by default.
 
 ## [2.2.362] - 2026-03-15
 ### General

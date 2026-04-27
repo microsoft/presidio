@@ -96,6 +96,9 @@ from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRe
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
 # Turkey recognizers
+from .country_specific.turkey.tr_license_plate_recognizer import (
+    TrLicensePlateRecognizer,
+)
 from .country_specific.turkey.tr_national_id_recognizer import (
     TrNationalIdRecognizer,
 )
@@ -234,6 +237,7 @@ __all__ = [
     "KrFrnRecognizer",
     "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
+    "TrLicensePlateRecognizer",
     "TrNationalIdRecognizer",
     "TrPhoneNumberRecognizer",
     "SePersonnummerRecognizer",
