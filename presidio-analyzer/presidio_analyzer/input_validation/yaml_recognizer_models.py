@@ -176,6 +176,23 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     )
 
 
+class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
+    """Configuration specifically for GLiNER models."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    model_name: Optional[str] = Field(None, description="GLiNER model name")
+    flat_ner: Optional[bool] = Field(None, description="Use flat NER")
+    multi_label: Optional[bool] = Field(
+        None, description="Use multi-label classification"
+    )
+    threshold: Optional[float] = Field(None, description="Confidence threshold")
+    map_location: Optional[str] = Field(None, description="Device (cpu/gpu/etc.)")
+    load_onnx_model: Optional[bool] = Field(None, description="Load ONNX model")
+    onnx_model_file: Optional[str] = Field(None, description="ONNX model file name")
+    entity_mapping: Optional[Dict[str, str]] = Field(None, description="Entity mapping")
+
+
 class CustomRecognizerConfig(BaseRecognizerConfig):
     """Configuration for custom pattern-based recognizers."""
 
@@ -463,4 +480,5 @@ class RecognizerRegistryConfig(BaseModel):
 # This allows for modular expansion without polluting the base config
 CONFIG_MODEL_MAP: Dict[str, Type[BaseModel]] = {
     "HuggingFaceNerRecognizer": HuggingFaceRecognizerConfig,
+    "GLiNERRecognizer": GLiNERRecognizerConfig,
 }

@@ -627,6 +627,37 @@ def test_recognizer_registry_config_custom_name_with_hf_class():
     assert recognizer.model_name == "TestModel/Ner"
 
 
+def test_gliner_recognizer_config_model_name():
+    """Test that GLiNERRecognizer model_name is preserved through config validation."""
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        GLiNERRecognizerConfig,
+        RecognizerRegistryConfig,
+    )
+
+    registry_config = {
+        "recognizers": [
+            {
+                "name": "GLiNERRecognizer",
+                "type": "predefined",
+                "supported_language": "en",
+                "model_name": "custom/gliner-model",
+                "threshold": 0.5,
+                "flat_ner": False,
+                "multi_label": True,
+            }
+        ]
+    }
+
+    config = RecognizerRegistryConfig(**registry_config)
+    recognizer = config.recognizers[0]
+
+    assert isinstance(recognizer, GLiNERRecognizerConfig)
+    assert recognizer.model_name == "custom/gliner-model"
+    assert recognizer.threshold == 0.5
+    assert recognizer.flat_ner is False
+    assert recognizer.multi_label is True
+
+
 def test_config_model_map_fallback_to_predefined():
     """Test CONFIG_MODEL_MAP falls back to Predefined for unknown class_name."""
     from presidio_analyzer.input_validation.yaml_recognizer_models import (
