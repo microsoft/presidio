@@ -29,21 +29,25 @@ class EntityRecognizer:
     :param version: the recognizer current version
     :param context: a list of words which can help boost confidence score
     when they appear in context of the matched entity
-    :param country_code: optional country tag for this recognizer, used by
+
+    To declare a recognizer as country-specific, override the class-level
+    :attr:`COUNTRY_CODE` attribute on the subclass (e.g.
+    ``COUNTRY_CODE = "us"``). Country tags are used by
     ``RecognizerRegistry.load_predefined_recognizers(countries=[...])`` to
-    include or exclude country-specific recognizers. ``None`` (the default)
+    include or exclude country-specific recognizers; ``None`` (the default)
     means the recognizer is locale-agnostic and is always included regardless
-    of the country filter. For predefined country-specific recognizers the
-    canonical way to declare the country is to set the class-level
-    ``COUNTRY_CODE`` attribute (e.g. ``COUNTRY_CODE = "us"``); the constructor
-    argument exists for ad-hoc / custom recognizers and overrides the class
-    attribute when both are provided. Codes are compared case-insensitively
-    and should follow ISO 3166-1 alpha-2 (with ``"uk"`` accepted as a synonym
-    of ``"gb"`` for historical consistency with the directory layout).
+    of the country filter. Codes follow ISO 3166-1 alpha-2 (with ``"uk"``
+    accepted as a synonym of ``"gb"`` for historical consistency with the
+    directory layout) and are compared case-insensitively.
     """
 
     MIN_SCORE = 0
     MAX_SCORE = 1.0
+    #: Canonical class-level country tag. Subclasses override on the class
+    #: itself (e.g. ``COUNTRY_CODE = "us"``) — there is no per-instance
+    #: override mechanism by design, so country information is a single
+    #: source of truth living on the recognizer class. Read via the
+    #: :meth:`country_code` / :meth:`is_country_specific` classmethods.
     COUNTRY_CODE: ClassVar[Optional[str]] = None
 
     def __init__(
@@ -53,7 +57,6 @@ class EntityRecognizer:
         supported_language: str = "en",
         version: str = "0.0.1",
         context: Optional[List[str]] = None,
-        country_code: Optional[str] = None,
     ):
         self.supported_entities = supported_entities
 
@@ -69,21 +72,36 @@ class EntityRecognizer:
         self.is_loaded = False
         self.context = context if context else []
 
-        # Resolve country_code: explicit constructor arg wins, otherwise fall
-        # back to the class-level COUNTRY_CODE attribute (used by predefined
-        # country-specific recognizers). ``None`` means locale-agnostic.
-        resolved_country_code = (
-            country_code if country_code is not None else self.COUNTRY_CODE
-        )
-        self.country_code = (
-            resolved_country_code.lower()
-            if isinstance(resolved_country_code, str)
-            else resolved_country_code
-        )
-
         self.load()
         logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
+
+    @classmethod
+    def country_code(cls) -> Optional[str]:
+        """Return the country tag for this recognizer, or ``None`` if generic.
+
+        Reads the class-level :attr:`COUNTRY_CODE` attribute and normalizes
+        it to lower-case so the case-insensitive contract of the country
+        filter holds at the source. Implemented as a classmethod (rather
+        than an instance attribute) so the country tag is a fact about the
+        recognizer *class*, not a per-instance value, and so callers can
+        introspect a recognizer class without instantiating it.
+        """
+        code = cls.COUNTRY_CODE
+        if isinstance(code, str):
+            return code.lower()
+        return code
+
+    @classmethod
+    def is_country_specific(cls) -> bool:
+        """Return ``True`` iff this recognizer is tagged with a country.
+
+        Equivalent to ``cls.country_code() is not None``. Provided as a
+        named predicate because filter / registry / discoverability code
+        reads more naturally with an explicit "is this country-specific?"
+        question than with a None-check.
+        """
+        return cls.country_code() is not None
 
     @property
     def id(self):
@@ -179,8 +197,6 @@ class EntityRecognizer:
             "name": self.name,
             "version": self.version,
         }
-        if self.country_code is not None:
-            return_dict["country_code"] = self.country_code
         return return_dict
 
     @classmethod

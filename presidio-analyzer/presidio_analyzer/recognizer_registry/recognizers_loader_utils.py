@@ -347,15 +347,6 @@ class RecognizerListLoader:
         if not accepts_supported_entity:
             kwargs.pop(RecognizerListLoader.SUPPORTED_ENTITY, None)
 
-        # ``country_code`` is opt-in metadata. Most predefined recognizer
-        # classes don't list it explicitly in their ``__init__`` (they rely
-        # on the class-level ``COUNTRY_CODE`` attribute instead). If the
-        # YAML happens to provide ``country_code`` for such a class, drop it
-        # to avoid a TypeError; the class attribute remains authoritative.
-        accepts_country_code = "country_code" in params
-        if not accepts_country_code and not has_var_kw:
-            kwargs.pop("country_code", None)
-
         return kwargs
 
     @staticmethod
@@ -363,11 +354,26 @@ class RecognizerListLoader:
         recognizers: Dict[str, Any],
         supported_languages: Iterable[str],
         global_regex_flags: int,
+        supported_countries: Optional[Iterable[str]] = None,
     ) -> Iterable[EntityRecognizer]:
         """
         Create an iterator of recognizers.
 
-        The recognizers are initialized according to configuration loaded previously.
+        The recognizers are initialized according to configuration loaded
+        previously.
+
+        :param recognizers: The recognizer configuration block.
+        :param supported_languages: Languages this registry should support.
+            Recognizers whose ``supported_language`` falls outside this set
+            are dropped.
+        :param global_regex_flags: Regex flags applied to pattern recognizers.
+        :param supported_countries: Optional country filter (case-insensitive
+            ISO-3166 alpha-2 codes — e.g. ``["us", "uk"]``). Mirrors the
+            ``supported_languages`` filter: when provided, recognizers
+            tagged with a country (via the class-level ``COUNTRY_CODE``
+            attribute) are kept only when their code is in this set.
+            Locale-agnostic recognizers (``COUNTRY_CODE`` unset / ``None``)
+            are always kept. Pass ``None`` (the default) to skip the filter.
         """
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
@@ -420,6 +426,11 @@ class RecognizerListLoader:
             )
         ]
 
+        if supported_countries is not None:
+            recognizer_instances = RecognizerListLoader.filter_by_countries(
+                recognizer_instances, supported_countries
+            )
+
         return recognizer_instances
 
     @staticmethod
@@ -441,26 +452,34 @@ class RecognizerListLoader:
 
         Resolution order:
 
-        1. ``recognizer.country_code`` — the canonical first-class attribute,
-           set either via the constructor or via the class-level
-           ``COUNTRY_CODE`` attribute on predefined country-specific
-           recognizers.
-        2. **Transitional fallback**: if no attribute is set, infer from the
-           module path. Predefined recognizers live under
-           ``predefined_recognizers/country_specific/<country>/...`` so we
-           take the segment immediately following ``country_specific`` as
-           the country code. This fallback is kept so that any custom
-           recognizer happening to live under a ``country_specific/<iso>/``
-           tree still works without explicitly setting ``country_code``.
+        1. The class-level ``COUNTRY_CODE`` attribute (read via
+           :meth:`EntityRecognizer.country_code`). This is the canonical
+           source of truth: subclasses declare their country once on the
+           class and the filter reads it back here.
+        2. **Transitional fallback**: if the class did not declare a
+           country, try to infer one from the module path. Predefined
+           recognizers live under
+           ``predefined_recognizers/country_specific/<country>/...``, so
+           the segment immediately following ``country_specific`` is taken
+           as the country code. This fallback exists for any custom
+           recognizer that follows the same directory layout but has not
+           yet adopted the class attribute.
 
-        Recognizers outside both paths (generic, NER, NLP engine, third-party,
-        and locale-agnostic user-supplied recognizers) return ``None``.
+        Recognizers outside both paths (generic, NER, NLP engine,
+        third-party, and locale-agnostic user-supplied recognizers) return
+        ``None``.
 
         :param recognizer: The recognizer instance whose country to resolve.
         """
-        attr_country = getattr(recognizer, "country_code", None)
-        if isinstance(attr_country, str) and attr_country:
-            return attr_country.lower()
+        # ``country_code`` is a classmethod on EntityRecognizer; calling it
+        # via the instance is identical to calling it on type(recognizer)
+        # but reads more naturally at the call site.
+        try:
+            declared = recognizer.country_code()
+        except Exception:  # pragma: no cover — defensive: third-party subclasses
+            declared = None
+        if isinstance(declared, str) and declared:
+            return declared.lower()
 
         module_name = type(recognizer).__module__ or ""
         parts = module_name.split(".")

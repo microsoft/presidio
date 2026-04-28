@@ -28,20 +28,34 @@ UK NINO, …) — but excludes German, Spanish, Indian, Italian, Korean,
 Polish, Singaporean, Swedish, Thai, Turkish, and other country
 recognizers.
 
+The same filter can be set globally in YAML, mirroring how
+`supported_languages` works:
+
+```yaml
+supported_languages: ["en"]
+supported_countries: ["us", "uk"]
+recognizers:
+  # ...
+```
+
+When the registry is built from a YAML file, this top-level
+`supported_countries` is applied automatically inside the loader; you
+don't need to pass `countries=` again from Python.
+
 ## How the filter works
 
-Every recognizer carries a `country_code` attribute:
+Country tagging is a fact about a recognizer **class**, declared once
+via the class-level `COUNTRY_CODE` attribute on the recognizer. The
+filter reads it back through two classmethods on `EntityRecognizer`:
 
-- `country_code is None` → **locale-agnostic**. Always loaded regardless
-  of the country filter. This is the default for any recognizer that
-  doesn't explicitly opt in.
-- `country_code` set to an ISO 3166-1 alpha-2 string (e.g. `"us"`,
-  `"uk"`, `"br"`) → **country-specific**. Only loaded when its code is
-  in the `countries` argument.
+- `recognizer.country_code()` returns the lower-cased ISO code declared
+  on the class, or `None` if the recognizer is locale-agnostic.
+- `recognizer.is_country_specific()` is the named predicate equivalent
+  to `country_code() is not None`.
 
 The filter has a single rule:
 
-| Recognizer's `country_code` | `countries=None` | `countries=["us"]` | `countries=["us", "uk"]` | `countries=[]` |
+| Recognizer's `country_code()` | `countries=None` | `countries=["us"]` | `countries=["us", "uk"]` | `countries=[]` |
 | --- | --- | --- | --- | --- |
 | `None` (locale-agnostic) | ✅ kept | ✅ kept | ✅ kept | ✅ kept |
 | `"us"` | ✅ kept | ✅ kept | ✅ kept | ❌ dropped |
@@ -50,15 +64,12 @@ The filter has a single rule:
 
 Code comparison is **case-insensitive**: `"US"`, `"Us"`, `"us"` all work.
 
-## Declaring `country_code` on your own recognizers
+## Declaring a country on your own recognizers
 
-There are two equivalent ways to tag a custom recognizer:
-
-### Option 1 — Class-level `COUNTRY_CODE` attribute
-
+Set the class-level `COUNTRY_CODE` attribute on the recognizer subclass.
 This is the path used by every predefined country-specific recognizer
 in Presidio (`UsSsnRecognizer`, `UkNinoRecognizer`, `EsNifRecognizer`,
-…) and is recommended for class-based recognizers:
+…) and is the only supported way to tag a recognizer:
 
 ```python
 from presidio_analyzer import Pattern, PatternRecognizer
@@ -81,49 +92,11 @@ class BrCpfRecognizer(PatternRecognizer):
         )
 ```
 
-The base `EntityRecognizer.__init__` reads the class attribute and
-assigns it to `self.country_code`.
+`BrCpfRecognizer.country_code()` will return `"br"`, and the registry's
+country filter will treat it the same as the predefined country-specific
+recognizers.
 
-### Option 2 — Constructor argument
-
-Useful for one-off recognizers, ad-hoc recognizers, and pattern
-recognizers loaded from YAML:
-
-```python
-from presidio_analyzer import Pattern, PatternRecognizer
-
-br_cpf = PatternRecognizer(
-    supported_entity="BR_CPF",
-    patterns=[Pattern("BR CPF", r"\b\d{3}\.\d{3}\.\d{3}-\d{2}\b", 0.5)],
-    supported_language="pt",
-    country_code="br",
-)
-```
-
-If both are provided, the constructor argument wins over the class
-attribute.
-
-### Option 3 — YAML configuration
-
-For YAML-defined custom recognizers, declare `country_code` next to the
-other fields:
-
-```yaml
-recognizers:
-  - name: "BR CPF Recognizer"
-    supported_language: "pt"
-    supported_entity: "BR_CPF"
-    country_code: "br"
-    patterns:
-      - name: "br_cpf (medium)"
-        regex: "\\b\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}\\b"
-        score: 0.5
-```
-
-See the full example in
-[`example_recognizers.yaml`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml).
-
-## When to leave `country_code` unset
+## When to leave `COUNTRY_CODE` unset
 
 Some PII patterns are not anchored to a single country and should
 remain locale-agnostic:
@@ -134,8 +107,9 @@ remain locale-agnostic:
 - IBAN — geographically European-ish but not anchored to one country.
 - Generic NER models (spaCy, Stanza, transformer-based recognizers).
 
-Leave `country_code = None` (the default) for these. They will always
-be loaded and the country filter will not touch them.
+Leave `COUNTRY_CODE` unset (it inherits the default `None` from
+`EntityRecognizer`) for these. They will always be loaded and the
+country filter will not touch them.
 
 ## Backwards compatibility
 
@@ -144,11 +118,11 @@ The filter is fully backwards compatible:
 1. **Default behavior is unchanged.** Calling
    `load_predefined_recognizers()` without `countries` (or with
    `countries=None`) loads every predefined recognizer exactly as before.
-2. **Untagged custom recognizers continue to work.** Any recognizer
-   you've already deployed that does not declare `country_code` is
-   treated as locale-agnostic and is never filtered out — regardless of
-   the requested countries. The filter only excludes recognizers that
-   have explicitly opted in via `country_code`.
+2. **Untagged custom recognizers continue to work.** Any recognizer you
+   have already deployed that does not declare `COUNTRY_CODE` is treated
+   as locale-agnostic and is never filtered out — regardless of the
+   requested countries. The filter only excludes recognizers that have
+   explicitly opted in via the class attribute.
 3. **Predefined recognizers are pre-tagged.** Every recognizer under
    `presidio_analyzer.predefined_recognizers.country_specific.<country>`
    ships with its `COUNTRY_CODE` set to the appropriate ISO code, so
@@ -158,7 +132,7 @@ The filter is fully backwards compatible:
 
 If you pass `countries=["br"]` and your custom Brazilian recognizer
 disappears, the most likely cause is that the recognizer hasn't
-declared `country_code="br"`. Two diagnostic helpers:
+declared `COUNTRY_CODE = "br"`. Two diagnostic helpers:
 
 - `registry.get_country_codes()` returns the sorted list of country
   codes currently represented in the registry. If `"br"` is missing, no

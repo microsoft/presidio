@@ -123,16 +123,17 @@ class RecognizerRegistry:
         registry_configuration = {"global_regex_flags": self.global_regex_flags}
         if languages is not None:
             registry_configuration["supported_languages"] = languages
+        if countries is not None:
+            # Threaded through the configuration the same way as
+            # ``supported_languages`` so the filter is applied inside
+            # ``RecognizerListLoader.get(...)`` and behaves uniformly
+            # whether driven from Python or from a YAML config file.
+            registry_configuration["supported_countries"] = countries
 
         configuration = RecognizerConfigurationLoader.get(
             registry_configuration=registry_configuration
         )
         recognizers = RecognizerListLoader.get(**configuration)
-
-        if countries is not None:
-            recognizers = RecognizerListLoader.filter_by_countries(
-                recognizers, countries
-            )
 
         self.recognizers.extend(recognizers)
         self.add_nlp_recognizer(nlp_engine=nlp_engine)
@@ -225,9 +226,10 @@ class RecognizerRegistry:
     def get_country_codes(self) -> List[str]:
         """Return the set of country codes currently represented in the registry.
 
-        Aggregates the ``country_code`` attribute across all loaded recognizers
-        (excluding ``None``, which represents locale-agnostic recognizers).
-        Useful for debugging country-filter behavior:
+        Aggregates the class-level ``COUNTRY_CODE`` (via
+        :meth:`EntityRecognizer.country_code`) across all loaded
+        recognizers, excluding generic / locale-agnostic ones. Useful for
+        debugging country-filter behavior:
 
         >>> registry = RecognizerRegistry()
         >>> registry.load_predefined_recognizers()
@@ -238,11 +240,14 @@ class RecognizerRegistry:
         :return: A sorted list of unique country codes (lowercased) seen on
             the loaded recognizers.
         """
-        codes = {
-            rec.country_code
-            for rec in self.recognizers
-            if getattr(rec, "country_code", None)
-        }
+        codes = set()
+        for rec in self.recognizers:
+            try:
+                code = rec.country_code()
+            except Exception:  # pragma: no cover — defensive
+                code = None
+            if isinstance(code, str) and code:
+                codes.add(code.lower())
         return sorted(codes)
 
     def add_recognizer(self, recognizer: EntityRecognizer) -> None:
