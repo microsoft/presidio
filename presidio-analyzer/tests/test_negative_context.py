@@ -138,7 +138,7 @@ def test_negative_context_reduces_score(spacy_nlp_engine):
     text = "This is a test SSN: 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
     assert len(results) > 0
     original_score = results[0].score
 
@@ -164,7 +164,7 @@ def test_negative_context_prevents_false_positives(spacy_nlp_engine):
     text = "Example SSN for testing: 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
     original_score = results[0].score
 
     enhancer = LemmaContextAwareEnhancer(negative_context_penalty=0.5)
@@ -188,7 +188,7 @@ def test_negative_context_penalty_clamped_to_min_score(spacy_nlp_engine):
     text = "This is a test SSN: 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
 
     enhancer = LemmaContextAwareEnhancer(negative_context_penalty=0.5)
     enhanced_results = enhancer.enhance_using_context(
@@ -215,7 +215,7 @@ def test_positive_context_unaffected_by_negative_context(spacy_nlp_engine):
     text = "My social security number is 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
     original_score = results[0].score
 
     enhancer = LemmaContextAwareEnhancer(
@@ -240,7 +240,7 @@ def test_negative_context_works_without_positive_context(spacy_nlp_engine):
     text = "This is a test SSN: 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
     original_score = results[0].score
 
     enhancer = LemmaContextAwareEnhancer(negative_context_penalty=0.3)
@@ -266,7 +266,7 @@ def test_substring_matching_mode_matches_partial_words(spacy_nlp_engine):
     text = "This is an example: 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
     original_score = results[0].score
 
     enhancer = LemmaContextAwareEnhancer(
@@ -291,7 +291,7 @@ def test_whole_word_matching_mode_no_partial_match(spacy_nlp_engine):
     text = "This is an example: 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
     original_score = results[0].score
 
     enhancer = LemmaContextAwareEnhancer(
@@ -319,7 +319,7 @@ def test_recognizer_without_negative_context_unchanged(spacy_nlp_engine):
     text = "My SSN is 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
     original_score = results[0].score
 
     enhancer = LemmaContextAwareEnhancer()
@@ -342,7 +342,7 @@ def test_empty_negative_context_no_penalty(spacy_nlp_engine):
     text = "My SSN is 123-45-6789"
     nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
 
-    results = recognizer.analyze(text, nlp_artifacts)
+    results = recognizer.analyze(text=text, entities=[], nlp_artifacts=nlp_artifacts)
     original_score = results[0].score
 
     enhancer = LemmaContextAwareEnhancer()
