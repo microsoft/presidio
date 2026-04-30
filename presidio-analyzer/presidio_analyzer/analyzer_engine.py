@@ -157,10 +157,10 @@ class AnalyzerEngine:
         return_decision_process: Optional[bool] = False,
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
         context: Optional[List[str]] = None,
-        negative_context: Optional[List[str]] = None,
         allow_list: Optional[List[str]] = None,
         allow_list_match: Optional[str] = "exact",
         regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
+        negative_context: Optional[List[str]] = None,
         nlp_artifacts: Optional[NlpArtifacts] = None,
     ) -> List[RecognizerResult]:
         """
