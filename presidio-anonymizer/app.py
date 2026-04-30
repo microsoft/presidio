@@ -9,6 +9,7 @@ from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
+from request_logger import register_request_logger
 from werkzeug.exceptions import BadRequest, HTTPException
 
 DEFAULT_PORT = "3000"
@@ -38,6 +39,7 @@ class Server:
         self.logger.info("Starting anonymizer engine")
         self.anonymizer = AnonymizerEngine()
         self.deanonymize = DeanonymizeEngine()
+        register_request_logger(self.app, service_name="anonymizer")
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")

@@ -1,5 +1,7 @@
 supported_languages:
   - en
+  - uk
+  - ru
 global_regex_flags: 26
 
 recognizers:
@@ -295,6 +297,13 @@ recognizers:
 
   - name: PhoneRecognizer
     type: predefined
+    supported_languages:
+    - language: en
+      context: [phone, number, telephone, cell, cellphone, mobile, call]
+    - language: uk
+      context: [телефон, номер, мобільний, стільниковий, дзвінок, зв'язок]
+    - language: ru
+      context: [телефон, номер, мобильный, сотовый, звонок, связь]
 
   - name: UrlRecognizer
     type: predefined
@@ -399,5 +408,43 @@ recognizers:
     supported_languages:
     - en
     - fr
+    type: predefined
+    enabled: false
+
+  # Ukraine recognizers (disabled by default, enable for Ukrainian-language pipelines)
+  - name: UaPassportRecognizer
+    supported_languages:
+    - uk
+    type: predefined
+    enabled: false
+
+  - name: UaTaxIdRecognizer
+    supported_languages:
+    - uk
+    type: predefined
+    enabled: false
+
+  - name: UaPensionIdRecognizer
+    supported_languages:
+    - uk
+    type: predefined
+    enabled: false
+
+  # Russia recognizers (disabled by default, enable for Russian-language pipelines)
+  - name: RuPassportRecognizer
+    supported_languages:
+    - ru
+    type: predefined
+    enabled: false
+
+  - name: RuInnRecognizer
+    supported_languages:
+    - ru
+    type: predefined
+    enabled: false
+
+  - name: RuSnilsRecognizer
+    supported_languages:
+    - ru
     type: predefined
     enabled: false

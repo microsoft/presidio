@@ -9,6 +9,12 @@ models:
   -
     lang_code: es
     model_name: es_core_news_md
+  -
+    lang_code: uk
+    model_name: uk_core_news_lg
+  -
+    lang_code: ru
+    model_name: ru_core_news_lg
 
 ner_model_configuration:
   model_to_presidio_entity_mapping:

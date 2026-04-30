@@ -103,6 +103,16 @@ from .country_specific.turkey.tr_national_id_recognizer import (
     TrNationalIdRecognizer,
 )
 
+# Ukraine recognizers
+from .country_specific.ukraine.ua_passport_recognizer import UaPassportRecognizer
+from .country_specific.ukraine.ua_pension_id_recognizer import UaPensionIdRecognizer
+from .country_specific.ukraine.ua_tax_id_recognizer import UaTaxIdRecognizer
+
+# Russia recognizers
+from .country_specific.russia.ru_passport_recognizer import RuPassportRecognizer
+from .country_specific.russia.ru_inn_recognizer import RuInnRecognizer
+from .country_specific.russia.ru_snils_recognizer import RuSnilsRecognizer
+
 # UK recognizers
 from .country_specific.uk.uk_driving_licence_recognizer import (
     UkDrivingLicenceRecognizer,
@@ -244,6 +254,14 @@ __all__ = [
     "NgNinRecognizer",
     "NgVehicleRegistrationRecognizer",
     "MedicalNERRecognizer",
+    # Ukraine recognizers
+    "UaPassportRecognizer",
+    "UaTaxIdRecognizer",
+    "UaPensionIdRecognizer",
+    # Russia recognizers
+    "RuPassportRecognizer",
+    "RuInnRecognizer",
+    "RuSnilsRecognizer",
     # Germany recognizers
     "DeTaxIdRecognizer",
     "DeTaxNumberRecognizer",

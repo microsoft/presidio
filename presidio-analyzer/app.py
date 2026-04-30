@@ -14,6 +14,7 @@ from presidio_analyzer import (
     AnalyzerRequest,
     BatchAnalyzerEngine,
 )
+from request_logger import register_request_logger
 from werkzeug.exceptions import HTTPException
 
 DEFAULT_PORT = "3000"
@@ -57,6 +58,7 @@ class Server:
         ).create_engine()
 
         self.batch_engine = BatchAnalyzerEngine(self.engine)
+        register_request_logger(self.app, service_name="analyzer")
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
