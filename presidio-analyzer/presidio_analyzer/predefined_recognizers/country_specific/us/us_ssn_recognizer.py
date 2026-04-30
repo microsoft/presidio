@@ -50,9 +50,8 @@ class UsSsnRecognizer(PatternRecognizer):
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
-        negative_context = (
-            negative_context if negative_context else self.NEGATIVE_CONTEXT
-        )
+        if negative_context is None:
+            negative_context = self.NEGATIVE_CONTEXT
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,
