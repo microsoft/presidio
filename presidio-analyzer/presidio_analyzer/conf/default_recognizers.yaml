@@ -16,192 +16,166 @@ recognizers:
   # For example, see the CreditCardRecognizer definition below:
   - name: CreditCardRecognizer
     supported_languages:
-      - language: en
-        context:
-          [
-            credit,
-            card,
-            visa,
-            mastercard,
-            cc,
-            amex,
-            discover,
-            jcb,
-            diners,
-            maestro,
-            instapayment,
-          ]
-      - language: es
-        context:
-          [
-            tarjeta,
-            credito,
-            visa,
-            mastercard,
-            cc,
-            amex,
-            discover,
-            jcb,
-            diners,
-            maestro,
-            instapayment,
-          ]
-      - language: it
-      - language: pl
+    - language: en
+      context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
+    - language: es
+      context: [tarjeta, credito, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
+    - language: it
+    - language: pl
     type: predefined
 
   - name: UsBankRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
 
   - name: UsLicenseRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
 
   - name: UsItinRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
-
+  
   - name: UsPassportRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
-
+  
   - name: UsSsnRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
 
   - name: UsMbiRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
   - name: UsNpiRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
   - name: NhsRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
-
+    
   - name: UkDrivingLicenceRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: UkNinoRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
   - name: UkPassportRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
   - name: UkPostcodeRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
-
+    
   - name: UkPostcodeRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
   - name: UkVehicleRegistrationRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
   - name: SgFinRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: AuAbnRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: AuAcnRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: AuTfnRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: AuMedicareRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: NgNinRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
   - name: NgVehicleRegistrationRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
   - name: InPanRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: InAadhaarRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: InVehicleRegistrationRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: InPassportRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   - name: EsNifRecognizer
-    supported_languages:
-      - es
+    supported_languages: 
+    - es
     type: predefined
 
   - name: EsNieRecognizer
-    supported_languages:
-      - es
+    supported_languages: 
+    - es
     type: predefined
 
   - name: EsPassportRecognizer
@@ -209,98 +183,98 @@ recognizers:
       - es
     type: predefined
     enabled: false
-
+  
   - name: ItDriverLicenseRecognizer
-    supported_languages:
-      - it
+    supported_languages: 
+    - it
     type: predefined
 
   - name: ItFiscalCodeRecognizer
-    supported_languages:
-      - it
+    supported_languages: 
+    - it
     type: predefined
 
   - name: ItVatCodeRecognizer
-    supported_languages:
-      - it
+    supported_languages: 
+    - it
     type: predefined
 
   - name: ItIdentityCardRecognizer
-    supported_languages:
-      - it
+    supported_languages: 
+    - it
     type: predefined
 
   - name: ItPassportRecognizer
-    supported_languages:
-      - it
+    supported_languages: 
+    - it
     type: predefined
 
   - name: PlPeselRecognizer
-    supported_languages:
-      - pl
+    supported_languages: 
+    - pl
     type: predefined
 
   - name: KrBrnRecognizer
-    supported_languages:
-      - ko
-      - kr
+    supported_languages: 
+    - ko
+    - kr
     type: predefined
     enabled: false
 
   - name: KrRrnRecognizer
-    supported_languages:
-      - ko
-      - kr
+    supported_languages: 
+    - ko
+    - kr
     type: predefined
     enabled: false
 
   - name: KrDriverLicenseRecognizer
-    supported_languages:
-      - ko
-      - kr
+    supported_languages: 
+    - ko
+    - kr
     type: predefined
     enabled: false
 
   - name: KrFrnRecognizer
     supported_languages:
-      - ko
-      - kr
+    - ko
+    - kr
     type: predefined
     enabled: false
 
   - name: SeOrganisationsnummerRecognizer
     supported_languages:
-      - sv
+    - sv
     type: predefined
     enabled: false
-
+  
   - name: SePersonnummerRecognizer
     supported_languages:
-      - sv
+    - sv
     type: predefined
     enabled: false
 
   - name: ThTninRecognizer
     supported_languages:
-      - th
+    - th
     type: predefined
     enabled: false
 
   - name: TrNationalIdRecognizer
     supported_languages:
-      - tr
+    - tr
     type: predefined
     enabled: false
 
   - name: TrLicensePlateRecognizer
     supported_languages:
-      - tr
+    - tr
     type: predefined
     enabled: false
 
   - name: HuggingFaceNerRecognizer
     supported_languages:
-      - en
+    - en
     type: predefined
     enabled: false
 
@@ -336,87 +310,87 @@ recognizers:
     enabled: false
 
   - name: InGstinRecognizer
-    supported_languages:
-      - en
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
   # Germany recognizers (disabled by default, enable for German-language pipelines)
   - name: DeTaxIdRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeTaxNumberRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DePassportRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeIdCardRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeSocialSecurityRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeHealthInsuranceRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeKfzRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeHandelsregisterRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DePlzRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeLanrRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeBsnrRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeVatIdRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
   - name: DeFuehrerscheinRecognizer
     supported_languages:
-      - de
+    - de
     type: predefined
     enabled: false
 
@@ -429,7 +403,7 @@ recognizers:
 
   - name: CaSinRecognizer
     supported_languages:
-      - en
-      - fr
+    - en
+    - fr
     type: predefined
     enabled: false

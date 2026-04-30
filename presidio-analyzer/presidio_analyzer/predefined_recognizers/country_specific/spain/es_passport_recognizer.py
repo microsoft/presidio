@@ -8,7 +8,7 @@ class EsPassportRecognizer(PatternRecognizer):
     """
     Recognize Spanish passport numbers using regex.
 
-    Spanish passports follow the format: 3 letters followed by 6 digits (e.g. AAA123456).
+    Follows the format: 3 letters followed by 6 digits (e.g. AAA123456).
 
     Reference(s):
     https://en.wikipedia.org/wiki/Spanish_passport
