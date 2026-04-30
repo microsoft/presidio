@@ -9,6 +9,12 @@ from typing import Optional
 from flask import Flask, g, request
 
 logger = logging.getLogger("presidio.request")
+if not logger.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter("%(message)s"))
+    logger.addHandler(_handler)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
 
 # Set LOG_REQUEST_TEXT=true to include the raw input text in log records.
 # Disabled by default: logging un-redacted text defeats the purpose of PII

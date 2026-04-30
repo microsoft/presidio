@@ -1,3 +1,5 @@
 supported_languages:
   - en
+  - uk
+  - ru
 default_score_threshold: 0
