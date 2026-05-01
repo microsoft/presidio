@@ -18,6 +18,7 @@ class PhoneRecognizer(LocalRecognizer):
      Using python-phonenumbers, along with fixed and regional context words.
     :param context: Base context words for enhancing the assurance scores.
     :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
     :param supported_regions: The regions for phone number matching and validation
     :param leniency: The strictness level of phone number formats.
     Accepts values from 0 to 3, where 0 is the lenient and 3 is the most strictest.
