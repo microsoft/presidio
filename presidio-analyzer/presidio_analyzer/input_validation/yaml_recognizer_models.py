@@ -99,6 +99,13 @@ class BaseRecognizerConfig(BaseModel):
 
         return self
 
+    def _recognizer_description_for_errors(self) -> str:
+        if self.name is not None:
+            return self.name
+        if self.class_name is not None:
+            return self.class_name
+        return "recognizer"
+
     @model_validator(mode="after")
     def validate_entity_configuration(self):
         """Ensure proper entity validation."""
@@ -108,8 +115,9 @@ class BaseRecognizerConfig(BaseModel):
         )
 
         if user_provided_both:
+            describe = self._recognizer_description_for_errors()
             raise ValueError(
-                f"Recognizer {self.name} has both "
+                f"Recognizer {describe} has both "
                 "'supported_entity' and 'supported_entities' specified."
             )
 
@@ -140,11 +148,24 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
     """Configuration for predefined recognizers."""
 
     type: str = Field(default="predefined", description="Type of recognizer")
+    name: Optional[str] = Field(
+        default=None,
+        description=(
+            "Instance name for analysis results; optional when "
+            "`class_name` is set — some recognizers infer a stable default "
+            "(e.g. GLiNERRecognizer from model_name)."
+        ),
+    )
 
     @model_validator(mode="after")
     def validate_predefined_recognizer_exists(self):
         """Validate that the predefined recognizer class actually exists."""
         recognizer_class_name = self.class_name if self.class_name else self.name
+        if recognizer_class_name is None:
+            raise ValueError(
+                "Predefined recognizer requires either 'name' "
+                "(shorthand/class key) or 'class_name'."
+            )
         try:
             RecognizerListLoader.get_existing_recognizer_cls(recognizer_class_name)
         except PredefinedRecognizerNotFoundError as e:
@@ -174,6 +195,27 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     label_prefixes: Optional[List[str]] = Field(
         default=None, description="Prefixes to strip from labels (e.g. B-, I-)"
     )
+
+
+class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
+    """Configuration specifically for GLiNER recognizers."""
+
+    model_config = ConfigDict(extra="allow")
+
+    model_name: Optional[str] = Field(None, description="GLiNER model name")
+    entity_mapping: Optional[Dict[str, str]] = Field(
+        None, description="GLiNER label to Presidio entity mapping"
+    )
+    flat_ner: Optional[bool] = Field(None, description="Whether to use flat NER")
+    multi_label: Optional[bool] = Field(
+        None, description="Whether to use multi-label classification"
+    )
+    threshold: Optional[float] = Field(None, description="Confidence threshold")
+    map_location: Optional[str] = Field(None, description="Model device")
+    load_onnx_model: Optional[bool] = Field(
+        None, description="Whether to load GLiNER with ONNX Runtime"
+    )
+    onnx_model_file: Optional[str] = Field(None, description="ONNX model file name")
 
 
 class CustomRecognizerConfig(BaseRecognizerConfig):
@@ -280,6 +322,7 @@ class RecognizerRegistryConfig(BaseModel):
     recognizers: List[
         Union[
             HuggingFaceRecognizerConfig,
+            GLiNERRecognizerConfig,
             PredefinedRecognizerConfig,
             CustomRecognizerConfig,
             str,
@@ -463,4 +506,5 @@ class RecognizerRegistryConfig(BaseModel):
 # This allows for modular expansion without polluting the base config
 CONFIG_MODEL_MAP: Dict[str, Type[BaseModel]] = {
     "HuggingFaceNerRecognizer": HuggingFaceRecognizerConfig,
+    "GLiNERRecognizer": GLiNERRecognizerConfig,
 }
