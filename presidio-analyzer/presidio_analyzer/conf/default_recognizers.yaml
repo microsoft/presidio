@@ -180,7 +180,7 @@ recognizers:
 
   - name: EsPassportRecognizer
     supported_languages:
-      - es
+    - es
     type: predefined
     enabled: false
   

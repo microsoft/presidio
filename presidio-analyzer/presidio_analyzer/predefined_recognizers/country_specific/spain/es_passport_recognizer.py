@@ -1,4 +1,4 @@
-import re
+import regex as re
 from typing import List, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
@@ -23,7 +23,7 @@ class EsPassportRecognizer(PatternRecognizer):
         Pattern(
             "ES_PASSPORT",
             r"\b[A-Z]{3}[0-9]{6}\b",
-            0.5,
+            0.05,
         ),
     ]
 
