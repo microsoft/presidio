@@ -178,6 +178,12 @@ recognizers:
     - es
     type: predefined
 
+  - name: EsPassportRecognizer
+    supported_languages:
+    - es
+    type: predefined
+    enabled: false
+  
   - name: ItDriverLicenseRecognizer
     supported_languages: 
     - it

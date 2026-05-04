@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 
 - Added recognizer for Swedish Organisationsnummer, ID number for all Swedish oragnisations.
 
+- Added recognizer for Spanish Passport (`ES_PASSPORT`).
+
 - Added `supported_entity` parameter to `PhoneRecognizer`. Previously, this recognizer hard-coded `["PHONE_NUMBER"]` as the only possible supported entity.
 
 #### Fixed
