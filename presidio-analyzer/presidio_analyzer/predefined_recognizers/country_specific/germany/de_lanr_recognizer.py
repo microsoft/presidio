@@ -23,14 +23,18 @@ class DeLanrRecognizer(PatternRecognizer):
         Pos 7:    Prüfziffer (check digit, derived from pos 1–6)
         Pos 8–9:  Arztgruppe / Fachgruppe (specialty / physician group code)
 
-    Examples (fictitious): 123456901, 234567601, 100000414
+    Examples: 123456601, 234567701, 100000601
 
-    Check digit algorithm (KBV specification):
-        1. Apply weights [4, 9, 2, 10, 5, 3] to digits at positions 1–6.
-        2. For each product > 9, replace it with the cross-sum of its digits
-           (e.g. 18 → 1+8 = 9, 40 → 4+0 = 4).
-        3. Sum all six values.
-        4. Check digit (pos 7) = sum mod 10.
+    Check digit algorithm (KBV Arztnummern-Richtlinie):
+        1. Multiply digits at positions 1–6 alternately by 4 and 9 from the
+           left: weights [4, 9, 4, 9, 4, 9].
+        2. Sum the six products (no cross-sum step).
+        3. Check digit (pos 7) = (10 − sum mod 10) mod 10, i.e. the
+           difference to 10; if the difference is 10, the check digit is 0.
+
+    Worked example for physician digits 123456:
+        products = 4, 18, 12, 36, 20, 54 → sum = 144
+        144 mod 10 = 4, 10 − 4 = 6 → check digit 6, so LANR = 123456601
 
     Accuracy note: The base pattern ``\\b\\d{9}\\b`` matches any 9-digit token.
     Because LANRs share the same surface form as other 9-digit identifiers
@@ -93,9 +97,9 @@ class DeLanrRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
-        Validate the LANR using the KBV check digit algorithm.
+        Validate the LANR using the KBV Arztnummern-Richtlinie checksum.
 
-        Algorithm source: KBV-Richtlinie nach § 75 Abs. 7 SGB V.
+        Algorithm source: KBV Arztnummern-Richtlinie nach § 75 Abs. 7 SGB V.
 
         :param pattern_text: the text to validate (9 digits)
         :return: True if check digit is valid, False otherwise
@@ -105,13 +109,8 @@ class DeLanrRecognizer(PatternRecognizer):
         if len(pattern_text) != 9 or not pattern_text.isdigit():
             return False
 
-        weights = [4, 9, 2, 10, 5, 3]
-        total = 0
-        for digit_char, weight in zip(pattern_text[:6], weights):
-            product = int(digit_char) * weight
-            if product > 9:
-                product = (product // 10) + (product % 10)
-            total += product
+        weights = [4, 9, 4, 9, 4, 9]
+        total = sum(int(d) * w for d, w in zip(pattern_text[:6], weights))
+        expected_check = (10 - total % 10) % 10
 
-        expected_check = total % 10
         return int(pattern_text[6]) == expected_check

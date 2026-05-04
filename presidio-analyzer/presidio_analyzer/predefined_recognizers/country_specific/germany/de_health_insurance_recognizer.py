@@ -25,17 +25,17 @@ class DeHealthInsuranceRecognizer(PatternRecognizer):
         Pos 2–9:  8 digits (birth date encoded + serial)
         Pos 10:   Prüfziffer (check digit, 0–9)
 
-    Example (fictitious): A123456787
+    Example: A000500015 (from § 290 SGB V Anlage 1, Stand 02.01.2023)
 
-    Check digit algorithm (GKV-Spitzenverband specification):
+    Check digit algorithm (§ 290 SGB V Anlage 1, GKV-Spitzenverband):
         1. Convert the letter at position 1 to its 2-digit ordinal value
-           (A=01, B=02, …, Z=26), yielding an effective 11-digit string.
-        2. Apply weights [2, 9, 8, 7, 6, 5, 4, 3, 2, 1] to the first 10
-           effective digits (before the check digit at effective position 11).
-           Note: the check digit is the last digit of the original 10-char string
-           (position 10), which maps to effective position 11.
-        3. For each product ≥ 10, replace it with the sum of its digits.
-        4. Sum all 10 values, compute sum mod 10.
+           (A=01, B=02, …, Z=26). Concatenated with the 8 data digits at
+           positions 2–9, this yields 10 effective digits.
+        2. Apply alternating factors [1, 2, 1, 2, 1, 2, 1, 2, 1, 2] to those
+           10 effective digits.
+        3. For each product ≥ 10, replace it with the cross-sum of its digits
+           (Quersumme).
+        4. Sum the 10 values; compute sum mod 10.
         5. The result must equal the check digit at position 10.
 
     :param patterns: List of patterns to be used by this recognizer
@@ -118,16 +118,15 @@ class DeHealthInsuranceRecognizer(PatternRecognizer):
         letter = pattern_text[0]
         letter_val = str(ord(letter) - ord("A") + 1).zfill(2)
 
-        # Effective 11-digit string: 2 (from letter) + 8 data digits + 1 check digit
-        # We apply weights to the first 10 effective positions (before check digit)
-        effective = letter_val + pattern_text[1:9]  # 2 + 8 = 10 digits
+        # Letter expanded to 2 digits + 8 data digits = 10 effective digits
+        effective = letter_val + pattern_text[1:9]
 
         check_digit = int(pattern_text[9])
-        weights = [2, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        factors = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
 
         total = 0
-        for digit_char, weight in zip(effective, weights):
-            product = int(digit_char) * weight
+        for digit_char, factor in zip(effective, factors):
+            product = int(digit_char) * factor
             if product >= 10:
                 product = (product // 10) + (product % 10)
             total += product

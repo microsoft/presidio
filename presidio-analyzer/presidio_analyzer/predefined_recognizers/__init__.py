@@ -95,6 +95,14 @@ from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRe
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
+# Turkey recognizers
+from .country_specific.turkey.tr_license_plate_recognizer import (
+    TrLicensePlateRecognizer,
+)
+from .country_specific.turkey.tr_national_id_recognizer import (
+    TrNationalIdRecognizer,
+)
+
 # UK recognizers
 from .country_specific.uk.uk_driving_licence_recognizer import (
     UkDrivingLicenceRecognizer,
@@ -226,6 +234,8 @@ __all__ = [
     "KrFrnRecognizer",
     "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
+    "TrLicensePlateRecognizer",
+    "TrNationalIdRecognizer",
     "SePersonnummerRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",

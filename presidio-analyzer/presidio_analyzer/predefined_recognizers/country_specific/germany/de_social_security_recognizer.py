@@ -19,24 +19,36 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
 
     Format (12 characters):
         Pos 1–2:   Bereichsnummer (2 digits, issuing regional office code, 01–99)
-        Pos 3–4:   Geburtstag (birth day, 01–31; or 51–81 for women with
-                   Ergänzungsmerkmal)
+        Pos 3–4:   Geburtstag (birth day, 01–31; or 51–81 with +50
+                   Ergänzungsmerkmal to disambiguate otherwise identical
+                   numbers — gender-agnostic)
         Pos 5–6:   Geburtsmonat (birth month, 01–12)
         Pos 7–8:   Geburtsjahr (last 2 digits of birth year)
         Pos 9:     Buchstabenkennung (first letter of birth surname, A–Z)
-        Pos 10–11: Seriennummer (2-digit ordinal, 01–49 male / 50–99 female as
-                   Ergänzungsmerkmal)
+        Pos 10–11: Seriennummer / Geschlechtskennung (00–49 male,
+                   50–99 female)
         Pos 12:    Prüfziffer (check digit)
 
-    Example (fictitious): 65070803A012
+    Example: 15070649C103 (canonical example, DRV technical documentation)
 
-    Check digit algorithm (Deutsche Rentenversicherung):
+    Check digit algorithm (VKVV § 4 / Deutsche Rentenversicherung):
         1. Replace the letter at position 9 with its 2-digit ordinal value
-           (A=01, B=02, …, Z=26), yielding an effective 13-digit string.
-        2. Apply weights [2,1,2,1,2,1,2,1,2,1,2,1] to the first 12 effective digits.
-        3. For each product ≥ 10, replace it with the sum of its digits.
-        4. Sum all 12 values, compute sum mod 10.
-        5. The result must equal the check digit at position 12 (pos 13 in effective).
+           (A=01, B=02, …, Z=26). This yields 12 data digits (positions
+           1–8 of the original, plus 2 letter-ordinal digits, plus
+           positions 10–11) followed by the check digit at position 12.
+        2. Apply weights [2, 1, 2, 5, 7, 1, 2, 1, 2, 1, 2, 1] to the 12
+           data digits (the check digit itself is not part of the
+           weighted sum).
+        3. For each product, take the cross-sum (Quersumme) of its digits
+           (products < 10 remain unchanged; e.g. 35 → 3+5 = 8).
+        4. Sum all 12 cross-sums, compute sum mod 10.
+        5. The result must equal the check digit at position 12.
+
+    Worked example for 15070649C103:
+        effective = '15070649' + '03' (C=03) + '10' = '150706490310'
+        × weights = 2,5,0,35,0,6,8,9,0,3,2,0
+        cross-sums = 2,5,0, 8,0,6,8,9,0,3,2,0 = 43
+        43 mod 10 = 3 → matches check digit '3'
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -99,10 +111,15 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
-        Validate the Rentenversicherungsnummer using the official checksum.
+        Validate the Rentenversicherungsnummer using the VKVV § 4 checksum.
 
-        Algorithm source: Deutsche Rentenversicherung Bund, technical specification
-        for RVNR validation.
+        Algorithm source: Verordnung über die Vergabe der Versicherungsnummer
+        (VKVV) § 4, Deutsche Rentenversicherung technical specification.
+
+        Additionally enforces the birth-day (01–31 or 51–81 with +50
+        Ergänzungsmerkmal) and birth-month (01–12) ranges from the spec
+        so that a relaxed-pattern match with an impossible date cannot
+        be promoted to MAX_SCORE by a lucky checksum collision.
 
         :param pattern_text: the text to validate (12 characters)
         :return: True if valid, False if invalid
@@ -115,21 +132,29 @@ class DeSocialSecurityRecognizer(PatternRecognizer):
         if not re.match(r"^\d{8}[A-Z]\d{3}$", pattern_text):
             return False
 
+        # VKVV § 4: Pos 3–4 encodes the birth day (01–31, or 51–81 with
+        # +50 Ergänzungsmerkmal); Pos 5–6 the birth month (01–12). These
+        # are structural invariants of a real RVNR — enforce them here so
+        # that a relaxed-pattern match with an impossible date cannot be
+        # promoted to MAX_SCORE by a lucky checksum.
+        day = int(pattern_text[2:4])
+        month = int(pattern_text[4:6])
+        if not (1 <= day <= 31 or 51 <= day <= 81):
+            return False
+        if not 1 <= month <= 12:
+            return False
+
         letter = pattern_text[8]
         letter_val = str(ord(letter) - ord("A") + 1).zfill(2)
 
-        # Effective 12-digit string:
-        # positions 1-8 + letter as 2 digits + positions 10-11
         effective = pattern_text[:8] + letter_val + pattern_text[9:11]
 
         check_digit = int(pattern_text[11])
-        weights = [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1]
+        weights = [2, 1, 2, 5, 7, 1, 2, 1, 2, 1, 2, 1]
 
         total = 0
         for digit_char, weight in zip(effective, weights):
             product = int(digit_char) * weight
-            if product >= 10:
-                product = (product // 10) + (product % 10)
-            total += product
+            total += (product // 10) + (product % 10)
 
         return (total % 10) == check_digit
