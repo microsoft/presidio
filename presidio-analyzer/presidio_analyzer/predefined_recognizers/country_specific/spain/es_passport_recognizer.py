@@ -45,5 +45,5 @@ class EsPassportRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
             name=name,
-            global_regex_flags=re.DOTALL | re.MULTILINE,
+            global_regex_flags=re.DOTALL | re.MULTILINE | re.IGNORECASE,
         )
