@@ -1,5 +1,6 @@
-import regex as re
 from typing import List, Optional
+
+import regex as re
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
