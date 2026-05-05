@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Canadian SIN (`CA_SIN`) recognizer for the Canadian Social Insurance Number, using regex pattern matching, context words (English and French), and Luhn checksum validation. Disabled by default.
 
-- Philippines TIN (`PH_TIN`) recognizer for the Philippines Taxpayer Identification Number, using regex pattern matching, context words, and weighted modulo 11 checksum validation.
+- Philippines TIN (`PH_TIN`) recognizer for the Philippines Taxpayer Identification Number, using regex pattern matching, context words, and weighted modulo 11 checksum validation. Disabled by default.
 
 - Swedish PII recognizers for `SE_PERSONNUMMER` to identify Swedish Personal ID Numbers using pattern match and checksum. The recognizer also supports Swedish coordination numbers (samordningsnummer), issued to individuals who are not registered residents in Sweden but require identification. All disabled by default.
 

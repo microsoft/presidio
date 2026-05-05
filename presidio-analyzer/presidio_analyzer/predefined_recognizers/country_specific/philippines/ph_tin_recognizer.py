@@ -11,7 +11,7 @@ class PhTinRecognizer(PatternRecognizer):
     The 9th digit is a check digit calculated using a weighted modulo 11 algorithm.
     The last 3 digits (in the 12-digit version) represent the branch code (default 000).
 
-    Format: XXX-XXX-XXX-XXX or XXXXXXXXXXXX
+    Formats: XXXXXXXXX, XXXXXXXXXXXX, XXX-XXX-XXX, or XXX-XXX-XXX-XXX
     Reference: https://www.bir.gov.ph/
 
     :param patterns: List of patterns to be used by this recognizer
@@ -80,7 +80,7 @@ class PhTinRecognizer(PatternRecognizer):
         if not pattern_text.isdigit():
             return False
 
-        if len(pattern_text) not in [9, 12]:
+        if len(pattern_text) not in (9, 12):
             return False
 
         # Weights for the first 8 digits

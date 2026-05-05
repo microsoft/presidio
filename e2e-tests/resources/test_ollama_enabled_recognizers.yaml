@@ -124,7 +124,7 @@ recognizers:
     type: predefined
 
   - name: PhTinRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
