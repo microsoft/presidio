@@ -88,6 +88,7 @@ from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
 # Spain recognizers
 from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
+from .country_specific.spain.es_passport_recognizer import EsPassportRecognizer
 
 # Sweden recognizers
 from .country_specific.sweden.se_organisationsnummer_recognizer import (
@@ -226,6 +227,7 @@ __all__ = [
     "InPassportRecognizer",
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
+    "EsPassportRecognizer",
     "UkDrivingLicenceRecognizer",
     "UkNinoRecognizer",
     "UkPassportRecognizer",

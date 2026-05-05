@@ -53,8 +53,9 @@ For more information, refer to the [adding new recognizers documentation](analyz
 
 |Entity Type|Description|Detection Method|
 |--- |--- |--- |
-|ES_NIF| A spanish NIF number (Personal tax ID) .|Pattern match, context and checksum|
-|ES_NIE| A spanish NIE number (Foreigners ID card) .|Pattern match, context and checksum|
+|ES_NIF         | A Spanish NIF number (Personal tax ID).|Pattern match, context and checksum|
+|ES_NIE         | A Spanish NIE number (Foreigners ID card).|Pattern match, context and checksum|
+|ES_PASSPORT    | A Spanish passport number.|Pattern match and context|
 
 ### Italy
 

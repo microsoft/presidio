@@ -178,12 +178,12 @@ recognizers:
     - es
     type: predefined
 
-  - name: PhTinRecognizer
-    supported_languages: 
-    - en
+  - name: EsPassportRecognizer
+    supported_languages:
+    - es
     type: predefined
     enabled: false
-
+  
   - name: ItDriverLicenseRecognizer
     supported_languages: 
     - it
@@ -239,6 +239,12 @@ recognizers:
     supported_languages:
     - ko
     - kr
+    type: predefined
+    enabled: false
+    
+  - name: PhTinRecognizer
+    supported_languages: 
+    - en
     type: predefined
     enabled: false
 
