@@ -69,6 +69,7 @@ To contribute a new predefined recognizer to Presidio Analyzer:
 
 3. **Add your recognizer to the configuration:**
    - Add your recognizer to `presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml`.
+   - For country-specific recognizers, also declare `country_code: <iso>` on the YAML entry to mirror the class-level `COUNTRY_CODE`. The loader cross-checks the two and refuses to load on mismatch, so the YAML stays a discoverable record of the country tag for no-code users.
    - For country-specific recognizers, set `enabled: false` by default in the YAML configuration.
 
 3. **Update imports:** Add your recognizer to `presidio-analyzer/presidio_analyzer/predefined_recognizers/__init__.py` so it is available for import and backward compatibility.

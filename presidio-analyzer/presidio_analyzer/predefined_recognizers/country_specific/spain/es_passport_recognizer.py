@@ -20,6 +20,8 @@ class EsPassportRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "es"
+
     PATTERNS = [
         Pattern(
             "ES_PASSPORT",

@@ -96,6 +96,39 @@ class BrCpfRecognizer(PatternRecognizer):
 country filter will treat it the same as the predefined country-specific
 recognizers.
 
+## Annotating predefined recognizers in YAML
+
+When you wire up the registry from a YAML file (the no-code path), you
+can — and should — also declare the country tag next to each predefined
+country-specific entry. This is purely advisory metadata that documents
+the entry for human readers; the class-level `COUNTRY_CODE` remains the
+source of truth, and the loader cross-checks the two and refuses to
+load on a mismatch:
+
+```yaml
+recognizers:
+  - name: UsSsnRecognizer
+    supported_languages:
+      - en
+    type: predefined
+    country_code: us       # must match UsSsnRecognizer.COUNTRY_CODE
+
+  - name: UkNinoRecognizer
+    supported_languages:
+      - en
+    type: predefined
+    country_code: uk
+
+  - name: CreditCardRecognizer
+    type: predefined
+    # no country_code: locale-agnostic
+```
+
+If you change one without the other, the registry will raise
+`ValueError` at load time naming both the YAML value and the class
+attribute, so the misconfiguration is fixable from the error message
+alone.
+
 ## When to leave `COUNTRY_CODE` unset
 
 Some PII patterns are not anchored to a single country and should

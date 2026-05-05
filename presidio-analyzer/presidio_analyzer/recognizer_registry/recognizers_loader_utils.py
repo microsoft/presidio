@@ -378,22 +378,39 @@ class RecognizerListLoader:
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
 
-        predefined_to_exclude = {"enabled", "type", "supported_languages", "class_name"}
-        custom_to_exclude = {"enabled", "type", "class_name"}
+        # ``country_code`` is YAML metadata: it makes the country tag visible
+        # to no-code users but the class-level ``COUNTRY_CODE`` ClassVar
+        # remains the single source of truth. We strip it from kwargs (no
+        # recognizer ``__init__`` accepts it) and cross-check it against the
+        # class attribute below to catch drift.
+        predefined_to_exclude = {
+            "enabled",
+            "type",
+            "supported_languages",
+            "class_name",
+            "country_code",
+        }
+        custom_to_exclude = {"enabled", "type", "class_name", "country_code"}
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
                 recognizer_conf=recognizer_conf, supported_languages=supported_languages
             ):
                 if RecognizerListLoader.is_recognizer_enabled(recognizer_conf):
-                    new_conf = RecognizerListLoader._filter_recognizer_fields(
-                        recognizer_conf, to_exclude=predefined_to_exclude
-                    )
-
                     recognizer_name = RecognizerListLoader.get_recognizer_name(
                         recognizer_conf=recognizer_conf
                     )
                     recognizer_cls = RecognizerListLoader.get_existing_recognizer_cls(
                         recognizer_name=recognizer_name
+                    )
+
+                    RecognizerListLoader._validate_yaml_country_code(
+                        recognizer_conf=recognizer_conf,
+                        recognizer_cls=recognizer_cls,
+                        recognizer_name=recognizer_name,
+                    )
+
+                    new_conf = RecognizerListLoader._filter_recognizer_fields(
+                        recognizer_conf, to_exclude=predefined_to_exclude
                     )
 
                     kwargs = RecognizerListLoader._prepare_recognizer_kwargs(
@@ -445,6 +462,119 @@ class RecognizerListLoader:
             if k not in to_exclude
         }
         return copied_recognizer_conf
+
+    @staticmethod
+    def _normalize_countries(countries: Iterable[str]) -> Set[str]:
+        """Normalize and validate a country-code iterable.
+
+        Accepts any iterable of strings, lower-cases and strips each entry,
+        and rejects common footguns up front so misuse fails loudly instead
+        of silently returning the wrong subset of recognizers.
+
+        Rejected inputs:
+
+        - A bare ``str`` (e.g. ``"us"`` instead of ``["us"]``) — would
+          otherwise iterate over characters and silently match nothing.
+        - Non-iterable scalars (``int``, ``None`` is handled by callers).
+        - Iterables containing non-string elements.
+        - Iterables containing blank / empty strings.
+
+        :param countries: Iterable of ISO-3166-1 alpha-2 codes (case-insensitive).
+        :return: A set of lower-cased, trimmed codes; empty set means
+            "keep only locale-agnostic recognizers".
+        :raises TypeError: If ``countries`` is a bare ``str`` or contains
+            non-string elements.
+        :raises ValueError: If any element is empty after trimming.
+        """
+        if isinstance(countries, str):
+            raise TypeError(
+                "``countries`` must be an iterable of strings (e.g. "
+                f"['us', 'uk']), not a bare string {countries!r}."
+            )
+        try:
+            iterator = iter(countries)
+        except TypeError as exc:
+            raise TypeError(
+                "``countries`` must be an iterable of strings (e.g. "
+                f"['us', 'uk']), got {type(countries).__name__}."
+            ) from exc
+
+        normalized: Set[str] = set()
+        for code in iterator:
+            if not isinstance(code, str):
+                raise TypeError(
+                    "Each entry in ``countries`` must be a string, got "
+                    f"{type(code).__name__}: {code!r}."
+                )
+            trimmed = code.strip()
+            if not trimmed:
+                raise ValueError(
+                    f"Country codes must be non-empty strings; got {code!r}."
+                )
+            normalized.add(trimmed.lower())
+        return normalized
+
+    @staticmethod
+    def _validate_yaml_country_code(
+        recognizer_conf: Union[Dict[str, Any], str],
+        recognizer_cls: Type[EntityRecognizer],
+        recognizer_name: str,
+    ) -> None:
+        """Validate the optional YAML ``country_code`` for a predefined recognizer.
+
+        The YAML field is advisory metadata for no-code users; the class
+        attribute ``COUNTRY_CODE`` is the source of truth. This method
+        catches drift between the two: if the YAML declares a country code
+        that disagrees with the class, we raise a ``ValueError`` at load
+        time so misconfigurations don't silently weaken the country
+        filter. Missing-from-YAML is allowed (the class attribute stands
+        on its own); missing-from-class with a YAML value is also a
+        misconfiguration and raises.
+
+        :param recognizer_conf: The YAML configuration block for a single
+            predefined recognizer.
+        :param recognizer_cls: The recognizer class resolved from the
+            ``name`` / ``class_name`` field.
+        :param recognizer_name: The name used in the YAML, included in
+            error messages for actionability.
+        """
+        if not isinstance(recognizer_conf, dict):
+            return
+        yaml_country = recognizer_conf.get("country_code")
+        if yaml_country is None:
+            return
+
+        if not isinstance(yaml_country, str) or not yaml_country.strip():
+            raise ValueError(
+                f"Recognizer {recognizer_name!r}: YAML ``country_code`` must be "
+                f"a non-empty string, got {yaml_country!r}."
+            )
+
+        normalized_yaml = yaml_country.strip().lower()
+        cls_country = (
+            recognizer_cls.country_code()
+            if hasattr(recognizer_cls, "country_code")
+            and callable(getattr(recognizer_cls, "country_code"))
+            else None
+        )
+
+        if cls_country is None:
+            raise ValueError(
+                f"Recognizer {recognizer_name!r}: YAML declares "
+                f"``country_code: {normalized_yaml!r}`` but the recognizer "
+                f"class {recognizer_cls.__name__} has no ``COUNTRY_CODE`` "
+                f"attribute. Set ``COUNTRY_CODE = {normalized_yaml!r}`` on "
+                f"the class, or remove the YAML field."
+            )
+
+        if cls_country != normalized_yaml:
+            raise ValueError(
+                f"Recognizer {recognizer_name!r}: YAML "
+                f"``country_code: {normalized_yaml!r}`` disagrees with "
+                f"class-level ``{recognizer_cls.__name__}.COUNTRY_CODE = "
+                f"{cls_country!r}``. The class attribute is the source of "
+                f"truth — update one to match the other."
+            )
 
     @staticmethod
     def _get_recognizer_country(recognizer: EntityRecognizer) -> Optional[str]:
@@ -522,11 +652,12 @@ class RecognizerListLoader:
         :param countries: Country codes to keep (e.g. ``["us", "uk"]``). An
             empty iterable keeps only locale-agnostic recognizers.
         :return: A new list preserving the original order.
+        :raises TypeError: If ``countries`` is a bare string or otherwise
+            not an iterable of strings.
+        :raises ValueError: If any element is empty / blank after trimming.
         """
-        # Materialize once so we can iterate twice (filter + warning probe)
-        # without consuming a generator.
         recognizer_list = list(recognizers)
-        allowed = {c.lower() for c in countries}
+        allowed = RecognizerListLoader._normalize_countries(countries)
 
         filtered: List[EntityRecognizer] = []
         seen_countries: Set[str] = set()
