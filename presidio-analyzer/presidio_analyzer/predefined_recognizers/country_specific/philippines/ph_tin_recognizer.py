@@ -23,14 +23,14 @@ class PhTinRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "TIN (High)",
+            "TIN (Low)",
             r"\b(\d{3}-\d{3}-\d{3}(-\d{3})?)\b",
-            0.6,
+            0.05,
         ),
         Pattern(
-            "TIN (Medium)",
+            "TIN (Very Low)",
             r"\b(\d{9}|\d{12})\b",
-            0.3,
+            0.01,
         ),
     ]
 
@@ -66,13 +66,17 @@ class PhTinRecognizer(PatternRecognizer):
             name=name,
         )
 
-    def validate_result(self, pattern_text: str) -> bool:
+    def invalidate_result(self, pattern_text: str) -> bool:
         """
-        Validate the Philippines TIN using weighted modulo 11.
+        Check if the Philippines TIN fails weighted modulo 11 validation.
 
         :param pattern_text: The text to validate
-        :return: True if valid, False otherwise
+        :return: True if invalid, False otherwise
         """
+        return not self._is_valid_tin(pattern_text)
+
+    def _is_valid_tin(self, pattern_text: str) -> bool:
+        """Validate the Philippines TIN using weighted modulo 11."""
         # Clean the input
         for search, replace in self.replacement_pairs:
             pattern_text = pattern_text.replace(search, replace)
