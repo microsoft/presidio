@@ -44,14 +44,31 @@ don't need to pass `countries=` again from Python.
 
 ## How the filter works
 
-Country tagging is a fact about a recognizer **class**, declared once
-via the class-level `COUNTRY_CODE` attribute on the recognizer. The
-filter reads it back through two classmethods on `EntityRecognizer`:
+A recognizer can be tagged with a country in two ways, reconciled at
+construction time:
 
-- `recognizer.country_code()` returns the lower-cased ISO code declared
-  on the class, or `None` if the recognizer is locale-agnostic.
+- **Class-level `COUNTRY_CODE`** — the canonical declaration for
+  predefined recognizers (`UsSsnRecognizer.COUNTRY_CODE = "us"`, …).
+- **Constructor `country_code=` kwarg** — for *custom* recognizers
+  without a subclass, or YAML `type: custom` entries that flow through
+  `PatternRecognizer.from_dict`. This is the path used by the
+  no-code/YAML route.
+
+If both are set, they must agree (case-insensitively); a constructor
+value that conflicts with `COUNTRY_CODE` raises `ValueError` so a
+predefined Polish-tax-ID recognizer can't be silently re-tagged as
+British. The filter then reads the resolved tag through two instance
+methods on `EntityRecognizer`:
+
+- `recognizer.country_code()` returns the lower-cased ISO code, or
+  `None` if the recognizer is locale-agnostic.
 - `recognizer.is_country_specific()` is the named predicate equivalent
   to `country_code() is not None`.
+
+To introspect a class without instantiating, read the
+`COUNTRY_CODE` ClassVar directly (e.g. `UsSsnRecognizer.COUNTRY_CODE`);
+the methods themselves are instance methods so they can also surface
+constructor-tagged custom recognizers.
 
 The filter has a single rule:
 
@@ -66,10 +83,16 @@ Code comparison is **case-insensitive**: `"US"`, `"Us"`, `"us"` all work.
 
 ## Declaring a country on your own recognizers
 
-Set the class-level `COUNTRY_CODE` attribute on the recognizer subclass.
+There are three equivalent paths, pick whichever fits your code shape.
+All three end up at the same `self._country_code` and are filtered the
+same way.
+
+### 1. Subclass with a class-level `COUNTRY_CODE` (preferred for shared code)
+
 This is the path used by every predefined country-specific recognizer
 in Presidio (`UsSsnRecognizer`, `UkNinoRecognizer`, `EsNifRecognizer`,
-…) and is the only supported way to tag a recognizer:
+…). Best when your recognizer lives in code and you want the country
+tag visible at the class definition for review:
 
 ```python
 from presidio_analyzer import Pattern, PatternRecognizer
@@ -92,9 +115,64 @@ class BrCpfRecognizer(PatternRecognizer):
         )
 ```
 
-`BrCpfRecognizer.country_code()` will return `"br"`, and the registry's
-country filter will treat it the same as the predefined country-specific
+`BrCpfRecognizer().country_code()` returns `"br"` and the registry's
+country filter treats it the same as predefined country-specific
 recognizers.
+
+### 2. Constructor `country_code=` (preferred for one-offs)
+
+If you don't want to subclass — e.g. you're constructing a one-off
+`PatternRecognizer` for an Armenian national ID — pass `country_code`
+to the constructor:
+
+```python
+from presidio_analyzer import Pattern, PatternRecognizer
+
+am_recognizer = PatternRecognizer(
+    supported_entity="AM_NATIONAL_ID",
+    name="AmNationalIdRecognizer",
+    patterns=[Pattern("AM 10-digit", r"\b\d{10}\b", 0.5)],
+    country_code="am",
+)
+assert am_recognizer.country_code() == "am"
+```
+
+This also covers `PatternRecognizer.from_dict({"country_code": "am",
+...})`, so any tooling that round-trips recognizer dicts (logs,
+serialization, recognizer-store backends, …) preserves the tag.
+
+### 3. YAML `type: custom` with `country_code:` (no-code path)
+
+YAML custom-recognizer entries forward `country_code` straight through
+to `PatternRecognizer.__init__` via `from_dict`, so the no-code path
+gets the same tagging without writing a single line of Python:
+
+```yaml
+recognizers:
+  - name: AmNationalIdRecognizer
+    type: custom
+    supported_entity: AM_NATIONAL_ID
+    supported_languages:
+      - language: en
+    country_code: am
+    patterns:
+      - name: "AM 10-digit"
+        regex: '\b\d{10}\b'
+        score: 0.5
+```
+
+Loading this registry with `supported_countries: ["am"]` (or the
+Python-side `countries=["am"]`) keeps the recognizer; filtering to a
+different country drops it.
+
+### Combining paths
+
+If you subclass *and* pass `country_code=` to the constructor, the two
+must agree — passing a different value raises `ValueError`. This means
+a predefined `UsSsnRecognizer` can never be silently re-tagged via the
+constructor, and a YAML `country_code:` on a `type: predefined` entry
+is cross-checked against the class attribute at load time (see the
+"Annotating predefined recognizers in YAML" section below).
 
 ## Annotating predefined recognizers in YAML
 

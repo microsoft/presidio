@@ -30,24 +30,43 @@ class EntityRecognizer:
     :param context: a list of words which can help boost confidence score
     when they appear in context of the matched entity
 
-    To declare a recognizer as country-specific, override the class-level
-    :attr:`COUNTRY_CODE` attribute on the subclass (e.g.
-    ``COUNTRY_CODE = "us"``). Country tags are used by
-    ``RecognizerRegistry.load_predefined_recognizers(countries=[...])`` to
-    include or exclude country-specific recognizers; ``None`` (the default)
-    means the recognizer is locale-agnostic and is always included regardless
-    of the country filter. Codes follow ISO 3166-1 alpha-2 (with ``"uk"``
-    accepted as a synonym of ``"gb"`` for historical consistency with the
-    directory layout) and are compared case-insensitively.
+    To declare a recognizer as country-specific there are two paths:
+
+    - **Class-level (preferred for predefined recognizers):** override the
+      class-level :attr:`COUNTRY_CODE` attribute on the subclass (e.g.
+      ``COUNTRY_CODE = "us"``). Used by every predefined country recognizer
+      shipped with Presidio.
+    - **Instance-level (preferred for custom recognizers without a
+      subclass):** pass ``country_code="<iso>"`` to the constructor. This
+      is the path that lets ``PatternRecognizer.from_dict({"country_code":
+      "am", ...})`` and the corresponding YAML ``type: custom`` entries
+      tag a recognizer with a country without writing Python.
+
+    The two paths are reconciled at construction time: if the class
+    declares ``COUNTRY_CODE`` and a different value is passed to the
+    constructor, ``ValueError`` is raised. Country tags are used by
+    ``RecognizerRegistry.load_predefined_recognizers(countries=[...])``
+    (and the matching top-level ``supported_countries`` YAML field) to
+    include or exclude country-specific recognizers; ``None`` (the
+    default for both paths) means the recognizer is locale-agnostic and
+    is always included regardless of the country filter. Codes follow
+    ISO 3166-1 alpha-2 (with ``"uk"`` accepted as a synonym of ``"gb"``
+    for historical consistency with the directory layout) and are
+    compared case-insensitively.
+
+    :param country_code: Optional ISO 3166-1 alpha-2 country tag for
+        instances of locale-agnostic classes. Stripped and lower-cased.
+        Must equal :attr:`COUNTRY_CODE` if the class also declares one.
     """
 
     MIN_SCORE = 0
     MAX_SCORE = 1.0
     #: Canonical class-level country tag. Subclasses override on the class
-    #: itself (e.g. ``COUNTRY_CODE = "us"``) — there is no per-instance
-    #: override mechanism by design, so country information is a single
-    #: source of truth living on the recognizer class. Read via the
-    #: :meth:`country_code` / :meth:`is_country_specific` classmethods.
+    #: itself (e.g. ``COUNTRY_CODE = "us"``) and predefined country
+    #: recognizers always declare it this way. Custom recognizers without
+    #: a subclass can pass ``country_code=`` to the constructor instead;
+    #: read both via the :meth:`country_code` / :meth:`is_country_specific`
+    #: instance methods.
     COUNTRY_CODE: ClassVar[Optional[str]] = None
 
     def __init__(
@@ -57,6 +76,7 @@ class EntityRecognizer:
         supported_language: str = "en",
         version: str = "0.0.1",
         context: Optional[List[str]] = None,
+        country_code: Optional[str] = None,
     ):
         self.supported_entities = supported_entities
 
@@ -72,36 +92,85 @@ class EntityRecognizer:
         self.is_loaded = False
         self.context = context if context else []
 
+        self._country_code = self._resolve_country_code(country_code)
+
         self.load()
         logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
 
     @classmethod
-    def country_code(cls) -> Optional[str]:
+    def _resolve_country_code(cls, passed: Optional[str]) -> Optional[str]:
+        """Reconcile a constructor-passed country code with the class attribute.
+
+        Implements the two-path tagging matrix: the class-level
+        :attr:`COUNTRY_CODE` is the canonical declaration for predefined
+        recognizers, and the constructor kwarg is the path for custom
+        recognizers (typically routed through ``from_dict`` from YAML).
+        Both can be set as long as they agree; conflicting values raise
+        ``ValueError`` so a Polish tax-ID recognizer can't be silently
+        re-tagged as British, regardless of which path the misconfiguration
+        comes from.
+
+        :param passed: The value supplied to ``__init__`` (already typed
+            as ``Optional[str]``).
+        :return: The lower-cased, stripped country code stored on the
+            instance, or ``None`` for locale-agnostic recognizers.
+        :raises TypeError: If ``passed`` is set but is not a string.
+        :raises ValueError: If ``passed`` is blank, or if it disagrees
+            with a class-level :attr:`COUNTRY_CODE`.
+        """
+        class_code = cls.COUNTRY_CODE
+        normalized_class = (
+            class_code.lower() if isinstance(class_code, str) else class_code
+        )
+
+        if passed is None:
+            return normalized_class
+
+        if not isinstance(passed, str):
+            raise TypeError(
+                f"country_code must be a string or None, got "
+                f"{type(passed).__name__}: {passed!r}."
+            )
+        trimmed = passed.strip()
+        if not trimmed:
+            raise ValueError(
+                f"country_code must be a non-empty string; got {passed!r}."
+            )
+        normalized_passed = trimmed.lower()
+
+        if normalized_class is not None and normalized_passed != normalized_class:
+            raise ValueError(
+                f"country_code={passed!r} conflicts with class-level "
+                f"{cls.__name__}.COUNTRY_CODE={class_code!r}. The class "
+                f"attribute is the canonical declaration; pass the matching "
+                f"value or omit ``country_code=`` entirely."
+            )
+
+        return normalized_passed
+
+    def country_code(self) -> Optional[str]:
         """Return the country tag for this recognizer, or ``None`` if generic.
 
-        Reads the class-level :attr:`COUNTRY_CODE` attribute and normalizes
-        it to lower-case so the case-insensitive contract of the country
-        filter holds at the source. Implemented as a classmethod (rather
-        than an instance attribute) so the country tag is a fact about the
-        recognizer *class*, not a per-instance value, and so callers can
-        introspect a recognizer class without instantiating it.
+        Resolved at construction time from the class-level
+        :attr:`COUNTRY_CODE` attribute and the optional ``country_code``
+        constructor kwarg; the two are reconciled by
+        :meth:`_resolve_country_code` so this method always returns a
+        single, lower-cased value (or ``None``). Note this is an instance
+        method — to introspect a class without instantiating, read
+        ``cls.COUNTRY_CODE`` directly.
         """
-        code = cls.COUNTRY_CODE
-        if isinstance(code, str):
-            return code.lower()
-        return code
+        return self._country_code
 
-    @classmethod
-    def is_country_specific(cls) -> bool:
+    def is_country_specific(self) -> bool:
         """Return ``True`` iff this recognizer is tagged with a country.
 
-        Equivalent to ``cls.country_code() is not None``. Provided as a
+        Equivalent to ``self.country_code() is not None``. Provided as a
         named predicate because filter / registry / discoverability code
         reads more naturally with an explicit "is this country-specific?"
         question than with a None-check.
         """
-        return cls.country_code() is not None
+        return self.country_code() is not None
 
     @property
     def id(self):
@@ -197,6 +266,8 @@ class EntityRecognizer:
             "name": self.name,
             "version": self.version,
         }
+        if self._country_code is not None:
+            return_dict["country_code"] = self._country_code
         return return_dict
 
     @classmethod

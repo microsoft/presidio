@@ -337,10 +337,11 @@ def test_entity_recognizer_country_code_default_is_none():
     assert rec.is_country_specific() is False
 
 
-def test_country_code_classmethod_lowercases_class_attribute():
-    """``country_code()`` normalizes the class-level ``COUNTRY_CODE`` to
-    lowercase so the filter's case-insensitive contract holds at the
-    source of truth.
+def test_country_code_lowercases_class_attribute():
+    """``country_code()`` normalizes the class-level ``COUNTRY_CODE`` to lowercase.
+
+    The filter's case-insensitive contract is enforced at the source of
+    truth, regardless of how the subclass spells its ``COUNTRY_CODE``.
     """
 
     class _UpperCased(PatternRecognizer):
@@ -358,31 +359,36 @@ def test_country_code_classmethod_lowercases_class_attribute():
 
 
 def test_predefined_country_specific_recognizer_carries_class_country_code():
-    """Predefined country-specific recognizers expose ``country_code()`` via
-    their class-level ``COUNTRY_CODE`` attribute.
+    """Predefined country recognizers expose their class-level ``COUNTRY_CODE``.
+
+    The country tag is reconciled at construction time and surfaced via
+    the instance's ``country_code()`` method; the ClassVar itself remains
+    accessible for class-level introspection without instantiating.
     """
     from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
 
-    # Classmethod is callable on the class without instantiation.
-    assert UsSsnRecognizer.country_code() == "us"
-    assert UsSsnRecognizer.is_country_specific() is True
+    # ClassVar accessible without instantiation (the no-instantiation
+    # introspection path is via the attribute, not the method).
+    assert UsSsnRecognizer.COUNTRY_CODE == "us"
 
-    # And on an instance.
+    # Instance method returns the resolved tag.
     rec = UsSsnRecognizer()
     assert rec.country_code() == "us"
+    assert rec.is_country_specific() is True
 
 
-def test_country_code_is_a_class_level_fact_not_instance():
-    """``COUNTRY_CODE`` is a fact about the recognizer *class*; setting it
-    on an instance does not influence what the classmethod returns. This
-    keeps country tagging discoverable at the type level for review and
-    introspection.
+def test_country_code_class_attribute_is_authoritative_over_instance_attr():
+    """Mutating ``rec.COUNTRY_CODE`` after construction does not change the tag.
+
+    Country resolution happens once in ``__init__`` (via
+    ``_resolve_country_code``) and the resolved value is cached as
+    ``self._country_code``. Re-assigning the class attribute on an
+    instance after the fact is intentionally a no-op for ``country_code()``
+    so the country tag stays consistent for the lifetime of the recognizer.
     """
     from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
 
     rec = UsSsnRecognizer()
-    # Attempting to override at the instance level is intentionally a no-op
-    # for the classmethod-based API.
     rec.COUNTRY_CODE = "ca"  # noqa: B010 — exercising the contract
     assert rec.country_code() == "us"
 
@@ -545,15 +551,217 @@ def test_get_country_codes_excludes_locale_agnostic_recognizers():
     assert registry.get_country_codes() == []
 
 
-def test_to_dict_does_not_carry_country_code():
-    """Country tag is a class-level fact, not part of the to_dict payload.
+def test_to_dict_omits_country_code_when_unset():
+    """``to_dict`` only emits ``country_code`` when the recognizer has a tag.
 
-    Serialized recognizers can be re-instantiated by class name; the
-    country tag travels with the class definition rather than the
-    instance dict.
+    Locale-agnostic recognizers (no class ``COUNTRY_CODE``, no constructor
+    kwarg) keep ``country_code`` out of the serialized payload so the
+    dict stays minimal and round-trips losslessly.
     """
     rec = create_mock_pattern_recognizer("en", "FOO", "rec")
+    assert rec.country_code() is None
     assert "country_code" not in rec.to_dict()
+
+
+def test_to_dict_emits_class_level_country_code():
+    """``to_dict`` surfaces the resolved tag for a predefined country class.
+
+    The serialized form includes ``country_code`` even though the tag
+    came from the class-level ``COUNTRY_CODE`` ClassVar, so a generic
+    consumer of the dict (e.g. logs, audit trails) doesn't need to know
+    which path the tag came from.
+    """
+    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
+
+    rec = UsSsnRecognizer()
+    assert rec.to_dict().get("country_code") == "us"
+
+
+# ---------------------------------------------------------------------------
+# Constructor ``country_code=`` kwarg — the path for custom recognizers
+# without a subclass (Issue #2000 review). Reconciliation matrix:
+#
+#   ClassVar          | kwarg            | result
+#   ------------------+------------------+-----------------------------
+#   None              | None             | self._country_code = None
+#   None              | "am"             | self._country_code = "am" (NEW)
+#   "us"              | None             | self._country_code = "us"
+#   "us"              | "us" (matches)   | self._country_code = "us"
+#   "us"              | "uk" (conflict)  | ValueError
+# ---------------------------------------------------------------------------
+
+
+def test_constructor_country_code_tags_locale_agnostic_class():
+    """``country_code=`` on a class without ``COUNTRY_CODE`` tags the instance.
+
+    This is the new capability: a custom recognizer (no subclass with a
+    ClassVar) can now declare a country at construction time, which means
+    YAML ``type: custom`` entries with ``country_code:`` flow through
+    ``from_dict`` and tag the resulting instance.
+    """
+    rec = PatternRecognizer(
+        supported_entity="AM_ID",
+        patterns=[Pattern("p", regex="REGEX", score=1.0)],
+        country_code="am",
+    )
+    assert rec.country_code() == "am"
+    assert rec.is_country_specific() is True
+
+
+def test_constructor_country_code_normalizes_case_and_whitespace():
+    """``country_code=" AM "`` is stored as ``"am"``."""
+    rec = PatternRecognizer(
+        supported_entity="AM_ID",
+        patterns=[Pattern("p", regex="REGEX", score=1.0)],
+        country_code="  AM  ",
+    )
+    assert rec.country_code() == "am"
+
+
+def test_constructor_country_code_rejects_blank():
+    """Blank / whitespace-only ``country_code`` raises ``ValueError``."""
+    with pytest.raises(ValueError, match="non-empty"):
+        PatternRecognizer(
+            supported_entity="AM_ID",
+            patterns=[Pattern("p", regex="REGEX", score=1.0)],
+            country_code="   ",
+        )
+
+
+def test_constructor_country_code_rejects_non_string():
+    """Non-string ``country_code`` raises ``TypeError``."""
+    with pytest.raises(TypeError, match="must be a string"):
+        PatternRecognizer(
+            supported_entity="AM_ID",
+            patterns=[Pattern("p", regex="REGEX", score=1.0)],
+            country_code=42,
+        )
+
+
+def test_constructor_country_code_matches_class_level_is_fine():
+    """Passing the same value as ``COUNTRY_CODE`` is redundant but harmless.
+
+    Useful for callers that want to be explicit about the country at
+    every layer (e.g. test helpers, generated code) without colliding
+    with the class declaration.
+    """
+    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
+
+    rec = UsSsnRecognizer.__new__(UsSsnRecognizer)
+    EntityRecognizer.__init__(
+        rec,
+        supported_entities=["US_SSN"],
+        country_code="us",
+    )
+    assert rec.country_code() == "us"
+
+
+def test_constructor_country_code_conflicts_with_class_level_raises():
+    """Passing a value that disagrees with ``COUNTRY_CODE`` raises ``ValueError``.
+
+    A predefined Polish-tax-ID recognizer can never be silently re-tagged
+    as British via the constructor; the class-level declaration wins and
+    misconfiguration fails loudly with both values in the message.
+    """
+    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
+
+    with pytest.raises(ValueError, match="conflicts with class-level"):
+        rec = UsSsnRecognizer.__new__(UsSsnRecognizer)
+        EntityRecognizer.__init__(
+            rec,
+            supported_entities=["US_SSN"],
+            country_code="uk",
+        )
+
+
+def test_constructor_country_code_match_is_case_insensitive():
+    """Match-check between kwarg and ``COUNTRY_CODE`` is case-insensitive."""
+    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
+
+    rec = UsSsnRecognizer.__new__(UsSsnRecognizer)
+    EntityRecognizer.__init__(
+        rec,
+        supported_entities=["US_SSN"],
+        country_code="US",
+    )
+    assert rec.country_code() == "us"
+
+
+def test_pattern_recognizer_from_dict_roundtrip_preserves_country_code():
+    """``from_dict(to_dict(rec))`` round-trips a constructor-tagged recognizer.
+
+    Round-tripping is what makes the YAML ``type: custom`` path useful:
+    the loader serializes/reconstructs the dict at various points, and
+    losing the tag mid-flight would silently drop custom recognizers
+    from the country filter.
+    """
+    rec = PatternRecognizer(
+        supported_entity="AM_ID",
+        patterns=[Pattern("AM ID", regex=r"\b\d{10}\b", score=0.5)],
+        country_code="am",
+    )
+
+    serialized = rec.to_dict()
+    assert serialized["country_code"] == "am"
+
+    restored = PatternRecognizer.from_dict(serialized)
+    assert restored.country_code() == "am"
+    assert restored.supported_entities == rec.supported_entities
+
+
+def test_custom_yaml_country_code_flows_through_to_filter(tmp_path):
+    """A YAML ``type: custom`` entry with ``country_code:`` is filtered by country.
+
+    End-to-end check: the YAML field flows through
+    ``RecognizerListLoader._create_custom_recognizers`` → ``from_dict``
+    → ``PatternRecognizer.__init__`` → ``EntityRecognizer.__init__``,
+    landing on the instance via ``self._country_code``. The country
+    filter then keeps or drops the instance based on the requested set.
+    """
+    import yaml as _yaml
+    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
+        RecognizerConfigurationLoader,
+        RecognizerListLoader,
+    )
+
+    yaml_doc = {
+        "supported_languages": ["en"],
+        "global_regex_flags": 26,
+        "recognizers": [
+            {
+                "name": "AmNationalIdRecognizer",
+                "type": "custom",
+                "supported_entity": "AM_NATIONAL_ID",
+                "supported_languages": [{"language": "en"}],
+                "country_code": "am",
+                "patterns": [
+                    {"name": "AM 10-digit", "regex": r"\b\d{10}\b", "score": 0.5}
+                ],
+            }
+        ],
+    }
+    conf_path = tmp_path / "custom_recognizers.yaml"
+    conf_path.write_text(_yaml.safe_dump(yaml_doc))
+
+    configuration = RecognizerConfigurationLoader.get(conf_file=str(conf_path))
+    instances = list(
+        RecognizerListLoader.get(**configuration, supported_countries=["am"])
+    )
+
+    am = [r for r in instances if getattr(r, "name", None) == "AmNationalIdRecognizer"]
+    assert len(am) == 1, (
+        "expected the custom AM recognizer to survive the country filter, got "
+        f"{[type(r).__name__ for r in instances]}"
+    )
+    assert am[0].country_code() == "am"
+
+    # The same registry, filtered to a different country, drops it.
+    instances_uk = list(
+        RecognizerListLoader.get(**configuration, supported_countries=["uk"])
+    )
+    assert not [
+        r for r in instances_uk if getattr(r, "name", None) == "AmNationalIdRecognizer"
+    ]
 
 
 # ---------------------------------------------------------------------------

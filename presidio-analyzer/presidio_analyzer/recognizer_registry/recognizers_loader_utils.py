@@ -378,11 +378,15 @@ class RecognizerListLoader:
         recognizer_instances = []
         predefined, custom = RecognizerListLoader._split_recognizers(recognizers)
 
-        # ``country_code`` is YAML metadata: it makes the country tag visible
-        # to no-code users but the class-level ``COUNTRY_CODE`` ClassVar
-        # remains the single source of truth. We strip it from kwargs (no
-        # recognizer ``__init__`` accepts it) and cross-check it against the
-        # class attribute below to catch drift.
+        # For predefined recognizers, ``country_code`` is YAML metadata
+        # only: the class-level ``COUNTRY_CODE`` ClassVar is the canonical
+        # declaration, and predefined ``__init__`` signatures don't accept
+        # the kwarg. We strip it before instantiation and cross-check it
+        # against the class attribute via ``_validate_yaml_country_code``.
+        # Custom recognizers are different: ``country_code`` flows through
+        # ``PatternRecognizer.__init__`` to ``EntityRecognizer.__init__``,
+        # so leaving it in the kwargs is what lets a YAML ``type: custom``
+        # entry tag a recognizer without subclassing.
         predefined_to_exclude = {
             "enabled",
             "type",
@@ -390,7 +394,7 @@ class RecognizerListLoader:
             "class_name",
             "country_code",
         }
-        custom_to_exclude = {"enabled", "type", "class_name", "country_code"}
+        custom_to_exclude = {"enabled", "type", "class_name"}
         for recognizer_conf in predefined:
             for language_conf in RecognizerListLoader._get_recognizer_languages(
                 recognizer_conf=recognizer_conf, supported_languages=supported_languages
@@ -551,11 +555,13 @@ class RecognizerListLoader:
             )
 
         normalized_yaml = yaml_country.strip().lower()
+        # Read the ClassVar directly. ``country_code()`` is now an instance
+        # method (custom recognizers can carry a tag without subclassing),
+        # so we can't call it on the class — but the class attribute is
+        # still the canonical declaration for predefined recognizers.
+        raw_class_code = getattr(recognizer_cls, "COUNTRY_CODE", None)
         cls_country = (
-            recognizer_cls.country_code()
-            if hasattr(recognizer_cls, "country_code")
-            and callable(getattr(recognizer_cls, "country_code"))
-            else None
+            raw_class_code.lower() if isinstance(raw_class_code, str) else None
         )
 
         if cls_country is None:
@@ -572,8 +578,8 @@ class RecognizerListLoader:
                 f"Recognizer {recognizer_name!r}: YAML "
                 f"``country_code: {normalized_yaml!r}`` disagrees with "
                 f"class-level ``{recognizer_cls.__name__}.COUNTRY_CODE = "
-                f"{cls_country!r}``. The class attribute is the source of "
-                f"truth — update one to match the other."
+                f"{raw_class_code!r}``. The class attribute is the source "
+                f"of truth — update one to match the other."
             )
 
     @staticmethod
@@ -582,18 +588,19 @@ class RecognizerListLoader:
 
         Resolution order:
 
-        1. The class-level ``COUNTRY_CODE`` attribute (read via
-           :meth:`EntityRecognizer.country_code`). This is the canonical
-           source of truth: subclasses declare their country once on the
-           class and the filter reads it back here.
-        2. **Transitional fallback**: if the class did not declare a
-           country, try to infer one from the module path. Predefined
-           recognizers live under
-           ``predefined_recognizers/country_specific/<country>/...``, so
-           the segment immediately following ``country_specific`` is taken
-           as the country code. This fallback exists for any custom
-           recognizer that follows the same directory layout but has not
-           yet adopted the class attribute.
+        1. The instance's :meth:`EntityRecognizer.country_code`, which
+           returns whichever of the class-level ``COUNTRY_CODE`` attribute
+           or the constructor ``country_code=`` kwarg was set (already
+           reconciled at construction time). This covers both predefined
+           recognizers (class-level) and custom recognizers tagged via
+           YAML / ``from_dict`` / Python kwargs (instance-level).
+        2. **Transitional fallback**: if neither path produced a country,
+           try to infer one from the module path. Predefined recognizers
+           live under ``predefined_recognizers/country_specific/<country>/
+           ...``, so the segment immediately following ``country_specific``
+           is taken as the country code. This fallback exists for any
+           custom recognizer that follows the same directory layout but
+           has not yet adopted either tagging mechanism.
 
         Recognizers outside both paths (generic, NER, NLP engine,
         third-party, and locale-agnostic user-supplied recognizers) return
@@ -601,9 +608,6 @@ class RecognizerListLoader:
 
         :param recognizer: The recognizer instance whose country to resolve.
         """
-        # ``country_code`` is a classmethod on EntityRecognizer; calling it
-        # via the instance is identical to calling it on type(recognizer)
-        # but reads more naturally at the call site.
         try:
             declared = recognizer.country_code()
         except Exception:  # pragma: no cover — defensive: third-party subclasses

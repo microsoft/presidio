@@ -226,10 +226,12 @@ class RecognizerRegistry:
     def get_country_codes(self) -> List[str]:
         """Return the set of country codes currently represented in the registry.
 
-        Aggregates the class-level ``COUNTRY_CODE`` (via
+        Aggregates the resolved country tag (via
         :meth:`EntityRecognizer.country_code`) across all loaded
-        recognizers, excluding generic / locale-agnostic ones. Useful for
-        debugging country-filter behavior:
+        recognizers — including both class-level ``COUNTRY_CODE`` and
+        per-instance ``country_code=`` constructor kwargs — and excludes
+        generic / locale-agnostic ones. Useful for debugging country-
+        filter behavior:
 
         >>> registry = RecognizerRegistry()
         >>> registry.load_predefined_recognizers()
