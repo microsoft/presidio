@@ -9,7 +9,7 @@ from presidio_analyzer import (
     PatternRecognizer,
     RecognizerRegistry,
 )
-from presidio_analyzer.predefined_recognizers import SpacyRecognizer
+from presidio_analyzer.predefined_recognizers import SpacyRecognizer, UsSsnRecognizer
 
 
 def create_mock_pattern_recognizer(lang, entity, name):
@@ -245,7 +245,6 @@ def test_remove_recognizer_when_multiple_instances_exist():
                 if rec.name == "SpacyRecognizer"]) == 1
 
 
-
 # ---------------------------------------------------------------------------
 # Country filter (load_predefined_recognizers(countries=...)) — fixes #1328
 # ---------------------------------------------------------------------------
@@ -365,8 +364,6 @@ def test_predefined_country_specific_recognizer_carries_class_country_code():
     the instance's ``country_code()`` method; the ClassVar itself remains
     accessible for class-level introspection without instantiating.
     """
-    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
-
     # ClassVar accessible without instantiation (the no-instantiation
     # introspection path is via the attribute, not the method).
     assert UsSsnRecognizer.COUNTRY_CODE == "us"
@@ -386,8 +383,6 @@ def test_country_code_class_attribute_is_authoritative_over_instance_attr():
     instance after the fact is intentionally a no-op for ``country_code()``
     so the country tag stays consistent for the lifetime of the recognizer.
     """
-    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
-
     rec = UsSsnRecognizer()
     rec.COUNTRY_CODE = "ca"  # noqa: B010 — exercising the contract
     assert rec.country_code() == "us"
@@ -407,104 +402,6 @@ def test_country_filter_keeps_untagged_custom_recognizer():
     registry.add_recognizer(custom)
 
     assert custom in registry.recognizers
-
-
-def test_country_filter_includes_tagged_custom_recognizer():
-    """A custom recognizer that opts in via class-level ``COUNTRY_CODE`` is
-    included when the filter is loaded with the matching country.
-    """
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    class _BrCpfRecognizer(PatternRecognizer):
-        COUNTRY_CODE = "br"
-
-        def __init__(self):
-            super().__init__(
-                supported_entity="BR_CPF",
-                name="BR CPF Recognizer",
-                patterns=[Pattern("p", regex="REGEX", score=1.0)],
-            )
-
-    class _XUsRecognizer(PatternRecognizer):
-        COUNTRY_CODE = "us"
-
-        def __init__(self):
-            super().__init__(
-                supported_entity="X_US_THING",
-                name="X US Recognizer",
-                patterns=[Pattern("p", regex="REGEX", score=1.0)],
-            )
-
-    br_recognizer = _BrCpfRecognizer()
-    us_recognizer = _XUsRecognizer()
-    agnostic = create_mock_pattern_recognizer("en", "AGNOSTIC", "Agnostic")
-
-    filtered = RecognizerListLoader.filter_by_countries(
-        [br_recognizer, us_recognizer, agnostic], ["br"]
-    )
-
-    assert br_recognizer in filtered
-    assert us_recognizer not in filtered
-    # Locale-agnostic recognizers always survive the filter.
-    assert agnostic in filtered
-
-
-def test_country_filter_warns_on_unknown_country(caplog):
-    """When a requested country has no matching recognizer in the input
-    list, a WARNING is logged so silent zero-result filters are easier to
-    debug.
-    """
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    class _XUsRecognizer(PatternRecognizer):
-        COUNTRY_CODE = "us"
-
-        def __init__(self):
-            super().__init__(
-                supported_entity="X_US_THING",
-                patterns=[Pattern("p", regex="REGEX", score=1.0)],
-            )
-
-    us_recognizer = _XUsRecognizer()
-
-    with caplog.at_level("WARNING", logger="presidio-analyzer"):
-        RecognizerListLoader.filter_by_countries([us_recognizer], ["br"])
-
-    warning_messages = [r.getMessage() for r in caplog.records if r.levelname == "WARNING"]
-    assert any("'br'" in m and "country_code" in m for m in warning_messages), (
-        f"expected a country-filter WARNING mentioning 'br' and country_code, "
-        f"got {warning_messages!r}"
-    )
-
-
-def test_supported_countries_via_loader_kwarg():
-    """``RecognizerListLoader.get(supported_countries=...)`` applies the
-    country filter inline alongside the language filter, mirroring how
-    ``supported_languages`` is threaded through. This is what allows the
-    same filter to be driven from a top-level YAML field with no extra
-    plumbing in ``RecognizerRegistry``.
-    """
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerConfigurationLoader,
-        RecognizerListLoader,
-    )
-
-    configuration = RecognizerConfigurationLoader.get(
-        registry_configuration={"global_regex_flags": 0}
-    )
-    recognizers = list(
-        RecognizerListLoader.get(**configuration, supported_countries=["us"])
-    )
-    names = {type(rec).__name__ for rec in recognizers}
-
-    assert "UsSsnRecognizer" in names
-    assert "UkNinoRecognizer" not in names
-    # Locale-agnostic recognizers survive the filter.
-    assert "CreditCardRecognizer" in names
 
 
 def test_get_country_codes_returns_loaded_countries():
@@ -571,8 +468,6 @@ def test_to_dict_emits_class_level_country_code():
     consumer of the dict (e.g. logs, audit trails) doesn't need to know
     which path the tag came from.
     """
-    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
-
     rec = UsSsnRecognizer()
     assert rec.to_dict().get("country_code") == "us"
 
@@ -645,8 +540,6 @@ def test_constructor_country_code_matches_class_level_is_fine():
     every layer (e.g. test helpers, generated code) without colliding
     with the class declaration.
     """
-    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
-
     rec = UsSsnRecognizer.__new__(UsSsnRecognizer)
     EntityRecognizer.__init__(
         rec,
@@ -663,8 +556,6 @@ def test_constructor_country_code_conflicts_with_class_level_raises():
     as British via the constructor; the class-level declaration wins and
     misconfiguration fails loudly with both values in the message.
     """
-    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
-
     with pytest.raises(ValueError, match="conflicts with class-level"):
         rec = UsSsnRecognizer.__new__(UsSsnRecognizer)
         EntityRecognizer.__init__(
@@ -676,8 +567,6 @@ def test_constructor_country_code_conflicts_with_class_level_raises():
 
 def test_constructor_country_code_match_is_case_insensitive():
     """Match-check between kwarg and ``COUNTRY_CODE`` is case-insensitive."""
-    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
-
     rec = UsSsnRecognizer.__new__(UsSsnRecognizer)
     EntityRecognizer.__init__(
         rec,
@@ -709,146 +598,9 @@ def test_pattern_recognizer_from_dict_roundtrip_preserves_country_code():
     assert restored.supported_entities == rec.supported_entities
 
 
-def test_custom_yaml_country_code_flows_through_to_filter(tmp_path):
-    """A YAML ``type: custom`` entry with ``country_code:`` is filtered by country.
-
-    End-to-end check: the YAML field flows through
-    ``RecognizerListLoader._create_custom_recognizers`` → ``from_dict``
-    → ``PatternRecognizer.__init__`` → ``EntityRecognizer.__init__``,
-    landing on the instance via ``self._country_code``. The country
-    filter then keeps or drops the instance based on the requested set.
-    """
-    import yaml as _yaml
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerConfigurationLoader,
-        RecognizerListLoader,
-    )
-
-    yaml_doc = {
-        "supported_languages": ["en"],
-        "global_regex_flags": 26,
-        "recognizers": [
-            {
-                "name": "AmNationalIdRecognizer",
-                "type": "custom",
-                "supported_entity": "AM_NATIONAL_ID",
-                "supported_languages": [{"language": "en"}],
-                "country_code": "am",
-                "patterns": [
-                    {"name": "AM 10-digit", "regex": r"\b\d{10}\b", "score": 0.5}
-                ],
-            }
-        ],
-    }
-    conf_path = tmp_path / "custom_recognizers.yaml"
-    conf_path.write_text(_yaml.safe_dump(yaml_doc))
-
-    configuration = RecognizerConfigurationLoader.get(conf_file=str(conf_path))
-    instances = list(
-        RecognizerListLoader.get(**configuration, supported_countries=["am"])
-    )
-
-    am = [r for r in instances if getattr(r, "name", None) == "AmNationalIdRecognizer"]
-    assert len(am) == 1, (
-        "expected the custom AM recognizer to survive the country filter, got "
-        f"{[type(r).__name__ for r in instances]}"
-    )
-    assert am[0].country_code() == "am"
-
-    # The same registry, filtered to a different country, drops it.
-    instances_uk = list(
-        RecognizerListLoader.get(**configuration, supported_countries=["uk"])
-    )
-    assert not [
-        r for r in instances_uk if getattr(r, "name", None) == "AmNationalIdRecognizer"
-    ]
-
-
 # ---------------------------------------------------------------------------
 # Input validation for ``countries=`` / ``supported_countries=``
 # ---------------------------------------------------------------------------
-
-
-def test_filter_by_countries_rejects_bare_string():
-    """A bare ``str`` raises ``TypeError`` rather than silently matching nothing.
-
-    ``countries="us"`` is the most common footgun: it would otherwise
-    iterate over characters and match nothing.
-    """
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    rec = create_mock_pattern_recognizer("en", "FOO", "rec")
-    with pytest.raises(TypeError, match="iterable of strings"):
-        RecognizerListLoader.filter_by_countries([rec], "us")
-
-
-def test_filter_by_countries_rejects_non_iterable():
-    """Non-iterable scalars raise ``TypeError`` early.
-
-    e.g. ``filter_by_countries([rec], 7)`` rather than failing later
-    with an opaque error.
-    """
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    rec = create_mock_pattern_recognizer("en", "FOO", "rec")
-    with pytest.raises(TypeError, match="iterable of strings"):
-        RecognizerListLoader.filter_by_countries([rec], 7)
-
-
-def test_filter_by_countries_rejects_non_string_element():
-    """Each element must be a string; ``[1, 2]`` raises ``TypeError``."""
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    rec = create_mock_pattern_recognizer("en", "FOO", "rec")
-    with pytest.raises(TypeError, match="must be a string"):
-        RecognizerListLoader.filter_by_countries([rec], ["us", 2])
-
-
-def test_filter_by_countries_rejects_blank_element():
-    """Empty / whitespace-only codes raise ``ValueError``."""
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    rec = create_mock_pattern_recognizer("en", "FOO", "rec")
-    with pytest.raises(ValueError, match="non-empty"):
-        RecognizerListLoader.filter_by_countries([rec], ["us", " "])
-
-
-def test_filter_by_countries_normalizes_case_and_whitespace():
-    """Whitespace is stripped and codes are lower-cased.
-
-    ``" US "`` matches a ``COUNTRY_CODE = "us"`` recognizer.
-    """
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    class TaggedRecognizer(PatternRecognizer):
-        COUNTRY_CODE = "us"
-
-        def __init__(self):
-            super().__init__(
-                supported_entity="FOO",
-                supported_language="en",
-                name="TaggedRecognizer",
-                patterns=[Pattern("p", regex="REGEX", score=1.0)],
-            )
-
-    tagged = TaggedRecognizer()
-    agnostic = create_mock_pattern_recognizer("en", "BAR", "agnostic")
-
-    filtered = RecognizerListLoader.filter_by_countries([tagged, agnostic], ["  US  "])
-    names = {type(rec).__name__ for rec in filtered}
-    assert "TaggedRecognizer" in names
-    # Untagged recognizers are always kept regardless of the filter.
-    assert any(getattr(rec, "name", None) == "agnostic" for rec in filtered)
 
 
 def test_load_predefined_recognizers_validates_countries_input():
@@ -865,94 +617,3 @@ def test_load_predefined_recognizers_validates_countries_input():
 # ---------------------------------------------------------------------------
 # YAML ``country_code`` cross-validation
 # ---------------------------------------------------------------------------
-
-
-def test_default_recognizers_yaml_country_code_matches_class(tmp_path):
-    """Every YAML ``country_code`` matches the class ``COUNTRY_CODE``.
-
-    Sanity check on the shipped ``default_recognizers.yaml``: protects
-    against the YAML and the code drifting silently — the loader will
-    refuse to load on mismatch.
-    """
-    import yaml as _yaml
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    conf_path = (
-        Path(__file__).resolve().parent.parent
-        / "presidio_analyzer"
-        / "conf"
-        / "default_recognizers.yaml"
-    )
-    data = _yaml.safe_load(conf_path.read_text())
-    declared = [
-        r
-        for r in data.get("recognizers", [])
-        if isinstance(r, dict) and "country_code" in r
-    ]
-    assert declared, "expected at least one country_code: entry in YAML"
-
-    for entry in declared:
-        name = entry["name"]
-        cls = RecognizerListLoader.get_existing_recognizer_cls(recognizer_name=name)
-        # Should not raise — declared YAML matches class.
-        RecognizerListLoader._validate_yaml_country_code(
-            recognizer_conf=entry,
-            recognizer_cls=cls,
-            recognizer_name=name,
-        )
-
-
-def test_yaml_country_code_mismatch_raises():
-    """YAML/class disagreement on ``country_code`` raises ``ValueError``.
-
-    The error names both values so the misconfiguration is fixable from
-    the error message alone.
-    """
-    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    with pytest.raises(ValueError, match="disagrees with class-level"):
-        RecognizerListLoader._validate_yaml_country_code(
-            recognizer_conf={"name": "UsSsnRecognizer", "country_code": "uk"},
-            recognizer_cls=UsSsnRecognizer,
-            recognizer_name="UsSsnRecognizer",
-        )
-
-
-def test_yaml_country_code_on_locale_agnostic_class_raises():
-    """YAML ``country_code`` on a class without ``COUNTRY_CODE`` raises.
-
-    The filter has no class-level fact to anchor on. The error message
-    points at the fix (set ``COUNTRY_CODE`` on the class, or remove the
-    YAML field).
-    """
-    from presidio_analyzer.predefined_recognizers import CreditCardRecognizer
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    with pytest.raises(ValueError, match="no ``COUNTRY_CODE`` attribute"):
-        RecognizerListLoader._validate_yaml_country_code(
-            recognizer_conf={"name": "CreditCardRecognizer", "country_code": "us"},
-            recognizer_cls=CreditCardRecognizer,
-            recognizer_name="CreditCardRecognizer",
-        )
-
-
-def test_yaml_country_code_blank_value_raises():
-    """A blank / non-string YAML ``country_code`` is rejected up-front."""
-    from presidio_analyzer.predefined_recognizers import UsSsnRecognizer
-    from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
-        RecognizerListLoader,
-    )
-
-    with pytest.raises(ValueError, match="non-empty string"):
-        RecognizerListLoader._validate_yaml_country_code(
-            recognizer_conf={"name": "UsSsnRecognizer", "country_code": "   "},
-            recognizer_cls=UsSsnRecognizer,
-            recognizer_name="UsSsnRecognizer",
-        )

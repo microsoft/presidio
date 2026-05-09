@@ -29,34 +29,10 @@ class EntityRecognizer:
     :param version: the recognizer current version
     :param context: a list of words which can help boost confidence score
     when they appear in context of the matched entity
-
-    To declare a recognizer as country-specific there are two paths:
-
-    - **Class-level (preferred for predefined recognizers):** override the
-      class-level :attr:`COUNTRY_CODE` attribute on the subclass (e.g.
-      ``COUNTRY_CODE = "us"``). Used by every predefined country recognizer
-      shipped with Presidio.
-    - **Instance-level (preferred for custom recognizers without a
-      subclass):** pass ``country_code="<iso>"`` to the constructor. This
-      is the path that lets ``PatternRecognizer.from_dict({"country_code":
-      "am", ...})`` and the corresponding YAML ``type: custom`` entries
-      tag a recognizer with a country without writing Python.
-
-    The two paths are reconciled at construction time: if the class
-    declares ``COUNTRY_CODE`` and a different value is passed to the
-    constructor, ``ValueError`` is raised. Country tags are used by
-    ``RecognizerRegistry.load_predefined_recognizers(countries=[...])``
-    (and the matching top-level ``supported_countries`` YAML field) to
-    include or exclude country-specific recognizers; ``None`` (the
-    default for both paths) means the recognizer is locale-agnostic and
-    is always included regardless of the country filter. Codes follow
-    ISO 3166-1 alpha-2 (with ``"uk"`` accepted as a synonym of ``"gb"``
-    for historical consistency with the directory layout) and are
-    compared case-insensitively.
-
-    :param country_code: Optional ISO 3166-1 alpha-2 country tag for
-        instances of locale-agnostic classes. Stripped and lower-cased.
-        Must equal :attr:`COUNTRY_CODE` if the class also declares one.
+    :param country_code: Optional ISO 3166-1 alpha-2 country tag. Custom
+        recognizers may set it per instance; predefined recognizers should
+        prefer the class-level :attr:`COUNTRY_CODE`. Values are stripped,
+        lower-cased, and must match :attr:`COUNTRY_CODE` when both are set.
     """
 
     MIN_SCORE = 0
