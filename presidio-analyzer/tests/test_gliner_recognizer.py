@@ -1,3 +1,4 @@
+import inspect
 import sys
 from unittest.mock import MagicMock, patch
 
@@ -5,6 +6,7 @@ import pytest
 
 from presidio_analyzer.chunkers import CharacterBasedTextChunker
 from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
+from presidio_analyzer.predefined_recognizers.ner import gliner_recognizer
 
 
 @pytest.fixture
@@ -291,6 +293,15 @@ def test_when_default_model_and_name_omitted_keeps_legacy_name(noop_gliner_load)
     """The built-in GLiNER default should keep the historical recognizer name."""
     r = GLiNERRecognizer()
     assert r.name == "GLiNERRecognizer"
+
+
+def test_default_model_parameter_reuses_shared_constant():
+    """Keep the constructor default and legacy-name comparison from drifting."""
+    signature = inspect.signature(GLiNERRecognizer.__init__)
+    assert (
+        signature.parameters["model_name"].default
+        == gliner_recognizer._DEFAULT_GLINER_MODEL_NAME
+    )
 
 
 @pytest.mark.parametrize(

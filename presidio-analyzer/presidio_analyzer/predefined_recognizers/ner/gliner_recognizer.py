@@ -58,7 +58,7 @@ class GLiNERRecognizer(LocalRecognizer):
         version: str = "0.0.1",
         context: Optional[List[str]] = None,
         entity_mapping: Optional[Dict[str, str]] = None,
-        model_name: str = "urchade/gliner_multi_pii-v1",
+        model_name: str = _DEFAULT_GLINER_MODEL_NAME,
         flat_ner: bool = True,
         multi_label: bool = False,
         threshold: float = 0.30,
