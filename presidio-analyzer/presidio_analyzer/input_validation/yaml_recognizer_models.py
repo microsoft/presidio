@@ -192,6 +192,27 @@ class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
     onnx_model_file: Optional[str] = Field(None, description="ONNX model file name")
     entity_mapping: Optional[Dict[str, str]] = Field(None, description="Entity mapping")
 
+    @model_validator(mode="after")
+    def validate_entity_mapping_and_supported_entities(self):
+        """Validate that entity_mapping and supported_entities are not both set."""
+        if self.entity_mapping is not None and self.supported_entities is not None:
+            raise ValueError(
+                "GLiNER recognizer configuration cannot define both "
+                "'entity_mapping' and 'supported_entities'; these fields are "
+                "mutually exclusive."
+            )
+        return self
+
+    def model_dump(self, *args, **kwargs) -> Dict[str, Any]:
+        """Serialize the config without None values by default.
+
+        GLiNER recognizer kwargs are passed directly to the recognizer constructor.
+        Excluding None values preserves constructor defaults for omitted YAML fields
+        instead of overriding them with explicit None.
+        """
+        kwargs.setdefault("exclude_none", True)
+        return super().model_dump(*args, **kwargs)
+
 
 class CustomRecognizerConfig(BaseRecognizerConfig):
     """Configuration for custom pattern-based recognizers."""

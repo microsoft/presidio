@@ -658,6 +658,44 @@ def test_gliner_recognizer_config_model_name():
     assert recognizer.multi_label is True
 
 
+def test_gliner_recognizer_config_model_dump_excludes_none():
+    """Test that GLiNERRecognizerConfig.model_dump excludes None fields by default."""
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        GLiNERRecognizerConfig,
+    )
+
+    config = GLiNERRecognizerConfig(
+        name="GLiNERRecognizer",
+        supported_language="en",
+        model_name="custom/gliner-model",
+    )
+    dumped = config.model_dump()
+    assert "model_name" in dumped
+    assert dumped["model_name"] == "custom/gliner-model"
+    # Fields not provided should be excluded, not set to None
+    assert "flat_ner" not in dumped
+    assert "threshold" not in dumped
+    assert "entity_mapping" not in dumped
+
+
+def test_gliner_recognizer_config_entity_mapping_and_supported_entities_mutually_exclusive():
+    """Test that entity_mapping and supported_entities cannot both be set."""
+    import pytest
+    from pydantic import ValidationError
+
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        GLiNERRecognizerConfig,
+    )
+
+    with pytest.raises(ValidationError, match="mutually exclusive"):
+        GLiNERRecognizerConfig(
+            name="GLiNERRecognizer",
+            supported_language="en",
+            entity_mapping={"person": "PERSON"},
+            supported_entities=["PERSON"],
+        )
+
+
 def test_config_model_map_fallback_to_predefined():
     """Test CONFIG_MODEL_MAP falls back to Predefined for unknown class_name."""
     from presidio_analyzer.input_validation.yaml_recognizer_models import (
