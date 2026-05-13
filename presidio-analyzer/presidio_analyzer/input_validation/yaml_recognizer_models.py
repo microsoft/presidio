@@ -157,7 +157,7 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
 class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     """Configuration specifically for HuggingFace NER models."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="allow")
 
     model_name: Optional[str] = Field(None, description="HuggingFace model name")
     tokenizer_name: Optional[str] = Field(
@@ -189,7 +189,7 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
 class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
     """Configuration specifically for GLiNER models."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="allow")
 
     model_name: Optional[str] = Field(None, description="GLiNER model name")
     flat_ner: Optional[bool] = Field(None, description="Use flat NER")
