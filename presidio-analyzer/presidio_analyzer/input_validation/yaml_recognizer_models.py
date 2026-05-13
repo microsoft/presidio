@@ -175,6 +175,16 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
         default=None, description="Prefixes to strip from labels (e.g. B-, I-)"
     )
 
+    def model_dump(self, *args, **kwargs) -> Dict[str, Any]:
+        """Serialize the config without None values by default.
+
+        HuggingFace recognizer kwargs are passed directly to the recognizer constructor.
+        Excluding None values preserves constructor defaults for omitted YAML fields
+        instead of overriding them with explicit None.
+        """
+        kwargs.setdefault("exclude_none", True)
+        return super().model_dump(*args, **kwargs)
+
 
 class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
     """Configuration specifically for GLiNER models."""

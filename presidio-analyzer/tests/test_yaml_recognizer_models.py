@@ -696,6 +696,26 @@ def test_gliner_recognizer_config_entity_mapping_and_supported_entities_mutually
         )
 
 
+def test_huggingface_recognizer_config_model_dump_excludes_none():
+    """Test that HuggingFaceRecognizerConfig.model_dump excludes None fields by default."""
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        HuggingFaceRecognizerConfig,
+    )
+
+    config = HuggingFaceRecognizerConfig(
+        name="HuggingFaceNerRecognizer",
+        supported_language="en",
+        model_name="custom/ner-model",
+    )
+    dumped = config.model_dump()
+    assert "model_name" in dumped
+    assert dumped["model_name"] == "custom/ner-model"
+    # Fields not provided should be excluded, not set to None
+    assert "tokenizer_name" not in dumped
+    assert "threshold" not in dumped
+    assert "label_mapping" not in dumped
+
+
 def test_config_model_map_fallback_to_predefined():
     """Test CONFIG_MODEL_MAP falls back to Predefined for unknown class_name."""
     from presidio_analyzer.input_validation.yaml_recognizer_models import (
