@@ -97,7 +97,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         """
         Generate a configuration from the given JSON data.
 
-        :param data: The input JSON data.
+        :param data: The input JSON data as either a dict or a list of dict objects.
         :return: The generated configuration.
         """
         logger.debug("Starting JSON BatchAnalyzer analysis")
@@ -107,8 +107,8 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         for json_object in json_objects:
             if not isinstance(json_object, dict):
                 raise ValueError(
-                    "JsonAnalysisBuilder only supports dict objects "
-                    "when input is a list."
+                    "JsonAnalysisBuilder only supports dict input "
+                    "or lists of dict objects."
                 )
             analyzer_results = self.batch_analyzer.analyze_dict(
                 input_dict=json_object,
