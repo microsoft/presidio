@@ -157,7 +157,7 @@ class PredefinedRecognizerConfig(BaseRecognizerConfig):
 class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     """Configuration specifically for HuggingFace NER models."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="allow")
 
     model_name: Optional[str] = Field(None, description="HuggingFace model name")
     tokenizer_name: Optional[str] = Field(
@@ -174,6 +174,54 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     label_prefixes: Optional[List[str]] = Field(
         default=None, description="Prefixes to strip from labels (e.g. B-, I-)"
     )
+
+    def model_dump(self, *args, **kwargs) -> Dict[str, Any]:
+        """Serialize the config without None values by default.
+
+        HuggingFace recognizer kwargs are passed directly to the recognizer constructor.
+        Excluding None values preserves constructor defaults for omitted YAML fields
+        instead of overriding them with explicit None.
+        """
+        kwargs.setdefault("exclude_none", True)
+        return super().model_dump(*args, **kwargs)
+
+
+class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
+    """Configuration specifically for GLiNER models."""
+
+    model_config = ConfigDict(extra="allow")
+
+    model_name: Optional[str] = Field(None, description="GLiNER model name")
+    flat_ner: Optional[bool] = Field(None, description="Use flat NER")
+    multi_label: Optional[bool] = Field(
+        None, description="Use multi-label classification"
+    )
+    threshold: Optional[float] = Field(None, description="Confidence threshold")
+    map_location: Optional[str] = Field(None, description="Device (cpu/gpu/etc.)")
+    load_onnx_model: Optional[bool] = Field(None, description="Load ONNX model")
+    onnx_model_file: Optional[str] = Field(None, description="ONNX model file name")
+    entity_mapping: Optional[Dict[str, str]] = Field(None, description="Entity mapping")
+
+    @model_validator(mode="after")
+    def validate_entity_mapping_and_supported_entities(self):
+        """Validate that entity_mapping and supported_entities are not both set."""
+        if self.entity_mapping is not None and self.supported_entities is not None:
+            raise ValueError(
+                "GLiNER recognizer configuration cannot define both "
+                "'entity_mapping' and 'supported_entities'; these fields are "
+                "mutually exclusive."
+            )
+        return self
+
+    def model_dump(self, *args, **kwargs) -> Dict[str, Any]:
+        """Serialize the config without None values by default.
+
+        GLiNER recognizer kwargs are passed directly to the recognizer constructor.
+        Excluding None values preserves constructor defaults for omitted YAML fields
+        instead of overriding them with explicit None.
+        """
+        kwargs.setdefault("exclude_none", True)
+        return super().model_dump(*args, **kwargs)
 
 
 class CustomRecognizerConfig(BaseRecognizerConfig):
@@ -463,4 +511,5 @@ class RecognizerRegistryConfig(BaseModel):
 # This allows for modular expansion without polluting the base config
 CONFIG_MODEL_MAP: Dict[str, Type[BaseModel]] = {
     "HuggingFaceNerRecognizer": HuggingFaceRecognizerConfig,
+    "GLiNERRecognizer": GLiNERRecognizerConfig,
 }
