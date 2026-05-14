@@ -91,7 +91,7 @@ class JsonAnalysisBuilder(AnalysisBuilder):
 
     def generate_analysis(
         self,
-        data: Dict,
+        data: Union[Dict, List[Dict]],
         language: str = "en",
     ) -> StructuredAnalysis:
         """
@@ -101,16 +101,31 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         :return: The generated configuration.
         """
         logger.debug("Starting JSON BatchAnalyzer analysis")
-        analyzer_results = self.batch_analyzer.analyze_dict(
-            input_dict=data,
-            language=language,
-            n_process=self.n_process,
-            batch_size=self.batch_size
-        )
+        key_recognizer_result_map = {}
+        json_objects = data if isinstance(data, list) else [data]
 
-        key_recognizer_result_map = self._generate_analysis_from_results_json(
-            analyzer_results
-        )
+        for json_object in json_objects:
+            if not isinstance(json_object, dict):
+                raise ValueError(
+                    "JsonAnalysisBuilder only supports dict objects "
+                    "when input is a list."
+                )
+            analyzer_results = self.batch_analyzer.analyze_dict(
+                input_dict=json_object,
+                language=language,
+                n_process=self.n_process,
+                batch_size=self.batch_size
+            )
+
+            json_key_recognizer_result_map = self._generate_analysis_from_results_json(
+                analyzer_results
+            )
+            for key, result in json_key_recognizer_result_map.items():
+                if (
+                    key not in key_recognizer_result_map
+                    or result.score > key_recognizer_result_map[key].score
+                ):
+                    key_recognizer_result_map[key] = result
 
         key_entity_map = {
             key: result.entity_type for key, result in key_recognizer_result_map.items()

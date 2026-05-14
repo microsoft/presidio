@@ -145,6 +145,24 @@ def test_generate_analysis_json_with_empty_data(json_analysis_builder):
     assert len(structured_analysis.entity_mapping) == 0
 
 
+def test_generate_analysis_json_with_empty_list(json_analysis_builder):
+    structured_analysis = json_analysis_builder.generate_analysis([])
+
+    assert len(structured_analysis.entity_mapping) == 0
+
+
+def test_generate_analysis_json_with_top_level_list_of_objects(json_analysis_builder):
+    data = [
+        {"name": "John Doe", "email": "john.doe@example.com"},
+        {"name": "Jane Doe", "email": "jane.doe@example.com"},
+    ]
+
+    structured_analysis = json_analysis_builder.generate_analysis(data)
+
+    assert structured_analysis.entity_mapping["name"] == "PERSON"
+    assert structured_analysis.entity_mapping["email"] == "EMAIL_ADDRESS"
+
+
 def test_analysis_json_when_default_threshold_is_high_then_only_email_passes(
     sample_json,
 ):
