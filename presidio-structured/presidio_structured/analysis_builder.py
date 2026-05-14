@@ -98,6 +98,8 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         Generate a configuration from the given JSON data.
 
         :param data: The input JSON data as either a Dict or a List[Dict].
+            For lists, entities are detected in each dict and merged per key
+            using the highest confidence score. Empty lists are supported.
         :return: The generated configuration.
         """
         logger.debug("Starting JSON BatchAnalyzer analysis")
@@ -107,8 +109,8 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         for json_object in objects_to_analyze:
             if not isinstance(json_object, dict):
                 raise ValueError(
-                    "JsonAnalysisBuilder only supports dictionary input "
-                    "or lists of dictionary objects."
+                    "Each element in the list must be a dictionary. "
+                    f"Received: {type(json_object).__name__}"
                 )
             analyzer_results = self.batch_analyzer.analyze_dict(
                 input_dict=json_object,
