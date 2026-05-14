@@ -163,6 +163,11 @@ def test_generate_analysis_json_with_top_level_list_of_objects(json_analysis_bui
     assert structured_analysis.entity_mapping["email"] == "EMAIL_ADDRESS"
 
 
+def test_generate_analysis_json_with_invalid_root_type_should_raise(json_analysis_builder):
+    with pytest.raises(ValueError):
+        json_analysis_builder.generate_analysis("not a json object")
+
+
 def test_analysis_json_when_default_threshold_is_high_then_only_email_passes(
     sample_json,
 ):

@@ -104,9 +104,15 @@ class JsonAnalysisBuilder(AnalysisBuilder):
         """
         logger.debug("Starting JSON BatchAnalyzer analysis")
         key_recognizer_result_map = {}
-        objects_to_analyze = data if isinstance(data, list) else [data]
+        if not isinstance(data, (dict, list)):
+            raise ValueError(
+                "JsonAnalysisBuilder only supports dictionary input "
+                "or lists of dictionaries."
+            )
 
-        for json_object in objects_to_analyze:
+        dict_list = data if isinstance(data, list) else [data]
+
+        for json_object in dict_list:
             if not isinstance(json_object, dict):
                 raise ValueError(
                     "Each element in the list must be a dictionary. "
