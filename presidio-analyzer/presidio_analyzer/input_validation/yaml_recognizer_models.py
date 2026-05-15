@@ -2,7 +2,14 @@
 
 from typing import Any, Dict, List, Optional, Type, Union
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
 
 from presidio_analyzer.input_validation import validate_language_codes
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
@@ -175,15 +182,21 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
         default=None, description="Prefixes to strip from labels (e.g. B-, I-)"
     )
 
-    def model_dump(self, *args, **kwargs) -> Dict[str, Any]:
-        """Serialize the config without None values by default.
+    @model_serializer(mode="wrap")
+    def _serialize_excluding_none(self, handler) -> Dict[str, Any]:
+        """Drop None-valued fields at the schema level.
 
-        HuggingFace recognizer kwargs are passed directly to the recognizer constructor.
-        Excluding None values preserves constructor defaults for omitted YAML fields
-        instead of overriding them with explicit None.
+        Implemented as a model_serializer (not a model_dump override) so the
+        exclusion runs when this model is serialized through a parent model's
+        Union field, not only on direct instance.model_dump() calls. Pydantic's
+        union serializer dispatches via the schema serializer and bypasses
+        Python-level model_dump overrides.
+
+        HuggingFace recognizer kwargs are passed directly to the recognizer
+        constructor; excluding None values preserves constructor defaults for
+        omitted YAML fields instead of overriding them with explicit None.
         """
-        kwargs.setdefault("exclude_none", True)
-        return super().model_dump(*args, **kwargs)
+        return {k: v for k, v in handler(self).items() if v is not None}
 
 
 class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
@@ -213,15 +226,21 @@ class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
             )
         return self
 
-    def model_dump(self, *args, **kwargs) -> Dict[str, Any]:
-        """Serialize the config without None values by default.
+    @model_serializer(mode="wrap")
+    def _serialize_excluding_none(self, handler) -> Dict[str, Any]:
+        """Drop None-valued fields at the schema level.
 
-        GLiNER recognizer kwargs are passed directly to the recognizer constructor.
-        Excluding None values preserves constructor defaults for omitted YAML fields
-        instead of overriding them with explicit None.
+        Implemented as a model_serializer (not a model_dump override) so the
+        exclusion runs when this model is serialized through a parent model's
+        Union field, not only on direct instance.model_dump() calls. Pydantic's
+        union serializer dispatches via the schema serializer and bypasses
+        Python-level model_dump overrides.
+
+        GLiNER recognizer kwargs are passed directly to the recognizer
+        constructor; excluding None values preserves constructor defaults for
+        omitted YAML fields instead of overriding them with explicit None.
         """
-        kwargs.setdefault("exclude_none", True)
-        return super().model_dump(*args, **kwargs)
+        return {k: v for k, v in handler(self).items() if v is not None}
 
 
 class CustomRecognizerConfig(BaseRecognizerConfig):

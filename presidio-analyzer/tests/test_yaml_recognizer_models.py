@@ -734,6 +734,90 @@ def test_gliner_recognizer_fields_survive_registry_dump_roundtrip():
     assert recognizer["entity_mapping"] == {"person": "PERSON"}
 
 
+def test_gliner_recognizer_omitted_fields_excluded_from_registry_dump():
+    """Omitted GLiNER fields must not leak into the registry dump as None.
+
+    Regression: the subclass-level None-exclusion was implemented as a
+    `model_dump` Python override, which Pydantic's union serializer
+    bypasses. Fields the user did not set leaked into
+    `validate_recognizer_registry_configuration` output as explicit None
+    and would override the recognizer's constructor defaults downstream.
+    """
+    from presidio_analyzer.input_validation.schemas import ConfigurationValidator
+
+    registry_config = {
+        "recognizers": [
+            {
+                "name": "GLiNERRecognizer",
+                "type": "predefined",
+                "supported_language": "en",
+                "model_name": "custom/gliner-model",
+            }
+        ]
+    }
+
+    dumped = ConfigurationValidator.validate_recognizer_registry_configuration(
+        registry_config
+    )
+    recognizer = dumped["recognizers"][0]
+
+    assert recognizer["model_name"] == "custom/gliner-model"
+    # Fields not provided in input must be absent from the dump, not None.
+    for field in (
+        "threshold",
+        "flat_ner",
+        "multi_label",
+        "map_location",
+        "load_onnx_model",
+        "onnx_model_file",
+        "entity_mapping",
+    ):
+        assert field not in recognizer, (
+            f"{field} unexpectedly present in dump: {recognizer!r}"
+        )
+
+
+def test_huggingface_recognizer_omitted_fields_excluded_from_registry_dump():
+    """Omitted HuggingFace fields must not leak into the registry dump as None.
+
+    Same root cause as the GLiNER variant above — the subclass's
+    `model_dump` override is bypassed by Pydantic's union serializer when
+    the registry is dumped.
+    """
+    from presidio_analyzer.input_validation.schemas import ConfigurationValidator
+
+    registry_config = {
+        "recognizers": [
+            {
+                "name": "HuggingFaceNerRecognizer",
+                "type": "predefined",
+                "supported_language": "en",
+                "model_name": "custom/ner-model",
+            }
+        ]
+    }
+
+    dumped = ConfigurationValidator.validate_recognizer_registry_configuration(
+        registry_config
+    )
+    recognizer = dumped["recognizers"][0]
+
+    assert recognizer["model_name"] == "custom/ner-model"
+    for field in (
+        "tokenizer_name",
+        "threshold",
+        "label_mapping",
+        "aggregation_strategy",
+        "chunk_overlap",
+        "chunk_size",
+        "device",
+        "label_prefixes",
+    ):
+        assert field not in recognizer, (
+            f"{field} unexpectedly present in dump: {recognizer!r}"
+        )
+
+
 def test_huggingface_recognizer_config_model_dump_excludes_none():
     """Test that HuggingFaceRecognizerConfig.model_dump excludes None fields by default."""
     from presidio_analyzer.input_validation.yaml_recognizer_models import (
