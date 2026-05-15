@@ -241,6 +241,12 @@ recognizers:
     - kr
     type: predefined
     enabled: false
+    
+  - name: PhTinRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+    enabled: false
 
   - name: SeOrganisationsnummerRecognizer
     supported_languages:

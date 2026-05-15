@@ -123,6 +123,12 @@ recognizers:
     - es
     type: predefined
 
+  - name: PhTinRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+
   - name: ItDriverLicenseRecognizer
     supported_languages: 
     - it
