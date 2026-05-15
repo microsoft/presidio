@@ -327,6 +327,7 @@ class RecognizerRegistryConfig(BaseModel):
     global_regex_flags: int = Field(default=26, description="Global regex flags")
     recognizers: List[
         Union[
+            GLiNERRecognizerConfig,
             HuggingFaceRecognizerConfig,
             PredefinedRecognizerConfig,
             CustomRecognizerConfig,

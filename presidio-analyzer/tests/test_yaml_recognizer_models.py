@@ -696,6 +696,44 @@ def test_gliner_recognizer_config_entity_mapping_and_supported_entities_mutually
         )
 
 
+def test_gliner_recognizer_fields_survive_registry_dump_roundtrip():
+    """GLiNER-specific fields must survive validate -> model_dump on the registry.
+
+    Regression: when GLiNERRecognizerConfig was absent from the
+    RecognizerRegistryConfig.recognizers Union, the parent's union serializer
+    dispatched by declared type (PredefinedRecognizerConfig) and stripped every
+    field declared only on the subclass, even though the runtime instance was
+    the correct GLiNER class.
+    """
+    from presidio_analyzer.input_validation.schemas import ConfigurationValidator
+
+    registry_config = {
+        "recognizers": [
+            {
+                "name": "GLiNERRecognizer",
+                "type": "predefined",
+                "supported_language": "en",
+                "model_name": "custom/gliner-model",
+                "threshold": 0.5,
+                "flat_ner": False,
+                "multi_label": True,
+                "entity_mapping": {"person": "PERSON"},
+            }
+        ]
+    }
+
+    dumped = ConfigurationValidator.validate_recognizer_registry_configuration(
+        registry_config
+    )
+    recognizer = dumped["recognizers"][0]
+
+    assert recognizer["model_name"] == "custom/gliner-model"
+    assert recognizer["threshold"] == 0.5
+    assert recognizer["flat_ner"] is False
+    assert recognizer["multi_label"] is True
+    assert recognizer["entity_mapping"] == {"person": "PERSON"}
+
+
 def test_huggingface_recognizer_config_model_dump_excludes_none():
     """Test that HuggingFaceRecognizerConfig.model_dump excludes None fields by default."""
     from presidio_analyzer.input_validation.yaml_recognizer_models import (
