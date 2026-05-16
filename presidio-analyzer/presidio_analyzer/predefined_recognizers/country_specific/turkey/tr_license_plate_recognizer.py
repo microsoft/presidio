@@ -25,6 +25,8 @@ class TrLicensePlateRecognizer(PatternRecognizer):
         for different strings to be used during pattern matching.
     """
 
+    COUNTRY_CODE = "tr"
+
     PATTERNS = [
         Pattern(
             "TR License Plate (space)",

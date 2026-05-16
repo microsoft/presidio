@@ -17,6 +17,8 @@ class SgFinRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "sg"
+
     PATTERNS = [
         Pattern("Nric (weak)", r"(?i)(\b[A-Z][0-9]{7}[A-Z]\b)", 0.3),
         Pattern("Nric (medium)", r"(?i)(\b[STFGM][0-9]{7}[A-Z]\b)", 0.5),

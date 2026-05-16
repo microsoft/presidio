@@ -231,6 +231,12 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
     supported_entity: str = Field(
         ..., description="Entity type this recognizer detects"
     )
+    country_code: Optional[str] = Field(
+        default=None,
+        description=(
+            "Optional ISO 3166-1 alpha-2 country tag for country filtering"
+        ),
+    )
     patterns: Optional[List[Dict[str, Any]]] = Field(
         default=None, description="List of patterns"
     )
@@ -282,6 +288,22 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
                 except PredefinedRecognizerNotFoundError:
                     pass
         return data
+
+    @field_validator("country_code")
+    @classmethod
+    def validate_country_code(cls, value: Optional[str]) -> Optional[str]:
+        """Validate and normalize the optional custom recognizer country tag."""
+        if value is None:
+            return None
+        if not isinstance(value, str):
+            raise ValueError(
+                "country_code must be a single non-empty string, "
+                f"got {type(value).__name__}: {value!r}"
+            )
+        normalized = value.strip().lower()
+        if not normalized:
+            raise ValueError("country_code must be a non-empty string")
+        return normalized
 
     @field_validator("patterns")
     @classmethod
