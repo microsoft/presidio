@@ -3,6 +3,7 @@ import logging
 import os
 from collections import Counter
 from typing import List, Optional
+import inspect
 
 import regex as re
 
@@ -332,14 +333,23 @@ class AnalyzerEngine:
 
         # Update results in case surrounding words or external context are relevant to
         # the context words.
-        results = self.context_aware_enhancer.enhance_using_context(
-            text=text,
-            raw_results=results,
-            nlp_artifacts=nlp_artifacts,
-            recognizers=recognizers,
-            context=context,
-            negative_context=negative_context,
+        # Check if the enhancer supports negative_context parameter for backward compatibility
+        enhancer_signature = inspect.signature(
+            self.context_aware_enhancer.enhance_using_context
         )
+        enhancer_kwargs = {
+            "text": text,
+            "raw_results": results,
+            "nlp_artifacts": nlp_artifacts,
+            "recognizers": recognizers,
+            "context": context,
+        }
+        
+        # Only pass negative_context if the enhancer supports it
+        if "negative_context" in enhancer_signature.parameters:
+            enhancer_kwargs["negative_context"] = negative_context
+        
+        results = self.context_aware_enhancer.enhance_using_context(**enhancer_kwargs)
 
         return results
 
