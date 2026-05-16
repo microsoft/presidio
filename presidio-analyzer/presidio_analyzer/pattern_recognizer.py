@@ -71,7 +71,6 @@ class PatternRecognizer(LocalRecognizer):
             self.patterns = []
         else:
             self.patterns = patterns
-        self.context = context
         self.deny_list_score = deny_list_score
         self.global_regex_flags = global_regex_flags
 
