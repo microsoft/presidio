@@ -35,8 +35,16 @@ class UsSsnRecognizer(PatternRecognizer):
 
     NEGATIVE_CONTEXT = [
         "test",
-        "example",
+        "testing",
+        "sample",
+        "fake",
         "dummy",
+        "example",
+        "demonstration",
+        "demo",
+        "mock",
+        "placeholder",
+        "documentation",
     ]
 
     def __init__(
