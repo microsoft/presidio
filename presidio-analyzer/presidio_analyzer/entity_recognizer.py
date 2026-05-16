@@ -157,6 +157,8 @@ class EntityRecognizer:
             "supported_language": self.supported_language,
             "name": self.name,
             "version": self.version,
+            "context": self.context,
+            "negative_context": self.negative_context,
         }
         return return_dict
 
