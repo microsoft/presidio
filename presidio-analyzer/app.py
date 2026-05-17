@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+import warnings
 from logging.config import fileConfig
 from pathlib import Path
 from typing import Tuple
@@ -49,6 +50,23 @@ class Server:
             os.environ.get("RECOGNIZER_REGISTRY_CONF_FILE") or None
         )
 
+        if nlp_engine_conf_file:
+            warnings.warn(
+                "The NLP_CONF_FILE environment variable is deprecated. "
+                "Use the 'nlp_configuration' section inside the unified "
+                "ANALYZER_CONF_FILE instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        if recognizer_registry_conf_file:
+            warnings.warn(
+                "The RECOGNIZER_REGISTRY_CONF_FILE environment variable is "
+                "deprecated. Use the 'recognizer_registry' section inside "
+                "the unified ANALYZER_CONF_FILE instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
         self.logger.info("Starting analyzer engine")
         self.engine: AnalyzerEngine = AnalyzerEngineProvider(
             analyzer_engine_conf_file=analyzer_conf_file,
@@ -86,7 +104,7 @@ class Server:
                     texts=batch,
                     batch_size=min(
                         len(batch),
-                        int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))
+                        int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE)),
                     ),
                     language=req_data.language,
                     correlation_id=req_data.correlation_id,
@@ -99,9 +117,8 @@ class Server:
                     allow_list_match=req_data.allow_list_match,
                     regex_flags=req_data.regex_flags,
                     n_process=min(
-                        len(batch),
-                        int(os.environ.get("N_PROCESS", DEFAULT_N_PROCESS))
-                    )
+                        len(batch), int(os.environ.get("N_PROCESS", DEFAULT_N_PROCESS))
+                    ),
                 )
                 results = []
                 for recognizer_result_list in iterator:

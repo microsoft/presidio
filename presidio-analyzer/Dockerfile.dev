@@ -2,15 +2,12 @@ FROM python:3.12-slim@sha256:804ddf3251a60bbf9c92e73b7566c40428d54d0e79d3428194e
 
 ARG DEV_MODE=dev
 ARG POETRY_EXTRAS=""
-ARG NLP_CONF_FILE=presidio_analyzer/conf/default.yaml
-ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml
-ARG RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml
+# Unified analyzer configuration file.
+ARG ANALYZER_CONF_FILE=presidio_analyzer/conf/analyzer.yaml
 
 ENV DEV_MODE=${DEV_MODE}
 ENV PIP_NO_CACHE_DIR=1
 ENV ANALYZER_CONF_FILE=${ANALYZER_CONF_FILE}
-ENV RECOGNIZER_REGISTRY_CONF_FILE=${RECOGNIZER_REGISTRY_CONF_FILE}
-ENV NLP_CONF_FILE=${NLP_CONF_FILE}
 ENV POETRY_EXTRAS=${POETRY_EXTRAS}
 
 # Install essential build tools

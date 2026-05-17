@@ -1,3 +1,16 @@
+# ---------------------------------------------------------
+# DEPRECATED – Use conf/analyzer.yaml instead.
+#
+# This file is kept for backward compatibility only.
+# It will be removed in a future version of Presidio.
+#
+# Migrate to the unified configuration file (analyzer.yaml)
+# which contains supported_languages, default_score_threshold,
+# nlp_configuration, and recognizer_registry in a single file.
+#
+# See: https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/
+# ---------------------------------------------------------
+
 supported_languages:
   - en
 default_score_threshold: 0

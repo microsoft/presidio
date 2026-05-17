@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 import logging
+import warnings
 from collections.abc import ItemsView
 from pathlib import Path
 from typing import (
@@ -452,6 +453,33 @@ class RecognizerConfigurationLoader:
         return registry_configuration
 
     @staticmethod
+    def _extract_recognizer_registry_configuration(configuration: Any) -> Any:
+        """Extract recognizer registry settings from unified analyzer config."""
+        if (
+            not isinstance(configuration, dict)
+            or "recognizer_registry" not in configuration
+        ):
+            return configuration
+
+        recognizer_registry = configuration["recognizer_registry"]
+        if not isinstance(recognizer_registry, dict):
+            raise TypeError(
+                "The 'recognizer_registry' section should be a valid mapping, "
+                f"got {type(recognizer_registry)}"
+            )
+
+        registry_configuration = recognizer_registry.copy()
+        if (
+            "supported_languages" not in registry_configuration
+            and "supported_languages" in configuration
+        ):
+            registry_configuration["supported_languages"] = configuration[
+                "supported_languages"
+            ]
+
+        return registry_configuration
+
+    @staticmethod
     def get(
         conf_file: Optional[Union[Path, str]] = None,
         registry_configuration: Optional[Dict] = None,
@@ -484,6 +512,15 @@ class RecognizerConfigurationLoader:
                 use_defaults = False
 
         if conf_file:
+            warnings.warn(
+                "Loading recognizer registry from a standalone file is deprecated. "
+                "Use the 'recognizer_registry' section inside the unified analyzer "
+                "configuration file (analyzer.yaml) instead. "
+                "See: https://microsoft.github.io/presidio/analyzer/"
+                "analyzer_engine_provider/",
+                DeprecationWarning,
+                stacklevel=3,
+            )
             try:
                 with open(conf_file) as file:
                     config_from_file = yaml.safe_load(file)
@@ -500,11 +537,22 @@ class RecognizerConfigurationLoader:
             except Exception as e:
                 raise ValueError(f"Failed to parse file {conf_file}. Error: {str(e)}")
 
+            config_from_file = (
+                RecognizerConfigurationLoader._extract_recognizer_registry_configuration(
+                    config_from_file
+                )
+            )
+
         # Load defaults if needed (no config provided,
         # or registry_configuration is incomplete)
         if use_defaults:
             with open(RecognizerConfigurationLoader._get_full_conf_path()) as file:
                 config_from_file = yaml.safe_load(file)
+            config_from_file = (
+                RecognizerConfigurationLoader._extract_recognizer_registry_configuration(
+                    config_from_file
+                )
+            )
 
         if config_from_file and not isinstance(config_from_file, dict):
             raise TypeError(
@@ -543,7 +591,7 @@ class RecognizerConfigurationLoader:
 
     @staticmethod
     def _get_full_conf_path(
-        default_conf_file: Union[Path, str] = "default_recognizers.yaml",
+        default_conf_file: Union[Path, str] = "analyzer.yaml",
     ) -> Path:
-        """Return a Path to the default conf file."""
+        """Return a Path to the built-in configuration file."""
         return Path(Path(__file__).parent, "../conf", default_conf_file)

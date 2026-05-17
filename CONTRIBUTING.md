@@ -64,7 +64,7 @@ To contribute a new predefined recognizer to Presidio Analyzer:
      - Document the source or reference for any new regex logic (e.g., link to a standard, documentation, or example dataset) in the code as a comment.
 
 3. **Add your recognizer to the configuration:**
-   - Add your recognizer to `presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml`.
+   - Add your recognizer to `presidio-analyzer/presidio_analyzer/conf/analyzer.yaml`.
    - For country-specific recognizers, set `enabled: false` by default in the YAML configuration.
 
 3. **Update imports:** Add your recognizer to `presidio-analyzer/presidio_analyzer/predefined_recognizers/__init__.py` so it is available for import and backward compatibility.

@@ -2,6 +2,7 @@ import functools
 import re
 
 import pytest
+import yaml
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
     RecognizerConfigurationLoader,
     RecognizerListLoader,
@@ -155,6 +156,53 @@ def test_configuration_loader_bad_yaml_raises_value_error(tmp_path):
     match_pattern = rf"Failed to parse file.*{re.escape(f.name)}"
     with pytest.raises(ValueError, match=match_pattern):
         RecognizerConfigurationLoader.get(conf_file=str(f))
+
+
+def test_configuration_loader_defaults_to_unified_analyzer_config():
+    """Test that default registry config comes from unified analyzer.yaml."""
+    configuration = RecognizerConfigurationLoader.get()
+    analyzer_conf_path = RecognizerConfigurationLoader._get_full_conf_path()
+
+    with open(analyzer_conf_path) as file:
+        analyzer_config = yaml.safe_load(file)
+
+    assert analyzer_conf_path.name == "analyzer.yaml"
+    assert (
+        configuration["supported_languages"] == analyzer_config["supported_languages"]
+    )
+    assert (
+        configuration["global_regex_flags"]
+        == analyzer_config["recognizer_registry"]["global_regex_flags"]
+    )
+    assert (
+        configuration["recognizers"]
+        == analyzer_config["recognizer_registry"]["recognizers"]
+    )
+
+
+def test_configuration_loader_extracts_registry_from_unified_config_file(tmp_path):
+    """Test that a unified analyzer config file can provide registry config."""
+    analyzer_yaml = tmp_path / "analyzer.yaml"
+    analyzer_yaml.write_text(
+        """
+supported_languages:
+  - en
+recognizer_registry:
+  global_regex_flags: 26
+  recognizers:
+    - CreditCardRecognizer
+""",
+        encoding="utf-8",
+    )
+
+    with pytest.warns(DeprecationWarning):
+        configuration = RecognizerConfigurationLoader.get(conf_file=analyzer_yaml)
+
+    assert configuration == {
+        "supported_languages": ["en"],
+        "global_regex_flags": 26,
+        "recognizers": ["CreditCardRecognizer"],
+    }
 
 
 def test_convert_supported_entities_to_entity_uses_first_item():

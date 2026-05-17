@@ -1,20 +1,17 @@
 # Configuring the Analyzer Engine from file
 
-Presidio uses `AnalyzerEngineProvider` to load `AnalyzerEngine` configuration from file. 
-Configuration can be loaded in three different ways:
+Presidio uses `AnalyzerEngineProvider` to load `AnalyzerEngine` configuration from file.
 
-## Using a single file
+## Using the unified configuration file (recommended)
 
-Create an `AnalyzerEngineProvider` using a single configuration file and set its path to `analyzer_engine_conf_file`, then create `AnalyzerEngine` based on it:
+The recommended approach is to use a **single configuration file** (`analyzer.yaml`) that contains all settings: supported languages, NLP engine configuration, and recognizer registry.
 
 ```python
 from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider
 
-analyzer_conf_file = "./analyzer/analyzer-config-all.yml"
-
 provider = AnalyzerEngineProvider(
-    analyzer_engine_conf_file=analyzer_conf_file
-    )
+    analyzer_engine_conf_file="./analyzer-config.yaml"
+)
 analyzer = provider.create_engine()
 
 results = analyzer.analyze(text="My name is Morris", language="en")
@@ -61,7 +58,6 @@ recognizer_registry:
   - name: CreditCardRecognizer
     supported_languages: 
       - en
-    supported_entity: IT_FISCAL_CODE
     type: predefined
 
   - name: ItFiscalCodeRecognizer
@@ -79,69 +75,47 @@ The configuration file contains the following parameters:
 
     `supported_languages` must be identical to the same field in recognizer_registry
 
-## Using multiple files
+You can also load and validate the configuration using the Pydantic-based `AnalyzerConfiguration` model:
 
-Create an `AnalyzerEngineProvider` using three different configuration files for each of the following components:
+```python
+from presidio_analyzer.configuration import AnalyzerConfiguration
 
-  - Analyzer
-  - NLP Engine
-  - Recognizer Registry
+config = AnalyzerConfiguration.from_yaml("./analyzer-config.yaml")
+```
 
-!!! note "Note"
+## Using the default configuration
 
-    Each of these parameters is optional and in case it's not set, the default configuration will be used. 
-
+Create an `AnalyzerEngineProvider` without any parameters. This will load the default configuration from the built-in [analyzer.yaml](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml):
 
 ```python
 from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider
 
-analyzer_conf_file = "./analyzer/analyzer-config.yml"
-nlp_engine_conf_file = "./analyzer/nlp-config.yml"
-recognizer_registry_conf_file = "./analyzer/recognizers-config.yml"
-
-provider = AnalyzerEngineProvider(
-    analyzer_engine_conf_file=analyzer_conf_file,
-    nlp_engine_conf_file=nlp_engine_conf_file,
-    recognizer_registry_conf_file=recognizer_registry_conf_file,
-    )
-analyzer = provider.create_engine()
+analyzer = AnalyzerEngineProvider().create_engine()
 
 results = analyzer.analyze(text="My name is Morris", language="en")
 print(results)
 ```
 
-The structure of the configuration files is as follows:
+## Using multiple files (deprecated)
 
-- Analyzer engine configuration file:
+!!! warning "Deprecated"
 
-    ```yaml
-    supported_languages: 
-    - en
-    default_score_threshold: 0
-    ```
+    Using separate configuration files for the NLP engine and recognizer registry is deprecated.
+    Use the unified configuration file instead – place the `nlp_configuration` and
+    `recognizer_registry` sections inside the analyzer configuration file.
 
-- NLP engine configuration file structure is examined thoroughly in the [Customizing the NLP model](customizing_nlp_models.md) section.
-
-- Recognizer registry configuration file structure is examined thoroughly in the [Customizing recognizer registry from file](recognizer_registry_provider.md) section.
-
-## Using the default configuration
-
-Create an `AnalyzerEngineProvider` without any parameters. This will load the default configuration:
+The `nlp_engine_conf_file` and `recognizer_registry_conf_file` parameters are still supported for backward compatibility, but will be removed in a future version.
 
 ```python
 from presidio_analyzer import AnalyzerEngine, AnalyzerEngineProvider
 
-provider = AnalyzerEngineProvider().create_engine()
-
-results = provider.analyze(text="My name is Morris", language="en")
-print(results)
+provider = AnalyzerEngineProvider(
+    analyzer_engine_conf_file="./analyzer-config.yml",
+    nlp_engine_conf_file="./nlp-config.yml",           # deprecated
+    recognizer_registry_conf_file="./recognizers.yml",  # deprecated
+)
+analyzer = provider.create_engine()
 ```
-
-The default configuration of `AnalyzerEngine` is defined in the following files: 
-
-  -  [Analyzer Engine](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml)
-  -  [NLP Engine](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default.yaml)
-  -  [Recognizer Registry](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml)
 
 ## Enabling and disabling recognizers
 In general, recognizers that are not added to the configuration would not be created, with one exception.

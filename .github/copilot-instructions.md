@@ -236,7 +236,7 @@ Follow best practices in docs/analyzer/developing_recognizers.md:
 
 2. **Make regex patterns specific** to minimize false positives
 3. **Document pattern sources** with comments linking to standards/references
-4. **Add to configuration** in `conf/default_recognizers.yaml` (set `enabled: false` for country-specific)
+4. **Add to configuration** in `conf/analyzer.yaml` (set `enabled: false` for country-specific)
 5. **Update imports** in `predefined_recognizers/__init__.py`
 6. **Add comprehensive tests** including edge cases
 7. **Update supported entities documentation** if adding new entity types
