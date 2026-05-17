@@ -169,5 +169,157 @@ docker run -d -p 5001:5001 presidio/presidio-anonymizer
 
 ---
 
+## Building Custom Docker Images
+
+This section provides detailed instructions for building custom Docker images to support additional languages and custom configurations.
+
+### Overview
+
+The official Presidio Docker images support English by default. To add support for additional languages, you'll need to build custom images using the provided YAML configuration files.
+
+### Key Configuration Files
+
+The main configuration files for customizing Presidio are located in the root directory:
+
+- `docker-compose.yml` - Main compose file
+- `docker-compose-image.yml` - Image-specific configuration
+- `docker-compose-text.yml` - Text processing configuration
+- `docker-compose-transformers.yml` - Transformer models configuration
+
+### Adding Support for Additional Languages
+
+#### Step 1: Modify the NLP Configuration
+
+The primary way to add language support is through the `NER_REGOGNIZERS` environment variable. Create a custom Dockerfile:
+
+```dockerfile
+FROM mcr.microsoft.com/presidio-analyzer:latest
+
+# Install additional language models
+RUN python -m spacy download es_core_news_lg
+RUN python -m spacy download fr_core_news_lg
+RUN python -m spacy download de_core_news_lg
+
+# Set environment variables for additional languages
+ENV NER_RECOGNIZERS='{"en": ["SpacyRecognizer"], "es": ["SpacyRecognizer"], "fr": ["SpacyRecognizer"], "de": ["SpacyRecognizer"]}'
+ENV DEFAULT_LANGUAGES="en,es,fr,de"
+
+CMD ["python", "-m", "presidio-analyzer"]
+```
+
+#### Step 2: Build Your Custom Image
+
+```bash
+docker build -t my-presidio-analyzer:custom -f Dockerfile .
+```
+
+#### Step 3: Run with Custom Configuration
+
+```bash
+docker run -d -p 5002:3000 \
+  -e NER_RECOGNIZERS='{"en": ["SpacyRecognizer"], "es": ["SpacyRecognizer"]}' \
+  -e DEFAULT_LANGUAGES="en,es" \
+  my-presidio-analyzer:custom
+```
+
+### Typical Pitfalls to Avoid
+
+#### Memory Issues with Multiple Languages
+
+!!! warning "Important"
+
+    Adding 10+ languages at once may cause the Docker image to run out of memory during model loading.
+
+**Solution:** Add languages incrementally and optimize model sizes:
+
+```dockerfile
+# Use smaller models when possible
+RUN python -m spacy download es_core_web_sm  # Use small model
+# Instead of: RUN python -m spacy download es_core_web_lg  # Large model
+```
+
+Alternatively, use lazy loading for NLP models.
+
+#### NLP Recognizer Warnings
+
+If you see warnings like:
+```
+UserWarning: NLP recognizer (e.g. SpacyRecognizer, StanzaRecognizer) is not in the list of recognizers for language en.
+```
+
+**Solution:** Ensure your recognizers are properly registered in the `NER_RECOGNIZERS` configuration:
+
+```bash
+docker run -d -p 5002:3000 \
+  -e NER_RECOGNIZERS='{"en": ["SpacyRecognizer"], "es": ["SpacyRecognizer"]}' \
+  my-presidio-analyzer:custom
+```
+
+### Complete Example: Multi-Language Support
+
+Create a `Dockerfile.multilang`:
+
+```dockerfile
+FROM mcr.microsoft.com/presidio-analyzer:latest
+
+# Install Spanish, French, German, and Italian models
+RUN python -m spacy download es_core_web_sm && \
+    python -m spacy download fr_core_web_sm && \
+    python -m spacy download de_core_web_sm && \
+    python -m spacy download it_core_web_sm
+
+# Configure recognizers for all supported languages
+ENV NER_RECOGNIZERS='{
+  "en": ["SpacyRecognizer"],
+  "es": ["SpacyRecognizer"],
+  "fr": ["SpacyRecognizer"],
+  "de": ["SpacyRecognizer"],
+  "it": ["SpacyRecognizer"]
+}'
+ENV DEFAULT_LANGUAGES="en,es,fr,de,it"
+
+EXPOSE 3000
+
+CMD ["python", "-m", "presidio-analyzer"]
+```
+
+Build and run:
+
+```bash
+docker build -f Dockerfile.multilang -t presidio-multilang:latest .
+docker run -d -p 5002:3000 presidio-multilang:latest
+```
+
+### Using Custom YAML Files
+
+For more complex configurations, you can modify the existing YAML files:
+
+1. **Edit `docker-compose-text.yml`** to customize text processing
+2. **Edit `docker-compose-transformers.yml`** to add custom transformer models
+3. **Build with custom compose:**
+
+```bash
+docker-compose -f docker-compose-text.yml build
+docker-compose -f docker-compose-text.yml up
+```
+
+### Troubleshooting
+
+#### Container Out of Memory
+
+If your container runs out of memory:
+- Reduce the number of languages loaded simultaneously
+- Use smaller spaCy models (`_sm` instead of `_lg`)
+- Limit the number of NLP engine workers
+
+#### Model Not Found
+
+If you get "model not found" errors:
+- Ensure the model is properly installed in the Dockerfile
+- Verify the model name matches exactly (case-sensitive)
+- Check that the model supports the requested language
+
+---
+
 For more information on developing locally,
 refer to the [setting up a development environment](development.md) section.
