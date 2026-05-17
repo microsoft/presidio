@@ -1,10 +1,22 @@
+import inspect
 import sys
-
-import pytest
 from unittest.mock import MagicMock, patch
 
-from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
+import pytest
+
 from presidio_analyzer.chunkers import CharacterBasedTextChunker
+from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
+from presidio_analyzer.predefined_recognizers.ner import gliner_recognizer
+
+
+@pytest.fixture
+def noop_gliner_load(monkeypatch):
+    """Avoid GLiNER installs/weights by stubbing recognizer load."""
+
+    def _noop(self):
+        return None
+
+    monkeypatch.setattr(GLiNERRecognizer, "load", _noop)
 
 
 @pytest.fixture
@@ -259,6 +271,37 @@ def test_gliner_deduplicates_entities_in_overlap_region(mock_gliner):
 GLINER_MOCK_PATH = (
     "presidio_analyzer.predefined_recognizers.ner.gliner_recognizer.GLiNER"
 )
+
+
+def test_when_name_omitted_derives_distinct_names_from_model(noop_gliner_load):
+    """No GLiNER package or weights are required (load is stubbed)."""
+
+    a = GLiNERRecognizer(model_name="model/a")
+    b = GLiNERRecognizer(model_name="model/b")
+    assert a.name == "GLiNERRecognizer_model_a"
+    assert b.name == "GLiNERRecognizer_model_b"
+    assert a.name != b.name
+
+
+def test_when_explicit_name_then_preserved(noop_gliner_load):
+    """Explicit recognizer names should not be replaced."""
+    r = GLiNERRecognizer(name="custom", model_name="model/a")
+    assert r.name == "custom"
+
+
+def test_when_default_model_and_name_omitted_keeps_legacy_name(noop_gliner_load):
+    """The built-in GLiNER default should keep the historical recognizer name."""
+    r = GLiNERRecognizer()
+    assert r.name == "GLiNERRecognizer"
+
+
+def test_default_model_parameter_reuses_shared_constant():
+    """Keep the constructor default and legacy-name comparison from drifting."""
+    signature = inspect.signature(GLiNERRecognizer.__init__)
+    assert (
+        signature.parameters["model_name"].default
+        == gliner_recognizer._DEFAULT_GLINER_MODEL_NAME
+    )
 
 
 @pytest.mark.parametrize(
