@@ -88,6 +88,7 @@ from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
 # Spain recognizers
 from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
+from .country_specific.spain.es_passport_recognizer import EsPassportRecognizer
 
 # Sweden recognizers
 from .country_specific.sweden.se_organisationsnummer_recognizer import (
@@ -99,6 +100,9 @@ from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRe
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
 # Turkey recognizers
+from .country_specific.turkey.tr_license_plate_recognizer import (
+    TrLicensePlateRecognizer,
+)
 from .country_specific.turkey.tr_national_id_recognizer import (
     TrNationalIdRecognizer,
 )
@@ -222,6 +226,7 @@ __all__ = [
     "InPassportRecognizer",
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
+    "EsPassportRecognizer",
     "UkDrivingLicenceRecognizer",
     "UkNinoRecognizer",
     "UkPassportRecognizer",
@@ -234,6 +239,7 @@ __all__ = [
     "KrFrnRecognizer",
     "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
+    "TrLicensePlateRecognizer",
     "TrNationalIdRecognizer",
     "SePersonnummerRecognizer",
     "LangExtractRecognizer",

@@ -26,6 +26,8 @@ class InVehicleRegistrationRecognizer(PatternRecognizer):
     This can allow a greater variety in input e.g. by removing dashes or spaces
     """
 
+    COUNTRY_CODE = "in"
+
     PATTERNS = [
         Pattern(
             "India Vehicle Registration (Very Weak)",

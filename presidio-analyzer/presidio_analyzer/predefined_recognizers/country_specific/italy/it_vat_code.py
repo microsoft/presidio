@@ -19,6 +19,8 @@ class ItVatCodeRecognizer(PatternRecognizer):
     This can allow a greater variety in input, for example by removing dashes or spaces.
     """
 
+    COUNTRY_CODE = "it"
+
     # Class variables
     PATTERNS = [
         Pattern(
