@@ -50,9 +50,9 @@ Configuration can be done in two ways:
     print(results_english)
     ```
 
-- **Via configuration**: Set up the models which should be used in the `nlp_configuration` section of the [unified analyzer configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml).
+- **Via configuration**: Set up the models either in a standalone NLP configuration file used by `NlpEngineProvider(conf_file=...)`, or in the `nlp_configuration` section of the [unified analyzer configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml) used by `AnalyzerEngineProvider`.
 
-    An example Conf file:
+    An example standalone NLP configuration file:
 
     ```yaml
     nlp_engine_name: spacy
@@ -86,7 +86,7 @@ Configuration can be done in two ways:
   - `low_confidence_score_multiplier`: A multiplier to apply to the score of entities with low confidence.
   - `low_score_entity_names`: A list of entity types to apply the low confidence score multiplier to.
 
-    To load NLP settings from a configuration file, use `NlpEngineProvider` with a config file such as the [analyzer configuration file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/analyzer.yaml). Alternatively, NLP configuration can be passed directly:
+    To load NLP settings from a standalone NLP configuration file, use `NlpEngineProvider(conf_file=...)`. Alternatively, NLP configuration can be passed directly:
 
     ```python
     from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
@@ -110,6 +110,16 @@ Configuration can be done in two ways:
 
     results_english = analyzer.analyze(text="My name is David", language="en")
     print(results_english)
+    ```
+
+    To load NLP settings from the unified analyzer configuration file, use `AnalyzerEngineProvider`:
+
+    ```python
+    from presidio_analyzer import AnalyzerEngineProvider
+
+    analyzer = AnalyzerEngineProvider(
+        analyzer_engine_conf_file="presidio_analyzer/conf/analyzer.yaml"
+    ).create_engine()
     ```
 
     In this examples we:

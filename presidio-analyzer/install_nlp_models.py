@@ -25,6 +25,18 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 logger.addHandler(logging.StreamHandler())
 
+DEFAULT_ANALYZER_CONF_FILE = "presidio_analyzer/conf/analyzer.yaml"
+DEFAULT_NLP_CONF_FILE = "presidio_analyzer/conf/default.yaml"
+
+
+def _resolve_config_files(
+    nlp_conf_file: Optional[str], analyzer_conf_file: Optional[str]
+) -> tuple[str, Optional[str]]:
+    """Resolve CLI defaults while preserving explicit NLP config overrides."""
+    if analyzer_conf_file or nlp_conf_file:
+        return nlp_conf_file or DEFAULT_NLP_CONF_FILE, analyzer_conf_file
+    return DEFAULT_NLP_CONF_FILE, DEFAULT_ANALYZER_CONF_FILE
+
 
 def install_models(
     nlp_conf_file: Optional[str] = None, analyzer_conf_file: Optional[str] = None
@@ -36,6 +48,10 @@ def install_models(
     :param analyzer_conf_file: Optional analyzer configuration file
         which may include NLP configuration.
     """
+    nlp_conf_file, analyzer_conf_file = _resolve_config_files(
+        nlp_conf_file, analyzer_conf_file
+    )
+
     # Prefer nlp_configuration embedded inside a unified ANALYZER_CONF_FILE.
     if analyzer_conf_file:
         try:
@@ -153,7 +169,7 @@ if __name__ == "__main__":
         default=None,
         help=(
             "Optional path to an analyzer conf file which may include "
-            "NLP configuration. When provided, --nlp_conf_file is ignored."
+            "NLP configuration."
         ),
     )
     args = parser.parse_args()
@@ -175,6 +191,5 @@ if __name__ == "__main__":
 
     install_models(
         nlp_conf_file=args.nlp_conf_file,
-        analyzer_conf_file=args.analyzer_conf_file
-        or "presidio_analyzer/conf/analyzer.yaml",
+        analyzer_conf_file=args.analyzer_conf_file,
     )

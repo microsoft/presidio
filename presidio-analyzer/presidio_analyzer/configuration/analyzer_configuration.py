@@ -26,7 +26,14 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
 from presidio_analyzer.input_validation import (
     RecognizerRegistryConfig,
@@ -262,8 +269,11 @@ class AnalyzerConfiguration(BaseModel):
         if not path.is_file():
             raise ValueError(f"Path is not a file: {path}")
 
-        with open(path) as f:
-            raw = yaml.safe_load(f)
+        try:
+            with open(path) as f:
+                raw = yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            raise ValueError(f"Invalid YAML in configuration file {path}: {e}") from e
 
         if raw is None:
             raise ValueError(f"Configuration file is empty: {path}")
@@ -288,7 +298,10 @@ class AnalyzerConfiguration(BaseModel):
                 stacklevel=2,
             )
 
-        return cls(**raw)
+        try:
+            return cls(**raw)
+        except ValidationError as e:
+            raise ValueError(f"Invalid analyzer configuration in {path}") from e
 
     @classmethod
     def from_dict(cls, config: Dict[str, Any]) -> "AnalyzerConfiguration":

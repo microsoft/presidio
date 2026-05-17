@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 
 
 ### Analyzer
+#### Changed
+- Breaking: Presidio Analyzer Docker images now use only the unified `ANALYZER_CONF_FILE` build argument and environment variable. Deprecated `NLP_CONF_FILE` and `RECOGNIZER_REGISTRY_CONF_FILE` Dockerfile inputs were removed; use the `nlp_configuration` and `recognizer_registry` sections in the analyzer configuration file instead.
+
 #### Added
 - Canadian SIN (`CA_SIN`) recognizer for the Canadian Social Insurance Number, using regex pattern matching, context words (English and French), and Luhn checksum validation. Disabled by default.
 
