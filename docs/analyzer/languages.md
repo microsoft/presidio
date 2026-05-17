@@ -75,3 +75,28 @@ the `docker build` phase and the models defined in it are installed automaticall
 
 For `transformers` based models, the configuration [can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/transformers.yaml). 
 A docker file supporting transformers models [can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/Dockerfile.transformers).
+
+### Building custom Docker images for more languages
+
+If you want to support languages beyond English in a custom Docker image, start with the NLP configuration file that the image copies during build:
+
+- `presidio-analyzer/presidio_analyzer/conf/default.yaml` for the standard spaCy-based image
+- `presidio-analyzer/presidio_analyzer/conf/transformers.yaml` for the transformers image
+- `presidio-analyzer/presidio_analyzer/conf/stanza.yaml` for the Stanza image
+
+Then pass that file to the Docker build through `NLP_CONF_FILE`. For example:
+
+```bash
+docker build -f presidio-analyzer/Dockerfile \
+  --build-arg NLP_CONF_FILE=presidio_analyzer/conf/default.yaml \
+  -t presidio-analyzer-custom .
+```
+
+The same pattern works for the other analyzer Dockerfiles, such as `Dockerfile.transformers` and `Dockerfile.stanza`.
+
+Practical tips:
+
+- Add a few languages at a time and verify the image still builds cleanly.
+- Keep the `models` list in the YAML file aligned with the languages you enable.
+- If you see recognizer warnings such as a language missing an NLP recognizer, make sure the recognizer registry and NLP configuration define the same language set.
+- For very large language sets, split the build into smaller steps so the Docker build has less work to do at once.
