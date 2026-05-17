@@ -120,6 +120,7 @@ from .country_specific.uk.uk_vehicle_registration_recognizer import (
 from .country_specific.us.aba_routing_recognizer import AbaRoutingRecognizer
 from .country_specific.us.medical_license_recognizer import MedicalLicenseRecognizer
 from .country_specific.us.us_bank_recognizer import UsBankRecognizer
+from .country_specific.us.us_clia_recognizer import UsCliaRecognizer
 from .country_specific.us.us_driver_license_recognizer import UsLicenseRecognizer
 from .country_specific.us.us_itin_recognizer import UsItinRecognizer
 from .country_specific.us.us_mbi_recognizer import UsMbiRecognizer
@@ -190,6 +191,7 @@ __all__ = [
     "SgFinRecognizer",
     "UrlRecognizer",
     "UsBankRecognizer",
+    "UsCliaRecognizer",
     "UsItinRecognizer",
     "UsLicenseRecognizer",
     "UsMbiRecognizer",
