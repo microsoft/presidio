@@ -151,7 +151,8 @@ To add a recognizer to the list of pre-defined recognizers:
 1. Clone the repo.
 2. Create a file containing the new recognizer Python class.
 3. Add the recognizer to the `recognizers` in the [`default_recognizers`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) config. Details of recognizer parameters are given [Here](./recognizer_registry_provider.md#the-recognizer-parameters).
-4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
+4. If the recognizer is country-specific (file lives under `predefined_recognizers/country_specific/<country>/`), declare its country by setting the class-level `COUNTRY_CODE = "<iso-3166-1-alpha-2>"` attribute. This makes the recognizer participate in the country filter — see [Filtering recognizers by country](./filtering_by_country.md). Generic / locale-agnostic recognizers leave `COUNTRY_CODE` unset (defaults to `None`).
+5. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
 ### Azure AI Language recognizer
 

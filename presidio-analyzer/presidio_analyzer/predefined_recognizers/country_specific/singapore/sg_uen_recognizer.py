@@ -18,6 +18,8 @@ class SgUenRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "sg"
+
     PATTERNS = [
         Pattern(
             "UEN (low)",

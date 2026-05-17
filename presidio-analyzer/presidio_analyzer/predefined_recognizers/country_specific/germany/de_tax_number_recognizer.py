@@ -34,6 +34,8 @@ class DeTaxNumberRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     PATTERNS = [
         Pattern(
             "Steuernummer ELSTER (bundeseinheitlich, 13-stellig)",

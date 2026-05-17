@@ -15,6 +15,8 @@ class PlPeselRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "pl"
+
     PATTERNS = [
         Pattern(
             "PESEL",
@@ -44,10 +46,15 @@ class PlPeselRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa: D102
+        if len(pattern_text) != 11 or not pattern_text.isdigit():
+            return False
+
         digits = [int(digit) for digit in pattern_text]
         weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
 
-        checksum = sum(digit * weight for digit, weight in zip(digits[:10], weights))
-        checksum %= 10
+        weighted_sum = sum(d * w for d, w in zip(digits[:10], weights))
+        # PESEL check digit = (10 - weighted_sum % 10) % 10. See
+        # https://en.wikipedia.org/wiki/PESEL#Check_digit
+        check_digit = (10 - weighted_sum % 10) % 10
 
-        return checksum == digits[10]
+        return check_digit == digits[10]
