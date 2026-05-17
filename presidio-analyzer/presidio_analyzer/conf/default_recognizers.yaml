@@ -81,6 +81,13 @@ recognizers:
     enabled: false
     country_code: us
 
+  - name: UsCliaRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+    country_code: us
+
   - name: NhsRecognizer
     supported_languages: 
     - en
