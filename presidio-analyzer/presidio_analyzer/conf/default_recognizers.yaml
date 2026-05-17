@@ -395,3 +395,9 @@ recognizers:
     - fr
     type: predefined
     enabled: false
+
+  - name: PhLicensePlateRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
