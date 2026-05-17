@@ -21,6 +21,8 @@ class EsNieRecognizer(PatternRecognizer):
     or spaces.
     """
 
+    COUNTRY_CODE = "es"
+
     PATTERNS = [
         Pattern(
             "NIE",

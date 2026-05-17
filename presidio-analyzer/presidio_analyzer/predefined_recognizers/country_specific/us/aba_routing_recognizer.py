@@ -19,6 +19,8 @@ class AbaRoutingRecognizer(PatternRecognizer):
     This can allow a greater variety in input, for example by removing dashes or spaces.
     """
 
+    COUNTRY_CODE = "us"
+
     PATTERNS = [
         Pattern(
             "ABA routing number (weak)",

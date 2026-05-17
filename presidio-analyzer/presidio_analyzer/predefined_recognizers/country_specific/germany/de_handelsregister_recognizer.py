@@ -38,6 +38,8 @@ class DeHandelsregisterRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     PATTERNS = [
         Pattern(
             "Handelsregisternummer HRA/HRB",

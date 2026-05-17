@@ -32,6 +32,8 @@ class KrRrnRecognizer(PatternRecognizer):
     This can allow a greater variety in input, for example by removing dashes.
     """
 
+    COUNTRY_CODE = "kr"
+
     PATTERNS = [
         Pattern(
             "RRN (Medium)",

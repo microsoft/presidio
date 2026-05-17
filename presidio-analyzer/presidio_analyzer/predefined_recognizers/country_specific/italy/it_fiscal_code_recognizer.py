@@ -13,6 +13,8 @@ class ItFiscalCodeRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "it"
+
     PATTERNS = [
         Pattern(
             "Fiscal Code",

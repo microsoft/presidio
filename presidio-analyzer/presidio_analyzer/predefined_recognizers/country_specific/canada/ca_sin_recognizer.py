@@ -24,6 +24,8 @@ class CaSinRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "ca"
+
     PATTERNS = [
         Pattern("SIN (weak)", r"\b[1-79]\d{8}\b", 0.05),
         Pattern("SIN (medium)", r"\b[1-79]\d{2}([- ])\d{3}\1\d{3}\b", 0.5),

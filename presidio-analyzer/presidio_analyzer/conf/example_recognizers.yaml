@@ -1,5 +1,19 @@
+# Optional top-level field:
+#
+#   supported_countries: ["us", "uk"]
+#     Restrict the loaded predefined recognizers to those tagged with one of
+#     these ISO-3166-1 alpha-2 country codes (case-insensitive). Mirrors
+#     ``supported_languages``: locale-agnostic recognizers (no
+#     ``COUNTRY_CODE`` set on the class) are always loaded regardless of
+#     this filter. Omit the field to disable country filtering. See
+#     docs/analyzer/filtering_by_country.md for the full semantics.
+#
+# Country tagging on individual recognizers is declared at the *class* level
+# via ``EntityRecognizer.COUNTRY_CODE`` (e.g. ``COUNTRY_CODE = "us"`` on the
+# class body). See docs/analyzer/adding_recognizers.md for the convention.
 recognizers:
   -
+    # Locale-agnostic example: class has no COUNTRY_CODE, always loaded.
     name: "Zip code Recognizer"
     supported_language: "de"
     patterns:
@@ -12,6 +26,7 @@ recognizers:
      - code
     supported_entity: "ZIP"
   -
+    # Locale-agnostic example: class has no COUNTRY_CODE, always loaded.
     name: "Titles recognizer"
     supported_language: "en"
     supported_entity: "TITLE"

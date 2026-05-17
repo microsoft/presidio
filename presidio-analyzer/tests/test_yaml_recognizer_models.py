@@ -193,6 +193,67 @@ def test_custom_recognizer_config_with_patterns():
     assert config.patterns == patterns
 
 
+def test_custom_recognizer_config_with_country_code():
+    """Custom YAML model preserves normalized country_code for filtering."""
+    config = CustomRecognizerConfig(
+        name="custom_am",
+        supported_entity="AM_NATIONAL_ID",
+        country_code=" AM ",
+        patterns=[{"name": "am_id", "regex": r"\d{10}", "score": 0.7}],
+    )
+
+    assert config.country_code == "am"
+    assert config.model_dump()["country_code"] == "am"
+
+
+def test_custom_recognizer_config_rejects_blank_country_code():
+    """Blank YAML country_code values fail validation instead of being ignored."""
+    with pytest.raises(ValidationError) as exc_info:
+        CustomRecognizerConfig(
+            name="custom_blank_country",
+            supported_entity="CUSTOM_ENTITY",
+            country_code="   ",
+            patterns=[{"name": "id", "regex": r"\d+", "score": 0.5}],
+        )
+
+    assert "country_code" in str(exc_info.value)
+    assert "non-empty" in str(exc_info.value)
+
+
+def test_custom_recognizer_config_rejects_multiple_country_codes():
+    """country_code is intentionally a single string, not a list."""
+    with pytest.raises(ValidationError) as exc_info:
+        CustomRecognizerConfig(
+            name="custom_multi_country",
+            supported_entity="CUSTOM_ENTITY",
+            country_code=["us", "uk"],
+            patterns=[{"name": "id", "regex": r"\d+", "score": 0.5}],
+        )
+
+    assert "country_code" in str(exc_info.value)
+
+
+def test_recognizer_registry_config_preserves_custom_country_code_on_dump():
+    """Validated registry YAML keeps custom country_code for loader kwargs."""
+    config = RecognizerRegistryConfig(
+        supported_languages=["en"],
+        recognizers=[
+            {
+                "name": "custom_am",
+                "type": "custom",
+                "supported_entity": "AM_NATIONAL_ID",
+                "country_code": "am",
+                "patterns": [{"name": "am_id", "regex": r"\d{10}", "score": 0.7}],
+            }
+        ],
+    )
+
+    recognizer = config.recognizers[0]
+    assert isinstance(recognizer, CustomRecognizerConfig)
+    assert recognizer.country_code == "am"
+    assert config.model_dump()["recognizers"][0]["country_code"] == "am"
+
+
 def test_custom_recognizer_config_with_deny_list():
     """Test custom recognizer with deny list only."""
     config = CustomRecognizerConfig(
@@ -625,6 +686,95 @@ def test_recognizer_registry_config_custom_name_with_hf_class():
     assert recognizer.name == "CustomKoreanWorker"
     assert recognizer.class_name == "HuggingFaceNerRecognizer"
     assert recognizer.model_name == "TestModel/Ner"
+
+
+def test_gliner_recognizer_config_model_name():
+    """Test that GLiNERRecognizer model_name is preserved through config validation."""
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        GLiNERRecognizerConfig,
+        RecognizerRegistryConfig,
+    )
+
+    registry_config = {
+        "recognizers": [
+            {
+                "name": "GLiNERRecognizer",
+                "type": "predefined",
+                "supported_language": "en",
+                "model_name": "custom/gliner-model",
+                "threshold": 0.5,
+                "flat_ner": False,
+                "multi_label": True,
+            }
+        ]
+    }
+
+    config = RecognizerRegistryConfig(**registry_config)
+    recognizer = config.recognizers[0]
+
+    assert isinstance(recognizer, GLiNERRecognizerConfig)
+    assert recognizer.model_name == "custom/gliner-model"
+    assert recognizer.threshold == 0.5
+    assert recognizer.flat_ner is False
+    assert recognizer.multi_label is True
+
+
+def test_gliner_recognizer_config_model_dump_excludes_none():
+    """Test that GLiNERRecognizerConfig.model_dump excludes None fields by default."""
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        GLiNERRecognizerConfig,
+    )
+
+    config = GLiNERRecognizerConfig(
+        name="GLiNERRecognizer",
+        supported_language="en",
+        model_name="custom/gliner-model",
+    )
+    dumped = config.model_dump()
+    assert "model_name" in dumped
+    assert dumped["model_name"] == "custom/gliner-model"
+    # Fields not provided should be excluded, not set to None
+    assert "flat_ner" not in dumped
+    assert "threshold" not in dumped
+    assert "entity_mapping" not in dumped
+
+
+def test_gliner_recognizer_config_entity_mapping_and_supported_entities_mutually_exclusive():
+    """Test that entity_mapping and supported_entities cannot both be set."""
+    import pytest
+    from pydantic import ValidationError
+
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        GLiNERRecognizerConfig,
+    )
+
+    with pytest.raises(ValidationError, match="mutually exclusive"):
+        GLiNERRecognizerConfig(
+            name="GLiNERRecognizer",
+            supported_language="en",
+            entity_mapping={"person": "PERSON"},
+            supported_entities=["PERSON"],
+        )
+
+
+def test_huggingface_recognizer_config_model_dump_excludes_none():
+    """Test that HuggingFaceRecognizerConfig.model_dump excludes None fields by default."""
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        HuggingFaceRecognizerConfig,
+    )
+
+    config = HuggingFaceRecognizerConfig(
+        name="HuggingFaceNerRecognizer",
+        supported_language="en",
+        model_name="custom/ner-model",
+    )
+    dumped = config.model_dump()
+    assert "model_name" in dumped
+    assert dumped["model_name"] == "custom/ner-model"
+    # Fields not provided should be excluded, not set to None
+    assert "tokenizer_name" not in dumped
+    assert "threshold" not in dumped
+    assert "label_mapping" not in dumped
 
 
 def test_config_model_map_fallback_to_predefined():
