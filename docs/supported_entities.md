@@ -142,6 +142,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | TR_NATIONAL_ID    | The Turkish National Identification Number (TCKN) is a unique 11-digit number issued to all Turkish citizens. | Pattern match, context and checksum. |
+| TR_PHONE_NUMBER   | Turkish phone numbers: 10-digit numbers starting with 5 (mobile) or 2/3/4 (geographic). Supports international (+90), national (0), and local formats. Includes mobile (MNP-compliant) and geographic numbers. Reference: ITU-T E.164. Legal basis: KTK Madde 23. | Pattern match, context and comprehensive format validation. |
 | TR_LICENSE_PLATE  | Turkish vehicle license plate (plaka): 2-digit province code (01–81), 1–3 letters (A–Z, excluding Q, W, X), and 2–4 digits. Standard civilian format only. Legal basis: KTK Madde 23. | Pattern match, context and province code validation. |
 
 ### Germany

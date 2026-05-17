@@ -321,6 +321,12 @@ recognizers:
     enabled: false
     country_code: tr
 
+  - name: TrPhoneNumberRecognizer
+    supported_languages:
+    - tr
+    type: predefined
+    enabled: false
+
   - name: TrLicensePlateRecognizer
     supported_languages:
     - tr
