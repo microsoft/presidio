@@ -114,11 +114,12 @@ class AnalyzerEngineProvider:
             and "recognizer_registry" not in configuration
         ):
             warnings.warn(
-                f"Configuration file '{conf_file}' uses the deprecated "
-                f"partial-configuration format (only supported_languages and "
-                f"default_score_threshold). Migrate to the unified analyzer "
-                f"configuration format that includes nlp_configuration and "
-                f"recognizer_registry sections. "
+                f"Configuration file '{conf_file}' uses the deprecated YAML "
+                f"config format with a separate file for each module "
+                f"(analyzer, NLP engine, and recognizer registry). Migrate "
+                f"to the unified analyzer configuration file format that "
+                f"includes supported_languages, default_score_threshold, "
+                f"nlp_configuration, and recognizer_registry in one file. "
                 f"See: https://microsoft.github.io/presidio/analyzer/"
                 f"analyzer_engine_provider/",
                 DeprecationWarning,
