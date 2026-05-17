@@ -472,11 +472,18 @@ recognizers:
     type: predefined
     enabled: false
     config_path: presidio_analyzer/conf/langextract_config_basic.yaml
-
-  - name: CaSinRecognizer
+    
+- name: CaSinRecognizer
     supported_languages:
     - en
     - fr
-    type: predefined
+    - type: predefined
     enabled: false
     country_code: ca
+
+  - name: PhLicensePlateRecognizer
+    supported_languages:
+    - en
+    - type: predefined
+    enabled: false
+    country_code: ph
