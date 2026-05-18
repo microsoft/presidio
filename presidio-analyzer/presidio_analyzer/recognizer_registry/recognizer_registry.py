@@ -164,6 +164,7 @@ class RecognizerRegistry:
         entities: Optional[List[str]] = None,
         all_fields: bool = False,
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
+        countries: Optional[Iterable[str]] = None,
     ) -> List[EntityRecognizer]:
         """
         Return a list of recognizers which supports the specified name and language.
@@ -173,6 +174,10 @@ class RecognizerRegistry:
         :param all_fields: a flag to return all fields of a requested language.
         :param ad_hoc_recognizers: Additional recognizers provided by the user
         as part of the request
+        :param countries: Optional country filter (case-insensitive ISO-3166
+        alpha-2 codes). When provided, country-specific recognizers are returned
+        only when their country code is included. Locale-agnostic recognizers
+        are always returned.
         :return: A list of the recognizers which supports the supplied entities
         and language
         """
@@ -185,6 +190,10 @@ class RecognizerRegistry:
         all_possible_recognizers = copy.copy(self.recognizers)
         if ad_hoc_recognizers:
             all_possible_recognizers.extend(ad_hoc_recognizers)
+        if countries is not None:
+            all_possible_recognizers = RecognizerListLoader.filter_by_countries(
+                all_possible_recognizers, countries
+            )
 
         # filter out unwanted recognizers
         to_return = set()
@@ -370,20 +379,26 @@ class RecognizerRegistry:
         return list(set(languages))
 
     def get_supported_entities(
-        self, languages: Optional[List[str]] = None
+        self,
+        languages: Optional[List[str]] = None,
+        countries: Optional[Iterable[str]] = None,
     ) -> List[str]:
         """
         Return the supported entities by the set of recognizers loaded.
 
         :param languages: The languages to get the supported entities for.
         If languages=None, returns all entities for all languages.
+        :param countries: Optional country filter to apply while collecting
+        supported entities.
         """
         if not languages:
             languages = self._get_supported_languages()
 
         supported_entities = []
         for language in languages:
-            recognizers = self.get_recognizers(language=language, all_fields=True)
+            recognizers = self.get_recognizers(
+                language=language, all_fields=True, countries=countries
+            )
 
             for recognizer in recognizers:
                 supported_entities.extend(recognizer.get_supported_entities())
