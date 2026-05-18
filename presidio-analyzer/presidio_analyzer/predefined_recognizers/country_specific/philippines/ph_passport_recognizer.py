@@ -19,9 +19,12 @@ class PhPassportRecognizer(PatternRecognizer):
 
     COUNTRY_CODE = "ph"
 
+    # Weak pattern: Philippine passport numbers do not include a universally
+    # reliable checksum / strict character set constraints (unlike MRZ check
+    # digits) and may therefore produce false positives without nearby context.
     PATTERNS = [
         Pattern(
-            "PH Passport (1L7D1L or 2L7D)",
+            "PH Passport (weak: 1L7D1L or 2L7D)",
             r"\b(?:[A-Z]\d{7}[A-Z]|[A-Z]{2}\d{7})\b",
             0.1,
         ),
@@ -30,6 +33,10 @@ class PhPassportRecognizer(PatternRecognizer):
     CONTEXT = [
         "passport",
         "passport number",
+        "passport no",
+        "passport no.",
+        "passport#",
+        "passport id",
         "travel document",
         "philippine passport",
         "philippines passport",
