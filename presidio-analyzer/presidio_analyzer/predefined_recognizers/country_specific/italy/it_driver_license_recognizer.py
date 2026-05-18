@@ -13,12 +13,14 @@ class ItDriverLicenseRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "it"
+
     PATTERNS = [
         Pattern(
             "Driver License",
             (
                 r"\b(?i)(([A-Z]{2}\d{7}[A-Z])"
-                r"|(^[U]1[BCDEFGHLJKMNPRSTUWYXZ0-9]{7}[A-Z]))\b"
+                r"|(U1[BCDEFGHLJKMNPRSTUWYXZ0-9]{7}[A-Z]))\b"
             ),
             0.2,
         ),

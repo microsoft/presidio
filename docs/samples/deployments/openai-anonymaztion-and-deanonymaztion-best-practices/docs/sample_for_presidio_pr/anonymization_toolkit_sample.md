@@ -15,7 +15,7 @@ The toolkit serves enterprises that: Require PII to remain internal while levera
 
 ## Workflow Example
 
-The following is the desired output. We can input PII data annoymized to the LLM input and return the replaced entities back to the original in the response back to the user.
+The following is the desired output. We can input PII data anonymized to the LLM input and return the replaced entities back to the original in the response back to the user.
 
 - User Input: "Hello world, my name is Jane Doe. My number is: 034453334"
 - Anonymized LLM Input: "Hello world, my name is [PERSON]. My number is: [PHONE_NUMBER]"
@@ -36,7 +36,7 @@ TODO complete this section
 
 ### Anonymization
 
-First we need to setup our `Presidio` engines to aid with analysis, anonoymization and deanonymization.
+First we need to setup our `Presidio` engines to aid with analysis, anonymization and deanonymization.
 The following code can exist as part of a service available to the appropriate api endpoints.
 
 ```python

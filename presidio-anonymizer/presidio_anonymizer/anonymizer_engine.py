@@ -34,6 +34,7 @@ class AnonymizerEngine(EngineBase):
         conflict_resolution: ConflictResolutionStrategy = (
             ConflictResolutionStrategy.MERGE_SIMILAR_OR_CONTAINED
         ),
+        merge_entities_with_spaces: bool = True,
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -95,9 +96,12 @@ class AnonymizerEngine(EngineBase):
             analyzer_results, conflict_resolution
         )
 
-        merged_results = self._merge_entities_with_whitespace_between(
-            text, analyzer_results
-        )
+        if merge_entities_with_spaces:
+            merged_results = self._merge_entities_with_spaces_between(
+                text, analyzer_results
+            )
+        else:
+            merged_results = analyzer_results
 
         operators = self.__check_or_add_default_operator(operators)
 
@@ -213,7 +217,7 @@ class AnonymizerEngine(EngineBase):
             ]
         return unique_text_metadata_elements
 
-    def _merge_entities_with_whitespace_between(
+    def _merge_entities_with_spaces_between(
         self, text: str, analyzer_results: List[RecognizerResult]
     ) -> List[RecognizerResult]:
         """Merge adjacent entities of the same type separated by whitespace."""
@@ -222,7 +226,7 @@ class AnonymizerEngine(EngineBase):
         for result in analyzer_results:
             if prev_result is not None:
                 if prev_result.entity_type == result.entity_type:
-                    if re.search(r"^( )+$", text[prev_result.end : result.start]):
+                    if re.search(r"^( )+$", text[prev_result.end:result.start]):
                         merged_results.remove(prev_result)
                         result.start = prev_result.start
             merged_results.append(result)

@@ -21,6 +21,13 @@ Make sure to create (or select) a valid Spark pool that you can attach to your F
    - `presidio-anonymizer`
    - `spacy`
 
+   For Microsoft Fabric compatibility, use the versions verified by this sample:
+   - `presidio-analyzer==2.2.357`
+   - `presidio-anonymizer==2.2.357`
+   - `spacy==3.8.4`
+
+   Newer Presidio package versions may introduce dependency conflicts with Fabric notebook utilities such as `mssparkutils`.
+
    ![Creating a custom environment](./images/custom_env_1.png)
 
 2. For **smaller SpaCy models** (like `en_core_web_md` < 300MB), you can include them directly in this environment.

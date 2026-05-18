@@ -1,30 +1,28 @@
 import copy
+import re
 from abc import ABC
 from contextlib import nullcontext
 from typing import List, Optional
-import re
+from unittest.mock import patch
 
 import pytest
-
 from presidio_analyzer import (
     AnalyzerEngine,
-    PatternRecognizer,
-    Pattern,
-    RecognizerRegistry,
     EntityRecognizer,
+    Pattern,
+    PatternRecognizer,
+    RecognizerRegistry,
     RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
     SpacyNlpEngine,
 )
-from presidio_analyzer.recognizer_registry import (
-    RecognizerRegistryProvider
-)
+from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 
 # noqa: F401
 from tests import assert_result
-from tests.mocks import NlpEngineMock, AppTracerMock, RecognizerRegistryMock
+from tests.mocks import AppTracerMock, NlpEngineMock, RecognizerRegistryMock
 
 
 @pytest.fixture(scope="module")
@@ -935,3 +933,28 @@ def test_when_multiple_nameless_recognizers_context_is_correct(spacy_nlp_engine)
 
     for recognizer_result in recognizer_results:
         assert recognizer_result.score > 0.3
+
+
+def test_when_regex_allow_list_times_out_then_result_is_kept(loaded_analyzer_engine):
+    """Test that a timed-out allow list regex keeps the result (conservative behavior)."""
+    text = "bing.com is his favorite website"
+
+    with patch(
+        "presidio_analyzer.analyzer_engine.REGEX_TIMEOUT_SECONDS", 0.001
+    ):
+        with patch(
+            "presidio_analyzer.analyzer_engine.re.compile"
+        ) as mock_compile:
+            mock_compiled = mock_compile.return_value
+            mock_compiled.search.side_effect = TimeoutError("regex timed out")
+
+            results = loaded_analyzer_engine.analyze(
+                text=text,
+                language="en",
+                allow_list=["bing"],
+                allow_list_match="regex",
+            )
+
+    # Result should be kept on timeout (not filtered out)
+    assert any(r.entity_type == "URL" for r in results)
+

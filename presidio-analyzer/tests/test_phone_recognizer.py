@@ -116,6 +116,10 @@ def test_when_phone_with_leniency_then_succeed(
          2, ["PHONE_NUMBER", "PHONE_NUMBER"],
          ((16, 30), (60, 76),), 0.4, 
          ['Recognized as US region phone number, using PhoneRecognizer','Recognized as GR region phone number, using PhoneRecognizer']),
+         ("My US number is (415) 555-0132, and my international one is +33 1 42 68 53 00",
+         2, ["PHONE_NUMBER", "PHONE_NUMBER"],
+         ((16, 30), (60, 77),), 0.4,
+         ['Recognized as US region phone number, using PhoneRecognizer','Recognized as FR region phone number, using PhoneRecognizer']),
         # fmt: on
     ],
 )
@@ -140,3 +144,13 @@ def test_get_analysis_explanation():
     test_region = "US"
     explanation = phone_recognizer._get_analysis_explanation(test_region)
     assert explanation.recognizer == "PhoneRecognizer"
+
+def test_get_supported_entities():
+    default_phone_recognizer = PhoneRecognizer()
+    default_supported_entities = default_phone_recognizer.get_supported_entities()
+    assert default_supported_entities == ["PHONE_NUMBER"]
+
+    entity_name = "TELEPHONE_OR_FAX"
+    configured_phone_recognizer = PhoneRecognizer(supported_entity=entity_name)
+    configured_supported_entities = configured_phone_recognizer.get_supported_entities()
+    assert configured_supported_entities == [entity_name]

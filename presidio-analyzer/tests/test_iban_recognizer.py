@@ -1,3 +1,6 @@
+import re
+from unittest.mock import MagicMock, patch
+
 import pytest
 
 from tests import assert_result
@@ -370,3 +373,40 @@ def test_when_all_ibans_then_succeed(
     for res, (start, end) in zip(results, expected_res):
 
         assert_result(res, entities[0], start, end, max_score)
+
+
+def test_when_finditer_times_out_then_returns_empty_results(recognizer, entities):
+    """Test that a TimeoutError from re.finditer is caught and returns no results."""
+    with patch(
+        "presidio_analyzer.predefined_recognizers.generic.iban_recognizer.re.finditer",
+        side_effect=TimeoutError("regex timed out"),
+    ):
+        results = recognizer.analyze("AL47212110090000000235698741", entities)
+
+    assert results == []
+
+
+def test_when_format_validation_times_out_then_returns_no_results(recognizer, entities):
+    """Test that a TimeoutError from re.match in __is_valid_format is caught."""
+    with patch(
+        "presidio_analyzer.predefined_recognizers.generic.iban_recognizer.re.match",
+        side_effect=TimeoutError("regex timed out"),
+    ):
+        results = recognizer.analyze("AL47212110090000000235698741", entities)
+
+    assert results == []
+
+
+def test_when_iban_match_group_is_empty_string_then_skips(recognizer, entities):
+    """Test that an empty match group is skipped without producing a result."""
+    mock_match = MagicMock()
+    mock_match.groups.return_value = ("",)
+    mock_match.span.return_value = (0, 0)
+
+    with patch(
+        "presidio_analyzer.predefined_recognizers.generic.iban_recognizer.re.finditer",
+        return_value=iter([mock_match]),
+    ):
+        results = recognizer.analyze("AL47212110090000000235698741", entities)
+
+    assert results == []

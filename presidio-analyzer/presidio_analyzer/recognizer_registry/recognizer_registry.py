@@ -91,19 +91,44 @@ class RecognizerRegistry:
         )
 
     def load_predefined_recognizers(
-        self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = None
+        self,
+        languages: Optional[List[str]] = None,
+        nlp_engine: NlpEngine = None,
+        countries: Optional[List[str]] = None,
     ) -> None:
         """
         Load the existing recognizers into memory.
 
         :param languages: List of languages for which to load recognizers
         :param nlp_engine: The NLP engine to use.
+        :param countries: Optional list of country codes (case-insensitive,
+            ISO 3166-1 alpha-2 — e.g. ``["us", "uk"]``).
+            When provided, the loaded recognizers are limited per the
+            ``country_code`` attribute on each recognizer:
+
+            - recognizers with ``country_code is None`` (locale-agnostic
+              built-ins, NER, NLP engine, third-party recognizers, and any
+              custom recognizer that hasn't opted into the country tag) are
+              **always loaded**;
+            - recognizers with ``country_code`` set are loaded only when
+              their code is in ``countries``.
+
+            Passing an empty list (``countries=[]``) keeps only
+            locale-agnostic recognizers. Passing ``None`` (the default)
+            preserves the previous behavior of loading every predefined
+            recognizer.
         :return: None
         """
 
         registry_configuration = {"global_regex_flags": self.global_regex_flags}
         if languages is not None:
             registry_configuration["supported_languages"] = languages
+        if countries is not None:
+            # Threaded through the configuration the same way as
+            # ``supported_languages`` so the filter is applied inside
+            # ``RecognizerListLoader.get(...)`` and behaves uniformly
+            # whether driven from Python or from a YAML config file.
+            registry_configuration["supported_countries"] = countries
 
         configuration = RecognizerConfigurationLoader.get(
             registry_configuration=registry_configuration
@@ -197,6 +222,35 @@ class RecognizerRegistry:
             raise ValueError("No matching recognizers were found to serve the request.")
 
         return list(to_return)
+
+    def get_country_codes(self) -> List[str]:
+        """Return the set of country codes currently represented in the registry.
+
+        Aggregates the resolved country tag (via
+        :meth:`EntityRecognizer.country_code`) across all loaded
+        recognizers — including both class-level ``COUNTRY_CODE`` and
+        per-instance ``country_code=`` constructor kwargs — and excludes
+        generic / locale-agnostic ones. Useful for debugging country-
+        filter behavior:
+
+        >>> registry = RecognizerRegistry()
+        >>> registry.load_predefined_recognizers()
+        >>> sorted(registry.get_country_codes())  # doctest: +SKIP
+        ['au', 'ca', 'de', 'es', 'fi', 'in', 'it', 'kr', 'ng', 'pl', 'se',
+         'sg', 'th', 'tr', 'uk', 'us']
+
+        :return: A sorted list of unique country codes (lowercased) seen on
+            the loaded recognizers.
+        """
+        codes = set()
+        for rec in self.recognizers:
+            try:
+                code = rec.country_code()
+            except Exception:  # pragma: no cover — defensive
+                code = None
+            if isinstance(code, str) and code:
+                codes.add(code.lower())
+        return sorted(codes)
 
     def add_recognizer(self, recognizer: EntityRecognizer) -> None:
         """

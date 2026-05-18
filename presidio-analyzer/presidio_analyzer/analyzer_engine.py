@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from collections import Counter
 from typing import List, Optional
 
@@ -22,6 +23,7 @@ from presidio_analyzer.recognizer_registry import (
 
 logger = logging.getLogger("presidio-analyzer")
 
+REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
 
 class AnalyzerEngine:
     """
@@ -371,7 +373,17 @@ class AnalyzerEngine:
                 word = text[result.start : result.end]
 
                 # if the word is not specified to be allowed, keep in the PII entities
-                if not re_compiled.search(word):
+                try:
+                    if not re_compiled.search(word, timeout=REGEX_TIMEOUT_SECONDS):
+                        new_results.append(result)
+                except TimeoutError:
+                    logger.warning(
+                        "Allow list regex timed out after %s seconds"
+                        " (word length: %d), keeping result.",
+                        REGEX_TIMEOUT_SECONDS,
+                        len(word),
+                        exc_info=True,
+                    )
                     new_results.append(result)
         elif allow_list_match == "exact":
             for result in results:
