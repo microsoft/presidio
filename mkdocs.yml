@@ -63,6 +63,7 @@ nav:
       - PII detection evaluation: evaluation/index.md
   - Resources:
       - Supported entities: supported_entities.md
+      - Project transition update: project_transition.md
       - Community: community.md
       - Change log: https://github.com/microsoft/presidio/blob/main/CHANGELOG.md
       - Setting up a development environment: development.md
