@@ -44,6 +44,8 @@ class DeHealthInsuranceRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     # Accuracy note: The base pattern `[A-Z]\d{9}` is intentionally broad (any
     # uppercase letter followed by 9 digits) because no more specific structural
     # constraint exists in the KVNR format beyond length and the leading letter.

@@ -193,6 +193,67 @@ def test_custom_recognizer_config_with_patterns():
     assert config.patterns == patterns
 
 
+def test_custom_recognizer_config_with_country_code():
+    """Custom YAML model preserves normalized country_code for filtering."""
+    config = CustomRecognizerConfig(
+        name="custom_am",
+        supported_entity="AM_NATIONAL_ID",
+        country_code=" AM ",
+        patterns=[{"name": "am_id", "regex": r"\d{10}", "score": 0.7}],
+    )
+
+    assert config.country_code == "am"
+    assert config.model_dump()["country_code"] == "am"
+
+
+def test_custom_recognizer_config_rejects_blank_country_code():
+    """Blank YAML country_code values fail validation instead of being ignored."""
+    with pytest.raises(ValidationError) as exc_info:
+        CustomRecognizerConfig(
+            name="custom_blank_country",
+            supported_entity="CUSTOM_ENTITY",
+            country_code="   ",
+            patterns=[{"name": "id", "regex": r"\d+", "score": 0.5}],
+        )
+
+    assert "country_code" in str(exc_info.value)
+    assert "non-empty" in str(exc_info.value)
+
+
+def test_custom_recognizer_config_rejects_multiple_country_codes():
+    """country_code is intentionally a single string, not a list."""
+    with pytest.raises(ValidationError) as exc_info:
+        CustomRecognizerConfig(
+            name="custom_multi_country",
+            supported_entity="CUSTOM_ENTITY",
+            country_code=["us", "uk"],
+            patterns=[{"name": "id", "regex": r"\d+", "score": 0.5}],
+        )
+
+    assert "country_code" in str(exc_info.value)
+
+
+def test_recognizer_registry_config_preserves_custom_country_code_on_dump():
+    """Validated registry YAML keeps custom country_code for loader kwargs."""
+    config = RecognizerRegistryConfig(
+        supported_languages=["en"],
+        recognizers=[
+            {
+                "name": "custom_am",
+                "type": "custom",
+                "supported_entity": "AM_NATIONAL_ID",
+                "country_code": "am",
+                "patterns": [{"name": "am_id", "regex": r"\d{10}", "score": 0.7}],
+            }
+        ],
+    )
+
+    recognizer = config.recognizers[0]
+    assert isinstance(recognizer, CustomRecognizerConfig)
+    assert recognizer.country_code == "am"
+    assert config.model_dump()["recognizers"][0]["country_code"] == "am"
+
+
 def test_custom_recognizer_config_with_deny_list():
     """Test custom recognizer with deny list only."""
     config = CustomRecognizerConfig(

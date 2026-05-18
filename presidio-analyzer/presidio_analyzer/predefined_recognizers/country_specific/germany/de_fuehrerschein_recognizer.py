@@ -51,6 +51,8 @@ class DeFuehrerscheinRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     PATTERNS = [
         Pattern(
             "Führerscheinnummer (Post-2013 EU-Format, 11 Zeichen)",

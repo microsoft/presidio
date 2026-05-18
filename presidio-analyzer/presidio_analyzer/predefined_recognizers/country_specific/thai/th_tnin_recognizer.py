@@ -44,6 +44,8 @@ class ThTninRecognizer(PatternRecognizer):
     for different strings to be used during pattern matching.
     """
 
+    COUNTRY_CODE = "th"
+
     PATTERNS = [
         Pattern(
             "TNIN (Medium)",

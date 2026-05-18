@@ -65,6 +65,8 @@ class DeVatIdRecognizer(PatternRecognizer):
     :param name: Optional recognizer instance name
     """
 
+    COUNTRY_CODE = "de"
+
     # Matches in order: continuous form (high confidence), grouped /
     # separator form (slightly lower because separators are rarer). Both
     # are routed through the same validate_result() which normalises first.

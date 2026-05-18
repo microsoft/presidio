@@ -49,6 +49,8 @@ class DeLanrRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     PATTERNS = [
         Pattern(
             "Lebenslange Arztnummer LANR (9 digits)",
