@@ -17,6 +17,8 @@ class PhPassportRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "ph"
+
     PATTERNS = [
         Pattern(
             "PH Passport (1L7D1L or 2L7D)",
@@ -53,4 +55,3 @@ class PhPassportRecognizer(PatternRecognizer):
             supported_language=supported_language,
             name=name,
         )
-
