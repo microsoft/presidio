@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Added `supported_entity` parameter to `PhoneRecognizer`. Previously, this recognizer hard-coded `["PHONE_NUMBER"]` as the only possible supported entity.
 
 #### Fixed
+- Fixed `PhoneRecognizer._get_recognizer_result` to use the constructor-provided `supported_entity` instead of the hard-coded `"PHONE_NUMBER"` string, making the `supported_entity` parameter from PR #2014 fully functional.
 - Fixed incorrect Prüfziffer algorithm in `DeHealthInsuranceRecognizer` (KVNR); now uses alternating factors [1,2,…,1,2] per § 290 SGB V Anlage 1 (#1972).
 - Fixed incorrect check-digit weights in `DeSocialSecurityRecognizer` (RVNR); now uses VKVV § 4 weights [2,1,2,5,7,1,2,1,2,1,2,1]. Previous weights diverged from the Deutsche Rentenversicherung specification and rejected the canonical DRV example 15070649C103.
 - Fixed incorrect check-digit algorithm in `DeLanrRecognizer`; now uses KBV Arztnummern-Richtlinie weights [4,9,4,9,4,9] without the spurious Quersumme step, and the complement-to-10 formula `(10 − sum mod 10) mod 10`. Previous weights and formula were internally self-consistent only.
@@ -32,7 +33,7 @@ All notable changes to this project will be documented in this file.
 - ICAO Doc 9303 MRZ checksum validation in `DePassportRecognizer` and `DeIdCardRecognizer` (weights 7, 3, 1 repeating; letters A=10…Z=35; sum mod 10).
 - Structural validation improvements in `DeBsnrRecognizer` per KBV Arztnummern-Richtlinie Anlage 1; valid KV regional codes are defined for defense-in-depth/documentation purposes, but unknown prefixes are not currently rejected (no public checksum exists for BSNR).
 - Turkish PII recognizer for `TR_NATIONAL_ID` (TCKN) to identify Turkish National Identification Numbers using pattern match, context, and NVI checksum validation. Disabled by default.
-- Turkish PII recognizer for `TR_PHONE_NUMBER` to identify Turkish mobile phone numbers in international (+90), national (0), and local formats using pattern match and format validation. Disabled by default.
+- Turkish phone number detection via configurable `PhoneRecognizer` with `supported_regions=["TR"]` and `supported_entity="TR_PHONE_NUMBER"`. Supports international (+90), national (0), and local formats using the `phonenumbers` library. Disabled by default; users enable it programmatically.
 - Turkish PII recognizer for `TR_LICENSE_PLATE` (plaka) to identify Turkish vehicle license plates using pattern match, context, and province code validation (01-81). Disabled by default.
 
 ## [2.2.362] - 2026-03-15
