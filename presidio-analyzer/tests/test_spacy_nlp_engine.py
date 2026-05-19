@@ -156,10 +156,10 @@ def test_when_cpu_device_then_gpu_not_configured():
 class TestMemoryZone:
     """Tests for the use_memory_zone feature."""
 
-    def test_memory_zone_defaults_to_true(self):
-        """Test that use_memory_zone defaults to True."""
+    def test_memory_zone_defaults_to_false(self):
+        """Test that use_memory_zone defaults to False."""
         engine = SpacyNlpEngine()
-        assert engine.use_memory_zone is True
+        assert engine.use_memory_zone is False
 
     def test_memory_zone_can_be_disabled(self):
         """Test that use_memory_zone can be set to False."""

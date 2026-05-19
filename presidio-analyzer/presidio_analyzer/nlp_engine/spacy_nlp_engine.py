@@ -33,7 +33,7 @@ class SpacyNlpEngine(NlpEngine):
         self,
         models: Optional[List[Dict[str, str]]] = None,
         ner_model_configuration: Optional[NerModelConfiguration] = None,
-        use_memory_zone: bool = True,
+        use_memory_zone: bool = False,
     ):
         """
         Initialize a wrapper on spaCy functionality.
@@ -45,7 +45,7 @@ class SpacyNlpEngine(NlpEngine):
         :param use_memory_zone: If True, wrap NLP processing in spaCy's
         memory_zone context manager to prevent unbounded Vocab/StringStore
         growth in long-running services. Requires spaCy >= 3.7.
-        Has no performance impact. Defaults to True.
+        Has no performance impact. Defaults to False.
         """
         if not models:
             models = [{"lang_code": "en", "model_name": "en_core_web_lg"}]
