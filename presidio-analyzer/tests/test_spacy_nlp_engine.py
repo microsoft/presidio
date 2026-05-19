@@ -142,12 +142,100 @@ def test_when_cpu_device_then_gpu_not_configured():
     """Test that GPU is not configured when CPU device is detected."""
     with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
         mock_detector.get_device.return_value = "cpu"
-        
+
         with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.spacy") as mock_spacy:
             mock_spacy.load.return_value = MagicMock()
             mock_spacy.util.is_package.return_value = True
-            
+
             engine = SpacyNlpEngine(models=[{"lang_code": "en", "model_name": "en_core_web_sm"}])
             engine.load()
-            
+
             mock_spacy.require_gpu.assert_not_called()
+
+
+class TestMemoryZone:
+    """Tests for the use_memory_zone feature."""
+
+    def test_memory_zone_defaults_to_true(self):
+        """Test that use_memory_zone defaults to True."""
+        engine = SpacyNlpEngine()
+        assert engine.use_memory_zone is True
+
+    def test_memory_zone_can_be_disabled(self):
+        """Test that use_memory_zone can be set to False."""
+        engine = SpacyNlpEngine(use_memory_zone=False)
+        assert engine.use_memory_zone is False
+
+    def test_process_text_uses_memory_zone_when_available(self, spacy_nlp_engine):
+        """Test that process_text wraps processing in memory_zone."""
+        mock_memory_zone = MagicMock()
+        mock_memory_zone.__enter__ = MagicMock(return_value=None)
+        mock_memory_zone.__exit__ = MagicMock(return_value=False)
+
+        spacy_nlp_engine.use_memory_zone = True
+        nlp = spacy_nlp_engine.nlp["en"]
+        nlp.memory_zone = MagicMock(return_value=mock_memory_zone)
+
+        spacy_nlp_engine.process_text("simple text", language="en")
+
+        nlp.memory_zone.assert_called_once()
+        mock_memory_zone.__enter__.assert_called_once()
+        mock_memory_zone.__exit__.assert_called_once()
+
+    def test_process_text_skips_memory_zone_when_disabled(self, spacy_nlp_engine):
+        """Test that process_text does not use memory_zone when disabled."""
+        spacy_nlp_engine.use_memory_zone = False
+        nlp = spacy_nlp_engine.nlp["en"]
+        nlp.memory_zone = MagicMock()
+
+        spacy_nlp_engine.process_text("simple text", language="en")
+
+        nlp.memory_zone.assert_not_called()
+
+    def test_process_text_skips_memory_zone_when_not_available(
+        self, spacy_nlp_engine
+    ):
+        """Test graceful fallback when spaCy < 3.7 (no memory_zone attr)."""
+        spacy_nlp_engine.use_memory_zone = True
+        nlp = spacy_nlp_engine.nlp["en"]
+        # Remove memory_zone attribute to simulate older spaCy
+        if hasattr(nlp, "memory_zone"):
+            delattr(nlp, "memory_zone")
+
+        # Should not raise
+        nlp_artifacts = spacy_nlp_engine.process_text("simple text", language="en")
+        assert len(nlp_artifacts.tokens) == 2
+
+    def test_process_batch_uses_memory_zone_when_available(self, spacy_nlp_engine):
+        """Test that process_batch wraps processing in memory_zone."""
+        mock_memory_zone = MagicMock()
+        mock_memory_zone.__enter__ = MagicMock(return_value=None)
+        mock_memory_zone.__exit__ = MagicMock(return_value=False)
+
+        spacy_nlp_engine.use_memory_zone = True
+        nlp = spacy_nlp_engine.nlp["en"]
+        nlp.memory_zone = MagicMock(return_value=mock_memory_zone)
+
+        results = list(
+            spacy_nlp_engine.process_batch(
+                ["simple text", "another text"], language="en"
+            )
+        )
+
+        nlp.memory_zone.assert_called_once()
+        mock_memory_zone.__enter__.assert_called_once()
+        assert len(results) == 2
+
+    def test_process_batch_skips_memory_zone_when_disabled(self, spacy_nlp_engine):
+        """Test that process_batch does not use memory_zone when disabled."""
+        spacy_nlp_engine.use_memory_zone = False
+        nlp = spacy_nlp_engine.nlp["en"]
+        nlp.memory_zone = MagicMock()
+
+        list(
+            spacy_nlp_engine.process_batch(
+                ["simple text"], language="en"
+            )
+        )
+
+        nlp.memory_zone.assert_not_called()

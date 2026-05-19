@@ -1,3 +1,4 @@
+import contextlib
 import logging
 from pathlib import Path
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union
@@ -32,6 +33,7 @@ class SpacyNlpEngine(NlpEngine):
         self,
         models: Optional[List[Dict[str, str]]] = None,
         ner_model_configuration: Optional[NerModelConfiguration] = None,
+        use_memory_zone: bool = True,
     ):
         """
         Initialize a wrapper on spaCy functionality.
@@ -40,6 +42,10 @@ class SpacyNlpEngine(NlpEngine):
         For example: models = [{"lang_code": "en", "model_name": "en_core_web_lg"}]
         :param ner_model_configuration: Parameters for the NER model.
         See conf/spacy.yaml for an example
+        :param use_memory_zone: If True, wrap NLP processing in spaCy's
+        memory_zone context manager to prevent unbounded Vocab/StringStore
+        growth in long-running services. Requires spaCy >= 3.7.
+        Has no performance impact. Defaults to True.
         """
         if not models:
             models = [{"lang_code": "en", "model_name": "en_core_web_lg"}]
@@ -49,6 +55,7 @@ class SpacyNlpEngine(NlpEngine):
             ner_model_configuration = NerModelConfiguration()
         self.ner_model_configuration = ner_model_configuration
 
+        self.use_memory_zone = use_memory_zone
         self.nlp = None
 
     def _enable_gpu(self) -> None:
@@ -116,13 +123,28 @@ class SpacyNlpEngine(NlpEngine):
         """Return True if the model is already loaded."""
         return self.nlp is not None
 
+    def _get_memory_zone(self, language: str):
+        """Return a memory_zone context manager if available and enabled.
+
+        spaCy 3.7+ provides nlp.memory_zone() which allocates lexemes in a
+        temporary pool that is freed on exit. This prevents unbounded
+        Vocab/StringStore growth in long-running services.
+
+        Falls back to a no-op context manager for older spaCy versions.
+        """
+        nlp = self.nlp[language]
+        if self.use_memory_zone and hasattr(nlp, "memory_zone"):
+            return nlp.memory_zone()
+        return contextlib.nullcontext()
+
     def process_text(self, text: str, language: str) -> NlpArtifacts:
         """Execute the SpaCy NLP pipeline on the given text and language."""
         if not self.nlp:
             raise ValueError("NLP engine is not loaded. Consider calling .load()")
 
-        doc = self.nlp[language](text)
-        return self._doc_to_nlp_artifact(doc, language)
+        with self._get_memory_zone(language):
+            doc = self.nlp[language](text)
+            return self._doc_to_nlp_artifact(doc, language)
 
     def process_batch(
         self,
@@ -161,16 +183,21 @@ class SpacyNlpEngine(NlpEngine):
             texts = ((str(text), context) for text, context in texts)
         else:
             texts = (str(text) for text in texts)
-        batch_output = self.nlp[language].pipe(
-            texts, as_tuples=as_tuples, batch_size=batch_size, n_process=n_process
-        )
-        for output in batch_output:
-            if as_tuples:
-                doc, context = output
-                yield doc.text, self._doc_to_nlp_artifact(doc, language), context
-            else:
-                doc = output
-                yield doc.text, self._doc_to_nlp_artifact(doc, language)
+
+        with self._get_memory_zone(language):
+            batch_output = self.nlp[language].pipe(
+                texts,
+                as_tuples=as_tuples,
+                batch_size=batch_size,
+                n_process=n_process,
+            )
+            for output in batch_output:
+                if as_tuples:
+                    doc, context = output
+                    yield doc.text, self._doc_to_nlp_artifact(doc, language), context
+                else:
+                    doc = output
+                    yield doc.text, self._doc_to_nlp_artifact(doc, language)
 
     def is_stopword(self, word: str, language: str) -> bool:
         """
