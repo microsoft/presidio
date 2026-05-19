@@ -1,9 +1,10 @@
 nlp_engine_name: transformers
 models:
-  - lang_code: lt
+  -
+    lang_code: en
     model_name:
-      spacy: lt_core_news_sm
-      transformers: VytautoDidziojoUniversitetas/NUS-LT-PII-xlm-roberta-large
+      spacy: en_core_web_sm
+      transformers: StanfordAIMI/stanford-deidentifier-base
 
 ner_model_configuration:
   labels_to_ignore:
@@ -14,35 +15,31 @@ ner_model_configuration:
                             # length. The value is the length of the
                             # window overlap in transformer tokenizer
                             # tokens, NOT the length of the stride.
-  alignment_mode: contract # "strict", "contract", "expand"
+  alignment_mode: expand # "strict", "contract", "expand"
   model_to_presidio_entity_mapping:
     PER: PERSON
+    PERSON: PERSON
     LOC: LOCATION
+    LOCATION: LOCATION
+    GPE: LOCATION
     ORG: ORGANIZATION
-    ID_PER: ID
-    ID_MISC: ID
-    NUM_PHONE: PHONE_NUMBER
+    ORGANIZATION: ORGANIZATION
+    NORP: NRP
     AGE: AGE
+    ID: ID
+    EMAIL: EMAIL
+    PATIENT: PERSON
+    STAFF: PERSON
+    HOSP: ORGANIZATION
+    PATORG: ORGANIZATION
     DATE: DATE_TIME
     TIME: DATE_TIME
-    DURATION: DATE_TIME
-    HEALTH: MEDICAL_CONDITION
+    PHONE: PHONE_NUMBER
+    HCW: PERSON
+    HOSPITAL: LOCATION
+    FACILITY: LOCATION
+    VENDOR: ORGANIZATION
 
-  labels_to_ignore:
-    - O
-    - VALUE
-    - MISC
-    - ID_MISC
-    - NAT
-    - REL
-    - POL
-    - ETH
-    - FAM
-    - AGE
-    - HEALTH
-    - MAR
-    - OCC
-    - NUM_CAR
-    - DURATION
-
-  default_score: 0.85
+  low_confidence_score_multiplier: 0.4
+  low_score_entity_names:
+  - ID

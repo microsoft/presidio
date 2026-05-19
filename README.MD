@@ -1,3 +1,61 @@
+# Vilantis' Presidio Fork
+
+## What’s different from upstream
+- Added Lithuanian NER model (VytautoDidziojoUniversitetas/NUS-LT-PII-xlm-roberta-large)
+- Custom analyzer configuration for `lt`
+
+## Architecture
+Services started via Docker:
+- `presidio-analyzer` → http://localhost:5002
+- `presidio-anonymizer` → http://localhost:5001
+
+Flow:
+LiteLLM → Presidio Analyzer → Presidio Anonymizer → response
+
+## Run locally
+
+```bash
+docker compose -f docker-compose-transformers.yml build
+docker compose -f docker-compose-transformers.yml up
+```
+
+## Verify services
+
+Analyzer:
+```bash
+curl http://localhost:5002/health
+```
+
+Anonymizer:
+```bash
+curl http://localhost:5001/health
+```
+
+## Example request
+
+```bash
+curl -X POST http://localhost:5002/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Jonas gyvena Vilniuje",
+    "language": "lt"
+  }'
+```
+
+## LiteLLM Guardrails Integration
+
+UI path:
+`litellm/ui → Guardrails → Add New Guardrail`
+
+Configuration:
+
+- presidio_analyzer_api_base: http://localhost:5002
+- presidio_anonymizer_api_base: http://localhost:5001
+- presidio_language: lt
+
+<details>
+<summary>Upstream presidio README contents</summary>
+
 # Presidio - Data Protection and De-identification SDK
 
 **Context aware, pluggable and customizable PII de-identification service for text and images.**
@@ -103,3 +161,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
   <img src="https://contrib.rocks/image?repo=microsoft/presidio" />
 </a>
 
+</details>

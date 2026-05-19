@@ -1,5 +1,6 @@
 supported_languages:
   - en
+  - lt
 global_regex_flags: 26
 
 # To restrict the loaded predefined recognizers to a subset of countries
@@ -31,10 +32,8 @@ recognizers:
     supported_languages:
     - language: en
       context: [credit, card, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
-    - language: es
-      context: [tarjeta, credito, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
-    - language: it
-    - language: pl
+    - language: lt
+      context: [kreditine, kortelė, visa, mastercard, cc, amex, discover, jcb, diners, maestro, instapayment]
     type: predefined
 
   - name: UsBankRecognizer
@@ -210,12 +209,14 @@ recognizers:
     supported_languages: 
     - es
     type: predefined
+    enabled: false
     country_code: es
 
   - name: EsNieRecognizer
     supported_languages: 
     - es
     type: predefined
+    enabled: false
     country_code: es
 
   - name: EsPassportRecognizer
@@ -229,36 +230,42 @@ recognizers:
     supported_languages: 
     - it
     type: predefined
+    enabled: false
     country_code: it
 
   - name: ItFiscalCodeRecognizer
     supported_languages: 
     - it
     type: predefined
+    enabled: false
     country_code: it
 
   - name: ItVatCodeRecognizer
     supported_languages: 
     - it
     type: predefined
+    enabled: false
     country_code: it
 
   - name: ItIdentityCardRecognizer
     supported_languages: 
     - it
     type: predefined
+    enabled: false
     country_code: it
 
   - name: ItPassportRecognizer
     supported_languages: 
     - it
     type: predefined
+    enabled: false
     country_code: it
 
   - name: PlPeselRecognizer
     supported_languages: 
     - pl
     type: predefined
+    enabled: false
     country_code: pl
 
   - name: KrBrnRecognizer
@@ -480,3 +487,117 @@ recognizers:
     type: predefined
     enabled: false
     country_code: ca
+
+# -----------------------------
+# Lithuanian custom recognizers
+# -----------------------------
+
+  - name: LtPersonalCodeRecognizer
+    type: custom
+    supported_languages:
+      - lt
+    supported_entity: LT_PERSONAL_CODE
+    patterns:
+      - name: lt_personal_code_strict
+        regex: \b[1-6]\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}\b
+        score: 0.95
+    context:
+      - asmens
+      - kodas
+      - a.k.
+      - ak
+
+  - name: LtPhoneRecognizer
+    type: custom
+    supported_languages:
+      - lt
+    supported_entity: PHONE_NUMBER
+    patterns:
+      - name: lt_mobile_phone
+        regex: \b(?:\+370|8)[\s-]?6(?:[\s-]?\d){7}\b
+        score: 0.9
+    context:
+      - telefonas
+      - tel
+      - telefono
+      - numeris
+      - mob
+      - mobilus
+
+  - name: LtIbanRecognizer
+    type: custom
+    supported_languages:
+      - lt
+    supported_entity: IBAN_CODE
+    patterns:
+      - name: lt_iban
+        regex: \bLT\d{2}(?:\s?\d{4}){4}\b
+        score: 0.95
+    context:
+      - iban
+      - saskaita
+      - sąskaita
+      - banko
+      - banko sąskaita
+      - banko saskaita
+
+  - name: LtPostalCodeRecognizer
+    type: custom
+    supported_languages:
+      - lt
+    supported_entity: LT_POSTAL_CODE
+    patterns:
+      - name: lt_postal_code
+        regex: \bLT-\d{5}\b
+        score: 0.85
+    context:
+      - pašto
+      - adresas
+
+
+  - name: LtDateRecognizer
+    type: custom
+    supported_languages:
+      - lt
+    supported_entity: DATE_TIME
+    patterns:
+      - name: lt_date_iso_multi_sep
+        regex: \b(19|20)\d{2}[-./](0[1-9]|1[0-2])[-./](0[1-9]|[12]\d|3[01])\b
+        score: 0.9
+    context:
+      - gimė
+      - gime
+      - gimiau
+      - data
+      - gimimo
+      - gimimo data
+
+  - name: LtOrganizationRecognizer
+    type: custom
+    supported_languages:
+      - lt
+    supported_entity: ORGANIZATION
+    patterns:
+      - name: lt_company_prefix_quoted_lt_quotes
+        regex: '(?<!\w)(?:UAB|AB|MB|VŠĮ|VSI|IĮ|II)\s+„[^“]+“'
+        score: 0.9
+      - name: lt_company_prefix_quoted_ascii
+        regex: '(?<!\w)(?:UAB|AB|MB|VŠĮ|VSI|IĮ|II)\s+"[^"]+"'
+        score: 0.9
+    context:
+      - įmonė
+      - imone
+      - bendrovė
+      - bendrove
+      - organizacija
+      - pirkėjas
+      - tiekėjas
+      - registruota
+      - registracijos
+      - įmonės kodas
+      - imones kodas
+    
+  - name: TransformersRecognizer
+    supported_languages:
+      - lt
+    type: predefined
