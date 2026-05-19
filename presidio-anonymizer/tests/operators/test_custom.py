@@ -24,7 +24,7 @@ def test_given_non_str_lambda_then_ipe_raised_at_operate_time():
     type, which caused side effects in stateful lambdas (see #2024).
     The return-type contract is now enforced in operate() on real data.
     """
-    with pytest.raises(Exception):
+    with pytest.raises(InvalidParamError):
         Custom().operate("hello", {"lambda": lambda x: len(x)})
 
 
