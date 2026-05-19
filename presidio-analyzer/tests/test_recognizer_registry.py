@@ -469,6 +469,20 @@ def test_get_recognizers_filters_by_countries_at_request_time():
     assert {rec.name for rec in country_agnostic_only} == {"Generic ID"}
 
 
+def test_get_recognizers_supports_non_list_iterable_with_ad_hoc_recognizers():
+    tuple_recognizer = create_mock_pattern_recognizer("en", "PERSON", "tuple")
+    ad_hoc_recognizer = create_mock_pattern_recognizer("en", "PERSON", "ad hoc")
+    registry = RecognizerRegistry(recognizers=(tuple_recognizer,))
+
+    recognizers = registry.get_recognizers(
+        language="en",
+        entities=["PERSON"],
+        ad_hoc_recognizers=[ad_hoc_recognizer],
+    )
+
+    assert {rec.name for rec in recognizers} == {"tuple", "ad hoc"}
+
+
 def test_get_country_codes_excludes_locale_agnostic_recognizers():
     """Filter out locale-agnostic recognizers from the country code report.
 

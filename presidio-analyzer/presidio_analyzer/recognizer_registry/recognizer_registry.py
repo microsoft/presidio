@@ -1,4 +1,3 @@
-import copy
 import logging
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Type, Union
@@ -187,7 +186,7 @@ class RecognizerRegistry:
         if entities is None and all_fields is False:
             raise ValueError("No entities provided")
 
-        all_possible_recognizers = copy.copy(self.recognizers)
+        all_possible_recognizers = list(self.recognizers)
         if ad_hoc_recognizers:
             all_possible_recognizers.extend(ad_hoc_recognizers)
         if countries is not None:
