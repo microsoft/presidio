@@ -1,3 +1,4 @@
+import re
 from typing import List, Optional, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
@@ -28,10 +29,16 @@ class InGstinRecognizer(PatternRecognizer):
 
     COUNTRY_CODE = "in"
 
+    GSTIN_CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    GSTIN_PATTERN = re.compile(
+        r"^(?:0[1-9]|[1-3][0-7])[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$"
+    )
+
     PATTERNS = [
         Pattern(
             "GSTIN (High)",
-            r"\b((?:0[1-9]|[1-3][0-7])[A-Za-z0-9]{10}[A-Za-z0-9]{1}Z[A-Za-z0-9]{1})\b",
+            r"\b((?:0[1-9]|[1-3][0-7])[A-Za-z]{5}[0-9]{4}"
+            r"[A-Za-z][1-9A-Za-z]Z[A-Za-z0-9])\b",
             0.8,
         ),
         Pattern(
@@ -90,12 +97,10 @@ class InGstinRecognizer(PatternRecognizer):
 
     def _sanitize_value(self, text: str) -> str:
         """Remove common separators and normalize the text."""
-        import re
-
         # First, try to extract GSTIN pattern from the text
         gstin_pattern = (
             r"\b((?:0[1-9]|[1-3][0-7])[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}"
-            r"[0-9A-Za-z]{1}Z[0-9A-Za-z]{1})\b"
+            r"[1-9A-Za-z]{1}Z[0-9A-Za-z]{1})\b"
         )
         match = re.search(gstin_pattern, text.upper())
         if match:
@@ -122,26 +127,10 @@ class InGstinRecognizer(PatternRecognizer):
         if not state_code.isdigit() or not (1 <= int(state_code) <= 37):
             return False
 
-        # Check PAN format (characters 3-12)
-        pan_part = gstin[2:12]
-        if not self._validate_pan_format(pan_part):
+        if not self.GSTIN_PATTERN.fullmatch(gstin):
             return False
 
-        # Check 13th character (registration number)
-        reg_number = gstin[12]
-        if not reg_number.isalnum():
-            return False
-
-        # Check 14th character should be 'Z'
-        if gstin[13] != "Z":
-            return False
-
-        # Check 15th character (checksum)
-        checksum = gstin[14]
-        if not checksum.isalnum():
-            return False
-
-        return True
+        return self._validate_checksum(gstin)
 
     def _validate_pan_format(self, pan: str) -> bool:
         """
@@ -172,3 +161,20 @@ class InGstinRecognizer(PatternRecognizer):
             return False
 
         return True
+
+    def _validate_checksum(self, gstin: str) -> bool:
+        """
+        Validate the GSTIN check digit using the Luhn mod-36 algorithm.
+
+        The first 14 characters are transformed into base-36 values and
+        multiplied by alternating factors of 1 and 2. The GSTIN is valid only
+        when the calculated check character matches the 15th character.
+        """
+        total = 0
+        for index, char in enumerate(gstin[:14]):
+            codepoint = self.GSTIN_CHARSET.index(char)
+            product = codepoint * ((index % 2) + 1)
+            total += (product // 36) + (product % 36)
+
+        check_codepoint = (36 - (total % 36)) % 36
+        return self.GSTIN_CHARSET[check_codepoint] == gstin[14]
