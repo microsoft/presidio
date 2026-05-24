@@ -50,6 +50,7 @@ from .country_specific.india.in_gstin_recognizer import InGstinRecognizer
 from .country_specific.india.in_pan_recognizer import InPanRecognizer
 from .country_specific.india.in_passport_recognizer import InPassportRecognizer
 from .country_specific.india.in_voter_recognizer import InVoterRecognizer
+from .country_specific.india.in_upi_recognizer import InUpiRecognizer
 
 # Italy recognizers
 from .country_specific.italy.it_driver_license_recognizer import (
@@ -221,6 +222,7 @@ __all__ = [
     "SgUenRecognizer",
     "InVoterRecognizer",
     "InPassportRecognizer",
+    "InUpiRecognizer",
     "FiPersonalIdentityCodeRecognizer",
     "EsNieRecognizer",
     "EsPassportRecognizer",
