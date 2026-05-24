@@ -57,7 +57,7 @@ class PhoneRecognizer(LocalRecognizer):
         """Analyzes text to detect phone numbers using python-phonenumbers.
 
         Iterates over entities, fetching regions, then matching regional
-        phone numbers patterns against the text.
+        phone number patterns against the text.
         :param text: Text to be analyzed
         :param entities: Entities this recognizer can detect
         :param nlp_artifacts: Additional metadata from the NLP engine
@@ -83,7 +83,7 @@ class PhoneRecognizer(LocalRecognizer):
 
     def _get_recognizer_result(self, match, text, region, nlp_artifacts):
         result = RecognizerResult(
-            entity_type="PHONE_NUMBER",
+            entity_type=self.supported_entities[0],
             start=match.start,
             end=match.end,
             score=self.SCORE,
