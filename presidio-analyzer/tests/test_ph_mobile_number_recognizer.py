@@ -61,7 +61,8 @@ def entities():
         ("0917 123 4567", 1, ((0, 13),), ((0.3, 1.0),)),
         ("0917-123-4567", 1, ((0, 13),), ((0.3, 1.0),)),
         ("0 (917) 123 4567", 1, ((0, 16),), ((0.3, 1.0),)),
-        # Local format (bare number without prefix) - not reliably detected by phonenumbers for PH region
+        # Local format (bare number without prefix) - not reliably detected
+        # by phonenumbers for PH region
         ("9171234567", 0, (), ()),
         ("917 123 4567", 0, (), ()),
         ("917-123-4567", 0, (), ()),
@@ -115,7 +116,9 @@ def entities():
             ((7, 20), (30, 41)),
             ((0.4, 1.0), (0.3, 1.0)),
         ),
-        # Invalid numbers that must not be detected as mobile (or maybe they are landline, but phonenumbers treats them as valid PH numbers but with lower score or geographic)
+        # Invalid numbers that must not be detected as mobile (or maybe they are
+        # landline, but phonenumbers treats them as valid PH numbers but with
+        # lower score or geographic)
         # Random 11-digit number
         ("12345678901", 0, (), ()),
         # Invalid: too short
