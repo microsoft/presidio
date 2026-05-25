@@ -107,6 +107,15 @@ The recognizer list comprises of both the predefined and custom recognizers, for
   - `supported_entity`: the detected entity associated by the recognizer.
   - `deny_list`: A list of words to detect, in case the recognizer uses a predefined list of words.
   - `deny_list_score`: confidence score for a term identified using a deny-list.
+  - `text_chunker`: configures how long texts are split for NER recognizers (`GLiNERRecognizer`, `HuggingFaceNerRecognizer`). Accepts a dict with `chunker_type` and params. Available types: `character` (default) and `tokenizer` (uses the model's tokenizer for accurate token-based splitting). Example:
+
+    ```yaml
+    - name: GLiNERRecognizer
+      type: predefined
+      text_chunker:
+        chunker_type: tokenizer
+        tokenizer: urchade/gliner_multi_pii-v1
+    ```
 
 !!! tip "Configuration Tip: Agglutinative languages (e.g., Korean)"
 

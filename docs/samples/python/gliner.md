@@ -75,6 +75,36 @@ results = analyzer_engine.analyze(
 print(results)
 ```
 
+## Text Chunking
+
+By default, GLiNERRecognizer splits long texts into character-based chunks (250 chars, 50 overlap). You can customize this via `text_chunker`:
+
+**From Python:**
+
+```python
+from presidio_analyzer.chunkers import CharacterBasedTextChunker
+
+gliner_recognizer = GLiNERRecognizer(
+    model_name="urchade/gliner_multi_pii-v1",
+    entity_mapping=entity_mapping,
+    text_chunker=CharacterBasedTextChunker(chunk_size=400, chunk_overlap=60),
+)
+```
+
+**From YAML (using tokenizer-based chunking):**
+
+```yaml
+- name: GLiNERRecognizer
+  type: predefined
+  text_chunker:
+    chunker_type: tokenizer
+    tokenizer: urchade/gliner_multi_pii-v1
+    max_tokens: 512
+    overlap_tokens: 32
+```
+
+The `tokenizer` chunker uses the model's actual tokenizer to split text by token count, respecting the model's token limit instead of approximating with character counts.
+
 ## ONNX Runtime Support
 
 GLiNERRecognizer supports using ONNX Runtime as a backend, which provides better CPU compatibility and can prevent crashes on older CPUs without AVX2 instruction set support (e.g., Intel Sandy Bridge).
