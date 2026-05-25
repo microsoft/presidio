@@ -112,6 +112,107 @@ docker run -d -p 5002:3000 mcr.microsoft.com/presidio-analyzer:latest
 docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
 ```
 
+### Customizing the analyzer Docker image for additional languages
+
+The published analyzer image uses the default analyzer configuration, which
+loads an English NLP model. To run the analyzer service with additional
+languages, build a custom analyzer image with configuration files that declare
+the languages, NLP models, and recognizers you want to load.
+
+The analyzer Dockerfile accepts these build arguments:
+
+- `ANALYZER_CONF_FILE`: Analyzer-level settings, including
+  `supported_languages`.
+- `NLP_CONF_FILE`: NLP engine settings, including spaCy, Stanza, or
+  Transformers model names.
+- `RECOGNIZER_REGISTRY_CONF_FILE`: Which predefined or custom recognizers to
+  load.
+
+For simple deployments you can start from the combined configuration format in
+[`default_analyzer_full.yaml`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_analyzer_full.yaml).
+For split-file deployments, update the default analyzer, NLP, and recognizer
+registry files under
+[`presidio-analyzer/presidio_analyzer/conf`](https://github.com/microsoft/presidio/tree/main/presidio-analyzer/presidio_analyzer/conf).
+
+For example, to add Spanish with spaCy:
+
+```yaml
+supported_languages:
+  - en
+  - es
+
+nlp_configuration:
+  nlp_engine_name: spacy
+  models:
+    - lang_code: en
+      model_name: en_core_web_lg
+    - lang_code: es
+      model_name: es_core_news_md
+
+recognizer_registry:
+  recognizers:
+    - name: SpacyRecognizer
+      type: predefined
+      supported_languages:
+        - en
+        - es
+    - name: EmailRecognizer
+      type: predefined
+      supported_languages:
+        - en
+        - es
+```
+
+Save the file inside the analyzer build context, for example as
+`presidio-analyzer/presidio_analyzer/conf/custom_analyzer.yaml`, then build the
+image and point `ANALYZER_CONF_FILE` at it:
+
+```sh
+docker build ./presidio-analyzer \
+  -t presidio-analyzer-custom \
+  --build-arg ANALYZER_CONF_FILE=presidio_analyzer/conf/custom_analyzer.yaml
+```
+
+During the image build, `install_nlp_models.py` installs models referenced by
+the configured NLP file or by the `nlp_configuration` section in the analyzer
+configuration file. After the image is built, run it as usual:
+
+```sh
+docker run -d -p 5002:3000 presidio-analyzer-custom
+```
+
+If the image already contains the referenced models, you can also mount
+configuration at runtime and set the matching environment variables:
+
+```sh
+docker run -d -p 5002:3000 \
+  -v "$PWD/custom_analyzer.yaml:/app/custom_analyzer.yaml:ro" \
+  -e ANALYZER_CONF_FILE=/app/custom_analyzer.yaml \
+  presidio-analyzer-custom
+```
+
+Common configuration pitfalls:
+
+- Keep the top-level `supported_languages` value aligned with the recognizer
+  registry configuration. The analyzer validates these values when the engine
+  starts.
+- Include the NLP recognizer for each language that should use model-based NER
+  results, such as `SpacyRecognizer`, `StanzaRecognizer`, or
+  `TransformersRecognizer`. Warnings such as `NLP recognizer ... is not in the
+  list of recognizers for language en` usually mean the NLP engine supports a
+  language that the recognizer registry did not enable.
+- Build the image with every referenced NLP model installed. Mounting only a new
+  YAML file at runtime does not download missing spaCy, Stanza, or Transformers
+  models into the container.
+- Add languages incrementally and test `/health`, `/recognizers?language=<code>`,
+  and `/supportedentities?language=<code>` before adding more models. Large NLP
+  model sets can increase image size, startup time, and memory use.
+
+See [Configuring the Analyzer Engine from file](analyzer/analyzer_engine_provider.md),
+[Customizing the NLP model](analyzer/customizing_nlp_models.md), and
+[Customizing recognizer registry from file](analyzer/recognizer_registry_provider.md)
+for the full configuration schema.
+
 ### For PII redaction in images
 
 For PII detection in images, the `presidio-image-redactor` is required.
