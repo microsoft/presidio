@@ -30,6 +30,8 @@ class UsNpiRecognizer(PatternRecognizer):
     spaces.
     """
 
+    COUNTRY_CODE = "us"
+
     PATTERNS = [
         Pattern(
             "NPI (weak)",

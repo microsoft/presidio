@@ -144,3 +144,13 @@ def test_get_analysis_explanation():
     test_region = "US"
     explanation = phone_recognizer._get_analysis_explanation(test_region)
     assert explanation.recognizer == "PhoneRecognizer"
+
+def test_get_supported_entities():
+    default_phone_recognizer = PhoneRecognizer()
+    default_supported_entities = default_phone_recognizer.get_supported_entities()
+    assert default_supported_entities == ["PHONE_NUMBER"]
+
+    entity_name = "TELEPHONE_OR_FAX"
+    configured_phone_recognizer = PhoneRecognizer(supported_entity=entity_name)
+    configured_supported_entities = configured_phone_recognizer.get_supported_entities()
+    assert configured_supported_entities == [entity_name]

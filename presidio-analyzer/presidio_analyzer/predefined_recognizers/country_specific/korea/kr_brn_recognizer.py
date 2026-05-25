@@ -25,6 +25,8 @@ class KrBrnRecognizer(PatternRecognizer):
     to be used during pattern matching (e.g., removing dashes).
     """
 
+    COUNTRY_CODE = "kr"
+
     PATTERNS = [
         Pattern(
             "BRN (Weak)",

@@ -18,6 +18,7 @@ class PhoneRecognizer(LocalRecognizer):
      Using python-phonenumbers, along with fixed and regional context words.
     :param context: Base context words for enhancing the assurance scores.
     :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
     :param supported_regions: The regions for phone number matching and validation
     :param leniency: The strictness level of phone number formats.
     Accepts values from 0 to 3, where 0 is the lenient and 3 is the most strictest.
@@ -31,6 +32,7 @@ class PhoneRecognizer(LocalRecognizer):
         self,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
+        supported_entity: str = "PHONE_NUMBER",
         # For all regions, use phonenumbers.SUPPORTED_REGIONS
         supported_regions=DEFAULT_SUPPORTED_REGIONS,
         leniency: Optional[int] = 1,
@@ -40,7 +42,7 @@ class PhoneRecognizer(LocalRecognizer):
         self.supported_regions = supported_regions
         self.leniency = leniency
         super().__init__(
-            supported_entities=self.get_supported_entities(),
+            supported_entities=[supported_entity],
             supported_language=supported_language,
             context=context,
             name=name,
@@ -49,16 +51,13 @@ class PhoneRecognizer(LocalRecognizer):
     def load(self) -> None:  # noqa: D102
         pass
 
-    def get_supported_entities(self):  # noqa: D102
-        return ["PHONE_NUMBER"]
-
     def analyze(
         self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts = None
     ) -> List[RecognizerResult]:
         """Analyzes text to detect phone numbers using python-phonenumbers.
 
         Iterates over entities, fetching regions, then matching regional
-        phone numbers patterns against the text.
+        phone number patterns against the text.
         :param text: Text to be analyzed
         :param entities: Entities this recognizer can detect
         :param nlp_artifacts: Additional metadata from the NLP engine
@@ -84,7 +83,7 @@ class PhoneRecognizer(LocalRecognizer):
 
     def _get_recognizer_result(self, match, text, region, nlp_artifacts):
         result = RecognizerResult(
-            entity_type="PHONE_NUMBER",
+            entity_type=self.supported_entities[0],
             start=match.start,
             end=match.end,
             score=self.SCORE,
