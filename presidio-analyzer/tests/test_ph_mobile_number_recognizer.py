@@ -116,9 +116,7 @@ def entities():
             ((7, 20), (30, 41)),
             ((0.4, 1.0), (0.3, 1.0)),
         ),
-        # Invalid numbers that must not be detected as mobile (or maybe they are
-        # landline, but phonenumbers treats them as valid PH numbers but with
-        # lower score or geographic)
+        # Invalid numbers (not mobile, or geographical/landline)
         # Random 11-digit number
         ("12345678901", 0, (), ()),
         # Invalid: too short
