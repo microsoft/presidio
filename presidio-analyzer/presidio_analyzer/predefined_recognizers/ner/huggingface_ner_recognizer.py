@@ -22,7 +22,11 @@ from presidio_analyzer import (
     LocalRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.chunkers import BaseTextChunker, CharacterBasedTextChunker
+from presidio_analyzer.chunkers import (
+    BaseTextChunker,
+    CharacterBasedTextChunker,
+    TextChunkerProvider,
+)
 from presidio_analyzer.nlp_engine import NlpArtifacts, device_detector
 
 try:
@@ -115,7 +119,7 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         chunk_size: int = 400,
         device: Optional[Union[str, int]] = None,
         tokenizer_name: Optional[str] = None,
-        text_chunker: Optional[BaseTextChunker] = None,
+        text_chunker: Optional[Union[BaseTextChunker, Dict[str, Any]]] = None,
         label_prefixes: Optional[List[str]] = None,
         **kwargs,
     ):
@@ -144,8 +148,13 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         :param chunk_overlap: Number of characters to overlap between chunks.
         :param chunk_size: Maximum number of characters per chunk.
         :param tokenizer_name: Name of the tokenizer. Defaults to model_name.
-        :param text_chunker: Custom text chunking strategy. If None, uses
+        :param text_chunker: Text chunking strategy. Accepts a BaseTextChunker
+            instance (Python) or a dict config (YAML). If None, uses
             CharacterBasedTextChunker with provided chunk_size and chunk_overlap.
+            Dict example::
+
+                {"chunker_type": "tokenizer", "tokenizer": "bert-base-uncased"}
+
         :param label_prefixes: List of label prefixes to strip (e.g., B-, I-).
         :raises ImportError: If transformers or torch libraries are not installed.
         """
@@ -199,8 +208,10 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             context=context,
         )
 
-        # Initialize the text chunker
-        if text_chunker:
+        # Initialize text chunker (object, dict config, or default)
+        if isinstance(text_chunker, dict):
+            self.text_chunker = TextChunkerProvider(text_chunker).create_chunker()
+        elif text_chunker is not None:
             self.text_chunker = text_chunker
         else:
             self.text_chunker = CharacterBasedTextChunker(

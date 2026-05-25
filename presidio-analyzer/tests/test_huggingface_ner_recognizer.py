@@ -623,3 +623,54 @@ def test_hf_recognizer_loader_supported_entities_filtering():
         "supported_entities was filtered out by loader!"
     )
     assert kwargs["supported_entities"] == ["STAY_PERSISTENT"]
+
+
+@patch(HF_PIPELINE_PATH, return_value=MagicMock())
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_hf_recognizer_default_chunker(_mock_pipeline):
+    """Test that HuggingFaceNerRecognizer uses CharacterBasedTextChunker by default."""
+    from presidio_analyzer.chunkers import CharacterBasedTextChunker
+
+    rec = HuggingFaceNerRecognizer(model_name="test-model")
+    assert isinstance(rec.text_chunker, CharacterBasedTextChunker)
+    assert rec.text_chunker.chunk_size == 400
+    assert rec.text_chunker.chunk_overlap == 40
+
+
+@patch(HF_PIPELINE_PATH, return_value=MagicMock())
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_hf_recognizer_custom_chunk_size(_mock_pipeline):
+    """Test that chunk_size and chunk_overlap params are forwarded."""
+    from presidio_analyzer.chunkers import CharacterBasedTextChunker
+
+    rec = HuggingFaceNerRecognizer(
+        model_name="test-model", chunk_size=600, chunk_overlap=80
+    )
+    assert isinstance(rec.text_chunker, CharacterBasedTextChunker)
+    assert rec.text_chunker.chunk_size == 600
+    assert rec.text_chunker.chunk_overlap == 80
+
+
+@patch(HF_PIPELINE_PATH, return_value=MagicMock())
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_hf_recognizer_text_chunker_dict_config(_mock_pipeline):
+    """Test that text_chunker accepts a dict and creates chunker via provider."""
+    from presidio_analyzer.chunkers import CharacterBasedTextChunker
+
+    rec = HuggingFaceNerRecognizer(
+        model_name="test-model",
+        text_chunker={"chunker_type": "character", "chunk_size": 300, "chunk_overlap": 40},
+    )
+    assert isinstance(rec.text_chunker, CharacterBasedTextChunker)
+    assert rec.text_chunker.chunk_size == 300
+
+
+@patch(HF_PIPELINE_PATH, return_value=MagicMock())
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_hf_recognizer_text_chunker_object(_mock_pipeline):
+    """Test that text_chunker accepts a BaseTextChunker instance directly."""
+    from presidio_analyzer.chunkers import CharacterBasedTextChunker
+
+    custom_chunker = CharacterBasedTextChunker(chunk_size=500, chunk_overlap=100)
+    rec = HuggingFaceNerRecognizer(model_name="test-model", text_chunker=custom_chunker)
+    assert rec.text_chunker is custom_chunker

@@ -323,3 +323,56 @@ def test_when_model_kwargs_then_passes_to_from_pretrained():
         assert call_kwargs["custom_param2"] == 42
 
 
+def test_gliner_default_chunker():
+    """Test that GLiNER uses CharacterBasedTextChunker by default."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    recognizer = GLiNERRecognizer(supported_entities=["PERSON"])
+    assert isinstance(recognizer.text_chunker, CharacterBasedTextChunker)
+    assert recognizer.text_chunker.chunk_size == 250
+    assert recognizer.text_chunker.chunk_overlap == 50
+
+
+def test_gliner_custom_chunk_size():
+    """Test that chunk_size and chunk_overlap params are forwarded."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    recognizer = GLiNERRecognizer(
+        supported_entities=["PERSON"], chunk_size=400, chunk_overlap=60
+    )
+    assert isinstance(recognizer.text_chunker, CharacterBasedTextChunker)
+    assert recognizer.text_chunker.chunk_size == 400
+    assert recognizer.text_chunker.chunk_overlap == 60
+
+
+def test_gliner_text_chunker_dict_config():
+    """Test that text_chunker accepts a dict and creates chunker via provider."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.model_max_length = 512
+    recognizer = GLiNERRecognizer(
+        supported_entities=["PERSON"],
+        text_chunker={"chunker_type": "character", "chunk_size": 300, "chunk_overlap": 40},
+    )
+    assert isinstance(recognizer.text_chunker, CharacterBasedTextChunker)
+    assert recognizer.text_chunker.chunk_size == 300
+
+
+def test_gliner_text_chunker_object():
+    """Test that text_chunker accepts a BaseTextChunker instance directly."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    custom_chunker = CharacterBasedTextChunker(chunk_size=500, chunk_overlap=100)
+    recognizer = GLiNERRecognizer(
+        supported_entities=["PERSON"], text_chunker=custom_chunker
+    )
+    assert recognizer.text_chunker is custom_chunker
