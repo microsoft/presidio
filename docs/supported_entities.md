@@ -22,7 +22,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |NRP|A person’s Nationality, religious or political group.|Custom logic and context|
 |LOCATION|Name of politically or geographically defined location (cities, provinces, countries, international regions, bodies of water, mountains|Custom logic and context|
 |PERSON|A full person name, which can include first names, middle names or initials, and last names.|Custom logic and context|
-|PHONE_NUMBER|A telephone number|Custom logic, pattern match and context|
+|PHONE_NUMBER|A telephone number. The `PhoneRecognizer` can be extended programmatically for country-specific detection by configuring `supported_regions` and `supported_entity` (e.g. Philippines: `PhoneRecognizer(supported_regions=["PH"], supported_entity="PH_MOBILE_NUMBER")`, Turkey: `PhoneRecognizer(supported_regions=["TR"], supported_entity="TR_PHONE_NUMBER")`)|Custom logic, pattern match and context|
 |MEDICAL_LICENSE|Common medical license numbers.|Pattern match, context and checksum|
 |URL|A URL (Uniform Resource Locator), unique identifier used to locate a resource on the Internet|Pattern match, context and top level url validation|
 
@@ -142,14 +142,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | TR_NATIONAL_ID    | The Turkish National Identification Number (TCKN) is a unique 11-digit number issued to all Turkish citizens. | Pattern match, context and checksum. |
-| TR_PHONE_NUMBER   | Turkish phone numbers: 10-digit numbers starting with 5 (mobile) or 2/3/4 (geographic). Supports international (+90), national (0), and local formats. Includes mobile (MNP-compliant) and geographic numbers. Reference: ITU-T E.164. Enabled programmatically via `PhoneRecognizer(supported_regions=["TR"], supported_entity="TR_PHONE_NUMBER")`. | `phonenumbers` library, context and format validation. |
 | TR_LICENSE_PLATE  | Turkish vehicle license plate (plaka): 2-digit province code (01–81), 1–3 letters (A–Z, excluding Q, W, X), and 2–4 digits. Standard civilian format only. Legal basis: KTK Madde 23. | Pattern match, context and province code validation. |
-
-### Philippines
-
-| FieldType  | Description                                                                                             | Detection Method                         |
-|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
-| PH_MOBILE_NUMBER  | Philippine mobile phone numbers with 10-digit subscriber numbers starting with 9. Supports international (+63 9XX XXX XXXX), national (09XX XXX XXXX) formats. Reference: ITU-T E.164. Enabled programmatically via `PhoneRecognizer(supported_regions=['PH'], supported_entity='PH_MOBILE_NUMBER')`. | `phonenumbers` library, context and format validation. |
 
 ### Germany
 
