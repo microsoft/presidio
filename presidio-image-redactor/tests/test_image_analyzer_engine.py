@@ -339,12 +339,13 @@ def test_add_custom_bboxes_happy_path(
             color_match = False
         return color_match
 
-    for dim in test_img_arr:
-        for pixel in dim:
-            if compare_color(list(pixel), color_red):
-                red_pixels += 1
-            if compare_color(list(pixel), color_blue):
-                blue_pixels += 1
+    if bboxes:
+        for dim in test_img_arr:
+            for pixel in dim:
+                if compare_color(list(pixel), color_red):
+                    red_pixels += 1
+                if compare_color(list(pixel), color_blue):
+                    blue_pixels += 1
 
     # Assert
     if not bboxes:

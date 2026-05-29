@@ -421,6 +421,13 @@ class ImageAnalyzerEngine:
                     bbox=dict(boxstyle="round4,pad=.5", fc="0.9"),
                 )
 
+        # When there are no bboxes and no greyscale colormap is needed, return the
+        # image directly to avoid unnecessary matplotlib rendering overhead and to
+        # preserve the original image fidelity (e.g. for RGB verification images).
+        if not bboxes and not use_greyscale_cmap:
+            plt.close(fig)
+            return image_custom
+
         if use_greyscale_cmap:
             ax.imshow(image_custom, cmap="gray")
         else:
