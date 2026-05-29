@@ -45,6 +45,7 @@ All notable changes to this project will be documented in this file.
 - Turkish phone number detection via configurable `PhoneRecognizer` with `supported_regions=["TR"]` and `supported_entity="TR_PHONE_NUMBER"`. Supports international (+90), national (0), and local formats using the `phonenumbers` library. Disabled by default; users enable it programmatically.
 - Turkish PII recognizer for `TR_LICENSE_PLATE` (plaka) to identify Turkish vehicle license plates using pattern match, context, and province code validation (01-81). Disabled by default.
 - Added PH_MOBILE_NUMBER recognizer for Philippine mobile phone numbers using PhoneRecognizer with supported_regions=['PH'] (disabled by default).
+- Added PH_UMID recognizer for Philippine Unified Multi-Purpose ID (UMID) / Common Reference Number (CRN) using pattern match and context. Disabled by default.
 
 ## [2.2.362] - 2026-03-15
 ### General
