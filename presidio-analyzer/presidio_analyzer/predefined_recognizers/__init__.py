@@ -78,6 +78,9 @@ from .country_specific.nigeria.ng_vehicle_registration_recognizer import (
 # Poland recognizers
 from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
 
+# Philippines recognizers
+from .country_specific.philippines.ph_umid_recognizer import PhUmidRecognizer
+
 # Singapore recognizers
 from .country_specific.singapore.sg_fin_recognizer import SgFinRecognizer
 from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
@@ -214,6 +217,7 @@ __all__ = [
     "GLiNERRecognizer",
     "HuggingFaceNerRecognizer",
     "PlPeselRecognizer",
+    "PhUmidRecognizer",
     "AzureAILanguageRecognizer",
     "InAadhaarRecognizer",
     "InGstinRecognizer",
