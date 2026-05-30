@@ -21,6 +21,10 @@ class PhPhilhealthRecognizer(PatternRecognizer):
     - Forcepoint DLP classifier documentation publishes 12-000015726-6 as a
       valid PhilHealth Identification Number example. The weighted modulus 11
       check used here validates that public example.
+    - Check digit convention: compute 11 - (weighted total mod 11), map 11 to
+      0, and reject 10 because it cannot be represented as a single decimal
+      digit. This follows the standard single-digit modulus 11 handling also
+      used by ISO/IEC 7064 Mod 11,10 identifiers.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -50,10 +54,10 @@ class PhPhilhealthRecognizer(PatternRecognizer):
         "philhealth no.",
         "philhealth id",
         "philhealth identification number",
-        "pin",
+        "philhealth pin",
         "health insurance",
         "member data record",
-        "mdr",
+        "philhealth mdr",
         "kalusugan",
         "seguro",
     ]
@@ -83,7 +87,9 @@ class PhPhilhealthRecognizer(PatternRecognizer):
         The public PhilHealth documentation confirms a modulus 11 check digit
         but does not publish a full algorithm. This implementation uses the
         common 2..12 weighted modulus 11 convention, which validates the public
-        Forcepoint example 12-000015726-6.
+        Forcepoint example 12-000015726-6. It maps a computed check value of
+        11 to 0 and rejects 10 because 10 cannot be represented as a single
+        decimal digit.
 
         :param pattern_text: Text detected as pattern by regex
         :return: True if invalidated
@@ -102,5 +108,11 @@ class PhPhilhealthRecognizer(PatternRecognizer):
 
         weights = range(2, 13)
         total = sum(int(digit) * weight for digit, weight in zip(digits[:11], weights))
-        check_digit = (11 - (total % 11)) % 10
+        check_digit = 11 - (total % 11)
+
+        if check_digit == 11:
+            check_digit = 0
+        elif check_digit == 10:
+            return False
+
         return check_digit == int(digits[-1])
