@@ -11,6 +11,12 @@ class PhPassportRecognizer(PatternRecognizer):
     - 1 letter + 7 digits + 1 letter (e.g., P1234567A)
     - 2 letters + 7 digits (e.g., EB1234567)
 
+    Reference:
+    - ICAO Doc 9303, Machine Readable Travel Documents (passport document
+      numbers are machine-readable passport identifiers; used here as a
+      reliable reference for passport-number handling):
+      https://www.icao.int/publications/doc-series/doc-9303
+
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
     :param supported_language: Language this recognizer supports
