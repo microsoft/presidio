@@ -16,5 +16,6 @@ services:
       dockerfile: Dockerfile.transformers
     environment:
       - PORT=5001
+      - NLP_CONF_FILE=presidio_analyzer/conf/transformers.yaml
     ports:
       - "5002:5001"
