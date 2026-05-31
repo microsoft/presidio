@@ -1,0 +1,37 @@
+supported_languages:
+  - en
+  - es
+  - de
+  - fr
+  - it
+  - pt
+  - nl
+  - sv
+global_regex_flags: 26
+
+recognizers:
+  - name: SpacyRecognizer
+    type: predefined
+    enabled: false
+
+  - name: "HuggingFace NER"
+    type: predefined
+    class_name: HuggingFaceNerRecognizer
+    model_name: dslim/bert-base-NER
+    supported_languages:
+      - en
+      - es
+      - de
+      - fr
+      - it
+      - pt
+      - nl
+      - sv
+    supported_entities:
+      - PERSON
+      - LOCATION
+      - ORGANIZATION
+      - MISC
+    aggregation_strategy: simple
+    threshold: 0.3
+    device: cpu
