@@ -26,6 +26,7 @@ logger = logging.getLogger("presidio-analyzer")
 
 REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
 
+
 class AnalyzerEngine:
     """
     Entry point for Presidio Analyzer.
@@ -333,10 +334,7 @@ class AnalyzerEngine:
 
         # Update results in case surrounding words or external context are relevant to
         # the context words.
-        # Check if the enhancer supports negative_context parameter for backward compatibility
-        enhancer_signature = inspect.signature(
-            self.context_aware_enhancer.enhance_using_context
-        )
+        # Only check if the enhancer supports negative_context if user provided context or negative_context
         enhancer_kwargs = {
             "text": text,
             "raw_results": results,
@@ -344,11 +342,16 @@ class AnalyzerEngine:
             "recognizers": recognizers,
             "context": context,
         }
-        
-        # Only pass negative_context if the enhancer supports it
-        if "negative_context" in enhancer_signature.parameters:
-            enhancer_kwargs["negative_context"] = negative_context
-        
+
+        # Only pass negative_context if user provided it and enhancer supports it
+        if negative_context is not None:
+            # Check if the enhancer supports negative_context parameter for backward compatibility
+            enhancer_signature = inspect.signature(
+                self.context_aware_enhancer.enhance_using_context
+            )
+            if "negative_context" in enhancer_signature.parameters:
+                enhancer_kwargs["negative_context"] = negative_context
+
         results = self.context_aware_enhancer.enhance_using_context(**enhancer_kwargs)
 
         return results
