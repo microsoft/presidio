@@ -23,6 +23,13 @@ services:
       - PORT=5001
     ports:
       - "5001:5001"
+    restart: unless-stopped                                    
+    healthcheck:                                               
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   presidio-analyzer:
     image: ${REGISTRY_NAME}/${IMAGE_PREFIX}presidio-analyzer${TAG}
@@ -35,6 +42,13 @@ services:
       - OLLAMA_HOST=http://ollama:11434
     ports:
       - "5002:5001"
+    restart: unless-stopped                                    
+    healthcheck:                                               
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       ollama:
         condition: service_healthy
