@@ -63,6 +63,14 @@ class TokenizerBasedTextChunker(BaseTextChunker):
             else:
                 max_tokens = raw
 
+            # Reserve space for special tokens ([CLS], [SEP], etc.) that the
+            # NER pipeline adds automatically, so chunks don't exceed the
+            # model's actual input limit.
+            num_special = getattr(
+                tokenizer, "num_special_tokens_to_add", lambda pair=False: 0
+            )(pair=False)
+            max_tokens = max(1, max_tokens - num_special)
+
         if max_tokens <= 0:
             raise ValueError("max_tokens must be greater than 0")
         if overlap_tokens < 0 or overlap_tokens >= max_tokens:

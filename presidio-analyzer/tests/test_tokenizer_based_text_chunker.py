@@ -12,6 +12,7 @@ def _make_tokenizer(tokens: list, offsets: list, model_max_length: int = 512):
     """Build a minimal mock tokenizer that returns fixed token/offset data."""
     tokenizer = MagicMock()
     tokenizer.model_max_length = model_max_length
+    tokenizer.num_special_tokens_to_add = lambda pair=False: 0
     tokenizer.return_value = {
         "input_ids": tokens,
         "offset_mapping": offsets,
@@ -110,3 +111,35 @@ def test_invalid_overlap_raises():
     tokenizer = _make_tokenizer([], [])
     with pytest.raises(ValueError, match="overlap_tokens"):
         TokenizerBasedTextChunker(tokenizer=tokenizer, max_tokens=10, overlap_tokens=10)
+
+
+def test_default_max_tokens_reserves_special_tokens():
+    """Auto-derived max_tokens subtracts special tokens (e.g. [CLS], [SEP])."""
+    tokenizer = _make_tokenizer([], [], model_max_length=512)
+    tokenizer.num_special_tokens_to_add = lambda pair=False: 2
+    chunker = TokenizerBasedTextChunker(tokenizer=tokenizer)
+    assert chunker.max_tokens == 510
+
+
+def test_explicit_max_tokens_does_not_reserve_special_tokens():
+    """User-provided max_tokens is used as-is without subtracting special tokens."""
+    tokenizer = _make_tokenizer([], [], model_max_length=512)
+    tokenizer.num_special_tokens_to_add = lambda pair=False: 2
+    chunker = TokenizerBasedTextChunker(tokenizer=tokenizer, max_tokens=500)
+    assert chunker.max_tokens == 500
+
+
+def test_text_chunker_provider_creates_tokenizer_chunker():
+    """TextChunkerProvider with chunker_type='tokenizer' creates TokenizerBasedTextChunker."""
+    from presidio_analyzer.chunkers.text_chunker_provider import TextChunkerProvider
+
+    mock_tokenizer = _make_tokenizer([], [], model_max_length=512)
+
+    provider = TextChunkerProvider(
+        {"chunker_type": "tokenizer", "tokenizer": mock_tokenizer, "max_tokens": 256, "overlap_tokens": 16}
+    )
+    chunker = provider.create_chunker()
+
+    assert isinstance(chunker, TokenizerBasedTextChunker)
+    assert chunker.max_tokens == 256
+    assert chunker.overlap_tokens == 16
