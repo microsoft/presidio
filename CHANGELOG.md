@@ -31,7 +31,7 @@ All notable changes to this project will be documented in this file.
 - Added `supported_entity` parameter to `PhoneRecognizer`. Previously, this recognizer hard-coded `["PHONE_NUMBER"]` as the only possible supported entity.
 
 #### Fixed
-- Fixed `UrlRecognizer` matching a TLD that is only the prefix of a longer label, producing false positives on `<word>.<word>` tokens common in code and filenames (e.g. `os.sy` in `os.system`, `zeus.mt` in `zeus.mtia`). A negative lookahead now requires the matched TLD to be a complete domain label. Genuine bare domains (e.g. `example.sy`) and URLs with paths are unaffected. Fixes [#1498](https://github.com/microsoft/presidio/issues/1498).
+- Fixed `UrlRecognizer` matching a TLD that is only the prefix of a longer label, producing false positives where a `<word>.<tld>` substring inside a longer identifier was matched (e.g. `os.sy` inside `os.system`, `zeus.mt` inside `zeus.mtia`) — common in code and filenames. A negative lookahead now requires the matched TLD to be a complete domain label. Genuine bare domains (e.g. `example.sy`) and URLs with paths are unaffected. Fixes [#1498](https://github.com/microsoft/presidio/issues/1498).
 - Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
 - Fixed `PhoneRecognizer._get_recognizer_result` to use the constructor-provided `supported_entity` instead of the hard-coded `"PHONE_NUMBER"` string, making the `supported_entity` parameter from PR #2014 fully functional.
