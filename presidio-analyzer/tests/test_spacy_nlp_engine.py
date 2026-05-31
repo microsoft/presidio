@@ -149,5 +149,56 @@ def test_when_cpu_device_then_gpu_not_configured():
             
             engine = SpacyNlpEngine(models=[{"lang_code": "en", "model_name": "en_core_web_sm"}])
             engine.load()
-            
+
             mock_spacy.require_gpu.assert_not_called()
+
+
+def test_load_shares_model_when_same_model_name():
+    """Test that languages sharing the same model_name reuse one spaCy instance."""
+    with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
+        mock_detector.get_device.return_value = "cpu"
+
+        with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.spacy") as mock_spacy:
+            mock_model = MagicMock()
+            mock_spacy.load.return_value = mock_model
+            mock_spacy.util.is_package.return_value = True
+
+            engine = SpacyNlpEngine(
+                models=[
+                    {"lang_code": "en", "model_name": "xx_ent_wiki_sm"},
+                    {"lang_code": "es", "model_name": "xx_ent_wiki_sm"},
+                    {"lang_code": "de", "model_name": "xx_ent_wiki_sm"},
+                ]
+            )
+            engine.load()
+
+            # spacy.load should be called only once for the shared model
+            mock_spacy.load.assert_called_once_with("xx_ent_wiki_sm")
+            # All languages should reference the same instance
+            assert engine.nlp["en"] is engine.nlp["es"]
+            assert engine.nlp["es"] is engine.nlp["de"]
+
+
+def test_load_keeps_separate_models_when_different_model_names():
+    """Test that different model_names are loaded separately."""
+    with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
+        mock_detector.get_device.return_value = "cpu"
+
+        with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.spacy") as mock_spacy:
+            mock_en = MagicMock()
+            mock_de = MagicMock()
+            mock_spacy.load.side_effect = [mock_en, mock_de]
+            mock_spacy.util.is_package.return_value = True
+
+            engine = SpacyNlpEngine(
+                models=[
+                    {"lang_code": "en", "model_name": "en_core_web_sm"},
+                    {"lang_code": "de", "model_name": "de_core_news_sm"},
+                ]
+            )
+            engine.load()
+
+            assert mock_spacy.load.call_count == 2
+            assert engine.nlp["en"] is mock_en
+            assert engine.nlp["de"] is mock_de
+            assert engine.nlp["en"] is not engine.nlp["de"]

@@ -7,6 +7,14 @@ from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
 from presidio_analyzer.chunkers import CharacterBasedTextChunker
 
 
+@pytest.fixture(autouse=True)
+def clear_shared_model_cache():
+    """Clear GLiNER shared model cache before and after each test."""
+    GLiNERRecognizer._shared_models.clear()
+    yield
+    GLiNERRecognizer._shared_models.clear()
+
+
 @pytest.fixture
 def mock_gliner():
     """
@@ -321,5 +329,63 @@ def test_when_model_kwargs_then_passes_to_from_pretrained():
         call_kwargs = mock_gliner_class.from_pretrained.call_args[1]
         assert call_kwargs["custom_param1"] == "value1"
         assert call_kwargs["custom_param2"] == 42
+
+
+def test_load_shares_model_across_instances():
+    """Test that instances with identical config share a single GLiNER model."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    GLiNERRecognizer._shared_models.clear()
+    try:
+        with patch(GLINER_MOCK_PATH) as mock_gliner_class:
+            mock_model = MagicMock()
+            mock_gliner_class.from_pretrained.return_value = mock_model
+
+            rec_en = GLiNERRecognizer(
+                supported_entities=["PERSON"], supported_language="en"
+            )
+            rec_es = GLiNERRecognizer(
+                supported_entities=["PERSON"], supported_language="es"
+            )
+            rec_en.load()
+            rec_es.load()
+
+            mock_gliner_class.from_pretrained.assert_called_once()
+            assert rec_en.gliner is rec_es.gliner
+    finally:
+        GLiNERRecognizer._shared_models.clear()
+
+
+def test_load_does_not_share_model_for_different_models():
+    """Test that instances with different model names get separate models."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    GLiNERRecognizer._shared_models.clear()
+    try:
+        with patch(GLINER_MOCK_PATH) as mock_gliner_class:
+            mock_gliner_class.from_pretrained.side_effect = [
+                MagicMock(),
+                MagicMock(),
+            ]
+
+            rec_a = GLiNERRecognizer(
+                supported_entities=["PERSON"], model_name="model-a"
+            )
+            rec_b = GLiNERRecognizer(
+                supported_entities=["PERSON"], model_name="model-b"
+            )
+            rec_a.load()
+            rec_b.load()
+
+            assert mock_gliner_class.from_pretrained.call_count == 2
+            assert rec_a.gliner is not rec_b.gliner
+    finally:
+        GLiNERRecognizer._shared_models.clear()
 
 

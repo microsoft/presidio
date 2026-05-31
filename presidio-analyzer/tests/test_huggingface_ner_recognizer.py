@@ -20,6 +20,18 @@ HF_PIPELINE_PATH = (
 TEST_MODEL_NAME = "dslim/bert-base-NER"
 
 
+@pytest.fixture(autouse=True)
+def clear_shared_pipeline_cache():
+    """Clear the shared pipeline cache before and after each test.
+
+    The class-level _shared_pipelines dict persists across tests,
+    so stale mock pipelines can leak between tests.
+    """
+    HuggingFaceNerRecognizer._shared_pipelines.clear()
+    yield
+    HuggingFaceNerRecognizer._shared_pipelines.clear()
+
+
 @pytest.fixture
 def mock_torch_installed():
     """Fixture to mock torch as installed and configured."""
@@ -562,6 +574,60 @@ def test_hf_recognizer_prediction_edge_cases(mock_recognizer, caplog):
     rec.ner_pipeline.side_effect = Exception("Pipeline failure")
     assert rec.analyze("test", entities=["PERSON"]) == []
     assert "NER prediction failed" in caplog.text
+
+
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_load_shares_pipeline_across_instances():
+    """Test that instances with identical config share a single HF pipeline."""
+    with patch(HF_PIPELINE_PATH) as mock_hf_pipeline:
+        mock_hf_pipeline.return_value = MagicMock()
+
+        rec_en = HuggingFaceNerRecognizer(
+            model_name="test-model", supported_language="en", device=-1
+        )
+        rec_es = HuggingFaceNerRecognizer(
+            model_name="test-model", supported_language="es", device=-1
+        )
+        rec_en.load()
+        rec_es.load()
+
+        # Pipeline should be created only once
+        mock_hf_pipeline.assert_called_once()
+        assert rec_en.ner_pipeline is rec_es.ner_pipeline
+
+
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_load_does_not_share_pipeline_for_different_models():
+    """Test that instances with different models get separate pipelines."""
+    with patch(HF_PIPELINE_PATH) as mock_hf_pipeline:
+        mock_hf_pipeline.side_effect = [MagicMock(), MagicMock()]
+
+        rec_a = HuggingFaceNerRecognizer(
+            model_name="model-a", supported_language="en", device=-1
+        )
+        rec_b = HuggingFaceNerRecognizer(
+            model_name="model-b", supported_language="en", device=-1
+        )
+        rec_a.load()
+        rec_b.load()
+
+        assert mock_hf_pipeline.call_count == 2
+        assert rec_a.ner_pipeline is not rec_b.ner_pipeline
+
+
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_load_skip_when_already_loaded():
+    """Test that load() is a no-op when pipeline is already assigned."""
+    with patch(HF_PIPELINE_PATH) as mock_hf_pipeline:
+        mock_hf_pipeline.return_value = MagicMock()
+
+        rec = HuggingFaceNerRecognizer(
+            model_name="test-model", supported_language="en", device=-1
+        )
+        rec.load()
+        rec.load()  # second call should be a no-op
+
+        mock_hf_pipeline.assert_called_once()
 
 
 def test_hf_recognizer_analyze_handles_malformed_pipeline_output(
