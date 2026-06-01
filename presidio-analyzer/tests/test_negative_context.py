@@ -149,7 +149,7 @@ def test_negative_context_reduces_score(spacy_nlp_engine):
 
     assert enhanced_results[0].score < original_score
     expected_score = max(original_score - 0.3, 0)
-    assert enhanced_results[0].score == expected_score
+    assert enhanced_results[0].score == pytest.approx(expected_score)
 
 
 def test_negative_context_prevents_false_positives(spacy_nlp_engine):
@@ -196,7 +196,7 @@ def test_negative_context_penalty_clamped_to_min_score(spacy_nlp_engine):
     )
 
     assert enhanced_results[0].score >= 0
-    assert enhanced_results[0].score == 0
+    assert enhanced_results[0].score == pytest.approx(0)
 
 
 # Integration Tests: interaction with positive context
@@ -301,7 +301,7 @@ def test_whole_word_matching_mode_no_partial_match(spacy_nlp_engine):
         text, results, nlp_artifacts, [recognizer]
     )
 
-    assert enhanced_results[0].score == original_score
+    assert enhanced_results[0].score == pytest.approx(original_score)
 
 
 # Backward Compatibility Tests
@@ -350,4 +350,4 @@ def test_empty_negative_context_no_penalty(spacy_nlp_engine):
         text, results, nlp_artifacts, [recognizer]
     )
 
-    assert enhanced_results[0].score == original_score
+    assert enhanced_results[0].score == pytest.approx(original_score)
