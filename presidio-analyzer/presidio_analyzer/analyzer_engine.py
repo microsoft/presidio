@@ -113,6 +113,25 @@ class AnalyzerEngine:
             context_aware_enhancer = LemmaContextAwareEnhancer()
 
         self.context_aware_enhancer = context_aware_enhancer
+        self._context_aware_enhancer_supports_negative_context = (
+            self._validate_context_aware_enhancer(context_aware_enhancer)
+        )
+
+    @staticmethod
+    def _validate_context_aware_enhancer(
+        enhancer: ContextAwareEnhancer,
+    ) -> bool:
+        """
+        Check if the context aware enhancer supports negative_context parameter.
+
+        This validation is done once during initialization to avoid runtime reflection
+        overhead during each analyze() call.
+
+        :param enhancer: The context aware enhancer instance to validate
+        :return: True if enhancer supports negative_context parameter, False otherwise
+        """
+        enhancer_signature = inspect.signature(enhancer.enhance_using_context)
+        return "negative_context" in enhancer_signature.parameters
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
         """
@@ -334,7 +353,6 @@ class AnalyzerEngine:
 
         # Update results in case surrounding words or external context are relevant to
         # the context words.
-        # Only check if the enhancer supports negative_context if user provided context or negative_context
         enhancer_kwargs = {
             "text": text,
             "raw_results": results,
@@ -344,13 +362,12 @@ class AnalyzerEngine:
         }
 
         # Only pass negative_context if user provided it and enhancer supports it
-        if negative_context is not None:
-            # Check if the enhancer supports negative_context parameter for backward compatibility
-            enhancer_signature = inspect.signature(
-                self.context_aware_enhancer.enhance_using_context
-            )
-            if "negative_context" in enhancer_signature.parameters:
-                enhancer_kwargs["negative_context"] = negative_context
+        # Use stored capability from initialization to avoid runtime reflection
+        if (
+            negative_context is not None
+            and self._context_aware_enhancer_supports_negative_context
+        ):
+            enhancer_kwargs["negative_context"] = negative_context
 
         results = self.context_aware_enhancer.enhance_using_context(**enhancer_kwargs)
 
