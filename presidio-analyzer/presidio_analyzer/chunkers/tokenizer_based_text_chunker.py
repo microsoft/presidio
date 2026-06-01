@@ -1,4 +1,5 @@
 """Tokenizer-based text chunker using HuggingFace tokenizers."""
+
 import logging
 from typing import TYPE_CHECKING, List, Union
 
@@ -121,7 +122,11 @@ class TokenizerBasedTextChunker(BaseTextChunker):
             char_start = offsets[start_token][0]
             char_end = offsets[end_token - 1][1]
 
-            chunks.append(TextChunk(text=text[char_start:char_end], start=char_start, end=char_end))
+            chunks.append(
+                TextChunk(
+                    text=text[char_start:char_end], start=char_start, end=char_end
+                )
+            )
 
             if end_token >= num_tokens:
                 break
