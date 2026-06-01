@@ -20,6 +20,8 @@ class KrPassportRecognizer(PatternRecognizer):
         - eight digits
     """
 
+    COUNTRY_CODE = "kr"
+
     PATTERNS = [
         Pattern(
             "Passport Number (Current)",

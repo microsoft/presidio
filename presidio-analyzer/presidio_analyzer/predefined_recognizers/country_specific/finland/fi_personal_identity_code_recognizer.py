@@ -14,6 +14,8 @@ class FiPersonalIdentityCodeRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "fi"
+
     PATTERNS = [
         Pattern(
             "Finnish Personal Identity Code (Medium)",

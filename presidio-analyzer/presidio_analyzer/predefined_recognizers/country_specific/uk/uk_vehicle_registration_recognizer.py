@@ -25,6 +25,8 @@ class UkVehicleRegistrationRecognizer(PatternRecognizer):
         pattern text for validation
     """
 
+    COUNTRY_CODE = "uk"
+
     PATTERNS = [
         Pattern(
             "UK Vehicle Registration (current)",

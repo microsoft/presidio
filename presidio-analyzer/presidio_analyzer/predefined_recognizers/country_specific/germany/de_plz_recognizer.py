@@ -36,6 +36,8 @@ class DePlzRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     # Regex covers 01001–09999 (leading zero) and 10000–99998.
     # Does NOT match 00000 (not a valid PLZ), 01000, 99999, or 6-digit numbers.
     # Reference: Deutsche Post AG PLZ-Verzeichnis.

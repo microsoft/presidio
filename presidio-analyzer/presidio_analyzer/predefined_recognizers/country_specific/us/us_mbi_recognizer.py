@@ -31,6 +31,8 @@ class UsMbiRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "us"
+
     # Valid letters: A-Z excluding S, L, O, I, B, Z
     # Valid letters are: A, C, D, E, F, G, H, J, K, M, N, P, Q, R, T, U, V, W, X, Y
     VALID_LETTERS = "ACDEFGHJKMNPQRTUVWXY"

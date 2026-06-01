@@ -42,6 +42,8 @@ class DePassportRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     # Only the ICAO-restricted charset is used. A previous relaxed
     # pattern allowing any [A-Z] first character was removed: it would
     # accept forbidden letters (A, B, D, E, I, O, Q, S, U) and
