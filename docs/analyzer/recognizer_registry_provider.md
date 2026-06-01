@@ -70,9 +70,6 @@ The recognizer list comprises of both the predefined and custom recognizers, for
     - name: "zip code (weak)"
       regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
       score: 0.01
-    - name: "zip code (weak)"
-      regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
-      score: 0.01
     supported_languages:
     - language: en
       context: [zip, code]
