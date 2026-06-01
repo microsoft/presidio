@@ -355,8 +355,6 @@ def test_gliner_text_chunker_dict_config():
         pytest.skip("gliner requires Python >= 3.10")
     pytest.importorskip("gliner", reason="GLiNER package is not installed")
 
-    mock_tokenizer = MagicMock()
-    mock_tokenizer.model_max_length = 512
     recognizer = GLiNERRecognizer(
         supported_entities=["PERSON"],
         text_chunker={"chunker_type": "character", "chunk_size": 300, "chunk_overlap": 40},
