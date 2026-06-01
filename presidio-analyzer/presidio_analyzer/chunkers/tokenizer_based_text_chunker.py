@@ -21,9 +21,9 @@ class TokenizerBasedTextChunker(BaseTextChunker):
     limit and avoids splitting mid-subword. Chunks are defined by token
     boundaries and mapped back to character offsets.
 
-    Can be configured from YAML by passing a tokenizer name string:
+    Can be configured from YAML via the ``text_chunker`` field::
 
-        chunker_configuration:
+        text_chunker:
           chunker_type: tokenizer
           tokenizer: bert-base-uncased
           max_tokens: 512
@@ -78,6 +78,15 @@ class TokenizerBasedTextChunker(BaseTextChunker):
                 tokenizer, "num_special_tokens_to_add", lambda pair=False: 0
             )(pair=False)
             max_tokens = max(1, max_tokens - num_special)
+
+            # Clamp overlap if auto-derived max_tokens is smaller than default overlap
+            if overlap_tokens >= max_tokens:
+                overlap_tokens = max(0, max_tokens - 1)
+                logger.warning(
+                    "overlap_tokens clamped to %d (max_tokens=%d)",
+                    overlap_tokens,
+                    max_tokens,
+                )
 
         if max_tokens <= 0:
             raise ValueError("max_tokens must be greater than 0")
