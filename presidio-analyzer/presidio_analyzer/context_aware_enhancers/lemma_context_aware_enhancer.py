@@ -95,14 +95,18 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         # create recognizer context dictionary
         recognizers_dict = {recognizer.id: recognizer for recognizer in recognizers}
 
-        # Create empty list in None or lowercase all context words in the list
-        if not context:
+        # Create empty list if None or lowercase all context words in the list
+        if context is None:
             context = []
         else:
             context = [word.lower() for word in context]
 
-        # Create empty list in None or lowercase all negative context words in the list
-        if not negative_context:
+        # Process negative_context carefully to distinguish between None and []
+        # - None means: use recognizer's default negative_context
+        # - [] means: explicitly disable negative context (don't use recognizer defaults)
+        # - [...] means: use runtime negative_context (may also include recognizer defaults)
+        runtime_negative_context_provided = negative_context is not None
+        if negative_context is None:
             negative_context = []
         else:
             negative_context = [word.lower() for word in negative_context]
@@ -179,10 +183,23 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             # Apply negative context penalty if recognizer has negative_context defined
             # or if negative_context is provided at runtime
             # This is independent of positive boost to always catch negative context
+            #
+            # Semantics:
+            # - If negative_context was None (not provided): use recognizer.negative_context only
+            # - If negative_context was [] (empty list): explicitly disable, don't use recognizer defaults
+            # - If negative_context has values: use recognizer.negative_context + runtime negative_context
             effective_negative_context = []
-            if recognizer.negative_context:
-                effective_negative_context.extend(recognizer.negative_context)
-            if negative_context:
+
+            if not runtime_negative_context_provided:
+                # Runtime negative_context was None, use recognizer's defaults only
+                if recognizer.negative_context:
+                    effective_negative_context.extend(recognizer.negative_context)
+            else:
+                # Runtime negative_context was provided (could be empty list or have values)
+                # Only include recognizer defaults if runtime list is not empty
+                if recognizer.negative_context and negative_context:
+                    effective_negative_context.extend(recognizer.negative_context)
+                # Always include the runtime negative_context (empty or not)
                 effective_negative_context.extend(negative_context)
 
             if effective_negative_context:
