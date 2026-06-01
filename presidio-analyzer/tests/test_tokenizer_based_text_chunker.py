@@ -164,3 +164,20 @@ def test_gliner_invalid_text_chunker_dict_raises():
             supported_entities=["PERSON"],
             text_chunker={"chunker_type": "nonexistent"},
         )
+
+
+def test_slow_tokenizer_raises():
+    """Passing a slow tokenizer (is_fast=False) raises ValueError at init."""
+    tokenizer = _make_tokenizer([], [], model_max_length=512)
+    tokenizer.is_fast = False
+    with pytest.raises(ValueError, match="fast tokenizer"):
+        TokenizerBasedTextChunker(tokenizer=tokenizer)
+
+
+def test_overlap_clamped_for_small_auto_derived_max_tokens():
+    """overlap_tokens is clamped when auto-derived max_tokens is smaller than default overlap."""
+    tokenizer = _make_tokenizer([], [], model_max_length=30)
+    # default overlap_tokens=32, but max_tokens will be 30 → overlap clamped to 29
+    chunker = TokenizerBasedTextChunker(tokenizer=tokenizer)
+    assert chunker.max_tokens == 30
+    assert chunker.overlap_tokens == 29
