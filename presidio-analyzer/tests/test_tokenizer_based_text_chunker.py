@@ -143,3 +143,24 @@ def test_text_chunker_provider_creates_tokenizer_chunker():
     assert isinstance(chunker, TokenizerBasedTextChunker)
     assert chunker.max_tokens == 256
     assert chunker.overlap_tokens == 16
+
+
+def test_text_chunker_provider_unknown_type_raises():
+    """TextChunkerProvider with unknown chunker_type raises ValueError."""
+    from presidio_analyzer.chunkers.text_chunker_provider import TextChunkerProvider
+
+    provider = TextChunkerProvider({"chunker_type": "unknown"})
+    with pytest.raises(ValueError, match="Unknown chunker_type"):
+        provider.create_chunker()
+
+
+def test_gliner_invalid_text_chunker_dict_raises():
+    """GLiNER with invalid text_chunker dict raises ValueError."""
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+    from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
+
+    with pytest.raises(ValueError, match="Unknown chunker_type"):
+        GLiNERRecognizer(
+            supported_entities=["PERSON"],
+            text_chunker={"chunker_type": "nonexistent"},
+        )
