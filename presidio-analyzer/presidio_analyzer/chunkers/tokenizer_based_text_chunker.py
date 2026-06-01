@@ -1,7 +1,7 @@
 """Tokenizer-based text chunker using HuggingFace tokenizers."""
 
 import logging
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List, Optional, Union
 
 from presidio_analyzer.chunkers.base_chunker import BaseTextChunker, TextChunk
 
@@ -41,7 +41,7 @@ class TokenizerBasedTextChunker(BaseTextChunker):
     def __init__(
         self,
         tokenizer: Union[str, "PreTrainedTokenizerBase"],
-        max_tokens: int = None,
+        max_tokens: Optional[int] = None,
         overlap_tokens: int = 32,
     ):
         if isinstance(tokenizer, str):
@@ -55,6 +55,13 @@ class TokenizerBasedTextChunker(BaseTextChunker):
             tokenizer = AutoTokenizer.from_pretrained(tokenizer)
 
         self.tokenizer = tokenizer
+
+        if not getattr(tokenizer, "is_fast", True):
+            raise ValueError(
+                "TokenizerBasedTextChunker requires a fast tokenizer "
+                "(one that supports return_offsets_mapping). "
+                "Use AutoTokenizer.from_pretrained(name, use_fast=True)."
+            )
 
         if max_tokens is None:
             raw = getattr(tokenizer, "model_max_length", _DEFAULT_MAX_TOKENS)
