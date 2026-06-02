@@ -278,9 +278,24 @@ def test_when_name_omitted_derives_distinct_names_from_model(noop_gliner_load):
 
     a = GLiNERRecognizer(model_name="model/a")
     b = GLiNERRecognizer(model_name="model/b")
-    assert a.name == "GLiNERRecognizer_model_a"
-    assert b.name == "GLiNERRecognizer_model_b"
+    assert a.name.startswith("GLiNERRecognizer_model_a_")
+    assert b.name.startswith("GLiNERRecognizer_model_b_")
     assert a.name != b.name
+
+
+def test_when_sanitized_model_names_collide_then_hash_keeps_names_distinct(
+    noop_gliner_load,
+):
+    """Model IDs differing only by punctuation should still get unique names."""
+
+    a = GLiNERRecognizer(model_name="team/model-a")
+    b = GLiNERRecognizer(model_name="team_model_a")
+    punctuation_only = GLiNERRecognizer(model_name="---")
+
+    assert a.name.startswith("GLiNERRecognizer_team_model_a_")
+    assert b.name.startswith("GLiNERRecognizer_team_model_a_")
+    assert a.name != b.name
+    assert punctuation_only.name.startswith("GLiNERRecognizer_model_")
 
 
 def test_when_explicit_name_then_preserved(noop_gliner_load):
@@ -364,5 +379,4 @@ def test_when_model_kwargs_then_passes_to_from_pretrained():
         call_kwargs = mock_gliner_class.from_pretrained.call_args[1]
         assert call_kwargs["custom_param1"] == "value1"
         assert call_kwargs["custom_param2"] == 42
-
 

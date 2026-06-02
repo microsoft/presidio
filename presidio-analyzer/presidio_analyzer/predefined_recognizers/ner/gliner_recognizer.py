@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 import re
@@ -28,11 +29,14 @@ _LEGACY_GLINER_RECOGNIZER_NAME = "GLiNERRecognizer"
 
 
 def _sanitize_model_name_for_instance_name(model_name: str) -> str:
-    """Map a HF-style model id to a deterministic single-token-ish suffix."""
+    """Map a HF-style model id to a deterministic, collision-resistant suffix."""
 
     sanitized = re.sub(r"[^0-9A-Za-z]+", "_", model_name)
     sanitized = re.sub(r"_+", "_", sanitized).strip("_")
-    return sanitized
+    model_hash = hashlib.sha256(model_name.encode("utf-8")).hexdigest()[:8]
+    if not sanitized:
+        sanitized = "model"
+    return f"{sanitized}_{model_hash}"
 
 
 def _default_gliner_recognizer_name(model_name: str) -> str:

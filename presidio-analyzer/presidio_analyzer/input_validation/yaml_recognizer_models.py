@@ -245,27 +245,6 @@ class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
         return super().model_dump(*args, **kwargs)
 
 
-class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
-    """Configuration specifically for GLiNER recognizers."""
-
-    model_config = ConfigDict(extra="allow")
-
-    model_name: Optional[str] = Field(None, description="GLiNER model name")
-    entity_mapping: Optional[Dict[str, str]] = Field(
-        None, description="GLiNER label to Presidio entity mapping"
-    )
-    flat_ner: Optional[bool] = Field(None, description="Whether to use flat NER")
-    multi_label: Optional[bool] = Field(
-        None, description="Whether to use multi-label classification"
-    )
-    threshold: Optional[float] = Field(None, description="Confidence threshold")
-    map_location: Optional[str] = Field(None, description="Model device")
-    load_onnx_model: Optional[bool] = Field(
-        None, description="Whether to load GLiNER with ONNX Runtime"
-    )
-    onnx_model_file: Optional[str] = Field(None, description="ONNX model file name")
-
-
 class CustomRecognizerConfig(BaseRecognizerConfig):
     """Configuration for custom pattern-based recognizers."""
 
