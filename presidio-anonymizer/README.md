@@ -205,9 +205,9 @@ Anonymizer REST API reference details
 
 #### Optional FastAPI server
 
-The anonymizer package also includes a FastAPI server with the same REST endpoints
-as the default Flask server. Install the optional dependencies and run it with
-Uvicorn:
+The anonymizer source tree also includes a FastAPI server with the same REST
+endpoints as the default Flask server. From the `presidio-anonymizer` source
+directory, install the optional dependencies and run it with Uvicorn:
 
 ```sh
 pip install "presidio-anonymizer[fastapi]"

@@ -49,6 +49,8 @@ pytest-mock = "*"
 python-dotenv = "*"
 pre_commit = "*"
 diff-cover = "*"
+fastapi = "*"
+httpx = "*"
 
 [tool.coverage.run]
 relative_files = true

@@ -1,5 +1,6 @@
 """FastAPI REST API server for anonymizer."""
 
+import json
 import logging
 import os
 from logging.config import fileConfig
@@ -50,9 +51,8 @@ class Server:
             return "Presidio Anonymizer service is up"
 
         @self.app.post("/anonymize")
-        def anonymize(content: dict[str, Any]) -> Response:
-            if not content:
-                raise HTTPException(status_code=400, detail="Invalid request json")
+        async def anonymize(request: Request) -> Response:
+            content = await self._json_request_body(request)
 
             anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
                 content.get("anonymizers")
@@ -75,9 +75,8 @@ class Server:
             )
 
         @self.app.post("/deanonymize")
-        def deanonymize(content: dict[str, Any]) -> Response:
-            if not content:
-                raise HTTPException(status_code=400, detail="Invalid request json")
+        async def deanonymize(request: Request) -> Response:
+            content = await self._json_request_body(request)
 
             deanonymize_entities = AppEntitiesConvertor.deanonymize_entities_from_json(
                 content
@@ -104,6 +103,16 @@ class Server:
         def deanonymizers() -> list[str]:
             """Return a list of supported deanonymizers."""
             return self.deanonymize.get_deanonymizers()
+
+    async def _json_request_body(self, request: Request) -> dict[str, Any]:
+        try:
+            content = await request.json()
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="Invalid request json")
+
+        if not content or not isinstance(content, dict):
+            raise HTTPException(status_code=400, detail="Invalid request json")
+        return content
 
     def _add_error_handlers(self) -> None:
         @self.app.exception_handler(InvalidParamError)
