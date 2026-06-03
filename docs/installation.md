@@ -44,9 +44,9 @@ with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
     ```
 
     !!! note "Note"
-        
+
         When using a transformers NLP engine, Presidio would still use spaCy for other capabilities,
-        therefore a small spaCy model (such as en_core_web_sm) is required. 
+        therefore a small spaCy model (such as en_core_web_sm) is required.
         Transformers models would be loaded lazily. To pre-load them, see: [Downloading a pre-trained model](./analyzer/nlp_engines/transformers.md#downloading-a-pre-trained-model)
 
 === "Stanza"
@@ -58,7 +58,7 @@ with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
 
 
     !!! note "Note"
-        
+
         Stanza models would be loaded lazily. To pre-load them, see: [Downloading a pre-trained model](./analyzer/nlp_engines/spacy_stanza.md#download-the-pre-trained-model).
 
 ### GPU acceleration (optional)
@@ -78,7 +78,7 @@ For PII redaction in images
 
     ```sh
     pip install presidio_image_redactor
-    
+
     # Presidio image redactor uses the presidio-analyzer
     # which requires a spaCy language model:
     python -m spacy download en_core_web_lg
@@ -166,6 +166,118 @@ And run:
 ```sh
 docker run -d -p 5001:5001 presidio/presidio-anonymizer
 ```
+
+## Building custom Docker images for additional languages
+
+The official Presidio Docker images only include English (en) language support out of the box.
+To add support for additional languages, you need to build a custom Docker image and configure the relevant YAML files.
+
+### Identify which YAML files to modify
+
+The Docker container for `presidio-analyzer` is driven by three configuration files,
+passed as build arguments:
+
+| Build argument | Default value | Purpose |
+|---|---|---|
+| `NLP_CONF_FILE` | `presidio_analyzer/conf/default.yaml` | Defines which NLP engine and model to use |
+| `ANALYZER_CONF_FILE` | `presidio_analyzer/conf/default_analyzer.yaml` | Analyzer behavior (thresholds, entity mapping) |
+| `RECOGNIZER_REGISTRY_CONF_FILE` | `presidio_analyzer/conf/default_recognizers.yaml` | Which recognizers to load per language |
+
+To add a new language (e.g., German — `de`), you primarily need to modify `default_recognizers.yaml`
+to enable recognizers for that language.
+
+### Modify `default_recognizers.yaml`
+
+Open `presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml`.
+For each recognizer you want to enable for your language, add a language entry:
+
+```yaml
+- name: SpacyRecognizer
+  supported_languages:
+  - language: en
+  - language: de   # ← add your language here
+  type: predefined
+```
+
+Not all recognizers support every language. Check the recognizer's source code or the
+[supported entities list](../supported_entities.md) for per-language coverage.
+
+### Build the custom Docker image
+
+```sh
+docker build \
+  --build-arg RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/default_recognizers.yaml \
+  --build-arg NLP_CONF_FILE=presidio_analyzer/conf/default.yaml \
+  --build-arg ANALYZER_CONF_FILE=presidio_analyzer/conf/default_analyzer.yaml \
+  -t my-presidio-analyzer:de \
+  ./presidio-analyzer
+```
+
+Or, to add multiple languages, modify the YAML files in a local copy and point the build to it:
+
+```sh
+cp -r presidio-analyzer presidio-analyzer-custom
+# edit presidio-analyzer-custom/presidio_analyzer/conf/default_recognizers.yaml
+docker build -t my-presidio-analyzer:multi presidio-analyzer-custom
+```
+
+### Add an NLP model for your language (spaCy)
+
+The default NLP engine is spaCy. To support your language, download the corresponding spaCy model
+and install it in the Dockerfile. In `presidio-analyzer/install_nlp_models.py`, spaCy models are
+installed based on `default.yaml`:
+
+```yaml
+# In default.yaml — add your language model:
+nlp_engine_name: spacy
+models:
+  - lang_code: en
+    model_name: en_core_web_lg
+  - lang_code: de
+    model_name: de_core_news_lg
+```
+
+Then install the model in your custom Dockerfile (add before the final `COPY . /app/` line):
+
+```dockerfile
+RUN python -m spacy download de_core_news_lg
+```
+
+### Typical pitfalls
+
+**Adding too many languages at once causes OOM**
+
+Each language model consumes significant RAM/CPU. If you add many large models (e.g., `de_core_news_lg`,
+`es_core_news_lg`, `fr_core_news_lg`), the Docker container may run out of memory during model loading.
+Start with one language, verify the container starts and responds, then add languages incrementally.
+
+**NLP recognizer warning after adding new languages**
+
+If you see a warning like:
+
+```
+UserWarning: NLP recognizer (e.g. SpacyRecognizer, StanzaRecognizer) is not in the list
+of recognizers for language en.
+```
+
+This means the NLP recognizer is registered for `en` in the `nlp_engine_name` section of `default.yaml`
+but not listed in `default_recognizers.yaml` with `language: en`. To fix, ensure the NLP recognizer
+has `en` in its `supported_languages` list, or remove `en` from the NLP engine configuration if
+you do not need it.
+
+**Memory tuning for production**
+
+For production deployments with multiple language models, consider:
+
+- Setting `WORKERS=1` (default) to limit memory per worker
+- Using `--env "PYTHONMALLOCSTATS=1"` to monitor Python memory usage
+- Allocating sufficient memory to the Docker daemon (minimum 4 GB recommended for 3+ language models)
+
+### Further reading
+
+- [NLP engine configuration](../analyzer/nlp_engines/spacy_stanza.md)
+- [Supported entities list](../supported_entities.md)
+- [Development environment setup](development.md)
 
 ---
 
