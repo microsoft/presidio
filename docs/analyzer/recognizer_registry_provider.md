@@ -112,9 +112,11 @@ The recognizer list comprises of both the predefined and custom recognizers, for
     ```yaml
     - name: GLiNERRecognizer
       type: predefined
+      model_name: urchade/gliner_multi_pii-v1
       text_chunker:
         chunker_type: tokenizer
-        tokenizer: urchade/gliner_multi_pii-v1
+        max_tokens: 512
+        overlap_tokens: 32
     ```
 
 !!! tip "Configuration Tip: Agglutinative languages (e.g., Korean)"

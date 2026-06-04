@@ -96,14 +96,14 @@ gliner_recognizer = GLiNERRecognizer(
 ```yaml
 - name: GLiNERRecognizer
   type: predefined
+  model_name: urchade/gliner_multi_pii-v1
   text_chunker:
     chunker_type: tokenizer
-    tokenizer: urchade/gliner_multi_pii-v1
     max_tokens: 512
     overlap_tokens: 32
 ```
 
-The `tokenizer` chunker uses the model's actual tokenizer to split text by token count, respecting the model's token limit instead of approximating with character counts.
+The `tokenizer` chunker uses the model's own tokenizer (resolved automatically at load time) to split text by token count, respecting the model's token limit instead of approximating with character counts.
 
 ## ONNX Runtime Support
 
