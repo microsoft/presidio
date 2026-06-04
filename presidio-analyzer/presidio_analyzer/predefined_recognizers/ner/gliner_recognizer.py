@@ -1,13 +1,13 @@
 import json
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 from presidio_analyzer import (
     AnalysisExplanation,
     LocalRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.chunkers import BaseTextChunker, TextChunkerProvider
+from presidio_analyzer.chunkers import BaseTextChunker
 from presidio_analyzer.nlp_engine import (
     NerModelConfiguration,
     NlpArtifacts,
@@ -39,7 +39,7 @@ class GLiNERRecognizer(LocalRecognizer):
         multi_label: bool = False,
         threshold: float = 0.30,
         map_location: Optional[str] = None,
-        text_chunker: Optional[Union[BaseTextChunker, Dict[str, Any]]] = None,
+        text_chunker: Optional[BaseTextChunker] = None,
         chunk_size: int = 250,
         chunk_overlap: int = 50,
         load_onnx_model: bool = False,
@@ -66,12 +66,10 @@ class GLiNERRecognizer(LocalRecognizer):
         :param map_location: The device to use for the model.
             If None, will auto-detect GPU or use CPU.
         :param text_chunker: Text chunking strategy. Accepts a BaseTextChunker
-            instance (Python) or a dict config (YAML). If None, uses
-            CharacterBasedTextChunker with provided chunk_size and chunk_overlap.
-            Dict example::
-
-                {"chunker_type": "tokenizer", "tokenizer": "bert-base-uncased"}
-
+            instance. If None, uses CharacterBasedTextChunker with provided
+            chunk_size and chunk_overlap. When loaded from YAML, the registry
+            loader converts the ``text_chunker`` dict to a chunker instance
+            automatically.
         :param chunk_size: Maximum number of characters per chunk.
         :param chunk_overlap: Number of characters to overlap between chunks.
         :param load_onnx_model: Whether to load the model using ONNX Runtime.
@@ -114,9 +112,7 @@ class GLiNERRecognizer(LocalRecognizer):
         self.model_name = model_name
 
         self.map_location = (
-            map_location
-            if map_location is not None
-            else device_detector.get_device()
+            map_location if map_location is not None else device_detector.get_device()
         )
 
         self.flat_ner = flat_ner
@@ -126,10 +122,8 @@ class GLiNERRecognizer(LocalRecognizer):
         self.onnx_model_file = onnx_model_file
         self.model_kwargs = model_kwargs
 
-        # Initialize text chunker (object, dict config, or default)
-        if isinstance(text_chunker, dict):
-            self.text_chunker = TextChunkerProvider(text_chunker).create_chunker()
-        elif text_chunker is not None:
+        # Initialize text chunker (instance or default)
+        if text_chunker is not None:
             self.text_chunker = text_chunker
         else:
             from presidio_analyzer.chunkers import CharacterBasedTextChunker

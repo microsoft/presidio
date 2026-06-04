@@ -1,6 +1,6 @@
 """Pydantic models for YAML recognizer configurations."""
 
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Literal, Optional, Type, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -136,6 +136,29 @@ class BaseRecognizerConfig(BaseModel):
         return self
 
 
+class TextChunkerConfig(BaseModel):
+    """Validated configuration for text chunker instantiation.
+
+    :param chunker_type: Type of chunker ("character" or "tokenizer").
+    :param chunk_size: Character chunk size (character chunker).
+    :param chunk_overlap: Character overlap (character chunker).
+    :param tokenizer: Tokenizer name or instance (tokenizer chunker).
+    :param max_tokens: Max tokens per chunk (tokenizer chunker).
+    :param overlap_tokens: Token overlap (tokenizer chunker).
+    """
+
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
+    chunker_type: Literal["character", "tokenizer"] = Field(
+        ..., description="Type of chunker"
+    )
+    chunk_size: Optional[int] = Field(None, description="Character chunk size")
+    chunk_overlap: Optional[int] = Field(None, description="Character overlap")
+    tokenizer: Optional[Any] = Field(None, description="Tokenizer name or instance")
+    max_tokens: Optional[int] = Field(None, description="Max tokens per chunk")
+    overlap_tokens: Optional[int] = Field(None, description="Token overlap")
+
+
 class PredefinedRecognizerConfig(BaseRecognizerConfig):
     """Configuration for predefined recognizers."""
 
@@ -174,6 +197,17 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
     label_prefixes: Optional[List[str]] = Field(
         default=None, description="Prefixes to strip from labels (e.g. B-, I-)"
     )
+    text_chunker: Optional[Union[TextChunkerConfig, Dict[str, Any]]] = Field(
+        None, description="Text chunker configuration"
+    )
+
+    @field_validator("text_chunker", mode="before")
+    @classmethod
+    def validate_text_chunker(cls, v):
+        """Validate text_chunker dict against TextChunkerConfig."""
+        if isinstance(v, dict):
+            return TextChunkerConfig(**v)
+        return v
 
     def model_dump(self, *args, **kwargs) -> Dict[str, Any]:
         """Serialize the config without None values by default.
@@ -183,7 +217,13 @@ class HuggingFaceRecognizerConfig(PredefinedRecognizerConfig):
         instead of overriding them with explicit None.
         """
         kwargs.setdefault("exclude_none", True)
-        return super().model_dump(*args, **kwargs)
+        result = super().model_dump(*args, **kwargs)
+        # Convert TextChunkerConfig back to plain dict for the loader
+        if "text_chunker" in result and isinstance(
+            self.text_chunker, TextChunkerConfig
+        ):
+            result["text_chunker"] = self.text_chunker.model_dump(exclude_none=True)
+        return result
 
 
 class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
@@ -201,6 +241,17 @@ class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
     load_onnx_model: Optional[bool] = Field(None, description="Load ONNX model")
     onnx_model_file: Optional[str] = Field(None, description="ONNX model file name")
     entity_mapping: Optional[Dict[str, str]] = Field(None, description="Entity mapping")
+    text_chunker: Optional[Union[TextChunkerConfig, Dict[str, Any]]] = Field(
+        None, description="Text chunker configuration"
+    )
+
+    @field_validator("text_chunker", mode="before")
+    @classmethod
+    def validate_text_chunker(cls, v):
+        """Validate text_chunker dict against TextChunkerConfig."""
+        if isinstance(v, dict):
+            return TextChunkerConfig(**v)
+        return v
 
     @model_validator(mode="after")
     def validate_entity_mapping_and_supported_entities(self):
@@ -221,7 +272,12 @@ class GLiNERRecognizerConfig(PredefinedRecognizerConfig):
         instead of overriding them with explicit None.
         """
         kwargs.setdefault("exclude_none", True)
-        return super().model_dump(*args, **kwargs)
+        result = super().model_dump(*args, **kwargs)
+        if "text_chunker" in result and isinstance(
+            self.text_chunker, TextChunkerConfig
+        ):
+            result["text_chunker"] = self.text_chunker.model_dump(exclude_none=True)
+        return result
 
 
 class CustomRecognizerConfig(BaseRecognizerConfig):
@@ -233,9 +289,7 @@ class CustomRecognizerConfig(BaseRecognizerConfig):
     )
     country_code: Optional[str] = Field(
         default=None,
-        description=(
-            "Optional ISO 3166-1 alpha-2 country tag for country filtering"
-        ),
+        description=("Optional ISO 3166-1 alpha-2 country tag for country filtering"),
     )
     patterns: Optional[List[Dict[str, Any]]] = Field(
         default=None, description="List of patterns"
@@ -350,6 +404,7 @@ class RecognizerRegistryConfig(BaseModel):
     recognizers: List[
         Union[
             HuggingFaceRecognizerConfig,
+            GLiNERRecognizerConfig,
             PredefinedRecognizerConfig,
             CustomRecognizerConfig,
             str,

@@ -349,18 +349,40 @@ def test_gliner_custom_chunk_size():
     assert recognizer.text_chunker.chunk_overlap == 60
 
 
-def test_gliner_text_chunker_dict_config():
-    """Test that text_chunker accepts a dict and creates chunker via provider."""
+def test_gliner_text_chunker_dict_config_via_loader():
+    """Test that text_chunker dict is converted to chunker by the registry loader."""
     if sys.version_info < (3, 10):
         pytest.skip("gliner requires Python >= 3.10")
     pytest.importorskip("gliner", reason="GLiNER package is not installed")
+    from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 
-    recognizer = GLiNERRecognizer(
-        supported_entities=["PERSON"],
-        text_chunker={"chunker_type": "character", "chunk_size": 300, "chunk_overlap": 40},
+    provider = RecognizerRegistryProvider(
+        registry_configuration={
+            "supported_languages": ["en"],
+            "global_regex_flags": 26,
+            "recognizers": [
+                {
+                    "name": "GLiNERRecognizer",
+                    "type": "predefined",
+                    "supported_entities": ["PERSON"],
+                    "supported_languages": ["en"],
+                    "text_chunker": {
+                        "chunker_type": "character",
+                        "chunk_size": 300,
+                        "chunk_overlap": 40,
+                    },
+                }
+            ],
+        }
     )
-    assert isinstance(recognizer.text_chunker, CharacterBasedTextChunker)
-    assert recognizer.text_chunker.chunk_size == 300
+    registry = provider.create_recognizer_registry()
+    gliner_recs = [
+        r for r in registry.recognizers if isinstance(r, GLiNERRecognizer)
+    ]
+    assert len(gliner_recs) == 1
+    assert isinstance(gliner_recs[0].text_chunker, CharacterBasedTextChunker)
+    assert gliner_recs[0].text_chunker.chunk_size == 300
+    assert gliner_recs[0].text_chunker.chunk_overlap == 40
 
 
 def test_gliner_text_chunker_object():

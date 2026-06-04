@@ -154,14 +154,16 @@ def test_text_chunker_provider_unknown_type_raises():
         provider.create_chunker()
 
 
-def test_gliner_invalid_text_chunker_dict_raises():
-    """GLiNER with invalid text_chunker dict raises ValueError."""
-    pytest.importorskip("gliner", reason="GLiNER package is not installed")
-    from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
+def test_invalid_text_chunker_dict_rejected_by_pydantic():
+    """Invalid text_chunker dict is rejected by Pydantic validation layer."""
+    from pydantic import ValidationError
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        HuggingFaceRecognizerConfig,
+    )
 
-    with pytest.raises(ValueError, match="Unknown chunker_type"):
-        GLiNERRecognizer(
-            supported_entities=["PERSON"],
+    with pytest.raises(ValidationError, match="chunker_type"):
+        HuggingFaceRecognizerConfig(
+            name="HuggingFaceNerRecognizer",
             text_chunker={"chunker_type": "nonexistent"},
         )
 

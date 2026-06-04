@@ -653,16 +653,41 @@ def test_hf_recognizer_custom_chunk_size(_mock_pipeline):
 
 @patch(HF_PIPELINE_PATH, return_value=MagicMock())
 @pytest.mark.usefixtures("mock_torch_installed")
-def test_hf_recognizer_text_chunker_dict_config(_mock_pipeline):
-    """Test that text_chunker accepts a dict and creates chunker via provider."""
+def test_hf_recognizer_text_chunker_dict_config_via_loader(_mock_pipeline):
+    """Test that text_chunker dict is converted to chunker by the registry loader."""
     from presidio_analyzer.chunkers import CharacterBasedTextChunker
+    from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
 
-    rec = HuggingFaceNerRecognizer(
-        model_name="test-model",
-        text_chunker={"chunker_type": "character", "chunk_size": 300, "chunk_overlap": 40},
+    provider = RecognizerRegistryProvider(
+        registry_configuration={
+            "supported_languages": ["en"],
+            "global_regex_flags": 26,
+            "recognizers": [
+                {
+                    "name": "HF NER",
+                    "type": "predefined",
+                    "class_name": "HuggingFaceNerRecognizer",
+                    "model_name": "test-model",
+                    "supported_languages": ["en"],
+                    "supported_entities": ["PERSON"],
+                    "device": "cpu",
+                    "text_chunker": {
+                        "chunker_type": "character",
+                        "chunk_size": 300,
+                        "chunk_overlap": 40,
+                    },
+                }
+            ],
+        }
     )
-    assert isinstance(rec.text_chunker, CharacterBasedTextChunker)
-    assert rec.text_chunker.chunk_size == 300
+    registry = provider.create_recognizer_registry()
+    hf_recs = [
+        r for r in registry.recognizers if isinstance(r, HuggingFaceNerRecognizer)
+    ]
+    assert len(hf_recs) == 1
+    assert isinstance(hf_recs[0].text_chunker, CharacterBasedTextChunker)
+    assert hf_recs[0].text_chunker.chunk_size == 300
+    assert hf_recs[0].text_chunker.chunk_overlap == 40
 
 
 @patch(HF_PIPELINE_PATH, return_value=MagicMock())
