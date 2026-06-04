@@ -253,3 +253,16 @@ def test_provider_creates_deferred_without_tokenizer():
     assert isinstance(chunker, TokenizerBasedTextChunker)
     assert chunker.is_deferred
     assert chunker.max_tokens == 384
+
+
+def test_missing_offset_mapping_raises():
+    """Tokenizer that doesn't return offset_mapping raises ValueError."""
+    tokenizer = MagicMock()
+    tokenizer.model_max_length = 512
+    tokenizer.num_special_tokens_to_add = lambda pair=False: 0
+    # Return encoding without offset_mapping
+    tokenizer.return_value = {"input_ids": [1, 2]}
+
+    chunker = TokenizerBasedTextChunker(tokenizer=tokenizer, max_tokens=512)
+    with pytest.raises(ValueError, match="offset_mapping"):
+        chunker.chunk("hello world")

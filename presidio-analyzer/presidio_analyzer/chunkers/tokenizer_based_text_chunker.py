@@ -156,7 +156,13 @@ class TokenizerBasedTextChunker(BaseTextChunker):
             truncation=False,
         )
 
-        offsets = encoding["offset_mapping"]
+        offsets = encoding.get("offset_mapping")
+        if offsets is None:
+            raise ValueError(
+                "Tokenizer did not return offset_mapping. "
+                "TokenizerBasedTextChunker requires a fast tokenizer "
+                "(one that supports return_offsets_mapping)."
+            )
         num_tokens = len(offsets)
 
         logger.debug(
