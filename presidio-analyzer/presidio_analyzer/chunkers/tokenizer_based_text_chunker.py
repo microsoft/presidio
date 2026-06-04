@@ -25,12 +25,15 @@ class TokenizerBasedTextChunker(BaseTextChunker):
 
         text_chunker:
           chunker_type: tokenizer
-          tokenizer: bert-base-uncased
           max_tokens: 512
           overlap_tokens: 32
 
-    :param tokenizer: A HuggingFace tokenizer name (str) or a loaded
-        PreTrainedTokenizer instance.
+    When ``tokenizer`` is omitted, the chunker starts in deferred mode and
+    the recognizer resolves it at model-load time using the model's own
+    tokenizer (via :meth:`resolve`).
+
+    :param tokenizer: A HuggingFace tokenizer name (str), a loaded
+        PreTrainedTokenizer instance, or None for deferred mode.
     :param max_tokens: Maximum number of tokens per chunk. Defaults to the
         tokenizer's model_max_length (falls back to 512 if not set or
         unreasonably large).
@@ -40,10 +43,18 @@ class TokenizerBasedTextChunker(BaseTextChunker):
 
     def __init__(
         self,
-        tokenizer: Union[str, "PreTrainedTokenizerBase"],
+        tokenizer: Optional[Union[str, "PreTrainedTokenizerBase"]] = None,
         max_tokens: Optional[int] = None,
         overlap_tokens: int = 32,
     ):
+        if tokenizer is None:
+            # Deferred mode: tokenizer will be provided later via resolve().
+            # Store config for now; validation happens in resolve().
+            self.tokenizer = None
+            self.max_tokens = max_tokens
+            self.overlap_tokens = overlap_tokens
+            return
+
         if isinstance(tokenizer, str):
             try:
                 from transformers import AutoTokenizer
@@ -54,6 +65,15 @@ class TokenizerBasedTextChunker(BaseTextChunker):
                 ) from e
             tokenizer = AutoTokenizer.from_pretrained(tokenizer)
 
+        self._init_with_tokenizer(tokenizer, max_tokens, overlap_tokens)
+
+    def _init_with_tokenizer(
+        self,
+        tokenizer: "PreTrainedTokenizerBase",
+        max_tokens: Optional[int],
+        overlap_tokens: int,
+    ) -> None:
+        """Initialize with a loaded tokenizer instance."""
         self.tokenizer = tokenizer
 
         if not getattr(tokenizer, "is_fast", True):
@@ -98,12 +118,34 @@ class TokenizerBasedTextChunker(BaseTextChunker):
         self.max_tokens = max_tokens
         self.overlap_tokens = overlap_tokens
 
+    def resolve(
+        self, tokenizer: "PreTrainedTokenizerBase"
+    ) -> "TokenizerBasedTextChunker":
+        """Resolve a deferred chunker with the model's own tokenizer.
+
+        :param tokenizer: A loaded HuggingFace fast tokenizer.
+        :return: self, for convenience.
+        """
+        self._init_with_tokenizer(tokenizer, self.max_tokens, self.overlap_tokens)
+        return self
+
+    @property
+    def is_deferred(self) -> bool:
+        """Whether this chunker is waiting for a tokenizer."""
+        return self.tokenizer is None
+
     def chunk(self, text: str) -> List[TextChunk]:
         """Split text into token-aligned chunks with character offset tracking.
 
         :param text: The input text to chunk.
         :return: List of TextChunk objects with text and position information.
+        :raises RuntimeError: If tokenizer has not been resolved yet.
         """
+        if self.tokenizer is None:
+            raise RuntimeError(
+                "TokenizerBasedTextChunker has no tokenizer. "
+                "Either pass one at init or call resolve(tokenizer) first."
+            )
         if not text:
             return []
 

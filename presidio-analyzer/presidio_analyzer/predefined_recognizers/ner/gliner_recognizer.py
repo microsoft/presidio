@@ -158,6 +158,16 @@ class GLiNERRecognizer(LocalRecognizer):
             **self.model_kwargs,
         )
 
+        # Resolve deferred tokenizer chunker using the model's own tokenizer
+        from presidio_analyzer.chunkers import TokenizerBasedTextChunker
+
+        if (
+            isinstance(self.text_chunker, TokenizerBasedTextChunker)
+            and self.text_chunker.is_deferred
+        ):
+            tokenizer = self.gliner.data_processor.transformer_tokenizer
+            self.text_chunker.resolve(tokenizer)
+
     def analyze(
         self,
         text: str,

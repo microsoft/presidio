@@ -183,3 +183,73 @@ def test_overlap_clamped_for_small_auto_derived_max_tokens():
     chunker = TokenizerBasedTextChunker(tokenizer=tokenizer)
     assert chunker.max_tokens == 30
     assert chunker.overlap_tokens == 29
+
+
+def test_deferred_mode_without_tokenizer():
+    """Omitting tokenizer creates a deferred chunker."""
+    chunker = TokenizerBasedTextChunker(max_tokens=256, overlap_tokens=16)
+    assert chunker.is_deferred
+    assert chunker.tokenizer is None
+    assert chunker.max_tokens == 256
+    assert chunker.overlap_tokens == 16
+
+
+def test_deferred_chunk_raises_before_resolve():
+    """Calling chunk() on a deferred chunker raises RuntimeError."""
+    chunker = TokenizerBasedTextChunker(max_tokens=256)
+    with pytest.raises(RuntimeError, match="no tokenizer"):
+        chunker.chunk("hello")
+
+
+def test_deferred_resolve_with_tokenizer():
+    """resolve() initializes the chunker with the provided tokenizer."""
+    chunker = TokenizerBasedTextChunker(max_tokens=256, overlap_tokens=16)
+    assert chunker.is_deferred
+
+    tokenizer = _make_tokenizer([1, 2], [(0, 5), (6, 11)], model_max_length=512)
+    chunker.resolve(tokenizer)
+
+    assert not chunker.is_deferred
+    assert chunker.tokenizer is tokenizer
+    assert chunker.max_tokens == 256
+    assert chunker.overlap_tokens == 16
+
+
+def test_deferred_resolve_auto_derives_max_tokens():
+    """resolve() with max_tokens=None derives from tokenizer's model_max_length."""
+    chunker = TokenizerBasedTextChunker()  # all defaults, deferred
+    assert chunker.is_deferred
+
+    tokenizer = _make_tokenizer([], [], model_max_length=1024)
+    chunker.resolve(tokenizer)
+
+    assert chunker.max_tokens == 1024
+
+
+def test_deferred_chunker_works_after_resolve():
+    """A deferred chunker chunks correctly after resolve()."""
+    text = "Hello world"
+    tokens = [1, 2]
+    offsets = [(0, 5), (6, 11)]
+    tokenizer = _make_tokenizer(tokens, offsets, model_max_length=512)
+
+    chunker = TokenizerBasedTextChunker(max_tokens=512)
+    chunker.resolve(tokenizer)
+
+    chunks = chunker.chunk(text)
+    assert len(chunks) == 1
+    assert chunks[0].text == text
+
+
+def test_provider_creates_deferred_without_tokenizer():
+    """TextChunkerProvider creates deferred chunker when tokenizer is omitted."""
+    from presidio_analyzer.chunkers.text_chunker_provider import TextChunkerProvider
+
+    provider = TextChunkerProvider(
+        {"chunker_type": "tokenizer", "max_tokens": 384, "overlap_tokens": 16}
+    )
+    chunker = provider.create_chunker()
+
+    assert isinstance(chunker, TokenizerBasedTextChunker)
+    assert chunker.is_deferred
+    assert chunker.max_tokens == 384

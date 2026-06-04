@@ -197,15 +197,8 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             # Use sorted set for deterministic order
             final_supported_entities = sorted(list(set(self.label_mapping.values())))
 
-        super().__init__(
-            supported_entities=final_supported_entities,
-            name=name,
-            supported_language=supported_language,
-            version=version,
-            context=context,
-        )
-
-        # Initialize text chunker (instance or default)
+        # Initialize text chunker before super().__init__() because
+        # super() may call load(), which resolves deferred chunkers.
         if text_chunker is not None:
             self.text_chunker = text_chunker
         else:
@@ -213,6 +206,14 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 chunk_size=chunk_size,
                 chunk_overlap=chunk_overlap,
             )
+
+        super().__init__(
+            supported_entities=final_supported_entities,
+            name=name,
+            supported_language=supported_language,
+            version=version,
+            context=context,
+        )
 
         logger.info(
             f"Initialized {self.name} with model={self.model_name}, "
@@ -295,6 +296,15 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         except Exception:
             logger.exception(f"Failed to load model {self.model_name}")
             raise
+
+        # Resolve deferred tokenizer chunker using the pipeline's tokenizer
+        from presidio_analyzer.chunkers import TokenizerBasedTextChunker
+
+        if (
+            isinstance(self.text_chunker, TokenizerBasedTextChunker)
+            and self.text_chunker.is_deferred
+        ):
+            self.text_chunker.resolve(self.ner_pipeline.tokenizer)
 
     def _normalize_label(self, label: str) -> str:
         """Normalize label by removing prefixes like B-/I-/U-/L-.
