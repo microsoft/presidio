@@ -112,6 +112,66 @@ docker run -d -p 5002:3000 mcr.microsoft.com/presidio-analyzer:latest
 docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
 ```
 
+#### Building a custom `presidio-analyzer` image
+
+The published analyzer image ships with the default English-only YAML files:
+
+- `presidio_analyzer/conf/default_analyzer.yaml`
+- `presidio_analyzer/conf/default.yaml`
+- `presidio_analyzer/conf/default_recognizers.yaml`
+
+To add more languages or enable a different recognizer mix, create custom copies
+of those files inside the `presidio-analyzer/` build context and point the Docker
+build to them with build arguments.
+
+For example:
+
+```sh
+cp presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml \
+  presidio-analyzer/presidio_analyzer/conf/custom_analyzer.yaml
+cp presidio-analyzer/presidio_analyzer/conf/default.yaml \
+  presidio-analyzer/presidio_analyzer/conf/custom_nlp.yaml
+cp presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml \
+  presidio-analyzer/presidio_analyzer/conf/custom_recognizers.yaml
+```
+
+Then update the copies as needed:
+
+- Add every runtime language to `supported_languages` in both
+  `custom_analyzer.yaml` and `custom_recognizers.yaml`.
+- Configure the NLP models for those languages in `custom_nlp.yaml`.
+- Enable or add recognizers that should run for the new languages.
+
+Build the image with the custom file paths:
+
+```sh
+docker build ./presidio-analyzer \
+  -t presidio/presidio-analyzer-custom \
+  --build-arg ANALYZER_CONF_FILE=presidio_analyzer/conf/custom_analyzer.yaml \
+  --build-arg NLP_CONF_FILE=presidio_analyzer/conf/custom_nlp.yaml \
+  --build-arg RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/custom_recognizers.yaml
+```
+
+Run it the same way as the default image:
+
+```sh
+docker run -d -p 5002:3000 presidio/presidio-analyzer-custom
+```
+
+!!! note "Important configuration checks"
+
+    - `supported_languages` must match between the analyzer and recognizer-registry YAML files.
+    - The Docker build installs the NLP models declared in `NLP_CONF_FILE` (or in the analyzer file if you use a single combined config), so adding more or larger models increases build time and image size.
+    - If the container logs warnings such as `NLP recognizer ... is not in the list of recognizers for language ...`, check that the recognizer registry still includes the NLP recognizer for that language (for example `SpacyRecognizer`) and that the same language code appears in both YAML files.
+    - If you are experimenting with many languages at once, start with a smaller subset first. Downloading and loading several large NLP models in one image can significantly increase memory usage during build and startup.
+
+For more background on the YAML structure, see:
+
+- [Analyzer Engine Provider](analyzer/analyzer_engine_provider.md)
+- [PII detection in different languages](analyzer/languages.md)
+- [Customizing NLP models](analyzer/customizing_nlp_models.md)
+- [Recognizer registry configuration](analyzer/recognizer_registry_provider.md)
+
 ### For PII redaction in images
 
 For PII detection in images, the `presidio-image-redactor` is required.
