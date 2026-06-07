@@ -23,10 +23,10 @@ class PIIEntity(ABC):
     def __repr__(self):
         """Return a string representation of the object."""
         return (
-            f"start: {self.start}"
-            f"end: {self.end},"
-            f"entity_type: {self.entity_type}"
-            f"score: {self.score}"
+            f"start: {self.start}, "
+            f"end: {self.end}, "
+            f"entity_type: {self.entity_type}, "
+            f"score: {getattr(self, 'score', None)}"
         )
 
     def __gt__(self, other):
