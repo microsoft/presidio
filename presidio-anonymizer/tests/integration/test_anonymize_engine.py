@@ -426,7 +426,7 @@ def test_given_score_in_result_then_it_is_present_in_json_output():
     result = engine.anonymize(text, analyzer_results, anonymizer_config)
     output = json.loads(result.to_json())
     assert output["items"][0]["score"] == 0.85
-    
+
 def run_engine_and_validate(
     text: str, anonymizers_config, analyzer_results, expected_result
 ):

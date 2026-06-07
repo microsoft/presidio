@@ -73,7 +73,7 @@ class EngineBase(ABC):
                 entity.entity_type,
                 changed_text,
                 operator_metadata.operator_name,
-                entity.score,
+                getattr(entity, "score", None),
             )
             engine_result.add_item(result_item)
 
