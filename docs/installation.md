@@ -120,7 +120,7 @@ The published analyzer image ships with the default English-only YAML files:
 - `presidio_analyzer/conf/default.yaml`
 - `presidio_analyzer/conf/default_recognizers.yaml`
 
-From the repository root (after cloning this repo), run the following commands to add
+From the repository root after cloning this repo, run the following commands to add
 more languages or enable a different recognizer mix. Create custom copies of those
 files inside the `presidio-analyzer/` build context and point the Docker build to
 them with build arguments.
@@ -128,6 +128,8 @@ them with build arguments.
 For example:
 
 ```sh
+cd /path/to/presidio
+
 cp presidio-analyzer/presidio_analyzer/conf/default_analyzer.yaml \
   presidio-analyzer/presidio_analyzer/conf/custom_analyzer.yaml
 cp presidio-analyzer/presidio_analyzer/conf/default.yaml \
@@ -147,7 +149,7 @@ Build the image with the custom file paths:
 
 ```sh
 docker build ./presidio-analyzer \
-  -t myorg/presidio-analyzer-custom \
+  -t presidio-analyzer-custom \
   --build-arg ANALYZER_CONF_FILE=presidio_analyzer/conf/custom_analyzer.yaml \
   --build-arg NLP_CONF_FILE=presidio_analyzer/conf/custom_nlp.yaml \
   --build-arg RECOGNIZER_REGISTRY_CONF_FILE=presidio_analyzer/conf/custom_recognizers.yaml
@@ -156,7 +158,7 @@ docker build ./presidio-analyzer \
 Run it the same way as the default image:
 
 ```sh
-docker run -d -p 5002:3000 myorg/presidio-analyzer-custom
+docker run -d -p 5002:3000 presidio-analyzer-custom
 ```
 
 !!! note "Important configuration checks"
