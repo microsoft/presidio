@@ -75,5 +75,5 @@ class OperatorResult(PIIEntity):
             entity_type=entity_type,
             text=text,
             operator=operator,
-            score=score,
+            score=float(score) if score is not None else None,
         )
