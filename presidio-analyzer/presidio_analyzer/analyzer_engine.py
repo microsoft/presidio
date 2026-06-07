@@ -25,6 +25,7 @@ logger = logging.getLogger("presidio-analyzer")
 
 REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
 
+
 class AnalyzerEngine:
     """
     Entry point for Presidio Analyzer.
@@ -267,6 +268,107 @@ class AnalyzerEngine:
             results = self.__remove_decision_process(results)
 
         return results
+
+    def analyze_batch(
+        self,
+        texts: List[str],
+        language: str,
+        entities: Optional[List[str]] = None,
+        correlation_id: Optional[str] = None,
+        score_threshold: Optional[float] = None,
+        return_decision_process: Optional[bool] = False,
+        ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
+        context: Optional[List[str]] = None,
+        allow_list: Optional[List[str]] = None,
+        allow_list_match: Optional[str] = "exact",
+        regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
+        nlp_artifacts_list: Optional[List[NlpArtifacts]] = None,
+    ) -> List[List[RecognizerResult]]:
+        """Find PII entities in multiple texts using batch processing.
+
+        Enables recognizers with batch-capable models (e.g. transformer
+        recognizers) to process multiple texts in a single forward pass
+        for improved throughput.
+
+        :param texts: List of texts to analyze
+        :param language: The language of the texts
+        :param entities: List of PII entities that should be looked for.
+            If None then all entities are looked for.
+        :param correlation_id: Cross call ID for this request
+        :param score_threshold: Minimum confidence value for detected entities
+        :param return_decision_process: Whether to include analysis explanation
+        :param ad_hoc_recognizers: List of recognizers for this specific request
+        :param context: List of context words to enhance confidence score
+        :param allow_list: List of allowed words to exclude from results
+        :param allow_list_match: How allow_list is interpreted ("exact" or "regex")
+        :param regex_flags: Regex flags for allow_list_match="regex"
+        :param nlp_artifacts_list: Precomputed NLP artifacts per text
+        :return: List of lists of RecognizerResult, one per input text
+        """
+        all_fields = not entities
+
+        recognizers = self.registry.get_recognizers(
+            language=language,
+            entities=entities,
+            all_fields=all_fields,
+            ad_hoc_recognizers=ad_hoc_recognizers,
+        )
+
+        if all_fields:
+            entities = self.get_supported_entities(language=language)
+
+        # Compute NLP artifacts for each text if not provided
+        if nlp_artifacts_list is None:
+            nlp_artifacts_list = [
+                self.nlp_engine.process_text(t, language) for t in texts
+            ]
+
+        # Aggregate results from all recognizers per text
+        num_texts = len(texts)
+        per_text_results: List[List[RecognizerResult]] = [[] for _ in range(num_texts)]
+
+        for recognizer in recognizers:
+            # Lazy loading
+            if not recognizer.is_loaded:
+                recognizer.load()
+                recognizer.is_loaded = True
+
+            # Call batch_analyze on the recognizer
+            recognizer_batch_results = recognizer.batch_analyze(
+                texts=texts,
+                entities=entities,
+                nlp_artifacts_list=nlp_artifacts_list,
+            )
+
+            # Merge results per text
+            for i, current_results in enumerate(recognizer_batch_results):
+                if current_results:
+                    self.__add_recognizer_id_if_not_exists(current_results, recognizer)
+                    per_text_results[i].extend(current_results)
+
+        # Per-text post-processing
+        final_results = []
+        for i in range(num_texts):
+            results = per_text_results[i]
+
+            results = self._enhance_using_context(
+                texts[i], results, nlp_artifacts_list[i], recognizers, context
+            )
+
+            results = EntityRecognizer.remove_duplicates(results)
+            results = self.__remove_low_scores(results, score_threshold)
+
+            if allow_list:
+                results = self._remove_allow_list(
+                    results, allow_list, texts[i], regex_flags, allow_list_match
+                )
+
+            if not return_decision_process:
+                results = self.__remove_decision_process(results)
+
+            final_results.append(results)
+
+        return final_results
 
     def _enhance_using_context(
         self,

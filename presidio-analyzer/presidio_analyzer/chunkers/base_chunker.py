@@ -1,4 +1,5 @@
 """Abstract base class for text chunking strategies."""
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Callable, List
@@ -63,6 +64,92 @@ class BaseTextChunker(ABC):
 
         predictions = self._process_chunks(chunks, predict_func)
         return self.deduplicate_overlapping_entities(predictions)
+
+    def predict_batch_with_chunking(
+        self,
+        texts: List[str],
+        predict_batch_func: Callable[[List[str]], List[List["RecognizerResult"]]],
+    ) -> List[List["RecognizerResult"]]:
+        """Process multiple texts with automatic chunking for batch inference.
+
+        Chunks all texts, batches them into a single call to predict_batch_func,
+        then unflattens and adjusts offsets.
+
+        :param texts: List of input texts to process
+        :param predict_batch_func: Function that takes a list of texts and returns
+            a list of lists of RecognizerResult objects
+        :return: List of RecognizerResult lists, one per input text
+        """
+        from presidio_analyzer import RecognizerResult
+
+        if not texts:
+            return []
+
+        # Build flat list of all chunk texts with tracking metadata
+        # Each entry: (text_index, chunk, is_single_chunk)
+        all_chunks = []
+        flat_chunk_texts = []
+        multi_chunk_texts = set()
+
+        for text_idx, text in enumerate(texts):
+            chunks = self.chunk(text)
+            if not chunks:
+                # No chunks produced; record a sentinel
+                all_chunks.append((text_idx, None, True))
+            elif len(chunks) == 1:
+                # Single chunk - use original text for consistency
+                all_chunks.append((text_idx, chunks[0], True))
+                flat_chunk_texts.append(text)
+            else:
+                multi_chunk_texts.add(text_idx)
+                for chunk in chunks:
+                    all_chunks.append((text_idx, chunk, False))
+                    flat_chunk_texts.append(chunk.text)
+
+        # Call predict_batch_func once with all chunk texts
+        if flat_chunk_texts:
+            flat_results = predict_batch_func(flat_chunk_texts)
+        else:
+            flat_results = []
+
+        # Unflatten results back to per-text structure
+        num_texts = len(texts)
+        per_text_results: List[List["RecognizerResult"]] = [
+            [] for _ in range(num_texts)
+        ]
+
+        flat_idx = 0
+        for text_idx, chunk, is_single in all_chunks:
+            if chunk is None:
+                # No chunks for this text, skip
+                continue
+
+            chunk_results = flat_results[flat_idx]
+            flat_idx += 1
+
+            if is_single:
+                # Single chunk covering entire text - no offset adjustment
+                per_text_results[text_idx].extend(chunk_results)
+            else:
+                # Adjust offsets using chunk.start
+                for pred in chunk_results:
+                    adjusted_pred = RecognizerResult(
+                        entity_type=pred.entity_type,
+                        start=pred.start + chunk.start,
+                        end=pred.end + chunk.start,
+                        score=pred.score,
+                        analysis_explanation=pred.analysis_explanation,
+                        recognition_metadata=pred.recognition_metadata,
+                    )
+                    per_text_results[text_idx].append(adjusted_pred)
+
+        # Deduplicate overlapping entities for texts that had multiple chunks
+        for text_idx in multi_chunk_texts:
+            per_text_results[text_idx] = self.deduplicate_overlapping_entities(
+                per_text_results[text_idx]
+            )
+
+        return per_text_results
 
     def _process_chunks(
         self,

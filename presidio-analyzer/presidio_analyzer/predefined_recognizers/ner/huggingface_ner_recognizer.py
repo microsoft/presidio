@@ -117,6 +117,7 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         tokenizer_name: Optional[str] = None,
         text_chunker: Optional[BaseTextChunker] = None,
         label_prefixes: Optional[List[str]] = None,
+        inference_batch_size: int = 8,
         **kwargs,
     ):
         """Initialize the HuggingFace NER Recognizer.
@@ -147,6 +148,8 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         :param text_chunker: Custom text chunking strategy. If None, uses
             CharacterBasedTextChunker with provided chunk_size and chunk_overlap.
         :param label_prefixes: List of label prefixes to strip (e.g., B-, I-).
+        :param inference_batch_size: Batch size for HuggingFace pipeline
+            batch inference. Defaults to 8.
         :raises ImportError: If transformers or torch libraries are not installed.
         """
         # Early check for required dependencies
@@ -175,6 +178,7 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             )
         self.device = self._parse_device(device)
         self.label_prefixes = label_prefixes or ["B-", "I-", "U-", "L-"]
+        self.inference_batch_size = inference_batch_size
         self.ner_pipeline = None
 
         if kwargs:
@@ -391,6 +395,97 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
 
         return chunk_results
 
+    def _predict_batch_chunks(
+        self, chunk_texts: List[str]
+    ) -> List[List[RecognizerResult]]:
+        """Perform NER prediction on multiple text chunks in a single batch.
+
+        Uses HuggingFace pipeline's built-in batching for efficiency.
+
+        :param chunk_texts: List of text chunks to analyze.
+        :return: List of lists of RecognizerResult objects, one list per chunk.
+        """
+        try:
+            batch_preds = self.ner_pipeline(
+                chunk_texts, batch_size=self.inference_batch_size
+            )
+        except Exception as e:
+            logger.warning(
+                f"Batch NER prediction failed, falling back to sequential: {e}",
+                exc_info=True,
+            )
+            return [self._predict_chunk(t) for t in chunk_texts]
+
+        all_results = []
+        for preds in batch_preds:
+            chunk_results = []
+
+            if not isinstance(preds, list):
+                logger.warning("Unexpected pipeline output type: %s", type(preds))
+                all_results.append([])
+                continue
+
+            for pred in preds:
+                if not isinstance(pred, dict):
+                    logger.warning("Unexpected prediction item type: %s", type(pred))
+                    continue
+
+                raw_label = pred.get("entity_group") or pred.get("entity")
+                if not raw_label:
+                    continue
+
+                model_label = self._normalize_label(raw_label)
+                presidio_entity = self.label_mapping.get(model_label)
+                if not presidio_entity:
+                    presidio_entity = model_label
+
+                raw_score = pred.get("score", 0.0)
+                try:
+                    score = float(raw_score)
+                except (TypeError, ValueError):
+                    logger.warning("Failed to convert score to float: %r", raw_score)
+                    continue
+
+                if score < self.threshold:
+                    continue
+
+                start = pred.get("start")
+                end = pred.get("end")
+                if start is None or end is None:
+                    continue
+
+                if raw_label == model_label:
+                    textual_explanation = (
+                        f"Identified as {presidio_entity} by {self.model_name} "
+                        f"(label: {raw_label})"
+                    )
+                else:
+                    textual_explanation = (
+                        f"Identified as {presidio_entity} by {self.model_name} "
+                        f"(original label: {raw_label}, "
+                        f"normalized: {model_label})"
+                    )
+
+                explanation = AnalysisExplanation(
+                    recognizer=self.name,
+                    original_score=score,
+                    textual_explanation=textual_explanation,
+                )
+
+                chunk_results.append(
+                    RecognizerResult(
+                        entity_type=presidio_entity,
+                        start=start,
+                        end=end,
+                        score=score,
+                        analysis_explanation=explanation,
+                    )
+                )
+
+            all_results.append(chunk_results)
+
+        return all_results
+
     def analyze(
         self,
         text: str,
@@ -437,3 +532,47 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             ]
 
         return results
+
+    def batch_analyze(
+        self,
+        texts: List[str],
+        entities: List[str],
+        nlp_artifacts_list: List[Optional[NlpArtifacts]],
+    ) -> List[List[RecognizerResult]]:
+        """Analyze multiple texts for entities using batch inference.
+
+        Overrides the default sequential implementation to leverage
+        HuggingFace pipeline's batch processing for GPU efficiency.
+
+        :param texts: List of texts to analyze
+        :param entities: Entity types to detect
+        :param nlp_artifacts_list: Parallel list of NLP artifacts (ignored)
+        :return: List of results per text, aligned with input texts
+        """
+        if not texts:
+            return []
+
+        entities = entities or []
+
+        if not self.ner_pipeline:
+            self.load()
+
+        all_results = self.text_chunker.predict_batch_with_chunking(
+            texts=texts,
+            predict_batch_func=self._predict_batch_chunks,
+        )
+
+        # Apply entity filtering per text (same as analyze())
+        if entities:
+            requested = set(entities)
+            supported = set(self.supported_entities)
+            all_results = [
+                [
+                    r
+                    for r in text_results
+                    if (r.entity_type in requested) or (r.entity_type not in supported)
+                ]
+                for text_results in all_results
+            ]
+
+        return all_results

@@ -177,6 +177,28 @@ class EntityRecognizer:
         """
         return None
 
+    def batch_analyze(
+        self,
+        texts: List[str],
+        entities: List[str],
+        nlp_artifacts_list: List[Optional["NlpArtifacts"]],
+    ) -> List[List[RecognizerResult]]:
+        """Analyze multiple texts for entities.
+
+        Default implementation iterates and calls analyze() per text.
+        Subclasses with batch-capable models (e.g. transformer recognizers)
+        should override for GPU efficiency.
+
+        :param texts: List of texts to analyze
+        :param entities: Entity types to detect
+        :param nlp_artifacts_list: Parallel list of NLP artifacts (one per text)
+        :return: List of results per text, aligned with input texts
+        """
+        return [
+            self.analyze(text=text, entities=entities, nlp_artifacts=artifacts)
+            for text, artifacts in zip(texts, nlp_artifacts_list)
+        ]
+
     def enhance_using_context(
         self,
         text: str,
