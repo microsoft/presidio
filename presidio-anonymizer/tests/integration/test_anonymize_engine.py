@@ -1,4 +1,5 @@
 import re
+import json
 
 import pytest
 
@@ -423,8 +424,6 @@ def test_given_score_in_result_then_it_is_present_in_json_output():
 
     engine = AnonymizerEngine()
     result = engine.anonymize(text, analyzer_results, anonymizer_config)
-
-    import json
     output = json.loads(result.to_json())
     assert output["items"][0]["score"] == 0.85
     
