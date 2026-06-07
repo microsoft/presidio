@@ -26,6 +26,7 @@ class PIIEntity(ABC):
             f"start: {self.start}"
             f"end: {self.end},"
             f"entity_type: {self.entity_type}"
+            f"score: {self.score}"
         )
 
     def __gt__(self, other):
