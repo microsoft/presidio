@@ -10,23 +10,13 @@ from presidio_analyzer import (
     BatchAnalyzerEngine,
     RecognizerResult,
 )
-from presidio_analyzer.chunkers import BaseTextChunker, CharacterBasedTextChunker
+from presidio_analyzer.chunkers import BaseTextChunker
 from presidio_analyzer.chunkers.base_chunker import TextChunk
 
 
 # ---------------------------------------------------------------------------
 # 7a. EntityRecognizer.batch_analyze — default implementation
 # ---------------------------------------------------------------------------
-
-
-class _ConcreteRecognizer:
-    """Minimal concrete recognizer for testing batch_analyze default."""
-
-    def __init__(self, results_map=None):
-        self.results_map = results_map or {}
-
-    def analyze(self, text, entities, nlp_artifacts):
-        return self.results_map.get(text, [])
 
 
 def test_entity_recognizer_batch_analyze_default(analyzer_engine_simple):
@@ -65,6 +55,15 @@ def test_entity_recognizer_batch_analyze_empty():
 
     rec = CreditCardRecognizer()
     assert rec.batch_analyze([], [], []) == []
+
+
+def test_entity_recognizer_batch_analyze_length_mismatch_raises():
+    """batch_analyze raises ValueError when texts/artifacts lengths differ."""
+    from presidio_analyzer.predefined_recognizers import CreditCardRecognizer
+
+    rec = CreditCardRecognizer()
+    with pytest.raises(ValueError, match="Length mismatch"):
+        rec.batch_analyze(["a", "b"], [], [None])  # 2 texts, 1 artifact
 
 
 # ---------------------------------------------------------------------------
@@ -184,6 +183,18 @@ def test_predict_batch_empty_input():
     chunker = _SimpleChunker()
     results = chunker.predict_batch_with_chunking([], lambda x: [])
     assert results == []
+
+
+def test_predict_batch_func_returns_wrong_length_raises():
+    """predict_batch_with_chunking raises when predict_batch_func returns
+    a list of a different length than the input."""
+    chunker = _SimpleChunker(max_len=100)
+
+    def bad_predict(chunk_texts):
+        return [[]]  # too few results
+
+    with pytest.raises(ValueError, match="must return one result list"):
+        chunker.predict_batch_with_chunking(["a", "b"], bad_predict)
 
 
 def test_predict_batch_deduplication_on_overlapping_chunks():
@@ -653,6 +664,17 @@ def test_analyze_batch_with_precomputed_artifacts(analyzer_engine_simple):
     assert len(results) == 1
     assert len(results[0]) == 1
     assert results[0][0].entity_type == "PHONE_NUMBER"
+
+
+def test_analyze_batch_artifacts_length_mismatch_raises(analyzer_engine_simple):
+    """analyze_batch raises ValueError when nlp_artifacts_list length
+    differs from texts length."""
+    with pytest.raises(ValueError, match="Length mismatch"):
+        analyzer_engine_simple.analyze_batch(
+            texts=["a", "b"],
+            language="en",
+            nlp_artifacts_list=[],  # empty — mismatch
+        )
 
 
 # ---------------------------------------------------------------------------

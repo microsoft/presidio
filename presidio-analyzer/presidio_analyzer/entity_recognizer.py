@@ -193,7 +193,14 @@ class EntityRecognizer:
         :param entities: Entity types to detect
         :param nlp_artifacts_list: Parallel list of NLP artifacts (one per text)
         :return: List of results per text, aligned with input texts
+        :raises ValueError: If nlp_artifacts_list length does not match texts
         """
+        if len(nlp_artifacts_list) != len(texts):
+            raise ValueError(
+                f"Length mismatch: texts has {len(texts)} items but "
+                f"nlp_artifacts_list has {len(nlp_artifacts_list)} items. "
+                "They must be parallel lists."
+            )
         return [
             self.analyze(text=text, entities=entities, nlp_artifacts=artifacts)
             for text, artifacts in zip(texts, nlp_artifacts_list)

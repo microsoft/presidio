@@ -75,10 +75,20 @@ class BaseTextChunker(ABC):
         Chunks all texts, batches them into a single call to predict_batch_func,
         then unflattens and adjusts offsets.
 
+        Note on memory: all chunk strings are collected into one Python list
+        before being passed to predict_batch_func. The list itself is small
+        (just string references). The GPU/CPU memory bound for the actual
+        model forward pass is the responsibility of predict_batch_func — for
+        the in-tree recognizers, that is enforced via `inference_batch_size`
+        which caps the per-forward-pass batch.
+
         :param texts: List of input texts to process
         :param predict_batch_func: Function that takes a list of texts and returns
-            a list of lists of RecognizerResult objects
+            a list of lists of RecognizerResult objects. Must return exactly
+            one result list per input chunk.
         :return: List of RecognizerResult lists, one per input text
+        :raises ValueError: If predict_batch_func returns a list of a length
+            different from its input list.
         """
         from presidio_analyzer import RecognizerResult
 
@@ -109,6 +119,12 @@ class BaseTextChunker(ABC):
         # Call predict_batch_func once with all chunk texts
         if flat_chunk_texts:
             flat_results = predict_batch_func(flat_chunk_texts)
+            if len(flat_results) != len(flat_chunk_texts):
+                raise ValueError(
+                    f"predict_batch_func returned {len(flat_results)} results "
+                    f"for {len(flat_chunk_texts)} input chunks. The function "
+                    "must return one result list per input chunk."
+                )
         else:
             flat_results = []
 

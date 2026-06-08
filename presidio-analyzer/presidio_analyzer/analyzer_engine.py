@@ -317,11 +317,18 @@ class AnalyzerEngine:
         if all_fields:
             entities = self.get_supported_entities(language=language)
 
-        # Compute NLP artifacts for each text if not provided
+        # Compute NLP artifacts for each text if not provided; otherwise
+        # validate the caller-supplied list matches texts length.
         if nlp_artifacts_list is None:
             nlp_artifacts_list = [
                 self.nlp_engine.process_text(t, language) for t in texts
             ]
+        elif len(nlp_artifacts_list) != len(texts):
+            raise ValueError(
+                f"Length mismatch: texts has {len(texts)} items but "
+                f"nlp_artifacts_list has {len(nlp_artifacts_list)} items. "
+                "They must be parallel lists."
+            )
 
         # Aggregate results from all recognizers per text
         num_texts = len(texts)
