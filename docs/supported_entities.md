@@ -120,6 +120,14 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | NG_NIN     | The Nigerian National Identification Number (NIN) is a unique 11-digit number issued by the National Identity Management Commission (NIMC). | Pattern match, context, and checksum |
 | NG_VEHICLE_REGISTRATION | Nigerian vehicle registration plate number in the current format (2011+): 3 letters (LGA code), 3 digits (serial), 2 letters (year/batch). | Pattern match and context |
 
+### Philippines
+
+|FieldType|Description|Detection Method|
+|--- |--- |--- |
+|PH_LICENSE_PLATE|Philippine vehicle license plate number. Supports modern private plates (3 letters + 4 digits, e.g. ABC 1234), motorcycle plates (4 digits + 3 letters, e.g. 1234 ABC), legacy private plates (2 letters + 4 digits, e.g. AB 1234), and conduction stickers (e.g. C12D345). Space, dash, or no separator accepted.|Pattern match and context|
+
+
+
 ### Canada
 
 |FieldType|Description|Detection Method|

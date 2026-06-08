@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+## Unreleased
+
 ### Anonymizer
 #### Fixed
 - Custom operator `validate()` no longer calls the user-supplied lambda with a dummy `"PII"` value. Previously, stateful lambdas (e.g. those accumulating a token-to-original-value map for de-anonymization) would receive a spurious invocation during validation, inserting a junk entry (`{"TOKEN_1": "PII"}`) into the map and skewing all subsequent token counters. The return-type contract is now enforced in `operate()` when the lambda runs on real data. Fixes [#2024](https://github.com/microsoft/presidio/issues/2024).
@@ -27,6 +29,9 @@ All notable changes to this project will be documented in this file.
 
 - Added `supported_entity` parameter to `PhoneRecognizer`. Previously, this recognizer hard-coded `["PHONE_NUMBER"]` as the only possible supported entity.
 
+- feat(analyzer): Add Philippines license plate recognizer (PH_LICENSE_PLATE) (#2015)
+
+
 #### Fixed
 - Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
@@ -36,6 +41,10 @@ All notable changes to this project will be documented in this file.
 - Fixed incorrect check-digit algorithm in `DeLanrRecognizer`; now uses KBV Arztnummern-Richtlinie weights [4,9,4,9,4,9] without the spurious Quersumme step, and the complement-to-10 formula `(10 − sum mod 10) mod 10`. Previous weights and formula were internally self-consistent only.
 - Enforced post-2016 BZSt repetition rule in `DeTaxIdRecognizer` (no digit may appear more than three times in positions 1–10).
 - Registered `DeLanrRecognizer`, `DeBsnrRecognizer`, `DeVatIdRecognizer` and `DeFuehrerscheinRecognizer` in the default registry (previously imported but missing from `conf/default_recognizers.yaml`, so they were unreachable via the default registry).
+- Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
+- Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
+- Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
+- Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).
 
 #### Added
 - ISO 7064 Mod 11,10 structural checksum in `DeVatIdRecognizer`. Algorithm identical to `DeTaxIdRecognizer`; widely used by community validators (python-stdnum, VIES-adjacent).
@@ -809,4 +818,5 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 [2.2.23]: https://github.com/microsoft/presidio/compare/2.2.2...2.2.23
 [2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
 [2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
+
 
