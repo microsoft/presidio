@@ -22,12 +22,15 @@ class PIIEntity(ABC):
 
     def __repr__(self):
         """Return a string representation of the object."""
-        return (
+        repr = (
             f"start: {self.start}, "
             f"end: {self.end}, "
-            f"entity_type: {self.entity_type}, "
-            f"score: {getattr(self, 'score', None)}"
+            f"entity_type: {self.entity_type}"
         )
+        score = getattr(self, "score", None)
+        if score is not None:
+            repr = repr + f", score: {score}"
+        return repr
 
     def __gt__(self, other):
         """Check one entity is greater then other by the text end index."""

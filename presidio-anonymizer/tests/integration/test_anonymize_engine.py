@@ -319,7 +319,6 @@ def test_when_hash_with_user_provided_salt_then_hash_is_reproducible():
 )
 def test_hash_with_known_salt_produces_expected_output(text, salt, hash_type, expected_hash):
     """Test that hashing with a known salt produces expected deterministic output."""
-    from presidio_anonymizer import AnonymizerEngine
     
     params = {"hash_type": hash_type, "salt": salt}
     anonymizer_config = {"DEFAULT": OperatorConfig("hash", params)}
@@ -424,8 +423,10 @@ def test_given_score_in_result_then_it_is_present_in_json_output():
 
     engine = AnonymizerEngine()
     result = engine.anonymize(text, analyzer_results, anonymizer_config)
+
     output = json.loads(result.to_json())
     assert output["items"][0]["score"] == pytest.approx(0.85)
+
 
 def run_engine_and_validate(
     text: str, anonymizers_config, analyzer_results, expected_result

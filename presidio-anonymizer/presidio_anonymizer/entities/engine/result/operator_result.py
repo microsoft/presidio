@@ -26,7 +26,7 @@ class OperatorResult(PIIEntity):
 
     def to_dict(self) -> Dict:
         """Return object as Dict."""
-        return self.__dict__
+        return dict(self.__dict__)
 
     def __str__(self):
         """Return a string representation of the object."""
