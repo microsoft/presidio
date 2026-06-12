@@ -11,7 +11,7 @@ Two tiers:
    The weights are random, so they assert on mechanics (spans, types,
    thresholds, torch/ort parity), not on meaningful predictions.
 2. Semantic tests with the Stanford de-identifier — the model family used
-   by conf/onnx.yaml and already downloaded by the engine tests (conftest
+   by conf/hf_ner_onnx.yaml and already downloaded by the engine tests (conftest
    references the torch variant). These assert on actual PII detection,
    and the ort test covers the mixed-layout repo scenario (ONNX under
    onnx/, tokenizer at root) that requires subfolder/file_name scoping.
