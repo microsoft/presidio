@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 - Added `supported_entity` parameter to `PhoneRecognizer`. Previously, this recognizer hard-coded `["PHONE_NUMBER"]` as the only possible supported entity.
 
 #### Fixed
+- Fixed a false-negative in `CreditCardRecognizer` where real, Luhn-valid cards were passing as clean (no `CREDIT_CARD` result) and leaking unredacted. The PAN regex now also matches Mastercard 2-series cards (BIN range 2221-2720, the first four digits; issued since 2017) and 18-19 digit PANs (ISO/IEC 7812 allows up to 19 digits, e.g. UnionPay/Maestro), in addition to the existing ranges. Luhn (`validate_result`) still gates every match, so the widened range does not introduce false positives on non-card numbers.
 - Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
 - Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
 - Fixed `PhoneRecognizer._get_recognizer_result` to use the constructor-provided `supported_entity` instead of the hard-coded `"PHONE_NUMBER"` string, making the `supported_entity` parameter from PR #2014 fully functional.
