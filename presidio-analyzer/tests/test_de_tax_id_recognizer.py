@@ -40,6 +40,9 @@ def entities():
         ("123456789030", 0, ()),
         # Invalid: all ten leading digits are identical (excluded by spec)
         ("11111111111", 0, ()),
+        # Invalid: a single digit appears 4+ times in positions 1-10
+        # (post-2016 BZSt rule: max 3 repetitions)
+        ("11112345678", 0, ()),
         # fmt: on
     ],
 )
@@ -70,6 +73,9 @@ def test_when_all_de_tax_ids_then_succeed(
         ("123456789030", False),
         # All same first 10 digits
         ("11111111111", False),
+        # Post-2016 BZSt rule: a digit repeated more than 3 times is invalid
+        ("11112345678", False),
+        ("12222234567", False),
     ],
 )
 def test_when_de_tax_id_validated_then_checksum_result_is_correct(number, expected, recognizer):

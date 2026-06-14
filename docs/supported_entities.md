@@ -22,7 +22,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |NRP|A person’s Nationality, religious or political group.|Custom logic and context|
 |LOCATION|Name of politically or geographically defined location (cities, provinces, countries, international regions, bodies of water, mountains|Custom logic and context|
 |PERSON|A full person name, which can include first names, middle names or initials, and last names.|Custom logic and context|
-|PHONE_NUMBER|A telephone number|Custom logic, pattern match and context|
+|PHONE_NUMBER|A telephone number. The `PhoneRecognizer` can be extended programmatically for country-specific detection by configuring `supported_regions` and `supported_entity` (e.g. Philippines: `PhoneRecognizer(supported_regions=["PH"], supported_entity="PH_MOBILE_NUMBER")`, Turkey: `PhoneRecognizer(supported_regions=["TR"], supported_entity="TR_PHONE_NUMBER")`)|Custom logic, pattern match and context|
 |MEDICAL_LICENSE|Common medical license numbers.|Pattern match, context and checksum|
 |URL|A URL (Uniform Resource Locator), unique identifier used to locate a resource on the Internet|Pattern match, context and top level url validation|
 
@@ -42,6 +42,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 
 |Entity Type|Description|Detection Method|
 |--- |--- |--- |
+|UK_DRIVING_LICENCE|UK driving licence number issued by the DVLA. A 16-character alphanumeric string encoding surname, date of birth, and initials.|Pattern match, context and validation|
 |UK_NHS|A UK NHS number is 10 digits.|Pattern match, context and checksum|
 |UK_NINO|UK [National Insurance Number](https://en.wikipedia.org/wiki/National_Insurance_number) is a unique identifier used in the administration of National Insurance and tax.|Pattern match and context|
 |UK_PASSPORT|A UK passport number consists of 2 letters followed by 7 digits (e.g., AB1234567), used in passports issued from 2015 onwards.|Pattern match and context|
@@ -52,8 +53,9 @@ For more information, refer to the [adding new recognizers documentation](analyz
 
 |Entity Type|Description|Detection Method|
 |--- |--- |--- |
-|ES_NIF| A spanish NIF number (Personal tax ID) .|Pattern match, context and checksum|
-|ES_NIE| A spanish NIE number (Foreigners ID card) .|Pattern match, context and checksum|
+|ES_NIF         | A Spanish NIF number (Personal tax ID).|Pattern match, context and checksum|
+|ES_NIE         | A Spanish NIE number (Foreigners ID card).|Pattern match, context and checksum|
+|ES_PASSPORT    | A Spanish passport number.|Pattern match and context|
 
 ### Italy
 
@@ -118,10 +120,29 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | NG_NIN     | The Nigerian National Identification Number (NIN) is a unique 11-digit number issued by the National Identity Management Commission (NIMC). | Pattern match, context, and checksum |
 | NG_VEHICLE_REGISTRATION | Nigerian vehicle registration plate number in the current format (2011+): 3 letters (LGA code), 3 digits (serial), 2 letters (year/batch). | Pattern match and context |
 
+### Canada
+
+|FieldType|Description|Detection Method|
+|--- |--- |--- |
+|CA_SIN|A Canadian Social Insurance Number (SIN) is a 9-digit number issued by Employment and Social Development Canada (ESDC) to administer government programs. The last digit is a Luhn check digit. SINs starting with 0 or 8 are reserved and not issued.|Pattern match, context, and checksum|
+
+### Sweden
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| SE_ORGANISATIONSNUMMER    | The Swedish Organisations ID Number is a unique 10-digit number issued to all Swedish organisations. | Pattern match, context, and checksum. |
+| SE_PERSONNUMMER    | The Swedish Personal ID Number is a unique 10/12-digit number issued to all Swedish residents. The recognizer also supports Samordningsnummer (coordination numbers) issued to individuals who are not (yet) registered residents but need a Swedish identifier (e.g., temporary workers, students). | Pattern match, context, and checksum. |
+
 ### Thai
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | TH_TNIN    | The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents. | Pattern match, context and custom logic. |
+
+### Turkey
+
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| TR_NATIONAL_ID    | The Turkish National Identification Number (TCKN) is a unique 11-digit number issued to all Turkish citizens. | Pattern match, context and checksum. |
+| TR_LICENSE_PLATE  | Turkish vehicle license plate (plaka): 2-digit province code (01–81), 1–3 letters (A–Z, excluding Q, W, X), and 2–4 digits. Standard civilian format only. Legal basis: KTK Madde 23. | Pattern match, context and province code validation. |
 
 ### Germany
 

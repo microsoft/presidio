@@ -33,6 +33,18 @@ class PatternRecognizer(LocalRecognizer):
     identified using a deny-list
     :param global_regex_flags: regex flags to be used in regex matching,
     including deny-lists.
+    :param country_code: Optional ISO 3166-1 alpha-2 country tag, forwarded
+    to :class:`EntityRecognizer`. Lets custom recognizers declare a country
+    without subclassing — typically used by ``from_dict`` and the
+    corresponding YAML ``type: custom`` entries. Subclasses with a class-
+    level :attr:`EntityRecognizer.COUNTRY_CODE` should leave this unset
+    or pass the matching value.
+
+    Country tagging may be declared at the class level via
+    :attr:`EntityRecognizer.COUNTRY_CODE` (the canonical path for
+    predefined recognizers) or per-instance via the ``country_code``
+    constructor kwarg; see :class:`EntityRecognizer` for the full
+    reconciliation rules.
     """
 
     def __init__(
@@ -46,6 +58,7 @@ class PatternRecognizer(LocalRecognizer):
         deny_list_score: float = 1.0,
         global_regex_flags: Optional[int] = re.DOTALL | re.MULTILINE | re.IGNORECASE,
         version: str = "0.0.1",
+        country_code: Optional[str] = None,
     ):
         if not supported_entity:
             raise ValueError("Pattern recognizer should be initialized with entity")
@@ -61,6 +74,7 @@ class PatternRecognizer(LocalRecognizer):
             supported_language=supported_language,
             name=name,
             version=version,
+            country_code=country_code,
         )
         if patterns is None:
             self.patterns = []
@@ -162,7 +176,7 @@ class PatternRecognizer(LocalRecognizer):
         :return: Analysis explanation
         """
         textual_explanation = (
-            f"Detected by `{recognizer_name}` " f"using pattern `{pattern_name}`"
+            f"Detected by `{recognizer_name}` using pattern `{pattern_name}`"
         )
 
         explanation = AnalysisExplanation(

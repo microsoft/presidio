@@ -2,18 +2,19 @@
 Tests for DeLanrRecognizer (Lebenslange Arztnummer / LANR).
 
 Format: 9 digits — 6-digit physician identifier + 1 check digit + 2-digit
-specialty code.  Check digit derived via KBV algorithm: weights [4,9,2,10,5,3]
-on digits 1–6; cross-sum for products > 9; check = sum mod 10.
+specialty code.  Check digit derived via KBV Arztnummern-Richtlinie:
+weights [4,9,4,9,4,9] on digits 1–6 (no cross-sum), sum of products,
+check = (10 − sum mod 10) mod 10.
 
-Legal basis: § 75 Abs. 7 SGB V; KBV-Richtlinie zur Vergabe der Arzt-,
-Betriebsstätten-, Praxisnetz- sowie Netzverbundnummern.
+Legal basis: § 75 Abs. 7 SGB V; KBV Arztnummern-Richtlinie.
 
-Pre-calculated valid examples (fictitious):
-  123456901  – physician 123456, check 9, specialty 01
-  234567601  – physician 234567, check 6, specialty 01
-  100000401  – physician 100000, check 4, specialty 01
-  987654901  – physician 987654, check 9, specialty 01
-  555555001  – physician 555555, check 0, specialty 01
+Pre-calculated valid examples:
+  123456601  – KBV canonical example (physician 123456, check 6)
+  234567701  – physician 234567, check 7
+  100000601  – physician 100000, check 6
+  987654401  – physician 987654, check 4
+  555555501  – physician 555555, check 5
+  999999901  – physician 999999, check 9 (all-9 edge case)
 """
 import pytest
 
@@ -35,23 +36,24 @@ def entities():
     "text, expected_len, expected_positions",
     [
         # fmt: off
-        # Valid LANR – checksum passes → result at MAX_SCORE
-        ("123456901", 1, ((0, 9),)),
-        ("234567601", 1, ((0, 9),)),
-        ("100000401", 1, ((0, 9),)),
-        ("987654901", 1, ((0, 9),)),
-        ("555555001", 1, ((0, 9),)),
+        # Valid LANR – KBV-spec check digits
+        ("123456601", 1, ((0, 9),)),
+        ("234567701", 1, ((0, 9),)),
+        ("100000601", 1, ((0, 9),)),
+        ("987654401", 1, ((0, 9),)),
+        ("555555501", 1, ((0, 9),)),
+        ("999999901", 1, ((0, 9),)),
         # Valid LANR in running text
-        ("LANR: 123456901 des behandelnden Arztes.", 1, ((6, 15),)),
-        ("Arztnummer 987654901 auf dem Rezept.", 1, ((11, 20),)),
-        # Invalid: wrong check digit
-        ("123456801", 0, ()),
-        ("234567001", 0, ()),
-        ("100000001", 0, ()),
-        # Too short (8 digits) – word boundary prevents match
-        ("12345690",  0, ()),
-        # Too long (10 digits) – word boundary prevents match
-        ("1234569010", 0, ()),
+        ("LANR: 123456601 des behandelnden Arztes.", 1, ((6, 15),)),
+        ("Arztnummer 987654401 auf dem Rezept.", 1, ((11, 20),)),
+        # Invalid: wrong check digit (old fixtures from buggy algorithm)
+        ("123456901", 0, ()),
+        ("234567601", 0, ()),
+        ("100000401", 0, ()),
+        # Too short (8 digits)
+        ("12345660",  0, ()),
+        # Too long (10 digits)
+        ("1234566010", 0, ()),
         # fmt: on
     ],
 )
@@ -67,21 +69,22 @@ def test_when_all_de_lanr_numbers_then_succeed(
 @pytest.mark.parametrize(
     "number, expected",
     [
-        # Valid check digit
-        ("123456901", True),
-        ("234567601", True),
-        ("100000401", True),
-        ("987654901", True),
-        ("555555001", True),
-        # Wrong check digit
-        ("123456801", False),
-        ("234567001", False),
-        ("100000101", False),
+        # Valid — KBV canonical and derived examples
+        ("123456601", True),
+        ("234567701", True),
+        ("100000601", True),
+        ("987654401", True),
+        ("555555501", True),
+        ("999999901", True),
+        # Wrong check digit — these were "valid" under the previous buggy algorithm
+        ("123456901", False),
+        ("234567601", False),
+        ("100000401", False),
         # Wrong length
-        ("12345690",  False),
-        ("1234569010", False),
+        ("12345660",  False),
+        ("1234566010", False),
         # Non-numeric
-        ("12345690a", False),
+        ("12345660a", False),
     ],
 )
 def test_when_de_lanr_validated_then_checksum_result_is_correct(

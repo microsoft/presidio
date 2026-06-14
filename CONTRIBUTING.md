@@ -62,9 +62,14 @@ To contribute a new predefined recognizer to Presidio Analyzer:
    - **If your recognizer uses regex patterns:**
      - Make regex patterns as specific as possible to minimize false positives.
      - Document the source or reference for any new regex logic (e.g., link to a standard, documentation, or example dataset) in the code as a comment.
+   - **If your recognizer is country-specific (lives under `country_specific/<country>/`):**
+     - Declare its country by setting the class-level `COUNTRY_CODE = "<iso-3166-1-alpha-2>"` attribute (e.g. `COUNTRY_CODE = "us"` for US recognizers, `"de"` for Germany). This is what powers `RecognizerRegistry.load_predefined_recognizers(countries=[...])`. See [Filtering recognizers by country](docs/analyzer/filtering_by_country.md) for details.
+     - The `COUNTRY_CODE` value should match the directory's country: e.g. anything under `country_specific/us/` declares `"us"`, anything under `country_specific/de/` declares `"de"`. Use `"uk"` (not `"gb"`) for the United Kingdom directory to stay consistent with the existing layout.
+     - Generic / locale-agnostic recognizers (credit cards, emails, URLs, IBAN, dates, …) leave `COUNTRY_CODE` unset; the default of `None` means the recognizer is always loaded regardless of any country filter.
 
 3. **Add your recognizer to the configuration:**
    - Add your recognizer to `presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml`.
+   - For country-specific recognizers, also declare `country_code: <iso>` on the YAML entry to mirror the class-level `COUNTRY_CODE`. The loader cross-checks the two and refuses to load on mismatch, so the YAML stays a discoverable record of the country tag for no-code users.
    - For country-specific recognizers, set `enabled: false` by default in the YAML configuration.
 
 3. **Update imports:** Add your recognizer to `presidio-analyzer/presidio_analyzer/predefined_recognizers/__init__.py` so it is available for import and backward compatibility.
