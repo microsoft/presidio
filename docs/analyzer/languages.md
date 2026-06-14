@@ -84,8 +84,8 @@ If you want to support languages beyond English in a custom Docker image, start 
 - `presidio-analyzer/presidio_analyzer/conf/transformers.yaml` for the transformers image
 - `presidio-analyzer/presidio_analyzer/conf/stanza.yaml` for the Stanza image
 
-Then pass that file to the Docker build through `NLP_CONF_FILE`. For example:
-
+In addition, update `presidio_analyzer/conf/default_analyzer.yaml` (`supported_languages`) and the recognizer registry (`presidio_analyzer/conf/default_recognizers.yaml`) to match the languages you enable.
+Then pass these files to the Docker build through `NLP_CONF_FILE` (and optionally `ANALYZER_CONF_FILE` / `RECOGNIZER_REGISTRY_CONF_FILE`). For example:
 ```bash
 docker build -f presidio-analyzer/Dockerfile \
   --build-arg NLP_CONF_FILE=presidio_analyzer/conf/default.yaml \
@@ -98,5 +98,5 @@ Practical tips:
 
 - Add a few languages at a time and verify the image still builds cleanly.
 - Keep the `models` list in the YAML file aligned with the languages you enable.
-- If you see recognizer warnings such as a language missing an NLP recognizer, make sure the recognizer registry and NLP configuration define the same language set.
+- If you see warnings like "NLP recognizer … is not in the list of recognizers for language …", add/enable the relevant NLP recognizer for that language in the recognizer registry YAML (or explicitly set it to `enabled=false` to disable it).
 - For very large language sets, split the build into smaller steps so the Docker build has less work to do at once.
