@@ -93,6 +93,11 @@ from .country_specific.sweden.se_organisationsnummer_recognizer import (
 )
 from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRecognizer
 
+# South Africa recognizers
+from .country_specific.south_africa.za_id_number_recognizer import (
+    ZaIdNumberRecognizer,
+)
+
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
@@ -239,6 +244,7 @@ __all__ = [
     "TrLicensePlateRecognizer",
     "TrNationalIdRecognizer",
     "SePersonnummerRecognizer",
+    "ZaIdNumberRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
