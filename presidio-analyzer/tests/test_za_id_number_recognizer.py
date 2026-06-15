@@ -35,9 +35,10 @@ def entities():
         # fmt: on
     ],
 )
-def test_when_all_za_ids_then_succeed(
+def test_analyze_valid_and_invalid_za_ids(
     text, expected_len, expected_positions, recognizer, entities, max_score
 ):
+    """Tests the recognizer against valid and invalid South African ID numbers."""
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
     for res, (st_pos, fn_pos) in zip(results, expected_positions):

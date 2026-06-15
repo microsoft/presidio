@@ -8,7 +8,7 @@ class ZaIdNumberRecognizer(PatternRecognizer):
     """
     Recognize South African ID numbers using regex and structural validation.
 
-    South African identity numbers are 13 digits in the ``YYMMDD SSSS CAZ``
+    South African identity numbers are 13 digits in the ``YYMMDDSSSSCAZ``
     layout:
     - ``YYMMDD``: date of birth
     - ``SSSS``: sequence number
@@ -54,8 +54,8 @@ class ZaIdNumberRecognizer(PatternRecognizer):
         supported_entity: str = "ZA_ID_NUMBER",
         name: Optional[str] = None,
     ):
-        patterns = patterns if patterns else self.PATTERNS
-        context = context if context else self.CONTEXT
+        patterns = self.PATTERNS if patterns is None else patterns
+        context = self.CONTEXT if context is None else context
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,
