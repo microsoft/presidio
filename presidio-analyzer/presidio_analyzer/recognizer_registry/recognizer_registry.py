@@ -9,6 +9,7 @@ import yaml
 from presidio_analyzer import EntityRecognizer, PatternRecognizer
 from presidio_analyzer.nlp_engine import (
     NlpEngine,
+    NoOpNlpEngine,
     SpacyNlpEngine,
     StanzaNlpEngine,
     TransformersNlpEngine,
@@ -75,6 +76,10 @@ class RecognizerRegistry:
         :param nlp_engine: The NLP engine.
         :return: None
         """
+
+        if isinstance(nlp_engine, NoOpNlpEngine):
+            logger.info("Skipping NLP recognizer registration for no-op NLP engine.")
+            return
 
         if not nlp_engine:
             supported_languages = self.supported_languages
@@ -148,6 +153,8 @@ class RecognizerRegistry:
             return StanzaRecognizer
         if isinstance(nlp_engine, TransformersNlpEngine):
             return TransformersRecognizer
+        if isinstance(nlp_engine, NoOpNlpEngine):
+            raise ValueError("NoOpNlpEngine does not have an NLP recognizer")
         if not nlp_engine or isinstance(nlp_engine, SpacyNlpEngine):
             return SpacyRecognizer
         else:
