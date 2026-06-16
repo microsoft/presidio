@@ -12,8 +12,8 @@ class ZaIdNumberRecognizer(PatternRecognizer):
     layout:
     - ``YYMMDD``: date of birth
     - ``SSSS``: sequence number
-    - ``C``: citizenship / status
-    - ``A``: typically 8 or 9
+    - ``C``: citizenship / status (must be 0, 1, or 2)
+    - ``A``: age indicator (must be 8 or 9)
     - ``Z``: check digit using the Luhn algorithm
 
     Reference:
@@ -26,6 +26,13 @@ class ZaIdNumberRecognizer(PatternRecognizer):
     """
 
     COUNTRY_CODE = "za"
+
+    ID_LENGTH = 13
+    BIRTH_DATE_LENGTH = 6
+    CITIZENSHIP_INDEX = 10
+    A_INDEX = 11
+    ALLOWED_CITIZENSHIP_VALUES = frozenset({"0", "1", "2"})
+    ALLOWED_A_VALUES = frozenset({"8", "9"})
 
     PATTERNS = [
         Pattern(
@@ -65,16 +72,16 @@ class ZaIdNumberRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text: str) -> bool:  # noqa: D102
-        if len(pattern_text) != 13 or not pattern_text.isdigit():
+        if len(pattern_text) != self.ID_LENGTH or not pattern_text.isdigit():
             return False
 
-        if not self._has_valid_birth_date(pattern_text[:6]):
+        if not self._has_valid_birth_date(pattern_text[: self.BIRTH_DATE_LENGTH]):
             return False
 
-        if pattern_text[10] not in {"0", "1", "2"}:
+        if pattern_text[self.CITIZENSHIP_INDEX] not in self.ALLOWED_CITIZENSHIP_VALUES:
             return False
 
-        if pattern_text[11] not in {"8", "9"}:
+        if pattern_text[self.A_INDEX] not in self.ALLOWED_A_VALUES:
             return False
 
         return self._is_luhn_valid(pattern_text)
