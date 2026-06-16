@@ -10,14 +10,19 @@ class ZaIdNumberRecognizer(PatternRecognizer):
 
     South African identity numbers are 13 digits in the ``YYMMDDSSSSCAZ``
     layout:
-    - ``YYMMDD``: date of birth
+    - ``YYMMDD``: date of birth (two-digit year mapped to a full year using a
+      rolling pivot: if ``YY`` is greater than the last two digits of the
+      current calendar year, the year is interpreted as 19YY; otherwise 20YY.
+      The resulting date must be valid and cannot be in the future.)
     - ``SSSS``: sequence number
-    - ``C``: citizenship / status (must be 0, 1, or 2)
-    - ``A``: age indicator (must be 8 or 9)
+    - ``C``: citizenship / status — 0 = SA citizen, 1 = permanent resident,
+      2 = refugee
+    - ``A``: obsolete race-classification digit (typically 8 or 9)
     - ``Z``: check digit using the Luhn algorithm
 
     Reference:
     https://en.wikipedia.org/wiki/South_African_identity_card#Identity_Number
+    https://www.irb-cisr.gc.ca/en/country-information/rir/Pages/index.aspx?doc=454798
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -30,9 +35,9 @@ class ZaIdNumberRecognizer(PatternRecognizer):
     ID_LENGTH = 13
     BIRTH_DATE_LENGTH = 6
     CITIZENSHIP_INDEX = 10
-    A_INDEX = 11
+    LEGACY_RACE_INDEX = 11
     ALLOWED_CITIZENSHIP_VALUES = frozenset({"0", "1", "2"})
-    ALLOWED_A_VALUES = frozenset({"8", "9"})
+    ALLOWED_LEGACY_RACE_VALUES = frozenset({"8", "9"})
 
     PATTERNS = [
         Pattern(
@@ -81,7 +86,7 @@ class ZaIdNumberRecognizer(PatternRecognizer):
         if pattern_text[self.CITIZENSHIP_INDEX] not in self.ALLOWED_CITIZENSHIP_VALUES:
             return False
 
-        if pattern_text[self.A_INDEX] not in self.ALLOWED_A_VALUES:
+        if pattern_text[self.LEGACY_RACE_INDEX] not in self.ALLOWED_LEGACY_RACE_VALUES:
             return False
 
         return self._is_luhn_valid(pattern_text)
@@ -92,13 +97,16 @@ class ZaIdNumberRecognizer(PatternRecognizer):
         day = int(date_part[4:6])
         year_suffix = int(date_part[:2])
 
-        for century in (1900, 2000):
-            try:
-                date(century + year_suffix, month, day)
-                return True
-            except ValueError:
-                continue
-        return False
+        today = date.today()
+        pivot = today.year % 100
+        century = 1900 if year_suffix > pivot else 2000
+
+        try:
+            birth_date = date(century + year_suffix, month, day)
+        except ValueError:
+            return False
+
+        return birth_date <= today
 
     @staticmethod
     def _is_luhn_valid(value: str) -> bool:

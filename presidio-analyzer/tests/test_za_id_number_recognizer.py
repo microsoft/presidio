@@ -1,6 +1,11 @@
+import datetime
+
 import pytest
 
 from presidio_analyzer.predefined_recognizers import ZaIdNumberRecognizer
+from presidio_analyzer.predefined_recognizers.country_specific.south_africa import (
+    za_id_number_recognizer,
+)
 from tests import assert_result
 
 
@@ -23,6 +28,7 @@ def entities():
         ("My South African ID is 9202201234088.", 1, ((23, 36),),),
         ("RSA ID: 0002294321191", 1, ((8, 21),),),
         ("Permanent resident number 9912316789285 is on file.", 1, ((26, 39),),),
+        ("Refugee ID number 0001015002288 is on file.", 1, ((18, 31),),),
         ("8001015009086", 0, (),),
         ("9913326789285", 0, (),),
         ("9902294321191", 0, (),),
@@ -53,6 +59,7 @@ def test_analyze_valid_and_invalid_za_ids(
         ("9202201234088", True),
         ("0002294321191", True),
         ("9912316789285", True),
+        ("0001015002288", True),
         ("8001015009086", False),
         ("9913326789285", False),
         ("9902294321191", False),
@@ -65,3 +72,27 @@ def test_analyze_valid_and_invalid_za_ids(
 )
 def test_validate_result(id_number, expected, recognizer):
     assert recognizer.validate_result(id_number) is expected
+
+
+@pytest.mark.parametrize(
+    "date_part, expected",
+    [
+        ("050101", True),
+        ("000229", True),
+        ("990229", False),
+    ],
+)
+def test_has_valid_birth_date(date_part, expected):
+    assert ZaIdNumberRecognizer._has_valid_birth_date(date_part) is expected
+
+
+def test_has_valid_birth_date_rejects_future_date(monkeypatch):
+    class FixedDate(datetime.date):
+        @classmethod
+        def today(cls):
+            return datetime.date(2025, 6, 15)
+
+    monkeypatch.setattr(za_id_number_recognizer, "date", FixedDate)
+
+    assert ZaIdNumberRecognizer._has_valid_birth_date("251231") is False
+    assert ZaIdNumberRecognizer._has_valid_birth_date("250615") is True
