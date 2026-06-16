@@ -82,6 +82,11 @@ from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
 from .country_specific.singapore.sg_fin_recognizer import SgFinRecognizer
 from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
 
+# South Africa recognizers
+from .country_specific.south_africa.za_id_number_recognizer import (
+    ZaIdNumberRecognizer,
+)
+
 # Spain recognizers
 from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
 from .country_specific.spain.es_nif_recognizer import EsNifRecognizer
@@ -92,11 +97,6 @@ from .country_specific.sweden.se_organisationsnummer_recognizer import (
     SeOrganisationsnummerRecognizer,
 )
 from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRecognizer
-
-# South Africa recognizers
-from .country_specific.south_africa.za_id_number_recognizer import (
-    ZaIdNumberRecognizer,
-)
 
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
