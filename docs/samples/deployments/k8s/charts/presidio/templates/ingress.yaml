@@ -1,36 +1,50 @@
-{{- if and (.Values.ingress.enabled) (eq .Values.ingress.class "nginx") -}}
-{{- $analyzerfullname := include "presidio.analyzer.fullname" . -}}
-{{- $anonymizerfullname := include "presidio.anonymizer.fullname" . -}}
-{{- $anonymizerimagefullname := include "presidio.anonymizerimage.fullname" . -}}
-apiVersion: networking.k8s.io/v1beta1
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: presidio-ingress
+  name: {{ include "presidio.fullname" . }}
   labels:
-    app: presidio-ingress
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "presidio.labels" (dict "root" $ "name" "shared") | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
-    nginx.ingress.kubernetes.io/rewrite-target: "/$2"
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- with .Values.ingress.tls }}
+  tls:
+    {{- range . }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
   rules:
-  - http:
-      paths:
-      - backend:
-          serviceName: {{ $analyzerfullname }}
-          servicePort: {{ .Values.analyzer.service.externalPort }}
-        path: /{{ $analyzerfullname }}(/|$)(.*)
-        pathType: Prefix
-      - backend:
-          serviceName: {{ $anonymizerfullname }}
-          servicePort: {{ .Values.anonymizer.service.externalPort }}
-        path: /{{ $anonymizerfullname }}(/|$)(.*)
-        pathType: Prefix
-      - backend:
-          serviceName: {{ $anonymizerimagefullname }}
-          servicePort: {{ .Values.anonymizerimage.service.externalPort }}
-        path: /{{ $anonymizerimagefullname }}(/|$)(.*)
-        pathType: Prefix
-{{- end -}}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          {{- $svc := .service }}
+          {{- if not (has $svc (list "analyzer" "anonymizer")) }}
+          {{- fail (printf "ingress path references unknown service %q (expected \"analyzer\" or \"anonymizer\")" $svc) }}
+          {{- end }}
+          {{- $component := index $.Values $svc }}
+          {{- if $component.enabled }}
+          - path: {{ .path }}
+            {{- with .pathType }}
+            pathType: {{ . }}
+            {{- end }}
+            backend:
+              service:
+                name: {{ include "presidio.componentFullname" (dict "root" $ "name" $svc) }}
+                port:
+                  number: {{ $component.service.port }}
+          {{- end }}
+          {{- end }}
+    {{- end }}
+{{- end }}

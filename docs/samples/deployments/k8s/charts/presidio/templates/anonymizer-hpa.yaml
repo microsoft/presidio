@@ -1,0 +1,3 @@
+{{- if .Values.anonymizer.enabled }}
+{{- include "presidio.hpa" (dict "root" $ "name" "anonymizer" "component" .Values.anonymizer) }}
+{{- end }}

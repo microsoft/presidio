@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Presidio text chart values",
+  "type": "object",
+  "properties": {
+    "nameOverride": { "type": "string" },
+    "fullnameOverride": { "type": "string" },
+    "image": {
+      "type": "object",
+      "properties": {
+        "registry": { "type": "string" },
+        "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] },
+        "tag": { "type": "string" }
+      }
+    },
+    "imagePullSecrets": { "type": "array" },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "automount": { "type": "boolean" },
+        "annotations": { "type": "object" },
+        "name": { "type": "string" }
+      }
+    },
+    "podAnnotations": { "type": "object" },
+    "podLabels": { "type": "object" },
+    "podSecurityContext": { "type": "object" },
+    "securityContext": { "type": "object" },
+    "nodeSelector": { "type": "object" },
+    "tolerations": { "type": "array" },
+    "affinity": { "type": "object" },
+    "ingress": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "className": { "type": "string" },
+        "annotations": { "type": "object" },
+        "hosts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "host": { "type": "string" },
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": { "type": "string" },
+                    "pathType": { "type": "string" },
+                    "service": { "type": "string", "enum": ["analyzer", "anonymizer"] }
+                  },
+                  "required": ["path", "service"]
+                }
+              }
+            }
+          }
+        },
+        "tls": { "type": "array" }
+      },
+      "required": ["enabled"]
+    },
+    "analyzer": { "$ref": "#/definitions/component" },
+    "anonymizer": { "$ref": "#/definitions/component" }
+  },
+  "required": ["analyzer", "anonymizer"],
+  "definitions": {
+    "component": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "image": {
+          "type": "object",
+          "properties": {
+            "repository": { "type": "string" },
+            "registry": { "type": "string" },
+            "tag": { "type": "string" },
+            "pullPolicy": { "type": "string" }
+          },
+          "required": ["repository"]
+        },
+        "replicaCount": { "type": "integer", "minimum": 0 },
+        "containerPort": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "workers": { "type": "integer", "minimum": 1 },
+        "extraEnv": { "type": "array" },
+        "service": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"] },
+            "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+            "annotations": { "type": "object" }
+          },
+          "required": ["type", "port"]
+        },
+        "resources": { "type": "object" },
+        "startupProbe": { "type": ["object", "null"] },
+        "livenessProbe": { "type": ["object", "null"] },
+        "readinessProbe": { "type": ["object", "null"] },
+        "autoscaling": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minReplicas": { "type": "integer", "minimum": 1 },
+            "maxReplicas": { "type": "integer", "minimum": 1 },
+            "targetCPUUtilizationPercentage": { "type": ["integer", "null"] },
+            "targetMemoryUtilizationPercentage": { "type": ["integer", "null"] }
+          },
+          "required": ["enabled"]
+        }
+      },
+      "required": ["enabled", "image", "containerPort", "service"]
+    }
+  }
+}

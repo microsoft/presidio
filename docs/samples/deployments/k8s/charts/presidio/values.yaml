@@ -1,68 +1,207 @@
-registry: mcr.microsoft.com
- 
-# Image pull secret
-# privateRegistry: acr-auth
-tag: latest
+# Default values for the Presidio (text) chart.
+# Deploys the analyzer + anonymizer services from docker-compose-text.yml.
+# This is a YAML-formatted file. Declare variables to be passed into the templates.
 
-# supported types are nginx (wip: traefik and istio)
+# -- Override the chart name (used in resource names/labels).
+nameOverride: ""
+# -- Override the fully qualified release name.
+fullnameOverride: ""
+
+# Global image defaults. Per-component blocks may override repository/tag/pullPolicy.
+image:
+  # -- Container registry hosting the Presidio images. Set to "" to use bare repositories.
+  registry: mcr.microsoft.com
+  # -- Default image pull policy.
+  pullPolicy: IfNotPresent
+  # -- Default image tag. Empty string falls back to the chart appVersion.
+  tag: ""
+
+# -- Secrets for pulling images from a private registry.
+# e.g. [ { name: my-registry-secret } ]
+imagePullSecrets: []
+
+# ServiceAccount shared by all Presidio pods.
+serviceAccount:
+  # -- Create a dedicated ServiceAccount.
+  create: true
+  # -- Automatically mount the ServiceAccount API token (Presidio does not call the K8s API).
+  automount: false
+  # -- Annotations to add to the ServiceAccount.
+  annotations: {}
+  # -- Name to use. Generated from the fullname template when empty and create is true.
+  name: ""
+
+# -- Extra annotations applied to every pod.
+podAnnotations: {}
+# -- Extra labels applied to every pod.
+podLabels: {}
+
+# Pod-level security context (applied to every component). Matches the non-root UID 1001
+# baked into the Presidio images.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container-level security context (applied to every component).
+# readOnlyRootFilesystem stays false: gunicorn workers may write temp files.
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+# Default scheduling constraints (a component block may override any of these).
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Single Ingress fronting both services. Disabled by default.
+# NOTE: the path rewrites below assume the ingress-nginx controller.
 ingress:
-  enabled: true
-  class: nginx
+  enabled: false
+  className: nginx
+  annotations: {}
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+    - host: presidio.local
+      paths:
+        - path: /analyzer(/|$)(.*)
+          pathType: ImplementationSpecific
+          # service references a component key below (analyzer | anonymizer).
+          service: analyzer
+        - path: /anonymizer(/|$)(.*)
+          pathType: ImplementationSpecific
+          service: anonymizer
+  tls: []
+    # - secretName: presidio-tls
+    #   hosts:
+    #     - presidio.local
 
-# For any of the services below, a service mesh like Linkerd or Istio
-# is needed to properly balance traffic to more than 1 replica.
-# https://github.com/microsoft/presidio/issues/304
-
+# --------------------------------------------------------------------------------------
+# presidio-analyzer: PII detection (heavy — bundles spaCy NLP models, slow to start).
+# --------------------------------------------------------------------------------------
 analyzer:
-  name: presidio-analyzer
-  replicas: 1
-  imagePullPolicy: Always
-  container:
-    resources:
-      requests:
-        memory: "1500Mi"
-        cpu: "1500m"
-      limits:
-        memory: "3000Mi"
-        cpu: "2000m"
+  enabled: true
+  image:
+    repository: presidio-analyzer
+    # registry/tag/pullPolicy inherit from the global image.* block unless set here.
+    registry: ""
+    tag: ""
+    pullPolicy: ""
+  # NOTE: balancing across >1 replica needs a service mesh (e.g. Linkerd/Istio).
+  # See https://github.com/microsoft/presidio/issues/304
+  replicaCount: 1
+  # Container port; also exported as the PORT env var consumed by gunicorn.
+  containerPort: 3000
+  # Number of gunicorn workers (exported as the WORKERS env var).
+  workers: 1
+  # Additional environment variables (e.g. OLLAMA_HOST).
+  extraEnv: []
   service:
     type: ClusterIP
-    externalPort: 80
-    internalPort: 8080
-    name: http
+    port: 8080
+    annotations: {}
+  resources:
+    requests:
+      memory: "1500Mi"
+      cpu: "1500m"
+    limits:
+      memory: "3000Mi"
+      cpu: "2000m"
+  # Generous startupProbe: NLP model loading can take minutes on first boot.
+  startupProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 10
+    failureThreshold: 30
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 15
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  # Optional per-component overrides (fall back to the global defaults when empty).
+  podAnnotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  volumes: []
+  volumeMounts: []
 
+# --------------------------------------------------------------------------------------
+# presidio-anonymizer: PII anonymization (lightweight, fast to start).
+# --------------------------------------------------------------------------------------
 anonymizer:
-  name: presidio-anonymizer
-  replicas: 1
-  imagePullPolicy: Always
-  container:
-    resources:
-      requests:
-        memory: "128Mi"
-        cpu: "125m"
-      limits:
-        memory: "512Mi"
-        cpu: "500m"
+  enabled: true
+  image:
+    repository: presidio-anonymizer
+    registry: ""
+    tag: ""
+    pullPolicy: ""
+  replicaCount: 1
+  containerPort: 3000
+  workers: 1
+  extraEnv: []
   service:
     type: ClusterIP
-    externalPort: 80
-    internalPort: 8080
-    name: http
-
-anonymizerimage:
-  name: presidio-image-redactor
-  replicas: 1
-  imagePullPolicy: Always
-  container:
-    resources:
-      requests:
-        memory: "1500Mi"
-        cpu: "1500m"
-      limits:
-        memory: "3000Mi"
-        cpu: "2000m"
-  service:
-    type: ClusterIP
-    externalPort: 80
-    internalPort: 8080
-    name: http
+    port: 8080
+    annotations: {}
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "125m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  startupProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 5
+    failureThreshold: 12
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 15
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  podAnnotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  volumes: []
+  volumeMounts: []

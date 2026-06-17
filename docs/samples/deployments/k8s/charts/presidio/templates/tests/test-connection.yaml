@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "presidio.fullname" . }}-test-health"
+  labels:
+    {{- include "presidio.labels" (dict "root" $ "name" "test") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+    - name: health
+      image: curlimages/curl:8.11.1
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          set -eu
+          {{- if .Values.analyzer.enabled }}
+          echo "Checking analyzer /health ..."
+          curl -fsS "http://{{ include "presidio.componentFullname" (dict "root" $ "name" "analyzer") }}:{{ .Values.analyzer.service.port }}/health"
+          {{- end }}
+          {{- if .Values.anonymizer.enabled }}
+          echo "Checking anonymizer /health ..."
+          curl -fsS "http://{{ include "presidio.componentFullname" (dict "root" $ "name" "anonymizer") }}:{{ .Values.anonymizer.service.port }}/health"
+          {{- end }}

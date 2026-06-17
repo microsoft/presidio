@@ -1,9 +1,39 @@
-presidio is now installed!
+Presidio (text) has been deployed. 🎉
 
-To find out about your newly configured system, run:
+Release:   {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
 
-  $ helm status {{ .Release.Name }}
+Services deployed:
+{{- if .Values.analyzer.enabled }}
+  - presidio-analyzer  → {{ include "presidio.componentFullname" (dict "root" $ "name" "analyzer") }}:{{ .Values.analyzer.service.port }}
+{{- end }}
+{{- if .Values.anonymizer.enabled }}
+  - presidio-anonymizer → {{ include "presidio.componentFullname" (dict "root" $ "name" "anonymizer") }}:{{ .Values.anonymizer.service.port }}
+{{- end }}
 
-To test your new Presidio service, forward the ports: the Analyzer publishes a service at port 8080. To use the Analyzer, you first need to forward this port to your local IP address:
+NOTE: the analyzer loads NLP models on first start and can take a few minutes to
+become Ready. Watch rollout with:
 
-  $ kubectl port-forward -n presidio $(kubectl get pod -n presidio -l app=demo-presidio-analyzer -o jsonpath='{.items[0].metadata.name}') 8080:8080
+  kubectl --namespace {{ .Release.Namespace }} rollout status deployment/{{ include "presidio.componentFullname" (dict "root" $ "name" "analyzer") }}
+
+{{- if .Values.ingress.enabled }}
+
+Reach the services via the configured Ingress:
+{{- range $host := .Values.ingress.hosts }}
+  {{- range $host.paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}  → {{ .service }}
+  {{- end }}
+{{- end }}
+{{- else }}
+
+No Ingress is enabled. Test a service from your machine with port-forward, e.g. the anonymizer:
+
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "presidio.componentFullname" (dict "root" $ "name" "anonymizer") }} {{ .Values.anonymizer.service.port }}:{{ .Values.anonymizer.service.port }}
+  curl http://localhost:{{ .Values.anonymizer.service.port }}/health
+
+Then anonymize a sample:
+
+  curl -X POST http://localhost:{{ .Values.anonymizer.service.port }}/anonymize \
+    -H "Content-Type: application/json" \
+    -d '{"text":"My name is Bond.","anonymizers":{"DEFAULT":{"type":"replace","new_value":"ANONYMIZED"}},"analyzer_results":[{"start":11,"end":15,"score":0.8,"entity_type":"PERSON"}]}'
+{{- end }}
