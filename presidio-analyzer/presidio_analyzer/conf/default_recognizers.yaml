@@ -314,6 +314,13 @@ recognizers:
     enabled: false
     country_code: se
 
+  - name: ZaIdNumberRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    enabled: false
+    country_code: za
+
   - name: ThTninRecognizer
     supported_languages:
     - th
