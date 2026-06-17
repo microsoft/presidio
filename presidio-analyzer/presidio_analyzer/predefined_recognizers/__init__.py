@@ -133,10 +133,12 @@ from .generic.crypto_recognizer import CryptoRecognizer
 from .generic.date_recognizer import DateRecognizer
 from .generic.email_recognizer import EmailRecognizer
 from .generic.iban_recognizer import IbanRecognizer
+from .generic.imei_recognizer import ImeiRecognizer
 from .generic.ip_recognizer import IpRecognizer
 from .generic.mac_recognizer import MacAddressRecognizer
 from .generic.phone_recognizer import PhoneRecognizer
 from .generic.url_recognizer import UrlRecognizer
+from .generic.vin_recognizer import VinRecognizer
 
 # NER recognizers
 from .ner.gliner_recognizer import GLiNERRecognizer
@@ -182,6 +184,7 @@ __all__ = [
     "DateRecognizer",
     "EmailRecognizer",
     "IbanRecognizer",
+    "ImeiRecognizer",
     "IpRecognizer",
     "NhsRecognizer",
     "MedicalLicenseRecognizer",
@@ -189,6 +192,7 @@ __all__ = [
     "PhoneRecognizer",
     "SgFinRecognizer",
     "UrlRecognizer",
+    "VinRecognizer",
     "UsBankRecognizer",
     "UsItinRecognizer",
     "UsLicenseRecognizer",
