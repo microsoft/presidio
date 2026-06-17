@@ -44,6 +44,9 @@ class VinRecognizer(PatternRecognizer):
 
     WEIGHTS = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2]
 
+    # WMI first character 1-5 indicates North America (ISO 3780 region codes).
+    NA_WMI_PREFIXES = frozenset("12345")
+
     PATTERNS = [
         Pattern(
             "VIN",
@@ -83,12 +86,13 @@ class VinRecognizer(PatternRecognizer):
         """
         Validate the North American mod-11 check digit at position 9.
 
-        Returns None when the check digit cannot be evaluated, so European
-        VINs without a NA check digit keep their base pattern score.
+        For North American VINs (WMI prefix 1-5), a mismatched check digit
+        returns False so invalid NA VINs are filtered out. For other regions,
+        returns None on mismatch so the base pattern score is preserved.
 
         :param pattern_text: Text detected as pattern by regex
-        :return: True if check digit matches, False if it does not, None if
-            not applicable
+        :return: True if check digit matches, False if NA-applicable and
+            mismatched or structurally invalid, None if not NA-applicable
         """
         vin = pattern_text.upper()
         if len(vin) != 17:
@@ -110,4 +114,6 @@ class VinRecognizer(PatternRecognizer):
 
         if actual == expected:
             return True
+        if vin[0] in self.NA_WMI_PREFIXES:
+            return False
         return None

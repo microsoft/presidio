@@ -24,6 +24,8 @@ def entities():
         ("The vehicle identification number is 1HGCM82633A004352", 1, ((37, 54),), ((0.5, "max"),)),
         # European-style VIN with non-matching NA check digit keeps base score
         ("VIN WVWZZZ1KZAW123456 on file", 1, ((4, 21),), ((0.5, 0.5),)),
+        # North American VIN with bad check digit is filtered out
+        ("VIN 1HGCM82633A004353 on file", 0, (), ()),
         # Invalid cases
         ("Not a VIN: 1HGCM82633A00435", 0, (), ()),
         ("Invalid char I in 1IGCM82633A004352", 0, (), ()),
@@ -58,7 +60,7 @@ def test_when_vin_in_text_then_detected(
     [
         ("1HGCM82633A004352", True),
         ("WVWZZZ1KZAW123456", None),
-        ("1HGCM82633A004353", None),
+        ("1HGCM82633A004353", False),
         ("SHORT", False),
     ],
 )

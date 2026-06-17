@@ -18,14 +18,17 @@ def entities():
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        ("490154203237518", 1, ((0, 15),), ((0.0, 0.3),)),
         ("49-015420-323751-8", 1, ((0, 18),), ((0.5, 0.81),)),
         ("49 015420 323751 8", 1, ((0, 18),), ((0.5, 0.81),)),
-        ("device imei 490154203237518", 1, ((12, 27),), ((0.0, 0.3),)),
         ("handset IMEI: 49-015420-323751-8", 1, ((14, 32),), ((0.5, 0.81),)),
+        # Bare 15-digit strings are not matched (avoids CREDIT_CARD collisions)
+        ("490154203237518", 0, (), ()),
+        ("device imei 490154203237518", 0, (), ()),
         # Invalid: checksum failure
         ("490154203237519", 0, (), ()),
         ("49-015420-323751-9", 0, (), ()),
+        # AMEX-style 15-digit Luhn number should not be detected as IMEI
+        ("378282246310005", 0, (), ()),
         # Invalid: wrong length
         ("49015420323751", 0, (), ()),
         ("4901542032375180", 0, (), ()),
