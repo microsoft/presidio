@@ -32,8 +32,7 @@ class NoOpNlpEngine(NlpEngine):
         """Mark configured languages as loaded without loading external models."""
         nlp = {}
         for model in self.models:
-            validated_model = self._validate_model_params(model)
-            nlp[validated_model["lang_code"]] = None
+            nlp[model["lang_code"]] = None
 
         self.nlp = nlp
         logger.info("Loaded no-op NLP engine with languages: %s", list(self.nlp.keys()))
@@ -106,7 +105,7 @@ class NoOpNlpEngine(NlpEngine):
                 if not isinstance(item, tuple) or len(item) != 2:
                     raise ValueError(
                         "When 'as_tuples' is True, "
-                        "'texts' must be a list of tuples (text, context)."
+                        "'texts' must be an iterable of tuples (text, context)."
                     )
                 text, context = item
                 text = str(text)
