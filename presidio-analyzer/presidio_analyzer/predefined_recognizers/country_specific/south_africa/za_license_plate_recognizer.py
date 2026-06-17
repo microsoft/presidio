@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
@@ -85,7 +85,7 @@ class ZaLicensePlateRecognizer(PatternRecognizer):
             name=name,
         )
 
-    def validate_result(self, pattern_text: str) -> Union[bool, None]:  # noqa: D102
+    def validate_result(self, pattern_text: str) -> bool:  # noqa: D102
         sanitized = EntityRecognizer.sanitize_value(
             pattern_text, self.replacement_pairs
         ).upper()

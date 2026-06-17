@@ -88,7 +88,7 @@ class ZaCompanyRegistrationRecognizer(PatternRecognizer):
         if len(year_part) != 4 or len(sequence_part) != 6 or len(type_part) != 2:
             return False
         year = int(year_part)
-        return 1800 <= year <= date.today().year + 1
+        return 1800 <= year <= date.today().year
 
     def _validate_legacy_format(self, text: str) -> bool:
         slash_index = text.index("/")
@@ -101,5 +101,5 @@ class ZaCompanyRegistrationRecognizer(PatternRecognizer):
                 year_part = prefix[len(legacy_prefix) :]
                 if len(year_part) == 4 and year_part.isdigit():
                     year = int(year_part)
-                    return 1800 <= year <= date.today().year + 1
+                    return 1800 <= year <= date.today().year
         return False

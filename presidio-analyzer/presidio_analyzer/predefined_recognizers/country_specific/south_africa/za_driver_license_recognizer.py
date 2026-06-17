@@ -3,8 +3,6 @@ from typing import List, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
-from .za_id_number_recognizer import ZaIdNumberRecognizer
-
 
 class ZaDriverLicenseRecognizer(PatternRecognizer):
     """
@@ -60,7 +58,6 @@ class ZaDriverLicenseRecognizer(PatternRecognizer):
     ):
         patterns = self.PATTERNS if patterns is None else patterns
         context = self.CONTEXT if context is None else context
-        self._id_validator = ZaIdNumberRecognizer()
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,
@@ -74,7 +71,5 @@ class ZaDriverLicenseRecognizer(PatternRecognizer):
         if not self.MIN_LENGTH <= len(text) <= self.MAX_LENGTH:
             return False
         if not re.search(r"\d", text) or not re.search(r"[A-Z]", text):
-            return False
-        if text.isdigit() and self._id_validator.validate_result(text):
             return False
         return True
