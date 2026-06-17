@@ -1,0 +1,3 @@
+{{- if .Values.imageRedactor.enabled }}
+{{- include "presidio.service" (dict "root" $ "name" "image-redactor" "component" .Values.imageRedactor) }}
+{{- end }}

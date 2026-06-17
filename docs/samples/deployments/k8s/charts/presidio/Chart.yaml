@@ -1,6 +1,6 @@
 apiVersion: v2
 name: presidio
-description: Presidio text services (analyzer + anonymizer) — context-aware PII detection and anonymization
+description: Presidio services (analyzer + anonymizer, optional image-redactor) — context-aware PII detection, anonymization, and image redaction
 type: application
 home: https://github.com/microsoft/presidio
 sources:
@@ -15,6 +15,6 @@ maintainers:
   - name: Presidio Maintainers
     url: https://github.com/microsoft/presidio
 # Chart version — bump on any chart change (SemVer).
-version: 0.1.0
+version: 0.2.0
 # Tracks the Presidio app release this chart targets. Quoted because "latest" is not SemVer.
 appVersion: "latest"

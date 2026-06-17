@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
-  "title": "Presidio text chart values",
+  "title": "Presidio chart values",
   "type": "object",
   "properties": {
     "nameOverride": { "type": "string" },
@@ -49,7 +49,7 @@
                   "properties": {
                     "path": { "type": "string" },
                     "pathType": { "type": "string" },
-                    "service": { "type": "string", "enum": ["analyzer", "anonymizer"] }
+                    "service": { "type": "string", "enum": ["analyzer", "anonymizer", "image-redactor"] }
                   },
                   "required": ["path", "service"]
                 }
@@ -62,9 +62,10 @@
       "required": ["enabled"]
     },
     "analyzer": { "$ref": "#/definitions/component" },
-    "anonymizer": { "$ref": "#/definitions/component" }
+    "anonymizer": { "$ref": "#/definitions/component" },
+    "imageRedactor": { "$ref": "#/definitions/component" }
   },
-  "required": ["analyzer", "anonymizer"],
+  "required": ["analyzer", "anonymizer", "imageRedactor"],
   "definitions": {
     "component": {
       "type": "object",

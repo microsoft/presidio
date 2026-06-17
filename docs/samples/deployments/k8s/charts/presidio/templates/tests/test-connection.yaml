@@ -24,3 +24,7 @@ spec:
           echo "Checking anonymizer /health ..."
           curl -fsS "http://{{ include "presidio.componentFullname" (dict "root" $ "name" "anonymizer") }}:{{ .Values.anonymizer.service.port }}/health"
           {{- end }}
+          {{- if .Values.imageRedactor.enabled }}
+          echo "Checking image-redactor /health ..."
+          curl -fsS "http://{{ include "presidio.componentFullname" (dict "root" $ "name" "image-redactor") }}:{{ .Values.imageRedactor.service.port }}/health"
+          {{- end }}

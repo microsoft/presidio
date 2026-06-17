@@ -24,16 +24,18 @@ spec:
     {{- end }}
   {{- end }}
   rules:
+    {{- /* Map each ingress service alias (also the resource name) to its values block. */}}
+    {{- $components := dict "analyzer" $.Values.analyzer "anonymizer" $.Values.anonymizer "image-redactor" $.Values.imageRedactor }}
     {{- range .Values.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
           {{- range .paths }}
           {{- $svc := .service }}
-          {{- if not (has $svc (list "analyzer" "anonymizer")) }}
-          {{- fail (printf "ingress path references unknown service %q (expected \"analyzer\" or \"anonymizer\")" $svc) }}
+          {{- if not (hasKey $components $svc) }}
+          {{- fail (printf "ingress path references unknown service %q (expected \"analyzer\", \"anonymizer\" or \"image-redactor\")" $svc) }}
           {{- end }}
-          {{- $component := index $.Values $svc }}
+          {{- $component := index $components $svc }}
           {{- if $component.enabled }}
           - path: {{ .path }}
             {{- with .pathType }}

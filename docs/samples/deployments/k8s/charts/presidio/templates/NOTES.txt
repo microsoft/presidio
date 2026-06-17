@@ -1,4 +1,4 @@
-Presidio (text) has been deployed. 🎉
+Presidio has been deployed. 🎉
 
 Release:   {{ .Release.Name }}
 Namespace: {{ .Release.Namespace }}
@@ -10,9 +10,12 @@ Services deployed:
 {{- if .Values.anonymizer.enabled }}
   - presidio-anonymizer → {{ include "presidio.componentFullname" (dict "root" $ "name" "anonymizer") }}:{{ .Values.anonymizer.service.port }}
 {{- end }}
+{{- if .Values.imageRedactor.enabled }}
+  - presidio-image-redactor → {{ include "presidio.componentFullname" (dict "root" $ "name" "image-redactor") }}:{{ .Values.imageRedactor.service.port }}
+{{- end }}
 
-NOTE: the analyzer loads NLP models on first start and can take a few minutes to
-become Ready. Watch rollout with:
+NOTE: the analyzer{{ if .Values.imageRedactor.enabled }} and image-redactor{{ end }} load NLP models on first start and can
+take a few minutes to become Ready. Watch rollout with:
 
   kubectl --namespace {{ .Release.Namespace }} rollout status deployment/{{ include "presidio.componentFullname" (dict "root" $ "name" "analyzer") }}
 
