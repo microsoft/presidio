@@ -255,6 +255,14 @@ recognizers:
     type: predefined
     country_code: it
 
+    
+  - name: PhTinRecognizer
+    supported_languages: 
+    - en
+    type: predefined
+    enabled: false
+
+
   - name: PlPeselRecognizer
     supported_languages: 
     - pl
