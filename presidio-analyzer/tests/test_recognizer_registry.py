@@ -11,6 +11,7 @@ from presidio_analyzer import (
     RecognizerRegistry,
 )
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer, UsSsnRecognizer
+from presidio_analyzer.recognizer_registry.recognizers_loader_utils import RecognizerListLoader
 
 
 def create_mock_pattern_recognizer(lang, entity, name):
