@@ -49,7 +49,7 @@ def entities():
         ("A10000001", 0, (), (),),
         ("A1000000011", 0, (), (),),
         ("身分證 A100000002", 0, (), (),),
-        ("a100000001", 0, (), (),),
+        ("a100000001", 1, ((0, 10),), ((0.5, 1.0),),),
     ],
 )
 def test_when_tw_national_id_in_text_then_all_matches_are_found(
@@ -88,7 +88,7 @@ def test_when_tw_national_id_in_text_then_all_matches_are_found(
         ("AA00000001", False),
         ("A10000001", False),
         ("A1000000011", False),
-        ("a100000001", False),
+        ("a100000001", True),
     ],
 )
 def test_validate_result(value, expected, recognizer):
