@@ -13,10 +13,7 @@ from pydantic import ValidationError
 
 def test_language_context_config_valid():
     """Test LanguageContextConfig validates correctly."""
-    lang_config = LanguageContextConfig(
-        language="en",
-        context=["credit", "card"]
-    )
+    lang_config = LanguageContextConfig(language="en", context=["credit", "card"])
     assert lang_config.language == "en"
     assert lang_config.context == ["credit", "card"]
 
@@ -24,8 +21,7 @@ def test_language_context_config_valid():
 def test_language_context_config_valid_with_region():
     """Test LanguageContextConfig with region code."""
     lang_config = LanguageContextConfig(
-        language="en-US",
-        context=["social", "security"]
+        language="en-US", context=["social", "security"]
     )
     assert lang_config.language == "en-US"
     assert lang_config.context == ["social", "security"]
@@ -70,7 +66,7 @@ def test_base_recognizer_config_full():
         type="custom",
         supported_language="en",
         context=["test", "context"],
-        supported_entity="TEST_ENTITY"
+        supported_entity="TEST_ENTITY",
     )
     assert config.name == "test_recognizer"
     assert config.enabled is False
@@ -84,20 +80,14 @@ def test_base_recognizer_config_full():
 
 def test_language_fields_preserved():
     """Test that supported_language is preserved as-is (not normalized)."""
-    config = BaseRecognizerConfig(
-        name="test",
-        supported_language="en"
-    )
+    config = BaseRecognizerConfig(name="test", supported_language="en")
     assert config.supported_language == "en"
     assert config.supported_languages is None
 
 
 def test_entity_fields_preserved():
     """Test that supported_entity is preserved as-is (not normalized)."""
-    config = BaseRecognizerConfig(
-        name="test",
-        supported_entity="PERSON"
-    )
+    config = BaseRecognizerConfig(name="test", supported_entity="PERSON")
     assert config.supported_entity == "PERSON"
     assert config.supported_entities is None
 
@@ -106,11 +96,11 @@ def test_cannot_specify_both_language_formats():
     """Test that specifying both language formats raises error."""
     with pytest.raises(ValidationError) as exc_info:
         BaseRecognizerConfig(
-            name="test",
-            supported_language="en",
-            supported_languages=["es", "fr"]
+            name="test", supported_language="en", supported_languages=["es", "fr"]
         )
-    assert "Cannot specify both 'supported_language' and 'supported_languages'" in str(exc_info.value)
+    assert "Cannot specify both 'supported_language' and 'supported_languages'" in str(
+        exc_info.value
+    )
 
 
 def test_cannot_specify_both_entity_formats():
@@ -119,37 +109,34 @@ def test_cannot_specify_both_entity_formats():
         BaseRecognizerConfig(
             name="test",
             supported_entity="PERSON",
-            supported_entities=["LOCATION", "ORG"]
+            supported_entities=["LOCATION", "ORG"],
         )
-    assert "has both 'supported_entity' and 'supported_entities' specified" in str(exc_info.value)
+    assert "has both 'supported_entity' and 'supported_entities' specified" in str(
+        exc_info.value
+    )
 
 
 def test_invalid_single_language_format():
     """Test validation of single language format."""
     with pytest.raises(ValidationError):
-        BaseRecognizerConfig(
-            name="test",
-            supported_language="invalid"
-        )
+        BaseRecognizerConfig(name="test", supported_language="invalid")
 
 
 def test_context_with_multiple_languages_error():
     """Test that global context with multiple languages raises error."""
     with pytest.raises(ValidationError) as exc_info:
         BaseRecognizerConfig(
-            name="test",
-            supported_languages=["en", "es"],
-            context=["global", "context"]
+            name="test", supported_languages=["en", "es"], context=["global", "context"]
         )
-    assert "Global context can only be used with a single language" in str(exc_info.value)
+    assert "Global context can only be used with a single language" in str(
+        exc_info.value
+    )
 
 
 def test_context_with_single_language_valid():
     """Test that global context with single language is valid."""
     config = BaseRecognizerConfig(
-        name="test",
-        supported_languages=["en"],
-        context=["global", "context"]
+        name="test", supported_languages=["en"], context=["global", "context"]
     )
     assert config.context == ["global", "context"]
 
@@ -165,8 +152,7 @@ def test_predefined_recognizer_config_defaults():
 def test_predefined_recognizer_config_with_language():
     """Test predefined recognizer with language specification."""
     config = PredefinedRecognizerConfig(
-        name="CreditCardRecognizer",
-        supported_language="en"
+        name="CreditCardRecognizer", supported_language="en"
     )
     assert config.supported_language == "en"
     assert config.supported_languages is None
@@ -175,16 +161,10 @@ def test_predefined_recognizer_config_with_language():
 def test_custom_recognizer_config_with_patterns():
     """Test custom recognizer with patterns."""
     patterns = [
-        {
-            "name": "test_pattern",
-            "regex": r"\b\d{4}-\d{4}-\d{4}-\d{4}\b",
-            "score": 0.8
-        }
+        {"name": "test_pattern", "regex": r"\b\d{4}-\d{4}-\d{4}-\d{4}\b", "score": 0.8}
     ]
     config = CustomRecognizerConfig(
-        name="custom_test",
-        supported_entity="CUSTOM_ENTITY",
-        patterns=patterns
+        name="custom_test", supported_entity="CUSTOM_ENTITY", patterns=patterns
     )
     assert config.name == "custom_test"
     assert config.type == "custom"
@@ -260,7 +240,7 @@ def test_custom_recognizer_config_with_deny_list():
         name="custom_test",
         supported_entity="CUSTOM_ENTITY",
         deny_list=["exclude", "this"],
-        deny_list_score=0.1
+        deny_list_score=0.1,
     )
     assert config.deny_list == ["exclude", "this"]
     assert config.deny_list_score == 0.1
@@ -270,9 +250,7 @@ def test_custom_recognizer_config_invalid_patterns_not_list():
     """Test that patterns must be a list."""
     with pytest.raises(ValidationError) as exc_info:
         CustomRecognizerConfig(
-            name="test",
-            supported_entity="TEST",
-            patterns="not a list"
+            name="test", supported_entity="TEST", patterns="not a list"
         )
 
 
@@ -280,9 +258,7 @@ def test_custom_recognizer_config_invalid_pattern_not_dict():
     """Test that each pattern must be a dict."""
     with pytest.raises(ValidationError) as exc_info:
         CustomRecognizerConfig(
-            name="test",
-            supported_entity="TEST",
-            patterns=["not a dict"]
+            name="test", supported_entity="TEST", patterns=["not a dict"]
         )
 
 
@@ -296,25 +272,15 @@ def test_custom_recognizer_config_pattern_missing_fields():
 
         with pytest.raises(ValidationError) as exc_info:
             CustomRecognizerConfig(
-                name="test",
-                supported_entity="TEST",
-                patterns=[pattern]
+                name="test", supported_entity="TEST", patterns=[pattern]
             )
 
 
 def test_custom_recognizer_config_invalid_score_type():
     """Test that pattern score must be float."""
-    pattern = {
-        "name": "test",
-        "regex": r"\d+",
-        "score": "not a float"
-    }
+    pattern = {"name": "test", "regex": r"\d+", "score": "not a float"}
     with pytest.raises(ValidationError) as exc_info:
-        CustomRecognizerConfig(
-            name="test",
-            supported_entity="TEST",
-            patterns=[pattern]
-        )
+        CustomRecognizerConfig(name="test", supported_entity="TEST", patterns=[pattern])
 
 
 def test_custom_recognizer_config_invalid_score_range():
@@ -322,26 +288,17 @@ def test_custom_recognizer_config_invalid_score_range():
     invalid_scores = [-0.1, 1.1, 2.0]
 
     for score in invalid_scores:
-        pattern = {
-            "name": "test",
-            "regex": r"\d+",
-            "score": score
-        }
+        pattern = {"name": "test", "regex": r"\d+", "score": score}
         with pytest.raises(ValidationError) as exc_info:
             CustomRecognizerConfig(
-                name="test",
-                supported_entity="TEST",
-                patterns=[pattern]
+                name="test", supported_entity="TEST", patterns=[pattern]
             )
 
 
 def test_custom_recognizer_config_no_patterns_or_deny_list():
     """Test that custom recognizer must have patterns or deny_list."""
     with pytest.raises(ValidationError) as exc_info:
-        CustomRecognizerConfig(
-            name="test",
-            supported_entity="TEST"
-        )
+        CustomRecognizerConfig(name="test", supported_entity="TEST")
 
 
 def test_custom_recognizer_config_invalid_deny_list_score():
@@ -351,7 +308,7 @@ def test_custom_recognizer_config_invalid_deny_list_score():
             name="test",
             supported_entity="TEST",
             deny_list=["test"],
-            deny_list_score=1.5  # Invalid: > 1.0
+            deny_list_score=1.5,  # Invalid: > 1.0
         )
 
     with pytest.raises(ValidationError):
@@ -359,7 +316,7 @@ def test_custom_recognizer_config_invalid_deny_list_score():
             name="test",
             supported_entity="TEST",
             deny_list=["test"],
-            deny_list_score=-0.1  # Invalid: < 0.0
+            deny_list_score=-0.1,  # Invalid: < 0.0
         )
 
 
@@ -374,8 +331,7 @@ def test_recognizer_registry_config_defaults():
 def test_recognizer_registry_config_valid_languages():
     """Test registry with valid languages."""
     config = RecognizerRegistryConfig(
-        supported_languages=["en", "es", "fr-CA"],
-        recognizers=["CreditCardRecognizer"]
+        supported_languages=["en", "es", "fr-CA"], recognizers=["CreditCardRecognizer"]
     )
     assert config.supported_languages == ["en", "es", "fr-CA"]
 
@@ -385,15 +341,14 @@ def test_recognizer_registry_config_invalid_language():
     with pytest.raises(ValidationError):
         RecognizerRegistryConfig(
             supported_languages=["en", "invalid", "es"],
-            recognizers=["CreditCardRecognizer"]
+            recognizers=["CreditCardRecognizer"],
         )
 
 
 def test_recognizer_registry_config_empty_languages():
     """Test registry with empty languages list."""
     config = RecognizerRegistryConfig(
-        supported_languages=[],
-        recognizers=["CreditCardRecognizer"]
+        supported_languages=[], recognizers=["CreditCardRecognizer"]
     )
     assert config.supported_languages == []
 
@@ -401,20 +356,14 @@ def test_recognizer_registry_config_empty_languages():
 def test_recognizer_registry_config_empty_recognizers():
     """Test that empty recognizers list raises a validation error."""
     with pytest.raises(ValidationError) as exc_info:
-        RecognizerRegistryConfig(
-            recognizers=[],
-            global_regex_flags=26
-        )
+        RecognizerRegistryConfig(recognizers=[], global_regex_flags=26)
     assert "empty recognizers list" in str(exc_info.value).lower()
 
 
 def test_recognizer_registry_config_missing_recognizers():
     """Test that missing recognizers field raises a validation error."""
     with pytest.raises(ValidationError) as exc_info:
-        RecognizerRegistryConfig(
-            supported_languages=["en"],
-            global_regex_flags=26
-        )
+        RecognizerRegistryConfig(supported_languages=["en"], global_regex_flags=26)
     assert "empty recognizers list" in str(exc_info.value).lower()
 
 
@@ -433,7 +382,7 @@ def test_recognizer_registry_config_mixed_recognizers():
         "name": "custom_test",
         "type": "custom",
         "supported_entity": "TEST",
-        "patterns": [{"name": "test", "regex": r"\d+", "score": 0.5}]
+        "patterns": [{"name": "test", "regex": r"\d+", "score": 0.5}],
     }
 
     with pytest.raises(ValidationError) as exc_info:
@@ -441,7 +390,7 @@ def test_recognizer_registry_config_mixed_recognizers():
             recognizers=[
                 "credit_card",  # string predefined
                 {"name": "UrlRecognizer", "type": "predefined"},  # predefined
-                custom_config  # custom without languages should trigger error
+                custom_config,  # custom without languages should trigger error
             ]
         )
     assert "Language configuration missing" in str(exc_info.value)
@@ -467,7 +416,7 @@ def test_recognizer_registry_config_auto_detect_type():
         "name": "auto_custom_patterns",
         "supported_entity": "TEST",
         "supported_language": "en",
-        "patterns": [{"name": "test", "regex": r"\d+", "score": 0.5}]
+        "patterns": [{"name": "test", "regex": r"\d+", "score": 0.5}],
     }
 
     # Should be detected as custom due to deny_list
@@ -475,18 +424,19 @@ def test_recognizer_registry_config_auto_detect_type():
         "name": "auto_custom_deny",
         "supported_entity": "TEST",
         "supported_language": "en",
-        "deny_list": ["exclude_this"]
+        "deny_list": ["exclude_this"],
     }
 
     # Should be detected as predefined (no patterns or deny_list)
-    predefined_config = {
-        "name": "UrlRecognizer",
-        "enabled": True
-    }
+    predefined_config = {"name": "UrlRecognizer", "enabled": True}
 
     config = RecognizerRegistryConfig(
         supported_languages=["en"],  # Add global language to satisfy new validation
-        recognizers=[custom_with_patterns_config, custom_with_deny_list_config, predefined_config]
+        recognizers=[
+            custom_with_patterns_config,
+            custom_with_deny_list_config,
+            predefined_config,
+        ],
     )
 
     assert isinstance(config.recognizers[0], CustomRecognizerConfig)
@@ -497,32 +447,23 @@ def test_recognizer_registry_config_auto_detect_type():
     assert config.recognizers[2].type == "predefined"
 
 
-
 def test_complete_registry_scenario():
     """Test a complete registry configuration scenario."""
     registry_config = {
         "supported_languages": ["en", "es"],
         "recognizers": [
             "credit_card",  # String recognizer (kept as string)
-            {
-                "name": "EmailRecognizer",
-                "type": "predefined",
-                "enabled": True
-            },
+            {"name": "EmailRecognizer", "type": "predefined", "enabled": True},
             {
                 "name": "custom_pattern",
                 "type": "custom",
                 "supported_entity": "CUSTOM_ID",
                 "supported_language": "en",
                 "patterns": [
-                    {
-                        "name": "id_pattern",
-                        "regex": r"ID-\d{6}",
-                        "score": 0.9
-                    }
-                ]
-            }
-        ]
+                    {"name": "id_pattern", "regex": r"ID-\d{6}", "score": 0.9}
+                ],
+            },
+        ],
     }
 
     config = RecognizerRegistryConfig(**registry_config)
@@ -530,7 +471,6 @@ def test_complete_registry_scenario():
     assert isinstance(config.recognizers[0], str)
     assert isinstance(config.recognizers[1], PredefinedRecognizerConfig)
     assert isinstance(config.recognizers[2], CustomRecognizerConfig)
-
 
 
 def test_error_handling_cascade():
@@ -548,9 +488,9 @@ def test_error_handling_cascade():
                         {
                             "name": "test",
                             "regex": r"\d+",
-                            "score": 2.0  # Invalid score > 1.0
+                            "score": 2.0,  # Invalid score > 1.0
                         }
-                    ]
+                    ],
                 }
             ]
         )
@@ -587,11 +527,13 @@ def test_custom_recognizer_config_predefined_name_error():
             name="CreditCardRecognizer",  # This is a predefined recognizer
             type="custom",
             supported_entity="CREDIT_CARD",
-            patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}]
+            patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}],
         )
 
     error_message = str(exc_info.value)
-    assert "Recognizer 'CreditCardRecognizer' conflicts with a predefined" in error_message
+    assert (
+        "Recognizer 'CreditCardRecognizer' conflicts with a predefined" in error_message
+    )
     assert "Either use type: 'predefined' or choose a different name" in error_message
 
 
@@ -600,13 +542,15 @@ def test_custom_recognizer_config_predefined_name_error_without_required_fields(
     with pytest.raises(ValidationError) as exc_info:
         CustomRecognizerConfig(
             name="UrlRecognizer",  # This is a predefined recognizer
-            type="custom"
+            type="custom",
             # Intentionally missing supported_entity, patterns, and deny_list
         )
 
     error_message = str(exc_info.value)
-    assert "conflicts with a predefined recognizer" in error_message or \
-           "is a predefined recognizer but is marked as 'custom'" in error_message
+    assert (
+        "conflicts with a predefined recognizer" in error_message
+        or "is a predefined recognizer but is marked as 'custom'" in error_message
+    )
 
 
 def test_custom_recognizer_config_unique_name_valid():
@@ -615,7 +559,7 @@ def test_custom_recognizer_config_unique_name_valid():
         name="MyCustomRecognizer",  # This should not exist as predefined
         type="custom",
         supported_entity="CUSTOM_ENTITY",
-        patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}]
+        patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}],
     )
     assert config.name == "MyCustomRecognizer"
     assert config.type == "custom"
@@ -631,7 +575,7 @@ def test_custom_recognizer_config_predefined_name_validation_with_import_error()
         name="SomeUniqueRecognizer",
         type="custom",
         supported_entity="TEST",
-        patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}]
+        patterns=[{"name": "test", "regex": r"\d+", "score": 0.5}],
     )
     assert config.name == "SomeUniqueRecognizer"
     assert config.type == "custom"
@@ -646,9 +590,7 @@ def test_custom_recognizer_with_language_no_global_languages():
                 "type": "custom",
                 "supported_entity": "TEST",
                 "supported_language": "en",
-                "patterns": [
-                    {"name": "p", "regex": r"\d+", "score": 0.5}
-                ]
+                "patterns": [{"name": "p", "regex": r"\d+", "score": 0.5}],
             }
         ]
     }
@@ -674,7 +616,7 @@ def test_recognizer_registry_config_custom_name_with_hf_class():
                 "type": "predefined",
                 "supported_language": "ko",
                 "supported_entities": ["PERSON"],
-                "model_name": "TestModel/Ner"
+                "model_name": "TestModel/Ner",
             }
         ]
     }

@@ -125,7 +125,6 @@ def entities():
         ("0232 123 45 67", 1, ((0, 14),), ((0.05, 1.0),)),
         ("0312 123 45 67", 1, ((0, 14),), ((0.1, 1.0),)),
         ("0412 123 45 67", 1, ((0, 14),), ((0.1, 1.0),)),
-
         # False positive: embedded in longer number
         ("15053212345678", 0, (), ()),
         # Geographic number: starts with 2 (valid geographic)

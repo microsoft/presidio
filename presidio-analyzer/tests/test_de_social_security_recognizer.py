@@ -17,6 +17,7 @@ Pre-calculated valid examples:
   20151090B023  – area 20 (Westfalen-Lippe), 15.10.1990, B, serial 02, check 3
   38551285K051  – Ergänzungsmerkmal day (55=5+50), 12.1985, K, serial 05, check 1
 """
+
 import pytest
 
 from tests import assert_result
@@ -81,7 +82,7 @@ def test_when_all_de_social_security_numbers_then_succeed(
         # Digit instead of letter at position 9
         ("150706491103", False),
         # Wrong length
-        ("15070649C10",  False),
+        ("15070649C10", False),
         ("15070649C1030", False),
         # Impossible day (42 is between 31 and 51, both excluded)
         ("15420649C103", False),

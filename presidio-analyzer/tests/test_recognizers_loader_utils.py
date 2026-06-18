@@ -191,6 +191,7 @@ def test_country_filter_includes_tagged_custom_recognizer():
     """A custom recognizer that opts in via class-level ``COUNTRY_CODE`` is
     included when the filter is loaded with the matching country.
     """
+
     class _BrCpfRecognizer(PatternRecognizer):
         COUNTRY_CODE = "br"
 
@@ -230,6 +231,7 @@ def test_country_filter_warns_on_unknown_country(caplog):
     list, a WARNING is logged so silent zero-result filters are easier to
     debug.
     """
+
     class _XUsRecognizer(PatternRecognizer):
         COUNTRY_CODE = "us"
 
@@ -364,6 +366,7 @@ def test_filter_by_countries_normalizes_case_and_whitespace():
 
     ``" US "`` matches a ``COUNTRY_CODE = "us"`` recognizer.
     """
+
     class TaggedRecognizer(PatternRecognizer):
         COUNTRY_CODE = "us"
 

@@ -2,31 +2,7 @@ supported_languages:
   - en
 global_regex_flags: 26
 
-# To restrict the loaded predefined recognizers to a subset of countries
-# (mirrors ``supported_languages``), uncomment ``supported_countries`` and
-# list ISO-3166-1 alpha-2 codes (case-insensitive). Locale-agnostic
-# recognizers (those without a ``country_code`` below) are always loaded
-# regardless of this filter.
-#
-# supported_countries:
-#   - us
-#   - uk
-
 recognizers:
-  # Recognizers listed here can either be loaded from the recognizers defined in code (type: predefined),
-  # or created based on the provided configuration (type: custom).
-  # For predefined:
-  # - If only a recognizer name is provided, a predefined recognizer with this name and default parameters will be loaded.
-  # - If a parameter isn't provided, the default one would be loaded.
-  # - Use 'class_name' to specify the Python class when using a custom 'name' for display/metadata
-  # - The optional ``country_code`` field (ISO-3166-1 alpha-2) makes the recognizer's country tag
-  #   visible to no-code YAML readers. It must match the recognizer class's ``COUNTRY_CODE``
-  #   attribute; mismatches raise at load time. Locale-agnostic recognizers omit ``country_code``.
-  # For custom:
-  # - See an example configuration here: https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/example_recognizers.yaml
-  # - Custom pattern recognizers with this configuration can be added to this file, with type: custom
-  #  For recognizers supporting more than one language, an instance of the recognizer for each language will be created.
-  # For example, see the CreditCardRecognizer definition below:
   - name: CreditCardRecognizer
     supported_languages:
     - language: en
@@ -38,34 +14,40 @@ recognizers:
     type: predefined
 
   - name: UsBankRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     country_code: us
 
   - name: UsLicenseRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     country_code: us
 
   - name: UsItinRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     country_code: us
-  
+
   - name: UsPassportRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     country_code: us
-  
+
   - name: UsSsnRecognizer
     supported_languages:
     - en
     type: predefined
     country_code: us
+
+  - name: TwNationalIdRecognizer
+    supported_languages:
+    - en
+    type: predefined
+    country_code: tw
 
   - name: UsMbiRecognizer
     supported_languages:
@@ -82,13 +64,13 @@ recognizers:
     country_code: us
 
   - name: NhsRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     country_code: uk
-    
+
   - name: UkDrivingLicenceRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
@@ -114,13 +96,6 @@ recognizers:
     type: predefined
     enabled: false
     country_code: uk
-    
-  - name: UkPostcodeRecognizer
-    supported_languages:
-    - en
-    type: predefined
-    enabled: false
-    country_code: uk
 
   - name: UkVehicleRegistrationRecognizer
     supported_languages:
@@ -130,35 +105,35 @@ recognizers:
     country_code: uk
 
   - name: SgFinRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: sg
 
   - name: AuAbnRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: au
 
   - name: AuAcnRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: au
 
   - name: AuTfnRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: au
 
   - name: AuMedicareRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
@@ -179,41 +154,41 @@ recognizers:
     country_code: ng
 
   - name: InPanRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: in
 
   - name: InAadhaarRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: in
 
   - name: InVehicleRegistrationRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: in
 
   - name: InPassportRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: in
 
   - name: EsNifRecognizer
-    supported_languages: 
+    supported_languages:
     - es
     type: predefined
     country_code: es
 
   - name: EsNieRecognizer
-    supported_languages: 
+    supported_languages:
     - es
     type: predefined
     country_code: es
@@ -224,45 +199,45 @@ recognizers:
     type: predefined
     enabled: false
     country_code: es
-  
+
   - name: ItDriverLicenseRecognizer
-    supported_languages: 
+    supported_languages:
     - it
     type: predefined
     country_code: it
 
   - name: ItFiscalCodeRecognizer
-    supported_languages: 
+    supported_languages:
     - it
     type: predefined
     country_code: it
 
   - name: ItVatCodeRecognizer
-    supported_languages: 
+    supported_languages:
     - it
     type: predefined
     country_code: it
 
   - name: ItIdentityCardRecognizer
-    supported_languages: 
+    supported_languages:
     - it
     type: predefined
     country_code: it
 
   - name: ItPassportRecognizer
-    supported_languages: 
+    supported_languages:
     - it
     type: predefined
     country_code: it
 
   - name: PlPeselRecognizer
-    supported_languages: 
+    supported_languages:
     - pl
     type: predefined
     country_code: pl
 
   - name: KrBrnRecognizer
-    supported_languages: 
+    supported_languages:
     - ko
     - kr
     type: predefined
@@ -270,7 +245,7 @@ recognizers:
     country_code: kr
 
   - name: KrRrnRecognizer
-    supported_languages: 
+    supported_languages:
     - ko
     - kr
     type: predefined
@@ -278,7 +253,7 @@ recognizers:
     country_code: kr
 
   - name: KrDriverLicenseRecognizer
-    supported_languages: 
+    supported_languages:
     - ko
     - kr
     type: predefined
@@ -299,7 +274,7 @@ recognizers:
     type: predefined
     enabled: false
     country_code: se
-  
+
   - name: SePersonnummerRecognizer
     supported_languages:
     - sv
@@ -375,13 +350,12 @@ recognizers:
     country_code: in
 
   - name: InGstinRecognizer
-    supported_languages: 
+    supported_languages:
     - en
     type: predefined
     enabled: false
     country_code: in
 
-  # Germany recognizers (disabled by default, enable for German-language pipelines)
   - name: DeTaxIdRecognizer
     supported_languages:
     - de

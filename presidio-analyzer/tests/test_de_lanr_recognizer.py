@@ -16,6 +16,7 @@ Pre-calculated valid examples:
   555555501  – physician 555555, check 5
   999999901  – physician 999999, check 9 (all-9 edge case)
 """
+
 import pytest
 
 from tests import assert_result
@@ -81,7 +82,7 @@ def test_when_all_de_lanr_numbers_then_succeed(
         ("234567601", False),
         ("100000401", False),
         # Wrong length
-        ("12345660",  False),
+        ("12345660", False),
         ("1234566010", False),
         # Non-numeric
         ("12345660a", False),

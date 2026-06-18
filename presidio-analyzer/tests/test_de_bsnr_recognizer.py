@@ -18,6 +18,7 @@ recognizer no longer differentiates whitelisted vs. unknown prefixes):
   711234567  – 71 Bayern
   351234567  – 35 Krankenhäuser (Anlage 8 BMV-Ä)
 """
+
 import pytest
 
 from tests import assert_result
@@ -68,8 +69,12 @@ def entities():
     ],
 )
 def test_when_all_de_bsnr_numbers_then_succeed(
-    text, expected_len, expected_positions, expected_score,
-    recognizer, entities,
+    text,
+    expected_len,
+    expected_positions,
+    expected_score,
+    recognizer,
+    entities,
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
@@ -81,21 +86,19 @@ def test_when_all_de_bsnr_numbers_then_succeed(
     "number, expected",
     [
         # Structurally valid — always None (no public checksum exists)
-        ("021234568", None),   # whitelisted prefix 02 Hamburg
-        ("521234567", None),   # whitelisted prefix 52 Baden-Württemberg
-        ("711234567", None),   # whitelisted prefix 71 Bayern
-        ("351234567", None),   # whitelisted prefix 35 Krankenhäuser
-        ("741234567", None),   # whitelisted prefix 74 KBV
-        ("991234567", None),   # non-whitelisted but structurally valid
+        ("021234568", None),  # whitelisted prefix 02 Hamburg
+        ("521234567", None),  # whitelisted prefix 52 Baden-Württemberg
+        ("711234567", None),  # whitelisted prefix 71 Bayern
+        ("351234567", None),  # whitelisted prefix 35 Krankenhäuser
+        ("741234567", None),  # whitelisted prefix 74 KBV
+        ("991234567", None),  # non-whitelisted but structurally valid
         ("051234567", None),
         # Structurally invalid — False
         ("000000000", False),
-        ("02123456",  False),  # 8 digits
-        ("0212345689", False), # 10 digits
+        ("02123456", False),  # 8 digits
+        ("0212345689", False),  # 10 digits
         ("02123456A", False),  # non-numeric
     ],
 )
-def test_when_de_bsnr_validated_then_result_is_correct(
-    number, expected, recognizer
-):
+def test_when_de_bsnr_validated_then_result_is_correct(number, expected, recognizer):
     assert recognizer.validate_result(number) == expected

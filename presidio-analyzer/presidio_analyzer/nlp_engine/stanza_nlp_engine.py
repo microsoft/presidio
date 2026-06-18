@@ -69,9 +69,9 @@ class StanzaNlpEngine(SpacyNlpEngine):
             self.nlp[model["lang_code"]] = load_pipeline(
                 model["model_name"],
                 processors="tokenize,pos,lemma,ner",
-                download_method="DOWNLOAD_RESOURCES"
-                if self.download_if_missing
-                else None,
+                download_method=(
+                    "DOWNLOAD_RESOURCES" if self.download_if_missing else None
+                ),
                 device=self.device,
             )
 

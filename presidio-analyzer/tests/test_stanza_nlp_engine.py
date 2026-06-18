@@ -17,10 +17,12 @@ def tags_equal(act, exp):
 def stanza_pipeline():
     pytest.importorskip("stanza")
     import stanza
+
     lang = "en"
     stanza.download(lang)
     nlp = load_pipeline(lang)
     return nlp
+
 
 @pytest.mark.skip_engine("stanza_en")
 def test_spacy_stanza_english(stanza_pipeline):

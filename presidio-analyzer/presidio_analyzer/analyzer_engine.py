@@ -25,6 +25,7 @@ logger = logging.getLogger("presidio-analyzer")
 
 REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
 
+
 class AnalyzerEngine:
     """
     Entry point for Presidio Analyzer.

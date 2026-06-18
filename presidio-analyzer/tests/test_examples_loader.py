@@ -1,4 +1,5 @@
 """Tests for llm_utils.examples_loader module."""
+
 import pytest
 import tempfile
 from pathlib import Path
@@ -13,7 +14,7 @@ class TestLoadYamlExamples:
 
     def test_when_examples_file_exists_then_loads_list(self):
         """Test loading examples from YAML file returns a list."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("""
 examples:
   - text: "John Doe works at Acme Corp"
@@ -33,7 +34,7 @@ examples:
         try:
             # Use absolute path to load temp file
             examples = load_yaml_examples(str(examples_path))
-            
+
             assert isinstance(examples, list)
             assert len(examples) == 2
             assert examples[0]["text"] == "John Doe works at Acme Corp"
@@ -41,9 +42,11 @@ examples:
         finally:
             examples_path.unlink()
 
-    def test_when_examples_file_has_multiple_extractions_per_example_then_loads_all(self):
+    def test_when_examples_file_has_multiple_extractions_per_example_then_loads_all(
+        self,
+    ):
         """Test loading example with multiple extractions."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("""
 examples:
   - text: "John at john@example.com"
@@ -59,7 +62,7 @@ examples:
 
         try:
             examples = load_yaml_examples(str(examples_path))
-            
+
             assert len(examples) == 1
             assert len(examples[0]["extractions"]) == 2
         finally:
@@ -72,7 +75,7 @@ examples:
 
     def test_when_examples_missing_from_yaml_then_raises_value_error(self):
         """Test that YAML without 'examples' key raises ValueError."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("""
 other_section:
   - text: "some text"
@@ -80,7 +83,9 @@ other_section:
             examples_path = Path(f.name)
 
         try:
-            with pytest.raises(ValueError, match="Examples file must contain 'examples'"):
+            with pytest.raises(
+                ValueError, match="Examples file must contain 'examples'"
+            ):
                 load_yaml_examples(str(examples_path))
         finally:
             examples_path.unlink()
@@ -91,7 +96,7 @@ other_section:
         examples = load_yaml_examples(
             "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
         )
-        
+
         assert isinstance(examples, list)
         assert len(examples) > 0
         # Each example should have text and extractions
@@ -112,9 +117,9 @@ class TestConvertToLangextractFormat:
                     {
                         "extraction_class": "PERSON",
                         "extraction_text": "John Doe",
-                        "attributes": {}
+                        "attributes": {},
                     }
-                ]
+                ],
             }
         ]
 
@@ -122,11 +127,11 @@ class TestConvertToLangextractFormat:
 
         assert isinstance(result, list)
         assert len(result) == 1
-        
+
         # Check it's a LangExtract ExampleData object
         example = result[0]
-        assert hasattr(example, 'text')
-        assert hasattr(example, 'extractions')
+        assert hasattr(example, "text")
+        assert hasattr(example, "extractions")
         assert example.text == "John Doe works here"
         assert len(example.extractions) == 1
 
@@ -136,15 +141,23 @@ class TestConvertToLangextractFormat:
             {
                 "text": "John Doe",
                 "extractions": [
-                    {"extraction_class": "PERSON", "extraction_text": "John Doe", "attributes": {}}
-                ]
+                    {
+                        "extraction_class": "PERSON",
+                        "extraction_text": "John Doe",
+                        "attributes": {},
+                    }
+                ],
             },
             {
                 "text": "info@example.com",
                 "extractions": [
-                    {"extraction_class": "EMAIL_ADDRESS", "extraction_text": "info@example.com", "attributes": {}}
-                ]
-            }
+                    {
+                        "extraction_class": "EMAIL_ADDRESS",
+                        "extraction_text": "info@example.com",
+                        "attributes": {},
+                    }
+                ],
+            },
         ]
 
         result = convert_to_langextract_format(examples_data)
@@ -159,9 +172,17 @@ class TestConvertToLangextractFormat:
             {
                 "text": "John at john@example.com",
                 "extractions": [
-                    {"extraction_class": "PERSON", "extraction_text": "John", "attributes": {}},
-                    {"extraction_class": "EMAIL_ADDRESS", "extraction_text": "john@example.com", "attributes": {}}
-                ]
+                    {
+                        "extraction_class": "PERSON",
+                        "extraction_text": "John",
+                        "attributes": {},
+                    },
+                    {
+                        "extraction_class": "EMAIL_ADDRESS",
+                        "extraction_text": "john@example.com",
+                        "attributes": {},
+                    },
+                ],
             }
         ]
 
@@ -179,9 +200,9 @@ class TestConvertToLangextractFormat:
                     {
                         "extraction_class": "PERSON",
                         "extraction_text": "Sample",
-                        "attributes": {"type": "name"}
+                        "attributes": {"type": "name"},
                     }
-                ]
+                ],
             }
         ]
 
@@ -189,9 +210,9 @@ class TestConvertToLangextractFormat:
         extraction = result[0].extractions[0]
 
         # Check the Extraction object has correct attributes
-        assert hasattr(extraction, 'extraction_class')
-        assert hasattr(extraction, 'extraction_text')
-        assert hasattr(extraction, 'attributes')
+        assert hasattr(extraction, "extraction_class")
+        assert hasattr(extraction, "extraction_text")
+        assert hasattr(extraction, "attributes")
         assert extraction.extraction_class == "PERSON"
         assert extraction.extraction_text == "Sample"
         assert extraction.attributes == {"type": "name"}
@@ -203,12 +224,7 @@ class TestConvertToLangextractFormat:
 
     def test_when_example_has_no_extractions_then_creates_empty_extractions(self):
         """Test example with empty extractions list."""
-        examples_data = [
-            {
-                "text": "No entities here",
-                "extractions": []
-            }
-        ]
+        examples_data = [{"text": "No entities here", "extractions": []}]
 
         result = convert_to_langextract_format(examples_data)
 
@@ -222,7 +238,7 @@ class TestIntegration:
 
     def test_when_loading_and_converting_workflow_then_works(self):
         """Test complete workflow: load YAML → convert to LangExtract format."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("""
 examples:
   - text: "John Doe at john@example.com and Jane Smith"
@@ -244,18 +260,20 @@ examples:
             examples_data = load_yaml_examples(str(examples_path))
             assert len(examples_data) == 1
             assert len(examples_data[0]["extractions"]) == 3
-            
+
             # Step 2: Convert to LangExtract format
             langextract_examples = convert_to_langextract_format(examples_data)
             assert len(langextract_examples) == 1
             assert len(langextract_examples[0].extractions) == 3
-            
+
             # Verify entity types
-            entity_types = [e.extraction_class for e in langextract_examples[0].extractions]
+            entity_types = [
+                e.extraction_class for e in langextract_examples[0].extractions
+            ]
             assert "PERSON" in entity_types
             assert "EMAIL_ADDRESS" in entity_types
             assert entity_types.count("PERSON") == 2
-            
+
         finally:
             examples_path.unlink()
 
@@ -265,16 +283,16 @@ examples:
         examples_data = load_yaml_examples(
             "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_examples.yaml"
         )
-        
+
         # Convert to LangExtract format
         langextract_examples = convert_to_langextract_format(examples_data)
-        
+
         assert isinstance(langextract_examples, list)
         assert len(langextract_examples) > 0
-        
+
         # Verify structure
         for example in langextract_examples:
-            assert hasattr(example, 'text')
-            assert hasattr(example, 'extractions')
+            assert hasattr(example, "text")
+            assert hasattr(example, "extractions")
             assert isinstance(example.text, str)
             assert isinstance(example.extractions, list)

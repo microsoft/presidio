@@ -1,4 +1,5 @@
 """Tests for BaseTextChunker methods."""
+
 import pytest
 
 from presidio_analyzer import RecognizerResult
@@ -29,7 +30,9 @@ class TestPredictWithChunking:
             if "Jane" in chunk:
                 idx = chunk.index("Jane")
                 return [
-                    RecognizerResult(entity_type="PERSON", start=idx, end=idx + 4, score=0.9)
+                    RecognizerResult(
+                        entity_type="PERSON", start=idx, end=idx + 4, score=0.9
+                    )
                 ]
             return []
 

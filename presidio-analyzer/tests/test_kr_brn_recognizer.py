@@ -1,15 +1,20 @@
 import pytest
 
 from tests import assert_result_within_score_range
-from presidio_analyzer.predefined_recognizers.country_specific.korea import KrBrnRecognizer
+from presidio_analyzer.predefined_recognizers.country_specific.korea import (
+    KrBrnRecognizer,
+)
+
 
 @pytest.fixture(scope="module")
 def recognizer():
     return KrBrnRecognizer()
 
+
 @pytest.fixture(scope="module")
 def entities():
     return ["KR_BRN"]
+
 
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",

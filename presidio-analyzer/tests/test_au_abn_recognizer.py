@@ -17,17 +17,57 @@ def entities():
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
-        # Valid formatting and valid ABNs 
-        ("51 824 753 556", 1, ((0, 14),), ((1.0, 1.0),), ),
-        ("51824753556", 1, ((0, 11),), ((1.0, 1.0),), ),
-        # Valid formatting but invalid ABNs 
-        ("52 824 753 556", 0, (), (),),
-        ("52824753556", 0, (), (),),
-        # Invalid formatting and ABNs.  
-        ("5282475355632", 0, (), (),),
-        ("52824753556AF", 0, (), (),),
-        ("51 824 753 5564", 0, (), (),),
-        ("123 456\n789", 0, (), (),),
+        # Valid formatting and valid ABNs
+        (
+            "51 824 753 556",
+            1,
+            ((0, 14),),
+            ((1.0, 1.0),),
+        ),
+        (
+            "51824753556",
+            1,
+            ((0, 11),),
+            ((1.0, 1.0),),
+        ),
+        # Valid formatting but invalid ABNs
+        (
+            "52 824 753 556",
+            0,
+            (),
+            (),
+        ),
+        (
+            "52824753556",
+            0,
+            (),
+            (),
+        ),
+        # Invalid formatting and ABNs.
+        (
+            "5282475355632",
+            0,
+            (),
+            (),
+        ),
+        (
+            "52824753556AF",
+            0,
+            (),
+            (),
+        ),
+        (
+            "51 824 753 5564",
+            0,
+            (),
+            (),
+        ),
+        (
+            "123 456\n789",
+            0,
+            (),
+            (),
+        ),
     ],
 )
 def test_when_all_abns_then_succeed(

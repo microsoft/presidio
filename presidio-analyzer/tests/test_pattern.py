@@ -34,7 +34,7 @@ def test_pattern_validation_success():
     pattern_data = {
         "name": "US ZIP Code",
         "regex": r"\b\d{5}(?:-\d{4})?\b",
-        "score": 0.85
+        "score": 0.85,
     }
 
     pattern = Pattern.from_dict(pattern_data)
@@ -42,12 +42,13 @@ def test_pattern_validation_success():
     assert pattern.score == 0.85
     assert pattern.regex == r"\b\d{5}(?:-\d{4})?\b"
 
+
 def test_pattern_validation_invalid_regex():
     """Test that Pattern class rejects invalid regex patterns."""
     pattern_data = {
         "name": "Invalid Pattern",
         "regex": "[unclosed_bracket",  # Invalid regex
-        "score": 0.5
+        "score": 0.5,
     }
 
     with pytest.raises(ValueError) as exc_info:
@@ -59,7 +60,7 @@ def test_pattern_validation_invalid_score_range():
     pattern_data = {
         "name": "Invalid Score",
         "regex": r"\btest\b",
-        "score": 1.5  # Invalid: > 1.0
+        "score": 1.5,  # Invalid: > 1.0
     }
 
     with pytest.raises(ValueError) as exc_info:

@@ -619,7 +619,7 @@ def test_hf_recognizer_loader_supported_entities_filtering():
     )
 
     # If the test fails here, it means the loader logic incorrectly filtered it out.
-    assert "supported_entities" in kwargs, (
-        "supported_entities was filtered out by loader!"
-    )
+    assert (
+        "supported_entities" in kwargs
+    ), "supported_entities was filtered out by loader!"
     assert kwargs["supported_entities"] == ["STAY_PERSISTENT"]

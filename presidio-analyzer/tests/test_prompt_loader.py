@@ -1,4 +1,5 @@
 """Tests for llm_utils.prompt_loader module."""
+
 import pytest
 from pathlib import Path
 from presidio_analyzer.llm_utils.prompt_loader import (
@@ -52,7 +53,9 @@ class TestRenderJinjaTemplate:
 
     def test_when_template_has_conditionals_then_renders_correctly(self):
         """Test rendering a template with if/else conditions."""
-        template = """{% if enabled %}Feature is ON{% else %}Feature is OFF{% endif %}"""
+        template = (
+            """{% if enabled %}Feature is ON{% else %}Feature is OFF{% endif %}"""
+        )
 
         result_enabled = render_jinja_template(template, enabled=True)
         assert result_enabled.strip() == "Feature is ON"
@@ -73,10 +76,7 @@ class TestRenderJinjaTemplate:
 {% for item in items %}
 {{ loop.index }}. {{ item.name }}: {{ item.value }}
 {% endfor %}"""
-        items = [
-            {"name": "Item1", "value": 10},
-            {"name": "Item2", "value": 20}
-        ]
+        items = [{"name": "Item1", "value": 10}, {"name": "Item2", "value": 20}]
         result = render_jinja_template(template, items=items)
 
         assert "Total: 2" in result
@@ -119,13 +119,13 @@ END"""
         template = load_prompt_file(
             "presidio-analyzer/presidio_analyzer/conf/langextract_prompts/default_pii_phi_prompt.j2"
         )
-        
+
         # Render with typical parameters
         result = render_jinja_template(
             template,
             supported_entities=["PERSON", "EMAIL_ADDRESS"],
             enable_generic_consolidation=True,
-            labels_to_ignore=["metadata"]
+            labels_to_ignore=["metadata"],
         )
 
         assert "PERSON" in result

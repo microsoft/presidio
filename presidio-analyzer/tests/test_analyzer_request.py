@@ -30,7 +30,7 @@ class TestAnalyzerRequest:
         req_data = {
             "text": "Test text",
             "language": "en",
-            "context": ["previous message", "current message"]
+            "context": ["previous message", "current message"],
         }
 
         request = AnalyzerRequest(req_data)
@@ -42,7 +42,7 @@ class TestAnalyzerRequest:
         req_data = {
             "text": "Test text",
             "language": "en",
-            "allow_list": ["John", "Microsoft", "Seattle"]
+            "allow_list": ["John", "Microsoft", "Seattle"],
         }
 
         request = AnalyzerRequest(req_data)
@@ -66,7 +66,7 @@ class TestAnalyzerRequest:
         req_data = {
             "text": "Test text",
             "language": "en",
-            "allow_list_match": "partial"
+            "allow_list_match": "partial",
         }
 
         request = AnalyzerRequest(req_data)
@@ -89,11 +89,7 @@ class TestAnalyzerRequest:
     def test_analyzer_request_with_regex_flags_custom(self):
         """Test regex_flags field with custom value (line 40)."""
         custom_flags = re.IGNORECASE | re.UNICODE
-        req_data = {
-            "text": "Test text",
-            "language": "en",
-            "regex_flags": custom_flags
-        }
+        req_data = {"text": "Test text", "language": "en", "regex_flags": custom_flags}
 
         request = AnalyzerRequest(req_data)
 
@@ -138,15 +134,15 @@ class TestAnalyzerRequest:
                         {
                             "name": "custom_pattern",
                             "regex": r"\d{3}-\d{3}",
-                            "score": 0.5
+                            "score": 0.5,
                         }
-                    ]
+                    ],
                 }
             ],
             "context": ["user profile", "chat history"],
             "allow_list": ["John", "Microsoft"],
             "allow_list_match": "fuzzy",
-            "regex_flags": re.IGNORECASE
+            "regex_flags": re.IGNORECASE,
         }
 
         request = AnalyzerRequest(req_data)
@@ -174,14 +170,10 @@ class TestAnalyzerRequest:
                     "supported_entity": "CUSTOM_ID",
                     "supported_language": "en",
                     "patterns": [
-                        {
-                            "name": "id_pattern",
-                            "regex": r"ID-\d{5}",
-                            "score": 0.8
-                        }
-                    ]
+                        {"name": "id_pattern", "regex": r"ID-\d{5}", "score": 0.8}
+                    ],
                 }
-            ]
+            ],
         }
 
         request = AnalyzerRequest(req_data)
@@ -227,8 +219,8 @@ class TestAnalyzerRequest:
             "context": {
                 "user_id": "12345",
                 "session": "abc",
-                "metadata": {"key": "value"}
-            }
+                "metadata": {"key": "value"},
+            },
         }
 
         request = AnalyzerRequest(req_data)
@@ -236,17 +228,13 @@ class TestAnalyzerRequest:
         assert request.context == {
             "user_id": "12345",
             "session": "abc",
-            "metadata": {"key": "value"}
+            "metadata": {"key": "value"},
         }
 
     def test_analyzer_request_with_multiple_regex_flags(self):
         """Test regex_flags with multiple combined flags."""
         custom_flags = re.IGNORECASE | re.MULTILINE | re.DOTALL | re.VERBOSE
-        req_data = {
-            "text": "Test text",
-            "language": "en",
-            "regex_flags": custom_flags
-        }
+        req_data = {"text": "Test text", "language": "en", "regex_flags": custom_flags}
 
         request = AnalyzerRequest(req_data)
 
@@ -259,21 +247,14 @@ class TestAnalyzerRequest:
 
     def test_analyzer_request_allow_list_match_variations(self):
         """Test various allow_list_match values."""
-        test_cases = [
-            "exact",
-            "partial",
-            "fuzzy",
-            "regex",
-            "custom_match_type"
-        ]
+        test_cases = ["exact", "partial", "fuzzy", "regex", "custom_match_type"]
 
         for match_type in test_cases:
             req_data = {
                 "text": "Test text",
                 "language": "en",
-                "allow_list_match": match_type
+                "allow_list_match": match_type,
             }
 
             request = AnalyzerRequest(req_data)
             assert request.allow_list_match == match_type
-

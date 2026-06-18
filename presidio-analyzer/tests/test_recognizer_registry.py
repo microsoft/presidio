@@ -53,7 +53,7 @@ def test_when_get_recognizers_then_all_recognizers_returned(mock_recognizer_regi
     recognizers = registry.get_recognizers(language="en", all_fields=True)
 
     # 1 custom recognizer in english + 28 predefined - 11 disabled
-    assert len(recognizers) == 1 + 28 - 11
+    assert len(recognizers) == 1 + 29 - 11
 
 
 def test_when_get_recognizers_then_return_all_fields(mock_recognizer_registry):
@@ -241,8 +241,9 @@ def test_remove_recognizer_when_multiple_instances_exist():
     assert len(registry.recognizers) == 1
 
     assert registry.recognizers[0].supported_language == "es"
-    assert len([rec for rec in registry.recognizers
-                if rec.name == "SpacyRecognizer"]) == 1
+    assert (
+        len([rec for rec in registry.recognizers if rec.name == "SpacyRecognizer"]) == 1
+    )
 
 
 # ---------------------------------------------------------------------------

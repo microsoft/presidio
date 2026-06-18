@@ -5,7 +5,9 @@ from typing import List
 from inspect import signature
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistryProvider
-from presidio_analyzer.recognizer_registry.recognizers_loader_utils import RecognizerConfigurationLoader
+from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
+    RecognizerConfigurationLoader,
+)
 from presidio_analyzer import RecognizerRegistry
 
 
@@ -13,7 +15,10 @@ def assert_default_configuration(
     recognizer_registry: RecognizerRegistry, mandatory_recognizers: List[str]
 ):
     assert recognizer_registry.supported_languages == ["en"]
-    assert recognizer_registry.global_regex_flags == re.DOTALL | re.MULTILINE | re.IGNORECASE
+    assert (
+        recognizer_registry.global_regex_flags
+        == re.DOTALL | re.MULTILINE | re.IGNORECASE
+    )
     names = [recognizer.name for recognizer in recognizer_registry.recognizers]
     for predefined_recognizer in mandatory_recognizers:
         assert predefined_recognizer in names
@@ -33,14 +38,33 @@ def test_recognizer_registry_provider_configuration_file():
     assert recognizer_registry.supported_languages == ["en", "es"]
     assert recognizer_registry.global_regex_flags == 26
     assert len(recognizer_registry.recognizers) == 5
-    assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ItFiscalCodeRecognizer"] == ["en", "es"]
-    assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "CreditCardRecognizer"] == ["en"]
-    assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer"] == ["en", "es"]
-    spanish_recognizer = [recognizer for recognizer in recognizer_registry.recognizers if recognizer.name == "ExampleCustomRecognizer" and recognizer.supported_language == "es"][0]
+    assert [
+        recognizer.supported_language
+        for recognizer in recognizer_registry.recognizers
+        if recognizer.name == "ItFiscalCodeRecognizer"
+    ] == ["en", "es"]
+    assert [
+        recognizer.supported_language
+        for recognizer in recognizer_registry.recognizers
+        if recognizer.name == "CreditCardRecognizer"
+    ] == ["en"]
+    assert [
+        recognizer.supported_language
+        for recognizer in recognizer_registry.recognizers
+        if recognizer.name == "ExampleCustomRecognizer"
+    ] == ["en", "es"]
+    spanish_recognizer = [
+        recognizer
+        for recognizer in recognizer_registry.recognizers
+        if recognizer.name == "ExampleCustomRecognizer"
+        and recognizer.supported_language == "es"
+    ][0]
     assert spanish_recognizer.context == ["tarjeta", "credito"]
 
 
-def test_recognizer_registry_provider_configuration_file_load_predefined(mandatory_recognizers):
+def test_recognizer_registry_provider_configuration_file_load_predefined(
+    mandatory_recognizers,
+):
     this_path = Path(__file__).parent.absolute()
     test_yaml = Path(this_path, "conf/test_recognizers.yaml")
     provider = RecognizerRegistryProvider(test_yaml)
@@ -48,13 +72,28 @@ def test_recognizer_registry_provider_configuration_file_load_predefined(mandato
     assert recognizer_registry.supported_languages == ["en"]
     assert recognizer_registry.global_regex_flags == 26
     assert len(recognizer_registry.recognizers) == 2
-    assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "TitleRecognizer"] == ["en"]
-    assert [recognizer.supported_language for recognizer in recognizer_registry.recognizers if recognizer.name == "ZipCodeRecognizer"] == ["en"]
-    zipcode_recognizer = [recognizer for recognizer in recognizer_registry.recognizers if recognizer.name == "ZipCodeRecognizer" and recognizer.supported_language == "en"][0]
+    assert [
+        recognizer.supported_language
+        for recognizer in recognizer_registry.recognizers
+        if recognizer.name == "TitleRecognizer"
+    ] == ["en"]
+    assert [
+        recognizer.supported_language
+        for recognizer in recognizer_registry.recognizers
+        if recognizer.name == "ZipCodeRecognizer"
+    ] == ["en"]
+    zipcode_recognizer = [
+        recognizer
+        for recognizer in recognizer_registry.recognizers
+        if recognizer.name == "ZipCodeRecognizer"
+        and recognizer.supported_language == "en"
+    ][0]
     assert zipcode_recognizer.context == ["zip", "code"]
 
 
-def test_recognizer_registry_provider_missing_conf_file_expect_default_configuration(mandatory_recognizers):
+def test_recognizer_registry_provider_missing_conf_file_expect_default_configuration(
+    mandatory_recognizers,
+):
     test_yaml = Path("missing.yaml")
     provider = RecognizerRegistryProvider(test_yaml)
     recognizer_registry = provider.create_recognizer_registry()
@@ -66,9 +105,7 @@ def test_recognizer_registry_provider_corrupt_conf_file_fail(mandatory_recognize
     test_yaml = Path(this_path, "conf/recognizers_error.yaml")
 
     with pytest.raises(TypeError):
-        RecognizerRegistryProvider(
-            conf_file=test_yaml
-        )
+        RecognizerRegistryProvider(conf_file=test_yaml)
 
 
 def test_recognizer_registry_provider_conf_file_valid_missing_keys_fail():
@@ -79,7 +116,6 @@ def test_recognizer_registry_provider_conf_file_valid_missing_keys_fail():
     # Config file with no mandatory keys should raise ValueError
     with pytest.raises(ValueError, match="does not contain any of the mandatory keys"):
         RecognizerRegistryProvider(conf_file=test_yaml)
-
 
 
 def test_recognizer_registry_provider_when_conf_file_and_registry_configuration_fail():
@@ -126,7 +162,10 @@ def test_recognizer_registry_provider_missing_language_config_raises():
     """
     Test that a recognizer configuration without language info gets the default languages.
     """
-    from presidio_analyzer.recognizer_registry.recognizer_registry_provider import RecognizerRegistryProvider
+    from presidio_analyzer.recognizer_registry.recognizer_registry_provider import (
+        RecognizerRegistryProvider,
+    )
+
     # Configuration with no supported_languages and no recognizer language
     registry_configuration = {
         "recognizers": [
@@ -134,9 +173,7 @@ def test_recognizer_registry_provider_missing_language_config_raises():
                 "name": "CustomRecognizer",
                 "type": "custom",
                 "supported_entity": "CUSTOM_ENTITY",
-                "patterns": [
-                    {"name": "custom", "regex": "test", "score": 0.5}
-                ],
+                "patterns": [{"name": "custom", "regex": "test", "score": 0.5}],
                 # No supported_language or supported_languages
             }
         ]
@@ -152,6 +189,7 @@ def test_recognizer_registry_provider_missing_language_config_raises():
 
 
 # Tests for missing required and optional fields in YAML configuration
+
 
 def test_missing_recognizers_raises_exception():
     """Test that missing recognizers raises an exception."""
@@ -189,7 +227,9 @@ def test_valid_configuration_passes():
         "global_regex_flags": 26,
     }
 
-    validated = ConfigurationValidator.validate_recognizer_registry_configuration(config)
+    validated = ConfigurationValidator.validate_recognizer_registry_configuration(
+        config
+    )
 
     assert validated is not None
     assert validated["supported_languages"] == ["en", "es"]
@@ -206,7 +246,9 @@ def test_valid_configuration_without_global_regex_flags():
     }
 
     # Should not raise an exception
-    validated = ConfigurationValidator.validate_recognizer_registry_configuration(config)
+    validated = ConfigurationValidator.validate_recognizer_registry_configuration(
+        config
+    )
 
     # Check default value was set
     assert validated["global_regex_flags"] == 26
@@ -237,7 +279,9 @@ def test_direct_validation_with_missing_global_regex_flags():
     }
 
     # Should not raise an exception
-    validated = ConfigurationValidator.validate_recognizer_registry_configuration(config)
+    validated = ConfigurationValidator.validate_recognizer_registry_configuration(
+        config
+    )
 
     # Verify default value and successful creation
     assert validated["global_regex_flags"] == 26

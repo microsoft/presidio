@@ -59,7 +59,8 @@ def entities():
         ("19000309-3393", 0, ()),
         ("19001309-2393", 0, ()),
         ("55670x-7485", 0, ()),
-        ("556703-7r85", 0, ()),],
+        ("556703-7r85", 0, ()),
+    ],
 )
 def test_when_all_swedish_organisationsnummer_then_succeed(
     text, expected_len, expected_positions, recognizer, entities, max_score

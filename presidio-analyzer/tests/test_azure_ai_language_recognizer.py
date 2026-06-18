@@ -16,7 +16,7 @@ def requires_env_vars():
 
     return pytest.mark.skipif(
         azure_ai_key == "" or azure_ai_endpoint == "",
-        reason=f"Environment variables are not set"
+        reason=f"Environment variables are not set",
     )
 
 
@@ -63,14 +63,23 @@ def test_mocked_entities_match_recognizer_results():
     except ImportError:
         pytest.skip("Skipping test because 'azure.ai.textanalytics' is not installed")
 
-    from azure.ai.textanalytics import PiiEntity, TextAnalyticsClient, \
-        RecognizePiiEntitiesResult
+    from azure.ai.textanalytics import (
+        PiiEntity,
+        TextAnalyticsClient,
+        RecognizePiiEntitiesResult,
+    )
     from azure.core.credentials import AzureKeyCredential
 
-    ent1 = PiiEntity(text="Raj", category="Person",
-                     length=3, offset=0, confidence_score=0.8)
-    ent2 = PiiEntity(text="My email is ab@email.com",
-                     category="EMAIL", length=12, offset=12, confidence_score=0.9)
+    ent1 = PiiEntity(
+        text="Raj", category="Person", length=3, offset=0, confidence_score=0.8
+    )
+    ent2 = PiiEntity(
+        text="My email is ab@email.com",
+        category="EMAIL",
+        length=12,
+        offset=12,
+        confidence_score=0.9,
+    )
     mock_entities = [ent1, ent2]
 
     ta_client = TextAnalyticsClient(endpoint="", credential=AzureKeyCredential(key=""))

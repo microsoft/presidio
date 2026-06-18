@@ -17,6 +17,7 @@ Pre-calculated valid examples:
   C01X00T41  – matches the worked example in the recognizer docstring
                (products 84+0+1+231+0+0+203+12 = 531 → check 1)
 """
+
 import pytest
 
 from tests import assert_result

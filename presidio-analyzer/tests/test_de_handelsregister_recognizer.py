@@ -4,6 +4,7 @@ Tests for DeHandelsregisterRecognizer (Handelsregisternummer).
 The HR[AB] prefix makes the pattern highly specific, keeping false positives low.
 Legal basis: §§ 9, 14 HGB; DSGVO Art. 4 Nr. 1 for HRA entries (sole traders).
 """
+
 import pytest
 
 from presidio_analyzer.predefined_recognizers import DeHandelsregisterRecognizer

@@ -96,6 +96,12 @@ def test_mbi_recognizer_supported_language(recognizer):
 def test_mbi_recognizer_context_words(recognizer):
     """Test that recognizer has appropriate context words."""
     expected_context = [
-        "medicare", "mbi", "beneficiary", "cms", "medicaid", "hic", "hicn"
+        "medicare",
+        "mbi",
+        "beneficiary",
+        "cms",
+        "medicaid",
+        "hic",
+        "hicn",
     ]
     assert recognizer.context == expected_context

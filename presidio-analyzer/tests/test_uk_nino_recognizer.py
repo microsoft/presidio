@@ -31,7 +31,7 @@ def entities():
         ("nino: nt 99 88 77 a", 0, (), (), ),
         ("This isn't a valid national insurance number UV 98 76 54 B", 0, (), (), ),
         # fmt: on
-    ]
+    ],
 )
 def test_when_nino_in_text_then_all_uk_ninos_found(
     text,

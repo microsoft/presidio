@@ -64,7 +64,7 @@ class TestCharacterBasedTextChunkerChunk:
         # Verify chunks don't cut words in the middle
         for chunk in chunks:
             # Each chunk text should not start/end mid-word (except first/last)
-            assert text[chunk.start:chunk.end] == chunk.text
+            assert text[chunk.start : chunk.end] == chunk.text
 
     def test_offset_calculation_is_correct(self):
         """Test that chunk offsets map correctly to original text."""
@@ -74,7 +74,7 @@ class TestCharacterBasedTextChunkerChunk:
 
         # Critical: offsets must point to correct positions
         for chunk in chunks:
-            assert text[chunk.start:chunk.end] == chunk.text
+            assert text[chunk.start : chunk.end] == chunk.text
 
 
 class TestCharacterBasedTextChunkerEdgeCases:
@@ -99,7 +99,7 @@ class TestCharacterBasedTextChunkerEdgeCases:
         # The chunk stops AT the boundary (space), not including it
         assert chunks[0].text == "Hello\nworld"
         assert chunks[0].end == 11  # Position of space
-        assert text[chunks[0].start:chunks[0].end] == chunks[0].text
+        assert text[chunks[0].start : chunks[0].end] == chunks[0].text
 
     def test_text_without_spaces_cjk(self):
         """Test chunking CJK text without spaces extends to end."""
@@ -135,7 +135,7 @@ class TestCharacterBasedTextChunkerIntegration:
         assert len(chunks) > 1
         # Verify all offsets are correct
         for chunk in chunks:
-            assert text[chunk.start:chunk.end] == chunk.text
+            assert text[chunk.start : chunk.end] == chunk.text
 
     def test_overlap_captures_entity_at_boundary(self):
         """Test that overlap prevents missing entities at chunk boundaries."""

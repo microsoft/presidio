@@ -6,6 +6,7 @@ matching any 5-digit number. These tests verify the regex structure (valid range
 boundary matching) only. In production, context words are required for the
 recognizer to produce actionable (high-confidence) results.
 """
+
 import pytest
 
 from presidio_analyzer.predefined_recognizers import DePlzRecognizer

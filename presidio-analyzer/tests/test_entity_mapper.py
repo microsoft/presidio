@@ -1,4 +1,5 @@
 """Tests for llm_utils.entity_mapper module."""
+
 import pytest
 from presidio_analyzer import RecognizerResult, AnalysisExplanation
 from presidio_analyzer.llm_utils.entity_mapper import (
@@ -14,11 +15,7 @@ from presidio_analyzer.llm_utils.entity_mapper import (
 
 
 def create_test_result(
-    entity_type="PERSON",
-    start=0,
-    end=10,
-    score=0.9,
-    recognition_metadata=None
+    entity_type="PERSON", start=0, end=10, score=0.9, recognition_metadata=None
 ):
     """Helper to create RecognizerResult for testing."""
     return RecognizerResult(
@@ -29,9 +26,9 @@ def create_test_result(
         analysis_explanation=AnalysisExplanation(
             recognizer="TestRecognizer",
             original_score=score,
-            textual_explanation="Test"
+            textual_explanation="Test",
         ),
-        recognition_metadata=recognition_metadata
+        recognition_metadata=recognition_metadata,
     )
 
 
@@ -93,10 +90,7 @@ class TestFilterResultsByLabels:
     def test_when_result_has_no_entity_type_then_skips_with_warning(self):
         """Test that results without entity_type are skipped."""
         result_without_type = RecognizerResult(
-            entity_type=None,
-            start=0,
-            end=10,
-            score=0.9
+            entity_type=None, start=0, end=10, score=0.9
         )
         results = [
             result_without_type,
@@ -232,10 +226,7 @@ class TestValidateResultPositions:
         """Test that results with missing start are filtered out."""
         valid_result = create_test_result("PERSON", start=0, end=10)
         invalid_result = RecognizerResult(
-            entity_type="EMAIL_ADDRESS",
-            start=None,
-            end=40,
-            score=0.9
+            entity_type="EMAIL_ADDRESS", start=None, end=40, score=0.9
         )
 
         filtered = validate_result_positions([valid_result, invalid_result])
@@ -247,10 +238,7 @@ class TestValidateResultPositions:
         """Test that results with missing end are filtered out."""
         valid_result = create_test_result("PERSON", start=0, end=10)
         invalid_result = RecognizerResult(
-            entity_type="EMAIL_ADDRESS",
-            start=20,
-            end=None,
-            score=0.9
+            entity_type="EMAIL_ADDRESS", start=20, end=None, score=0.9
         )
 
         filtered = validate_result_positions([valid_result, invalid_result])
@@ -262,10 +250,7 @@ class TestValidateResultPositions:
         """Test that results with both positions missing are filtered out."""
         valid_result = create_test_result("PERSON", start=0, end=10)
         invalid_result = RecognizerResult(
-            entity_type="EMAIL_ADDRESS",
-            start=None,
-            end=None,
-            score=0.9
+            entity_type="EMAIL_ADDRESS", start=None, end=None, score=0.9
         )
 
         filtered = validate_result_positions([valid_result, invalid_result])
@@ -284,7 +269,9 @@ class TestConsolidateGenericEntities:
         supported_entities = ["PERSON", "EMAIL_ADDRESS"]
         logged_entities = set()
 
-        processed = consolidate_generic_entities(results, supported_entities, logged_entities)
+        processed = consolidate_generic_entities(
+            results, supported_entities, logged_entities
+        )
 
         assert len(processed) == 1
         assert processed[0].entity_type == "PERSON"
@@ -297,7 +284,9 @@ class TestConsolidateGenericEntities:
         supported_entities = ["PERSON"]
         logged_entities = set()
 
-        processed = consolidate_generic_entities(results, supported_entities, logged_entities)
+        processed = consolidate_generic_entities(
+            results, supported_entities, logged_entities
+        )
 
         assert len(processed) == 1
         assert processed[0].entity_type == GENERIC_PII_ENTITY
@@ -310,10 +299,14 @@ class TestConsolidateGenericEntities:
         supported_entities = ["PERSON"]
         logged_entities = set()
 
-        processed = consolidate_generic_entities(results, supported_entities, logged_entities)
+        processed = consolidate_generic_entities(
+            results, supported_entities, logged_entities
+        )
 
         assert processed[0].recognition_metadata is not None
-        assert processed[0].recognition_metadata["original_entity_type"] == "UNKNOWN_TYPE"
+        assert (
+            processed[0].recognition_metadata["original_entity_type"] == "UNKNOWN_TYPE"
+        )
 
     def test_when_entity_already_has_metadata_then_adds_original_type(self):
         """Test that original_entity_type is added to existing metadata."""
@@ -323,10 +316,14 @@ class TestConsolidateGenericEntities:
         supported_entities = ["PERSON"]
         logged_entities = set()
 
-        processed = consolidate_generic_entities(results, supported_entities, logged_entities)
+        processed = consolidate_generic_entities(
+            results, supported_entities, logged_entities
+        )
 
         assert processed[0].recognition_metadata["key"] == "value"
-        assert processed[0].recognition_metadata["original_entity_type"] == "UNKNOWN_TYPE"
+        assert (
+            processed[0].recognition_metadata["original_entity_type"] == "UNKNOWN_TYPE"
+        )
 
     def test_when_unknown_entity_first_seen_then_logs_to_set(self):
         """Test that first occurrence of unknown entity is added to logged set."""
@@ -403,7 +400,9 @@ class TestEnsureGenericEntitySupport:
         """Test that GENERIC_PII_ENTITY is added when consolidation is enabled."""
         supported_entities = ["PERSON", "EMAIL_ADDRESS"]
 
-        result = ensure_generic_entity_support(supported_entities, enable_generic_consolidation=True)
+        result = ensure_generic_entity_support(
+            supported_entities, enable_generic_consolidation=True
+        )
 
         assert GENERIC_PII_ENTITY in result
         assert "PERSON" in result
@@ -413,16 +412,22 @@ class TestEnsureGenericEntitySupport:
         """Test that GENERIC_PII_ENTITY is not added when consolidation is disabled."""
         supported_entities = ["PERSON", "EMAIL_ADDRESS"]
 
-        result = ensure_generic_entity_support(supported_entities, enable_generic_consolidation=False)
+        result = ensure_generic_entity_support(
+            supported_entities, enable_generic_consolidation=False
+        )
 
         assert GENERIC_PII_ENTITY not in result
         assert len(result) == 2
 
-    def test_when_generic_already_present_and_consolidation_enabled_then_no_duplicate(self):
+    def test_when_generic_already_present_and_consolidation_enabled_then_no_duplicate(
+        self,
+    ):
         """Test that GENERIC_PII_ENTITY is not duplicated."""
         supported_entities = ["PERSON", GENERIC_PII_ENTITY]
 
-        result = ensure_generic_entity_support(supported_entities, enable_generic_consolidation=True)
+        result = ensure_generic_entity_support(
+            supported_entities, enable_generic_consolidation=True
+        )
 
         # Count occurrences of GENERIC_PII_ENTITY
         generic_count = result.count(GENERIC_PII_ENTITY)
@@ -431,8 +436,10 @@ class TestEnsureGenericEntitySupport:
     def test_when_original_list_not_modified(self):
         """Test that original list is not modified (returns a copy)."""
         original = ["PERSON", "EMAIL_ADDRESS"]
-        
-        result = ensure_generic_entity_support(original, enable_generic_consolidation=True)
+
+        result = ensure_generic_entity_support(
+            original, enable_generic_consolidation=True
+        )
 
         assert GENERIC_PII_ENTITY not in original  # Original unchanged
         assert GENERIC_PII_ENTITY in result  # Result has it

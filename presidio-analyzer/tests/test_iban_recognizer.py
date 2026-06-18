@@ -4,7 +4,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from tests import assert_result
-from presidio_analyzer.predefined_recognizers.generic.iban_recognizer import IbanRecognizer
+from presidio_analyzer.predefined_recognizers.generic.iban_recognizer import (
+    IbanRecognizer,
+)
 
 
 @pytest.fixture(scope="module")

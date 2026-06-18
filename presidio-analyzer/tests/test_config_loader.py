@@ -1,4 +1,5 @@
 """Tests for llm_utils.config_loader module."""
+
 import pytest
 import tempfile
 from pathlib import Path
@@ -15,7 +16,7 @@ class TestLoadYamlFile:
 
     def test_when_config_file_exists_then_loads_yaml(self):
         """Test loading a valid YAML configuration file."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("""
 lm_recognizer:
   supported_entities: ["PERSON", "EMAIL"]
@@ -40,7 +41,7 @@ lm_recognizer:
 
     def test_when_config_has_invalid_yaml_then_raises_value_error(self):
         """Test that invalid YAML raises ValueError."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("invalid: yaml: content:\n  - [unclosed")
             config_path = f.name
 
@@ -52,7 +53,7 @@ lm_recognizer:
 
     def test_when_config_is_empty_then_returns_none(self):
         """Test loading an empty YAML file."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("")
             config_path = f.name
 
@@ -65,7 +66,7 @@ lm_recognizer:
 
     def test_when_config_has_multiple_sections_then_loads_all(self):
         """Test loading config with multiple sections."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("""
 lm_recognizer:
   supported_entities: ["PERSON"]
@@ -93,11 +94,7 @@ class TestExtractLmConfig:
 
     def test_when_lm_recognizer_section_exists_then_extracts_with_defaults(self):
         """Test extracting lm_recognizer config applies defaults for missing fields."""
-        full_config = {
-            "lm_recognizer": {
-                "supported_entities": ["PERSON", "EMAIL"]
-            }
-        }
+        full_config = {"lm_recognizer": {"supported_entities": ["PERSON", "EMAIL"]}}
 
         lm_config = extract_lm_config(full_config)
 
@@ -115,7 +112,7 @@ class TestExtractLmConfig:
                 "supported_entities": ["PERSON"],
                 "min_score": 0.8,
                 "labels_to_ignore": ["system", "metadata"],
-                "enable_generic_consolidation": False
+                "enable_generic_consolidation": False,
             }
         }
 
@@ -143,7 +140,7 @@ class TestExtractLmConfig:
         full_config = {
             "lm_recognizer": {
                 "supported_entities": ["PHONE"],
-                "min_score": 0.6
+                "min_score": 0.6,
                 # labels_to_ignore and enable_generic_consolidation missing
             }
         }
@@ -166,7 +163,7 @@ class TestGetModelConfig:
                 "model": {
                     "model_id": "qwen2.5:1.5b",
                     "temperature": 0.0,
-                    "model_url": "http://localhost:11434"
+                    "model_url": "http://localhost:11434",
                 }
             }
         }
@@ -180,37 +177,29 @@ class TestGetModelConfig:
 
     def test_when_provider_key_missing_then_raises_value_error(self):
         """Test that missing provider key raises ValueError."""
-        config = {
-            "other_provider": {
-                "model": {"model_id": "some-model"}
-            }
-        }
+        config = {"other_provider": {"model": {"model_id": "some-model"}}}
 
-        with pytest.raises(ValueError, match="Configuration must contain 'langextract'"):
+        with pytest.raises(
+            ValueError, match="Configuration must contain 'langextract'"
+        ):
             get_model_config(config, "langextract")
 
     def test_when_model_section_missing_then_raises_value_error(self):
         """Test that missing model section raises ValueError."""
-        config = {
-            "langextract": {
-                "other_section": {}
-            }
-        }
+        config = {"langextract": {"other_section": {}}}
 
-        with pytest.raises(ValueError, match="Configuration must contain 'langextract.model'"):
+        with pytest.raises(
+            ValueError, match="Configuration must contain 'langextract.model'"
+        ):
             get_model_config(config, "langextract")
 
     def test_when_model_id_missing_then_raises_value_error(self):
         """Test that missing model_id raises ValueError."""
-        config = {
-            "langextract": {
-                "model": {
-                    "temperature": 0.0
-                }
-            }
-        }
+        config = {"langextract": {"model": {"temperature": 0.0}}}
 
-        with pytest.raises(ValueError, match="Configuration must contain 'langextract.model.model_id'"):
+        with pytest.raises(
+            ValueError, match="Configuration must contain 'langextract.model.model_id'"
+        ):
             get_model_config(config, "langextract")
 
     def test_when_model_config_has_extra_params_then_includes_all(self):
@@ -221,7 +210,7 @@ class TestGetModelConfig:
                     "model_id": "qwen2.5:1.5b",
                     "temperature": 0.1,
                     "model_url": "http://localhost:11434",
-                    "custom_param": "custom_value"
+                    "custom_param": "custom_value",
                 }
             }
         }
@@ -239,7 +228,7 @@ class TestIntegration:
 
     def test_when_loading_full_config_workflow_then_extracts_correctly(self):
         """Test complete workflow: load YAML → extract lm config → get model config."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("""
 lm_recognizer:
   supported_entities: ["PERSON", "EMAIL", "PHONE"]
@@ -258,19 +247,19 @@ langextract:
         try:
             # Step 1: Load YAML
             full_config = load_yaml_file(config_path)
-            
+
             # Step 2: Extract lm_recognizer config
             lm_config = extract_lm_config(full_config)
             assert lm_config["supported_entities"] == ["PERSON", "EMAIL", "PHONE"]
             assert lm_config["min_score"] == 0.75
             assert lm_config["labels_to_ignore"] == ["system"]
             assert lm_config["enable_generic_consolidation"] is False
-            
+
             # Step 3: Get model config
             model_config = get_model_config(full_config, "langextract")
             assert model_config["model_id"] == "qwen2.5:1.5b"
             assert model_config["temperature"] == 0.0
-            
+
         finally:
             Path(config_path).unlink()
 
@@ -280,9 +269,7 @@ class TestResolveConfigPath:
 
     def test_when_conf_relative_path_then_resolves_to_package_conf(self):
         """Test that paths relative to conf/ resolve via the package directory."""
-        resolved = resolve_config_path(
-            "langextract_prompts/default_pii_phi_prompt.j2"
-        )
+        resolved = resolve_config_path("langextract_prompts/default_pii_phi_prompt.j2")
         assert resolved.exists()
         assert "conf" in str(resolved)
         assert resolved.name == "default_pii_phi_prompt.j2"

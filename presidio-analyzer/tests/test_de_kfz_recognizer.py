@@ -7,6 +7,7 @@ Format: [1–3 letter district code] [space or hyphen] [1–2 letter identifier]
 Legal basis: Fahrzeug-Zulassungsverordnung (FZV) § 8.
 Data protection: DSGVO Art. 4 Nr. 1 (ECJ C-582/14, Breyer v. Germany).
 """
+
 import pytest
 
 from presidio_analyzer.predefined_recognizers import DeKfzRecognizer

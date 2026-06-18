@@ -64,6 +64,7 @@ def test_when_sgfins_in_text_then_all_sg_fins_found(
         results, expected_positions, expected_score_ranges
     ):
         import logging
+
         logging.info(f"result: {result}")
         # Adjust end_score if it's marked with a placeholder value that indicates it should be considered as max_score
         if end_score == "max":

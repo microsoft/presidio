@@ -72,9 +72,7 @@ class TestSlimSpacyNlpEngineInit:
 
     def test_when_models_and_languages_both_given_then_models_takes_precedence(self):
         models = [{"lang_code": "en", "model_name": "en_core_web_lg"}]
-        engine = SlimSpacyNlpEngine(
-            models=models, supported_languages=["es"]
-        )
+        engine = SlimSpacyNlpEngine(models=models, supported_languages=["es"])
         # models parameter takes precedence
         assert engine.models == models
 
@@ -147,9 +145,7 @@ class TestSlimSpacyNlpEngineLoad:
 
     def test_when_validate_model_params_missing_lang_code_then_raises(self):
         with pytest.raises(ValueError, match="lang_code"):
-            SlimSpacyNlpEngine._validate_model_params(
-                {"model_name": "en_core_web_sm"}
-            )
+            SlimSpacyNlpEngine._validate_model_params({"model_name": "en_core_web_sm"})
 
     def test_when_validate_model_params_missing_model_name_then_raises(self):
         with pytest.raises(ValueError, match="model_name"):
@@ -210,9 +206,7 @@ class TestSlimSpacyNlpEngineProcessBatch:
     """Tests for process_batch method."""
 
     def test_when_process_batch_then_returns_iterator(self, slim_nlp_engine):
-        results = slim_nlp_engine.process_batch(
-            ["hello", "world"], language="en"
-        )
+        results = slim_nlp_engine.process_batch(["hello", "world"], language="en")
         assert isinstance(results, Iterator)
 
     def test_when_process_batch_strings_then_text_and_artifacts(self, slim_nlp_engine):
@@ -225,9 +219,7 @@ class TestSlimSpacyNlpEngineProcessBatch:
         assert len(artifacts.tokens) == 2
         assert artifacts.entities == []
 
-    def test_when_process_batch_as_tuples_then_context_preserved(
-        self, slim_nlp_engine
-    ):
+    def test_when_process_batch_as_tuples_then_context_preserved(self, slim_nlp_engine):
         inputs = [("hello world", {"id": 1}), ("test text", {"id": 2})]
         results = list(
             slim_nlp_engine.process_batch(inputs, language="en", as_tuples=True)
@@ -328,6 +320,6 @@ class TestDefaultSlimModels:
 
     def test_when_default_models_then_all_values_are_sm(self):
         for lang, model in DEFAULT_SLIM_MODELS.items():
-            assert "_sm" in model or "sm" in model, (
-                f"Default model for {lang} ({model}) should be a small model"
-            )
+            assert (
+                "_sm" in model or "sm" in model
+            ), f"Default model for {lang} ({model}) should be a small model"

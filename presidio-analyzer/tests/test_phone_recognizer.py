@@ -1,6 +1,8 @@
 import pytest
 
-from presidio_analyzer.predefined_recognizers.generic.phone_recognizer import PhoneRecognizer
+from presidio_analyzer.predefined_recognizers.generic.phone_recognizer import (
+    PhoneRecognizer,
+)
 from tests import assert_result, assert_result_with_textual_explanation
 
 
@@ -9,7 +11,6 @@ def recognizer():
     return PhoneRecognizer(
         supported_regions=PhoneRecognizer.DEFAULT_SUPPORTED_REGIONS + ("JP", "CN")
     )
-
 
 
 @pytest.mark.parametrize(
@@ -137,13 +138,17 @@ def test_when_phone_with_textual_explanation_then_succeed(
     results = recognizer.analyze(text, entities, nlp_artifacts=nlp_artifacts)
     assert len(results) == expected_len
     for i, (res, (st_pos, fn_pos)) in enumerate(zip(results, expected_positions)):
-        assert_result_with_textual_explanation(res, entities[i], st_pos, fn_pos, score, expected_textual_explanations[i])
+        assert_result_with_textual_explanation(
+            res, entities[i], st_pos, fn_pos, score, expected_textual_explanations[i]
+        )
+
 
 def test_get_analysis_explanation():
     phone_recognizer = PhoneRecognizer()
     test_region = "US"
     explanation = phone_recognizer._get_analysis_explanation(test_region)
     assert explanation.recognizer == "PhoneRecognizer"
+
 
 def test_get_supported_entities():
     default_phone_recognizer = PhoneRecognizer()

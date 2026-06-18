@@ -30,8 +30,7 @@ _PATCH_HF = (
     ".huggingface_ner_recognizer.hf_pipeline"
 )
 _PATCH_TORCH = (
-    "presidio_analyzer.predefined_recognizers.ner"
-    ".huggingface_ner_recognizer.torch"
+    "presidio_analyzer.predefined_recognizers.ner" ".huggingface_ner_recognizer.torch"
 )
 _PATCH_DEVICE = (
     "presidio_analyzer.predefined_recognizers.ner"

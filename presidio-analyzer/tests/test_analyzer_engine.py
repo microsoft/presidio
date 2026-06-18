@@ -85,6 +85,7 @@ def test_when_analyze_with_predefined_recognizers_then_return_results(
     assert len(results) == 1
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
 
+
 @pytest.mark.parametrize(
     "registry_config,analyzer_lang,expectation",
     [
@@ -93,21 +94,26 @@ def test_when_analyze_with_predefined_recognizers_then_return_results(
         ({"supported_languages": ["es", "de"]}, None, pytest.raises(ValueError)),
         ({"supported_languages": ["es", "de"]}, ["de", "es"], nullcontext()),
         (None, None, nullcontext()),
-    ]
+    ],
 )
-def test_when_analyze_with_unsupported_language_must_match(registry_config, analyzer_lang, expectation):
+def test_when_analyze_with_unsupported_language_must_match(
+    registry_config, analyzer_lang, expectation
+):
     with expectation:
-        registry = RecognizerRegistryProvider(registry_configuration=registry_config).create_recognizer_registry()
+        registry = RecognizerRegistryProvider(
+            registry_configuration=registry_config
+        ).create_recognizer_registry()
         AnalyzerEngine(
             registry=registry,
             supported_languages=analyzer_lang,
             nlp_engine=NlpEngineMock(),
         )
 
-def test_when_analyze_with_defaults_success(
-):
+
+def test_when_analyze_with_defaults_success():
     registry = RecognizerRegistryProvider().create_recognizer_registry()
     AnalyzerEngine(registry=registry)
+
 
 def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     loaded_registry, unit_test_guid, spacy_nlp_engine, max_score
@@ -271,7 +277,7 @@ def test_when_regex_allow_list_specified(loaded_analyzer_engine):
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", allow_list=["bing"], allow_list_match = "regex"
+        text=text, language="en", allow_list=["bing"], allow_list_match="regex"
     )
     assert len(results) == 2
     assert text[results[0].start : results[0].end] == "microsoft.com"
@@ -289,13 +295,15 @@ def test_when_regex_allow_list_specified_but_none_in_file(loaded_analyzer_engine
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", allow_list=["microsoft"], allow_list_match = "regex"
+        text=text, language="en", allow_list=["microsoft"], allow_list_match="regex"
     )
     assert len(results) == 1
     assert_result(results[0], "URL", 0, 8, 0.5)
 
 
-def test_when_regex_allow_list_specified_multiple_items_with_missing_flags(loaded_analyzer_engine):
+def test_when_regex_allow_list_specified_multiple_items_with_missing_flags(
+    loaded_analyzer_engine,
+):
     text = "bing.com is his favorite website, microsoft.com is his second favorite, azure.com is his third favorite"
     results = loaded_analyzer_engine.analyze(
         text=text,
@@ -305,7 +313,10 @@ def test_when_regex_allow_list_specified_multiple_items_with_missing_flags(loade
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", allow_list=["bing", "microsoft"], allow_list_match = "regex", 
+        text=text,
+        language="en",
+        allow_list=["bing", "microsoft"],
+        allow_list_match="regex",
     )
     assert len(results) == 1
     assert text[results[0].start : results[0].end] == "azure.com"
@@ -321,12 +332,20 @@ def test_when_regex_allow_list_specified_with_regex_flags(loaded_analyzer_engine
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", allow_list=["BING", "MICROSOFT", "AZURE"], allow_list_match = "regex", regex_flags=0
+        text=text,
+        language="en",
+        allow_list=["BING", "MICROSOFT", "AZURE"],
+        allow_list_match="regex",
+        regex_flags=0,
     )
     assert len(results) == 3
 
     results = loaded_analyzer_engine.analyze(
-        text=text, language="en", allow_list=["BING", "MICROSOFT", "AZURE"], allow_list_match = "regex", regex_flags=re.IGNORECASE
+        text=text,
+        language="en",
+        allow_list=["BING", "MICROSOFT", "AZURE"],
+        allow_list_match="regex",
+        regex_flags=re.IGNORECASE,
     )
     assert len(results) == 0
 
@@ -419,7 +438,7 @@ def test_when_entities_is_none_then_return_all_fields(loaded_registry):
 
 
 def test_when_entities_is_none_all_recognizers_loaded_then_return_all_fields(
-        spacy_nlp_engine,
+    spacy_nlp_engine,
 ):
     analyze_engine = AnalyzerEngine(
         registry=RecognizerRegistry(), nlp_engine=spacy_nlp_engine
@@ -753,7 +772,9 @@ def test_entities_filter_for_ad_hoc_removes_recognizer(loaded_analyzer_engine):
     assert "MR" not in [resp.entity_type for resp in responses2]
 
 
-def test_ad_hoc_with_context_support_higher_confidence(spacy_nlp_engine, zip_code_recognizer):
+def test_ad_hoc_with_context_support_higher_confidence(
+    spacy_nlp_engine, zip_code_recognizer
+):
     text = "Mr. John Smith's zip code is 10023"
     analyzer_engine = AnalyzerEngine(nlp_engine=spacy_nlp_engine)
 
@@ -836,7 +857,9 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(spacy_nlp_en
     )
 
 
-def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(spacy_nlp_engine):
+def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(
+    spacy_nlp_engine,
+):
     class MockRecognizer(EntityRecognizer, ABC):
         def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
             return [
@@ -939,12 +962,8 @@ def test_when_regex_allow_list_times_out_then_result_is_kept(loaded_analyzer_eng
     """Test that a timed-out allow list regex keeps the result (conservative behavior)."""
     text = "bing.com is his favorite website"
 
-    with patch(
-        "presidio_analyzer.analyzer_engine.REGEX_TIMEOUT_SECONDS", 0.001
-    ):
-        with patch(
-            "presidio_analyzer.analyzer_engine.re.compile"
-        ) as mock_compile:
+    with patch("presidio_analyzer.analyzer_engine.REGEX_TIMEOUT_SECONDS", 0.001):
+        with patch("presidio_analyzer.analyzer_engine.re.compile") as mock_compile:
             mock_compiled = mock_compile.return_value
             mock_compiled.search.side_effect = TimeoutError("regex timed out")
 
@@ -993,4 +1012,3 @@ def test_when_regex_allow_list_is_all_empty_entries_then_results_are_kept():
     )
 
     assert filtered == results
-

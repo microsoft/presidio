@@ -1,4 +1,5 @@
 """Tests for llm_utils.langextract_helper module."""
+
 import pytest
 from unittest.mock import Mock, MagicMock, patch
 from presidio_analyzer.llm_utils.langextract_helper import (
@@ -20,7 +21,7 @@ class TestExtractLmConfig:
                 "supported_entities": ["PERSON", "EMAIL"],
                 "min_score": 0.7,
                 "labels_to_ignore": ["system"],
-                "enable_generic_consolidation": False
+                "enable_generic_consolidation": False,
             }
         }
 
@@ -44,11 +45,7 @@ class TestExtractLmConfig:
 
     def test_when_partial_config_then_uses_defaults_for_missing_fields(self):
         """Test that defaults are used for missing fields."""
-        config = {
-            "lm_recognizer": {
-                "supported_entities": ["PERSON"]
-            }
-        }
+        config = {"lm_recognizer": {"supported_entities": ["PERSON"]}}
 
         result = extract_lm_config(config)
 
@@ -59,11 +56,7 @@ class TestExtractLmConfig:
 
     def test_when_only_min_score_provided_then_uses_defaults_for_others(self):
         """Test partial config with only min_score."""
-        config = {
-            "lm_recognizer": {
-                "min_score": 0.8
-            }
-        }
+        config = {"lm_recognizer": {"min_score": 0.8}}
 
         result = extract_lm_config(config)
 
@@ -122,7 +115,7 @@ class TestCreateReverseEntityMapping:
         entity_mappings = {
             "person": "PERSON",
             "email": "EMAIL_ADDRESS",
-            "phone": "PHONE_NUMBER"
+            "phone": "PHONE_NUMBER",
         }
 
         result = create_reverse_entity_mapping(entity_mappings)
@@ -139,10 +132,7 @@ class TestCreateReverseEntityMapping:
 
     def test_when_duplicate_values_then_last_wins(self):
         """Test behavior with duplicate values in original mapping."""
-        entity_mappings = {
-            "person1": "PERSON",
-            "person2": "PERSON"  # Duplicate value
-        }
+        entity_mappings = {"person1": "PERSON", "person2": "PERSON"}  # Duplicate value
 
         result = create_reverse_entity_mapping(entity_mappings)
 
@@ -238,13 +228,12 @@ class TestCalculateExtractionConfidence:
         """Test using custom alignment scores."""
         extraction = Mock()
         extraction.alignment_status = "MATCH_EXACT"
-        
-        custom_scores = {
-            "MATCH_EXACT": 0.99,
-            "MATCH_FUZZY": 0.75
-        }
 
-        result = calculate_extraction_confidence(extraction, alignment_scores=custom_scores)
+        custom_scores = {"MATCH_EXACT": 0.99, "MATCH_FUZZY": 0.75}
+
+        result = calculate_extraction_confidence(
+            extraction, alignment_scores=custom_scores
+        )
 
         assert result == 0.99
 
@@ -252,13 +241,15 @@ class TestCalculateExtractionConfidence:
         """Test that default is returned when custom scores don't have the status."""
         extraction = Mock()
         extraction.alignment_status = "MATCH_FUZZY"
-        
+
         custom_scores = {
             "MATCH_EXACT": 0.99
             # MATCH_FUZZY missing
         }
 
-        result = calculate_extraction_confidence(extraction, alignment_scores=custom_scores)
+        result = calculate_extraction_confidence(
+            extraction, alignment_scores=custom_scores
+        )
 
         assert result == 0.85  # Default score
 
@@ -280,6 +271,15 @@ class TestDefaultAlignmentScores:
 
     def test_default_alignment_scores_are_ordered_correctly(self):
         """Test that scores are in descending order of confidence."""
-        assert DEFAULT_ALIGNMENT_SCORES["MATCH_EXACT"] > DEFAULT_ALIGNMENT_SCORES["MATCH_FUZZY"]
-        assert DEFAULT_ALIGNMENT_SCORES["MATCH_FUZZY"] > DEFAULT_ALIGNMENT_SCORES["MATCH_LESSER"]
-        assert DEFAULT_ALIGNMENT_SCORES["MATCH_LESSER"] > DEFAULT_ALIGNMENT_SCORES["NOT_ALIGNED"]
+        assert (
+            DEFAULT_ALIGNMENT_SCORES["MATCH_EXACT"]
+            > DEFAULT_ALIGNMENT_SCORES["MATCH_FUZZY"]
+        )
+        assert (
+            DEFAULT_ALIGNMENT_SCORES["MATCH_FUZZY"]
+            > DEFAULT_ALIGNMENT_SCORES["MATCH_LESSER"]
+        )
+        assert (
+            DEFAULT_ALIGNMENT_SCORES["MATCH_LESSER"]
+            > DEFAULT_ALIGNMENT_SCORES["NOT_ALIGNED"]
+        )

@@ -8,6 +8,7 @@ def test_configuration_validator_language_codes_no_exception():
     valid_languages = ["en", "es", "fr", "en-US", "es-ES"]
     validate_language_codes(valid_languages)
 
+
 def test_configuration_validator_language_codes_invalid():
     """Test ConfigurationValidator rejects invalid language codes."""
     invalid_languages = ["invalid_lang"]

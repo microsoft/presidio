@@ -43,7 +43,7 @@ def entities():
     ],
 )
 def test_when_all_urls_then_succeed(
-        text, expected_len, expected_positions, expected_score, recognizer, entities
+    text, expected_len, expected_positions, expected_score, recognizer, entities
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len

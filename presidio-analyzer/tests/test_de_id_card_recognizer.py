@@ -14,6 +14,7 @@ Scoring contract (see DeIdCardRecognizer.PATTERNS):
   ICAO-valid nPA → validate_result True  → MAX_SCORE (1.0)
   Legacy T+8d    → validate_result None  → pattern score 0.5
 """
+
 import pytest
 
 from tests import assert_result
@@ -67,8 +68,12 @@ def entities():
     ],
 )
 def test_when_all_de_id_cards_then_succeed(
-    text, expected_len, expected_positions, expected_score,
-    recognizer, entities,
+    text,
+    expected_len,
+    expected_positions,
+    expected_score,
+    recognizer,
+    entities,
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
@@ -93,7 +98,7 @@ def test_when_all_de_id_cards_then_succeed(
         ("T22000129", None),
         ("T00000000", None),
         # Wrong length
-        ("L01X00T4",  False),
+        ("L01X00T4", False),
         ("L01X00T440", False),
         # Last char must be digit (for nPA form)
         ("L01X00T4A", False),

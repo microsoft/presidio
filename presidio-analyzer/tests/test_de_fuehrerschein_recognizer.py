@@ -21,6 +21,7 @@ Fictitious examples following the 11-character structure:
   HH98765432C  – issuing authority "HH" (Hamburg)
   KO12345678X  – issuing authority "KO" (Koblenz)
 """
+
 import pytest
 
 from presidio_analyzer.predefined_recognizers import DeFuehrerscheinRecognizer

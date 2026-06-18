@@ -20,6 +20,7 @@ Pre-calculated valid examples:
   Z000000005  – letter Z (=26), exercises upper-bound letter ordinal
   Z999999997  – letter Z with all-9 data, exercises Quersumme on 7 of 10 products
 """
+
 import pytest
 
 from tests import assert_result
@@ -96,7 +97,7 @@ def test_when_all_de_health_insurance_numbers_then_succeed(
         # Starts with digit (after .upper() it's still a digit → re.match fails)
         ("1123456780", False),
         # Wrong length
-        ("A12345678",  False),
+        ("A12345678", False),
         ("A1234567890", False),
         # Lowercase: .upper() converts to valid → True (IGNORECASE is global)
         ("a123456780", True),

@@ -3,7 +3,11 @@ from pathlib import Path
 from typing import List
 from unittest.mock import patch
 
-from presidio_analyzer import AnalyzerEngineProvider, RecognizerResult, PatternRecognizer
+from presidio_analyzer import (
+    AnalyzerEngineProvider,
+    RecognizerResult,
+    PatternRecognizer,
+)
 from presidio_analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 
 
@@ -176,7 +180,10 @@ def test_analyzer_engine_provider_with_azure_ai_language():
 
     assert len(analyzer_engine.analyze("This is a test", language="en")) > 0
 
-@pytest.mark.skipif(pytest.importorskip("azure"), reason="Optional dependency not installed") # noqa: E501
+
+@pytest.mark.skipif(
+    pytest.importorskip("azure"), reason="Optional dependency not installed"
+)  # noqa: E501
 def test_analyzer_engine_provider_with_ahds():
     analyzer_yaml, _, _ = get_full_paths(
         "conf/test_ahds_reco.yaml",
@@ -205,7 +212,6 @@ def test_analyzer_engine_provider_with_ahds():
     assert len(ahds_recognizers) == 1
 
     assert len(analyzer_engine.analyze("This is a test", language="en")) > 0
-    
 
 
 def test_analyzer_engine_provider_no_nlp_recognizer():
@@ -221,7 +227,14 @@ def test_analyzer_engine_provider_no_nlp_recognizer():
     recognizer = analyzer_engine.get_recognizers()[0]
     assert isinstance(recognizer, CreditCardRecognizer)
 
-    assert len(analyzer_engine.analyze("My Credit card number is 4917300800000000", language="en")) > 0
+    assert (
+        len(
+            analyzer_engine.analyze(
+                "My Credit card number is 4917300800000000", language="en"
+            )
+        )
+        > 0
+    )
 
 
 def test_analyzer_engine_provider_no_nlp_recognizer_is_added():
@@ -249,7 +262,9 @@ def test_analyzer_engine_provider_no_nlp_recognizer_is_added_per_language():
 
     analyzer_engine = provider.create_engine()
 
-    assert len(analyzer_engine.get_recognizers()) == 4 # Two CreditCardRecognizers and two SpacyRecognizers
+    assert (
+        len(analyzer_engine.get_recognizers()) == 4
+    )  # Two CreditCardRecognizers and two SpacyRecognizers
     nlp_recognizers = [
         rec
         for rec in analyzer_engine.get_recognizers()
@@ -277,7 +292,8 @@ def test_analyzer_engine_provider_multiple_nlp_recognizers_raises_exception():
     with pytest.raises(
         ValueError,
         match=f"Multiple NLP recognizers for language en found in the configuration. "
-                f"Please remove the duplicates."):
+        f"Please remove the duplicates.",
+    ):
         provider = AnalyzerEngineProvider(analyzer_engine_conf_file=analyzer_yaml)
         analyzer_engine = provider.create_engine()
 
@@ -290,7 +306,9 @@ def test_analyzer_engine_provider_no_nlp_engine_or_provider_results_in_default_n
 
     analyzer_engine = provider.create_engine()
 
-    assert len(analyzer_engine.get_recognizers()) == 2 # SpacyRecognizer, CreditCardRecognizer
+    assert (
+        len(analyzer_engine.get_recognizers()) == 2
+    )  # SpacyRecognizer, CreditCardRecognizer
     nlp_recognizer = [
         rec
         for rec in analyzer_engine.get_recognizers()
@@ -323,6 +341,7 @@ def test_analyzer_engine_stanza_without_recognizer_creates_recognizer():
     }
     assert supported_languages == {"en", "es"}
 
+
 def test_analyzer_engine_provider_one_custom_recognizer():
     analyzer_yaml, _, _ = get_full_paths(
         "conf/custom_recognizer_yaml.yaml",
@@ -331,7 +350,9 @@ def test_analyzer_engine_provider_one_custom_recognizer():
 
     analyzer_engine = provider.create_engine()
     assert len(analyzer_engine.get_recognizers()) == 1
-    assert analyzer_engine.analyze("My zip code is 12345", language="en")[0].score == pytest.approx(0.4)
+    assert analyzer_engine.analyze("My zip code is 12345", language="en")[
+        0
+    ].score == pytest.approx(0.4)
 
 
 def test_analyzer_engine_provider_invalid_analyzer_conf_file():
@@ -349,7 +370,9 @@ def test_analyzer_engine_provider_invalid_nlp_conf_file():
 def test_analyzer_engine_provider_invalid_registry_conf_file():
     """Test that invalid recognizer registry configuration file path raises error."""
     with pytest.raises(ValueError):
-        AnalyzerEngineProvider(recognizer_registry_conf_file="/nonexistent/path/file.yaml")
+        AnalyzerEngineProvider(
+            recognizer_registry_conf_file="/nonexistent/path/file.yaml"
+        )
 
 
 def test_analyzer_engine_provider_get_configuration_with_nonexistent_file():
@@ -370,7 +393,7 @@ def test_analyzer_engine_provider_get_configuration_with_invalid_yaml():
     import os
 
     # Create a temporary file with invalid YAML
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
         f.write("invalid: yaml: content: [[[")
         temp_file = f.name
 
@@ -599,8 +622,6 @@ def test_analyzer_engine_provider_configuration_logging(caplog):
     assert len(caplog.records) > 0
 
 
-
-
 # --- install_models / _install_models_from_nlp_config tests ---
 
 _NLP_CONF_CONTENT = (
@@ -640,7 +661,9 @@ def test_install_models_analyzer_conf_without_nlp_falls_back_to_nlp_conf(tmp_pat
     nlp_yaml.write_text(_NLP_CONF_CONTENT)
 
     with patch("install_nlp_models._download_model") as mock_dl:
-        install_models(nlp_conf_file=str(nlp_yaml), analyzer_conf_file=str(analyzer_yaml))
+        install_models(
+            nlp_conf_file=str(nlp_yaml), analyzer_conf_file=str(analyzer_yaml)
+        )
 
     mock_dl.assert_called_once_with("spacy", "en_core_web_sm")
 
@@ -664,7 +687,9 @@ def test_install_models_analyzer_conf_takes_priority_over_nlp_conf(tmp_path):
     nlp_yaml.write_text(_NLP_CONF_CONTENT)
 
     with patch("install_nlp_models._download_model") as mock_dl:
-        install_models(nlp_conf_file=str(nlp_yaml), analyzer_conf_file=str(analyzer_yaml))
+        install_models(
+            nlp_conf_file=str(nlp_yaml), analyzer_conf_file=str(analyzer_yaml)
+        )
 
     mock_dl.assert_called_once_with("spacy", "en_core_web_lg")
 

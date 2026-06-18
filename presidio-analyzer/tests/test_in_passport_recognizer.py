@@ -1,14 +1,17 @@
-import pytest           
+import pytest
 from presidio_analyzer.predefined_recognizers import InPassportRecognizer
 from tests.assertions import assert_result
+
 
 @pytest.fixture(scope="module")
 def recognizer():
     return InPassportRecognizer()
 
+
 @pytest.fixture(scope="module")
 def entities():
     return ["IN_PASSPORT"]
+
 
 @pytest.mark.parametrize(
     "text, expected_len, expected_position, expected_score",
@@ -28,12 +31,12 @@ def entities():
     ],
 )
 def test_when_all_passport_numbers_then_succeed(
-        text,
-        expected_len,
-        expected_position,
-        expected_score,
-        recognizer,
-        entities,
+    text,
+    expected_len,
+    expected_position,
+    expected_score,
+    recognizer,
+    entities,
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len

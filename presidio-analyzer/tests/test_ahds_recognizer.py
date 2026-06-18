@@ -21,15 +21,13 @@ def import_modules():
     from azure.identity import DefaultAzureCredential
 
 
-    
-
 def requires_env_vars():
     dotenv.load_dotenv()
     endpoint = os.getenv("AHDS_ENDPOINT", "")
     return pytest.mark.skipif(
-        endpoint == "",
-        reason="AHDS_ENDPOINT environment variable not set"
+        endpoint == "", reason="AHDS_ENDPOINT environment variable not set"
     )
+
 
 @requires_env_vars()
 def test_get_supported_entities(import_modules):
@@ -80,7 +78,9 @@ def test_mocked_entities_match_recognizer_results():
     try:
         importlib.import_module("azure.health.deidentification")
     except ImportError:
-        pytest.skip("Skipping test because 'azure.health.deidentification' is not installed")
+        pytest.skip(
+            "Skipping test because 'azure.health.deidentification' is not installed"
+        )
 
     # Mocking the DeidentificationClient and its analyze method
     from presidio_analyzer.predefined_recognizers import AzureHealthDeidRecognizer
@@ -94,7 +94,7 @@ def test_mocked_entities_match_recognizer_results():
 
     mock_entities = [
         MockResult(entity_type="PATIENT", start=14, end=17, score=1.0),
-        MockResult(entity_type="EMAIL", start=29, end=41, score=1.0)
+        MockResult(entity_type="EMAIL", start=29, end=41, score=1.0),
     ]
 
     mock_client = MagicMock()

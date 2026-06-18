@@ -5,6 +5,7 @@ All test numbers are fictitious/generated and do not represent real persons.
 Valid numbers are produced with the official ISO 7064 Mod 11, 10 algorithm
 as specified by the Bundeszentralamt für Steuern (§§ 139a–139e AO).
 """
+
 import pytest
 
 from tests import assert_result
@@ -69,7 +70,7 @@ def test_when_all_de_tax_ids_then_succeed(
         # Non-numeric
         ("abcdefghijk", False),
         # Wrong length
-        ("1234567890",  False),
+        ("1234567890", False),
         ("123456789030", False),
         # All same first 10 digits
         ("11111111111", False),
@@ -78,5 +79,7 @@ def test_when_all_de_tax_ids_then_succeed(
         ("12222234567", False),
     ],
 )
-def test_when_de_tax_id_validated_then_checksum_result_is_correct(number, expected, recognizer):
+def test_when_de_tax_id_validated_then_checksum_result_is_correct(
+    number, expected, recognizer
+):
     assert recognizer.validate_result(number) == expected

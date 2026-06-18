@@ -76,7 +76,6 @@ def test_when_using_transformers_then_all_transformers_result_correct(
         )
 
 
-
 @pytest.mark.skip_engine("transformers_en")
 def test_when_person_in_text_then_person_full_name_complex_found(
     nlp_engine, nlp_recognizer, entities

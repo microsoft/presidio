@@ -212,13 +212,14 @@ def test_empty_deny_list_raises_value_error():
 )
 def test_global_regex_flag_deny_list_returns_right_result(global_flag, expected_len):
     deny_list = ["MrS", "mR"]
-    text = "Mrs. smith \n\n" \
-           "and Mr. Jones were sitting in the room."
+    text = "Mrs. smith \n\n" "and Mr. Jones were sitting in the room."
 
-    recognizer_ignore_case = PatternRecognizer(supported_entity="TITLE",
-                                               name="TitlesRecognizer",
-                                               deny_list=deny_list,
-                                               global_regex_flags=global_flag)
+    recognizer_ignore_case = PatternRecognizer(
+        supported_entity="TITLE",
+        name="TitlesRecognizer",
+        deny_list=deny_list,
+        global_regex_flags=global_flag,
+    )
 
     results = recognizer_ignore_case.analyze(text=text, entities=["TITLE"])
     assert len(results) == expected_len
@@ -226,10 +227,11 @@ def test_global_regex_flag_deny_list_returns_right_result(global_flag, expected_
 
 def test_pattern_recognizer_with_invalidate_result():
     """Test PatternRecognizer with invalidate_result returning True."""
+
     class InvalidatingRecognizer(PatternRecognizer):
         def invalidate_result(self, pattern_text):
             # Invalidate if pattern starts with '0'
-            return pattern_text.startswith('0')
+            return pattern_text.startswith("0")
 
     patterns = [Pattern(name="test_pattern", regex=r"\d{3}", score=0.8)]
     recognizer = InvalidatingRecognizer(
@@ -250,10 +252,11 @@ def test_pattern_recognizer_with_invalidate_result():
 
 def test_pattern_recognizer_with_validate_result_false():
     """Test PatternRecognizer with validate_result returning False."""
+
     class ValidatingRecognizer(PatternRecognizer):
         def validate_result(self, pattern_text):
             # Only validate if it contains digit '5'
-            return '5' in pattern_text
+            return "5" in pattern_text
 
     patterns = [Pattern(name="test_pattern", regex=r"\d{3}", score=0.5)]
     recognizer = ValidatingRecognizer(
@@ -274,6 +277,7 @@ def test_pattern_recognizer_with_validate_result_false():
 
 def test_pattern_recognizer_with_both_validate_and_invalidate():
     """Test PatternRecognizer with both validate and invalidate logic."""
+
     class BothRecognizer(PatternRecognizer):
         def validate_result(self, pattern_text):
             return len(pattern_text) == 3
@@ -347,7 +351,9 @@ def test_pattern_recognizer_from_dict_with_both_supported_entity_and_entities():
         "patterns": [{"name": "p1", "score": 0.5, "regex": r"\d+"}],
     }
 
-    with pytest.raises(ValueError, match="Both 'supported_entity' and 'supported_entities'"):
+    with pytest.raises(
+        ValueError, match="Both 'supported_entity' and 'supported_entities'"
+    ):
         PatternRecognizer.from_dict(recognizer_dict)
 
 
@@ -403,7 +409,7 @@ def test_pattern_recognizer_multiple_patterns():
         supported_entity="TEST",
         patterns=patterns,
         name="MultiPatternTest",
-        global_regex_flags=re.DOTALL | re.MULTILINE
+        global_regex_flags=re.DOTALL | re.MULTILINE,
     )
 
     results = recognizer.analyze("Number 123 and CAPS word", ["TEST"])
@@ -564,4 +570,3 @@ def test_regex_timeout_seconds_env_var_override():
 
     # Restore the module to default state
     importlib.reload(pr_module)
-

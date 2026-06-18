@@ -77,7 +77,7 @@ def test_ner_model_configuration_validation_success():
         "stride": 16,
         "alignment_mode": "expand",
         "default_score": 0.9,
-        "low_confidence_score_multiplier": 0.3
+        "low_confidence_score_multiplier": 0.3,
     }
 
     config = NerModelConfiguration.from_dict(config_data)
@@ -86,16 +86,16 @@ def test_ner_model_configuration_validation_success():
     assert config.default_score == 0.9
     assert config.low_confidence_score_multiplier == 0.3
 
+
 def test_ner_model_configuration_invalid_score():
     """Test NerModelConfiguration rejects invalid score values."""
-    config_data = {
-        "default_score": 1.5  # Invalid: > 1.0
-    }
+    config_data = {"default_score": 1.5}  # Invalid: > 1.0
 
     with pytest.raises(ValidationError) as exc_info:
         NerModelConfiguration.from_dict(config_data)
 
     assert "less than or equal to 1" in str(exc_info.value)
+
 
 def test_backward_compatibility_ner_config_to_dict():
     """Test that NerModelConfiguration maintains backward compatibility."""

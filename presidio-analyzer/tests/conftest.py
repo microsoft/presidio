@@ -12,7 +12,10 @@ from presidio_analyzer import (
 )
 from presidio_analyzer import RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
-from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS, PREDEFINED_RECOGNIZERS
+from presidio_analyzer.predefined_recognizers import (
+    NLP_RECOGNIZERS,
+    PREDEFINED_RECOGNIZERS,
+)
 from tests.mocks import RecognizerRegistryMock, NlpEngineMock
 
 

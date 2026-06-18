@@ -55,6 +55,7 @@ def test_when_aadhaar_in_text_then_all_aadhaars_found(
             expected_score,
         )
 
+
 palindrome_test_set = [
     ["abMA", False, False],
     ["abCba", False, True],
@@ -77,8 +78,8 @@ def test_is_palindrome(input_text, case_sensitive, expected_output):
     :return: True/False
     """
     assert (
-            InAadhaarRecognizer._is_palindrome(input_text, case_sensitive)
-            == expected_output
+        InAadhaarRecognizer._is_palindrome(input_text, case_sensitive)
+        == expected_output
     )
 
 
@@ -87,6 +88,7 @@ verhoeff_test_set = [
     [400123456787, True],
     [123456789012, False],
 ]
+
 
 @pytest.mark.parametrize("input_number, is_verhoeff", verhoeff_test_set)
 def test_is_verhoeff(input_number, is_verhoeff) -> None:

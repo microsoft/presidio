@@ -22,6 +22,7 @@ Real-world formatting variants that must normalise to a valid ID:
   "DE 136 695 976", "DE-136-695-976", "DE.136.695.976", "DE 136695976",
   lowercase variants.
 """
+
 import pytest
 
 from tests import assert_result
@@ -73,7 +74,8 @@ def entities():
         ("AT123456789", 0),      # wrong country
         ("FR12345678901", 0),    # wrong country
         ("DE12345678",   0),     # too short
-        ("DE1234567890", 0),     # too long
+        ("DE1234567890", 0),
+        # too long
         # fmt: on
     ],
 )

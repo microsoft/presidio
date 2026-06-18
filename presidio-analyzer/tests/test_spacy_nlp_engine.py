@@ -22,7 +22,6 @@ def test_simple_process_text(spacy_nlp_engine):
     assert nlp_artifacts.lemmas[1] == "text"
 
 
-
 def test_process_batch_strings(spacy_nlp_engine):
     nlp_artifacts_batch = spacy_nlp_engine.process_batch(
         ["simple text", "simple text"], language="en"
@@ -72,10 +71,10 @@ def test_default_configuration_correct():
 
 
 def test_get_supported_entities_doesnt_include_ignored():
-    ner_config = NerModelConfiguration(labels_to_ignore=["A","B"],
-                                       model_to_presidio_entity_mapping=dict(A="A",
-                                                                             B="B",
-                                                                             C="C"))
+    ner_config = NerModelConfiguration(
+        labels_to_ignore=["A", "B"],
+        model_to_presidio_entity_mapping=dict(A="A", B="B", C="C"),
+    )
     spacy_nlp_engine = SpacyNlpEngine(ner_model_configuration=ner_config)
     entities = spacy_nlp_engine.get_supported_entities()
 
@@ -84,11 +83,16 @@ def test_get_supported_entities_doesnt_include_ignored():
     assert "C" in entities
 
 
-@pytest.mark.parametrize("texts, as_tuples", [
-    (["simple text", "simple text"], False),
-    ([("simple text", {"key": "value"})], True),
-])
-def test_batch_processing_with_as_tuples_returns_context(spacy_nlp_engine, texts, as_tuples):
+@pytest.mark.parametrize(
+    "texts, as_tuples",
+    [
+        (["simple text", "simple text"], False),
+        ([("simple text", {"key": "value"})], True),
+    ],
+)
+def test_batch_processing_with_as_tuples_returns_context(
+    spacy_nlp_engine, texts, as_tuples
+):
     nlp_artifacts_batch = spacy_nlp_engine.process_batch(
         texts, language="en", as_tuples=as_tuples
     )
@@ -108,46 +112,60 @@ def test_batch_processing_with_as_tuples_returns_context(spacy_nlp_engine, texts
 
 def test_when_gpu_available_then_spacy_gpu_configured():
     """Test that spaCy GPU is configured when GPU is detected."""
-    with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
+    with patch(
+        "presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector"
+    ) as mock_detector:
         mock_detector.get_device.return_value = "cuda"
-        
+
         with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.spacy") as mock_spacy:
             mock_spacy.load.return_value = MagicMock()
             mock_spacy.util.is_package.return_value = True
-            
-            engine = SpacyNlpEngine(models=[{"lang_code": "en", "model_name": "en_core_web_sm"}])
+
+            engine = SpacyNlpEngine(
+                models=[{"lang_code": "en", "model_name": "en_core_web_sm"}]
+            )
             engine.load()
-            
+
             mock_spacy.require_gpu.assert_called_once()
 
 
 def test_when_gpu_configuration_fails_then_warning_logged():
     """Test that warning is logged when GPU configuration fails."""
-    with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
+    with patch(
+        "presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector"
+    ) as mock_detector:
         mock_detector.get_device.return_value = "cuda"
-        
+
         with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.spacy") as mock_spacy:
             mock_spacy.load.return_value = MagicMock()
             mock_spacy.util.is_package.return_value = True
             mock_spacy.require_gpu.side_effect = Exception("GPU error")
-            
-            with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.logger") as mock_logger:
-                engine = SpacyNlpEngine(models=[{"lang_code": "en", "model_name": "en_core_web_sm"}])
+
+            with patch(
+                "presidio_analyzer.nlp_engine.spacy_nlp_engine.logger"
+            ) as mock_logger:
+                engine = SpacyNlpEngine(
+                    models=[{"lang_code": "en", "model_name": "en_core_web_sm"}]
+                )
                 engine.load()
-                
+
                 assert mock_logger.warning.called
 
 
 def test_when_cpu_device_then_gpu_not_configured():
     """Test that GPU is not configured when CPU device is detected."""
-    with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector") as mock_detector:
+    with patch(
+        "presidio_analyzer.nlp_engine.spacy_nlp_engine.device_detector"
+    ) as mock_detector:
         mock_detector.get_device.return_value = "cpu"
-        
+
         with patch("presidio_analyzer.nlp_engine.spacy_nlp_engine.spacy") as mock_spacy:
             mock_spacy.load.return_value = MagicMock()
             mock_spacy.util.is_package.return_value = True
-            
-            engine = SpacyNlpEngine(models=[{"lang_code": "en", "model_name": "en_core_web_sm"}])
+
+            engine = SpacyNlpEngine(
+                models=[{"lang_code": "en", "model_name": "en_core_web_sm"}]
+            )
             engine.load()
-            
+
             mock_spacy.require_gpu.assert_not_called()

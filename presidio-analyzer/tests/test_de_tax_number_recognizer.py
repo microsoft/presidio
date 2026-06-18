@@ -4,6 +4,7 @@ Tests for DeTaxNumberRecognizer (Steuernummer).
 Tests cover both the ELSTER unified 13-digit format and the various
 state-specific slash-separated formats used across German Bundesländer.
 """
+
 import pytest
 
 from presidio_analyzer.predefined_recognizers import DeTaxNumberRecognizer
