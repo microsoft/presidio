@@ -241,6 +241,7 @@ __all__ = [
     "KrFrnRecognizer",
     "SeOrganisationsnummerRecognizer",
     "ThTninRecognizer",
+    "TwNationalIdRecognizer",
     "TrLicensePlateRecognizer",
     "TrNationalIdRecognizer",
     "SePersonnummerRecognizer",
