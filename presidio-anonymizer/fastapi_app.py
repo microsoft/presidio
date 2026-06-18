@@ -141,11 +141,8 @@ def create_app() -> FastAPI:
     return server.app
 
 
-app = create_app()
-
-
 if __name__ == "__main__":
     import uvicorn
 
     port = int(os.environ.get("PORT", DEFAULT_PORT))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(create_app(), host="0.0.0.0", port=port)

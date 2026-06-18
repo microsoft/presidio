@@ -211,5 +211,5 @@ directory, install the optional dependencies and run it with Uvicorn:
 
 ```sh
 pip install -e ".[fastapi]"
-uvicorn fastapi_app:app --host 0.0.0.0 --port 3000
+uvicorn fastapi_app:create_app --factory --host 0.0.0.0 --port 3000
 ```

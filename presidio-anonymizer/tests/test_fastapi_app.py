@@ -15,7 +15,7 @@ def _load_fastapi_app():
     spec = util.spec_from_file_location("presidio_anonymizer_fastapi_app", module_path)
     module = util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.app
+    return module.create_app()
 
 
 def test_health_endpoint_returns_service_status():
