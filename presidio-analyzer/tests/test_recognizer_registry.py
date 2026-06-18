@@ -617,3 +617,17 @@ def test_load_predefined_recognizers_validates_countries_input():
 # ---------------------------------------------------------------------------
 # YAML ``country_code`` cross-validation
 # ---------------------------------------------------------------------------
+
+
+def test_load_predefined_recognizers_includes_tw_recognizers_from_default_yaml():
+    """Default YAML should expose Taiwan recognizers for zh pipelines."""
+    registry = RecognizerRegistry(supported_languages=["zh"])
+    registry.load_predefined_recognizers(languages=["zh"])
+
+    zh_recognizers = [
+        rec for rec in registry.recognizers if rec.supported_language == "zh"
+    ]
+    names = {type(rec).__name__ for rec in zh_recognizers}
+
+    assert "TwNationalIdRecognizer" in names
+    assert "TwPhoneNumberRecognizer" in names
