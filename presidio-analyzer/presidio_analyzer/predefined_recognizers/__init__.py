@@ -101,6 +101,10 @@ from .country_specific.sweden.se_personnummer_recognizer import SePersonnummerRe
 # Thai recognizers
 from .country_specific.thai.th_tnin_recognizer import ThTninRecognizer
 
+# Taiwan recognizers
+from .country_specific.taiwan.tw_national_id_recognizer import TwNationalIdRecognizer
+from .country_specific.taiwan.tw_phone_number_recognizer import TwPhoneNumberRecognizer
+
 # Turkey recognizers
 from .country_specific.turkey.tr_license_plate_recognizer import (
     TrLicensePlateRecognizer,
