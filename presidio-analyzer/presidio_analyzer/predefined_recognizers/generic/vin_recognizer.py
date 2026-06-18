@@ -91,8 +91,9 @@ class VinRecognizer(PatternRecognizer):
         returns None on mismatch so the base pattern score is preserved.
 
         :param pattern_text: Text detected as pattern by regex
-        :return: True if check digit matches, False if NA-applicable and
-            mismatched or structurally invalid, None if not NA-applicable
+        :return: True if mod-11 check digit matches (any region), False if
+            NA-applicable and mismatched or structurally invalid, None if
+            non-NA and mismatched
         """
         vin = pattern_text.upper()
         if len(vin) != 17:

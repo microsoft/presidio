@@ -8,7 +8,8 @@ class ImeiRecognizer(PatternRecognizer):
     Recognize International Mobile Equipment Identity (IMEI) numbers using regex.
 
     IMEI is a 15-digit identifier for mobile devices. The last digit is a Luhn
-    check digit computed over all 15 digits. Detection relies on the formatted
+    check digit derived from the preceding 14 digits; validation is performed
+    over the full 15-digit IMEI. Detection relies on the formatted
     pattern (``##-######-######-#``) to avoid collisions with other 15-digit
     Luhn identifiers such as AMEX credit card numbers.
 
