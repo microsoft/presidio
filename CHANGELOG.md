@@ -3,6 +3,7 @@
 ### Added
 
 - Added Taiwan National ID (`TW_NATIONAL_ID`) predefined recognizer in `presidio-analyzer`.
+- Added Taiwan phone number (`TW_PHONE_NUMBER`) predefined recognizer in `presidio-analyzer`.
 
 All notable changes to this project will be documented in this file.
 
