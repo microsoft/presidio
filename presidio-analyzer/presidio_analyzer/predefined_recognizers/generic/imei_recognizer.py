@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple
 
-from presidio_analyzer import Pattern, PatternRecognizer
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 
 
 class ImeiRecognizer(PatternRecognizer):
@@ -58,7 +58,9 @@ class ImeiRecognizer(PatternRecognizer):
         :param pattern_text: Text detected as pattern by regex
         :return: True if invalidated
         """
-        only_digits = "".join(c for c in pattern_text if c.isdigit())
+        only_digits = EntityRecognizer.sanitize_value(
+            pattern_text, self.replacement_pairs
+        )
         if len(only_digits) != 15:
             return True
         return not self._luhn_valid(only_digits)

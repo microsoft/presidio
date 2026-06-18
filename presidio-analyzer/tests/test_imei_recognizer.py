@@ -66,3 +66,9 @@ def test_when_imei_in_text_then_detected(
 )
 def test_invalidate_result(imei, invalidated, recognizer):
     assert recognizer.invalidate_result(imei) is invalidated
+
+
+def test_invalidate_result_respects_custom_replacement_pairs():
+    recognizer = ImeiRecognizer(replacement_pairs=[("-", ""), (".", "")])
+    assert recognizer.invalidate_result("49.015420.323751.8") is False
+    assert recognizer.invalidate_result("49.015420.323751.9") is True
