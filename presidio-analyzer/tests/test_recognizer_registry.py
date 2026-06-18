@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+import yaml
 import regex as re
 from presidio_analyzer import (
     AnalyzerEngine,
@@ -619,15 +620,22 @@ def test_load_predefined_recognizers_validates_countries_input():
 # ---------------------------------------------------------------------------
 
 
-def test_load_predefined_recognizers_includes_tw_recognizers_from_default_yaml():
-    """Default YAML should expose Taiwan recognizers for zh pipelines."""
-    registry = RecognizerRegistry(supported_languages=["zh"])
-    registry.load_predefined_recognizers(languages=["zh"])
+def test_default_yaml_defines_tw_recognizers_and_loader_can_resolve_classes():
+    """Default YAML should define Taiwan recognizers with matching loader classes."""
+    config_path = Path(__file__).resolve().parents[1] / "presidio_analyzer" / "conf" / "default_recognizers.yaml"
+    config = yaml.safe_load(config_path.read_text())
 
-    zh_recognizers = [
-        rec for rec in registry.recognizers if rec.supported_language == "zh"
-    ]
-    names = {type(rec).__name__ for rec in zh_recognizers}
+    recognizer_entries = {
+        entry["name"]: entry for entry in config["recognizers"] if isinstance(entry, dict)
+    }
 
-    assert "TwNationalIdRecognizer" in names
-    assert "TwPhoneNumberRecognizer" in names
+    tw_national_id = recognizer_entries["TwNationalIdRecognizer"]
+    tw_phone = recognizer_entries["TwPhoneNumberRecognizer"]
+
+    assert tw_national_id["supported_languages"] == ["zh"]
+    assert tw_national_id["country_code"] == "tw"
+    assert tw_phone["supported_languages"] == ["zh"]
+    assert tw_phone["country_code"] == "tw"
+
+    assert RecognizerListLoader.get_existing_recognizer_cls("TwNationalIdRecognizer").__name__ == "TwNationalIdRecognizer"
+    assert RecognizerListLoader.get_existing_recognizer_cls("TwPhoneNumberRecognizer").__name__ == "TwPhoneNumberRecognizer"
