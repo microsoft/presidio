@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse, Response
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
+from starlette.concurrency import run_in_threadpool
 
 DEFAULT_PORT = "3000"
 
@@ -65,7 +66,8 @@ class Server:
             analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
                 content.get("analyzer_results")
             )
-            anonymizer_result = self.anonymizer.anonymize(
+            anonymizer_result = await run_in_threadpool(
+                self.anonymizer.anonymize,
                 text=content.get("text", ""),
                 analyzer_results=analyzer_results,
                 operators=anonymizers_config,
@@ -84,7 +86,8 @@ class Server:
             deanonymize_config = AppEntitiesConvertor.operators_config_from_json(
                 content.get("deanonymizers")
             )
-            deanonymized_response = self.deanonymize.deanonymize(
+            deanonymized_response = await run_in_threadpool(
+                self.deanonymize.deanonymize,
                 text=content.get("text", ""),
                 entities=deanonymize_entities,
                 operators=deanonymize_config,
@@ -128,7 +131,7 @@ class Server:
 
         @self.app.exception_handler(Exception)
         def server_error(_: Request, err: Exception) -> JSONResponse:
-            self.logger.error("A fatal error occurred during execution: %s", err)
+            self.logger.exception("A fatal error occurred during execution")
             return JSONResponse({"error": "Internal server error"}, status_code=500)
 
 

@@ -210,6 +210,6 @@ endpoints as the default Flask server. From the `presidio-anonymizer` source
 directory, install the optional dependencies and run it with Uvicorn:
 
 ```sh
-pip install "presidio-anonymizer[fastapi]"
+pip install -e ".[fastapi]"
 uvicorn fastapi_app:app --host 0.0.0.0 --port 3000
 ```

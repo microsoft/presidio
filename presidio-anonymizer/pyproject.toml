@@ -49,7 +49,7 @@ pytest-mock = "*"
 python-dotenv = "*"
 pre_commit = "*"
 diff-cover = "*"
-fastapi = "*"
+fastapi = ">=0.115.0,<1.0.0"
 httpx = "*"
 
 [tool.coverage.run]
