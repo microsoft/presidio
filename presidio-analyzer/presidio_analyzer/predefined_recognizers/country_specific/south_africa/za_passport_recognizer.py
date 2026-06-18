@@ -11,7 +11,7 @@ class ZaPassportRecognizer(PatternRecognizer):
     (A, D, M, or T) followed by 8 digits.
 
     Reference:
-    https://regex101.com/library/bxJ2Zn
+    https://en.wikipedia.org/wiki/South_African_passport
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection

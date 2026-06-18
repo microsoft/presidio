@@ -46,6 +46,7 @@ def test_analyze_valid_and_invalid_za_drivers_licences(
         ("8001015009087", False),
         ("60390002", False),
         ("ABCDEFGHIJK", False),
+        ("ABC1234567890", False),
     ],
 )
 def test_validate_result(licence_number, expected, recognizer):

@@ -70,6 +70,6 @@ class ZaDriverLicenseRecognizer(PatternRecognizer):
         text = pattern_text.upper()
         if not self.MIN_LENGTH <= len(text) <= self.MAX_LENGTH:
             return False
-        if not re.search(r"\d", text) or not re.search(r"[A-Z]", text):
+        if re.fullmatch(r"\d{6,10}[A-Z0-9]{2,5}", text) is None:
             return False
-        return True
+        return bool(re.search(r"[A-Z]", text))

@@ -3,6 +3,9 @@
 import pytest
 
 from presidio_analyzer.predefined_recognizers import ZaMobileNumberRecognizer
+from presidio_analyzer.predefined_recognizers.country_specific.south_africa.za_phone_number_recognizer import (
+    ZaPhoneNumberRecognizer,
+)
 
 from tests import assert_result_within_score_range
 
@@ -76,3 +79,21 @@ def test_supported_entity(recognizer):
 def test_supported_language(recognizer):
     """Test that supported language is correctly set."""
     assert recognizer.supported_language == "en"
+
+
+@pytest.mark.parametrize(
+    "nsn, expected",
+    [
+        ("632118258", "mobile"),
+        ("825609352", "mobile"),
+        ("881234567", "mobile"),
+        ("891234567", "mobile"),
+        ("800123456", "telephone"),
+        ("861234567", "telephone"),
+        ("871234567", "telephone"),
+        ("112625500", "telephone"),
+    ],
+)
+def test_classify_by_nsn_prefix(nsn, expected):
+    """Test NSN fallback when python-phonenumbers returns UNKNOWN."""
+    assert ZaPhoneNumberRecognizer._classify_by_nsn_prefix(nsn) == expected

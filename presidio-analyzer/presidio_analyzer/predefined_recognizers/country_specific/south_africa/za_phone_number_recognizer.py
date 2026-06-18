@@ -130,7 +130,11 @@ class ZaPhoneNumberRecognizer(PhoneRecognizer):
         first_digit = nsn[0]
         if first_digit in "67":
             return "mobile"
-        if first_digit in "1234589":
+        if nsn.startswith("80") or nsn.startswith(("86", "87")):
+            return "telephone"
+        if first_digit == "8":
+            return "mobile"
+        if first_digit in "123459":
             return "telephone"
         return None
 
