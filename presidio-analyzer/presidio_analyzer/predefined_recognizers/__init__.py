@@ -130,6 +130,7 @@ from .country_specific.us.us_itin_recognizer import UsItinRecognizer
 from .country_specific.us.us_mbi_recognizer import UsMbiRecognizer
 from .country_specific.us.us_npi_recognizer import UsNpiRecognizer
 from .country_specific.us.us_passport_recognizer import UsPassportRecognizer
+from .country_specific.tw.tw_national_id_recognizer import TwNationalIdRecognizer
 from .country_specific.us.us_ssn_recognizer import UsSsnRecognizer
 
 # Generic recognizers
@@ -200,6 +201,7 @@ __all__ = [
     "UsMbiRecognizer",
     "UsNpiRecognizer",
     "UsPassportRecognizer",
+    "TwNationalIdRecognizer",
     "UsSsnRecognizer",
     "EsNifRecognizer",
     "SpacyRecognizer",

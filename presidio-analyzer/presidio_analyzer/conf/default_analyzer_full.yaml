@@ -71,6 +71,7 @@ recognizer_registry:
       type: predefined
 
     - name: UsSsnRecognizer
+    - name: TwNationalIdRecognizer
       type: predefined
 
     - name: NhsRecognizer
