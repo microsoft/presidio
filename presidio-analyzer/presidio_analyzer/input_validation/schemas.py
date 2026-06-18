@@ -97,7 +97,7 @@ class ConfigurationValidator:
         dumped_config["recognizers"] = [
             recognizer
             if isinstance(recognizer, str)
-            else recognizer.model_dump(exclude_unset=False)
+            else recognizer.model_dump()
             for recognizer in validated_config.recognizers
         ]
         return dumped_config
