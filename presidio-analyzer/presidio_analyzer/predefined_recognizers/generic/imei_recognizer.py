@@ -9,8 +9,8 @@ class ImeiRecognizer(PatternRecognizer):
 
     IMEI is a 15-digit identifier for mobile devices. The last digit is a Luhn
     check digit derived from the preceding 14 digits; validation is performed
-    over the full 15-digit IMEI. Detection relies on the formatted
-    pattern (``##-######-######-#``) to avoid collisions with other 15-digit
+    over the full 15-digit IMEI. Detection relies on a formatted
+    pattern (``##-######-######-#`` or ``## ###### ###### #``) to avoid collisions with other 15-digit
     Luhn identifiers such as AMEX credit card numbers.
 
     ref:
