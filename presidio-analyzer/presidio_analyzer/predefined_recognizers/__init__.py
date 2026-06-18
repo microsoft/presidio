@@ -174,8 +174,10 @@ PREDEFINED_RECOGNIZERS = [
     "EmailRecognizer",
     "IpRecognizer",
     "IbanRecognizer",
+    "ImeiRecognizer",
     "MedicalLicenseRecognizer",
     "UrlRecognizer",
+    "VinRecognizer",
 ]
 
 NLP_RECOGNIZERS = {
