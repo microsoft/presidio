@@ -1,7 +1,7 @@
 """Tests for Taiwan phone number (TW_PHONE_NUMBER) recognizer."""
 
 import pytest
-from presidio_analyzer.predefined_recognizers import PhoneRecognizer
+from presidio_analyzer.predefined_recognizers import TwPhoneNumberRecognizer
 
 from tests import assert_result_within_score_range
 
@@ -26,12 +26,7 @@ TAIWAN_CONTEXT = [
 @pytest.fixture(scope="module")
 def recognizer():
     """Create a TW-configured PhoneRecognizer instance for testing."""
-    return PhoneRecognizer(
-        supported_regions=["TW"],
-        supported_entity="TW_PHONE_NUMBER",
-        context=TAIWAN_CONTEXT,
-        supported_language="zh",
-    )
+    return TwPhoneNumberRecognizer()
 
 
 @pytest.fixture(scope="module")

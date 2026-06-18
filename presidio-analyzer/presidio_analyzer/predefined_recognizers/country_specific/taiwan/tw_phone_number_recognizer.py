@@ -13,7 +13,7 @@ class TwPhoneNumberRecognizer(PhoneRecognizer):
     generic PhoneRecognizer with the supported region restricted to Taiwan.
 
     Public reference for numbering background:
-    https://en.wikipedia.org/wiki/Telephone_numbers_in_Taiwan
+    https://www.itu.int/itudoc/itu-t/ob-lists/icc/e164_886.html
 
     :param context: Base context words for enhancing the assurance scores.
     :param supported_language: Language this recognizer supports

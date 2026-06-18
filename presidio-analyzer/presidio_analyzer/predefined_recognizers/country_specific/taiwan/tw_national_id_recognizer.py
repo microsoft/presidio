@@ -13,7 +13,7 @@ class TwNationalIdRecognizer(PatternRecognizer):
     numbering scheme.
 
     Public reference for format and checksum background:
-    https://en.wikipedia.org/wiki/National_identification_card_(Taiwan)
+    https://www.ris.gov.tw/app/portal/3053
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
