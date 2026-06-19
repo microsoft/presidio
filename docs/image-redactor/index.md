@@ -161,9 +161,9 @@ The most basic usage of the engine can be setup like the following in python
 diOCR = DocumentIntelligenceOCR(endpoint="<your_endpoint>", key="<your_key>")
 ```
 
-If your environment uses Azure Identity instead of API keys, pass any Azure SDK
-credential object. For example, install `azure-identity` and use
-`DefaultAzureCredential`:
+If your environment uses Azure Identity instead of API keys, pass an Azure SDK
+credential that implements `TokenCredential`, such as `DefaultAzureCredential`.
+For example, install `azure-identity` and use `DefaultAzureCredential`:
 
 ```
 from azure.identity import DefaultAzureCredential
