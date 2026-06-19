@@ -129,6 +129,18 @@ def test_credential_auth_uses_passed_credential(document_analysis_client):
     )
 
 
+@mock.patch("presidio_image_redactor.document_intelligence_ocr.DocumentAnalysisClient")
+def test_credential_auth_accepts_azure_key_credential(document_analysis_client):
+    """Confirm credential auth can receive AzureKeyCredential directly."""
+    credential = AzureKeyCredential("fake_key")
+
+    DocumentIntelligenceOCR(endpoint="fake_endpoint", credential=credential)
+
+    document_analysis_client.assert_called_once_with(
+        endpoint="fake_endpoint", credential=credential
+    )
+
+
 def test_key_and_credential_then_raises_exception():
     """Confirm key and credential auth cannot be mixed."""
     with pytest.raises(ValueError, match="Only one of key or credential"):
