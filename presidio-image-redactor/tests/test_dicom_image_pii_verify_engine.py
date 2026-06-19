@@ -389,7 +389,7 @@ def test_remove_duplicate_entities_happy_path(
     test_results_no_dups = mock_engine._remove_duplicate_entities(results, tolerance)
 
     # Assert
-    assert sorted(test_results_no_dups, key=lambda x: str(x)) == sorted(expected_results, key=lambda x: str(x))
+    assert sorted(map(lambda d: tuple(sorted(d.items())), test_results_no_dups)) == sorted(map(lambda d: tuple(sorted(d.items())), expected_results))
 
 
 # ------------------------------------------------------
@@ -574,7 +574,7 @@ def test_label_all_positives_happy_path(
     test_all_pos = mock_engine._label_all_positives(mock_gt_single, ocr_results, analyzer_results, tolerance)
 
     # Assert
-    assert sorted(test_all_pos, key=lambda x: str(x)) == sorted(expected_results, key=lambda x: str(x))
+    assert sorted(map(lambda d: tuple(sorted(d.items())), test_all_pos)) == sorted(map(lambda d: tuple(sorted(d.items())), expected_results))
 
 
 # ------------------------------------------------------
@@ -710,14 +710,11 @@ def test_calculate_recall_happy_path(
     assert test_recall == expected_result
 
 def test_remove_duplicate_entities_keeps_highest_score():
-    from presidio_image_redactor import DicomImagePiiVerifyEngine
-
-    engine = DicomImagePiiVerifyEngine()
     results = [
         {"entity_type": "DATE_TIME", "score": 0.4, "left": 10, "top": 10, "width": 100, "height": 30},
         {"entity_type": "PERSON",    "score": 1.0, "left": 10, "top": 10, "width": 100, "height": 30},
     ]
     
-    deduped = engine._remove_duplicate_entities(results, dup_pix_tolerance=5)
+    deduped = DicomImagePiiVerifyEngine._remove_duplicate_entities(results, dup_pix_tolerance=5)
     assert len(deduped) == 1
     assert deduped[0]["entity_type"] == "PERSON"
