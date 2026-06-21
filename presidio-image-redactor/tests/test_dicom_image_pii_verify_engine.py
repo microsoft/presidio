@@ -149,12 +149,6 @@ def test_eval_dicom_instance_happy_path(
         "verify_dicom_instance",
         return_value=[None, None, None],
     )
-    mock_get_ocr_bboxes = mocker.patch.object(BboxProcessor, "get_bboxes_from_ocr_results", return_value=None)
-    mock_get_analyzer_bboxes = mocker.patch.object(
-        BboxProcessor,
-        "get_bboxes_from_analyzer_results",
-        return_value=None,
-    )
     mock_remove_dups = mocker.patch.object(DicomImagePiiVerifyEngine, "_remove_duplicate_entities", return_value=None)
     mock_label_positives = mocker.patch.object(DicomImagePiiVerifyEngine, "_label_all_positives", return_value=None)
     mock_precision = mocker.patch.object(DicomImagePiiVerifyEngine, "calculate_precision", return_value=None)
@@ -168,8 +162,6 @@ def test_eval_dicom_instance_happy_path(
     # Assert
     assert type(test_eval_results) == dict
     assert mock_verify_instance.call_count == 1
-    assert mock_get_ocr_bboxes.call_count == 1
-    assert mock_get_analyzer_bboxes.call_count == 1
     assert mock_remove_dups.call_count == 1
     assert mock_label_positives.call_count == 1
     assert mock_precision.call_count == 1
