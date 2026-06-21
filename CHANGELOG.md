@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file.
 - Canadian SIN (`CA_SIN`) recognizer for the Canadian Social Insurance Number, using regex pattern matching, context words (English and French), and Luhn checksum validation. Disabled by default.
 - South African ID number (`ZA_ID_NUMBER`) recognizer for the 13-digit national identity number, using pattern matching, context words, birth-date validation, and Luhn checksum validation. Disabled by default.
 
+- Philippines TIN (`PH_TIN`) recognizer for the Philippines Taxpayer Identification Number, using regex pattern matching, context words, and weighted modulo 11 checksum validation. Disabled by default.
+
 - Swedish PII recognizers for `SE_PERSONNUMMER` to identify Swedish Personal ID Numbers using pattern match and checksum. The recognizer also supports Swedish coordination numbers (samordningsnummer), issued to individuals who are not registered residents in Sweden but require identification. All disabled by default.
 
 - German PII recognizers for `DE_TAX_ID` (Steueridentifikationsnummer, §§ 139a–139e AO, ISO 7064 Mod 11,10 checksum), `DE_TAX_NUMBER` (Steuernummer, § 139a AO, ELSTER and slash formats), `DE_PASSPORT` (Reisepassnummer, PassG § 4, ICAO Doc 9303), `DE_ID_CARD` (Personalausweisnummer, PAuswG), `DE_SOCIAL_SECURITY` (Rentenversicherungsnummer, § 147 SGB VI, DRV checksum), `DE_HEALTH_INSURANCE` (Krankenversicherungsnummer/KVNR, § 290 SGB V, GKV checksum), `DE_KFZ` (KFZ-Kennzeichen, FZV § 8), `DE_HANDELSREGISTER` (Handelsregisternummer HRA/HRB, §§ 9/14 HGB), and `DE_PLZ` (Postleitzahl, very low base confidence, context-only). All disabled by default.
@@ -46,6 +48,10 @@ All notable changes to this project will be documented in this file.
 - Turkish phone number detection via configurable `PhoneRecognizer` with `supported_regions=["TR"]` and `supported_entity="TR_PHONE_NUMBER"`. Supports international (+90), national (0), and local formats using the `phonenumbers` library. Disabled by default; users enable it programmatically.
 - Turkish PII recognizer for `TR_LICENSE_PLATE` (plaka) to identify Turkish vehicle license plates using pattern match, context, and province code validation (01-81). Disabled by default.
 - Added PH_MOBILE_NUMBER recognizer for Philippine mobile phone numbers using PhoneRecognizer with supported_regions=['PH'] (disabled by default).
+
+### Image Redactor
+#### Added
+- Added Azure SDK credential support to `DocumentIntelligenceOCR` so callers can use Azure Identity credentials instead of API keys. Fixes #1882.
 
 ## [2.2.362] - 2026-03-15
 ### General
