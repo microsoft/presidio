@@ -1,0 +1,29 @@
+nlp_engine_name: spacy
+
+
+models:
+  -
+    lang_code: en
+    model_name: xx_ent_wiki_sm
+  - 
+    lang_code: es
+    model_name: xx_ent_wiki_sm
+  - 
+    lang_code: de
+    model_name: xx_ent_wiki_sm
+  - 
+    lang_code: fr
+    model_name: xx_ent_wiki_sm
+  - 
+    lang_code: it
+    model_name: xx_ent_wiki_sm
+  - 
+    lang_code: pt
+    model_name: xx_ent_wiki_sm
+  - 
+    lang_code: nl
+    model_name: xx_ent_wiki_sm
+  - 
+    lang_code: sv
+    model_name: xx_ent_wiki_sm
+    

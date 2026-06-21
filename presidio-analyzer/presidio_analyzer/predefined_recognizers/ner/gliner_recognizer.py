@@ -26,6 +26,11 @@ logger = logging.getLogger("presidio-analyzer")
 class GLiNERRecognizer(LocalRecognizer):
     """GLiNER model based entity recognizer."""
 
+    # Class-level cache for sharing GLiNER models across instances.
+    # Keyed by (model_name, map_location, load_onnx_model, onnx_model_file).
+    # Avoids loading duplicate copies when the same model serves multiple languages.
+    _shared_models: dict = {}
+
     def __init__(
         self,
         supported_entities: Optional[List[str]] = None,
@@ -106,9 +111,7 @@ class GLiNERRecognizer(LocalRecognizer):
         self.model_name = model_name
 
         self.map_location = (
-            map_location
-            if map_location is not None
-            else device_detector.get_device()
+            map_location if map_location is not None else device_detector.get_device()
         )
 
         self.flat_ner = flat_ner
@@ -142,9 +145,24 @@ class GLiNERRecognizer(LocalRecognizer):
         self.gliner_labels = list(self.model_to_presidio_entity_mapping.keys())
 
     def load(self) -> None:
-        """Load the GLiNER model."""
+        """Load the GLiNER model.
+
+        Shares model instances across recognizers with identical configuration
+        to avoid loading duplicate copies for multilingual setups.
+        """
         if not GLiNER:
             raise ImportError("GLiNER is not installed. Please install it.")
+
+        cache_key = (
+            self.model_name,
+            self.map_location,
+            self.load_onnx_model,
+            self.onnx_model_file,
+        )
+        if cache_key in GLiNERRecognizer._shared_models:
+            self.gliner = GLiNERRecognizer._shared_models[cache_key]
+            logger.info(f"Reusing shared GLiNER model for {self.model_name}")
+            return
 
         self.gliner = GLiNER.from_pretrained(
             self.model_name,
@@ -153,6 +171,8 @@ class GLiNERRecognizer(LocalRecognizer):
             onnx_model_file=self.onnx_model_file,
             **self.model_kwargs,
         )
+        GLiNERRecognizer._shared_models[cache_key] = self.gliner
+        logger.info(f"Loaded GLiNER model: {self.model_name}")
 
     def analyze(
         self,

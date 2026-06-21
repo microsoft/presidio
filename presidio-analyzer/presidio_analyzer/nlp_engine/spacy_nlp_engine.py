@@ -63,16 +63,26 @@ class SpacyNlpEngine(NlpEngine):
                 )
 
     def load(self) -> None:
-        """Load the spaCy NLP model."""
+        """Load the spaCy NLP model.
+
+        When multiple languages share the same model_name (e.g. xx_ent_wiki_sm
+        for multilingual setups), a single spaCy Language instance is reused.
+        This avoids duplicate model memory and multiple independently growing
+        StringStore/Vocab instances.
+        """
         logger.debug(f"Loading SpaCy models: {self.models}")
 
         self._enable_gpu()
 
         self.nlp = {}
+        loaded_models = {}
         for model in self.models:
             self._validate_model_params(model)
-            self._download_spacy_model_if_needed(model["model_name"])
-            self.nlp[model["lang_code"]] = spacy.load(model["model_name"])
+            model_name = model["model_name"]
+            if model_name not in loaded_models:
+                self._download_spacy_model_if_needed(model_name)
+                loaded_models[model_name] = spacy.load(model_name)
+            self.nlp[model["lang_code"]] = loaded_models[model_name]
 
     @staticmethod
     def _download_spacy_model_if_needed(model_name: str) -> None:

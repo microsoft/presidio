@@ -75,6 +75,11 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         >>> analyzer.registry.add_recognizer(recognizer)
     """
 
+    # Class-level cache for sharing HF pipelines across instances.
+    # Keyed by (model_name, tokenizer_name, aggregation_strategy, device).
+    # Avoids loading duplicate copies when the same model serves multiple languages.
+    _shared_pipelines: dict = {}
+
     # Default label mapping from common NER models to Presidio entities
     DEFAULT_LABEL_MAPPING = {
         # Standard NER labels (CoNLL format)
@@ -249,6 +254,8 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         This method handles:
         1. Hardware acceleration setup (CUDA validation and fallback)
         2. Lazy-loading of the heavyweight ML pipeline.
+        3. Sharing pipelines across instances with identical configuration
+           to avoid loading duplicate model copies for multilingual setups.
 
         :raises ValueError: If model_name is not set
         """
@@ -275,6 +282,17 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 )
                 device = -1
 
+        cache_key = (
+            self.model_name,
+            self.tokenizer_name,
+            self.aggregation_strategy,
+            device,
+        )
+        if cache_key in HuggingFaceNerRecognizer._shared_pipelines:
+            self.ner_pipeline = HuggingFaceNerRecognizer._shared_pipelines[cache_key]
+            logger.info(f"Reusing shared HuggingFace pipeline for {self.model_name}")
+            return
+
         logger.info(f"Loading HuggingFace model: {self.model_name}, device={device}")
 
         try:
@@ -285,6 +303,7 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 aggregation_strategy=self.aggregation_strategy,
                 device=device,
             )
+            HuggingFaceNerRecognizer._shared_pipelines[cache_key] = self.ner_pipeline
             logger.info(f"Successfully loaded {self.model_name}")
         except Exception:
             logger.exception(f"Failed to load model {self.model_name}")
