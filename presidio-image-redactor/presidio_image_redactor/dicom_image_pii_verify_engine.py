@@ -207,7 +207,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :return: Detected PHI with no duplicate entities.
         """
         dups = []
-        sorted(results, key=lambda x: x["score"], reverse=True)
+        results = sorted(results, key=lambda x: x["score"], reverse=True)
         results_no_dups = []
         dims = ["left", "top", "width", "height"]
 
