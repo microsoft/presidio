@@ -49,6 +49,10 @@ All notable changes to this project will be documented in this file.
 - Turkish PII recognizer for `TR_LICENSE_PLATE` (plaka) to identify Turkish vehicle license plates using pattern match, context, and province code validation (01-81). Disabled by default.
 - Added PH_MOBILE_NUMBER recognizer for Philippine mobile phone numbers using PhoneRecognizer with supported_regions=['PH'] (disabled by default).
 
+### Image Redactor
+#### Added
+- Added Azure SDK credential support to `DocumentIntelligenceOCR` so callers can use Azure Identity credentials instead of API keys. Fixes #1882.
+
 ## [2.2.362] - 2026-03-15
 ### General
 #### Added
