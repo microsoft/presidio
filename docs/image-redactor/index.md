@@ -191,7 +191,7 @@ Additional metadata can be sent to the Document Intelligence API call, such as p
 
 ```
 diOCR = DocumentIntelligenceOCR()
-ia_engine = ImageAnalyzerEngine(ocr=di_ocr)
+ia_engine = ImageAnalyzerEngine(ocr=diOCR)
 my_engine = ImageRedactorEngine(image_analyzer_engine=ia_engine)
 ```
 
