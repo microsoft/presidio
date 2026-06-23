@@ -113,7 +113,12 @@ jobs:
       - name: Setup Poetry Cache Directory
         run: |
           sudo mkdir -p $POETRY_CACHE_DIR
-          sudo chown -R runner $POETRY_CACHE_DIR    
+          sudo chown -R runner $POETRY_CACHE_DIR
+          # Remove stale virtualenvs to prevent cache corruption on re-run attempts.
+          # GitHub Actions may reuse the same runner VM when re-running failed jobs,
+          # which leaves the old /mnt/poetry_cache intact. Installing a new numpy
+          # version over an existing one causes mixed file state and IndentationErrors.
+          rm -rf $POETRY_CACHE_DIR/virtualenvs 2>/dev/null || true
 
       - name: Install system dependencies for Image Redactor
         if: matrix.component.name == 'Image Redactor'
