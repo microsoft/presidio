@@ -14,8 +14,12 @@
 *.swp
 *.bak
 *.tmp
+*.orig
 *~
 # Various IDEs
 .project
 .idea/
 *.tmproj
+.vscode/
+# CI/test artifacts
+ci/

@@ -1,0 +1,3 @@
+{{- if .Values.analyzer.enabled }}
+{{- include "presidio.hpa" (dict "root" $ "name" "analyzer" "component" .Values.analyzer) }}
+{{- end }}

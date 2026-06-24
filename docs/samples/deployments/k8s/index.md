@@ -31,7 +31,8 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 5. Port forwarding of HTTP requests to the API micro-service will be done automatically. In order to run manual:
 
    ```sh
-   kubectl port-forward <presidio-analyzer-pod-name> 8080:8080 -n presidio
+   # Forward the analyzer service (release name is "demo" when using run-with-kind.sh)
+   kubectl port-forward svc/demo-presidio-analyzer 8080:8080 -n presidio
    ```
 
 ## Presidio As a Service with Kubernetes
@@ -60,8 +61,8 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 2. Optional - Ingress controller for presidio API, e.g., [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls).
 
    > **NOTE**:  
-   > Presidio is deployed with an ingress controller by default, and uses `nginx` as `ingress.class`.  To change
-   > this behavior, deploy the helm chart with `ingress.enabled=false`.
+   > The chart does not create an Ingress by default. To expose the services through an
+   > NGINX Ingress, deploy with `ingress.enabled=true` (the default `ingress.className` is `nginx`).
 
 3. Deploy from `/docs/samples/deployments/k8s/charts/presidio`
 
@@ -76,9 +77,9 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
    NAME=<name>
 
    # Use Helm to install all required components
-   helm install $NAME . --set tag=$PRESIDIO_LABEL --namespace $NAMESPACE
+   helm install $NAME . --set image.tag=$TAG --namespace $NAMESPACE
 
    # If you have your own images in a separate ACR, run
    DOCKER_REGISTRY=<your_registry>
-   helm install $NAME . --set registry=$DOCKER_REGISTRY,tag=$PRESIDIO_LABEL . --namespace $NAMESPACE
+   helm install $NAME . --set image.registry=$DOCKER_REGISTRY,image.tag=$TAG --namespace $NAMESPACE
    ```
