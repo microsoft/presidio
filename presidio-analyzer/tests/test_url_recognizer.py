@@ -34,11 +34,18 @@ def entities():
         ("my domains: microsoft.com google.co.il", 2, ((12, 25), (26, 38),), 0.5),
         ('"https://microsoft.github.io/presidio/"', 1, ((0, 39),), 0.6),  
         ("'https://microsoft.github.io/presidio/'", 1, ((0, 39),), 0.6),
+        # A genuine ccTLD as a complete label must still match (#1498 guard)
+        ("example.sy", 1, ((0, 10),), 0.5),
 
         # Invalid URLs
         ("www.microsoft", 0, (), 0),
         ("http://microsoft", 0, (), 0),
         ("'www.microsoft'", 0, (), 0),
+        # Regression for #1498: a TLD must not match when it is only the prefix
+        # of a longer label (e.g. ".sy" in "os.system", ".mt" in "zeus.mtia").
+        ("os.system", 0, (), 0),
+        ("zeus.mtia.local", 0, (), 0),
+        ("return os.system, (cmd,)", 0, (), 0),
         # fmt: on
     ],
 )
