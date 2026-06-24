@@ -7,6 +7,12 @@ modules for private entities in text and images such as
 credit card numbers, names, locations, social security numbers,
 bitcoin wallets, US phone numbers, financial data and more.
 
+
+!!! info "Project transition update"
+    Presidio is transitioning to a community-owned project.
+    Read the full announcement [here](project_transition.md).
+
+
 ## Goals
 
 - Allow organizations to preserve privacy in a simpler way by democratizing de-identification technologies and introducing transparency in decisions.
@@ -33,10 +39,6 @@ bitcoin wallets, US phone numbers, financial data and more.
 Link to demo: <https://aka.ms/presidio-demo>
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/RPJ3-kEUybU?si=9HolTiQRZmxV7BqV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-## Provide feedback
-
-Are you using Presidio? We'd love to know how! Please help us improve by taking [this short anonymous survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR9LagCGNW01LpMix2pnFWFJUQjJDTVkwSlJYRkFPSUNNVlVRRVRWVDVNSy4u).
 
 ## Presidio's modules
 
