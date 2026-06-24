@@ -2,7 +2,7 @@
 
 We want to share an important update regarding the future of Presidio.
 
-The Presidio project is in the process of transitioning from a Microsoft-owned project to an independent, community-governed open source project under the new GitHub organization Data Privacy Stack. Its new URL is: `https://github.com/data-privacy-stack/presidio`
+The Presidio project is in the process of transitioning from a Microsoft-owned project to an independent, community-governed open source project under the new GitHub organization Data Privacy Stack. Its new URL is: <https://github.com/data-privacy-stack/presidio>
 
 Microsoft supports this transition and the continued success of the Presidio project as an open source community initiative.
 
