@@ -24,6 +24,8 @@ class SePersonnummerRecognizer(PatternRecognizer):
     * Luhn checksum is applied to the last 10 digits.
     """
 
+    COUNTRY_CODE = "se"
+
     # ---------------------------------------------------------------------
     #  Regular expressions – allow 6‑ or 8‑digit date parts.
     # ---------------------------------------------------------------------

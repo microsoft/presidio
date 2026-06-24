@@ -22,7 +22,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |NRP|A person’s Nationality, religious or political group.|Custom logic and context|
 |LOCATION|Name of politically or geographically defined location (cities, provinces, countries, international regions, bodies of water, mountains|Custom logic and context|
 |PERSON|A full person name, which can include first names, middle names or initials, and last names.|Custom logic and context|
-|PHONE_NUMBER|A telephone number|Custom logic, pattern match and context|
+|PHONE_NUMBER|A telephone number. The `PhoneRecognizer` can be extended programmatically for country-specific detection by configuring `supported_regions` and `supported_entity` (e.g. Philippines: `PhoneRecognizer(supported_regions=["PH"], supported_entity="PH_MOBILE_NUMBER")`, Turkey: `PhoneRecognizer(supported_regions=["TR"], supported_entity="TR_PHONE_NUMBER")`)|Custom logic, pattern match and context|
 |MEDICAL_LICENSE|Common medical license numbers.|Pattern match, context and checksum|
 |URL|A URL (Uniform Resource Locator), unique identifier used to locate a resource on the Internet|Pattern match, context and top level url validation|
 
@@ -120,6 +120,11 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | NG_NIN     | The Nigerian National Identification Number (NIN) is a unique 11-digit number issued by the National Identity Management Commission (NIMC). | Pattern match, context, and checksum |
 | NG_VEHICLE_REGISTRATION | Nigerian vehicle registration plate number in the current format (2011+): 3 letters (LGA code), 3 digits (serial), 2 letters (year/batch). | Pattern match and context |
 
+### Philippines
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| PH_TIN     | Philippines Taxpayer Identification Number (TIN). 9 or 12-digit number issued by the Bureau of Internal Revenue (BIR). | Pattern match, context, and checksum |
+
 ### Canada
 
 |FieldType|Description|Detection Method|
@@ -131,6 +136,11 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | SE_ORGANISATIONSNUMMER    | The Swedish Organisations ID Number is a unique 10-digit number issued to all Swedish organisations. | Pattern match, context, and checksum. |
 | SE_PERSONNUMMER    | The Swedish Personal ID Number is a unique 10/12-digit number issued to all Swedish residents. The recognizer also supports Samordningsnummer (coordination numbers) issued to individuals who are not (yet) registered residents but need a Swedish identifier (e.g., temporary workers, students). | Pattern match, context, and checksum. |
+
+### South Africa
+| FieldType  | Description                                                                                             | Detection Method                         |
+|------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
+| ZA_ID_NUMBER | The South African identity number is a 13-digit identifier in the `YYMMDDSSSSCAZ` format, where the trailing digit is validated with the Luhn algorithm. | Pattern match, context, and checksum. |
 
 ### Thai
 | FieldType  | Description                                                                                             | Detection Method                         |

@@ -35,6 +35,8 @@ class DeIdCardRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     PATTERNS = [
         Pattern(
             "Personalausweisnummer nPA (ICAO charset + check digit)",

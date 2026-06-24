@@ -19,6 +19,8 @@ class UkPostcodeRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "uk"
+
     PATTERNS = [
         Pattern(
             "UK Postcode",

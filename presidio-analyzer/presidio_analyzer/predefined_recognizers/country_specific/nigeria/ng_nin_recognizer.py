@@ -18,6 +18,8 @@ class NgNinRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "ng"
+
     PATTERNS = [
         Pattern(
             "NIN (Very Weak)",

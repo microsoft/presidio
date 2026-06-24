@@ -48,6 +48,8 @@ class DeBsnrRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
+    COUNTRY_CODE = "de"
+
     # Valid KV regional codes per KBV Arztnummern-Richtlinie Anlage 1.
     # Includes the standard 17 KV regions, the KBV itself, and Anlage-8 BMV-Ä
     # special codes for Krankenhäuser.

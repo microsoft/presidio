@@ -17,6 +17,8 @@ class SeOrganisationsnummerRecognizer(PatternRecognizer):
     * Luhn checksum validation
     """
 
+    COUNTRY_CODE = "se"
+
     PATTERNS = [
         Pattern(
             "Swedish Organisationsnummer (Medium)",

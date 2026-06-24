@@ -4,10 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### Anonymizer
+#### Fixed
+- Custom operator `validate()` no longer calls the user-supplied lambda with a dummy `"PII"` value. Previously, stateful lambdas (e.g. those accumulating a token-to-original-value map for de-anonymization) would receive a spurious invocation during validation, inserting a junk entry (`{"TOKEN_1": "PII"}`) into the map and skewing all subsequent token counters. The return-type contract is now enforced in `operate()` when the lambda runs on real data. Fixes [#2024](https://github.com/microsoft/presidio/issues/2024).
 
 ### Analyzer
 #### Added
+- Optional `countries` filter on `RecognizerRegistry.load_predefined_recognizers()` to scope predefined country-specific recognizers to a subset of locales (e.g. `countries=["us", "uk"]`). The same filter is also exposed as a top-level `supported_countries` field in the recognizer-registry YAML, mirroring `supported_languages`, and as an advisory per-recognizer `country_code:` field on every predefined country-specific entry in `default_recognizers.yaml` (cross-checked against the class attribute at load time). Country tagging works via two reconciled paths: the class-level `EntityRecognizer.COUNTRY_CODE` ClassVar (canonical for predefined recognizers) and the new `country_code` constructor kwarg on `EntityRecognizer` / `PatternRecognizer` (the path for custom recognizers without a subclass — flows through `PatternRecognizer.from_dict` so YAML `type: custom` entries can declare `country_code:` directly). Conflicting values raise `ValueError` at construction time so a predefined country recognizer can never be silently re-tagged. The resolved tag is read via the `country_code()` and `is_country_specific()` instance methods, and serialized through `to_dict()` / `from_dict()` for round-tripping. Inputs to the `countries` filter are validated up front (rejects bare strings, non-iterables, non-string elements, and blank codes). Locale-agnostic recognizers and untagged custom recognizers are always loaded regardless of the filter, preserving backwards compatibility. Adds `RecognizerRegistry.get_country_codes()` for introspection and a `WARNING` log when a requested country has no matching recognizer. See `docs/analyzer/filtering_by_country.md`. Fixes #1328.
 - Canadian SIN (`CA_SIN`) recognizer for the Canadian Social Insurance Number, using regex pattern matching, context words (English and French), and Luhn checksum validation. Disabled by default.
+- South African ID number (`ZA_ID_NUMBER`) recognizer for the 13-digit national identity number, using pattern matching, context words, birth-date validation, and Luhn checksum validation. Disabled by default.
+
+- Philippines TIN (`PH_TIN`) recognizer for the Philippines Taxpayer Identification Number, using regex pattern matching, context words, and weighted modulo 11 checksum validation. Disabled by default.
 
 - Swedish PII recognizers for `SE_PERSONNUMMER` to identify Swedish Personal ID Numbers using pattern match and checksum. The recognizer also supports Swedish coordination numbers (samordningsnummer), issued to individuals who are not registered residents in Sweden but require identification. All disabled by default.
 
@@ -17,9 +24,16 @@ All notable changes to this project will be documented in this file.
 
 - Added recognizer for Spanish Passport (`ES_PASSPORT`).
 
+- Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
+
+- Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).
+
 - Added `supported_entity` parameter to `PhoneRecognizer`. Previously, this recognizer hard-coded `["PHONE_NUMBER"]` as the only possible supported entity.
 
 #### Fixed
+- Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
+- Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
+- Fixed `PhoneRecognizer._get_recognizer_result` to use the constructor-provided `supported_entity` instead of the hard-coded `"PHONE_NUMBER"` string, making the `supported_entity` parameter from PR #2014 fully functional.
 - Fixed incorrect Prüfziffer algorithm in `DeHealthInsuranceRecognizer` (KVNR); now uses alternating factors [1,2,…,1,2] per § 290 SGB V Anlage 1 (#1972).
 - Fixed incorrect check-digit weights in `DeSocialSecurityRecognizer` (RVNR); now uses VKVV § 4 weights [2,1,2,5,7,1,2,1,2,1,2,1]. Previous weights diverged from the Deutsche Rentenversicherung specification and rejected the canonical DRV example 15070649C103.
 - Fixed incorrect check-digit algorithm in `DeLanrRecognizer`; now uses KBV Arztnummern-Richtlinie weights [4,9,4,9,4,9] without the spurious Quersumme step, and the complement-to-10 formula `(10 − sum mod 10) mod 10`. Previous weights and formula were internally self-consistent only.
@@ -31,7 +45,16 @@ All notable changes to this project will be documented in this file.
 - ICAO Doc 9303 MRZ checksum validation in `DePassportRecognizer` and `DeIdCardRecognizer` (weights 7, 3, 1 repeating; letters A=10…Z=35; sum mod 10).
 - Structural validation improvements in `DeBsnrRecognizer` per KBV Arztnummern-Richtlinie Anlage 1; valid KV regional codes are defined for defense-in-depth/documentation purposes, but unknown prefixes are not currently rejected (no public checksum exists for BSNR).
 - Turkish PII recognizer for `TR_NATIONAL_ID` (TCKN) to identify Turkish National Identification Numbers using pattern match, context, and NVI checksum validation. Disabled by default.
+- Turkish phone number detection via configurable `PhoneRecognizer` with `supported_regions=["TR"]` and `supported_entity="TR_PHONE_NUMBER"`. Supports international (+90), national (0), and local formats using the `phonenumbers` library. Disabled by default; users enable it programmatically.
 - Turkish PII recognizer for `TR_LICENSE_PLATE` (plaka) to identify Turkish vehicle license plates using pattern match, context, and province code validation (01-81). Disabled by default.
+- Added PH_MOBILE_NUMBER recognizer for Philippine mobile phone numbers using PhoneRecognizer with supported_regions=['PH'] (disabled by default).
+
+### Image Redactor
+#### Added
+- Added Azure SDK credential support to `DocumentIntelligenceOCR` so callers can use Azure Identity credentials instead of API keys. Fixes #1882.
+
+#### Fixed
+- Fixed an undefined variable in the Document Intelligence OCR setup example in the image-redactor documentation. The "Creating an image redactor engine in Python" snippet defined `diOCR` but referenced `di_ocr`, raising `NameError` when copied verbatim; the snippet now consistently uses `diOCR`.
 
 ## [2.2.362] - 2026-03-15
 ### General
@@ -796,12 +819,3 @@ New endpoint for deanonymizing encrypted entities by the anonymizer.
 [2.2.23]: https://github.com/microsoft/presidio/compare/2.2.2...2.2.23
 [2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
 [2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
-
-## Unreleased
-
-### Fixed
-- Fixed an issue where the CreditCardRecognizer regex could incorrectly identify 13-digit Unix timestamps as credit card numbers. Validated that 13 digit numbers that start with `1` and have no separators (e.g. `1748503543012`) are not flagged as credit cards.
-- Enhance NlpEngineProvider with validation methods for NLP engines, configuration, and conf file path.
-- Added Korean Resident Registration Number (RRN) recognizer (KrRrnRecognizer).
-- Added Thai National ID Number (TNIN) recognizer (ThTninRecognizer).
-
