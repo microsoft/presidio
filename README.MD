@@ -24,9 +24,17 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ---
 
-### :blue_book: [Full documentation](https://microsoft.github.io/presidio)
+> ## 📣 Important: Presidio is Transitioning
+>
+> **Presidio is moving to a new community-owned home.** The project is transitioning from a Microsoft-owned project to an independent, community-governed open source project under the [Data Privacy Stack](https://github.com/data-privacy-stack) organization.
+>
+> **New repository:** https://github.com/data-privacy-stack/presidio
+>
+> Existing functionality, APIs, and documentation are expected to remain available during the transition. [Read the full transition update](docs/project_transition.md).
 
-### :mega: [Project transition update](docs/project_transition.md)
+---
+
+### :blue_book: [Full documentation](https://microsoft.github.io/presidio)
 
 ### :question: [Frequently Asked Questions](docs/faq.md)
 
