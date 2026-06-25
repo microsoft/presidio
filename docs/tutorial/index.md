@@ -1,4 +1,4 @@
-# Tutorial: Customization in Microsoft Presidio
+# Tutorial: Customization in Presidio
 
 This tutorials covers different customization use cases to:
 
