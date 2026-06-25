@@ -1,9 +1,0 @@
-services:
-  presidio-anonymizer:
-    image: ${REGISTRY_NAME}/presidio-anonymizer${TAG}
-
-  presidio-analyzer:
-    image: ${REGISTRY_NAME}/presidio-analyzer${TAG}
-
-  presidio-image-redactor:
-    image: ${REGISTRY_NAME}/presidio-image-redactor${TAG}
