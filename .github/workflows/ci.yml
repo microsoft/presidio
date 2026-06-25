@@ -306,7 +306,7 @@ jobs:
       - name: Pull Presidio images from GHCR
         run: |
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
-          docker compose -f docker-compose.yml pull
+          docker compose -f docker-compose.yml -f .github/docker-compose-ci.yml pull
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           TAG: ':${{ env.TAG }}'
@@ -314,7 +314,7 @@ jobs:
       - name: Start Presidio cluster
         run: |
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
-          docker compose -f docker-compose.yml up -d
+          docker compose -f docker-compose.yml -f .github/docker-compose-ci.yml up -d
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
           TAG: ':${{ env.TAG }}'
@@ -360,12 +360,12 @@ jobs:
         if: failure()
         run: |
           echo "Capturing Docker logs for platform: ${{ matrix.platform }}"
-          docker compose -f docker-compose.yml logs
+          docker compose -f docker-compose.yml -f .github/docker-compose-ci.yml logs
 
       - name: Stop Docker containers
         if: always()
         run: |
-          docker compose -f docker-compose.yml down
+          docker compose -f docker-compose.yml -f .github/docker-compose-ci.yml down
 
   # Local build and test jobs for external contributors (no secrets required) 
   local-build-and-test:
