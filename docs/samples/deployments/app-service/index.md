@@ -21,7 +21,7 @@ APP_SERVICE_NAME=<name of app service>
 LOCATION=<location>
 APP_SERVICE_SKU=<sku>
 
-IMAGE_NAME=mcr.microsoft.com/presidio-analyzer
+IMAGE_NAME=ghcr.io/data-privacy-stack/presidio-analyzer:latest
 # the following parameters are only required if you build and deploy your own containers from a private registry
 ACR_USER_NAME=<user name>
 ACR_USER_PASSWORD=<password>

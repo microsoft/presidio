@@ -44,11 +44,11 @@ Pre-requisites:
         This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
     
     ```sh
-    # Download image from Dockerhub
-    docker pull mcr.microsoft.com/presidio-image-redactor
-    
+    # Download image from GitHub Container Registry
+    docker pull ghcr.io/data-privacy-stack/presidio-image-redactor
+
     # Run the container with the default port
-    docker run -d -p 5003:3000 mcr.microsoft.com/presidio-image-redactor:latest
+    docker run -d -p 5003:3000 ghcr.io/data-privacy-stack/presidio-image-redactor:latest
     ```
 
 === "From source"

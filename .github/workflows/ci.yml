@@ -14,7 +14,7 @@ concurrency:
 permissions: read-all
 
 env:
-  REGISTRY_NAME: ${{ secrets.ACR_NAME }}.azurecr.io
+  REGISTRY_NAME: ghcr.io/data-privacy-stack
   TAG: gha${{ github.run_number }}
 
 jobs:
@@ -182,8 +182,8 @@ jobs:
     needs: [lint]
     if: github.ref == 'refs/heads/main'
     permissions:
-      id-token: write
       contents: read
+      packages: write
     strategy:
       matrix:
         include:
@@ -211,15 +211,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Azure Login using OIDC
-        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Log in to Azure Container Registry
-        run: az acr login --name ${{ secrets.ACR_NAME }}
+      - name: Log in to GitHub Container Registry
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
+          GHCR_USERNAME: ${{ vars.GHCR_USERNAME || github.actor }}
+        run: echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
@@ -232,7 +228,7 @@ jobs:
             --platform ${{ matrix.platform }} \
             --push \
             --tag ${{ env.REGISTRY_NAME }}/${{ matrix.image }}:${{ env.TAG }}-${PLATFORM_TAG} \
-            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/public/${{ matrix.image }}:latest \
+            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/${{ matrix.image }}:latest \
             --cache-to type=inline \
             --attest type=sbom \
             --attest type=provenance,mode=max \
@@ -247,18 +243,14 @@ jobs:
     needs: build-platform-images
     if: github.ref == 'refs/heads/main'
     permissions:
-      id-token: write
       contents: read
+      packages: write
     steps:
-      - name: Azure Login using OIDC
-        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Log in to Azure Container Registry
-        run: az acr login --name ${{ secrets.ACR_NAME }}
+      - name: Log in to GitHub Container Registry
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
+          GHCR_USERNAME: ${{ vars.GHCR_USERNAME || github.actor }}
+        run: echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
@@ -284,8 +276,8 @@ jobs:
     needs: create-manifests
     if: github.ref == 'refs/heads/main'
     permissions:
-      id-token: write
       contents: read
+      packages: read
     strategy:
       matrix:
         include:
@@ -299,23 +291,19 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Azure Login using OIDC
-        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Log in to GitHub Container Registry
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
+          GHCR_USERNAME: ${{ vars.GHCR_USERNAME || github.actor }}
+        run: echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
-      - name: Log in to Azure Container Registry
-        run: az acr login --name ${{ secrets.ACR_NAME }}
-
-      - name: Pull Presidio images from ACR
+      - name: Pull Presidio images from GHCR
         run: |
           export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
           docker compose -f docker-compose.yml pull
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
-          TAG: :${{ env.TAG }}
+          TAG: ':${{ env.TAG }}'
 
       - name: Start Presidio cluster
         run: |
@@ -323,7 +311,7 @@ jobs:
           docker compose -f docker-compose.yml up -d
         env:
           REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
-          TAG: :${{ env.TAG }}
+          TAG: ':${{ env.TAG }}'
 
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
@@ -400,17 +388,17 @@ jobs:
           # Build all images locally without pushing
           docker compose -f docker-compose.yml build
         env:
-          REGISTRY_NAME: 'mcr.microsoft.com'
+          REGISTRY_NAME: 'ghcr.io/data-privacy-stack'
           IMAGE_PREFIX: ''
-          TAG: gha${{ github.run_number }}
+          TAG: ':gha${{ github.run_number }}'
 
       - name: Start Presidio cluster locally
         run: |
           docker compose -f docker-compose.yml up -d
         env:
-          REGISTRY_NAME: 'mcr.microsoft.com'
+          REGISTRY_NAME: 'ghcr.io/data-privacy-stack'
           IMAGE_PREFIX: ''
-          TAG: gha${{ github.run_number }}
+          TAG: ':gha${{ github.run_number }}'
 
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0

@@ -1,4 +1,4 @@
-registry: mcr.microsoft.com
+registry: ghcr.io/data-privacy-stack
  
 # Image pull secret
 # privateRegistry: acr-auth
