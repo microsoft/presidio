@@ -1,5 +1,10 @@
 name: Release Documentation
 
+# Builds the docs with Zensical (the successor to Material for MkDocs) via
+# scripts/zensical_build.py and publishes the result to GitHub Pages. The script
+# pre-converts the notebook samples with nbconvert because Zensical does not run
+# the mkdocs-jupyter plugin.
+
 on:
   workflow_dispatch:
 
@@ -8,28 +13,34 @@ permissions:
 
 jobs:
   github-pages-release:
-    name: Push to github pages
+    name: Build with Zensical and push to GitHub Pages
     runs-on: ubuntu-slim
-    
+
     permissions:
-      contents: write  # Required for pushing to gh-pages branch
-    
+      contents: write  # Required for pushing to the gh-pages branch
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
         with:
           fetch-depth: 0  # Fetch all history for proper gh-pages deployment
           persist-credentials: true  # So that the token is available for pushing
-      
+
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
           pip install -r docs/requirements-docs.txt
-      
-      - name: Deploy docs
+
+      - name: Build docs
         run: |
-          mkdocs gh-deploy
+          python scripts/zensical_build.py build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site

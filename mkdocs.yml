@@ -219,8 +219,6 @@ plugins:
               modules: false
             filters:
               - "!^_"
-  - mkdocs-jupyter:
-      ignore_h1_titles: True
 
 extra:
   social:
