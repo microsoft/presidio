@@ -1,4 +1,12 @@
-# **Presidio**: Data Protection and De-identification SDK
+<div class="dps-hero">
+  <div class="dps-hero__media">
+    <img class="dps-hero__mascot" src="assets/inkey.svg" alt="Inky, the Presidio mascot" />
+  </div>
+  <div class="dps-hero__body">
+    <h1 class="dps-hero__title">Presidio</h1>
+    <p class="dps-hero__byline">by data <strong>privacy</strong> stack</p>
+  </div>
+</div>
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_
 helps to ensure sensitive data is properly managed and governed.
