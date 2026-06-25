@@ -57,9 +57,21 @@ jobs:
         run: |
           gh release create "${{ needs.get-version.outputs.version }}" \
             --title "Release ${{ needs.get-version.outputs.version }}" \
-            --notes "" \
+            --notes-file - \
             --draft \
-            --latest
+            --latest <<'EOF'
+          ## Container images moved to GitHub Container Registry
+
+          Presidio container images for this release are published to GitHub Container Registry under the Data Privacy Stack organization:
+
+          - `ghcr.io/data-privacy-stack/presidio-analyzer:${{ needs.get-version.outputs.version }}`
+          - `ghcr.io/data-privacy-stack/presidio-anonymizer:${{ needs.get-version.outputs.version }}`
+          - `ghcr.io/data-privacy-stack/presidio-image-redactor:${{ needs.get-version.outputs.image-version }}`
+
+          The legacy Microsoft Container Registry images at `mcr.microsoft.com/presidio-*` are no longer updated. If you use `mcr.microsoft.com/presidio-analyzer:latest`, replace it with `ghcr.io/data-privacy-stack/presidio-analyzer:latest` for quick testing, or pin the explicit GHCR release tag above for production.
+
+          See the [Data Privacy Stack packages page](https://github.com/orgs/data-privacy-stack/packages) and the [Presidio installation guide](https://microsoft.github.io/presidio/installation/) for migration details.
+          EOF
 
   publish-to-pypi:
     name: Publish ${{ matrix.package.name }} to PyPI
@@ -144,6 +156,12 @@ jobs:
             --cache-to type=inline \
             --tag ${repo}:latest \
             --tag ${repo}:${version_tag} \
+            --label org.opencontainers.image.source=https://github.com/data-privacy-stack/presidio \
+            --label org.opencontainers.image.url=https://github.com/orgs/data-privacy-stack/packages/container/package/${{ matrix.image }} \
+            --label org.opencontainers.image.documentation=https://microsoft.github.io/presidio/installation/ \
+            --label org.opencontainers.image.version=${version_tag} \
+            --label org.opencontainers.image.revision=${{ github.sha }} \
+            --label org.opencontainers.image.vendor="Data Privacy Stack" \
             --attest type=sbom \
             --attest type=provenance,mode=max \
             --push \

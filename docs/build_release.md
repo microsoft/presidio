@@ -39,6 +39,8 @@ docker pull ghcr.io/data-privacy-stack/presidio-analyzer:<release-version>
 
 If an existing deployment uses `mcr.microsoft.com/presidio-analyzer:latest`, treat it as a legacy reference and replace it with either `ghcr.io/data-privacy-stack/presidio-analyzer:latest` for quick testing or a pinned GHCR release tag for production.
 
+Docker registries do not provide a portable way to redirect `docker pull mcr.microsoft.com/presidio-analyzer:latest` to GHCR or show a deprecation warning during `docker pull`. To reduce confusion, each GitHub release includes the GHCR image names, the GHCR images include OCI metadata labels pointing to the source repository, package page, and installation guide, and the MCR tags are documented as legacy references.
+
 ## PyPI publishing with OIDC
 
 The release workflow uses OIDC (OpenID Connect) trusted publishing to PyPI, which eliminates the need to manage PyPI API tokens. This requires:
