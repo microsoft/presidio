@@ -1,6 +1,6 @@
 services:
   presidio-image-redactor:
-    image: ghcr.io/data-privacy-stack/presidio-image-redactor:latest
+    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
       context: ./presidio-image-redactor
     environment:
