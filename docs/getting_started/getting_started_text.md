@@ -107,16 +107,16 @@ Presidio provides Docker containers that you can use to de-identify text data. E
 1. Download Docker images
 
 ```sh
-docker pull ghcr.io/data-privacy-stack/presidio-analyzer
-docker pull ghcr.io/data-privacy-stack/presidio-anonymizer
+docker pull mcr.microsoft.com/presidio-analyzer
+docker pull mcr.microsoft.com/presidio-anonymizer
 ```
 
 2. Run containers
 
 ```sh
-docker run -d -p 5002:3000 ghcr.io/data-privacy-stack/presidio-analyzer:latest
+docker run -d -p 5002:3000 mcr.microsoft.com/presidio-analyzer:latest
 
-docker run -d -p 5001:3000 ghcr.io/data-privacy-stack/presidio-anonymizer:latest
+docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
 ```
 
 3. Use the API
