@@ -230,12 +230,6 @@ jobs:
             --tag ${{ env.REGISTRY_NAME }}/${{ matrix.image }}:${{ env.TAG }}-${PLATFORM_TAG} \
             --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/${{ matrix.image }}:latest \
             --cache-to type=inline \
-            --label org.opencontainers.image.source=https://github.com/data-privacy-stack/presidio \
-            --label org.opencontainers.image.url=https://github.com/orgs/data-privacy-stack/packages/container/package/${{ matrix.image }} \
-            --label org.opencontainers.image.documentation=https://microsoft.github.io/presidio/installation/ \
-            --label org.opencontainers.image.version=${{ env.TAG }}-${PLATFORM_TAG} \
-            --label org.opencontainers.image.revision=${{ github.sha }} \
-            --label org.opencontainers.image.vendor="Data Privacy Stack" \
             --attest type=sbom \
             --attest type=provenance,mode=max \
             ./${{ matrix.image }}
