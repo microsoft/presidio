@@ -161,6 +161,19 @@ The most basic usage of the engine can be setup like the following in python
 diOCR = DocumentIntelligenceOCR(endpoint="<your_endpoint>", key="<your_key>")
 ```
 
+If your environment uses Azure Identity instead of API keys, pass an Azure SDK
+credential that implements `TokenCredential`, such as `DefaultAzureCredential`.
+For example, install `azure-identity` and use `DefaultAzureCredential`:
+
+```
+from azure.identity import DefaultAzureCredential
+
+diOCR = DocumentIntelligenceOCR(
+    endpoint="<your_endpoint>",
+    credential=DefaultAzureCredential(),
+)
+```
+
 The DocumentIntelligenceOCR can also attempt to pull your endpoint and key values from environment variables.  
 
 ```
@@ -178,7 +191,7 @@ Additional metadata can be sent to the Document Intelligence API call, such as p
 
 ```
 diOCR = DocumentIntelligenceOCR()
-ia_engine = ImageAnalyzerEngine(ocr=di_ocr)
+ia_engine = ImageAnalyzerEngine(ocr=diOCR)
 my_engine = ImageRedactorEngine(image_analyzer_engine=ia_engine)
 ```
 
