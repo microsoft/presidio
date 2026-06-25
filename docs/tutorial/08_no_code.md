@@ -15,7 +15,7 @@ The default configuration files for Presidio can be found here:
 - [NLP engine configuration](https://github.com/data-privacy-stack/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default.yaml)
 
 Alternatively, one can create one configuration file for all three components.
-In this example, we'll tweak the configuration to reduce the number of predefinedrecognizers to only a few, and add a new custom one. We'll also adjust the context words to support the detection of a different language (Spanish).
+In this example, we'll tweak the configuration to reduce the number of predefined recognizers to only a few, and add a new custom one. We'll also adjust the context words to support the detection of a different language (Spanish).
 
 ```python
 import yaml

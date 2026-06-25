@@ -145,4 +145,4 @@ Contributions are welcome! Please refer to the [Contributing Guide](https://gith
 - [API documentation](../api/structured_python.md)
 - [Sample code](../samples/python/example_structured.ipynb)
 - [Join the discussion](https://github.com/data-privacy-stack/presidio/discussions?discussions_q=structured)
-- [Relevant issues on Github](https://github.com/data-privacy-stack/presidio/issues?q=is%3Aissue+label%3Astructured-data)
+- [Relevant issues on GitHub](https://github.com/data-privacy-stack/presidio/issues?q=is%3Aissue+label%3Astructured-data)
