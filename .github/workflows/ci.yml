@@ -88,6 +88,13 @@ jobs:
             path: 'presidio-structured'
             extras: ''
             spacy-models: ''
+        include:
+          - python-version: '3.14'
+            component:
+              name: 'Analyzer'
+              path: 'presidio-analyzer'
+              extras: '--all-extras'
+              spacy-models: 'en_core_web_lg en_core_web_sm'
     env:
       POETRY_CACHE_DIR: /mnt/poetry_cache
       COVERAGE_THRESHOLD: 90
