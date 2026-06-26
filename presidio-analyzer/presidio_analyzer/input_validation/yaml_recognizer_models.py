@@ -158,6 +158,38 @@ class TextChunkerConfig(BaseModel):
     max_tokens: Optional[int] = Field(None, description="Max tokens per chunk")
     overlap_tokens: Optional[int] = Field(None, description="Token overlap")
 
+    @model_validator(mode="after")
+    def validate_params_match_chunker_type(self):
+        """Reject params that don't belong to the selected chunker_type.
+
+        Catches misconfigurations (e.g. ``max_tokens`` on a character chunker)
+        at validation time with a clear message, instead of letting them fail
+        later in TextChunkerProvider with a generic TypeError-wrapped error.
+        """
+        if self.chunker_type == "character":
+            invalid = [
+                name
+                for name in ("tokenizer", "max_tokens", "overlap_tokens")
+                if getattr(self, name) is not None
+            ]
+            if invalid:
+                raise ValueError(
+                    f"chunker_type='character' does not accept {invalid}; "
+                    "only 'chunk_size' and 'chunk_overlap' are allowed."
+                )
+        else:  # tokenizer
+            invalid = [
+                name
+                for name in ("chunk_size", "chunk_overlap")
+                if getattr(self, name) is not None
+            ]
+            if invalid:
+                raise ValueError(
+                    f"chunker_type='tokenizer' does not accept {invalid}; "
+                    "only 'tokenizer', 'max_tokens' and 'overlap_tokens' are allowed."
+                )
+        return self
+
 
 class PredefinedRecognizerConfig(BaseRecognizerConfig):
     """Configuration for predefined recognizers."""
