@@ -212,13 +212,19 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 "aggregation_strategy='none' may result in fragmented entities "
                 "(e.g., 'B-PER', 'I-PER'). Recommended: 'simple' or 'first'."
             )
-        if self.backend == "ort" and device is not None:
-            logger.warning(
-                "The 'device' parameter is ignored by the 'ort' backend. "
-                "Select hardware via the 'provider' model kwarg instead, "
-                "e.g. provider='CUDAExecutionProvider'."
-            )
-        self.device = self._parse_device(device)
+        if self.backend == "ort":
+            if device not in (None, "cpu", -1):
+                logger.warning(
+                    "The 'device' parameter is ignored by the 'ort' backend. "
+                    "Select hardware via the 'provider' model kwarg instead, "
+                    "e.g. provider='CUDAExecutionProvider'."
+                )
+            # ort selects hardware via the execution provider, not device.
+            # Skip parsing/auto-detection and keep self.device consistent
+            # with actual behavior.
+            self.device = -1
+        else:
+            self.device = self._parse_device(device)
         self.label_prefixes = label_prefixes or ["B-", "I-", "U-", "L-"]
         self.ner_pipeline = None
         self.model_kwargs = model_kwargs

@@ -662,6 +662,58 @@ def test_hf_recognizer_ort_backend_warns_when_device_set(caplog):
 
 
 @pytest.mark.usefixtures("mock_torch_installed")
+def test_hf_recognizer_ort_backend_ignores_invalid_device(caplog):
+    """ort backend skips device parsing: an invalid device must not raise."""
+    caplog.set_level(logging.WARNING, logger="presidio-analyzer")
+    mock_optimum = MagicMock()
+    mock_ort_model_cls = MagicMock()
+    with patch(HF_PIPELINE_PATH, new=MagicMock()):
+        with patch(
+            "presidio_analyzer.predefined_recognizers.ner."
+            "huggingface_ner_recognizer.optimum_pipeline",
+            mock_optimum,
+        ):
+            with patch(
+                "optimum.onnxruntime.ORTModelForTokenClassification",
+                mock_ort_model_cls,
+            ):
+                # "not-a-device" would raise ValueError via _parse_device on
+                # the torch backend; ort skips parsing and forces CPU.
+                rec = HuggingFaceNerRecognizer(
+                    model_name="test-model",
+                    backend="ort",
+                    device="not-a-device",
+                )
+
+    assert rec.device == -1
+    assert "ignored by the 'ort' backend" in caplog.text
+
+
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_hf_recognizer_ort_backend_cpu_device_no_warning(caplog):
+    """device='cpu' on ort is consistent with default behavior; no warning."""
+    caplog.set_level(logging.WARNING, logger="presidio-analyzer")
+    mock_optimum = MagicMock()
+    mock_ort_model_cls = MagicMock()
+    with patch(HF_PIPELINE_PATH, new=MagicMock()):
+        with patch(
+            "presidio_analyzer.predefined_recognizers.ner."
+            "huggingface_ner_recognizer.optimum_pipeline",
+            mock_optimum,
+        ):
+            with patch(
+                "optimum.onnxruntime.ORTModelForTokenClassification",
+                mock_ort_model_cls,
+            ):
+                rec = HuggingFaceNerRecognizer(
+                    model_name="test-model", backend="ort", device="cpu"
+                )
+
+    assert rec.device == -1
+    assert "ignored by the 'ort' backend" not in caplog.text
+
+
+@pytest.mark.usefixtures("mock_torch_installed")
 def test_hf_recognizer_ort_backend_loads_optimum_pipeline():
     """ort backend pre-loads ORTModel, then hands it to optimum_pipeline."""
     mock_optimum = MagicMock()

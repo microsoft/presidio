@@ -38,4 +38,3 @@ recognizer_registry:
         ID: ID
       aggregation_strategy: simple
       threshold: 0.3
-      device: cpu
