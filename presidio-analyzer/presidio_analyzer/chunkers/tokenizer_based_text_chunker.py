@@ -25,7 +25,9 @@ class TokenizerBasedTextChunker(BaseTextChunker):
 
         text_chunker:
           chunker_type: tokenizer
-          max_tokens: 512
+          # max_tokens omitted: auto-derived from the model's tokenizer and
+          # reduced to reserve room for special tokens ([CLS]/[SEP]). Set it
+          # explicitly only if you account for those special tokens yourself.
           overlap_tokens: 32
 
     When ``tokenizer`` is omitted, the chunker starts in deferred mode and

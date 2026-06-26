@@ -99,11 +99,12 @@ gliner_recognizer = GLiNERRecognizer(
   model_name: urchade/gliner_multi_pii-v1
   text_chunker:
     chunker_type: tokenizer
-    max_tokens: 512
     overlap_tokens: 32
 ```
 
 The `tokenizer` chunker uses the model's own tokenizer (resolved automatically at load time) to split text by token count, respecting the model's token limit instead of approximating with character counts.
+
+`max_tokens` is omitted above so it is auto-derived from the model's tokenizer and reduced to reserve room for special tokens (e.g. `[CLS]`/`[SEP]`). Set it explicitly only if you account for those special tokens yourself, otherwise chunks may overflow the model's real input limit and be truncated.
 
 ## ONNX Runtime Support
 

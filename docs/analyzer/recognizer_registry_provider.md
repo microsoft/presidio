@@ -115,7 +115,9 @@ The recognizer list comprises of both the predefined and custom recognizers, for
       model_name: urchade/gliner_multi_pii-v1
       text_chunker:
         chunker_type: tokenizer
-        max_tokens: 512
+        # max_tokens omitted: auto-derived from the model's tokenizer and
+        # reduced to reserve room for special tokens ([CLS]/[SEP]). Set it
+        # explicitly only if you account for those special tokens yourself.
         overlap_tokens: 32
     ```
 
