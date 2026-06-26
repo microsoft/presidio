@@ -1,7 +1,7 @@
-site_name: Microsoft Presidio
+site_name: Presidio
 site_url: https://microsoft.github.io/presidio
 site_description: PII anonymization for text, images, and structured data.
-site_author: Microsoft
+site_author: Data Privacy Stack
 
 repo_url: https://github.com/microsoft/presidio/
 edit_uri: ""
@@ -65,6 +65,7 @@ nav:
       - PII detection evaluation: evaluation/index.md
   - Resources:
       - Supported entities: supported_entities.md
+      - Project transition update: project_transition.md
       - Community: community.md
       - Change log: https://github.com/microsoft/presidio/blob/main/CHANGELOG.md
       - Setting up a development environment: development.md
@@ -154,21 +155,45 @@ theme:
   name: material
   custom_dir: overrides
   palette:
+    - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: blue grey
-      accent: indigo
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
   font:
-    text: Roboto
-    code: Roboto Mono
+    text: Inter
+    code: JetBrains Mono
   hide:
     - toc
-  logo: assets/ms_icon.png
-  favicon: assets/ms_icon.png
+  logo: assets/dps-icon.svg
+  favicon: assets/dps-icon.svg
+  icon:
+    repo: fontawesome/brands/github
   features:
     - navigation.instant
+    - navigation.instant.progress
     - content.tabs.link
+    - content.code.copy
+    - content.code.annotate
     - navigation.tabs
     - navigation.tabs.sticky
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - toc.follow
+
+extra_css:
+  - stylesheets/extra.css
 plugins:
   - search
   - mkdocstrings:
