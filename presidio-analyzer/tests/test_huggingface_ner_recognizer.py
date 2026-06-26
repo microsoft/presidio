@@ -699,3 +699,27 @@ def test_hf_recognizer_text_chunker_object(_mock_pipeline):
     custom_chunker = CharacterBasedTextChunker(chunk_size=500, chunk_overlap=100)
     rec = HuggingFaceNerRecognizer(model_name="test-model", text_chunker=custom_chunker)
     assert rec.text_chunker is custom_chunker
+
+
+@patch(HF_PIPELINE_PATH, return_value=MagicMock())
+@pytest.mark.usefixtures("mock_torch_installed")
+def test_hf_recognizer_resolves_deferred_tokenizer_chunker(mock_pipeline):
+    """A deferred TokenizerBasedTextChunker is resolved during load()."""
+    from presidio_analyzer.chunkers import TokenizerBasedTextChunker
+
+    # The pipeline exposes a fast tokenizer that the chunker should adopt.
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.is_fast = True
+    mock_pipeline.return_value.tokenizer = mock_tokenizer
+
+    chunker = TokenizerBasedTextChunker(max_tokens=128, overlap_tokens=16)
+    assert chunker.is_deferred
+
+    # __init__ triggers load() (via EntityRecognizer), which resolves the chunker.
+    rec = HuggingFaceNerRecognizer(model_name="test-model", text_chunker=chunker)
+
+    assert rec.text_chunker is chunker
+    assert not chunker.is_deferred
+    assert chunker.tokenizer is mock_tokenizer
+    assert chunker.max_tokens == 128
+    assert chunker.overlap_tokens == 16

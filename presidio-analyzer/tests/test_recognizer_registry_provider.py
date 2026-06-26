@@ -311,3 +311,25 @@ def test_recognizer_registry_provider_tokenizer_chunker_config():
     assert isinstance(recognizer.text_chunker, TokenizerBasedTextChunker)
     assert recognizer.text_chunker.max_tokens == 256
     assert recognizer.text_chunker.overlap_tokens == 16
+
+
+def test_text_chunker_config_rejects_tokenizer_params_for_character():
+    """Character chunker_type must not accept tokenizer-only params."""
+    from pydantic import ValidationError
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        TextChunkerConfig,
+    )
+
+    with pytest.raises(ValidationError, match="chunker_type='character'"):
+        TextChunkerConfig(chunker_type="character", max_tokens=256)
+
+
+def test_text_chunker_config_rejects_character_params_for_tokenizer():
+    """Tokenizer chunker_type must not accept character-only params."""
+    from pydantic import ValidationError
+    from presidio_analyzer.input_validation.yaml_recognizer_models import (
+        TextChunkerConfig,
+    )
+
+    with pytest.raises(ValidationError, match="chunker_type='tokenizer'"):
+        TextChunkerConfig(chunker_type="tokenizer", chunk_size=300)

@@ -396,3 +396,35 @@ def test_gliner_text_chunker_object():
         supported_entities=["PERSON"], text_chunker=custom_chunker
     )
     assert recognizer.text_chunker is custom_chunker
+
+
+def test_gliner_resolves_deferred_tokenizer_chunker():
+    """A deferred TokenizerBasedTextChunker is resolved during load()."""
+    if sys.version_info < (3, 10):
+        pytest.skip("gliner requires Python >= 3.10")
+    pytest.importorskip("gliner", reason="GLiNER package is not installed")
+
+    from presidio_analyzer.chunkers import TokenizerBasedTextChunker
+
+    with patch(GLINER_MOCK_PATH) as mock_gliner_class:
+        mock_gliner_instance = MagicMock()
+        mock_gliner_class.from_pretrained.return_value = mock_gliner_instance
+
+        # The GLiNER model exposes its own fast tokenizer.
+        mock_tokenizer = MagicMock()
+        mock_tokenizer.is_fast = True
+        mock_gliner_instance.data_processor.transformer_tokenizer = mock_tokenizer
+
+        chunker = TokenizerBasedTextChunker(max_tokens=128, overlap_tokens=16)
+        assert chunker.is_deferred
+
+        recognizer = GLiNERRecognizer(
+            supported_entities=["PERSON"], text_chunker=chunker
+        )
+        recognizer.load()
+
+        assert recognizer.text_chunker is chunker
+        assert not chunker.is_deferred
+        assert chunker.tokenizer is mock_tokenizer
+        assert chunker.max_tokens == 128
+        assert chunker.overlap_tokens == 16
