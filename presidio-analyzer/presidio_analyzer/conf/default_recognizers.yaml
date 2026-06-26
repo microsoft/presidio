@@ -361,6 +361,9 @@ recognizers:
   - name: IbanRecognizer
     type: predefined
 
+  - name: ImeiRecognizer
+    type: predefined
+
   - name: IpRecognizer
     type: predefined
 
@@ -375,6 +378,9 @@ recognizers:
     type: predefined
 
   - name: UrlRecognizer
+    type: predefined
+
+  - name: VinRecognizer
     type: predefined
 
   - name: InVoterRecognizer
