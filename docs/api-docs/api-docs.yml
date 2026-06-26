@@ -8,7 +8,9 @@ info:
     email: presidio@microsoft.com
     url: https://github.com/microsoft/presidio
   x-logo:
-    url: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+    url: "logo.svg"
+    altText: "Presidio"
+    backgroundColor: "#ffffff"
   license:
     name: MIT
     url: 'https://github.com/microsoft/presidio/blob/main/LICENSE'

@@ -88,6 +88,13 @@ jobs:
             path: 'presidio-structured'
             extras: ''
             spacy-models: ''
+        include:
+          - python-version: '3.14'
+            component:
+              name: 'Analyzer'
+              path: 'presidio-analyzer'
+              extras: '--all-extras'
+              spacy-models: 'en_core_web_lg en_core_web_sm'
     env:
       POETRY_CACHE_DIR: /mnt/poetry_cache
       COVERAGE_THRESHOLD: 90
@@ -113,7 +120,12 @@ jobs:
       - name: Setup Poetry Cache Directory
         run: |
           sudo mkdir -p $POETRY_CACHE_DIR
-          sudo chown -R runner $POETRY_CACHE_DIR    
+          sudo chown -R runner $POETRY_CACHE_DIR
+          # Remove stale virtualenvs to prevent cache corruption on re-run attempts.
+          # GitHub Actions may reuse the same runner VM when re-running failed jobs,
+          # which leaves the old /mnt/poetry_cache intact. Installing a new numpy
+          # version over an existing one causes mixed file state and IndentationErrors.
+          rm -rf $POETRY_CACHE_DIR/virtualenvs 2>/dev/null || true
 
       - name: Install system dependencies for Image Redactor
         if: matrix.component.name == 'Image Redactor'
