@@ -1,5 +1,5 @@
 # Presidio - Data Protection and De-identification SDK
-
+## :mega: Presidio is moving to a new home! [Read more here](docs/project_transition.md) :mega:
 **Context aware, pluggable and customizable PII de-identification service for text and images.**
 
 ---
@@ -25,6 +25,8 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 ---
 
 ### :blue_book: [Full documentation](https://microsoft.github.io/presidio)
+
+### :mega: [Project transition update](docs/project_transition.md)
 
 ### :question: [Frequently Asked Questions](docs/faq.md)
 
@@ -102,4 +104,3 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 <a href="https://github.com/microsoft/presidio/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=microsoft/presidio" />
 </a>
-
