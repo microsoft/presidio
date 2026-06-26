@@ -81,7 +81,7 @@ class ConfigurationValidator:
             # Use Pydantic model for validation
             validated_config = RecognizerRegistryConfig(**config)
             # Use model_dump() without exclude_unset to include default values
-            return validated_config.model_dump(exclude_unset=False, exclude_none=True)
+            return validated_config.model_dump(exclude_unset=False)
         except ValidationError as e:
             raise ValueError("Invalid recognizer registry configuration") from e
 
