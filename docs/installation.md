@@ -96,6 +96,10 @@ To download the Presidio Docker containers, run the following command:
 
     This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
 
+!!! important "Container registry moved to GitHub Packages"
+
+    New Presidio container releases are published to [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) under the [Data Privacy Stack packages organization](https://github.com/orgs/data-privacy-stack/packages). The legacy Microsoft Container Registry images at `mcr.microsoft.com/presidio-*` are no longer updated. If you previously used `mcr.microsoft.com/presidio-analyzer:latest`, switch to `ghcr.io/data-privacy-stack/presidio-analyzer:latest`; for production, prefer pinning an explicit release tag from the package page.
+
 ### For PII anonymization in text
 
 For PII detection and anonymization in text, the `presidio-analyzer`
