@@ -397,7 +397,6 @@ jobs:
           docker compose -f docker-compose.yml build
         env:
           REGISTRY_NAME: 'ghcr.io/data-privacy-stack'
-          IMAGE_PREFIX: ''
           TAG: ':gha${{ github.run_number }}'
 
       - name: Start Presidio cluster locally
@@ -405,7 +404,6 @@ jobs:
           docker compose -f docker-compose.yml up -d
         env:
           REGISTRY_NAME: 'ghcr.io/data-privacy-stack'
-          IMAGE_PREFIX: ''
           TAG: ':gha${{ github.run_number }}'
 
       - name: Set up Python
