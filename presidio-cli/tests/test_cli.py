@@ -194,8 +194,16 @@ def test_threshold_value_rejects_invalid_values(value):
         cli.threshold_value(value)
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [("0", 0.0), ("0.7", 0.7), ("1", 1.0)],
+)
+def test_threshold_value_accepts_valid_values(value, expected):
+    assert cli.threshold_value(value) == expected
+
+
 def test_run_with_stdin(mocker):
-    mocked_args = mocker.Mock(**make_args(stdin=True, files=""))
+    mocked_args = mocker.Mock(**make_args(stdin=True, files=()))
     conf = make_conf(mocker)
     mocker.patch("presidio_cli.cli.PresidioCLIConfig", return_value=conf)
     mocker.patch("presidio_cli.cli.find_files_recursively", return_value=[])
