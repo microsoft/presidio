@@ -93,6 +93,16 @@ def test_given_empty_entities_we_return_text_unchanged(engine):
     assert deanonymize_results == [ENCRYPTED_TEXT]
 
 
+def test_given_short_entities_list_we_keep_trailing_texts(engine):
+    deanonymize_results = engine.deanonymize_list(
+        texts=[ENCRYPTED_TEXT, "plain trailing text"],
+        entities_list=[[ENTITY]],
+        operators=OPERATORS,
+    )
+
+    assert deanonymize_results == [DECRYPTED_TEXT, "plain trailing text"]
+
+
 def test_given_exact_type_list_values_we_route_through_injected_engine():
     deanonymize_engine = RecordingDeanonymizeEngine()
     engine = BatchDeanonymizeEngine(deanonymize_engine=deanonymize_engine)
@@ -162,3 +172,13 @@ def test_given_custom_deanonymizer_we_use_injected_engine():
 
     assert deanonymize_results == [f"custom::{ENCRYPTED_TEXT}"]
     assert deanonymize_engine.calls == [(ENCRYPTED_TEXT, [ENTITY], OPERATORS)]
+
+
+def test_given_unsupported_kwargs_then_batch_api_rejects_them(engine):
+    with pytest.raises(TypeError, match="unexpected keyword argument"):
+        engine.deanonymize_list(
+            texts=[ENCRYPTED_TEXT],
+            entities_list=[[ENTITY]],
+            operators=OPERATORS,
+            language="en",
+        )

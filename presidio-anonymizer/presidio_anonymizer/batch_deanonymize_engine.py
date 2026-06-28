@@ -25,7 +25,6 @@ class BatchDeanonymizeEngine:
         texts: List[Optional[Union[str, bool, int, float]]],
         entities_list: List[List[OperatorResult]],
         operators: Dict[str, OperatorConfig],
-        **kwargs,
     ) -> List[Union[str, Any]]:
         """
         Deanonymize a list of strings.
@@ -33,18 +32,18 @@ class BatchDeanonymizeEngine:
         :param texts: List containing the texts to be deanonymized.
             Items with a `type` not in `(str, bool, int, float)` will be left
             unchanged.
-        :param entities_list: A list of lists of OperatorResult, the output of
-            DeanonymizeEngine.deanonymize on each text in the list.
+        :param entities_list: A list of lists of OperatorResult used as the
+            deanonymization input spans for each text in the list.
         :param operators: Operators to define the deanonymization type.
-        :param kwargs: Additional kwargs for the `DeanonymizeEngine.deanonymize` method
         """
         return_list = []
         if not entities_list:
             entities_list = [[] for _ in range(len(texts))]
-        for text, entities in zip(texts, entities_list):
+        for index, text in enumerate(texts):
+            entities = entities_list[index] if index < len(entities_list) else []
             if type(text) in (str, bool, int, float):
                 res = self.deanonymize_engine.deanonymize(
-                    text=str(text), entities=entities, operators=operators, **kwargs
+                    text=str(text), entities=entities, operators=operators
                 )
                 return_list.append(res.text)
             else:
@@ -56,7 +55,6 @@ class BatchDeanonymizeEngine:
         self,
         anonymizer_results: Iterable[DictRecognizerResult],
         operators: Dict[str, OperatorConfig],
-        **kwargs,
     ) -> Dict[str, Any]:
         """
         Deanonymize values in a dictionary.
@@ -64,7 +62,6 @@ class BatchDeanonymizeEngine:
         :param anonymizer_results: Iterator of `DictRecognizerResult`
             containing the output of batch anonymization on the input text.
         :param operators: Operators to define the deanonymization type.
-        :param kwargs: Additional kwargs for the `DeanonymizeEngine.deanonymize` method
         """
 
         return_dict = {}
@@ -73,7 +70,6 @@ class BatchDeanonymizeEngine:
                 resp = self.deanonymize_dict(
                     anonymizer_results=result.recognizer_results,
                     operators=operators,
-                    **kwargs,
                 )
                 return_dict[result.key] = resp
 
@@ -82,7 +78,6 @@ class BatchDeanonymizeEngine:
                     text=result.value,
                     entities=result.recognizer_results,
                     operators=operators,
-                    **kwargs,
                 )
                 return_dict[result.key] = resp.text
 
@@ -91,7 +86,6 @@ class BatchDeanonymizeEngine:
                     texts=result.value,
                     entities_list=result.recognizer_results,
                     operators=operators,
-                    **kwargs,
                 )
                 return_dict[result.key] = deanonymize_response
             else:
