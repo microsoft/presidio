@@ -51,7 +51,7 @@ def test_given_analyzer_result_we_deanonymize_dict_correctly(engine):
     ]
 
     deanonymize_results = engine.deanonymize_dict(
-        analyzer_results=analyzer_results, operators=OPERATORS
+        anonymizer_results=analyzer_results, operators=OPERATORS
     )
 
     assert deanonymize_results == {"name": DECRYPTED_TEXT}
@@ -79,7 +79,7 @@ def test_given_nested_analyzer_result_we_deanonymize_dict_correctly(engine):
     ]
 
     deanonymize_results = engine.deanonymize_dict(
-        analyzer_results=analyzer_results, operators=OPERATORS
+        anonymizer_results=analyzer_results, operators=OPERATORS
     )
 
     assert deanonymize_results == {"customer": {"profile": {"name": DECRYPTED_TEXT}}}
@@ -122,7 +122,7 @@ def test_given_non_string_list_value_we_return_item_unchanged(engine):
     ]
 
     deanonymize_results = engine.deanonymize_dict(
-        analyzer_results=analyzer_results, operators=OPERATORS
+        anonymizer_results=analyzer_results, operators=OPERATORS
     )
 
     assert deanonymize_results["items"][0] == DECRYPTED_TEXT
@@ -136,7 +136,7 @@ def test_given_scalar_dict_value_we_return_value_unchanged(engine):
     ]
 
     deanonymize_results = engine.deanonymize_dict(
-        analyzer_results=analyzer_results, operators=OPERATORS
+        anonymizer_results=analyzer_results, operators=OPERATORS
     )
 
     assert deanonymize_results == {"id": 123}

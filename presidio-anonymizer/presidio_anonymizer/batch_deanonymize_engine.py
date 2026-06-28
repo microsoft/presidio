@@ -54,24 +54,24 @@ class BatchDeanonymizeEngine:
 
     def deanonymize_dict(
         self,
-        analyzer_results: Iterable[DictRecognizerResult],
+        anonymizer_results: Iterable[DictRecognizerResult],
         operators: Dict[str, OperatorConfig],
         **kwargs,
     ) -> Dict[str, Any]:
         """
         Deanonymize values in a dictionary.
 
-        :param analyzer_results: Iterator of `DictRecognizerResult`
-            containing the output of the AnalyzerEngine.analyze_dict on the input text.
+        :param anonymizer_results: Iterator of `DictRecognizerResult`
+            containing the output of batch anonymization on the input text.
         :param operators: Operators to define the deanonymization type.
         :param kwargs: Additional kwargs for the `DeanonymizeEngine.deanonymize` method
         """
 
         return_dict = {}
-        for result in analyzer_results:
+        for result in anonymizer_results:
             if isinstance(result.value, dict):
                 resp = self.deanonymize_dict(
-                    analyzer_results=result.recognizer_results,
+                    anonymizer_results=result.recognizer_results,
                     operators=operators,
                     **kwargs,
                 )
