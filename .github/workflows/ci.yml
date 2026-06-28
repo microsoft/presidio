@@ -276,7 +276,7 @@ jobs:
           for image_archive in image-artifacts/*.tar.gz; do
             gzip -dc "${image_archive}" | docker load
           done
-          docker image ls "${{ env.REGISTRY_NAME }}/*:${{ env.TAG }}"
+          docker image ls
 
       - name: Start Presidio cluster
         run: |
