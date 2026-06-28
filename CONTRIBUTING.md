@@ -89,7 +89,7 @@ To contribute a new predefined recognizer to Presidio Analyzer:
 
 ### Fixing Bugs and improving the code
 
-Please review the open [issues on Github](https://github.com/microsoft/presidio/issues) for known bugs and feature requests. We sometimes add 'good first issue' labels on those we believe are simpler, and 'advanced' labels on those which require more work or multiple changes across the solution.
+Please review the open [issues on Github](https://github.com/data-privacy-stack/presidio/issues) for known bugs and feature requests. We sometimes add 'good first issue' labels on those we believe are simpler, and 'advanced' labels on those which require more work or multiple changes across the solution.
 
 ### Adding samples
 
