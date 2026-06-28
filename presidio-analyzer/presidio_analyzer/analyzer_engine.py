@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from collections import Counter
-from typing import List, Optional
+from typing import Dict, List, Optional, Union
 
 import regex as re
 
@@ -15,6 +15,7 @@ from presidio_analyzer.context_aware_enhancers import (
     ContextAwareEnhancer,
     LemmaContextAwareEnhancer,
 )
+from presidio_analyzer.input_validation import ConfigurationValidator
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, NlpEngineProvider
 from presidio_analyzer.recognizer_registry import (
     RecognizerRegistry,
@@ -24,6 +25,7 @@ from presidio_analyzer.recognizer_registry import (
 logger = logging.getLogger("presidio-analyzer")
 
 REGEX_TIMEOUT_SECONDS = int(os.environ.get("REGEX_TIMEOUT_SECONDS", 60))
+RecognizerScoreThresholds = Dict[str, Union[float, Dict[str, float]]]
 
 class AnalyzerEngine:
     """
@@ -40,6 +42,8 @@ class AnalyzerEngine:
     defines whether the decision process within the analyzer should be logged or not.
     :param default_score_threshold: Minimum confidence value
     for detected entities to be returned
+    :param recognizer_score_thresholds: Optional recognizer and entity-specific
+    score thresholds applied when no request-level score threshold is provided.
     :param supported_languages: List of possible languages this engine could be run on.
     Used for loading the right NLP models and recognizers for these languages.
     :param context_aware_enhancer: instance of type ContextAwareEnhancer for enhancing
@@ -56,6 +60,7 @@ class AnalyzerEngine:
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
         context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
+        recognizer_score_thresholds: Optional[RecognizerScoreThresholds] = None,
     ):
         if not supported_languages:
             supported_languages = ["en"]
@@ -102,6 +107,9 @@ class AnalyzerEngine:
 
         self.log_decision_process = log_decision_process
         self.default_score_threshold = default_score_threshold
+        self.recognizer_score_thresholds = (
+            self.__normalize_recognizer_score_thresholds(recognizer_score_thresholds)
+        )
 
         if not context_aware_enhancer:
             logger.debug(
@@ -254,9 +262,10 @@ class AnalyzerEngine:
                 json.dumps([str(result.to_dict()) for result in results]),
             )
 
-        # Remove duplicates or low score results
-        results = EntityRecognizer.remove_duplicates(results)
+        # Filter low-score results before deduplication so recognizer-specific
+        # thresholds do not get lost when duplicate spans collapse.
         results = self.__remove_low_scores(results, score_threshold)
+        results = EntityRecognizer.remove_duplicates(results)
 
         if allow_list:
             results = self._remove_allow_list(
@@ -340,10 +349,49 @@ class AnalyzerEngine:
         :return: List[RecognizerResult]
         """
         if score_threshold is None:
-            score_threshold = self.default_score_threshold
+            return [
+                result
+                for result in results
+                if result.score >= self.__get_result_score_threshold(result)
+            ]
 
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
+
+    @staticmethod
+    def __normalize_recognizer_score_thresholds(
+        recognizer_score_thresholds: Optional[RecognizerScoreThresholds]
+    ) -> Dict[str, Dict[str, float]]:
+        """Normalize shorthand threshold values into the nested mapping shape."""
+        if recognizer_score_thresholds is None:
+            return {}
+        return ConfigurationValidator.validate_recognizer_score_thresholds(
+            recognizer_score_thresholds
+        )
+
+    def __get_result_score_threshold(self, result: RecognizerResult) -> float:
+        """Resolve the threshold to apply for a single recognizer result."""
+        if not self.recognizer_score_thresholds:
+            return self.default_score_threshold
+
+        metadata = result.recognition_metadata or {}
+        recognizer_name = metadata.get(RecognizerResult.RECOGNIZER_NAME_KEY)
+        if not recognizer_name:
+            return self.default_score_threshold
+
+        recognizer_thresholds = self.recognizer_score_thresholds.get(recognizer_name)
+        if not recognizer_thresholds:
+            return self.default_score_threshold
+
+        entity_threshold = recognizer_thresholds.get(result.entity_type)
+        if entity_threshold is not None:
+            return entity_threshold
+
+        recognizer_default_threshold = recognizer_thresholds.get("default")
+        if recognizer_default_threshold is not None:
+            return recognizer_default_threshold
+
+        return self.default_score_threshold
 
     @staticmethod
     def _remove_allow_list(
