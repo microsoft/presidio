@@ -9,6 +9,7 @@
 ![Release](https://img.shields.io/github/release/data-privacy-stack/presidio.svg)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/6076/badge)](https://www.bestpractices.dev/projects/6076)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
+[![Discord](https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/MewtBGFquB)
 
 | Component | Downloads | Coverage |
 |-----------|-----------|----------|

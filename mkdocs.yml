@@ -226,6 +226,8 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/data-privacy-stack/presidio
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/MewtBGFquB
     - icon: fontawesome/brands/docker
       link: https://github.com/orgs/data-privacy-stack/packages
     - icon: fontawesome/solid/envelope
