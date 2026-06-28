@@ -183,11 +183,164 @@ jobs:
           pip install --require-hashes -r ${{ github.workspace }}/.github/pipelines/requirements-build.txt
           python -m build --wheel
 
-  # Build and test Docker images locally so CI does not publish ephemeral tags.
-  local-build-and-test:
-    name: Build and E2E Tests (${{ matrix.platform }})
+  build-platform-images:
+    name: Build ${{ matrix.image }} (${{ matrix.platform }})
     runs-on: ${{ matrix.runner }}
     needs: [lint]
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        include:
+          - image: presidio-anonymizer
+            platform: linux/amd64
+            platform_tag: linux-amd64
+            runner: ubuntu-latest
+          - image: presidio-analyzer
+            platform: linux/amd64
+            platform_tag: linux-amd64
+            runner: ubuntu-latest
+          - image: presidio-image-redactor
+            platform: linux/amd64
+            platform_tag: linux-amd64
+            runner: ubuntu-latest
+          - image: presidio-anonymizer
+            platform: linux/arm64
+            platform_tag: linux-arm64
+            runner: ubuntu-24.04-arm
+          - image: presidio-analyzer
+            platform: linux/arm64
+            platform_tag: linux-arm64
+            runner: ubuntu-24.04-arm
+          - image: presidio-image-redactor
+            platform: linux/arm64
+            platform_tag: linux-arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+
+      - name: Build ${{ matrix.image }} image artifact
+        run: |
+          mkdir -p image-artifacts
+          image_ref="${{ env.REGISTRY_NAME }}/${{ matrix.image }}:${{ env.TAG }}"
+          docker buildx build \
+            --platform ${{ matrix.platform }} \
+            --cache-from type=registry,ref=${{ env.REGISTRY_NAME }}/${{ matrix.image }}:latest \
+            --tag "${image_ref}" \
+            --output type=docker,dest="image-artifacts/${{ matrix.image }}.tar" \
+            ./${{ matrix.image }}
+          gzip "image-artifacts/${{ matrix.image }}.tar"
+
+      - name: Upload ${{ matrix.image }} image artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ matrix.image }}-${{ matrix.platform_tag }}
+          path: image-artifacts/${{ matrix.image }}.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+  e2e-tests:
+    name: E2E Tests (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    needs: build-platform-images
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            platform_tag: linux-amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            platform_tag: linux-arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
+        with:
+          persist-credentials: false
+
+      - name: Download image artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: presidio-*-${{ matrix.platform_tag }}
+          path: image-artifacts
+          merge-multiple: true
+
+      - name: Load Presidio images
+        run: |
+          for image_archive in image-artifacts/*.tar.gz; do
+            gzip -dc "${image_archive}" | docker load
+          done
+          docker image ls "${{ env.REGISTRY_NAME }}/*:${{ env.TAG }}"
+
+      - name: Start Presidio cluster
+        run: |
+          export DOCKER_DEFAULT_PLATFORM=${{ matrix.platform }}
+          docker compose -f docker-compose.yml up -d --no-build
+        env:
+          REGISTRY_NAME: ${{ env.REGISTRY_NAME }}
+          IMAGE_PREFIX: ''
+          TAG: ':${{ env.TAG }}'
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.10'
+
+      - name: Cache E2E dependencies
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.0
+        with:
+          path: |
+            ~/.cache/pip
+            e2e-tests/env
+          key: ${{ runner.os }}-${{ matrix.platform }}-e2e-${{ hashFiles('e2e-tests/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.platform }}-e2e-
+
+      - name: Install E2E test dependencies
+        working-directory: e2e-tests
+        run: |
+          python -m venv env
+          source env/bin/activate
+          pip install -r requirements.txt
+          python -m spacy download en_core_web_lg
+
+      - name: Wait for services to be ready
+        run: sleep 60
+
+      - name: Download Ollama model for Ollama LangExtract recognizer tests
+        run: |
+          docker exec $(docker ps -qf "name=ollama") ollama pull qwen2.5:1.5b
+          docker exec $(docker ps -qf "name=ollama") ollama run qwen2.5:1.5b
+
+      - name: Run E2E tests
+        working-directory: e2e-tests
+        run: |
+          source env/bin/activate
+          pytest -vv --tb=short
+
+      - name: Capture Docker logs on failure (${{ matrix.platform }})
+        if: failure()
+        run: |
+          echo "Capturing Docker logs for platform: ${{ matrix.platform }}"
+          docker compose -f docker-compose.yml logs
+
+      - name: Stop Docker containers
+        if: always()
+        run: |
+          docker compose -f docker-compose.yml down
+
+  # Build and test Docker images locally for non-main branches without publishing.
+  local-build-and-test:
+    name: Local Build and E2E Tests (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    needs: [lint]
+    if: github.ref != 'refs/heads/main'
     strategy:
       matrix:
         include:
