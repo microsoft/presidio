@@ -221,8 +221,8 @@ jobs:
 
       - name: Log in to GitHub Container Registry
         env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
-          GHCR_USERNAME: ${{ vars.GHCR_USERNAME || github.actor }}
+          GHCR_TOKEN: ${{ github.repository_owner == 'data-privacy-stack' && github.token || secrets.GHCR_TOKEN }}
+          GHCR_USERNAME: ${{ github.repository_owner == 'data-privacy-stack' && github.actor || vars.GHCR_USERNAME || github.actor }}
         run: echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
       - name: Set up Docker Buildx
@@ -256,8 +256,8 @@ jobs:
     steps:
       - name: Log in to GitHub Container Registry
         env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
-          GHCR_USERNAME: ${{ vars.GHCR_USERNAME || github.actor }}
+          GHCR_TOKEN: ${{ github.repository_owner == 'data-privacy-stack' && github.token || secrets.GHCR_TOKEN }}
+          GHCR_USERNAME: ${{ github.repository_owner == 'data-privacy-stack' && github.actor || vars.GHCR_USERNAME || github.actor }}
         run: echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
       - name: Set up Docker Buildx
@@ -301,8 +301,8 @@ jobs:
 
       - name: Log in to GitHub Container Registry
         env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
-          GHCR_USERNAME: ${{ vars.GHCR_USERNAME || github.actor }}
+          GHCR_TOKEN: ${{ github.repository_owner == 'data-privacy-stack' && github.token || secrets.GHCR_TOKEN }}
+          GHCR_USERNAME: ${{ github.repository_owner == 'data-privacy-stack' && github.actor || vars.GHCR_USERNAME || github.actor }}
         run: echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
       - name: Pull Presidio images from GHCR
