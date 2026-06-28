@@ -6,13 +6,13 @@ Presidio uses GitHub Actions workflows to validate, build, release, and deliver 
 
 The following workflows are maintained as part of the Presidio development process:
 
-- [CI](https://github.com/microsoft/presidio/blob/main/.github/workflows/ci.yml) - triggered for pull requests and merges to the main branch.
+- [CI](https://github.com/data-privacy-stack/presidio/blob/main/.github/workflows/ci.yml) - triggered for pull requests and merges to the main branch.
     - Linting
     - Dependency review
     - Unit tests
     - Package builds
     - Container builds and E2E tests
-- [Release](https://github.com/microsoft/presidio/blob/main/.github/workflows/release.yml) - manually triggered for official releases.
+- [Release](https://github.com/data-privacy-stack/presidio/blob/main/.github/workflows/release.yml) - manually triggered for official releases.
     - Publishes Python packages to [PyPI](https://pypi.org/search/?q=presidio)
     - Publishes container images to [GitHub Container Registry](https://github.com/orgs/data-privacy-stack/packages)
     - Creates a draft GitHub release
