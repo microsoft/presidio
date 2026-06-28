@@ -4,9 +4,8 @@
 Zensical (https://zensical.org) is the successor to Material for MkDocs. It can
 read an existing ``mkdocs.yml`` natively, but it does **not** run MkDocs plugins
 - it only supports a curated set of plugins that it shims into Python-Markdown
-extensions. The Presidio docs use ``mkdocs-jupyter`` to render notebook samples,
-which therefore has no effect under Zensical and would leave those nav entries
-returning 404.
+extensions. Presidio's docs nav still includes notebook samples (``*.ipynb``),
+so this script pre-converts them to Markdown before invoking Zensical.
 
 Notebook support is accepted on the Zensical backlog but unscheduled:
   - request : https://github.com/zensical/zensical/issues/52
