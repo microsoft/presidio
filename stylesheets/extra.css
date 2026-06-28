@@ -269,8 +269,6 @@ body,
    ========================================================================= */
 .md-footer-meta {
   background: var(--md-footer-bg-color--dark);
-  --md-default-fg-color: var(--md-primary-bg-color);
-  --md-default-fg-color--light: color-mix(in srgb, var(--md-primary-bg-color) 72%, transparent);
 }
 
 /* =========================================================================
@@ -380,7 +378,7 @@ body,
   align-items: center;
 }
 
-.md-typeset .dps-hero__mascot {
+.dps-hero__mascot {
   width: 100%;
   max-width: 140px;
   height: auto;
@@ -458,42 +456,11 @@ body,
     gap: 1.5rem;
   }
   .dps-hero__media { order: -1; }
-  .md-typeset .dps-hero__mascot { max-width: 120px; }
+  .dps-hero__media .dps-hero__mascot { width: 100%; max-width: 180px; }
   .dps-hero__tagline { margin-inline: auto; }
   .dps-hero__cta { justify-content: center; }
   .dps-hero__body { align-items: center; }
   .dps-features { grid-template-columns: 1fr; }
-}
-
-@media screen and (max-width: 44.984375em) {
-  .dps-hero {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 0;
-    margin: 0.25rem 0 1.35rem;
-    padding: 0.9rem 1rem;
-    border-radius: 18px;
-  }
-
-  .dps-hero__media {
-    display: none;
-  }
-
-  .dps-hero__body {
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .md-typeset .dps-hero__title {
-    font-size: clamp(2.25rem, 13vw, 3.2rem);
-    line-height: 0.95;
-  }
-
-  .md-typeset .dps-hero__byline {
-    font-size: clamp(0.75rem, 3.8vw, 0.95rem);
-    line-height: 1.25;
-    white-space: normal;
-  }
 }
 
 /* =========================================================================
