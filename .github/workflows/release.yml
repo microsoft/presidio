@@ -8,6 +8,7 @@ permissions: read-all
 env:
   IMAGE_REGISTRY: ghcr.io
   IMAGE_NAMESPACE: data-privacy-stack
+  CONTAINER_PLATFORMS_JSON: '["linux/amd64","linux/arm64"]'
 
 jobs:
   get-version:
@@ -119,7 +120,7 @@ jobs:
       fail-fast: false
       matrix:
         image: [presidio-anonymizer, presidio-analyzer, presidio-image-redactor]
-        platform: [linux/amd64, linux/arm64]
+        platform: ${{ fromJson(env.CONTAINER_PLATFORMS_JSON) }}
 
     steps:
       - name: Checkout code
@@ -183,12 +184,13 @@ jobs:
             fi
 
             for tag in latest "${version_tag}"; do
+              platform_refs=$(repo="${repo}" tag="${tag}" python -c 'import json, os; print(" ".join(f"{os.environ[\"repo\"]}:{os.environ[\"tag\"]}-{platform.replace(\"/\", \"-\")}" for platform in json.loads(os.environ["CONTAINER_PLATFORMS_JSON"])))')
               docker buildx imagetools create \
                 --tag ${repo}:${tag} \
-                ${repo}:${tag}-linux-amd64 \
-                ${repo}:${tag}-linux-arm64
+                ${platform_refs}
             done
           done
         env:
           IMAGE_REGISTRY: ${{ env.IMAGE_REGISTRY }}
           IMAGE_NAMESPACE: ${{ env.IMAGE_NAMESPACE }}
+          CONTAINER_PLATFORMS_JSON: ${{ env.CONTAINER_PLATFORMS_JSON }}
