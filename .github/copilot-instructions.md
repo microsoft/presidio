@@ -1,6 +1,6 @@
-# Microsoft Presidio Development Instructions
+# Presidio Development Instructions
 
-Microsoft Presidio is a Python-based data protection and de-identification SDK with multiple components for detecting and anonymizing PII (Personally Identifiable Information) in text and images.
+Presidio is a Python-based data protection and de-identification SDK with multiple components for detecting and anonymizing PII (Personally Identifiable Information) in text and images.
 
 ## Core Philosophy
 
