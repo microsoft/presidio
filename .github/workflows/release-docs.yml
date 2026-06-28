@@ -40,7 +40,27 @@ jobs:
           python scripts/zensical_build.py build
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          publish_dir="$(mktemp -d)"
+          trap 'git worktree remove --force "$publish_dir"' EXIT
+
+          git fetch origin gh-pages:refs/remotes/origin/gh-pages
+          git worktree add --detach "$publish_dir" origin/gh-pages
+
+          find "$publish_dir" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a site/. "$publish_dir"/
+          touch "$publish_dir/.nojekyll"
+
+          git -C "$publish_dir" add -A
+          if git -C "$publish_dir" diff --cached --quiet; then
+            echo "No documentation changes to publish."
+            exit 0
+          fi
+
+          git -C "$publish_dir" commit -m "docs: publish Zensical documentation"
+          git -C "$publish_dir" push origin HEAD:gh-pages
