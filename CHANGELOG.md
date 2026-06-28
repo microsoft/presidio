@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 
 #### Changed
 - Moved container image publishing from Microsoft Container Registry to GitHub Container Registry under `ghcr.io/data-privacy-stack`, updated Docker usage documentation, and fixed GHCR authentication and provenance publishing in CI (#2103, #2123, #2124) (Thanks @SharonHart, @Copilot)
-- Rebranded repository documentation and links for Data Privacy Stack, added project transition notices, migrated the docs site to Material for MkDocs/Zensical, and updated docs publishing and search verification workflows (#2097, #2098, #2100, #2102, #2104, #2117, #2118, #2119, #2120, #2121, #2122) (Thanks @omri374, @SharonHart)
+- Rebranded repository documentation and links for Data Privacy Stack, added project transition notices about Presidio's move to its new home at https://presidio.dataprivacystack.org/project_transition/, migrated the docs site to Material for MkDocs/Zensical, and updated docs publishing and search verification workflows (#2097, #2098, #2100, #2102, #2104, #2117, #2118, #2119, #2120, #2121, #2122) (Thanks @omri374, @SharonHart)
 - Updated Dependabot coverage and grouping for package, Docker, Docker Compose, and GitHub Actions dependencies, with defensive dependency range controls (#1928, #1929, #1965, #1984, #2005) (Thanks @dependabot, @Copilot, @SharonHart)
 - Updated GitHub Actions dependencies, Docker base images, and sample dependency pins across CI/release workflows (#1913, #1914, #1915, #1920, #1927, #1935, #1936, #1937, #1938, #1966, #1967, #1968, #1975, #1976, #1985, #1991, #1996) (Thanks @dependabot)
 - Updated Copilot development instructions for the repository (#1866) (Thanks @omri374)
