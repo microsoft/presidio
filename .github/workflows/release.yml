@@ -16,6 +16,7 @@ jobs:
     outputs:
       version: ${{ steps.set-version.outputs.version }}
       image-version: ${{ steps.set-image-version.outputs.image-version }}
+      container-images: ${{ steps.set-container-images.outputs.container-images }}
       container-platforms: ${{ steps.set-container-platforms.outputs.container-platforms }}
     steps:
       - name: Checkout code
@@ -42,6 +43,10 @@ jobs:
       - name: Set container platforms
         id: set-container-platforms
         run: echo 'container-platforms=["linux/amd64","linux/arm64"]' >> $GITHUB_OUTPUT
+
+      - name: Set container images
+        id: set-container-images
+        run: echo 'container-images=["presidio-anonymizer","presidio-analyzer","presidio-image-redactor"]' >> $GITHUB_OUTPUT
 
   github-release:
     name: Create GitHub Release
@@ -123,7 +128,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [presidio-anonymizer, presidio-analyzer, presidio-image-redactor]
+        image: ${{ fromJson(needs.get-version.outputs.container-images) }}
         platform: ${{ fromJson(needs.get-version.outputs.container-platforms) }}
 
     steps:
@@ -179,7 +184,7 @@ jobs:
 
       - name: Create multi-platform manifests
         run: |
-          for image in presidio-anonymizer presidio-analyzer presidio-image-redactor; do
+          for image in $(python -c 'import json, os; print("\n".join(json.loads(os.environ["CONTAINER_IMAGES_JSON"])))'); do
             repo="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${image}"
             if [ "${image}" = "presidio-image-redactor" ]; then
               version_tag="${{ needs.get-version.outputs.image-version }}"
@@ -201,4 +206,5 @@ jobs:
         env:
           IMAGE_REGISTRY: ${{ env.IMAGE_REGISTRY }}
           IMAGE_NAMESPACE: ${{ env.IMAGE_NAMESPACE }}
+          CONTAINER_IMAGES_JSON: ${{ needs.get-version.outputs.container-images }}
           CONTAINER_PLATFORMS_JSON: ${{ needs.get-version.outputs.container-platforms }}
