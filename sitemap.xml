@@ -1,276 +1,276 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>
-        <loc>https://presidio.dataprivacystack.org/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/installation/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/installation/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/faq/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/faq/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/getting_started/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/getting_started/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/getting_started/getting_started_text/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/getting_started/getting_started_text/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/getting_started/getting_started_images/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/getting_started/getting_started_images/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/getting_started/getting_started_structured/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/getting_started/getting_started_structured/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/learn_presidio/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/learn_presidio/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/learn_presidio/concepts/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/learn_presidio/concepts/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/00_getting_started/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/00_getting_started/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/01_deny_list/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/01_deny_list/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/02_regex/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/02_regex/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/03_rule_based/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/03_rule_based/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/05_languages/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/05_languages/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/04_external_services/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/04_external_services/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/06_context/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/06_context/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/07_decision_process/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/07_decision_process/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/08_no_code/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/08_no_code/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/09_ad_hoc/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/09_ad_hoc/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/10_simple_anonymization/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/10_simple_anonymization/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/11_custom_anonymization/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/11_custom_anonymization/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/12_encryption/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/12_encryption/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/tutorial/13_allow_list/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/tutorial/13_allow_list/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/text_anonymization/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/text_anonymization/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/adding_recognizers/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/adding_recognizers/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/developing_recognizers/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/developing_recognizers/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/recognizer_registry_provider/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/recognizer_registry_provider/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/filtering_by_country/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/filtering_by_country/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/languages/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/languages/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/customizing_nlp_models/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/customizing_nlp_models/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/nlp_engines/spacy_stanza/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/nlp_engines/spacy_stanza/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/nlp_engines/transformers/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/nlp_engines/transformers/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/nlp_engines/gpu_usage/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/nlp_engines/gpu_usage/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/decision_process/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/decision_process/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/analyzer/analyzer_engine_provider/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/analyzer/analyzer_engine_provider/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/anonymizer/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/anonymizer/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/anonymizer/adding_operators/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/anonymizer/adding_operators/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/ahds_integration/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/ahds_integration/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/image-redactor/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/image-redactor/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/image-redactor/evaluating_dicom_redaction/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/image-redactor/evaluating_dicom_redaction/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/structured/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/structured/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/evaluation/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/evaluation/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/supported_entities/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/supported_entities/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/project_transition/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/project_transition/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/community/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/community/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/development/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/development/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/build_release/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/build_release/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/presidio_V2/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/presidio_V2/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/api/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/api/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/api/analyzer_python/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/api/analyzer_python/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/api/anonymizer_python/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/api/anonymizer_python/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/api/image_redactor_python/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/api/image_redactor_python/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/api/structured_python/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/api/structured_python/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/recipes/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/recipes/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/recipes/CONTRIBUTING/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/recipes/CONTRIBUTING/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/recipes/template/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/recipes/template/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/presidio_notebook/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/presidio_notebook/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/customizing_presidio_analyzer/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/customizing_presidio_analyzer/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/ner_model_configuration/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/ner_model_configuration/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/encrypt_decrypt/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/encrypt_decrypt/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/getting_entity_values/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/getting_entity_values/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/Anonymizing%20known%20values/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/Anonymizing%20known%20values/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/keep_entities/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/keep_entities/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/integrating_with_external_services/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/integrating_with_external_services/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/text_analytics/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/text_analytics/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/ahds/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/ahds/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/transformers_recognizer/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/transformers_recognizer/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/gliner/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/gliner/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/pseudonymization/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/pseudonymization/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/synth_data_with_openai/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/synth_data_with_openai/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/no_code_config/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/no_code_config/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/batch_processing/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/batch_processing/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/example_structured/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/example_structured/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/example_dicom_image_redactor/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/example_dicom_image_redactor/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/image_redaction_allow_list_approach/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/image_redaction_allow_list_approach/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/plot_custom_bboxes/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/plot_custom_bboxes/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/example_dicom_redactor_evaluation/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/example_dicom_redactor_evaluation/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/example_pdf_annotation/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/example_pdf_annotation/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/deployments/app-service/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/deployments/app-service/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/deployments/k8s/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/deployments/k8s/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/deployments/spark/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/deployments/spark/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/fabric/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/fabric/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/deployments/redacting-telemetry/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/deployments/redacting-telemetry/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/deployments/data-factory/presidio-data-factory/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/deployments/data-factory/presidio-data-factory/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/deployments/data-factory/presidio-data-factory-template-gallery-http/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/deployments/data-factory/presidio-data-factory-template-gallery-http/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/deployments/data-factory/presidio-data-factory-template-gallery-databricks/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/deployments/data-factory/presidio-data-factory-template-gallery-databricks/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/docker/litellm/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/docker/litellm/</loc>
       </url>
       <url>
-        <loc>https://presidio.dataprivacystack.org/samples/python/streamlit/</loc>
+        <loc>https://data-privacy-stack.github.io/presidio/samples/python/streamlit/</loc>
       </url>
 </urlset>
