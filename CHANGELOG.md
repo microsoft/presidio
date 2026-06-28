@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Anonymizer
 #### Fixed
-- Custom operator `validate()` no longer calls the user-supplied lambda with a dummy `"PII"` value. Previously, stateful lambdas (e.g. those accumulating a token-to-original-value map for de-anonymization) would receive a spurious invocation during validation, inserting a junk entry (`{"TOKEN_1": "PII"}`) into the map and skewing all subsequent token counters. The return-type contract is now enforced in `operate()` when the lambda runs on real data. Fixes [#2024](https://github.com/microsoft/presidio/issues/2024).
+- Custom operator `validate()` no longer calls the user-supplied lambda with a dummy `"PII"` value. Previously, stateful lambdas (e.g. those accumulating a token-to-original-value map for de-anonymization) would receive a spurious invocation during validation, inserting a junk entry (`{"TOKEN_1": "PII"}`) into the map and skewing all subsequent token counters. The return-type contract is now enforced in `operate()` when the lambda runs on real data. Fixes [#2024](https://github.com/data-privacy-stack/presidio/issues/2024).
 
 ### Analyzer
 #### Changed
@@ -233,8 +233,8 @@ All notable changes to this project will be documented in this file.
     - EsNifRecognizer
     - InVoterRecognizer
 
-  To re-enable them, either change the [default YAML](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) to have them as `enabled: true`, or via code, add them to the recognizer registry manually.
-    - Yaml based: see more here: [YAML based configuration](https://microsoft.github.io/presidio/analyzer/analyzer_engine_provider/).
+  To re-enable them, either change the [default YAML](https://github.com/data-privacy-stack/presidio/blob/main/presidio-analyzer/presidio_analyzer/conf/default_recognizers.yaml) to have them as `enabled: true`, or via code, add them to the recognizer registry manually.
+    - Yaml based: see more here: [YAML based configuration](https://presidio.dataprivacystack.org/analyzer/analyzer_engine_provider/).
     - Code based:
       ```py
       from presidio_analyzer import AnalyzerEngine
@@ -357,13 +357,13 @@ All notable changes to this project will be documented in this file.
 ## [2.2.355] - 2024-10-28
 ### Added
 #### Docs
- * Add a link to HashiCorp vault operator resource ([#1468](https://github.com/microsoft/presidio/pull/1468)) (Thanks [Akshay Karle](https://github.com/akshaykarle))
+ * Add a link to HashiCorp vault operator resource ([#1468](https://github.com/data-privacy-stack/presidio/pull/1468)) (Thanks [Akshay Karle](https://github.com/akshaykarle))
 ### Changed
 #### Analyzer
- * Updates to the transformers conf docs and yaml file ([#1467](https://github.com/microsoft/presidio/pull/1467)) 
+ * Updates to the transformers conf docs and yaml file ([#1467](https://github.com/data-privacy-stack/presidio/pull/1467)) 
 
 #### Docs
- * docs: clarify the docs on deploying presidio to k8s ([#1453](https://github.com/microsoft/presidio/pull/1453)) (Thanks [Roel Fauconnier](https://github.com/roel4ez))
+ * docs: clarify the docs on deploying presidio to k8s ([#1453](https://github.com/data-privacy-stack/presidio/pull/1453)) (Thanks [Roel Fauconnier](https://github.com/roel4ez))
 
 
 ## [2.2.355] - July 9th 2024
@@ -653,15 +653,15 @@ The default recognizers are now automatically loaded from file.
 - Added CodeQL scanning
 
 #### Analyzer
-- Introduced [BatchAnalyzerEngine](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/batch_analyzer_engine.py)
-- Added [allow-list functionality](https://github.com/microsoft/presidio/blob/4cbfc1a80dc15da7d5a9cf5a1c680e8df4f2b349/presidio-analyzer/presidio_analyzer/analyzer_engine.py#L135) to ignore specific strings
-- Added notebook on [anonymizing known values](https://github.com/microsoft/presidio/blob/main/docs/samples/python/Anonymizing%20known%20values.ipynb)
-- Added [sample for using `transformers` models in Presidio](https://github.com/microsoft/presidio/blob/main/docs/samples/python/transformers_recognizer.py)
+- Introduced [BatchAnalyzerEngine](https://github.com/data-privacy-stack/presidio/blob/main/presidio-analyzer/presidio_analyzer/batch_analyzer_engine.py)
+- Added [allow-list functionality](https://github.com/data-privacy-stack/presidio/blob/4cbfc1a80dc15da7d5a9cf5a1c680e8df4f2b349/presidio-analyzer/presidio_analyzer/analyzer_engine.py#L135) to ignore specific strings
+- Added notebook on [anonymizing known values](https://github.com/data-privacy-stack/presidio/blob/main/docs/samples/python/Anonymizing%20known%20values.ipynb)
+- Added [sample for using `transformers` models in Presidio](https://github.com/data-privacy-stack/presidio/blob/main/docs/samples/python/transformers_recognizer.py)
 
 ### Changed
 
 #### Anonymizer
-- Bug fix for getting the text before anonymizing (https://github.com/microsoft/presidio/pull/890)
+- Bug fix for getting the text before anonymizing (https://github.com/data-privacy-stack/presidio/pull/890)
 
 #### Image redactor
 - Deps update
@@ -699,7 +699,7 @@ Bug fix in context support
 #### Analyzer
 
 * Added a URL recognizer
-* Added a new capability for creating new logic for context detection. See [ContextAwareEnhancer](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/context_aware_enhancers/context_aware_enhancer.py) and [LemmaContextAwareEnhancer](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/context_aware_enhancers/lemma_context_aware_enhancer.py). Documentation would be added on a future release.
+* Added a new capability for creating new logic for context detection. See [ContextAwareEnhancer](https://github.com/data-privacy-stack/presidio/blob/main/presidio-analyzer/presidio_analyzer/context_aware_enhancers/context_aware_enhancer.py) and [LemmaContextAwareEnhancer](https://github.com/data-privacy-stack/presidio/blob/main/presidio-analyzer/presidio_analyzer/context_aware_enhancers/lemma_context_aware_enhancer.py). Documentation would be added on a future release.
 Furthermore, it is now possible to pass context words thruogh the `analyze` method (or via API) and those would be taken into account for context enhancement. 
 
 
@@ -797,32 +797,32 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.  
 
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.362...HEAD
-[2.2.362]: https://github.com/microsoft/presidio/compare/2.2.361...2.2.362
-[2.2.361]: https://github.com/microsoft/presidio/compare/2.2.360...2.2.361
-[2.2.360]: https://github.com/microsoft/presidio/compare/2.2.359...2.2.360
-[2.2.359]: https://github.com/microsoft/presidio/compare/2.2.358...2.2.359
-[2.2.358]: https://github.com/microsoft/presidio/compare/2.2.357...2.2.358
-[2.2.357]: https://github.com/microsoft/presidio/compare/2.2.356...2.2.357
-[2.2.356]: https://github.com/microsoft/presidio/compare/2.2.355...2.2.356
-[2.2.355]: https://github.com/microsoft/presidio/compare/2.2.354...2.2.355
-[2.2.354]: https://github.com/microsoft/presidio/compare/2.2.353...2.2.354
-[2.2.353]: https://github.com/microsoft/presidio/compare/2.2.352...2.2.353
-[2.2.352]: https://github.com/microsoft/presidio/compare/2.2.351...2.2.352
-[2.2.351]: https://github.com/microsoft/presidio/compare/2.2.350...2.2.351
-[2.2.350]: https://github.com/microsoft/presidio/compare/2.2.35...2.2.350
-[2.2.35]: https://github.com/microsoft/presidio/compare/2.2.34...2.2.35
-[2.2.34]: https://github.com/microsoft/presidio/compare/2.2.33...2.2.34
-[2.2.33]: https://github.com/microsoft/presidio/compare/2.2.32...2.2.33
-[2.2.32]: https://github.com/microsoft/presidio/compare/2.2.31...2.2.32
-[2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
-[2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
-[2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
-[2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28
-[2.2.27]: https://github.com/microsoft/presidio/compare/2.2.26...2.2.27
-[2.2.26]: https://github.com/microsoft/presidio/compare/2.2.25...2.2.26
-[2.2.25]: https://github.com/microsoft/presidio/compare/2.2.24...2.2.25
-[2.2.24]: https://github.com/microsoft/presidio/compare/2.2.23...2.2.24
-[2.2.23]: https://github.com/microsoft/presidio/compare/2.2.2...2.2.23
-[2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
-[2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
+[unreleased]: https://github.com/data-privacy-stack/presidio/compare/2.2.362...HEAD
+[2.2.362]: https://github.com/data-privacy-stack/presidio/compare/2.2.361...2.2.362
+[2.2.361]: https://github.com/data-privacy-stack/presidio/compare/2.2.360...2.2.361
+[2.2.360]: https://github.com/data-privacy-stack/presidio/compare/2.2.359...2.2.360
+[2.2.359]: https://github.com/data-privacy-stack/presidio/compare/2.2.358...2.2.359
+[2.2.358]: https://github.com/data-privacy-stack/presidio/compare/2.2.357...2.2.358
+[2.2.357]: https://github.com/data-privacy-stack/presidio/compare/2.2.356...2.2.357
+[2.2.356]: https://github.com/data-privacy-stack/presidio/compare/2.2.355...2.2.356
+[2.2.355]: https://github.com/data-privacy-stack/presidio/compare/2.2.354...2.2.355
+[2.2.354]: https://github.com/data-privacy-stack/presidio/compare/2.2.353...2.2.354
+[2.2.353]: https://github.com/data-privacy-stack/presidio/compare/2.2.352...2.2.353
+[2.2.352]: https://github.com/data-privacy-stack/presidio/compare/2.2.351...2.2.352
+[2.2.351]: https://github.com/data-privacy-stack/presidio/compare/2.2.350...2.2.351
+[2.2.350]: https://github.com/data-privacy-stack/presidio/compare/2.2.35...2.2.350
+[2.2.35]: https://github.com/data-privacy-stack/presidio/compare/2.2.34...2.2.35
+[2.2.34]: https://github.com/data-privacy-stack/presidio/compare/2.2.33...2.2.34
+[2.2.33]: https://github.com/data-privacy-stack/presidio/compare/2.2.32...2.2.33
+[2.2.32]: https://github.com/data-privacy-stack/presidio/compare/2.2.31...2.2.32
+[2.2.31]: https://github.com/data-privacy-stack/presidio/compare/2.2.30...2.2.31
+[2.2.30]: https://github.com/data-privacy-stack/presidio/compare/2.2.29...2.2.30
+[2.2.29]: https://github.com/data-privacy-stack/presidio/compare/2.2.28...2.2.29
+[2.2.28]: https://github.com/data-privacy-stack/presidio/compare/2.2.27...2.2.28
+[2.2.27]: https://github.com/data-privacy-stack/presidio/compare/2.2.26...2.2.27
+[2.2.26]: https://github.com/data-privacy-stack/presidio/compare/2.2.25...2.2.26
+[2.2.25]: https://github.com/data-privacy-stack/presidio/compare/2.2.24...2.2.25
+[2.2.24]: https://github.com/data-privacy-stack/presidio/compare/2.2.23...2.2.24
+[2.2.23]: https://github.com/data-privacy-stack/presidio/compare/2.2.2...2.2.23
+[2.2.2]: https://github.com/data-privacy-stack/presidio/compare/2.2.1...2.2.2
+[2.2.1]: https://github.com/data-privacy-stack/presidio/compare/2.2.0...2.2.1
