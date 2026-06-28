@@ -7,7 +7,7 @@ Azure App Service provides a managed production environment, which supports dock
 
 Use the following button to deploy presidio services to your Azure subscription.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdata-privacy-stack%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
 
 ## Deploy using command-line script
 

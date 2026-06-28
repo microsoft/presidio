@@ -138,13 +138,13 @@ To install Presidio from source, first clone the repo:
 * using HTTPS
 
 ```sh
-git clone https://github.com/microsoft/presidio.git
+git clone https://github.com/data-privacy-stack/presidio.git
 ```
 
 * Using SSH
 
 ```sh
-git clone git@github.com:microsoft/presidio.git
+git clone git@github.com:data-privacy-stack/presidio.git
 ```
 
 Then, build the containers locally.

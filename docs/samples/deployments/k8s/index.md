@@ -69,16 +69,16 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
    # Choose a namespace and ensure it is created
    NAMESPACE=presidio
 
-   # Choose the tag from GitHub Packages, e.g. `latest`
+   # Choose the tag from ghcr.io/data-privacy-stack, e.g. `latest`
    TAG=latest
 
    # Choose a name for the deployment
    NAME=<name>
 
    # Use Helm to install all required components
-   helm install $NAME . --set tag=$PRESIDIO_LABEL --namespace $NAMESPACE
+   helm install $NAME . --set tag=$TAG --namespace $NAMESPACE
 
    # If you have your own images in a separate ACR, run
    DOCKER_REGISTRY=<your_registry>
-   helm install $NAME . --set registry=$DOCKER_REGISTRY,tag=$PRESIDIO_LABEL . --namespace $NAMESPACE
+   helm install $NAME . --set registry=$DOCKER_REGISTRY,tag=$TAG --namespace $NAMESPACE
    ```
