@@ -72,7 +72,7 @@ docker pull ghcr.io/data-privacy-stack/presidio-image-redactor
 2. Run container
 
 ```sh
-docker run -d -p 5003:3000 ghcr.io/data-privacy-stack/presidio-image-redactor
+docker run -d -p 5003:3000 ghcr.io/data-privacy-stack/presidio-image-redactor:latest
 ```
 
 3. Use the API
