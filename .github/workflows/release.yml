@@ -16,8 +16,6 @@ jobs:
     outputs:
       version: ${{ steps.set-version.outputs.version }}
       image-version: ${{ steps.set-image-version.outputs.image-version }}
-      container-images: ${{ steps.set-container-images.outputs.container-images }}
-      container-platforms: ${{ steps.set-container-platforms.outputs.container-platforms }}
     steps:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
@@ -39,14 +37,6 @@ jobs:
           imageVer=$(grep -m 1 version presidio-image-redactor/pyproject.toml | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
           echo "image-version=$imageVer" >> $GITHUB_OUTPUT
           echo "Image-redactor version: $imageVer"
-
-      - name: Set container platforms
-        id: set-container-platforms
-        run: echo 'container-platforms=["linux/amd64","linux/arm64"]' >> $GITHUB_OUTPUT
-
-      - name: Set container images
-        id: set-container-images
-        run: echo 'container-images=["presidio-anonymizer","presidio-analyzer","presidio-image-redactor"]' >> $GITHUB_OUTPUT
 
   github-release:
     name: Create GitHub Release
@@ -128,8 +118,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ fromJson(needs.get-version.outputs.container-images) }}
-        platform: ${{ fromJson(needs.get-version.outputs.container-platforms) }}
+        image: [presidio-anonymizer, presidio-analyzer, presidio-image-redactor]
+        platform: [linux/amd64, linux/arm64]
+        include:
+          - platform: linux/amd64
+            platform_tag: linux-amd64
+          - platform: linux/arm64
+            platform_tag: linux-arm64
 
     steps:
       - name: Checkout code
@@ -148,22 +143,25 @@ jobs:
 
       - name: Build and Push ${{ matrix.image }} for ${{ matrix.platform }}
         run: |
-          repo="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ matrix.image }}"
-          version_tag="${{ matrix.image == 'presidio-image-redactor' && needs.get-version.outputs.image-version || needs.get-version.outputs.version }}"
-          platform_tag=$(echo "${{ matrix.platform }}" | sed 's/\//-/g')
+          repo="${IMAGE_REGISTRY}/${IMAGE_NAMESPACE}/${{ matrix.image }}"
+          version_tag="${VERSION}"
+          if [ "${{ matrix.image }}" = "presidio-image-redactor" ]; then
+            version_tag="${IMAGE_VERSION}"
+          fi
+
           docker buildx build \
             --platform ${{ matrix.platform }} \
             --cache-from type=registry,ref=${repo}:latest \
             --cache-to type=inline \
-            --tag ${repo}:latest-${platform_tag} \
-            --tag ${repo}:${version_tag}-${platform_tag} \
+            --tag "${repo}:latest-${{ matrix.platform_tag }}" \
+            --tag "${repo}:${version_tag}-${{ matrix.platform_tag }}" \
             --attest type=sbom \
             --attest type=provenance,mode=max \
             --push \
             ./${{ matrix.image }}
         env:
-          IMAGE_REGISTRY: ${{ env.IMAGE_REGISTRY }}
-          IMAGE_NAMESPACE: ${{ env.IMAGE_NAMESPACE }}
+          VERSION: ${{ needs.get-version.outputs.version }}
+          IMAGE_VERSION: ${{ needs.get-version.outputs.image-version }}
 
   create-container-manifests:
     name: Create Multi-Platform Container Manifests
@@ -184,27 +182,27 @@ jobs:
 
       - name: Create multi-platform manifests
         run: |
-          for image in $(python -c 'import json, os; print("\n".join(json.loads(os.environ["CONTAINER_IMAGES_JSON"])))'); do
-            repo="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${image}"
+          images=(presidio-anonymizer presidio-analyzer presidio-image-redactor)
+          platform_tags=(linux-amd64 linux-arm64)
+
+          for image in "${images[@]}"; do
+            repo="${IMAGE_REGISTRY}/${IMAGE_NAMESPACE}/${image}"
+            version_tag="${VERSION}"
             if [ "${image}" = "presidio-image-redactor" ]; then
-              version_tag="${{ needs.get-version.outputs.image-version }}"
-            else
-              version_tag="${{ needs.get-version.outputs.version }}"
+              version_tag="${IMAGE_VERSION}"
             fi
 
             for tag in latest "${version_tag}"; do
-              platform_refs=""
-              for platform_tag in $(python -c 'import json, os; print("\n".join(platform.replace("/", "-") for platform in json.loads(os.environ["CONTAINER_PLATFORMS_JSON"])))'); do
-                platform_refs="${platform_refs} ${repo}:${tag}-${platform_tag}"
+              platform_refs=()
+              for platform_tag in "${platform_tags[@]}"; do
+                platform_refs+=("${repo}:${tag}-${platform_tag}")
               done
-              platform_refs="${platform_refs# }"
+
               docker buildx imagetools create \
-                --tag ${repo}:${tag} \
-                ${platform_refs}
+                --tag "${repo}:${tag}" \
+                "${platform_refs[@]}"
             done
           done
         env:
-          IMAGE_REGISTRY: ${{ env.IMAGE_REGISTRY }}
-          IMAGE_NAMESPACE: ${{ env.IMAGE_NAMESPACE }}
-          CONTAINER_IMAGES_JSON: ${{ needs.get-version.outputs.container-images }}
-          CONTAINER_PLATFORMS_JSON: ${{ needs.get-version.outputs.container-platforms }}
+          VERSION: ${{ needs.get-version.outputs.version }}
+          IMAGE_VERSION: ${{ needs.get-version.outputs.image-version }}
