@@ -221,6 +221,10 @@ plugins:
             filters:
               - "!^_"
 
+copyright: >
+  Maintained by
+  <a href="https://dataprivacystack.org" target="_blank" rel="noopener">Data Privacy Stack</a>
+
 extra:
   social:
     - icon: fontawesome/brands/github
