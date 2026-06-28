@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### Presidio CLI
+#### Added
+- Added a top-level `--threshold` flag that overrides the loaded config threshold for a single run without changing config files.
+
 ### Anonymizer
 #### Fixed
 - Custom operator `validate()` no longer calls the user-supplied lambda with a dummy `"PII"` value. Previously, stateful lambdas (e.g. those accumulating a token-to-original-value map for de-anonymization) would receive a spurious invocation during validation, inserting a junk entry (`{"TOKEN_1": "PII"}`) into the map and skewing all subsequent token counters. The return-type contract is now enforced in `operate()` when the lambda runs on real data. Fixes [#2024](https://github.com/microsoft/presidio/issues/2024).
