@@ -10,7 +10,7 @@
 `presidio` is a convenience meta-package that references and installs
 [presidio-analyzer](https://pypi.org/project/presidio-analyzer/) and
 [presidio-anonymizer](https://pypi.org/project/presidio-anonymizer/), the PII detection and
-anonymization engines from the [Microsoft Presidio](https://github.com/data-privacy-stack/presidio) project.
+anonymization engines from the [Presidio](https://github.com/data-privacy-stack/presidio) project.
 
 > **Note:** This package contains no code of its own. It simply pulls in `presidio-analyzer` and
 > `presidio-anonymizer` as dependencies. For the full feature set, documentation, and source code
