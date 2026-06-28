@@ -2,6 +2,7 @@ site_name: Presidio
 site_url: https://data-privacy-stack.github.io/presidio
 site_description: PII anonymization for text, images, and structured data.
 site_author: Data Privacy Stack
+copyright: '<a href="https://dataprivacystack.org/">Data Privacy Stack</a>'
 
 repo_url: https://github.com/data-privacy-stack/presidio/
 edit_uri: ""
@@ -219,8 +220,10 @@ plugins:
               modules: false
             filters:
               - "!^_"
-  - mkdocs-jupyter:
-      ignore_h1_titles: True
+
+copyright: >
+  Maintained by
+  <a href="https://dataprivacystack.org" target="_blank" rel="noopener">Data Privacy Stack</a>
 
 extra:
   social:
