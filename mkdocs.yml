@@ -222,6 +222,10 @@ plugins:
   - mkdocs-jupyter:
       ignore_h1_titles: True
 
+copyright: >
+  Maintained by
+  <a href="https://dataprivacystack.org" target="_blank" rel="noopener">Data Privacy Stack</a>
+
 extra:
   social:
     - icon: fontawesome/brands/github
