@@ -195,7 +195,7 @@ For a list of the current supported entities:
 
 ## API reference
 
-Follow the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Analyzer) for the Analyzer REST API reference details and [Analyzer Python API](../api/analyzer_python.md) for Python API reference
+Follow the [API Spec](https://data-privacy-stack.github.io/presidio/api-docs/api-docs.html#tag/Analyzer) for the Analyzer REST API reference details and [Analyzer Python API](../api/analyzer_python.md) for Python API reference
 
 ## Samples
 
