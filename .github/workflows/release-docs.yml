@@ -14,7 +14,7 @@ permissions:
 jobs:
   github-pages-release:
     name: Build with Zensical and push to GitHub Pages
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
 
     permissions:
       contents: write  # Required for pushing to the gh-pages branch
