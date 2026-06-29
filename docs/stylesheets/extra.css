@@ -343,7 +343,10 @@ body,
 .md-typeset .dps-hero__byline {
   display: inline-flex;
   align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.38em;
+  max-width: 100%;
   font-family: "Space Grotesk", "Inter", sans-serif;
   font-size: clamp(0.95rem, 4.6cqi, 1.3rem);
   font-weight: 500;
