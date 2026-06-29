@@ -4,7 +4,10 @@
   </div>
   <div class="dps-hero__body">
     <h1 class="dps-hero__title">Presidio</h1>
-    <p class="dps-hero__byline">by data <strong>privacy</strong> stack</p>
+    <p class="dps-hero__byline">
+      <span class="dps-hero__byline-prefix">by</span>
+      <span class="dps-hero__byline-brand">Data Privacy Stack</span>
+    </p>
   </div>
 </div>
 
