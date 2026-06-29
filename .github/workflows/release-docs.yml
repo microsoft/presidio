@@ -70,6 +70,7 @@ jobs:
 
           find "$publish_dir" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -a site/. "$publish_dir"/
+          printf "presidio.dataprivacystack.org\n" > "$publish_dir/CNAME"
           touch "$publish_dir/.nojekyll"
 
           git -C "$publish_dir" add -A
