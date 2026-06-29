@@ -26,13 +26,13 @@ class InUpiRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "UPI ID (High)",
-            r"\b([a-zA-Z0-9.\-_]{2,256}@(okicici|okhdfcbank|okaxis|oksbi|paytm|ybl|upi|apl|ibl|axl|waicici|wahdfcbank|timecosmos|rapl|mbk|ikwik|freecharge))\b",
+            r"\b([a-zA-Z0-9.\-_]{2,256}@(okicici|okhdfcbank|okaxis|oksbi|paytm|ybl|upi|apl|ibl|axl|waicici|wahdfcbank|timecosmos|rapl|mbk|ikwik|freecharge))(?![\w.-])",
             0.7,
         ),
         Pattern(
             "UPI ID (Medium)",
-            r"\b([a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64})\b",
-            0.4,
+            r"\b([a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64})(?![\w.-])",
+            0.2,
         ),
     ]
 
