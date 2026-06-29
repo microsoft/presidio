@@ -64,41 +64,6 @@
     
     <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
-<!-- Microsoft Clarity with Consent Mode -->
-<script type="text/javascript">
-    (function () {
-        // Determine the current consent state before loading Clarity
-        var storedConsent = null;
-        try {
-            storedConsent = window.localStorage && window.localStorage.getItem("clarity_consent");
-        } catch (e) {
-            // If localStorage is unavailable (e.g., privacy mode), fall back to denied
-            storedConsent = null;
-        }
-
-        // Default to "denied" when there is no prior explicit "granted" choice
-        var defaultConsent = storedConsent === "granted" ? "granted" : "denied";
-
-        (function (c, l, a, r, i, t, y) {
-            c[a] = c[a] || function () {
-                (c[a].q = c[a].q || []).push(arguments);
-            };
-
-            // Set consentv2 state before loading the Clarity script so it honors consent immediately
-            c[a]("consentv2", {
-                ad_Storage: defaultConsent,
-                analytics_Storage: defaultConsent
-            });
-
-            t = l.createElement(r);
-            t.async = 1;
-            t.src = "https://www.clarity.ms/tag/" + i;
-            y = l.getElementsByTagName(r)[0];
-            y.parentNode.insertBefore(t, y);
-        })(window, document, "clarity", "script", "5pd40fk720");
-    })();
-</script>
-
 <!-- Cookie consent banner -->
 <style>
     #cookie-consent-banner {
@@ -150,7 +115,68 @@
 </style>
 <script type="text/javascript">
     (function() {
-        if (localStorage.getItem("clarity_consent")) return;
+        var CONSENT_KEY = "clarity_consent";
+        var CLARITY_PROJECT_ID = "5pd40fk720";
+
+        function getStoredConsent() {
+            try {
+                var value = window.localStorage && window.localStorage.getItem(CONSENT_KEY);
+                return value === "granted" || value === "denied" ? value : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setStoredConsent(value) {
+            try {
+                if (window.localStorage) {
+                    window.localStorage.setItem(CONSENT_KEY, value);
+                }
+            } catch (e) {}
+        }
+
+        function deleteCookie(name) {
+            document.cookie = name + "=; Max-Age=0; path=/";
+            document.cookie = name + "=; Max-Age=0; path=/; domain=" + window.location.hostname;
+        }
+
+        function clearClarityCookies() {
+            deleteCookie("_clck");
+            deleteCookie("_clsk");
+        }
+
+        function loadClarity() {
+            window.clarity = window.clarity || function() {
+                (window.clarity.q = window.clarity.q || []).push(arguments);
+            };
+
+            window.clarity("consentv2", {
+                ad_Storage: "granted",
+                analytics_Storage: "granted"
+            });
+
+            if (window.__clarityScriptLoaded) {
+                return;
+            }
+            window.__clarityScriptLoaded = true;
+
+            var script = document.createElement("script");
+            script.async = true;
+            script.src = "https://www.clarity.ms/tag/" + CLARITY_PROJECT_ID;
+            var firstScript = document.getElementsByTagName("script")[0];
+            firstScript.parentNode.insertBefore(script, firstScript);
+        }
+
+        var storedConsent = getStoredConsent();
+        if (storedConsent === "granted") {
+            loadClarity();
+            return;
+        }
+
+        if (storedConsent === "denied") {
+            clearClarityCookies();
+            return;
+        }
 
         var banner = document.createElement("div");
         banner.id = "cookie-consent-banner";
@@ -169,20 +195,14 @@
             document.body.appendChild(banner);
 
             document.getElementById("cookie-consent-accept").addEventListener("click", function() {
-                localStorage.setItem("clarity_consent", "granted");
-                window.clarity("consentv2", {
-                    ad_Storage: "granted",
-                    analytics_Storage: "granted"
-                });
+                setStoredConsent("granted");
+                loadClarity();
                 banner.remove();
             });
 
             document.getElementById("cookie-consent-decline").addEventListener("click", function() {
-                localStorage.setItem("clarity_consent", "denied");
-                window.clarity("consentv2", {
-                    ad_Storage: "denied",
-                    analytics_Storage: "denied"
-                });
+                setStoredConsent("denied");
+                clearClarityCookies();
                 banner.remove();
             });
         });
@@ -6889,8 +6909,6 @@
             <td class="doc-param-details">
               <div class="doc-md-description">
                 <p>Which model to use</p>
-<p>For details, see
-https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
               </div>
               <p>
                   <span class="doc-param-annotation">
@@ -6900,6 +6918,29 @@ https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
                   <span class="doc-param-default">
                     <b>DEFAULT:</b>
                       <code>&#39;prebuilt-document&#39;</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>credential</code>
+            </td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>An Azure credential object, such as
+    DefaultAzureCredential or AzureKeyCredential</p>
+<p>For details, see
+https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="azure.core.credentials.AzureKeyCredential">AzureKeyCredential</span>, <span title="azure.core.credentials.TokenCredential">TokenCredential</span>]]</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
                   </span>
               </p>
             </td>
@@ -6966,10 +7007,7 @@ https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>presidio_image_redactor/document_intelligence_ocr.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 18</span>
-<span class="normal"> 19</span>
-<span class="normal"> 20</span>
-<span class="normal"> 21</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 21</span>
 <span class="normal"> 22</span>
 <span class="normal"> 23</span>
 <span class="normal"> 24</span>
@@ -7121,12 +7159,25 @@ https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
-<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DocumentIntelligenceOCR</span><span class="p">(</span><span class="n">OCR</span><span class="p">):</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DocumentIntelligenceOCR</span><span class="p">(</span><span class="n">OCR</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;OCR class that uses Azure AI Document Intelligence OCR engine.</span>
 
 <span class="sd">    :param key: The API key</span>
 <span class="sd">    :param endpoint: The API endpoint</span>
 <span class="sd">    :param model_id: Which model to use</span>
+<span class="sd">    :param credential: An Azure credential object, such as</span>
+<span class="sd">        DefaultAzureCredential or AzureKeyCredential</span>
 
 <span class="sd">    For details, see</span>
 <span class="sd">    https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</span>
@@ -7149,24 +7200,30 @@ https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
         <span class="n">endpoint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;prebuilt-document&quot;</span><span class="p">,</span>
+        <span class="n">credential</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">AzureKeyCredential</span><span class="p">,</span> <span class="s2">&quot;TokenCredential&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DocumentIntelligenceOCR</span><span class="o">.</span><span class="n">SUPPORTED_MODELS</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported model id: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">credential</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only one of key or credential may be specified&quot;</span><span class="p">)</span>
+
         <span class="c1"># If endpoint and/or key are not passed, attempt to get from environment</span>
-        <span class="c1"># variables</span>
+        <span class="c1"># variables.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">endpoint</span><span class="p">:</span>
             <span class="n">endpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DOCUMENT_INTELLIGENCE_ENDPOINT&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DOCUMENT_INTELLIGENCE_KEY&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">credential</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DOCUMENT_INTELLIGENCE_KEY&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">endpoint</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Endpoint and key must be specified&quot;</span><span class="p">)</span>
+            <span class="n">credential</span> <span class="o">=</span> <span class="n">AzureKeyCredential</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">endpoint</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Endpoint and key must be specified&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">endpoint</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Endpoint must be specified&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">DocumentAnalysisClient</span><span class="p">(</span>
-            <span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">credential</span><span class="o">=</span><span class="n">AzureKeyCredential</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">DocumentAnalysisClient</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">credential</span><span class="o">=</span><span class="n">credential</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
     <span class="nd">@staticmethod</span>
@@ -7467,18 +7524,7 @@ https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>presidio_image_redactor/document_intelligence_ocr.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
@@ -7489,7 +7535,18 @@ https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
-<span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_imgbytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_imgbytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the image bytes from the image object.</span>
 
 <span class="sd">    :param image:  Any of bytes/numpy array /PIL image object</span>
@@ -7609,16 +7666,16 @@ https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>presidio_image_redactor/document_intelligence_ocr.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">analyze_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imgbytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnalyzedDocument</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">analyze_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imgbytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnalyzedDocument</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze the document and return the result.</span>
 
 <span class="sd">    :param imgbytes: The bytes to send to the API endpoint</span>
@@ -7725,22 +7782,22 @@ https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>presidio_image_redactor/document_intelligence_ocr.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
-<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">perform_ocr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">perform_ocr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform OCR on the image.</span>
 
 <span class="sd">    :param image: PIL Image/numpy array or file path(str) to be processed</span>
@@ -10116,7 +10173,12 @@ used to preprocess the image</p>
 <span class="normal">431</span>
 <span class="normal">432</span>
 <span class="normal">433</span>
-<span class="normal">434</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ImageAnalyzerEngine</span><span class="p">:</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ImageAnalyzerEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ImageAnalyzerEngine class.</span>
 
 <span class="sd">    :param analyzer_engine: The Presidio AnalyzerEngine instance</span>
@@ -10494,46 +10556,51 @@ used to preprocess the image</p>
         <span class="n">image_r</span> <span class="o">=</span> <span class="mi">70</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">image_x</span> <span class="o">/</span> <span class="n">image_r</span><span class="p">,</span> <span class="n">image_y</span> <span class="o">/</span> <span class="n">image_r</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">image_custom</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">entity_type</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span>
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="n">entity_type</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
+        <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">entity_type</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">entity_type</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
 
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;is_PII&quot;</span><span class="p">]:</span>
-                        <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;is_PII&quot;</span><span class="p">]:</span>
+                    <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
                     <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
 
-                <span class="c1"># Get coordinates and dimensions</span>
-                <span class="n">x0</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span>
-                <span class="n">y0</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span>
-                <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span>
-                <span class="n">y1</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span>
-                <span class="n">rect</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">bbox_color</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
+            <span class="c1"># Get coordinates and dimensions</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span>
+            <span class="n">y0</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">bbox_color</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_text_annotation</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+                    <span class="n">entity_type</span><span class="p">,</span>
+                    <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">y0</span> <span class="o">-</span> <span class="mi">3</span><span class="p">),</span>
+                    <span class="n">xycoords</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+                    <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round4,pad=.5&quot;</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;0.9&quot;</span><span class="p">),</span>
                 <span class="p">)</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">show_text_annotation</span><span class="p">:</span>
-                    <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
-                        <span class="n">entity_type</span><span class="p">,</span>
-                        <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">y0</span> <span class="o">-</span> <span class="mi">3</span><span class="p">),</span>
-                        <span class="n">xycoords</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
-                        <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round4,pad=.5&quot;</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;0.9&quot;</span><span class="p">),</span>
-                    <span class="p">)</span>
-            <span class="k">if</span> <span class="n">use_greyscale_cmap</span><span class="p">:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">)</span>
-            <span class="n">im_from_fig</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fig2img</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
-            <span class="n">im_resized</span> <span class="o">=</span> <span class="n">im_from_fig</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">image_x</span><span class="p">,</span> <span class="n">image_y</span><span class="p">))</span>
+
+        <span class="c1"># When there are no bboxes and no greyscale colormap is needed, return the</span>
+        <span class="c1"># image directly to avoid unnecessary matplotlib rendering overhead and to</span>
+        <span class="c1"># preserve the original image fidelity (e.g. for RGB verification images).</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">bboxes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">use_greyscale_cmap</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">image_custom</span>
+
+        <span class="k">if</span> <span class="n">use_greyscale_cmap</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">)</span>
+        <span class="n">im_from_fig</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fig2img</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="n">im_resized</span> <span class="o">=</span> <span class="n">im_from_fig</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">image_x</span><span class="p">,</span> <span class="n">image_y</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">im_resized</span>
 </code></pre></div></td></tr></table></div>
@@ -11819,7 +11886,12 @@ PHI status to display.</p>
 <span class="normal">431</span>
 <span class="normal">432</span>
 <span class="normal">433</span>
-<span class="normal">434</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_custom_bboxes</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span>
@@ -11843,46 +11915,51 @@ PHI status to display.</p>
     <span class="n">image_r</span> <span class="o">=</span> <span class="mi">70</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">image_x</span> <span class="o">/</span> <span class="n">image_r</span><span class="p">,</span> <span class="n">image_y</span> <span class="o">/</span> <span class="n">image_r</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">image_custom</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">entity_type</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="n">entity_type</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
+    <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">entity_type</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">entity_type</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
 
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;is_PII&quot;</span><span class="p">]:</span>
-                    <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;is_PII&quot;</span><span class="p">]:</span>
+                <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">bbox_color</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
 
-            <span class="c1"># Get coordinates and dimensions</span>
-            <span class="n">x0</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span>
-            <span class="n">y0</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span>
-            <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span>
-            <span class="n">y1</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span>
-            <span class="n">rect</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">bbox_color</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
+        <span class="c1"># Get coordinates and dimensions</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">bbox_color</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_text_annotation</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+                <span class="n">entity_type</span><span class="p">,</span>
+                <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">y0</span> <span class="o">-</span> <span class="mi">3</span><span class="p">),</span>
+                <span class="n">xycoords</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+                <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round4,pad=.5&quot;</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;0.9&quot;</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">show_text_annotation</span><span class="p">:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
-                    <span class="n">entity_type</span><span class="p">,</span>
-                    <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">y0</span> <span class="o">-</span> <span class="mi">3</span><span class="p">),</span>
-                    <span class="n">xycoords</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
-                    <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round4,pad=.5&quot;</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;0.9&quot;</span><span class="p">),</span>
-                <span class="p">)</span>
-        <span class="k">if</span> <span class="n">use_greyscale_cmap</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">)</span>
-        <span class="n">im_from_fig</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fig2img</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
-        <span class="n">im_resized</span> <span class="o">=</span> <span class="n">im_from_fig</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">image_x</span><span class="p">,</span> <span class="n">image_y</span><span class="p">))</span>
+
+    <span class="c1"># When there are no bboxes and no greyscale colormap is needed, return the</span>
+    <span class="c1"># image directly to avoid unnecessary matplotlib rendering overhead and to</span>
+    <span class="c1"># preserve the original image fidelity (e.g. for RGB verification images).</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bboxes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">use_greyscale_cmap</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image_custom</span>
+
+    <span class="k">if</span> <span class="n">use_greyscale_cmap</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_custom</span><span class="p">)</span>
+    <span class="n">im_from_fig</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fig2img</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+    <span class="n">im_resized</span> <span class="o">=</span> <span class="n">im_from_fig</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">image_x</span><span class="p">,</span> <span class="n">image_y</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">im_resized</span>
 </code></pre></div></td></tr></table></div>
@@ -18354,12 +18431,7 @@ new instances and manipulate them.</p>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DicomImagePiiVerifyEngine</span><span class="p">(</span><span class="n">ImagePiiVerifyEngine</span><span class="p">,</span> <span class="n">DicomImageRedactorEngine</span><span class="p">):</span>
+<span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DicomImagePiiVerifyEngine</span><span class="p">(</span><span class="n">ImagePiiVerifyEngine</span><span class="p">,</span> <span class="n">DicomImageRedactorEngine</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to handle verification and evaluation for DICOM de-identification.&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -18507,20 +18579,15 @@ new instances and manipulate them.</p>
 <span class="sd">        :return: Evaluation comparing redactor engine results vs ground truth.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Verify detected PHI</span>
-        <span class="n">verify_image</span><span class="p">,</span> <span class="n">ocr_results</span><span class="p">,</span> <span class="n">analyzer_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify_dicom_instance</span><span class="p">(</span>
+        <span class="c1"># verify_dicom_instance already returns formatted ocr bboxes and analyzer bboxes</span>
+        <span class="n">verify_image</span><span class="p">,</span> <span class="n">formatted_ocr_results</span><span class="p">,</span> <span class="n">detected_phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify_dicom_instance</span><span class="p">(</span>
             <span class="n">instance</span><span class="p">,</span>
             <span class="n">padding_width</span><span class="p">,</span>
             <span class="n">display_image</span><span class="p">,</span>
-            <span class="n">use_metadata</span><span class="p">,</span>
+            <span class="n">use_metadata</span><span class="o">=</span><span class="n">use_metadata</span><span class="p">,</span>
             <span class="n">ocr_kwargs</span><span class="o">=</span><span class="n">ocr_kwargs</span><span class="p">,</span>
             <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="n">ad_hoc_recognizers</span><span class="p">,</span>
             <span class="o">**</span><span class="n">text_analyzer_kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">formatted_ocr_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_processor</span><span class="o">.</span><span class="n">get_bboxes_from_ocr_results</span><span class="p">(</span>
-            <span class="n">ocr_results</span>
-        <span class="p">)</span>
-        <span class="n">detected_phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_processor</span><span class="o">.</span><span class="n">get_bboxes_from_analyzer_results</span><span class="p">(</span>
-            <span class="n">analyzer_results</span>
         <span class="p">)</span>
 
         <span class="c1"># Remove duplicate entities in results</span>
@@ -18555,7 +18622,7 @@ new instances and manipulate them.</p>
 <span class="sd">        :return: Detected PHI with no duplicate entities.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dups</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="nb">sorted</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">results_no_dups</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">]</span>
 
@@ -21427,12 +21494,7 @@ in ImageAnalyzerEngine.</p>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">eval_dicom_instance</span><span class="p">(</span>
+<span class="normal">197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">eval_dicom_instance</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">instance</span><span class="p">:</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">FileDataset</span><span class="p">,</span>
     <span class="n">ground_truth</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -21462,20 +21524,15 @@ in ImageAnalyzerEngine.</p>
 <span class="sd">    :return: Evaluation comparing redactor engine results vs ground truth.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Verify detected PHI</span>
-    <span class="n">verify_image</span><span class="p">,</span> <span class="n">ocr_results</span><span class="p">,</span> <span class="n">analyzer_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify_dicom_instance</span><span class="p">(</span>
+    <span class="c1"># verify_dicom_instance already returns formatted ocr bboxes and analyzer bboxes</span>
+    <span class="n">verify_image</span><span class="p">,</span> <span class="n">formatted_ocr_results</span><span class="p">,</span> <span class="n">detected_phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify_dicom_instance</span><span class="p">(</span>
         <span class="n">instance</span><span class="p">,</span>
         <span class="n">padding_width</span><span class="p">,</span>
         <span class="n">display_image</span><span class="p">,</span>
-        <span class="n">use_metadata</span><span class="p">,</span>
+        <span class="n">use_metadata</span><span class="o">=</span><span class="n">use_metadata</span><span class="p">,</span>
         <span class="n">ocr_kwargs</span><span class="o">=</span><span class="n">ocr_kwargs</span><span class="p">,</span>
         <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="n">ad_hoc_recognizers</span><span class="p">,</span>
         <span class="o">**</span><span class="n">text_analyzer_kwargs</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">formatted_ocr_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_processor</span><span class="o">.</span><span class="n">get_bboxes_from_ocr_results</span><span class="p">(</span>
-        <span class="n">ocr_results</span>
-    <span class="p">)</span>
-    <span class="n">detected_phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_processor</span><span class="o">.</span><span class="n">get_bboxes_from_analyzer_results</span><span class="p">(</span>
-        <span class="n">analyzer_results</span>
     <span class="p">)</span>
 
     <span class="c1"># Remove duplicate entities in results</span>
@@ -21599,7 +21656,12 @@ in ImageAnalyzerEngine.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>presidio_image_redactor/dicom_image_pii_verify_engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">288</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
 <span class="normal">289</span>
 <span class="normal">290</span>
 <span class="normal">291</span>
@@ -21609,12 +21671,7 @@ in ImageAnalyzerEngine.</p>
 <span class="normal">295</span>
 <span class="normal">296</span>
 <span class="normal">297</span>
-<span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span>
-<span class="normal">301</span>
-<span class="normal">302</span>
-<span class="normal">303</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_precision</span><span class="p">(</span><span class="n">gt</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">all_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate precision.</span>
 
@@ -21731,7 +21788,12 @@ in ImageAnalyzerEngine.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>presidio_image_redactor/dicom_image_pii_verify_engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">305</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
 <span class="normal">306</span>
 <span class="normal">307</span>
 <span class="normal">308</span>
@@ -21741,12 +21803,7 @@ in ImageAnalyzerEngine.</p>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_recall</span><span class="p">(</span><span class="n">gt</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">all_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate recall.</span>
 
