@@ -6,7 +6,7 @@ requires = ["poetry-core"]
 name = "presidio-image-redactor"
 version = "0.0.59"
 description = "Presidio image redactor package"
-authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
+authors = [{name = "Presidio", email = "presidio@dataprivacystack.org"}]
 license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",

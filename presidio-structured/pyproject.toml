@@ -6,7 +6,7 @@ requires = ["poetry-core"]
 name = "presidio_structured"
 version = "0.0.7"
 description = "Presidio structured package - analyzes and anonymizes structured and semi-structured data."
-authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
+authors = [{name = "Presidio", email = "presidio@dataprivacystack.org"}]
 license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",

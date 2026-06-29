@@ -2,10 +2,10 @@
    Data Privacy Stack — Presidio docs theme
    Violet/indigo brand built around the "Inky" octopus mascot.
    Light-first, calm neutral canvas; the mascot carries the colour.
-   Type: Plus Jakarta Sans (display) + Inter (body).
+   Type: Plus Jakarta Sans (display), Montserrat (brand byline) + Inter (body).
    ========================================================================= */
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Montserrat:wght@400;600&family=Inter:wght@400;500;600;700&display=swap");
 
 /* ---- Brand tokens ------------------------------------------------------- */
 :root {
@@ -326,7 +326,7 @@ body,
 }
 
 .md-typeset .dps-hero__title {
-  font-family: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+  font-family: "Plus Jakarta Sans", "Inter", "Segoe UI", sans-serif;
   font-size: clamp(2.5rem, 11vw, 7rem);
   font-size: clamp(2.5rem, 21cqi, 8rem);
   line-height: 0.9;
@@ -341,18 +341,25 @@ body,
 }
 
 .md-typeset .dps-hero__byline {
-  font-family: "Space Grotesk", "Inter", sans-serif;
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.38em;
+  max-width: 100%;
+  font-family: "Montserrat", "Inter", sans-serif;
   font-size: clamp(0.95rem, 4.6cqi, 1.3rem);
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.005em;
-  text-transform: lowercase;
   white-space: nowrap;
   margin: 0;
   color: var(--md-default-fg-color--lighter);
 }
 
-.md-typeset .dps-hero__byline strong {
-  font-weight: 700;
+.md-typeset .dps-hero__byline-brand {
+  font-family: "Montserrat", "Inter", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--md-default-fg-color--light);
 }
 
@@ -469,14 +476,20 @@ body,
   .dps-hero {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 0;
+    gap: 0.35rem;
     margin: 0.25rem 0 1.35rem;
-    padding: 0.9rem 1rem;
+    padding: 0.85rem 1rem;
     border-radius: 18px;
   }
 
   .dps-hero__media {
-    display: none;
+    display: flex;
+    order: -1;
+  }
+
+  .md-typeset .dps-hero__mascot {
+    max-width: 48px;
+    filter: drop-shadow(0 8px 14px rgba(79, 70, 229, 0.18));
   }
 
   .dps-hero__body {
@@ -485,7 +498,7 @@ body,
   }
 
   .md-typeset .dps-hero__title {
-    font-size: clamp(2.25rem, 13vw, 3.2rem);
+    font-size: clamp(2rem, 11vw, 2.65rem);
     line-height: 0.95;
   }
 

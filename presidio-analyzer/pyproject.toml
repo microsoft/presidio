@@ -6,7 +6,7 @@ requires = ["poetry-core"]
 name = "presidio_analyzer"
 version = "2.2.363"
 description = "Presidio Analyzer package"
-authors = [{name = "Presidio", email = "presidio@microsoft.com"}]
+authors = [{name = "Presidio", email = "presidio@dataprivacystack.org"}]
 license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
