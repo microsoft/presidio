@@ -2,10 +2,10 @@
    Data Privacy Stack — Presidio docs theme
    Violet/indigo brand built around the "Inky" octopus mascot.
    Light-first, calm neutral canvas; the mascot carries the colour.
-   Type: Plus Jakarta Sans (display), Space Grotesk (byline), Montserrat (brand accents) + Inter (body).
+   Type: Plus Jakarta Sans (display), Montserrat (brand byline) + Inter (body).
    ========================================================================= */
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Montserrat:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Montserrat:wght@400;600&family=Inter:wght@400;500;600;700&display=swap");
 
 /* ---- Brand tokens ------------------------------------------------------- */
 :root {
@@ -347,9 +347,9 @@ body,
   justify-content: center;
   gap: 0.38em;
   max-width: 100%;
-  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-family: "Montserrat", "Inter", sans-serif;
   font-size: clamp(0.95rem, 4.6cqi, 1.3rem);
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.005em;
   white-space: nowrap;
   margin: 0;
@@ -358,7 +358,7 @@ body,
 
 .md-typeset .dps-hero__byline-brand {
   font-family: "Montserrat", "Inter", sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--md-default-fg-color--light);
 }
