@@ -276,7 +276,23 @@ def main(argv: list[str]) -> int:
 
     cmd = [zensical, command, "-f", str(GENERATED_CONFIG), *passthrough]
     print(f"Running: {' '.join(cmd)}")
-    return subprocess.run(cmd, env=env, check=False).returncode
+
+    # ``serve`` is interactive/long-running, so run it once. ``build`` can be
+    # killed by the OS (e.g. exit code 247 == 256-9, SIGKILL) when memory spikes
+    # while griffe imports the documented ML packages; that crash is transient,
+    # so retry a couple of times before giving up.
+    if command != "build":
+        return subprocess.run(cmd, env=env, check=False).returncode
+
+    attempts = max(1, int(os.environ.get("ZENSICAL_BUILD_RETRIES", "3")))
+    rc = 0
+    for attempt in range(1, attempts + 1):
+        rc = subprocess.run(cmd, env=env, check=False).returncode
+        if rc == 0:
+            return 0
+        print(f"  zensical build failed (exit {rc}), attempt {attempt}/{attempts}")
+    print(f"  zensical build still failing after {attempts} attempt(s)")
+    return rc
 
 
 if __name__ == "__main__":
