@@ -469,14 +469,20 @@ body,
   .dps-hero {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 0;
+    gap: 0.35rem;
     margin: 0.25rem 0 1.35rem;
-    padding: 0.9rem 1rem;
+    padding: 0.85rem 1rem;
     border-radius: 18px;
   }
 
   .dps-hero__media {
-    display: none;
+    display: flex;
+    order: -1;
+  }
+
+  .md-typeset .dps-hero__mascot {
+    max-width: 48px;
+    filter: drop-shadow(0 8px 14px rgba(79, 70, 229, 0.18));
   }
 
   .dps-hero__body {
@@ -485,7 +491,7 @@ body,
   }
 
   .md-typeset .dps-hero__title {
-    font-size: clamp(2.25rem, 13vw, 3.2rem);
+    font-size: clamp(2rem, 11vw, 2.65rem);
     line-height: 0.95;
   }
 
