@@ -37,7 +37,23 @@ jobs:
 
       - name: Build docs
         run: |
-          python scripts/zensical_build.py build
+          echo "::group::Available memory before build"
+          free -h || true
+          echo "::endgroup::"
+
+          # Capture peak RSS and exit status so an OS kill (e.g. SIGKILL ->
+          # exit 247) is visible. Continue to the diagnostics step regardless.
+          status=0
+          /usr/bin/time -v python scripts/zensical_build.py build || status=$?
+          echo "docs build exit status: $status"
+
+          if [ "$status" -ne 0 ]; then
+            echo "::group::OOM killer check"
+            dmesg 2>/dev/null | grep -i -E "killed process|out of memory" | tail -n 20 || \
+              echo "dmesg unavailable or no OOM messages"
+            echo "::endgroup::"
+            exit "$status"
+          fi
 
       - name: Deploy to GitHub Pages
         run: |
