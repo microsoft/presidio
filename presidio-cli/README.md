@@ -70,6 +70,8 @@ Configuration file supports the following parameters in a yaml file:
 
 - allow - list of tokens that should not be marked as PII.
 
+- threshold - minimum confidence score for detected entities.
+
 Note: a file requires at least one parameter to be set.
 
 An example of yaml configuration file content:
@@ -113,6 +115,9 @@ presidio -c presidio_cli/conf/limited.yaml tests/
 
 # run with configuration limited.yaml in single file only tests/test_analyzer.py
 presidio -c presidio_cli/conf/limited.yaml tests/test_analyzer.py
+
+# override the configured threshold for one invocation
+presidio -c presidio_cli/conf/limited.yaml --threshold 0.7 tests/
 ```
 
 ### Configuration as a parameter

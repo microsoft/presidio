@@ -1,6 +1,8 @@
+import argparse
 import os
-import pytest
 from io import StringIO
+
+import pytest
 from presidio_cli import cli
 
 
@@ -90,9 +92,74 @@ def test_run_with_config(temp_workspace, mocker):
 
 
 def test_run_with_stdin(mocker):
-    mocked_args = mocker.Mock(stdin=True, config_data=None, config_file=None, files="")
+    mocked_args = mocker.Mock(
+        stdin=True,
+        config_data=None,
+        config_file=None,
+        files=(),
+        threshold=None,
+        format="standard",
+        no_warnings=False,
+    )
     ec = mocker.patch("sys.exit")
-    with mocker.patch("argparse.ArgumentParser.parse_args", return_value=mocked_args):
-        with mocker.patch("sys.stdin", StringIO("Example input")):
-            cli.run()
+    mocker.patch("argparse.ArgumentParser.parse_args", return_value=mocked_args)
+    mocker.patch("sys.stdin", StringIO("Example input"))
+    cli.run()
     ec.assert_called_once_with(0)
+
+
+def test_run_with_threshold_overrides_config_data(mocker):
+    mocked_args = mocker.Mock(
+        stdin=True,
+        config_data="threshold: 0.2",
+        config_file=None,
+        files="",
+        threshold=0.8,
+        format="standard",
+        no_warnings=False,
+    )
+    analyze = mocker.patch("presidio_cli.cli.analyze", return_value=())
+    ec = mocker.patch("sys.exit")
+    mocker.patch("argparse.ArgumentParser.parse_args", return_value=mocked_args)
+    mocker.patch("sys.stdin", StringIO("Example input"))
+
+    cli.run()
+
+    assert analyze.call_args.args[1].threshold == 0.8
+    ec.assert_called_once_with(0)
+
+
+def test_run_with_threshold_overrides_config_file(tmp_path, mocker):
+    config_file = tmp_path / ".presidiocli"
+    config_file.write_text("threshold: 0.2")
+    mocked_args = mocker.Mock(
+        stdin=True,
+        config_data=None,
+        config_file=str(config_file),
+        files="",
+        threshold=0.8,
+        format="standard",
+        no_warnings=False,
+    )
+    analyze = mocker.patch("presidio_cli.cli.analyze", return_value=())
+    ec = mocker.patch("sys.exit")
+    mocker.patch("argparse.ArgumentParser.parse_args", return_value=mocked_args)
+    mocker.patch("sys.stdin", StringIO("Example input"))
+
+    cli.run()
+
+    assert analyze.call_args.args[1].threshold == 0.8
+    ec.assert_called_once_with(0)
+
+
+def test_threshold_value_rejects_invalid_values():
+    assert cli.threshold_value("0.7") == 0.7
+
+    with pytest.raises(argparse.ArgumentTypeError):
+        cli.threshold_value("-0.1")
+
+    with pytest.raises(argparse.ArgumentTypeError):
+        cli.threshold_value("1.1")
+
+    with pytest.raises(argparse.ArgumentTypeError):
+        cli.threshold_value("not-a-number")

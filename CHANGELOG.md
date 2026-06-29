@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### CLI
+#### Added
+- Added a `--threshold` flag to `presidio-cli` so one-shot invocations can override the configured analyzer confidence threshold without writing inline YAML or a temporary config file. Fixes [#2101](https://github.com/data-privacy-stack/presidio/issues/2101).
+
 ## [2.2.363] - 2026-06-28
 ### General
 #### Added

@@ -81,6 +81,19 @@ class Format(object):
         return line
 
 
+def threshold_value(value: str) -> float:
+    """Parse and validate a CLI threshold value."""
+    try:
+        threshold = float(value)
+    except ValueError as e:
+        raise argparse.ArgumentTypeError("threshold must be a number") from e
+
+    if not 0 <= threshold <= 1:
+        raise argparse.ArgumentTypeError("threshold must be between 0 and 1")
+
+    return threshold
+
+
 def supports_color() -> bool:
     """Check whether the platform supports colored output."""
     supported_platform = not (
@@ -215,6 +228,11 @@ def run() -> None:
         action="store_true",
         help="output only error level problems",
     )
+    parser.add_argument(
+        "--threshold",
+        type=threshold_value,
+        help="minimum confidence score for detected entities (overrides configuration)",
+    )
 
     args = parser.parse_args()
 
@@ -232,6 +250,9 @@ def run() -> None:
     except PresidioCLIConfigError as e:
         print(e, file=sys.stderr)
         sys.exit(1)
+
+    if args.threshold is not None:
+        conf.threshold = args.threshold
 
     if conf.locale is not None:
         locale.setlocale(locale.LC_ALL, conf.locale)
