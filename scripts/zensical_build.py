@@ -291,6 +291,7 @@ def main(argv: list[str]) -> int:
         if rc == 0:
             return 0
         print(f"  zensical build failed (exit {rc}), attempt {attempt}/{attempts}")
+    print(f"  zensical build still failing after {attempts} attempt(s)")
     return rc
 
 
