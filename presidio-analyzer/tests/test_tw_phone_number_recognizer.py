@@ -77,7 +77,10 @@ def test_when_tw_phone_number_in_text_then_all_matches_are_found(
     entities,
 ):
     """Test that Taiwan phone number recognizer correctly identifies numbers."""
-    results = sorted(recognizer.analyze(text, entities), key=lambda result: result.start)
+    results = sorted(
+        recognizer.analyze(text, entities),
+        key=lambda result: result.start,
+    )
     assert len(results) == expected_len
 
     for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
