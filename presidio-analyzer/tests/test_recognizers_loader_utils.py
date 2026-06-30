@@ -173,6 +173,45 @@ def test_configuration_loader_bad_yaml_raises_value_error(tmp_path):
         RecognizerConfigurationLoader.get(conf_file=str(f))
 
 
+def test_yaml_two_gliner_entries_without_name_yield_distinct_recognizers(monkeypatch):
+    """Validated registry YAML + RecognizerListLoader; no HF model download/load."""
+    from presidio_analyzer.input_validation import ConfigurationValidator
+    from presidio_analyzer.predefined_recognizers import GLiNERRecognizer
+
+    def _noop(self):
+        return None
+
+    monkeypatch.setattr(GLiNERRecognizer, "load", _noop)
+
+    cfg = ConfigurationValidator.validate_recognizer_registry_configuration(
+        {
+            "supported_languages": ["en"],
+            "global_regex_flags": 26,
+            "recognizers": [
+                {
+                    "type": "predefined",
+                    "class_name": "GLiNERRecognizer",
+                    "model_name": "team/model-a",
+                },
+                {
+                    "type": "predefined",
+                    "class_name": "GLiNERRecognizer",
+                    "model_name": "team/model-b",
+                },
+            ],
+        }
+    )
+    instances = list(
+        RecognizerListLoader.get(
+            cfg["recognizers"], cfg["supported_languages"], cfg["global_regex_flags"]
+        )
+    )
+    names = sorted(r.name for r in instances)
+    assert names == sorted(
+        ["GLiNERRecognizer_team_model_a", "GLiNERRecognizer_team_model_b"]
+    )
+
+
 def test_convert_supported_entities_to_entity_uses_first_item():
     """Test that supported_entities list is converted to single supported_entity."""
     conf = {"supported_entities": ["ENT1", "ENT2"]}
