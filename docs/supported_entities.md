@@ -146,6 +146,8 @@ For more information, refer to the [adding new recognizers documentation](analyz
 | FieldType  | Description                                                                                             | Detection Method                         |
 |------------|---------------------------------------------------------------------------------------------------------|------------------------------------------|
 | TH_TNIN    | The Thai National ID Number (TNIN) is a unique 13-digit number issued to all Thai residents. | Pattern match, context and custom logic. |
+| TW_NATIONAL_ID | Taiwan National Identification Number (國民身分證統一編號 / 身分證字號): 1 leading letter followed by 9 digits, with the second digit indicating holder category and a public checksum rule. | Pattern match, context and checksum |
+| TW_PHONE_NUMBER | Taiwan phone number (電話號碼 / 手機號碼): validated by `python-phonenumbers` with the Taiwan (`TW`) region for mobile and landline formats. | Pattern match, context and region-aware phone validation |
 
 ### Turkey
 
