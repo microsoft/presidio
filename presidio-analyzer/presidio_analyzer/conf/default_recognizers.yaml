@@ -62,6 +62,7 @@ recognizers:
     country_code: us
   
   - name: UsSsnRecognizer
+  - name: TwNationalIdRecognizer
     supported_languages:
     - en
     type: predefined
