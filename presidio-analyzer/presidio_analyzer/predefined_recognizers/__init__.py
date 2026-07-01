@@ -75,6 +75,9 @@ from .country_specific.nigeria.ng_vehicle_registration_recognizer import (
     NgVehicleRegistrationRecognizer,
 )
 
+# Philippines recognizers
+from .country_specific.philippines.ph_tin_recognizer import PhTinRecognizer
+
 # Poland recognizers
 from .country_specific.poland.pl_pesel_recognizer import PlPeselRecognizer
 
@@ -84,6 +87,11 @@ from .country_specific.philippines.ph_umid_recognizer import PhUmidRecognizer
 # Singapore recognizers
 from .country_specific.singapore.sg_fin_recognizer import SgFinRecognizer
 from .country_specific.singapore.sg_uen_recognizer import SgUenRecognizer
+
+# South Africa recognizers
+from .country_specific.south_africa.za_id_number_recognizer import (
+    ZaIdNumberRecognizer,
+)
 
 # Spain recognizers
 from .country_specific.spain.es_nie_recognizer import EsNieRecognizer
@@ -216,6 +224,7 @@ __all__ = [
     "InPanRecognizer",
     "GLiNERRecognizer",
     "HuggingFaceNerRecognizer",
+    "PhTinRecognizer",
     "PlPeselRecognizer",
     "PhUmidRecognizer",
     "AzureAILanguageRecognizer",
@@ -243,6 +252,7 @@ __all__ = [
     "TrLicensePlateRecognizer",
     "TrNationalIdRecognizer",
     "SePersonnummerRecognizer",
+    "ZaIdNumberRecognizer",
     "LangExtractRecognizer",
     "AzureOpenAILangExtractRecognizer",
     "BasicLangExtractRecognizer",
