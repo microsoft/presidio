@@ -80,6 +80,8 @@ class FlairRecognizer(EntityRecognizer):
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
         model: SequenceTagger = None,
+        name: str = "Flair Analytics",
+        **kwargs,
     ):
         self.check_label_groups = (
             check_label_groups if check_label_groups else self.CHECK_LABEL_GROUPS
@@ -95,7 +97,8 @@ class FlairRecognizer(EntityRecognizer):
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
-            name="Flair Analytics",
+            name=name,
+            **kwargs,
         )
 
     def load(self) -> None:

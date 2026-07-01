@@ -1,0 +1,60 @@
+# Presidio demo — Flair NER configuration.
+# The FlairRecognizer is a custom (sample) recognizer defined in flair_recognizer.py,
+# not a Presidio built-in. Presidio's YAML loader still discovers it by class name as
+# long as the module is imported (see presidio_analyzer_config.py) — so it's declared
+# here as a predefined recognizer rather than added in code. A small spaCy model
+# provides tokenization only via the slim engine; the spaCy NER recognizer is disabled.
+supported_languages:
+  - en
+default_score_threshold: 0
+
+nlp_configuration:
+  nlp_engine_name: slim
+  models:
+    - lang_code: en
+      model_name: en_core_web_sm
+
+recognizer_registry:
+  global_regex_flags: 26
+  recognizers:
+    - name: SpacyRecognizer
+      type: predefined
+      enabled: false
+
+    - name: FlairRecognizer
+      type: predefined
+      supported_languages:
+        - en
+
+    - name: CreditCardRecognizer
+      type: predefined
+    - name: CryptoRecognizer
+      type: predefined
+    - name: DateRecognizer
+      type: predefined
+    - name: EmailRecognizer
+      type: predefined
+    - name: IbanRecognizer
+      type: predefined
+    - name: IpRecognizer
+      type: predefined
+    - name: PhoneRecognizer
+      type: predefined
+    - name: UrlRecognizer
+      type: predefined
+    - name: UsSsnRecognizer
+      type: predefined
+    - name: UsBankRecognizer
+      type: predefined
+    - name: UsPassportRecognizer
+      type: predefined
+    - name: UsLicenseRecognizer
+      type: predefined
+    - name: MedicalLicenseRecognizer
+      type: predefined
+    - name: MacAddressRecognizer
+      type: predefined
+    - name: NhsRecognizer
+      type: predefined
+    - name: UsItinRecognizer
+      type: predefined

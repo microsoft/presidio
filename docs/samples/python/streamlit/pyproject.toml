@@ -1,0 +1,39 @@
+[project]
+name = "presidio-streamlit"
+version = "0.1.0"
+description = "Presidio demo Streamlit app — PII detection & de-identification by Data Privacy Stack."
+readme = "index.md"
+requires-python = ">=3.13"
+dependencies = [
+    "presidio-analyzer[transformers,stanza,gliner]>=2.2.355",
+    "presidio-anonymizer>=2.2.355",
+    "streamlit>=1.37.0",
+    "pandas>=2.2,<3",
+    "python-dotenv",
+    "st-annotated-text",
+    "torch>=2.8.0",
+    "flair>=0.15.0",
+    "openai",
+    # spaCy models, installed via uv (so no pip / runtime auto-download is needed):
+    # en_core_web_lg for the spaCy NER option, en_core_web_sm for the slim engine
+    # (GLiNER / OpenMed / Flair tokenization).
+    "en_core_web_lg",
+    "en_core_web_sm",
+]
+
+# spaCy model wheels (compatible with the resolved spaCy 3.8.x).
+[tool.uv.sources]
+en_core_web_lg = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl" }
+en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" }
+# CPU-only torch on Linux (the demo runs on a free CPU Hugging Face Space, so the
+# CUDA build is dead weight ~25GB). macOS already ships CPU-only torch from PyPI.
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+# Application (not a distributable package): uv installs only the dependencies.
+[tool.uv]
+package = false

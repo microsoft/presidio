@@ -1,13 +1,11 @@
-from presidio_helpers import analyzer_engine, analyze, anonymize
+from presidio_helpers import analyze, analyzer_engine, anonymize
 
 
 def test_streamlit_logic():
-    st_model = "en"  # st_model = "StanfordAIMI/stanford-deidentifier-base"
-    st_model_package = "stanza"  ##st_model_package = "HuggingFace"
-    st_ta_key = None
-    st_ta_endpoint = None
+    st_model = "en"
+    st_model_package = "stanza"
 
-    analyzer_params = (st_model_package, st_model, st_ta_key, st_ta_endpoint)
+    analyzer_params = (st_model_package, st_model)
 
     # Read default text
     with open("demo_text.txt") as f:

@@ -1,0 +1,84 @@
+# Presidio demo — OpenMed PII (small) configuration.
+# Uses the new HuggingFaceNerRecognizer to run the OpenMed PII model directly
+# through a HuggingFace token-classification pipeline (no TransformersNlpEngine).
+# A small spaCy model provides tokenization only; its NER recognizer is disabled.
+supported_languages:
+  - en
+default_score_threshold: 0
+
+nlp_configuration:
+  nlp_engine_name: slim
+  models:
+    - lang_code: en
+      model_name: en_core_web_sm
+
+recognizer_registry:
+  global_regex_flags: 26
+  recognizers:
+    - name: SpacyRecognizer
+      type: predefined
+      enabled: false
+
+    - name: OpenMedNerRecognizer
+      class_name: HuggingFaceNerRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      model_name: OpenMed/OpenMed-PII-GTEMed-Base-149M-v1
+      aggregation_strategy: simple
+      threshold: 0.35
+      label_mapping:
+        first_name: PERSON
+        last_name: PERSON
+        name: PERSON
+        email: EMAIL_ADDRESS
+        phone_number: PHONE_NUMBER
+        fax_number: PHONE_NUMBER
+        street_address: LOCATION
+        city: LOCATION
+        county: LOCATION
+        state: LOCATION
+        country: LOCATION
+        company_name: ORGANIZATION
+        date: DATE_TIME
+        date_time: DATE_TIME
+        date_of_birth: DATE_TIME
+        time: DATE_TIME
+        age: AGE
+        ipv4: IP_ADDRESS
+        ipv6: IP_ADDRESS
+        url: URL
+        credit_debit_card: CREDIT_CARD
+
+    - name: CreditCardRecognizer
+      type: predefined
+    - name: CryptoRecognizer
+      type: predefined
+    - name: DateRecognizer
+      type: predefined
+    - name: EmailRecognizer
+      type: predefined
+    - name: IbanRecognizer
+      type: predefined
+    - name: IpRecognizer
+      type: predefined
+    - name: PhoneRecognizer
+      type: predefined
+    - name: UrlRecognizer
+      type: predefined
+    - name: UsSsnRecognizer
+      type: predefined
+    - name: UsBankRecognizer
+      type: predefined
+    - name: UsPassportRecognizer
+      type: predefined
+    - name: UsLicenseRecognizer
+      type: predefined
+    - name: MedicalLicenseRecognizer
+      type: predefined
+    - name: MacAddressRecognizer
+      type: predefined
+    - name: NhsRecognizer
+      type: predefined
+    - name: UsItinRecognizer
+      type: predefined

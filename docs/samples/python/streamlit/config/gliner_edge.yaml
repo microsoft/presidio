@@ -1,0 +1,81 @@
+# Presidio demo — GLiNER NER configuration.
+# A small spaCy model is loaded for tokenization/lemmatization only; entity
+# detection is handled by the self-contained GLiNERRecognizer. The spaCy NER
+# recognizer is therefore disabled.
+supported_languages:
+  - en
+default_score_threshold: 0
+
+nlp_configuration:
+  nlp_engine_name: slim
+  models:
+    - lang_code: en
+      model_name: en_core_web_sm
+
+recognizer_registry:
+  global_regex_flags: 26
+  recognizers:
+    - name: SpacyRecognizer
+      type: predefined
+      enabled: false
+
+    - name: GLiNERRecognizer
+      type: predefined
+      supported_languages:
+        - en
+      model_name: knowledgator/gliner-pii-edge-v1.0
+      flat_ner: false
+      multi_label: true
+      map_location: cpu
+      threshold: 0.35
+      entity_mapping:
+        person: PERSON
+        name: PERSON
+        organization: ORGANIZATION
+        phone number: PHONE_NUMBER
+        email: EMAIL_ADDRESS
+        email address: EMAIL_ADDRESS
+        address: LOCATION
+        location: LOCATION
+        date: DATE_TIME
+        date time: DATE_TIME
+        date of birth: DATE_TIME
+        credit card number: CREDIT_CARD
+        social security number: US_SSN
+        passport number: US_PASSPORT
+        driver license number: US_DRIVER_LICENSE
+        ip address: IP_ADDRESS
+        bank account number: US_BANK_NUMBER
+
+    - name: CreditCardRecognizer
+      type: predefined
+    - name: CryptoRecognizer
+      type: predefined
+    - name: DateRecognizer
+      type: predefined
+    - name: EmailRecognizer
+      type: predefined
+    - name: IbanRecognizer
+      type: predefined
+    - name: IpRecognizer
+      type: predefined
+    - name: PhoneRecognizer
+      type: predefined
+    - name: UrlRecognizer
+      type: predefined
+    - name: UsSsnRecognizer
+      type: predefined
+    - name: UsBankRecognizer
+      type: predefined
+    - name: UsPassportRecognizer
+      type: predefined
+    - name: UsLicenseRecognizer
+      type: predefined
+    - name: MedicalLicenseRecognizer
+      type: predefined
+    - name: MacAddressRecognizer
+      type: predefined
+    - name: NhsRecognizer
+      type: predefined
+    - name: UsItinRecognizer
+      type: predefined

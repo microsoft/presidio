@@ -1,18 +1,16 @@
 ## Taken from https://github.com/data-privacy-stack/presidio/blob/main/docs/samples/python/flair_recognizer.py
 
 import logging
-from typing import Optional, List, Tuple, Set
-
-from presidio_analyzer import (
-    RecognizerResult,
-    EntityRecognizer,
-    AnalysisExplanation,
-)
-from presidio_analyzer.nlp_engine import NlpArtifacts
+from typing import List, Optional, Set, Tuple
 
 from flair.data import Sentence
 from flair.models import SequenceTagger
-
+from presidio_analyzer import (
+    AnalysisExplanation,
+    EntityRecognizer,
+    RecognizerResult,
+)
+from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -75,6 +73,8 @@ class FlairRecognizer(EntityRecognizer):
         check_label_groups: Optional[Tuple[Set, Set]] = None,
         model: SequenceTagger = None,
         model_path: Optional[str] = None,
+        name: str = "Flair Analytics",
+        **kwargs,
     ):
         self.check_label_groups = (
             check_label_groups if check_label_groups else self.CHECK_LABEL_GROUPS
@@ -98,7 +98,8 @@ class FlairRecognizer(EntityRecognizer):
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
-            name="Flair Analytics",
+            name=name,
+            **kwargs,
         )
 
     def load(self) -> None:

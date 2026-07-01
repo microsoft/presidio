@@ -1,0 +1,8 @@
+# Data Privacy Stack brand theme for the Presidio demo.
+# Mirrors docs/stylesheets/extra.css: violet/indigo accents on a calm neutral canvas.
+[theme]
+primaryColor = "#7c3aed"
+backgroundColor = "#fbfbfd"
+secondaryBackgroundColor = "#f4f4f9"
+textColor = "#11131a"
+font = "sans serif"

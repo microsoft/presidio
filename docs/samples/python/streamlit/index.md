@@ -6,30 +6,27 @@ A live version can be found here: https://huggingface.co/spaces/presidio/presidi
 
 ## Requirements
 1. Clone the repo and move to the `docs/samples/python/streamlit` folder
-2. Install dependencies (preferably in a virtual environment)
+2. Install dependencies with [uv](https://docs.astral.sh/uv/) (creates an isolated virtual environment from `pyproject.toml`/`uv.lock`):
 
 ```sh
-pip install -r requirements.txt
+uv sync
 ```
-> Note: This would install additional packages such as `transformers` and `flair` which are not mandatory for using Presidio.
+> Note: This also installs additional packages such as `transformers`, `gliner` and `flair`
+> (and the `en_core_web_lg` / `en_core_web_sm` spaCy models) which are not mandatory for using Presidio.
 
-3. *Optional*: Update the `analyzer_engine` and `anonymizer_engine` functions for your specific implementation (in `presidio_helpers.py`).
+3. *Optional*: Update the analyzer configuration. The NER setups are defined declaratively as
+   YAML files under `config/` and loaded via `AnalyzerEngineProvider` (see `presidio_analyzer_config.py`).
 4. Start the app:
 
 ```sh
-streamlit run presidio_streamlit.py
+uv run streamlit run presidio_streamlit.py
 ```
 
 5. Consider adding an `.env` file with the following environment variables, for further customizability:
 ```sh
-TA_KEY=YOUR_TEXT_ANALYTICS_KEY
-TA_ENDPOINT=YOUR_TEXT_ANALYTICS_ENDPOINT
-OPENAI_TYPE="Azure" #or "openai"
+OPENAI_TYPE="openai" #or "Azure"
 OPENAI_KEY=YOUR_OPENAI_KEY
-OPENAI_API_VERSION = "2023-05-15"
-AZURE_OPENAI_ENDPOINT=YOUR_AZURE_OPENAI_AZURE_OPENAI_ENDPOINT
-AZURE_OPENAI_DEPLOYMENT=text-davinci-003
-ALLOW_OTHER_MODELS=true #true if the user could download new models
+OPENAI_API_VERSION="2023-05-15"
 ```
 ## Output
 Output should be similar to this screenshot:

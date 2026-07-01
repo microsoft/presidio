@@ -1,0 +1,13 @@
+# Never copy a host-built virtualenv into the image — it would clobber the
+# container's /code/.venv with the wrong-platform interpreter.
+.venv
+# Python caches / build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+# VCS / local
+.git
+.gitignore
+.env
+.DS_Store

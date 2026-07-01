@@ -1,32 +1,33 @@
-FROM python:3.10-slim@sha256:e508a34e5491225a76fbb9e0f43ebde1f691c6a689d096d7510cf7fb17d4ba6f
+# Presidio demo — Hugging Face Space (Docker SDK), built with uv.
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 
-RUN apt-get update && apt-get install -y \
+# System deps: build tools for native wheels + curl for the healthcheck.
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
-    software-properties-common \
     && rm -rf /var/lib/apt/lists/*
+
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
 
 WORKDIR /code
 
-COPY ./requirements.txt /code/requirements.txt
+# Resolve & install dependencies (incl. the spaCy models) from the lockfile.
+COPY pyproject.toml uv.lock index.md ./
+RUN uv sync --frozen --no-dev
 
-RUN pip3 install -r requirements.txt
-RUN pip3 install https://huggingface.co/spacy/en_core_web_sm/resolve/main/en_core_web_sm-any-py3-none-any.whl
-RUN pip3 install https://huggingface.co/spacy/en_core_web_lg/resolve/main/en_core_web_lg-any-py3-none-any.whl
+# Use the project virtual environment for everything that follows.
+ENV VIRTUAL_ENV=/code/.venv \
+    PATH=/code/.venv/bin:$PATH
+
+# Run as a non-root user (Hugging Face Spaces convention).
+RUN useradd -m -u 1000 user
+COPY --chown=user . /code
+RUN chown -R user /code
+USER user
+ENV HOME=/home/user
 
 EXPOSE 7860
-
-COPY . /code
-
-RUN useradd -m -u 1000 user
-USER user
-ENV HOME=/home/user \
-	PATH=/home/user/.local/bin:$PATH
-
-WORKDIR $HOME/app
-
-COPY --chown=user . $HOME/app
-
 HEALTHCHECK CMD curl --fail http://localhost:7860/_stcore/health
 
-CMD python -m streamlit run presidio_streamlit.py --server.port=7860 --server.address=0.0.0.0
+CMD ["streamlit", "run", "presidio_streamlit.py", "--server.port=7860", "--server.address=0.0.0.0"]

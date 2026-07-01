@@ -1,89 +1,48 @@
 """
 Helper methods for the Presidio Streamlit app
 """
-from typing import List, Optional, Tuple
-import logging
-import streamlit as st
-from presidio_analyzer import (
-    AnalyzerEngine,
-    RecognizerResult,
-    RecognizerRegistry,
-    PatternRecognizer,
-    Pattern,
-)
-from presidio_analyzer.nlp_engine import NlpEngine
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import OperatorConfig
 
+import logging
+from typing import List, Optional
+
+import streamlit as st
 from openai_fake_data_generator import (
-    call_completion_model,
     OpenAIParams,
+    call_completion_model,
     create_prompt,
 )
-from presidio_nlp_engine_config import (
-    create_nlp_engine_with_spacy,
-    create_nlp_engine_with_flair,
-    create_nlp_engine_with_transformers,
-    create_nlp_engine_with_azure_ai_language,
-    create_nlp_engine_with_stanza,
+from presidio_analyzer import (
+    AnalyzerEngine,
+    Pattern,
+    PatternRecognizer,
+    RecognizerResult,
 )
+from presidio_analyzer_config import create_analyzer_engine
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import OperatorConfig
 
 logger = logging.getLogger("presidio-streamlit")
 
 
 @st.cache_resource
-def nlp_engine_and_registry(
-    model_family: str,
-    model_path: str,
-    ta_key: Optional[str] = None,
-    ta_endpoint: Optional[str] = None,
-) -> Tuple[NlpEngine, RecognizerRegistry]:
-    """Create the NLP Engine instance based on the requested model.
-    :param model_family: Which model package to use for NER.
-    :param model_path: Which model to use for NER. E.g.,
-        "StanfordAIMI/stanford-deidentifier-base",
-        "obi/deid_roberta_i2b2",
-        "en_core_web_lg"
-    :param ta_key: Key to the Text Analytics endpoint (only if model_path = "Azure Text Analytics")
-    :param ta_endpoint: Endpoint of the Text Analytics instance (only if model_path = "Azure Text Analytics")
-    """
-
-    # Set up NLP Engine according to the model of choice
-    if "spacy" in model_family.lower():
-        return create_nlp_engine_with_spacy(model_path)
-    if "stanza" in model_family.lower():
-        return create_nlp_engine_with_stanza(model_path)
-    elif "flair" in model_family.lower():
-        return create_nlp_engine_with_flair(model_path)
-    elif "huggingface" in model_family.lower():
-        return create_nlp_engine_with_transformers(model_path)
-    elif "azure ai language" in model_family.lower():
-        return create_nlp_engine_with_azure_ai_language(ta_key, ta_endpoint)
-    else:
-        raise ValueError(f"Model family {model_family} not supported")
-
-
-@st.cache_resource
 def analyzer_engine(
-    model_family: str,
-    model_path: str,
-    ta_key: Optional[str] = None,
-    ta_endpoint: Optional[str] = None,
+    model_family: str, model_path: str, config_yaml: Optional[str] = None
 ) -> AnalyzerEngine:
-    """Create the NLP Engine instance based on the requested model.
-    :param model_family: Which model package to use for NER.
-    :param model_path: Which model to use for NER:
-        "StanfordAIMI/stanford-deidentifier-base",
-        "obi/deid_roberta_i2b2",
-        "en_core_web_lg"
-    :param ta_key: Key to the Text Analytics endpoint (only if model_path = "Azure Text Analytics")
-    :param ta_endpoint: Endpoint of the Text Analytics instance (only if model_path = "Azure Text Analytics")
+    """Create the AnalyzerEngine instance based on the requested model.
+
+    The engine is built from the declarative YAML configuration in ``config/``
+    (see ``presidio_analyzer_config.py``), or from ``config_yaml`` if provided
+    (the in-app editor, enabled via ``ALLOW_CONFIG_EDIT``).
+
+    :param model_family: Which model package to use for NER
+        (spacy, stanza, gliner, flair, huggingface).
+    :param model_path: Which model to use for NER. E.g.,
+        "en_core_web_lg",
+        "urchade/gliner_multi_pii-v1",
+        "OpenMed/OpenMed-PII-GTEMed-Base-149M-v1".
+    :param config_yaml: Optional raw YAML overriding the committed config file.
     """
-    nlp_engine, registry = nlp_engine_and_registry(
-        model_family, model_path, ta_key, ta_endpoint
-    )
-    analyzer = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry)
-    return analyzer
+    return create_analyzer_engine(model_family, model_path, config_yaml)
 
 
 @st.cache_resource
@@ -94,17 +53,17 @@ def anonymizer_engine():
 
 @st.cache_data
 def get_supported_entities(
-    model_family: str, model_path: str, ta_key: str, ta_endpoint: str
+    model_family: str, model_path: str, config_yaml: Optional[str] = None
 ):
     """Return supported entities from the Analyzer Engine."""
     return analyzer_engine(
-        model_family, model_path, ta_key, ta_endpoint
+        model_family, model_path, config_yaml
     ).get_supported_entities() + ["GENERIC_PII"]
 
 
 @st.cache_data
 def analyze(
-    model_family: str, model_path: str, ta_key: str, ta_endpoint: str, **kwargs
+    model_family: str, model_path: str, config_yaml: Optional[str] = None, **kwargs
 ):
     """Analyze input using Analyzer engine and input arguments (kwargs)."""
     if "entities" not in kwargs or "All" in kwargs["entities"]:
@@ -120,9 +79,7 @@ def analyze(
         kwargs["ad_hoc_recognizers"] = [ad_hoc_recognizer] if ad_hoc_recognizer else []
         del kwargs["regex_params"]
 
-    return analyzer_engine(model_family, model_path, ta_key, ta_endpoint).analyze(
-        **kwargs
-    )
+    return analyzer_engine(model_family, model_path, config_yaml).analyze(**kwargs)
 
 
 def anonymize(
