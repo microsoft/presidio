@@ -35,6 +35,11 @@ try:
 except ImportError:
     torch = None
 
+try:
+    from optimum.pipelines import pipeline as optimum_pipeline
+except ImportError:
+    optimum_pipeline = None
+
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -117,7 +122,8 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         tokenizer_name: Optional[str] = None,
         text_chunker: Optional[BaseTextChunker] = None,
         label_prefixes: Optional[List[str]] = None,
-        **kwargs,
+        backend: str = "torch",
+        **model_kwargs,
     ):
         """Initialize the HuggingFace NER Recognizer.
 
@@ -136,30 +142,63 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
             ("simple", "first", "average", "max").
             Recommendation: Use "simple" or "first" so that entities are pre-aggregated
             by the model, preserving performance and alignment.
-        :param device: Device to use. Accepts:
+        :param device: Device to use ("torch" backend only). Accepts:
             - "cpu" or -1 for CPU
             - "cuda" or "cuda:N" or int N for GPU
             - None for auto-detection (GPU if available, else CPU)
-            Defaults to None.
+            Defaults to None. Ignored by the "ort" backend — select
+            hardware there via the `provider` model kwarg.
         :param chunk_overlap: Number of characters to overlap between chunks.
         :param chunk_size: Maximum number of characters per chunk.
         :param tokenizer_name: Name of the tokenizer. Defaults to model_name.
         :param text_chunker: Custom text chunking strategy. If None, uses
             CharacterBasedTextChunker with provided chunk_size and chunk_overlap.
         :param label_prefixes: List of label prefixes to strip (e.g., B-, I-).
-        :raises ImportError: If transformers or torch libraries are not installed.
+        :param backend: Inference backend to use.
+            - "torch" (default): PyTorch via transformers pipeline.
+              Requires: torch, transformers.
+            - "ort": ONNX Runtime via optimum.
+              Requires: optimum, optimum-onnx[onnxruntime].
+              For NVIDIA GPU, install `onnxruntime-gpu` and pass
+              `provider="CUDAExecutionProvider"` via model_kwargs.
+        :param model_kwargs: Additional keyword arguments forwarded to the
+            underlying model loader.
+            For the "torch" backend, passed to `transformers.pipeline` as
+            `model_kwargs=`. For "ort", passed to
+            `ORTModel.from_pretrained` directly (so they scope to the model
+            loader only — important for mixed-layout repos where ONNX is
+            under `onnx/` but the tokenizer/config are at the repo root).
+            Use this for e.g. `file_name`, `subfolder`, `revision`,
+            `cache_dir`, `provider`, `provider_options`, `session_options`.
+        :raises ValueError: If `backend` is not one of "torch" or "ort".
+        :raises ImportError: If required libraries for the chosen backend
+            are not installed.
         """
+        if backend not in ("torch", "ort"):
+            raise ValueError(
+                f"Unsupported backend: {backend!r}. Expected 'torch' or 'ort'."
+            )
+        self.backend = backend
+
         # Early check for required dependencies
         if hf_pipeline is None:
             raise ImportError(
                 "transformers is not installed. Please install it "
-                "(pip install transformers torch) to use this recognizer."
+                "(pip install transformers) to use this recognizer."
             )
-        if torch is None:
-            raise ImportError(
-                "torch is not installed. Please install it "
-                "(pip install torch) to use this recognizer."
-            )
+        if self.backend == "torch":
+            if torch is None:
+                raise ImportError(
+                    "torch is not installed. Please install it "
+                    "(pip install torch) to use the 'torch' backend."
+                )
+        elif self.backend == "ort":
+            if optimum_pipeline is None:
+                raise ImportError(
+                    "optimum is not installed. Please install it "
+                    "(pip install optimum 'optimum-onnx[onnxruntime]') "
+                    "to use the 'ort' backend."
+                )
 
         self.model_name = model_name
         self.tokenizer_name = tokenizer_name or model_name
@@ -173,16 +212,22 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 "aggregation_strategy='none' may result in fragmented entities "
                 "(e.g., 'B-PER', 'I-PER'). Recommended: 'simple' or 'first'."
             )
-        self.device = self._parse_device(device)
+        if self.backend == "ort":
+            if device not in (None, "cpu", -1):
+                logger.warning(
+                    "The 'device' parameter is ignored by the 'ort' backend. "
+                    "Select hardware via the 'provider' model kwarg instead, "
+                    "e.g. provider='CUDAExecutionProvider'."
+                )
+            # ort selects hardware via the execution provider, not device.
+            # Skip parsing/auto-detection and keep self.device consistent
+            # with actual behavior.
+            self.device = -1
+        else:
+            self.device = self._parse_device(device)
         self.label_prefixes = label_prefixes or ["B-", "I-", "U-", "L-"]
         self.ner_pipeline = None
-
-        if kwargs:
-            logger.warning(
-                "Ignoring unsupported kwargs in %s: %s",
-                name,
-                sorted(kwargs.keys()),
-            )
+        self.model_kwargs = model_kwargs
 
         # Derive supported entities from label mapping
         if supported_entities:
@@ -247,8 +292,10 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
         """Load the HuggingFace NER pipeline.
 
         This method handles:
-        1. Hardware acceleration setup (CUDA validation and fallback)
-        2. Lazy-loading of the heavyweight ML pipeline.
+        1. Backend selection (torch or ort)
+        2. Hardware acceleration setup (CUDA validation and fallback for
+           the torch backend; provider selection for ort via model_kwargs)
+        3. Lazy-loading of the heavyweight ML pipeline.
 
         :raises ValueError: If model_name is not set
         """
@@ -261,6 +308,13 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 "Pass it to __init__() or set it directly."
             )
 
+        if self.backend == "torch":
+            self._load_torch_pipeline()
+        else:
+            self._load_ort_pipeline()
+
+    def _load_torch_pipeline(self) -> None:
+        """Load the NER pipeline using PyTorch backend."""
         # Device validation and fallback
         device = self.device
         if device >= 0:
@@ -275,7 +329,10 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 )
                 device = -1
 
-        logger.info(f"Loading HuggingFace model: {self.model_name}, device={device}")
+        logger.info(
+            f"Loading HuggingFace model: {self.model_name}, "
+            f"backend=torch, device={device}"
+        )
 
         try:
             self.ner_pipeline = hf_pipeline(
@@ -284,10 +341,49 @@ class HuggingFaceNerRecognizer(LocalRecognizer):
                 tokenizer=self.tokenizer_name,
                 aggregation_strategy=self.aggregation_strategy,
                 device=device,
+                model_kwargs=self.model_kwargs or None,
             )
             logger.info(f"Successfully loaded {self.model_name}")
         except Exception:
             logger.exception(f"Failed to load model {self.model_name}")
+            raise
+
+    def _load_ort_pipeline(self) -> None:
+        """Load the NER pipeline using optimum's ONNX Runtime backend.
+
+        Pre-loads ``ORTModelForTokenClassification`` explicitly so that
+        model_kwargs like ``subfolder`` and ``file_name`` are scoped to the
+        model loader only. Passing them at the pipeline level leaks them
+        into transformers' config/tokenizer loading, which breaks
+        mixed-layout repos (e.g. onnx-community/*, Xenova/*) where the ONNX
+        file lives under ``onnx/`` but config/tokenizer live at the repo
+        root.
+        """
+        try:
+            from optimum.onnxruntime import ORTModelForTokenClassification
+        except ImportError as e:
+            raise ImportError(
+                "optimum-onnx is not installed. Please install it "
+                "(pip install 'optimum-onnx[onnxruntime]') "
+                "to use the 'ort' backend."
+            ) from e
+
+        logger.info(f"Loading HuggingFace model: {self.model_name}, backend=ort")
+
+        try:
+            model = ORTModelForTokenClassification.from_pretrained(
+                self.model_name, **self.model_kwargs
+            )
+            self.ner_pipeline = optimum_pipeline(
+                self.DEFAULT_HF_TASK,
+                model=model,
+                tokenizer=self.tokenizer_name,
+                aggregation_strategy=self.aggregation_strategy,
+                accelerator="ort",
+            )
+            logger.info(f"Successfully loaded {self.model_name} with ort backend")
+        except Exception:
+            logger.exception(f"Failed to load model {self.model_name} with ort backend")
             raise
 
     def _normalize_label(self, label: str) -> str:
