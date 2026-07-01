@@ -55,15 +55,23 @@ class BatchAnalyzerEngine:
             )
         )
 
-        list_results = []
+        # Collect all texts and artifacts for batch recognizer processing
+        ordered_texts = []
+        ordered_artifacts = []
         for text, nlp_artifacts in nlp_artifacts_batch:
-            results = self.analyzer_engine.analyze(
-                text=str(text), nlp_artifacts=nlp_artifacts, language=language, **kwargs
-            )
+            ordered_texts.append(str(text))
+            ordered_artifacts.append(nlp_artifacts)
 
-            list_results.append(results)
+        if not ordered_texts:
+            return []
 
-        return list_results
+        # Batch analyze through recognizers
+        return self.analyzer_engine.analyze_batch(
+            texts=ordered_texts,
+            nlp_artifacts_list=ordered_artifacts,
+            language=language,
+            **kwargs,
+        )
 
     def analyze_dict(
         self,
