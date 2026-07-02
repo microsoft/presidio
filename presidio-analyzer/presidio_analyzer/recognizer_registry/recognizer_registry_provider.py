@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from presidio_analyzer import EntityRecognizer
 from presidio_analyzer.input_validation import ConfigurationValidator
-from presidio_analyzer.nlp_engine import NlpEngine
+from presidio_analyzer.nlp_engine import NlpEngine, NoOpNlpEngine
 from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.recognizer_registry.recognizers_loader_utils import (
@@ -117,6 +117,21 @@ class RecognizerRegistryProvider:
         nlp_engine = self.nlp_engine
 
         if not nlp_engine:
+            return
+
+        if isinstance(nlp_engine, NoOpNlpEngine):
+            nlp_recognizers = [
+                rec for rec in recognizers if isinstance(rec, SpacyRecognizer)
+            ]
+            if nlp_recognizers:
+                names = sorted({rec.__class__.__name__ for rec in nlp_recognizers})
+                raise ValueError(
+                    "NoOpNlpEngine cannot be used with NLP engine recognizers. "
+                    f"Remove or disable these recognizers: {names}."
+                )
+            logger.info(
+                "Skipping NLP recognizer configuration updates for no-op NLP engine."
+            )
             return
 
         for language in nlp_engine.get_supported_languages():
