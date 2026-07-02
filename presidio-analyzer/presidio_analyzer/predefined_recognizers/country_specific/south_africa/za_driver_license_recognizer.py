@@ -8,7 +8,7 @@ class ZaDriverLicenseRecognizer(PatternRecognizer):
     """
     Recognize South African driver's licence numbers issued by eNaTIS.
 
-    eNaTIS licence numbers are alphanumeric strings of roughly 10–12
+    eNaTIS licence numbers are alphanumeric strings of 10–14
     characters combining digit blocks with trailing letter groups.
 
     Reference:

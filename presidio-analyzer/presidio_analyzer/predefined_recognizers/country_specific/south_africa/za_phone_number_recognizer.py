@@ -2,7 +2,6 @@ from typing import List, Literal, Optional
 
 import phonenumbers
 from phonenumbers import PhoneNumberType
-from phonenumbers.phonenumberutil import NumberParseException
 
 from presidio_analyzer import EntityRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -93,12 +92,7 @@ class ZaPhoneNumberRecognizer(PhoneRecognizer):
         for match in phonenumbers.PhoneNumberMatcher(
             text, self.REGION, leniency=self.leniency
         ):
-            try:
-                parsed_number = phonenumbers.parse(
-                    text[match.start : match.end], self.REGION
-                )
-            except NumberParseException:
-                continue
+            parsed_number = match.number
 
             if phonenumbers.region_code_for_number(parsed_number) != self.REGION:
                 continue
