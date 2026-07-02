@@ -16,12 +16,16 @@ def test_spacy_3_8_14_excluded_for_python_3_14_plus():
 
     spacy_lines = [line.strip() for line in pyproject_lines if "spacy (" in line]
     lower_python_line = next(
-        line for line in spacy_lines if "python_version < '3.14'" in line
+        (line for line in spacy_lines if "python_version < '3.14'" in line),
+        None,
     )
     higher_python_line = next(
-        line for line in spacy_lines if "python_version >= '3.14'" in line
+        (line for line in spacy_lines if "python_version >= '3.14'" in line),
+        None,
     )
 
+    assert lower_python_line is not None
+    assert higher_python_line is not None
     assert "!=3.8.14" not in lower_python_line
     assert "!=3.8.14" in higher_python_line
 
@@ -39,17 +43,18 @@ def test_distribution_preserves_python_version_markers():
         if requirement.name.lower() == "spacy":
             spacy_requirements.append(requirement)
 
+    assert spacy_requirements
     requires_for_312 = [
         requirement
         for requirement in spacy_requirements
-        if requirement.marker is None
-        or requirement.marker.evaluate({"python_version": "3.12"})
+        if requirement.marker
+        and requirement.marker.evaluate({"python_version": "3.12"})
     ]
     requires_for_314 = [
         requirement
         for requirement in spacy_requirements
-        if requirement.marker is None
-        or requirement.marker.evaluate({"python_version": "3.14"})
+        if requirement.marker
+        and requirement.marker.evaluate({"python_version": "3.14"})
     ]
 
     assert len(requires_for_312) == 1
