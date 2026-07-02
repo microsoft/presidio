@@ -4,6 +4,9 @@ from pathlib import Path
 import pytest
 from packaging.requirements import Requirement
 
+SPACY_SPECIFIERS_PRE_314 = {">=3.4.4", "!=3.7.0", "<4.0.0"}
+SPACY_SPECIFIERS_314_PLUS = {">=3.4.4", "!=3.7.0", "!=3.8.14", "<4.0.0"}
+
 
 def test_spacy_3_8_14_excluded_for_python_3_14_plus():
     """Ensure spacy 3.8.14 exclusion applies only to Python 3.14+."""
@@ -49,15 +52,15 @@ def test_distribution_preserves_python_version_markers():
         or requirement.marker.evaluate({"python_version": "3.14"})
     ]
 
-    assert requires_for_312
-    assert requires_for_314
+    assert len(requires_for_312) == 1
+    assert len(requires_for_314) == 1
     assert all(
         {str(specifier) for specifier in requirement.specifier}
-        == {">=3.4.4", "!=3.7.0", "<4.0.0"}
+        == SPACY_SPECIFIERS_PRE_314
         for requirement in requires_for_312
     )
     assert all(
         {str(specifier) for specifier in requirement.specifier}
-        == {">=3.4.4", "!=3.7.0", "!=3.8.14", "<4.0.0"}
+        == SPACY_SPECIFIERS_314_PLUS
         for requirement in requires_for_314
     )
