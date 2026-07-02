@@ -7,15 +7,20 @@ from packaging.requirements import Requirement
 
 def test_spacy_3_8_14_excluded_for_python_3_14_plus():
     """Ensure spacy 3.8.14 exclusion applies only to Python 3.14+."""
-    pyproject = (
+    pyproject_lines = (
         Path(__file__).resolve().parents[1] / "pyproject.toml"
-    ).read_text(encoding="utf-8")
+    ).read_text(encoding="utf-8").splitlines()
 
-    assert "spacy (>=3.4.4,!=3.7.0,<4.0.0); python_version < '3.14'" in pyproject
-    assert (
-        "spacy (>=3.4.4,!=3.7.0,!=3.8.14,<4.0.0); python_version >= '3.14'"
-        in pyproject
+    spacy_lines = [line.strip() for line in pyproject_lines if "spacy (" in line]
+    lower_python_line = next(
+        line for line in spacy_lines if "python_version < '3.14'" in line
     )
+    higher_python_line = next(
+        line for line in spacy_lines if "python_version >= '3.14'" in line
+    )
+
+    assert "!=3.8.14" not in lower_python_line
+    assert "!=3.8.14" in higher_python_line
 
 
 def test_distribution_preserves_python_version_markers():
@@ -47,10 +52,12 @@ def test_distribution_preserves_python_version_markers():
     assert requires_for_312
     assert requires_for_314
     assert all(
-        str(requirement.specifier) == "!=3.7.0,<4.0.0,>=3.4.4"
+        {str(specifier) for specifier in requirement.specifier}
+        == {">=3.4.4", "!=3.7.0", "<4.0.0"}
         for requirement in requires_for_312
     )
     assert all(
-        str(requirement.specifier) == "!=3.7.0,!=3.8.14,<4.0.0,>=3.4.4"
+        {str(specifier) for specifier in requirement.specifier}
+        == {">=3.4.4", "!=3.7.0", "!=3.8.14", "<4.0.0"}
         for requirement in requires_for_314
     )
