@@ -66,8 +66,8 @@ def test_low_confidence_pattern_does_not_backtrack(recognizer, entities):
     # no four-digit run cost time quadratic in its length. Matching must now be
     # linear and finish well within the regex timeout.
     text = "a " * 50000
-    start = time.time()
+    start = time.perf_counter()
     results = recognizer.analyze(text, entities)
-    elapsed = time.time() - start
+    elapsed = time.perf_counter() - start
     assert results == []
     assert elapsed < 10
